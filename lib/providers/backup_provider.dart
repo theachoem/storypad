@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spooky/core/concerns/schedule_concern.dart';
+import 'package:spooky/core/databases/models/story_db_model.dart';
 import 'package:spooky/core/objects/backup_object.dart';
 import 'package:spooky/core/objects/cloud_file_object.dart';
 import 'package:spooky/core/services/backup_sources/base_backup_source.dart';
@@ -18,6 +19,9 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
   DateTime? get lastSyncedAt => source.lastSyncedAt;
 
+  int? _storyCount;
+  bool get storyEmpty => _storyCount == 0;
+
   bool _syncing = false;
   bool get syncing => _syncing;
   bool get synced => lastSyncedAt == lastDbUpdatedAt;
@@ -27,11 +31,12 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     notifyListeners();
   }
 
-  bool canBackup() => _lastDbUpdatedAt != null && _lastDbUpdatedAt != source.lastSyncedAt;
+  bool canBackup() => !storyEmpty && _lastDbUpdatedAt != null && _lastDbUpdatedAt != source.lastSyncedAt;
 
   void _databaseListener() async {
     debugPrint('BackupProvider#_databaseListener');
     _lastDbUpdatedAt = await _getLastDbUpdatedAt();
+    _storyCount = await StoryDbModel.db.count();
     notifyListeners();
   }
 
@@ -44,8 +49,11 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
 
   Future<void> load() async {
     _lastDbUpdatedAt = await _getLastDbUpdatedAt();
+    _storyCount = await StoryDbModel.db.count();
+
     await source.authenticate();
     await syncBackupAcrossDevices();
+
     notifyListeners();
   }
 

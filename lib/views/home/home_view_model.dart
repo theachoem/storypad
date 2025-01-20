@@ -1,9 +1,14 @@
 import 'dart:math';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:spooky/core/base/base_view_model.dart';
+import 'package:spooky/core/databases/legacy/storypad_legacy_database.dart';
 import 'package:spooky/core/databases/models/collection_db_model.dart';
 import 'package:spooky/core/databases/models/preference_db_model.dart';
 import 'package:spooky/core/databases/models/story_db_model.dart';
+import 'package:spooky/core/services/messenger_service.dart';
 import 'package:spooky/core/services/restore_backup_service.dart';
 import 'package:spooky/core/types/path_type.dart';
 import 'package:spooky/views/home/local_widgets/nickname_bottom_sheet.dart';
@@ -16,8 +21,16 @@ class HomeViewModel extends BaseViewModel {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
   HomeViewModel(BuildContext context) {
-    loadUser(context);
-    load(debugSource: '$runtimeType#_constructor');
+    _construct(context);
+  }
+
+  Future<void> _construct(BuildContext context) async {
+    nickname = PreferenceDbModel.db.nickname.get();
+    await loadFromLegacyStorypadIfShould(context);
+    if (!context.mounted) return;
+
+    await load(debugSource: '$runtimeType#_construct');
+    if (nickname == null && context.mounted) showInputNameSheet(context);
 
     RestoreBackupService.instance.addListener(() {
       load(debugSource: '$runtimeType#_listenToRestoreService');
@@ -34,18 +47,17 @@ class HomeViewModel extends BaseViewModel {
     return months;
   }
 
-  Future<void> loadUser(BuildContext context) async {
-    nickname = PreferenceDbModel.db.nickname.get();
-    if (nickname == null) {
-      await Future.delayed(Durations.long3);
-      if (context.mounted) changeName(context);
-    }
+  Future<void> showInputNameSheet(BuildContext context) async {
+    await Future.delayed(Durations.long3);
+    if (context.mounted) changeName(context);
   }
 
   Future<void> load({
     required String debugSource,
   }) async {
     debugPrint('🚧 Reload home from $debugSource 🏠');
+
+    nickname = PreferenceDbModel.db.nickname.get();
     stories = await StoryDbModel.db.where(filters: {
       'year': year,
       'types': [PathType.docs.name],
@@ -53,6 +65,31 @@ class HomeViewModel extends BaseViewModel {
 
     scrollInfo.setupStoryKeys(stories?.items ?? []);
     notifyListeners();
+  }
+
+  Future<void> loadFromLegacyStorypadIfShould(BuildContext context) async {
+    (bool, String) result = await StorypadLegacyDatabase.instance.transferToObjectBoxIfNotYet();
+
+    bool success = result.$1;
+    String? message = result.$2;
+
+    if (success) {
+      if (!context.mounted) return;
+      // if (kDebugMode) MessengerService.of(context).showSnackBar(message);
+    } else {
+      if (!context.mounted) return;
+
+      OkCancelResult userAction = await showOkAlertDialog(
+        context: context,
+        title: 'Error importing data from previous version!',
+        message: "Please contact developer for support & avoid data loss.",
+      );
+
+      if (userAction == OkCancelResult.ok && context.mounted) {
+        Clipboard.setData(ClipboardData(text: message));
+        MessengerService.of(context).showSnackBar("Error code copied to your clipboard");
+      }
+    }
   }
 
   Future<void> changeYear(int newYear) async {

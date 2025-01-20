@@ -71,6 +71,28 @@ class GoogleDriveService {
     });
   }
 
+  Future<CloudFileObject?> fetchLegacyStoryPadBackup() async {
+    return _execHandler(() async {
+      drive.DriveApi? client = await googleDriveClient;
+      if (client == null) return null;
+
+      const mimeType = "mimeType = 'application/vnd.google-apps.folder'";
+      drive.FileList? folderList = await client.files.list(q: mimeType);
+
+      String? folderId;
+      folderList.files?.forEach((e) {
+        if (e.name == "Story") folderId = e.id;
+      });
+
+      final folder = await client.files.list(
+        q: "mimeType = 'application/zip' and '$folderId' in parents",
+      );
+
+      drive.File? file = folder.files?.firstOrNull;
+      return file != null ? CloudFileObject.fromLegacyStoryPad(file) : null;
+    });
+  }
+
   Future<CloudFileObject?> findFileById(String fileId) async {
     return _execHandler(() async {
       drive.DriveApi? client = await googleDriveClient;

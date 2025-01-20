@@ -1,5 +1,6 @@
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:spooky/core/objects/backup_file_object.dart';
+import 'package:spooky/core/objects/device_info_object.dart';
 
 class CloudFileObject {
   final String? fileName;
@@ -20,8 +21,28 @@ class CloudFileObject {
     );
   }
 
+  factory CloudFileObject.fromLegacyStoryPad(drive.File file) {
+    return CloudFileObject(
+      fileName: file.name,
+      id: file.id!,
+      description: file.description,
+    );
+  }
+
+  // story2025-01-20 21:31:05.234761.zip
   BackupFileObject? getFileInfo() {
     if (fileName == null) return null;
-    return BackupFileObject.fromFileName(fileName!);
+
+    if (fileName?.startsWith("story") == true) {
+      String createdAtStr = fileName!.replaceAll("story", "").replaceAll(".zip", "");
+      DateTime? createdAt = DateTime.tryParse(createdAtStr);
+
+      return BackupFileObject(
+        createdAt: createdAt!,
+        device: DeviceInfoObject('StoryPad', 'legacy-model-id'),
+      );
+    } else {
+      return BackupFileObject.fromFileName(fileName!);
+    }
   }
 }

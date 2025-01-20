@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spooky/core/base/base_view_model.dart';
@@ -31,6 +30,7 @@ class BackupViewModel extends BaseViewModel {
   Future<void> load(BuildContext context) async {
     loading = true;
     files = await context.read<BackupProvider>().source.fetchAllCloudFiles().then((e) => e?.files);
+
     if (context.mounted) deleteOldBackupsSilently(context);
 
     loading = false;

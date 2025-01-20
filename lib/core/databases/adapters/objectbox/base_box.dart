@@ -87,10 +87,13 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
-  Future<T?> set(T record) async {
+  Future<T?> set(
+    T record, {
+    bool runCallbacks = true,
+  }) async {
     B constructed = await modelToObject(record);
     await box.putAsync(constructed, mode: PutMode.put);
-    afterCommit(record.id);
+    if (runCallbacks) afterCommit(record.id);
     return record;
   }
 
@@ -101,23 +104,32 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
-  Future<T?> update(T record) async {
+  Future<T?> update(
+    T record, {
+    bool runCallbacks = true,
+  }) async {
     B constructed = await modelToObject(record);
     await box.putAsync(constructed, mode: PutMode.update);
-    afterCommit(record.id);
+    if (runCallbacks) afterCommit(record.id);
     return record;
   }
 
   @override
-  Future<T?> create(T record) async {
+  Future<T?> create(
+    T record, {
+    bool runCallbacks = true,
+  }) async {
     B constructed = await modelToObject(record);
     await box.putAsync(constructed, mode: PutMode.insert);
-    afterCommit(record.id);
+    if (runCallbacks) afterCommit(record.id);
     return record;
   }
 
   @override
-  Future<T?> delete(int id) async {
+  Future<T?> delete(
+    int id, {
+    bool runCallbacks = true,
+  }) async {
     B? object = box.get(id);
 
     if (object != null) {
@@ -125,7 +137,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
       await box.putAsync(object);
     }
 
-    afterCommit(id);
+    if (runCallbacks) afterCommit(id);
     return null;
   }
 }

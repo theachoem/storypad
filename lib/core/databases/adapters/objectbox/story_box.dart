@@ -33,7 +33,10 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
-  Future<StoryDbModel?> set(StoryDbModel record) async {
+  Future<StoryDbModel?> set(
+    StoryDbModel record, {
+    bool runCallbacks = true,
+  }) async {
     StoryDbModel? saved = await super.set(record);
     debugPrint("🚧 StoryBox#set: ${saved?.rawChanges?.length}");
     return saved;

@@ -88,7 +88,7 @@ class StoryContentDbModel extends BaseDbModel with ComparableConcern {
     DateTime? createdAt,
   }) {
     return StoryContentDbModel(
-      id: DateTime.now().millisecondsSinceEpoch,
+      id: createdAt?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
       title: null,
       plainText: null,
       createdAt: createdAt ?? DateTime.now(),
