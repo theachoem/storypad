@@ -53,6 +53,7 @@ dev_dependencies:
   copy_with_extension_gen: ^6.0.0
   objectbox_generator: any
   flutter_gen_runner: ^5.8.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true

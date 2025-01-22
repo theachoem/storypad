@@ -146,7 +146,7 @@ class AppTheme extends StatelessWidget {
     } else {
       return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         lightDynamic ??= ColorScheme.fromSeed(seedColor: ThemeConstant.defaultSeed, brightness: Brightness.light);
-        darkDynamic ??= ColorScheme.fromSeed(seedColor: ThemeConstant.defaultSeed, brightness: Brightness.light);
+        darkDynamic ??= ColorScheme.fromSeed(seedColor: ThemeConstant.defaultSeed, brightness: Brightness.dark);
 
         return builder(lightDynamic, darkDynamic);
       });
