@@ -11,7 +11,6 @@ void main({
   FirebaseOptions? firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: firebaseOptions);
 
   // core

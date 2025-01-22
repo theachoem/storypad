@@ -1,7 +1,7 @@
 name: spooky
 description: Minimalist application to write stories, notes, diary!
 publish_to: "none"
-version: 2.0.0+222
+version: 2.0.0+223
 
 environment:
   sdk: ^3.5.4
@@ -53,6 +53,7 @@ dev_dependencies:
   copy_with_extension_gen: ^6.0.0
   objectbox_generator: any
   flutter_gen_runner: ^5.8.0
+  flutter_native_splash: ^2.4.4
   flutter_launcher_icons: ^0.14.3
 
 flutter:
