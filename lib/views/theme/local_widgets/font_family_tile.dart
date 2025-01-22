@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/providers/theme_provider.dart';
-import 'package:spooky/views/fonts/fonts_view.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/fonts/fonts_view.dart';
 
 class FontFamilyTile extends StatelessWidget {
   const FontFamilyTile({

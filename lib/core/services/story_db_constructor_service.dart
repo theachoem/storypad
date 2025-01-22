@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:html_character_entities/html_character_entities.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 
 class StoryDbConstructorService {
   static List<String> changesToRawChanges(StoryDbModel story) {

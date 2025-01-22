@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/services/date_format_service.dart';
-import 'package:spooky/widgets/story_list/story_tile.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/widgets/story_list/story_tile.dart';
 
 part 'story_month_header.dart';
 

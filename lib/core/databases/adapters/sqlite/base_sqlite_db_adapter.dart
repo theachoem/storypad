@@ -1,6 +1,6 @@
-import 'package:spooky/core/databases/adapters/base_db_adapter.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
 
 // This is just for example.
 class BaseSqliteDbAdapter extends BaseDbAdapter {

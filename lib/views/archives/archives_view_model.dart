@@ -1,5 +1,5 @@
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/types/path_type.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/types/path_type.dart';
 import 'archives_view.dart';
 
 class ArchivesViewModel extends BaseViewModel {

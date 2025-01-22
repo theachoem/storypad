@@ -3,14 +3,14 @@
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:spooky/core/databases/adapters/objectbox/story_box.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
-import 'package:spooky/core/services/story_db_constructor_service.dart';
-import 'package:spooky/core/services/story_helper.dart';
-import 'package:spooky/core/types/path_type.dart';
-import 'package:spooky/views/stories/edit/edit_story_view_model.dart';
-import 'package:spooky/views/stories/show/show_story_view_model.dart';
+import 'package:storypad/core/databases/adapters/objectbox/story_box.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/services/story_db_constructor_service.dart';
+import 'package:storypad/core/services/story_helper.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
+import 'package:storypad/views/stories/show/show_story_view_model.dart';
 
 part 'story_db_model.g.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:spooky/core/services/date_format_service.dart';
+import 'package:storypad/core/services/date_format_service.dart';
 
 class DateBlockEmbed extends EmbedBuilder {
   @override

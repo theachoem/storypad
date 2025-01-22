@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:spooky/core/objects/device_info_object.dart';
+import 'package:storypad/core/objects/device_info_object.dart';
 
 class BackupFileObject {
   static const String prefix = "Backup";

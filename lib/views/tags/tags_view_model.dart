@@ -1,13 +1,13 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/databases/models/tag_db_model.dart';
-import 'package:spooky/core/types/path_type.dart';
-import 'package:spooky/widgets/sp_nested_navigation.dart';
-import 'package:spooky/widgets/sp_text_inputs_page.dart';
-import 'package:spooky/widgets/story_list/story_list.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
+import 'package:storypad/widgets/sp_text_inputs_page.dart';
+import 'package:storypad/widgets/story_list/story_list.dart';
 import 'tags_view.dart';
 
 class TagsViewModel extends BaseViewModel {

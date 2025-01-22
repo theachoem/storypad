@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:spooky/core/databases/adapters/objectbox/base_box.dart';
-import 'package:spooky/core/databases/adapters/objectbox/entities.dart';
-import 'package:spooky/core/databases/models/preference_db_model.dart';
-import 'package:spooky/objectbox.g.dart';
+import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/models/preference_db_model.dart';
+import 'package:storypad/objectbox.g.dart';
 
 class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   _DefinedPreference get nickname => _DefinedPreference(id: 2, key: 'nickname');

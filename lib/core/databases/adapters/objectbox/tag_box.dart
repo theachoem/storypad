@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:spooky/core/databases/adapters/objectbox/base_box.dart';
-import 'package:spooky/core/databases/adapters/objectbox/entities.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/tag_db_model.dart';
-import 'package:spooky/objectbox.g.dart';
+import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/objectbox.g.dart';
 
 class TagBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override

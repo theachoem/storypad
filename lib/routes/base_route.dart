@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/widgets/sp_nested_navigation.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 abstract class BaseRoute {
   bool get nestedRoute => false;

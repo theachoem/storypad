@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/databases/models/preference_db_model.dart';
+import 'package:storypad/core/databases/models/preference_db_model.dart';
 
 class BackupPreferencesTableViewer extends StatelessWidget {
   const BackupPreferencesTableViewer({

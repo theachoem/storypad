@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/routes/utils/animated_page_route.dart';
+import 'package:storypad/routes/utils/animated_page_route.dart';
 
 // Nested navigation inside same parent. Eg. navigations in dialog.
 class SpNestedNavigation extends StatefulWidget {

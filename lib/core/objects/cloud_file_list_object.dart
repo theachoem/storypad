@@ -1,4 +1,4 @@
-import 'package:spooky/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 
 class CloudFileListObject {

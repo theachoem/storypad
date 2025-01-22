@@ -3,17 +3,17 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/databases/legacy/storypad_legacy_database.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/preference_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/services/messenger_service.dart';
-import 'package:spooky/core/services/restore_backup_service.dart';
-import 'package:spooky/core/types/path_type.dart';
-import 'package:spooky/views/home/local_widgets/nickname_bottom_sheet.dart';
-import 'package:spooky/views/stories/edit/edit_story_view.dart';
-import 'package:spooky/views/stories/show/show_story_view.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/databases/legacy/storypad_legacy_database.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/preference_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/restore_backup_service.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/views/home/local_widgets/nickname_bottom_sheet.dart';
+import 'package:storypad/views/stories/edit/edit_story_view.dart';
+import 'package:storypad/views/stories/show/show_story_view.dart';
 
 part './local_widgets/home_scroll_info.dart';
 

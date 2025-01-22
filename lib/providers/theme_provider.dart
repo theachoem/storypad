@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/objects/theme_object.dart';
-import 'package:spooky/core/storages/theme_storage.dart';
+import 'package:storypad/core/objects/theme_object.dart';
+import 'package:storypad/core/storages/theme_storage.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static ThemeStorage get storage => ThemeStorage.instance;

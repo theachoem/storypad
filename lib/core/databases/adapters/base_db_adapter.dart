@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
 
 abstract class BaseDbAdapter<T extends BaseDbModel> {
   final Map<int, List<FutureOr<void> Function()>> _listeners = {};

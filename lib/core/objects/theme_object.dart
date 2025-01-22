@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:spooky/core/constants/theme_constant.dart';
+import 'package:storypad/core/constants/theme_constant.dart';
 
 part 'theme_object.g.dart';
 

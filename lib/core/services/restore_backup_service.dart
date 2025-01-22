@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:spooky/core/databases/adapters/base_db_adapter.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
-import 'package:spooky/core/objects/backup_object.dart';
-import 'package:spooky/core/services/backup_sources/base_backup_source.dart';
+import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 
 class RestoreBackupService {
   RestoreBackupService._();

@@ -1,13 +1,13 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/concerns/schedule_concern.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/services/story_helper.dart';
-import 'package:spooky/core/types/editing_flow_type.dart';
-import 'package:spooky/views/stories/edit/edit_story_view.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/concerns/schedule_concern.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/story_helper.dart';
+import 'package:storypad/core/types/editing_flow_type.dart';
+import 'package:storypad/views/stories/edit/edit_story_view.dart';
 
 class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
   final EditStoryRoute params;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 
 class SpEndDrawerTheme extends StatelessWidget {
   const SpEndDrawerTheme({

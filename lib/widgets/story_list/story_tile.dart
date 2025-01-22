@@ -2,15 +2,15 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/app_theme.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/services/color_from_day_service.dart';
-import 'package:spooky/core/services/date_format_service.dart';
-import 'package:spooky/core/services/messenger_service.dart';
-import 'package:spooky/views/home/home_view_model.dart';
-import 'package:spooky/widgets/sp_markdown_body.dart';
-import 'package:spooky/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/color_from_day_service.dart';
+import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/widgets/sp_markdown_body.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;

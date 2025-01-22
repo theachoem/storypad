@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/providers/theme_provider.dart';
-import 'package:spooky/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class FontWeightTile extends StatelessWidget {
   const FontWeightTile({

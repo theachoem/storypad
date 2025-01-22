@@ -1,4 +1,4 @@
-import 'package:spooky/core/base/base_view_model.dart';
+import 'package:storypad/core/base/base_view_model.dart';
 import 'theme_view.dart';
 
 class ThemeViewModel extends BaseViewModel {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/types/path_type.dart';
-import 'package:spooky/views/home/home_view_model.dart';
-import 'package:spooky/widgets/sp_nested_navigation.dart';
-import 'package:spooky/widgets/sp_text_inputs_page.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
+import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
 class HomeYearsView extends StatefulWidget {
   const HomeYearsView({super.key});

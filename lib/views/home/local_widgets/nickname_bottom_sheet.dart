@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/widgets/sp_default_text_controller.dart';
+import 'package:storypad/widgets/sp_default_text_controller.dart';
 
 class NicknameBottomSheet extends StatelessWidget {
   const NicknameBottomSheet({

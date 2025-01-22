@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:spooky/core/databases/adapters/base_db_adapter.dart';
-import 'package:spooky/core/databases/adapters/objectbox/entities.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/services/file_service.dart';
-import 'package:spooky/objectbox.g.dart';
+import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/services/file_service.dart';
+import 'package:storypad/objectbox.g.dart';
 
 abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends BaseDbAdapter<T> {
   @override

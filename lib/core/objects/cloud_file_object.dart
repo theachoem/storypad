@@ -1,6 +1,6 @@
 import 'package:googleapis/drive/v3.dart' as drive;
-import 'package:spooky/core/objects/backup_file_object.dart';
-import 'package:spooky/core/objects/device_info_object.dart';
+import 'package:storypad/core/objects/backup_file_object.dart';
+import 'package:storypad/core/objects/device_info_object.dart';
 
 class CloudFileObject {
   final String? fileName;

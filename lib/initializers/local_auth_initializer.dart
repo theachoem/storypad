@@ -1,4 +1,4 @@
-import 'package:spooky/core/services/local_auth_service.dart';
+import 'package:storypad/core/services/local_auth_service.dart';
 
 class LocalAuthInitializer {
   static Future<void> call() async {

@@ -1,11 +1,11 @@
 import 'package:animated_clipper/animated_clipper.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/core/extensions/color_scheme_extensions.dart';
-import 'package:spooky/core/objects/feeling_object.dart';
-import 'package:spooky/core/services/color_from_day_service.dart';
-import 'package:spooky/widgets/feeling_picker/sp_feeling_picker.dart';
-import 'package:spooky/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/objects/feeling_object.dart';
+import 'package:storypad/core/services/color_from_day_service.dart';
+import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'dart:math';
 
 class SpFeelingButton extends StatefulWidget {

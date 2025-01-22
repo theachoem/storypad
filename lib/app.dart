@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/app_theme.dart';
-import 'package:spooky/providers/theme_provider.dart';
-import 'package:spooky/views/home/home_view.dart';
-import 'package:spooky/widgets/sp_local_auth_wrapper.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/widgets/sp_local_auth_wrapper.dart';
 
 class App extends StatelessWidget {
   const App({

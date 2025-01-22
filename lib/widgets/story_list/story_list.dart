@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/types/path_type.dart';
-import 'package:spooky/views/home/home_view_model.dart';
-import 'package:spooky/views/stories/changes/show/show_change_view.dart';
-import 'package:spooky/views/stories/show/show_story_view.dart';
-import 'package:spooky/widgets/story_list/story_list_timeline_verticle_divider.dart';
-import 'package:spooky/widgets/story_list/story_listener_builder.dart';
-import 'package:spooky/widgets/story_list/story_tile_list_item.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/views/stories/show/show_story_view.dart';
+import 'package:storypad/widgets/story_list/story_list_timeline_verticle_divider.dart';
+import 'package:storypad/widgets/story_list/story_listener_builder.dart';
+import 'package:storypad/widgets/story_list/story_tile_list_item.dart';
 
 class StoryList extends StatelessWidget {
   final CollectionDbModel<StoryDbModel>? stories;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
 
 class StoryTitle extends StatelessWidget {
   const StoryTitle({

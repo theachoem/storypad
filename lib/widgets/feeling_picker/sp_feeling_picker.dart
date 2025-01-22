@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:spooky/core/extensions/color_scheme_extensions.dart';
-import 'package:spooky/core/extensions/string_extension.dart';
-import 'package:spooky/core/objects/feeling_object.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/string_extension.dart';
+import 'package:storypad/core/objects/feeling_object.dart';
 
 class SpFeelingPicker extends StatefulWidget {
   const SpFeelingPicker({

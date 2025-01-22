@@ -1,5 +1,5 @@
 import 'package:local_auth/local_auth.dart';
-import 'package:spooky/core/storages/local_auth_enabled_storage.dart';
+import 'package:storypad/core/storages/local_auth_enabled_storage.dart';
 
 class LocalAuthService {
   LocalAuthService._();

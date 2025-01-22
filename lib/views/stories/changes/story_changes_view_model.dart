@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/databases/models/story_content_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/core/services/messenger_service.dart';
-import 'package:spooky/views/stories/changes/story_changes_view.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/views/stories/changes/story_changes_view.dart';
 
 class StoryChangesViewModel extends BaseViewModel {
   final StoryChangesRoute params;

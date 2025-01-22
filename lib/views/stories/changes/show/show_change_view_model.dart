@@ -1,7 +1,7 @@
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:spooky/core/base/base_view_model.dart';
-import 'package:spooky/core/services/story_helper.dart';
-import 'package:spooky/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/core/services/story_helper.dart';
+import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 
 class ShowChangeViewModel extends BaseViewModel {
   final ShowChangeRoute params;

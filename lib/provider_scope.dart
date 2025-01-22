@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/providers/backup_provider.dart';
-import 'package:spooky/providers/local_auth_provider.dart';
-import 'package:spooky/providers/theme_provider.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/local_auth_provider.dart';
+import 'package:storypad/providers/theme_provider.dart';
 
 // global providers
 class ProviderScope extends StatelessWidget {

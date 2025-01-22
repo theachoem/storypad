@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:spooky/core/objects/cloud_file_list_object.dart';
-import 'package:spooky/core/objects/cloud_file_object.dart';
-import 'package:spooky/core/services/backup_sources/base_backup_source.dart';
-import 'package:spooky/core/services/google_drive/google_drive_service.dart';
+import 'package:storypad/core/objects/cloud_file_list_object.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
+import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 
 class GoogleDriveBackupSource extends BaseBackupSource {
   @override

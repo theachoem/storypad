@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/core/services/local_auth_service.dart';
-import 'package:spooky/providers/local_auth_provider.dart';
+import 'package:storypad/core/services/local_auth_service.dart';
+import 'package:storypad/providers/local_auth_provider.dart';
 
 class SpLocalAuthWrapper extends StatelessWidget {
   const SpLocalAuthWrapper({

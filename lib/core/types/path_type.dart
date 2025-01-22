@@ -1,4 +1,4 @@
-import 'package:spooky/core/extensions/string_extension.dart';
+import 'package:storypad/core/extensions/string_extension.dart';
 
 enum PathType {
   docs,

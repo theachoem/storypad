@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:spooky/core/databases/adapters/objectbox/preference_box.dart';
-import 'package:spooky/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/adapters/objectbox/preference_box.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
 
 part 'preference_db_model.g.dart';
 

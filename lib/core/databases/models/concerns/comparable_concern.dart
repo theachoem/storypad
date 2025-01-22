@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:spooky/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
 
 mixin ComparableConcern<T extends BaseDbModel> on BaseDbModel {
   bool hasChanges(T other) {

@@ -20,7 +20,7 @@
   "BookMe+ View Model": {
     "prefix": "view_model",
     "body": ["",
-      "import 'package:spooky/core/base/base_view_model.dart';",
+      "import 'package:storypad/core/base/base_view_model.dart';",
       "import '${TM_FILENAME_BASE/(.*)_view_model/$1/}_view.dart';",
       "",
       "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends BaseViewModel {",
@@ -36,9 +36,9 @@
   "BookMe+ View": {
     "prefix": "view",
     "body": [
-      "import 'package:spooky/core/base/view_model_provider.dart';",
+      "import 'package:storypad/core/base/view_model_provider.dart';",
       "import 'package:flutter/material.dart';",
-      "import 'package:spooky/routes/base_route.dart';",
+      "import 'package:storypad/routes/base_route.dart';",
       "",
       "import '${TM_FILENAME_BASE/_view/_view_model/}.dart';",
       "",

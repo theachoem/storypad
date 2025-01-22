@@ -1,4 +1,4 @@
-import 'package:spooky/core/storages/storage_adapters/base_storage_adapter.dart';
+import 'package:storypad/core/storages/storage_adapters/base_storage_adapter.dart';
 
 abstract class BaseStorage<T> {
   int? get version => null;

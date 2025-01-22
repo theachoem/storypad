@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/app.dart';
-import 'package:spooky/core/storages/theme_storage.dart';
-import 'package:spooky/initializers/database_initializer.dart';
-import 'package:spooky/initializers/file_initializer.dart';
-import 'package:spooky/initializers/local_auth_initializer.dart';
-import 'package:spooky/provider_scope.dart';
+import 'package:storypad/app.dart';
+import 'package:storypad/core/storages/theme_storage.dart';
+import 'package:storypad/initializers/database_initializer.dart';
+import 'package:storypad/initializers/file_initializer.dart';
+import 'package:storypad/initializers/local_auth_initializer.dart';
+import 'package:storypad/provider_scope.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main({

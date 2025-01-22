@@ -1,5 +1,5 @@
-import 'package:spooky/core/objects/theme_object.dart';
-import 'package:spooky/core/storages/base_object_storages/object_storage.dart';
+import 'package:storypad/core/objects/theme_object.dart';
+import 'package:storypad/core/storages/base_object_storages/object_storage.dart';
 
 class ThemeStorage extends ObjectStorage<ThemeObject> {
   ThemeStorage._();

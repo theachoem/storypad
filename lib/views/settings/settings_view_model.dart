@@ -1,4 +1,4 @@
-import 'package:spooky/core/base/base_view_model.dart';
+import 'package:storypad/core/base/base_view_model.dart';
 import 'settings_view.dart';
 
 class SettingsViewModel extends BaseViewModel {

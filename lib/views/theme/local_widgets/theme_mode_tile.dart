@@ -1,9 +1,9 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/core/extensions/string_extension.dart';
-import 'package:spooky/providers/theme_provider.dart';
-import 'package:spooky/widgets/sp_animated_icon.dart';
-import 'package:spooky/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/core/extensions/string_extension.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class ThemeModeTile extends StatelessWidget {
   const ThemeModeTile({

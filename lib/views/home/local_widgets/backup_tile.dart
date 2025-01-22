@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:spooky/core/extensions/color_scheme_extensions.dart';
-import 'package:spooky/core/services/date_format_service.dart';
-import 'package:spooky/core/services/messenger_service.dart';
-import 'package:spooky/providers/backup_provider.dart';
-import 'package:spooky/views/backup/backup_view.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/backup/backup_view.dart';
 
 class BackupTile extends StatefulWidget {
   const BackupTile({

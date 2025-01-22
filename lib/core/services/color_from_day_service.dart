@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/constants/utils_colors.dart';
+import 'package:storypad/core/constants/utils_colors.dart';
 
 class ColorFromDayService {
   final BuildContext context;

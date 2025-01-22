@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/databases/models/collection_db_model.dart';
-import 'package:spooky/core/databases/models/story_db_model.dart';
-import 'package:spooky/widgets/story_list/story_list.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/widgets/story_list/story_list.dart';
 
 class BackupStoriesTableViewer extends StatelessWidget {
   const BackupStoriesTableViewer({

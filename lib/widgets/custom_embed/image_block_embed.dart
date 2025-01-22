@@ -5,12 +5,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:spooky/core/extensions/color_scheme_extensions.dart';
-import 'package:spooky/core/services/messenger_service.dart';
-import 'package:spooky/core/services/url_opener_service.dart';
-import 'package:spooky/widgets/custom_embed/unsupported.dart';
-import 'package:spooky/widgets/sp_images_viewer.dart';
-import 'package:spooky/widgets/sp_tap_effect.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/url_opener_service.dart';
+import 'package:storypad/widgets/custom_embed/unsupported.dart';
+import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class ImageBlockEmbed extends quill.EmbedBuilder {
   @override

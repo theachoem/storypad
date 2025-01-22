@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/core/services/local_auth_service.dart';
+import 'package:storypad/core/services/local_auth_service.dart';
 
 class LocalAuthProvider extends ChangeNotifier {
   bool get localAuthEnabled => LocalAuthService.instance.localAuthEnabled;

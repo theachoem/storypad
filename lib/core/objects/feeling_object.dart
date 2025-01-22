@@ -1,4 +1,4 @@
-import 'package:spooky/gen/assets.gen.dart';
+import 'package:storypad/gen/assets.gen.dart';
 
 // No translation for now
 String tr(String text) {

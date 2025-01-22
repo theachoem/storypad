@@ -1,4 +1,4 @@
-import 'package:spooky/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
 
 class CollectionDbModel<T extends BaseDbModel> {
   final List<T> items;

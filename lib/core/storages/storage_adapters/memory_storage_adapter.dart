@@ -1,4 +1,4 @@
-import 'package:spooky/core/storages/storage_adapters/base_storage_adapter.dart';
+import 'package:storypad/core/storages/storage_adapters/base_storage_adapter.dart';
 
 class MemoryStorageAdapter<T> extends BaseStorageAdapter<T> {
   static Map<String, dynamic> map = {};

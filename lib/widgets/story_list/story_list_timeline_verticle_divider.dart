@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spooky/app_theme.dart';
-import 'package:spooky/widgets/story_list/story_tile.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/widgets/story_list/story_tile.dart';
 
 class StoryListTimelineVerticleDivider extends StatelessWidget {
   const StoryListTimelineVerticleDivider({

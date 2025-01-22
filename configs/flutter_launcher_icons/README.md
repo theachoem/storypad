@@ -1,6 +1,6 @@
-# Spooky Launcher Icons
+# StoryPad Launcher Icons
 
-Spooky uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) to generate app icons for all flavors. This tool is highly customizable and supports adaptive icons.
+StoryPad uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) to generate app icons for all flavors. This tool is highly customizable and supports adaptive icons.
 
 ## How it's implemented here?
 

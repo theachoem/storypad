@@ -1,8 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:spooky/providers/theme_provider.dart';
-import 'package:spooky/widgets/sp_color_picker.dart';
-import 'package:spooky/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/widgets/sp_color_picker.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 
 class ColorSeedTile extends StatelessWidget {
   const ColorSeedTile({
