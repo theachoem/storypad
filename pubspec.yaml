@@ -44,6 +44,7 @@ dependencies:
   dismissible_page: ^1.0.2
   material_design_icons_flutter: ^7.0.7296
   sqflite: ^2.4.1
+  in_app_review: ^2.0.10
 
 dev_dependencies:
   flutter_test:

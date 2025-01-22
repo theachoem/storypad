@@ -1,5 +1,7 @@
 part of '../home_view.dart';
 
+const bool _enableSwitchLanguage = false;
+
 class _HomeEndDrawer extends StatelessWidget {
   const _HomeEndDrawer(this.viewModel);
 
@@ -57,12 +59,14 @@ class _HomeEndDrawer extends StatelessWidget {
             title: const Text('Theme'),
             onTap: () => ThemeRoute().push(context),
           ),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text("Language"),
-            subtitle: const Text("Khmer"),
-            onTap: () => const _LanguagesRoute().push(context),
-          ),
+          if (_enableSwitchLanguage) ...[
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text("Language"),
+              subtitle: const Text("Khmer"),
+              onTap: () => const _LanguagesRoute().push(context),
+            ),
+          ],
           Consumer<LocalAuthProvider>(
             builder: (context, provider, child) {
               return Visibility(
@@ -80,7 +84,20 @@ class _HomeEndDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.rate_review_outlined),
             title: const Text('Rate'),
-            onTap: () {},
+            onTap: () async {
+              final InAppReview inAppReview = InAppReview.instance;
+
+              if (await inAppReview.isAvailable()) {
+                try {
+                  await inAppReview.requestReview();
+                } catch (e) {
+                  debugPrint(e.toString());
+                  await inAppReview.openStoreListing();
+                }
+              } else {
+                await inAppReview.openStoreListing();
+              }
+            },
           ),
         ],
       ),

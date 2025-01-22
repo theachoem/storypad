@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:spooky/app_theme.dart';
