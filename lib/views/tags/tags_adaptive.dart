@@ -17,12 +17,16 @@ class _TagsAdaptive extends StatelessWidget {
           )
         ],
       ),
-      body: buildBody(),
+      body: buildBody(context),
     );
   }
 
-  Widget buildBody() {
+  Widget buildBody(BuildContext context) {
     if (viewModel.tags?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+
+    if (viewModel.tags?.items.isEmpty == true) {
+      return buildEmptyBody(context);
+    }
 
     return ListView.builder(
       itemCount: viewModel.tags?.items.length ?? 0,
@@ -68,6 +72,28 @@ class _TagsAdaptive extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget buildEmptyBody(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 200),
+            margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight),
+            child: Text(
+              "Tags will appear here",
+              textAlign: TextAlign.center,
+              style: TextTheme.of(context).bodyLarge,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

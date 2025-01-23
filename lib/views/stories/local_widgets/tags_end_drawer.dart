@@ -44,7 +44,7 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
       }
     }
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
@@ -62,6 +62,10 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
   void initState() {
     load();
     super.initState();
+
+    TagDbModel.db.addGlobalListener(() {
+      load();
+    });
   }
 
   @override
@@ -76,6 +80,10 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
   }
 
   Widget buildDrawer(BuildContext context) {
+    if (tags?.items.isEmpty == true) {
+      return TagsView(params: TagsRoute(storyViewOnly: true));
+    }
+
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
@@ -83,12 +91,9 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
           Builder(builder: (context) {
             return IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () async {
-                await TagsRoute(storyViewOnly: true).push(context);
-                load();
-              },
+              onPressed: () => TagsRoute(storyViewOnly: true).push(context),
             );
-          })
+          }),
         ],
       ),
       body: buildBody(context),
@@ -98,6 +103,10 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
   Widget buildBody(BuildContext context) {
     if (tags == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    if (tags?.items.isEmpty == true) {
+      return buildEmptyBody(context);
     }
 
     return ListView.builder(
@@ -131,6 +140,28 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
           },
         );
       },
+    );
+  }
+
+  Widget buildEmptyBody(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 200),
+            margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight),
+            child: Text(
+              "Tags will appear here",
+              textAlign: TextAlign.center,
+              style: TextTheme.of(context).bodyLarge,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
