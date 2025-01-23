@@ -133,13 +133,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                   child: _HomeAppBarNickname(nickname: viewModel.nickname),
                 ),
                 SpTapEffect(
-                  onTap: () {
-                    if (context.read<BackupProvider>().synced) {
-                      viewModel.changeName(context);
-                    } else {
-                      Scaffold.of(context).openEndDrawer();
-                    }
-                  },
+                  onTap: () => Scaffold.of(context).openEndDrawer(),
                   child: const _HomeAppBarMessage(),
                 ),
               ],

@@ -310,6 +310,8 @@ class StoryTile extends StatelessWidget {
       child: Container(
         transform: Matrix4.identity()..translate(x, y),
         child: IconButton(
+          tooltip: 'Star',
+          padding: const EdgeInsets.all(16.0),
           isSelected: story.starred,
           iconSize: 18.0,
           onPressed: viewOnly ? null : () => story.toggleStarred(),
