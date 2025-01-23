@@ -50,10 +50,7 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   Future<void> load() async {
     _lastDbUpdatedAt = await _getLastDbUpdatedAt();
     _storyCount = await StoryDbModel.db.count();
-
     await source.authenticate();
-    await syncBackupAcrossDevices();
-
     notifyListeners();
   }
 

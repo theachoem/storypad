@@ -31,7 +31,7 @@ class BackupObjectViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? backupAt = DateFormatService.yMEd_jmsNullable(backup.fileInfo.createdAt);
+    String? backupAt = DateFormatService.yMEd_jmNullable(backup.fileInfo.createdAt);
 
     return Scaffold(
       appBar: AppBar(

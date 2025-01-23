@@ -125,9 +125,9 @@ android {
 
     buildTypes {
         debug {
-          // signingConfig signingConfigs.spookyDebug
+          signingConfig signingConfigs.spookyDebug
           // signingConfig signingConfigs.storypadDebug
-          signingConfig signingConfigs.communityDebug
+          // signingConfig signingConfigs.communityDebug
         }
     }
 }

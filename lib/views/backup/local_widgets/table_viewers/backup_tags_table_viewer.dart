@@ -19,7 +19,7 @@ class BackupTagsTableViewer extends StatelessWidget {
         return ListTile(
           leading: const Icon(Icons.sell),
           title: Text(tag.title),
-          subtitle: Text(DateFormatService.yMEd_jmsNullable(tag.updatedAt) ?? 'N/A'),
+          subtitle: Text(DateFormatService.yMEd_jmNullable(tag.updatedAt) ?? 'N/A'),
         );
       },
     );

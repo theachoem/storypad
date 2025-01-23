@@ -39,7 +39,7 @@ class GoogleDriveBackupSource extends BaseBackupSource {
 
   @override
   Future<bool> reauthenticate() async {
-    await _service.googleSignIn.signInSilently();
+    await _service.googleSignIn.signInSilently(reAuthenticate: true);
     return _recheckIsSignedIn();
   }
 

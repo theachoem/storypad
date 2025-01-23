@@ -181,17 +181,17 @@ class StoryTile extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.delete),
                         title: const Text('Moved to bin'),
-                        subtitle: Text(DateFormatService.yMEd_jms(story.movedToBinAt!)),
+                        subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!)),
                       ),
                     ListTile(
                       leading: const Icon(Icons.update),
                       title: const Text('Updated'),
-                      subtitle: Text(DateFormatService.yMEd_jms(story.updatedAt)),
+                      subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt)),
                     ),
                     ListTile(
                       leading: const Icon(Icons.date_range),
                       title: const Text('Created'),
-                      subtitle: Text(DateFormatService.yMEd_jms(story.createdAt)),
+                      subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
                     ),
                   ],
                 ),

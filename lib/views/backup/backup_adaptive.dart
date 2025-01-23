@@ -159,7 +159,7 @@ class _BackupAdaptive extends StatelessWidget {
                       child: ListTile(
                         contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
                         title: Text(fileInfo?.device.model ?? 'Unknown'),
-                        subtitle: Text(DateFormatService.yMEd_jmsNullable(fileInfo?.createdAt) ?? 'N/A'),
+                        subtitle: Text(DateFormatService.yMEd_jmNullable(fileInfo?.createdAt) ?? 'N/A'),
                       ),
                     ),
                   ],

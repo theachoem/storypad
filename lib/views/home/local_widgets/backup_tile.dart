@@ -110,10 +110,23 @@ class _SignedInTile extends StatelessWidget {
         Icons.cloud_done,
         color: ColorScheme.of(context).bootstrap.success.color,
       );
-      subtitle = Text(DateFormatService.yMEd_jmsNullable(provider.lastSyncedAt) ?? '...');
+      subtitle = Text(DateFormatService.yMEd_jmNullable(provider.lastSyncedAt) ?? '...');
     } else {
+      String? deviceModel = provider.source.syncedFile?.getFileInfo()?.device.model;
+
+      String fallbackMessage = [
+        if (deviceModel != null) deviceModel,
+        if (provider.lastSyncedAt != null) DateFormatService.yMEd_jmNullable(provider.lastSyncedAt),
+      ].join(", ");
+
+      if (fallbackMessage.isEmpty && provider.source.email != null) {
+        fallbackMessage = provider.source.email!;
+      }
+
       leading = const Icon(Icons.cloud_upload_outlined);
       subtitle = provider.canBackup() ? const Text('Some data hasn\'t synced yet') : null;
+
+      if (subtitle == null && fallbackMessage.isNotEmpty) subtitle = Text(fallbackMessage);
     }
 
     if (provider.source.smallImageUrl != null) {
