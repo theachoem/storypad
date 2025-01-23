@@ -156,7 +156,7 @@ class _Editor extends StatelessWidget {
         showUndo: true,
         showRedo: true,
         showDirection: false,
-        showSearchButton: true,
+        showSearchButton: false,
         showSubscript: false,
         showSuperscript: false,
         showClipboardCut: false,

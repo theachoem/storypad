@@ -30,6 +30,12 @@ class HomeYearsViewState extends State<HomeYearsView> {
       ]
     });
 
+    if (years == null || years?.isEmpty == true) {
+      years = {
+        DateTime.now().year: 0,
+      };
+    }
+
     setState(() {});
   }
 
