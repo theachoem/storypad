@@ -36,6 +36,7 @@ class _HomeScaffold extends StatelessWidget {
                 ],
               ),
             ),
+            const _AppUpdateFloatingButton(),
           ],
         );
       }),

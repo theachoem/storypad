@@ -10,6 +10,7 @@ import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/local_auth_provider.dart';
 import 'package:storypad/providers/theme_provider.dart';
@@ -39,6 +40,7 @@ part 'local_widgets/home_app_bar.dart';
 part 'local_widgets/home_app_bar_nickname.dart';
 part 'local_widgets/home_app_bar_message.dart';
 part 'local_widgets/home_empty.dart';
+part 'local_widgets/app_update_floating_button.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

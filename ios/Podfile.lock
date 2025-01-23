@@ -60,6 +60,8 @@ PODS:
   - objectbox_flutter_libs (0.0.1):
     - Flutter
     - ObjectBox (= 4.0.1)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -85,6 +87,7 @@ DEPENDENCIES:
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -124,6 +127,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/local_auth_darwin/darwin"
   objectbox_flutter_libs:
     :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   quill_native_bridge_ios:
@@ -155,6 +160,7 @@ SPEC CHECKSUMS:
   local_auth_darwin: 553ce4f9b16d3fdfeafce9cf042e7c9f77c1c391
   ObjectBox: 0bc4bb75eea85f6af06b369148b334c2056bbc29
   objectbox_flutter_libs: 3af037f7cc35e687acca01f1f6da6cb6c2abc22b
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7

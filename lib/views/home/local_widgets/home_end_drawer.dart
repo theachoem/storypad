@@ -81,23 +81,34 @@ class _HomeEndDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.rate_review_outlined),
-            title: const Text('Rate'),
-            onTap: () async {
-              final InAppReview inAppReview = InAppReview.instance;
+          Tooltip(
+            message: "Build signature: ${kPackageInfo.buildSignature}",
+            child: ListTile(
+              leading: const Icon(Icons.rate_review_outlined),
+              title: const Text('Rate'),
+              subtitle: Text("${kPackageInfo.version}+${kPackageInfo.buildNumber}"),
+              onTap: () async {
+                final InAppReview inAppReview = InAppReview.instance;
 
-              if (await inAppReview.isAvailable()) {
-                try {
-                  await inAppReview.requestReview();
-                } catch (e) {
-                  debugPrint(e.toString());
+                Future<void> openStore() async {
+                  String deeplink = 'market://details?id=PACKAGE_NAME';
+                  bool launched = await NewVersionPlus().launchApplicationStore(deeplink);
+                  if (launched) return;
                   await inAppReview.openStoreListing();
                 }
-              } else {
-                await inAppReview.openStoreListing();
-              }
-            },
+
+                if (await inAppReview.isAvailable()) {
+                  try {
+                    await inAppReview.requestReview();
+                  } catch (e) {
+                    debugPrint(e.toString());
+                    await openStore();
+                  }
+                } else {
+                  await openStore();
+                }
+              },
+            ),
           ),
         ],
       ),

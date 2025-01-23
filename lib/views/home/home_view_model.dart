@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/base/base_view_model.dart';
