@@ -111,15 +111,17 @@ class BackupObjectViewer extends StatelessWidget {
 
     switch (tableName) {
       case 'stories':
-        List<StoryDbModel> models = tableContents.map(StoryBox().modelFromJson).toList();
+        List<StoryDbModel> models =
+            tableContents.map((e) => StoryBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupStoriesTableViewer(stories: models);
         break;
       case 'tags':
-        List<TagDbModel> models = tableContents.map(TagBox().modelFromJson).toList();
+        List<TagDbModel> models = tableContents.map((e) => TagBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupTagsTableViewer(tags: models);
         break;
       case 'preferences':
-        List<PreferenceDbModel> models = tableContents.map(PreferenceBox().modelFromJson).toList();
+        List<PreferenceDbModel> models =
+            tableContents.map((e) => PreferenceBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupPreferencesTableViewer(preferences: models);
         break;
       default:

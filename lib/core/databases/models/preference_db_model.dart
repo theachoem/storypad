@@ -32,4 +32,11 @@ class PreferenceDbModel extends BaseDbModel {
 
   @override
   Map<String, dynamic> toJson() => _$PreferenceDbModelToJson(this);
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+  PreferenceDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }

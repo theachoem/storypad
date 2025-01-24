@@ -107,12 +107,13 @@ class StoryDbModel extends BaseDbModel {
   bool get inBins => type == PathType.bins;
   bool get inArchives => type == PathType.archives;
 
-  bool get editable => type == PathType.docs;
-  bool get putBackAble => inBins || unarchivable;
+  bool get editable => type == PathType.docs && !cloudViewing;
+  bool get putBackAble => (inBins || unarchivable) && !cloudViewing;
 
-  bool get archivable => type == PathType.docs;
-  bool get unarchivable => type == PathType.archives;
-  bool get canMoveToBin => !inBins;
+  bool get archivable => type == PathType.docs && !cloudViewing;
+  bool get unarchivable => type == PathType.archives && !cloudViewing;
+  bool get canMoveToBin => !inBins && !cloudViewing;
+  bool get hardDeletable => inBins && !cloudViewing;
 
   int? get willBeRemovedInDays {
     if (movedToBinAt != null) {
@@ -128,6 +129,8 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Future<StoryDbModel?> putBack() async {
+    if (!putBackAble) return null;
+
     return db.set(copyWith(
       type: PathType.docs,
       updatedAt: DateTime.now(),
@@ -136,6 +139,8 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Future<StoryDbModel?> moveToBin() async {
+    if (!canMoveToBin) return null;
+
     return db.set(copyWith(
       type: PathType.bins,
       updatedAt: DateTime.now(),
@@ -144,13 +149,17 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Future<StoryDbModel?> toggleStarred() async {
+    if (!editable) return null;
+
     return db.set(copyWith(
       starred: !(starred == true),
       updatedAt: DateTime.now(),
     ));
   }
 
-  Future<StoryDbModel?> archive() {
+  Future<StoryDbModel?> archive() async {
+    if (!archivable) return null;
+
     return db.set(copyWith(
       type: PathType.archives,
       updatedAt: DateTime.now(),
@@ -158,10 +167,13 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Future<void> delete() async {
+    if (!hardDeletable) return;
     await db.delete(id);
   }
 
   Future<StoryDbModel?> changePathDate(DateTime date) async {
+    if (!editable) return null;
+
     return db.set(copyWith(
       year: date.year,
       month: date.month,
@@ -252,4 +264,12 @@ class StoryDbModel extends BaseDbModel {
 
   @override
   Map<String, dynamic> toJson() => _$StoryDbModelToJson(this);
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+
+  StoryDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }

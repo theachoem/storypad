@@ -126,7 +126,7 @@ class StoryTile extends StatelessWidget {
             }
           },
         ),
-      if (story.inBins)
+      if (story.hardDeletable)
         SpPopMenuItem(
           title: 'Delete',
           leadingIconData: Icons.delete,
@@ -156,6 +156,18 @@ class StoryTile extends StatelessWidget {
                 },
               );
             }
+          },
+        ),
+      if (story.cloudViewing)
+        SpPopMenuItem(
+          title: 'Import',
+          leadingIconData: Icons.restore_outlined,
+          titleStyle: TextStyle(color: ColorScheme.of(context).primary),
+          onPressed: () async {
+            await StoryDbModel.db.set(story);
+            if (!context.mounted) return;
+
+            MessengerService.of(context).showSnackBar('Story restored!');
           },
         ),
       SpPopMenuItem(

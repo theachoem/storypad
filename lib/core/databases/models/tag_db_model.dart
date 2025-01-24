@@ -59,4 +59,11 @@ class TagDbModel extends BaseDbModel {
     if (!json.containsKey('index')) json['index'] = 0;
     return _$TagDbModelFromJson(json);
   }
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+  TagDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }
