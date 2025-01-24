@@ -100,7 +100,7 @@ class InAppUpdateProvider extends ChangeNotifier {
   }
 
   Future<AppUpdateInfo?> _checkForUpdate() async {
-    if (Platform.isAndroid) return null;
+    if (!Platform.isAndroid) return null;
 
     try {
       return InAppUpdate.checkForUpdate();
