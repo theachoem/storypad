@@ -94,7 +94,7 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
     );
 
     if (result != null && result.firstOrNull != null) {
-      draftContent = draftContent!.copyWith(title: result.first);
+      draftContent = draftContent!.copyWith(title: result.first.trim());
       story = story!.copyWith(latestChange: draftContent!);
 
       StoryDbModel.db.set(story!);

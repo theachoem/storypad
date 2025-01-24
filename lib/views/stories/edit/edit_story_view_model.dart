@@ -110,7 +110,7 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     );
 
     if (result != null && result.firstOrNull != null) {
-      draftContent = draftContent!.copyWith(title: result.firstOrNull);
+      draftContent = draftContent!.copyWith(title: result.firstOrNull?.trim());
       notifyListeners();
 
       if (context.mounted) _silentlySave();

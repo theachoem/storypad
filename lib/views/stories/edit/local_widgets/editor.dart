@@ -56,11 +56,13 @@ class _Editor extends StatelessWidget {
     return QuillEditor.basic(
       controller: controller,
       config: QuillEditorConfig(
+        placeholder: "...",
         padding: const EdgeInsets.all(16.0).copyWith(
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
         ),
         autoFocus: true,
         enableScribble: true,
+        showCursor: true,
         embedBuilders: [
           ImageBlockEmbed(),
           DateBlockEmbed(),
