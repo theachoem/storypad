@@ -1,11 +1,16 @@
 // ignore_for_file: overridden_fields
 
 import 'package:objectbox/objectbox.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
 
 abstract class BaseObjectBox<T> {
   void toPermanentlyDeleted();
+  void setDeviceId() {
+    lastSavedDeviceId = kDeviceInfo.id;
+  }
 
   DateTime? permanentlyDeletedAt;
+  String? lastSavedDeviceId;
 }
 
 @Entity()
@@ -44,6 +49,9 @@ class StoryObjectBox extends BaseObjectBox {
   // for query
   String? metadata;
 
+  @override
+  String? lastSavedDeviceId;
+
   StoryObjectBox({
     required this.id,
     required this.version,
@@ -62,6 +70,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.changes,
     required this.tags,
     required this.metadata,
+    this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
   });
 
@@ -96,6 +105,9 @@ class TagObjectBox extends BaseObjectBox {
   @Property(type: PropertyType.date)
   DateTime? permanentlyDeletedAt;
 
+  @override
+  String? lastSavedDeviceId;
+
   TagObjectBox({
     required this.id,
     required this.title,
@@ -105,6 +117,7 @@ class TagObjectBox extends BaseObjectBox {
     required this.emoji,
     required this.createdAt,
     required this.updatedAt,
+    this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
   });
 
@@ -132,12 +145,16 @@ class PreferenceObjectBox extends BaseObjectBox {
   @Property(type: PropertyType.date)
   DateTime? permanentlyDeletedAt;
 
+  @override
+  String? lastSavedDeviceId;
+
   PreferenceObjectBox({
     required this.id,
     required this.key,
     required this.value,
     required this.createdAt,
     required this.updatedAt,
+    this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
   });
 

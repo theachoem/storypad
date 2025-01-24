@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 2962579780537594759),
       name: 'StoryObjectBox',
-      lastPropertyId: const obx_int.IdUid(21, 5147940647382545592),
+      lastPropertyId: const obx_int.IdUid(22, 7678166380701811232),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -114,6 +114,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(21, 5147940647382545592),
             name: 'permanentlyDeletedAt',
             type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(22, 7678166380701811232),
+            name: 'lastSavedDeviceId',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -121,7 +126,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(2, 5548558812249966101),
       name: 'TagObjectBox',
-      lastPropertyId: const obx_int.IdUid(9, 4397546260987904187),
+      lastPropertyId: const obx_int.IdUid(10, 1120015455933452719),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -168,6 +173,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(9, 4397546260987904187),
             name: 'permanentlyDeletedAt',
             type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 1120015455933452719),
+            name: 'lastSavedDeviceId',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -175,7 +185,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(4, 8652388247732271380),
       name: 'PreferenceObjectBox',
-      lastPropertyId: const obx_int.IdUid(6, 7741946128893402175),
+      lastPropertyId: const obx_int.IdUid(7, 4080067487898077389),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -207,6 +217,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(6, 7741946128893402175),
             name: 'permanentlyDeletedAt',
             type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 4080067487898077389),
+            name: 'lastSavedDeviceId',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -288,7 +303,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final metadataOffset = object.metadata == null
               ? null
               : fbb.writeString(object.metadata!);
-          fbb.startTable(22);
+          final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+              ? null
+              : fbb.writeString(object.lastSavedDeviceId!);
+          fbb.startTable(23);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.version);
           fbb.addOffset(2, typeOffset);
@@ -307,6 +325,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(18, object.minute);
           fbb.addInt64(19, object.second);
           fbb.addInt64(20, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+          fbb.addOffset(21, lastSavedDeviceIdOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -356,6 +375,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGetNullable(buffer, rootOffset, 28);
           final metadataParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 36);
+          final lastSavedDeviceIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 46);
           final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
@@ -377,6 +399,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               changes: changesParam,
               tags: tagsParam,
               metadata: metadataParam,
+              lastSavedDeviceId: lastSavedDeviceIdParam,
               permanentlyDeletedAt: permanentlyDeletedAtParam);
 
           return object;
@@ -393,7 +416,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final titleOffset = fbb.writeString(object.title);
           final emojiOffset =
               object.emoji == null ? null : fbb.writeString(object.emoji!);
-          fbb.startTable(10);
+          final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+              ? null
+              : fbb.writeString(object.lastSavedDeviceId!);
+          fbb.startTable(11);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
           fbb.addInt64(2, object.version);
@@ -403,6 +429,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(6, object.updatedAt.millisecondsSinceEpoch);
           fbb.addInt64(7, object.index);
           fbb.addInt64(8, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+          fbb.addOffset(9, lastSavedDeviceIdOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -427,6 +454,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0));
           final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0));
+          final lastSavedDeviceIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 22);
           final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
@@ -439,6 +469,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               emoji: emojiParam,
               createdAt: createdAtParam,
               updatedAt: updatedAtParam,
+              lastSavedDeviceId: lastSavedDeviceIdParam,
               permanentlyDeletedAt: permanentlyDeletedAtParam);
 
           return object;
@@ -454,13 +485,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
         objectToFB: (PreferenceObjectBox object, fb.Builder fbb) {
           final keyOffset = fbb.writeString(object.key);
           final valueOffset = fbb.writeString(object.value);
-          fbb.startTable(7);
+          final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+              ? null
+              : fbb.writeString(object.lastSavedDeviceId!);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, keyOffset);
           fbb.addOffset(2, valueOffset);
           fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
           fbb.addInt64(4, object.updatedAt.millisecondsSinceEpoch);
           fbb.addInt64(5, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+          fbb.addOffset(6, lastSavedDeviceIdOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -479,6 +514,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
           final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0));
+          final lastSavedDeviceIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 16);
           final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
@@ -488,6 +526,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               value: valueParam,
               createdAt: createdAtParam,
               updatedAt: updatedAtParam,
+              lastSavedDeviceId: lastSavedDeviceIdParam,
               permanentlyDeletedAt: permanentlyDeletedAtParam);
 
           return object;
@@ -570,6 +609,10 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.permanentlyDeletedAt].
   static final permanentlyDeletedAt =
       obx.QueryDateProperty<StoryObjectBox>(_entities[0].properties[17]);
+
+  /// See [StoryObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId =
+      obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[18]);
 }
 
 /// [TagObjectBox] entity fields to define ObjectBox queries.
@@ -609,6 +652,10 @@ class TagObjectBox_ {
   /// See [TagObjectBox.permanentlyDeletedAt].
   static final permanentlyDeletedAt =
       obx.QueryDateProperty<TagObjectBox>(_entities[1].properties[8]);
+
+  /// See [TagObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId =
+      obx.QueryStringProperty<TagObjectBox>(_entities[1].properties[9]);
 }
 
 /// [PreferenceObjectBox] entity fields to define ObjectBox queries.
@@ -636,4 +683,8 @@ class PreferenceObjectBox_ {
   /// See [PreferenceObjectBox.permanentlyDeletedAt].
   static final permanentlyDeletedAt =
       obx.QueryDateProperty<PreferenceObjectBox>(_entities[2].properties[5]);
+
+  /// See [PreferenceObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId =
+      obx.QueryStringProperty<PreferenceObjectBox>(_entities[2].properties[6]);
 }

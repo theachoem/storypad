@@ -92,7 +92,10 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     bool runCallbacks = true,
   }) async {
     B constructed = await modelToObject(record);
+
+    constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.put);
+
     if (runCallbacks) afterCommit(record.id);
     return record;
   }
@@ -100,6 +103,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   @override
   Future<void> setAll(List<T> records) async {
     List<B> objects = await modelsToObjects(records.whereType<T>().toList());
+
+    for (B obj in objects) {
+      obj.setDeviceId();
+    }
+
     await box.putManyAsync(objects, mode: PutMode.put);
   }
 
@@ -109,7 +117,10 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     bool runCallbacks = true,
   }) async {
     B constructed = await modelToObject(record);
+
+    constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.update);
+
     if (runCallbacks) afterCommit(record.id);
     return record;
   }
@@ -120,7 +131,10 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     bool runCallbacks = true,
   }) async {
     B constructed = await modelToObject(record);
+
+    constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.insert);
+
     if (runCallbacks) afterCommit(record.id);
     return record;
   }
@@ -133,6 +147,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     B? object = box.get(id);
 
     if (object != null) {
+      object.setDeviceId();
       object.toPermanentlyDeleted();
       await box.putAsync(object);
     }

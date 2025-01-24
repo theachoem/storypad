@@ -19,6 +19,7 @@ class PreferenceDbModel extends BaseDbModel {
 
   @override
   final DateTime updatedAt;
+  final String? lastSavedDeviceId;
 
   PreferenceDbModel({
     required this.id,
@@ -26,6 +27,7 @@ class PreferenceDbModel extends BaseDbModel {
     required this.value,
     required this.createdAt,
     required this.updatedAt,
+    required this.lastSavedDeviceId,
   });
 
   factory PreferenceDbModel.fromJson(Map<String, dynamic> json) => _$PreferenceDbModelFromJson(json);

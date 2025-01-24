@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 class TagBox extends BaseBox<TagObjectBox, TagDbModel> {
@@ -10,8 +11,13 @@ class TagBox extends BaseBox<TagObjectBox, TagDbModel> {
   String get tableName => "tags";
 
   @override
-  Future<DateTime?> getLastUpdatedAt() async {
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
     Condition<TagObjectBox>? conditions = TagObjectBox_.id.notNull();
+
+    if (fromThisDeviceOnly == true) {
+      conditions.and(TagObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
+    }
+
     Query<TagObjectBox> query = box.query(conditions).order(TagObjectBox_.updatedAt, flags: Order.descending).build();
     TagObjectBox? object = await query.findFirstAsync();
     return object?.updatedAt;
@@ -107,5 +113,6 @@ TagDbModel _objectToModel(Map<String, dynamic> options) {
     emoji: object.emoji,
     createdAt: object.createdAt,
     updatedAt: object.updatedAt,
+    lastSavedDeviceId: object.lastSavedDeviceId,
   );
 }

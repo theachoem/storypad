@@ -51,7 +51,7 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<DateTime?> getLastUpdatedAt() {
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) {
     throw UnimplementedError();
   }
 

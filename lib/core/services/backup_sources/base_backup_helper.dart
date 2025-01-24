@@ -7,14 +7,13 @@ class _BaseBackupHelper {
   }) async {
     debugPrint('_BaseBackupHelper#constructBackup');
     Map<String, dynamic> tables = await _constructTables(databases);
-    DeviceInfoObject device = await DeviceInfoObject.get();
     debugPrint('_BaseBackupHelper#constructBackup ${tables.keys}');
 
     return BackupObject(
       tables: tables,
       fileInfo: BackupFileObject(
         createdAt: lastUpdatedAt,
-        device: device,
+        device: kDeviceInfo,
       ),
     );
   }

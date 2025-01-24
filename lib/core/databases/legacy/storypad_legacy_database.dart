@@ -100,6 +100,7 @@ class StorypadLegacyDatabase {
           second: storypadStory.forDate.second,
           updatedAt: storypadStory.updateOn ?? storypadStory.createOn,
           createdAt: storypadStory.createOn,
+          lastSavedDeviceId: null,
           tags: [],
           movedToBinAt: null,
           allChanges: [content],

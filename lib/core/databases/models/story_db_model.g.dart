@@ -39,6 +39,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel allChanges(List<StoryContentDbModel>? allChanges);
 
+  StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
+
   StoryDbModel rawChanges(List<String>? rawChanges);
 
   StoryDbModel latestChange(StoryContentDbModel? latestChange);
@@ -66,6 +68,7 @@ abstract class _$StoryDbModelCWProxy {
     List<String>? tags,
     DateTime? movedToBinAt,
     List<StoryContentDbModel>? allChanges,
+    String? lastSavedDeviceId,
     List<String>? rawChanges,
     StoryContentDbModel? latestChange,
   });
@@ -128,6 +131,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       this(allChanges: allChanges);
 
   @override
+  StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
+      this(lastSavedDeviceId: lastSavedDeviceId);
+
+  @override
   StoryDbModel rawChanges(List<String>? rawChanges) =>
       this(rawChanges: rawChanges);
 
@@ -160,6 +167,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? tags = const $CopyWithPlaceholder(),
     Object? movedToBinAt = const $CopyWithPlaceholder(),
     Object? allChanges = const $CopyWithPlaceholder(),
+    Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? rawChanges = const $CopyWithPlaceholder(),
     Object? latestChange = const $CopyWithPlaceholder(),
   }) {
@@ -228,6 +236,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.allChanges
           // ignore: cast_nullable_to_non_nullable
           : allChanges as List<StoryContentDbModel>?,
+      lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
+          ? _value.lastSavedDeviceId
+          // ignore: cast_nullable_to_non_nullable
+          : lastSavedDeviceId as String?,
       rawChanges: rawChanges == const $CopyWithPlaceholder()
           ? _value.rawChanges
           // ignore: cast_nullable_to_non_nullable
@@ -271,6 +283,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       allChanges: (json['changes'] as List<dynamic>?)
           ?.map((e) => StoryContentDbModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      lastSavedDeviceId: json['last_saved_device_id'] as String?,
     );
 
 Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
@@ -291,6 +304,7 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
+      'last_saved_device_id': instance.lastSavedDeviceId,
     };
 
 const _$PathTypeEnumMap = {

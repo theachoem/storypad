@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "21:5147940647382545592",
+      "lastPropertyId": "22:7678166380701811232",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -98,13 +98,18 @@
           "id": "21:5147940647382545592",
           "name": "permanentlyDeletedAt",
           "type": 10
+        },
+        {
+          "id": "22:7678166380701811232",
+          "name": "lastSavedDeviceId",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "2:5548558812249966101",
-      "lastPropertyId": "9:4397546260987904187",
+      "lastPropertyId": "10:1120015455933452719",
       "name": "TagObjectBox",
       "properties": [
         {
@@ -152,13 +157,18 @@
           "id": "9:4397546260987904187",
           "name": "permanentlyDeletedAt",
           "type": 10
+        },
+        {
+          "id": "10:1120015455933452719",
+          "name": "lastSavedDeviceId",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "4:8652388247732271380",
-      "lastPropertyId": "6:7741946128893402175",
+      "lastPropertyId": "7:4080067487898077389",
       "name": "PreferenceObjectBox",
       "properties": [
         {
@@ -191,6 +201,11 @@
           "id": "6:7741946128893402175",
           "name": "permanentlyDeletedAt",
           "type": 10
+        },
+        {
+          "id": "7:4080067487898077389",
+          "name": "lastSavedDeviceId",
+          "type": 9
         }
       ],
       "relations": []

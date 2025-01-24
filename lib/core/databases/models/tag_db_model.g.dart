@@ -21,6 +21,8 @@ abstract class _$TagDbModelCWProxy {
 
   TagDbModel updatedAt(DateTime updatedAt);
 
+  TagDbModel lastSavedDeviceId(String? lastSavedDeviceId);
+
   TagDbModel index(int? index);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TagDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -37,6 +39,7 @@ abstract class _$TagDbModelCWProxy {
     String? emoji,
     DateTime createdAt,
     DateTime updatedAt,
+    String? lastSavedDeviceId,
     int? index,
   });
 }
@@ -69,6 +72,10 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
   TagDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
 
   @override
+  TagDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
+      this(lastSavedDeviceId: lastSavedDeviceId);
+
+  @override
   TagDbModel index(int? index) => this(index: index);
 
   @override
@@ -87,6 +94,7 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
     Object? emoji = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
+    Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return TagDbModel(
@@ -118,6 +126,10 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
+      lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
+          ? _value.lastSavedDeviceId
+          // ignore: cast_nullable_to_non_nullable
+          : lastSavedDeviceId as String?,
       index: index == const $CopyWithPlaceholder()
           ? _value.index
           // ignore: cast_nullable_to_non_nullable
@@ -144,6 +156,7 @@ TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
       emoji: json['emoji'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      lastSavedDeviceId: json['last_saved_device_id'] as String?,
       index: (json['index'] as num?)?.toInt(),
     );
 
@@ -157,4 +170,5 @@ Map<String, dynamic> _$TagDbModelToJson(TagDbModel instance) =>
       'emoji': instance.emoji,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'last_saved_device_id': instance.lastSavedDeviceId,
     };

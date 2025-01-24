@@ -9,7 +9,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   String get tableName;
 
-  Future<DateTime?> getLastUpdatedAt();
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly});
   Future<T?> find(int id, {bool returnDeleted = false});
 
   Future<int> count({Map<String, dynamic>? filters});

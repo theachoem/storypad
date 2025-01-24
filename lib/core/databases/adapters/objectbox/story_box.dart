@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/story_db_constructor_service.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
@@ -11,8 +12,13 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   String get tableName => "stories";
 
   @override
-  Future<DateTime?> getLastUpdatedAt() async {
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
     Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
+
+    if (fromThisDeviceOnly == true) {
+      conditions.and(StoryObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
+    }
+
     Query<StoryObjectBox> query =
         box.query(conditions).order(StoryObjectBox_.updatedAt, flags: Order.descending).build();
     StoryObjectBox? object = await query.findFirstAsync();
@@ -167,6 +173,7 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       tags: object.tags,
       rawChanges: object.changes,
       movedToBinAt: object.movedToBinAt,
+      lastSavedDeviceId: object.lastSavedDeviceId,
       latestChange:
           object.changes.isNotEmpty ? StoryDbConstructorService.rawChangesToChanges([object.changes.last]).first : null,
       allChanges:

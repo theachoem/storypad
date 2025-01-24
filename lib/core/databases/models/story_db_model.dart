@@ -60,6 +60,7 @@ class StoryDbModel extends BaseDbModel {
   final DateTime updatedAt;
 
   final DateTime? movedToBinAt;
+  final String? lastSavedDeviceId;
 
   DateTime get displayPathDate {
     return DateTime(
@@ -92,6 +93,7 @@ class StoryDbModel extends BaseDbModel {
     required this.tags,
     required this.movedToBinAt,
     required this.allChanges,
+    required this.lastSavedDeviceId,
     this.rawChanges,
     this.latestChange,
   }) {
@@ -212,6 +214,7 @@ class StoryDbModel extends BaseDbModel {
       tags: [],
       movedToBinAt: null,
       rawChanges: null,
+      lastSavedDeviceId: null,
     );
   }
 

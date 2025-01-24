@@ -12,8 +12,8 @@ import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/objects/device_info_object.dart';
 import 'package:storypad/core/types/file_path_type.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
 
 part 'base_backup_helper.dart';
 

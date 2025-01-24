@@ -17,6 +17,8 @@ abstract class _$PreferenceDbModelCWProxy {
 
   PreferenceDbModel updatedAt(DateTime updatedAt);
 
+  PreferenceDbModel lastSavedDeviceId(String? lastSavedDeviceId);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$PreferenceDbModelCWProxy {
     String value,
     DateTime createdAt,
     DateTime updatedAt,
+    String? lastSavedDeviceId,
   });
 }
 
@@ -54,6 +57,10 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
   PreferenceDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
 
   @override
+  PreferenceDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
+      this(lastSavedDeviceId: lastSavedDeviceId);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -67,6 +74,7 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
     Object? value = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
+    Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
   }) {
     return PreferenceDbModel(
       id: id == const $CopyWithPlaceholder()
@@ -89,6 +97,10 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
+      lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
+          ? _value.lastSavedDeviceId
+          // ignore: cast_nullable_to_non_nullable
+          : lastSavedDeviceId as String?,
     );
   }
 }
@@ -111,6 +123,7 @@ PreferenceDbModel _$PreferenceDbModelFromJson(Map<String, dynamic> json) =>
       value: json['value'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      lastSavedDeviceId: json['last_saved_device_id'] as String?,
     );
 
 Map<String, dynamic> _$PreferenceDbModelToJson(PreferenceDbModel instance) =>
@@ -120,4 +133,5 @@ Map<String, dynamic> _$PreferenceDbModelToJson(PreferenceDbModel instance) =>
       'value': instance.value,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'last_saved_device_id': instance.lastSavedDeviceId,
     };

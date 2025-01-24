@@ -3,6 +3,7 @@
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
@@ -12,8 +13,13 @@ class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   String get tableName => "preferences";
 
   @override
-  Future<DateTime?> getLastUpdatedAt() async {
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
     Condition<PreferenceObjectBox>? conditions = PreferenceObjectBox_.id.notNull();
+
+    if (fromThisDeviceOnly == true) {
+      conditions = conditions.and(PreferenceObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
+    }
+
     Query<PreferenceObjectBox> query =
         box.query(conditions).order(PreferenceObjectBox_.updatedAt, flags: Order.descending).build();
     PreferenceObjectBox? object = await query.findFirstAsync();
@@ -65,6 +71,7 @@ class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
       value: object.value,
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
+      lastSavedDeviceId: object.lastSavedDeviceId,
     );
   }
 
@@ -80,6 +87,7 @@ class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
         value: object.value,
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,
+        lastSavedDeviceId: object.lastSavedDeviceId,
       );
     }).toList();
   }

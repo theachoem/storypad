@@ -21,6 +21,7 @@ class TagDbModel extends BaseDbModel {
 
   @override
   final DateTime updatedAt;
+  final String? lastSavedDeviceId;
 
   TagDbModel({
     required this.id,
@@ -30,6 +31,7 @@ class TagDbModel extends BaseDbModel {
     required this.emoji,
     required this.createdAt,
     required this.updatedAt,
+    required this.lastSavedDeviceId,
     int? index,
   }) : index = index ?? 0;
 
@@ -39,7 +41,8 @@ class TagDbModel extends BaseDbModel {
         emoji = null,
         index = 0,
         createdAt = DateTime.now(),
-        updatedAt = DateTime.now();
+        updatedAt = DateTime.now(),
+        lastSavedDeviceId = null;
 
   factory TagDbModel.fromNow() {
     return TagDbModel(
@@ -50,6 +53,7 @@ class TagDbModel extends BaseDbModel {
       emoji: null,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      lastSavedDeviceId: null,
     );
   }
 
