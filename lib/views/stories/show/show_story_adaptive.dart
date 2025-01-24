@@ -66,6 +66,7 @@ class _ShowStoryAdaptive extends StatelessWidget {
           ),
           SpPopMenuItem(
             title: 'Changes History',
+            subtitle: "${viewModel.story?.rawChanges?.length}",
             leadingIconData: Icons.history,
             onPressed: () => viewModel.goToChangesPage(context),
           ),
