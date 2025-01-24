@@ -87,6 +87,20 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
+  Future<T?> touch(
+    T record, {
+    bool runCallbacks = true,
+  }) async {
+    B constructed = await modelToObject(record);
+
+    constructed.touch();
+    await box.putAsync(constructed, mode: PutMode.put);
+
+    if (runCallbacks) afterCommit(record.id);
+    return record;
+  }
+
+  @override
   Future<T?> set(
     T record, {
     bool runCallbacks = true,
@@ -101,13 +115,17 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
-  Future<void> setAll(List<T> records) async {
+  Future<void> setAll(
+    List<T> records, {
+    bool runCallbacks = true,
+  }) async {
     List<B> objects = await modelsToObjects(records.whereType<T>().toList());
 
     for (B obj in objects) {
       obj.setDeviceId();
     }
 
+    if (runCallbacks) afterCommit();
     await box.putManyAsync(objects, mode: PutMode.put);
   }
 

@@ -9,6 +9,8 @@ abstract class BaseObjectBox<T> {
     lastSavedDeviceId = kDeviceInfo.id;
   }
 
+  void touch();
+
   DateTime? permanentlyDeletedAt;
   String? lastSavedDeviceId;
 }
@@ -82,6 +84,11 @@ class StoryObjectBox extends BaseObjectBox {
     updatedAt = DateTime.now();
     permanentlyDeletedAt = DateTime.now();
   }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
 }
 
 @Entity()
@@ -126,6 +133,11 @@ class TagObjectBox extends BaseObjectBox {
     updatedAt = DateTime.now();
     permanentlyDeletedAt = DateTime.now();
   }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
 }
 
 @Entity()
@@ -162,5 +174,10 @@ class PreferenceObjectBox extends BaseObjectBox {
   void toPermanentlyDeleted() {
     updatedAt = DateTime.now();
     permanentlyDeletedAt = DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
   }
 }

@@ -32,8 +32,14 @@ class RestoreBackupService {
           if (existingRecord != null) {
             if (existingRecord.updatedAt != null && newRecord.updatedAt != null) {
               bool newContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
+              bool unSyncContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
+
               if (newContent) {
                 await db.set(newRecord);
+              } else if (unSyncContent) {
+                // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
+                // This prevents the app from incorrectly assuming the database is fully synced after restoration.
+                await db.touch(existingRecord);
               }
             }
           } else {

@@ -18,6 +18,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
     Map<String, dynamic>? options,
   });
 
+  Future<T?> touch(T record);
   Future<T?> set(T record);
   Future<void> setAll(List<T> records);
 
@@ -29,7 +30,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   T modelFromJson(Map<String, dynamic> json);
 
-  Future<void> afterCommit(int id) async {
+  Future<void> afterCommit([int? id]) async {
     debugPrint("BaseDbAdapter#afterCommit $id");
 
     for (FutureOr<void> Function() globalCallback in _globalListeners) {

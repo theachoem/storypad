@@ -46,6 +46,11 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
+  Future<BaseDbModel?> touch(BaseDbModel record) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<BaseDbModel?> set(BaseDbModel record) {
     throw UnimplementedError();
   }
