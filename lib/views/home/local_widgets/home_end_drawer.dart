@@ -30,141 +30,105 @@ class _HomeEndDrawer extends StatelessWidget {
     required void Function() closeDrawer,
   }) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        actions: const [
+          _MoreOptionsButton(),
+        ],
+      ),
       body: ListView(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+          bottom: MediaQuery.of(context).padding.bottom,
+        ),
         children: [
-          if (kDebugMode) buildGoogleDriveRequestsCount(context),
           const _HomeEndDrawerHeader(),
+          if (kDebugMode) buildGoogleDriveRequestsCount(context),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text('Search'),
-            onTap: () {
-              SearchRoute().push(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.sell_outlined),
-            title: const Text('Tags'),
-            onTap: () => TagsRoute().push(context),
-          ),
-          ListTile(
-            leading: const Icon(Icons.archive_outlined),
-            title: const Text('Archives / Bin'),
-            onTap: () => ArchivesRoute().push(context),
-          ),
+          buildSearchTile(context),
+          buildTagsTile(context),
+          buildArchiveBinTile(context),
           const Divider(),
           const BackupTile(),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.color_lens_outlined),
-            title: const Text('Theme'),
-            onTap: () => ThemeRoute().push(context),
-          ),
-          if (_enableSwitchLanguage) ...[
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text("Language"),
-              subtitle: const Text("Khmer"),
-              onTap: () => const _LanguagesRoute().push(context),
-            ),
-          ],
-          Consumer<LocalAuthProvider>(
-            builder: (context, provider, child) {
-              return Visibility(
-                visible: provider.canCheckBiometrics,
-                child: SwitchListTile.adaptive(
-                  secondary: const Icon(Icons.lock),
-                  title: const Text('Biometrics Lock'),
-                  value: provider.localAuthEnabled,
-                  onChanged: (value) => provider.setEnable(value),
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          Tooltip(
-            message: "Build signature: ${kPackageInfo.buildSignature}",
-            child: ListTile(
-              leading: const Icon(Icons.rate_review_outlined),
-              title: const Text('Rate'),
-              subtitle: Text("${kPackageInfo.version}+${kPackageInfo.buildNumber}"),
-              onTap: () async {
-                final InAppReview inAppReview = InAppReview.instance;
-
-                Future<void> openStore() async {
-                  String deeplink = 'market://details?id=PACKAGE_NAME';
-                  bool launched = await NewVersionPlus().launchApplicationStore(deeplink);
-                  if (launched) return;
-                  await inAppReview.openStoreListing();
-                }
-
-                if (await inAppReview.isAvailable()) {
-                  try {
-                    await inAppReview.requestReview();
-                  } catch (e) {
-                    debugPrint(e.toString());
-                    await openStore();
-                  }
-                } else {
-                  await openStore();
-                }
-              },
-            ),
-          ),
+          buildThemeTile(context),
+          if (_enableSwitchLanguage) buildLanguageTile(context),
+          buildBiometricsTile(),
         ],
       ),
     );
   }
 
-  Container buildGoogleDriveRequestsCount(BuildContext context) {
+  Widget buildSearchTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.search),
+      title: const Text('Search'),
+      onTap: () {
+        SearchRoute().push(context);
+      },
+    );
+  }
+
+  Widget buildTagsTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.sell_outlined),
+      title: const Text('Tags'),
+      onTap: () => TagsRoute().push(context),
+    );
+  }
+
+  Widget buildArchiveBinTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.archive_outlined),
+      title: const Text('Archives / Bin'),
+      onTap: () => ArchivesRoute().push(context),
+    );
+  }
+
+  Widget buildThemeTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.color_lens_outlined),
+      title: const Text('Theme'),
+      onTap: () => ThemeRoute().push(context),
+    );
+  }
+
+  Widget buildLanguageTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.language),
+      title: const Text("Language"),
+      subtitle: const Text("Khmer"),
+      onTap: () => const _LanguagesRoute().push(context),
+    );
+  }
+
+  Widget buildBiometricsTile() {
+    return Consumer<LocalAuthProvider>(
+      builder: (context, provider, child) {
+        return Visibility(
+          visible: provider.canCheckBiometrics,
+          child: SwitchListTile.adaptive(
+            secondary: const Icon(Icons.lock),
+            title: const Text('Biometrics Lock'),
+            value: provider.localAuthEnabled,
+            onChanged: (value) => provider.setEnable(value),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildGoogleDriveRequestsCount(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       decoration: BoxDecoration(color: ColorScheme.of(context).bootstrap.info.color),
       child: Text(
-        '${GoogleDriveService.instance.requestCount} Google Drive requests',
+        '${GoogleDriveService.instance.requestCount} Google Drive requests (debug only)',
         textAlign: TextAlign.center,
         style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).bootstrap.info.onColor),
-      ),
-    );
-  }
-}
-
-class _HomeEndDrawerHeader extends StatelessWidget {
-  const _HomeEndDrawerHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<HomeViewModel>(context);
-
-    return InkWell(
-      onTap: () => SpNestedNavigation.maybeOf(context)?.push(const HomeYearsView()),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 4.0,
-          children: [
-            Text(
-              provider.year.toString(),
-              style: TextTheme.of(context).displayMedium?.copyWith(color: ColorScheme.of(context).primary),
-            ),
-            RichText(
-              textScaler: MediaQuery.textScalerOf(context),
-              text: TextSpan(
-                text: "Switch",
-                style: TextTheme.of(context).labelLarge,
-                children: const [
-                  WidgetSpan(
-                    child: Icon(Icons.keyboard_arrow_down_outlined, size: 16.0),
-                    alignment: PlaceholderAlignment.middle,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

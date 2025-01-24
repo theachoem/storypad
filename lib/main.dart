@@ -3,6 +3,7 @@ import 'package:storypad/app.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
 import 'package:storypad/initializers/database_initializer.dart';
 import 'package:storypad/initializers/file_initializer.dart';
+import 'package:storypad/initializers/licenses_initializer.dart';
 import 'package:storypad/initializers/local_auth_initializer.dart';
 import 'package:storypad/initializers/package_info_initializer.dart';
 import 'package:storypad/provider_scope.dart';
@@ -22,6 +23,8 @@ void main({
 
   // ui
   await ThemeStorage.instance.load();
+
+  LicensesInitializer.call();
 
   runApp(
     const ProviderScope(
