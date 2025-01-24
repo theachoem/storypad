@@ -20,14 +20,157 @@ class StoryTile extends StatelessWidget {
     required this.story,
     required this.showMonogram,
     required this.onTap,
+    required this.listContext,
     this.viewOnly = false,
   });
 
   final StoryDbModel story;
-
   final bool showMonogram;
   final bool viewOnly;
   final void Function()? onTap;
+
+  /// In some case, StoryTile is removed from screen, which make its context unusable.
+  /// [listContext] is still mounted even after story is removed, allow us it to read HomeViewModel & do other thiings.
+  final BuildContext listContext;
+
+  Future<void> hardDelete(BuildContext context) async {
+    OkCancelResult result = await showOkCancelAlertDialog(
+      context: context,
+      isDestructiveAction: true,
+      title: "Are you sure to delete this story?",
+      message: "You can't undo this action",
+      okLabel: "Delete",
+    );
+
+    if (result == OkCancelResult.ok) {
+      await story.delete();
+      if (!context.mounted) return;
+
+      MessengerService.of(context).showSnackBar(
+        'Deleted successfully',
+        showAction: true,
+        action: (foreground) {
+          return SnackBarAction(
+            label: 'Undo',
+            onPressed: () => StoryDbModel.db.set(story),
+            textColor: foreground,
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> import(BuildContext context) async {
+    await StoryDbModel.db.set(story);
+    if (!context.mounted) return;
+
+    MessengerService.of(context).showSnackBar('Story restored!');
+  }
+
+  Future<void> showInfo(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      useRootNavigator: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Story Date'),
+                subtitle: Text(DateFormatService.yMEd(story.displayPathDate)),
+              ),
+              if (story.movedToBinAt != null)
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text('Moved to bin'),
+                  subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!)),
+                ),
+              ListTile(
+                leading: const Icon(Icons.update),
+                title: const Text('Updated'),
+                subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.date_range),
+                title: const Text('Created'),
+                subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> moveToBin(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    await story.moveToBin();
+
+    if (context.mounted) {
+      MessengerService.of(context).showSnackBar("Moved to bin!", showAction: true, action: (foreground) {
+        return SnackBarAction(
+          label: "Undo",
+          textColor: foreground,
+          onPressed: () async {
+            await StoryDbModel.db.set(originalStory);
+            return reloadHome('$runtimeType#moveToBin');
+          },
+        );
+      });
+    }
+  }
+
+  Future<void> archive(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    await story.archive();
+
+    if (context.mounted) {
+      MessengerService.of(context).showSnackBar("Archived!", showAction: true, action: (foreground) {
+        return SnackBarAction(
+          label: "Undo",
+          textColor: foreground,
+          onPressed: () async {
+            await StoryDbModel.db.set(originalStory);
+            return reloadHome('$runtimeType#archive');
+          },
+        );
+      });
+    }
+  }
+
+  Future<void> putBack(BuildContext context) async {
+    await story.putBack();
+
+    // put back most likely inside archives page (not home)
+    // reload home as the put back data could go there.
+    await reloadHome('$runtimeType#putBack');
+  }
+
+  Future<void> changeDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
+      currentDate: story.displayPathDate,
+    );
+
+    if (date != null) {
+      await story.changePathDate(date);
+
+      if (date.year != story.year) {
+        // story has moved to another year which move out of home view as well -> need to reload.
+        return reloadHome('$runtimeType#putBack');
+      }
+    }
+  }
+
+  Future<void> reloadHome(String debugSource) async {
+    await listContext.read<HomeViewModel>().load(debugSource: debugSource);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,134 +254,37 @@ class StoryTile extends StatelessWidget {
         SpPopMenuItem(
           title: 'Archive',
           leadingIconData: Icons.archive,
-          onPressed: () => story.archive(),
+          onPressed: () => archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
           title: 'Move to bin',
           leadingIconData: Icons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () async {
-            await story.moveToBin();
-
-            if (context.mounted) {
-              MessengerService.of(context).showSnackBar("Moved to bin", showAction: true);
-            }
-          },
+          onPressed: () => moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
           title: 'Delete',
           leadingIconData: Icons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () async {
-            OkCancelResult result = await showOkCancelAlertDialog(
-              context: context,
-              isDestructiveAction: true,
-              title: "Are you sure to delete this story?",
-              message: "You can't undo this action",
-              okLabel: "Delete",
-            );
-
-            if (result == OkCancelResult.ok) {
-              await story.delete();
-              if (!context.mounted) return;
-
-              MessengerService.of(context).showSnackBar(
-                'Deleted successfully',
-                showAction: true,
-                action: (foreground) {
-                  return SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () => StoryDbModel.db.set(story),
-                    textColor: foreground,
-                  );
-                },
-              );
-            }
-          },
+          onPressed: () => hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
           title: 'Import',
           leadingIconData: Icons.restore_outlined,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
-          onPressed: () async {
-            await StoryDbModel.db.set(story);
-            if (!context.mounted) return;
-
-            MessengerService.of(context).showSnackBar('Story restored!');
-          },
+          onPressed: () => import(context),
         ),
       SpPopMenuItem(
         title: 'Info',
         leadingIconData: Icons.info,
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            showDragHandle: true,
-            useRootNavigator: true,
-            builder: (context) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Story Date'),
-                      subtitle: Text(DateFormatService.yMEd(story.displayPathDate)),
-                    ),
-                    if (story.movedToBinAt != null)
-                      ListTile(
-                        leading: const Icon(Icons.delete),
-                        title: const Text('Moved to bin'),
-                        subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!)),
-                      ),
-                    ListTile(
-                      leading: const Icon(Icons.update),
-                      title: const Text('Updated'),
-                      subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt)),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.date_range),
-                      title: const Text('Created'),
-                      subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+          showInfo(context);
         },
       )
     ];
-  }
-
-  Future<void> putBack(BuildContext context) async {
-    await story.putBack();
-
-    // put back most likely inside archives page (not home)
-    // reload home as the put back data could go there.
-    if (context.mounted) context.read<HomeViewModel>().load(debugSource: '$runtimeType#putBack');
-  }
-
-  Future<void> changeDate(BuildContext context) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
-      currentDate: story.displayPathDate,
-    );
-
-    if (date != null) {
-      await story.changePathDate(date);
-
-      if (date.year != story.year) {
-        // story has moved to another year which move out of home view as well -> need to reload.
-        if (context.mounted) context.read<HomeViewModel>().load(debugSource: '$runtimeType#putBack');
-      }
-    }
   }
 
   Widget buildContents(bool hasTitle, StoryContentDbModel? content, BuildContext context, bool hasBody) {
@@ -280,29 +326,7 @@ class StoryTile extends StatelessWidget {
               ),
             ),
           ),
-        // if (story.inBins)
-        //   Container(
-        //     margin: const EdgeInsets.only(top: 8.0),
-        //     child: RichText(
-        //       text: TextSpan(
-        //         style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).error),
-        //         children: [
-        //           WidgetSpan(
-        //             alignment: PlaceholderAlignment.middle,
-        //             child: Icon(
-        //               Icons.info,
-        //               size: 12.0,
-        //               color: ColorScheme.of(context).error,
-        //             ),
-        //           ),
-        //           TextSpan(
-        //             text:
-        //                 ' Auto delete on ${DateFormatService.yMd((story.movedToBinAt ?? story.updatedAt).add(const Duration(days: 30)))}',
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   )
+        // if (story.inBins) buildAutoDeleteMessage(context)
       ]),
     );
   }
@@ -386,6 +410,31 @@ class StoryTile extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget buildAutoDeleteMessage(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 8.0),
+      child: RichText(
+        text: TextSpan(
+          style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).error),
+          children: [
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                Icons.info,
+                size: 12.0,
+                color: ColorScheme.of(context).error,
+              ),
+            ),
+            TextSpan(
+              text:
+                  ' Auto delete on ${DateFormatService.yMd((story.movedToBinAt ?? story.updatedAt).add(const Duration(days: 30)))}',
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

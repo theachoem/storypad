@@ -22,7 +22,7 @@ class _HomeAdaptive extends StatelessWidget {
     );
   }
 
-  Widget buildBody(BuildContext context) {
+  Widget buildBody(BuildContext listContext) {
     if (viewModel.stories == null) {
       return const SliverFillRemaining(
         child: Center(
@@ -40,9 +40,9 @@ class _HomeAdaptive extends StatelessWidget {
     return SliverPadding(
       padding: EdgeInsets.only(
         top: 16.0,
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: kToolbarHeight + 200 + MediaQuery.of(context).padding.bottom,
+        left: MediaQuery.of(listContext).padding.left,
+        right: MediaQuery.of(listContext).padding.right,
+        bottom: kToolbarHeight + 200 + MediaQuery.of(listContext).padding.bottom,
       ),
       sliver: SliverList.builder(
         itemCount: viewModel.stories?.items.length ?? 0,
@@ -61,6 +61,7 @@ class _HomeAdaptive extends StatelessWidget {
                 index: index,
                 stories: viewModel.stories!,
                 onTap: () => viewModel.goToViewPage(context, story),
+                listContext: listContext,
               );
             },
           );

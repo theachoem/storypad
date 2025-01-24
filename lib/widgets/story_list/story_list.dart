@@ -48,41 +48,47 @@ class StoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+
     return Stack(
       children: [
         const StoryListTimelineVerticleDivider(),
-        ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: 16.0)
-              .copyWith(left: MediaQuery.of(context).padding.left, right: MediaQuery.of(context).padding.right),
-          itemCount: stories?.items.length ?? 0,
-          itemBuilder: (context, index) {
-            final story = stories!.items[index];
-            return StoryListenerBuilder(
-              story: story,
-              key: ValueKey(story.id),
-              onChanged: onChanged,
-              // onDeleted only happen when reloaded story is null which not frequently happen. We just reload in this case.
-              onDeleted: onDeleted,
-              builder: (context) {
-                return StoryTileListItem(
-                  showYear: true,
-                  stories: stories!,
-                  index: index,
-                  viewOnly: viewOnly,
-                  onTap: () {
-                    if (viewOnly) {
-                      ShowChangeRoute(content: story.latestChange!).push(context);
-                    } else {
-                      ShowStoryRoute(id: story.id, story: story).push(context);
-                    }
-                  },
-                );
+        buildList(context),
+      ],
+    );
+  }
+
+  Widget buildList(BuildContext listContext) {
+    return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 16.0)
+          .copyWith(left: MediaQuery.of(listContext).padding.left, right: MediaQuery.of(listContext).padding.right),
+      itemCount: stories?.items.length ?? 0,
+      itemBuilder: (context, index) {
+        final story = stories!.items[index];
+        return StoryListenerBuilder(
+          story: story,
+          key: ValueKey(story.id),
+          onChanged: onChanged,
+          // onDeleted only happen when reloaded story is null which not frequently happen. We just reload in this case.
+          onDeleted: onDeleted,
+          builder: (context) {
+            return StoryTileListItem(
+              showYear: true,
+              stories: stories!,
+              index: index,
+              viewOnly: viewOnly,
+              listContext: listContext,
+              onTap: () {
+                if (viewOnly) {
+                  ShowChangeRoute(content: story.latestChange!).push(context);
+                } else {
+                  ShowStoryRoute(id: story.id, story: story).push(context);
+                }
               },
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 }

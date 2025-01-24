@@ -13,6 +13,7 @@ class StoryTileListItem extends StatelessWidget {
     required this.index,
     required this.showYear,
     required this.onTap,
+    required this.listContext,
     this.viewOnly = false,
   });
 
@@ -21,6 +22,7 @@ class StoryTileListItem extends StatelessWidget {
   final bool showYear;
   final void Function() onTap;
   final bool viewOnly;
+  final BuildContext listContext;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class StoryTileListItem extends StatelessWidget {
             showMonogram: showMonogram,
             viewOnly: viewOnly,
             onTap: onTap,
+            listContext: listContext,
           ),
         ],
       );
@@ -48,6 +51,7 @@ class StoryTileListItem extends StatelessWidget {
         showMonogram: showMonogram,
         viewOnly: viewOnly,
         onTap: onTap,
+        listContext: listContext,
       );
     }
   }
