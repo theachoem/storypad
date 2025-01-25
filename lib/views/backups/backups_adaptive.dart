@@ -1,9 +1,9 @@
-part of 'backup_view.dart';
+part of 'backups_view.dart';
 
-class _BackupAdaptive extends StatelessWidget {
-  const _BackupAdaptive(this.viewModel);
+class _BackupsAdaptive extends StatelessWidget {
+  const _BackupsAdaptive(this.viewModel);
 
-  final BackupViewModel viewModel;
+  final BackupsViewModel viewModel;
 
   final double avatarSize = 56;
 
@@ -14,7 +14,7 @@ class _BackupAdaptive extends StatelessWidget {
     return SpDefaultScrollController(builder: (context, controller) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Backup Histories"),
+          title: Text("Backups"),
         ),
         body: Stack(children: [
           if (viewModel.hasData) buildTimelineDivider(context),

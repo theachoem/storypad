@@ -9,38 +9,38 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/routes/base_route.dart';
-import 'package:storypad/views/backup/local_widgets/user_profile_collapsible_tile.dart';
+import 'package:storypad/views/backups/local_widgets/user_profile_collapsible_tile.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
-import 'backup_view_model.dart';
+import 'backups_view_model.dart';
 
-part 'backup_adaptive.dart';
+part 'backups_adaptive.dart';
 
-class BackupRoute extends BaseRoute {
-  BackupRoute();
+class BackupsRoute extends BaseRoute {
+  BackupsRoute();
 
   @override
-  Widget buildPage(BuildContext context) => BackupView(params: this);
+  Widget buildPage(BuildContext context) => BackupsView(params: this);
 
   @override
   bool get nestedRoute => true;
 }
 
-class BackupView extends StatelessWidget {
-  const BackupView({
+class BackupsView extends StatelessWidget {
+  const BackupsView({
     super.key,
     required this.params,
   });
 
-  final BackupRoute params;
+  final BackupsRoute params;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<BackupViewModel>(
-      create: (context) => BackupViewModel(context: context, params: params),
+    return ViewModelProvider<BackupsViewModel>(
+      create: (context) => BackupsViewModel(context: context, params: params),
       builder: (context, viewModel, child) {
-        return _BackupAdaptive(viewModel);
+        return _BackupsAdaptive(viewModel);
       },
     );
   }

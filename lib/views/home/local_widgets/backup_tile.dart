@@ -6,7 +6,7 @@ import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backup/backup_view.dart';
+import 'package:storypad/views/backups/backups_view.dart';
 
 class BackupTile extends StatefulWidget {
   const BackupTile({
@@ -157,7 +157,7 @@ class _SignedInTile extends StatelessWidget {
             color: Colors.transparent,
             child: ListTile(
               leading: leading,
-              onTap: () => BackupRoute().push(context),
+              onTap: () => BackupsRoute().push(context),
               subtitle: subtitle,
               title: RichText(
                 textScaler: MediaQuery.textScalerOf(context),

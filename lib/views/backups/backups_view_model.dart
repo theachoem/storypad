@@ -6,14 +6,14 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backup/local_widgets/backup_object_viewer.dart';
+import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
-import 'backup_view.dart';
+import 'backups_view.dart';
 
-class BackupViewModel extends BaseViewModel {
-  final BackupRoute params;
+class BackupsViewModel extends BaseViewModel {
+  final BackupsRoute params;
 
-  BackupViewModel({
+  BackupsViewModel({
     required this.params,
     required BuildContext context,
   }) {

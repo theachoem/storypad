@@ -11,10 +11,10 @@ import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backup/local_widgets/table_viewers/backup_preferences_table_viewer.dart';
-import 'package:storypad/views/backup/local_widgets/table_viewers/backup_stories_table_viewer.dart';
-import 'package:storypad/views/backup/local_widgets/table_viewers/backup_default_table_viewer.dart';
-import 'package:storypad/views/backup/local_widgets/table_viewers/backup_tags_table_viewer.dart';
+import 'package:storypad/views/backups/local_widgets/table_viewers/backup_preferences_table_viewer.dart';
+import 'package:storypad/views/backups/local_widgets/table_viewers/backup_stories_table_viewer.dart';
+import 'package:storypad/views/backups/local_widgets/table_viewers/backup_default_table_viewer.dart';
+import 'package:storypad/views/backups/local_widgets/table_viewers/backup_tags_table_viewer.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 class BackupObjectViewer extends StatelessWidget {
