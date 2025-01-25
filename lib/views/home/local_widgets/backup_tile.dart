@@ -90,7 +90,7 @@ class _SignedInTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTile(context),
-        if (!provider.syncing && !provider.synced) buildSyncButton(),
+        if (!provider.syncing && !provider.synced && provider.lastDbUpdatedAt != null) buildSyncButton(),
       ],
     );
   }
@@ -111,7 +111,7 @@ class _SignedInTile extends StatelessWidget {
         color: ColorScheme.of(context).bootstrap.success.color,
       );
       subtitle = Text(DateFormatService.yMEd_jmNullable(provider.lastSyncedAt) ?? '...');
-    } else {
+    } else if (provider.lastDbUpdatedAt != null) {
       String? deviceModel = provider.source.syncedFile?.getFileInfo()?.device.model;
 
       String fallbackMessage = [
@@ -127,6 +127,9 @@ class _SignedInTile extends StatelessWidget {
       subtitle = provider.canBackup() ? const Text('Some data hasn\'t synced yet') : null;
 
       if (subtitle == null && fallbackMessage.isNotEmpty) subtitle = Text(fallbackMessage);
+    } else {
+      leading = const Icon(Icons.cloud_upload_outlined);
+      subtitle = Text(provider.source.email ?? 'N/A');
     }
 
     if (provider.source.smallImageUrl != null) {

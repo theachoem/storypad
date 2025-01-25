@@ -24,7 +24,7 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
 
   bool _syncing = false;
   bool get syncing => _syncing;
-  bool get synced => lastSyncedAt == lastDbUpdatedAt;
+  bool get synced => lastSyncedAt != null && lastSyncedAt == lastDbUpdatedAt;
 
   void setSyncing(bool value) {
     _syncing = value;
