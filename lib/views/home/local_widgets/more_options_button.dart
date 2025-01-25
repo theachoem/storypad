@@ -16,6 +16,7 @@ class _MoreOptionsButton extends StatelessWidget {
             leadingIconData: MdiIcons.license,
             title: 'Licenses',
             onPressed: () {
+              AnalyticsService.instance.logLicenseView();
               showLicensePage(
                 context: context,
                 applicationName: kPackageInfo.appName,
@@ -24,6 +25,12 @@ class _MoreOptionsButton extends StatelessWidget {
               );
             },
           ),
+          if (kDebugMode)
+            SpPopMenuItem(
+              leadingIconData: MdiIcons.googleDrive,
+              title: "Google Drive API",
+              subtitle: "${GoogleDriveService.instance.requestCount} requests",
+            )
         ];
       },
       builder: (open) {
@@ -40,7 +47,7 @@ class _MoreOptionsButton extends StatelessWidget {
       leadingIconData: Icons.code,
       title: 'Source Code',
       onPressed: () {
-        UrlOpenerService().open(context, 'https://github.com/theachoem/storypad');
+        UrlOpenerService.openInCustomTab(context, 'https://github.com/theachoem/storypad');
       },
     );
   }
@@ -50,7 +57,7 @@ class _MoreOptionsButton extends StatelessWidget {
       leadingIconData: Icons.policy,
       title: 'Privacy & Policy',
       onPressed: () {
-        UrlOpenerService().open(context, 'https://github.com/theachoem/storypad/wiki/Privacy-Policy');
+        UrlOpenerService.openInCustomTab(context, 'https://github.com/theachoem/storypad/wiki/Privacy-Policy');
       },
     );
   }

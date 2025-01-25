@@ -53,10 +53,10 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
 
   @override
   void dispose() {
-    super.dispose();
-
     animationController.dispose();
     if (animationController.isCompleted) floating?.remove();
+
+    super.dispose();
   }
 
   @override

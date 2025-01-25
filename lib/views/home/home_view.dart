@@ -8,6 +8,7 @@ import 'package:storypad/core/base/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';

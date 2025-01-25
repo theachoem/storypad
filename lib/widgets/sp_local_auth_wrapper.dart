@@ -97,7 +97,12 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
   }
 
   Future<void> authenticate() async {
-    authenticated = await LocalAuthService.instance.authenticate();
+    try {
+      authenticated = await LocalAuthService.instance.authenticate();
+    } catch (e) {
+      debugPrint("👤 Authenticate local auth failed: $e");
+    }
+
     if (authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);

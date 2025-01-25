@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/concerns/schedule_concern.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -65,6 +65,8 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   //
   Future<void> syncBackupAcrossDevices() async {
     if (syncing) return;
+
+    AnalyticsService.instance.logSyncBackup();
     setSyncing(true);
 
     try {
@@ -125,18 +127,27 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   Future<void> signOut() async {
     await source.signOut();
     await source.loadLatestBackup();
+
+    AnalyticsService.instance.logSignOut();
+
     notifyListeners();
   }
 
   Future<void> signIn() async {
     await source.signIn();
     await source.loadLatestBackup();
+
+    AnalyticsService.instance.logSignInWithGoogle();
+
     notifyListeners();
   }
 
-  Future<void> deleteCloudFile(String id) async {
-    await source.deleteCloudFile(id);
+  Future<void> deleteCloudFile(CloudFileObject file) async {
+    await source.deleteCloudFile(file.id);
     await source.loadLatestBackup();
+
+    AnalyticsService.instance.logDeleteCloudFile(cloudFile: file);
+
     notifyListeners();
   }
 
@@ -151,6 +162,10 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#forceRestore',
       future: () => RestoreBackupService.instance.forceRestore(backup: backup),
+    );
+
+    AnalyticsService.instance.logForceRestoreBackup(
+      backupFileInfo: backup.fileInfo,
     );
 
     await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');

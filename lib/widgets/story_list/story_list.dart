@@ -109,11 +109,15 @@ class StoryListWithQuery extends StatefulWidget {
   final String? query;
   final bool viewOnly;
 
+  static StoryListWithQueryState? of(BuildContext context) {
+    return context.findAncestorStateOfType<StoryListWithQueryState>();
+  }
+
   @override
-  State<StoryListWithQuery> createState() => _StoryListWithQueryState();
+  State<StoryListWithQuery> createState() => StoryListWithQueryState();
 }
 
-class _StoryListWithQueryState extends State<StoryListWithQuery> {
+class StoryListWithQueryState extends State<StoryListWithQuery> {
   CollectionDbModel<StoryDbModel>? stories;
 
   Future<void> load() async {
@@ -124,7 +128,7 @@ class _StoryListWithQueryState extends State<StoryListWithQuery> {
       'query': widget.query,
     });
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override

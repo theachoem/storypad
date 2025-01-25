@@ -13,6 +13,7 @@ class _SearchAdaptive extends StatelessWidget {
           textInputAction: TextInputAction.search,
           style: Theme.of(context).appBarTheme.titleTextStyle,
           keyboardType: TextInputType.text,
+          autofocus: true,
           decoration: const InputDecoration(
             hintText: "eg. My home",
             border: InputBorder.none,

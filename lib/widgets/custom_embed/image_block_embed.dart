@@ -181,7 +181,7 @@ class _QuillImageRenderer extends StatelessWidget {
         if (context.mounted) MessengerService.of(context).showSnackBar("Copied", showAction: false);
         break;
       case "view-on-web":
-        if (context.mounted) UrlOpenerService().open(context, imageUrl);
+        if (context.mounted) UrlOpenerService.openInCustomTab(context, imageUrl);
         break;
       case "view":
         if (context.mounted) viewImage(context, imageUrl);

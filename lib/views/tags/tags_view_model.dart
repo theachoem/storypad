@@ -4,10 +4,10 @@ import 'package:storypad/core/base/base_view_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
-import 'package:storypad/widgets/sp_text_inputs_page.dart';
-import 'package:storypad/widgets/story_list/story_list.dart';
+import 'package:storypad/views/tags/edit/edit_tag_view.dart';
+import 'package:storypad/views/tags/show/show_tag_view.dart';
 import 'tags_view.dart';
 
 class TagsViewModel extends BaseViewModel {
@@ -43,17 +43,10 @@ class TagsViewModel extends BaseViewModel {
   }
 
   void viewTag(BuildContext context, TagDbModel tag) async {
-    SpNestedNavigation.maybeOf(context)?.push(Scaffold(
-      appBar: AppBar(title: Text(tag.title)),
-      body: StoryList.withQuery(
-        tagId: tag.id,
-        viewOnly: params.storyViewOnly,
-        types: const [
-          PathType.archives,
-          PathType.docs,
-        ],
-      ),
-    ));
+    ShowTagRoute(
+      storyViewOnly: params.storyViewOnly,
+      tag: tag,
+    ).push(context);
   }
 
   Future<void> deleteTag(BuildContext context, TagDbModel tag) async {
@@ -66,51 +59,39 @@ class TagsViewModel extends BaseViewModel {
     if (result == OkCancelResult.ok) {
       await TagDbModel.db.delete(tag.id);
       await load();
+
+      AnalyticsService.instance.logDeleteTag(
+        tag: tag,
+      );
     }
   }
 
   Future<void> editTag(BuildContext context, TagDbModel tag) async {
-    dynamic result = await SpNestedNavigation.maybeOf(context)?.push(buildTagForm(initialTag: tag));
+    final result = await EditTagRoute(tag: tag, allTags: tags?.items ?? []).push(context);
 
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = tag.copyWith(title: result.first);
       await TagDbModel.db.set(newTag);
       await load();
+
+      AnalyticsService.instance.logEditTag(
+        tag: tag,
+      );
     }
   }
 
   Future<void> addTag(BuildContext context) async {
-    dynamic result = await SpNestedNavigation.maybeOf(context)?.push(buildTagForm());
+    final result = await EditTagRoute(tag: null, allTags: tags?.items ?? []).push(context);
 
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = TagDbModel.fromNow().copyWith(title: result.first);
-      await TagDbModel.db.set(newTag);
+      TagDbModel? tag = await TagDbModel.db.set(newTag);
       await load();
+
+      if (tag == null) return;
+      AnalyticsService.instance.logAddTag(
+        tag: tag,
+      );
     }
-  }
-
-  Widget buildTagForm({
-    TagDbModel? initialTag,
-  }) {
-    List<String> tagTitles = tags?.items.map((e) => e.title).toList() ?? [];
-
-    bool isTagExist(String title) {
-      return tagTitles.map((e) => e.toLowerCase()).contains(title.trim().toLowerCase());
-    }
-
-    return SpTextInputsPage(
-      appBar: AppBar(title: initialTag != null ? const Text("Edit Tag") : const Text("Add Tag")),
-      fields: [
-        SpTextInputField(
-          initialText: initialTag?.title,
-          hintText: 'eg. Personal',
-          validator: (value) {
-            if (value == null || value.trim().isEmpty == true) return "Required";
-            if (isTagExist(value) == true) return 'Tag already Exist';
-            return null;
-          },
-        ),
-      ],
-    );
   }
 }

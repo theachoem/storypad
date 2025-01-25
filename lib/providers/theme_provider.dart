@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/theme_object.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
 
 class ThemeProvider extends ChangeNotifier {
@@ -13,12 +14,20 @@ class ThemeProvider extends ChangeNotifier {
   void setCurrentLocale(Locale value) {
     currentLocale = value;
     notifyListeners();
+
+    AnalyticsService.instance.logSetLocale(
+      newLocale: value,
+    );
   }
 
   void setColorSeed(Color color) {
     _theme = _theme.copyWithNewColor(color, removeIfSame: true);
     storage.writeObject(_theme);
     notifyListeners();
+
+    AnalyticsService.instance.logSetColorSeedTheme(
+      newColor: _theme.colorSeed,
+    );
   }
 
   void setThemeMode(ThemeMode? value) {
@@ -26,6 +35,10 @@ class ThemeProvider extends ChangeNotifier {
       _theme = _theme.copyWith(themeMode: value);
       storage.writeObject(_theme);
       notifyListeners();
+
+      AnalyticsService.instance.logSetThemeMode(
+        newThemeMode: value,
+      );
     }
   }
 
@@ -33,12 +46,20 @@ class ThemeProvider extends ChangeNotifier {
     _theme = _theme.copyWith(fontWeight: fontWeight);
     storage.writeObject(_theme);
     notifyListeners();
+
+    AnalyticsService.instance.logSetFontWeight(
+      newFontWeight: fontWeight,
+    );
   }
 
   void setFontFamily(String fontFamily) {
     _theme = _theme.copyWith(fontFamily: fontFamily);
     storage.writeObject(_theme);
     notifyListeners();
+
+    AnalyticsService.instance.logSetFontFamily(
+      newFontFamily: fontFamily,
+    );
   }
 
   void toggleThemeMode(BuildContext context) {

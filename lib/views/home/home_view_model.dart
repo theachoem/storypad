@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/legacy/storypad_legacy_database.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -20,6 +21,8 @@ class HomeViewModel extends BaseViewModel {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
   HomeViewModel(BuildContext context) {
+    AnalyticsService.instance.logViewHome(year: year);
+
     _construct(context);
   }
 
@@ -70,7 +73,7 @@ class HomeViewModel extends BaseViewModel {
     (bool, String) result = await StorypadLegacyDatabase.instance.transferToObjectBoxIfNotYet();
 
     bool success = result.$1;
-    String? message = result.$2;
+    String message = result.$2;
 
     if (success) {
       if (!context.mounted) return;
@@ -92,8 +95,12 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> changeYear(int newYear) async {
+    if (year == newYear) return;
+
     year = newYear;
     await load(debugSource: '$runtimeType#changeYear $newYear');
+
+    AnalyticsService.instance.logViewHome(year: year);
   }
 
   Future<void> goToViewPage(BuildContext context, StoryDbModel story) async {

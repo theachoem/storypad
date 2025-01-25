@@ -87,8 +87,7 @@ class _FontsAdaptive extends StatelessWidget {
             subtitleStyle: GoogleFonts.getFont(fontFamily),
             trailingIconData: Icons.keyboard_arrow_right,
             onPressed: () {
-              themeProvider.setFontFamily(fontFamily);
-              viewModel.saveToRecently(fontFamily);
+              viewModel.changeFont(themeProvider, fontFamily);
             },
           )
         ];

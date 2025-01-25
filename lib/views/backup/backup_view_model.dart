@@ -83,7 +83,7 @@ class BackupViewModel extends BaseViewModel {
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#deleteCloudFile',
       future: () async {
-        await context.read<BackupProvider>().deleteCloudFile(file.id);
+        await context.read<BackupProvider>().deleteCloudFile(file);
         files?.removeWhere((e) => e.id == file.id);
         notifyListeners();
       },

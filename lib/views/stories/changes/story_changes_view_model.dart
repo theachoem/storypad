@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/base/base_view_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/stories/changes/story_changes_view.dart';
 
@@ -57,6 +58,10 @@ class StoryChangesViewModel extends BaseViewModel {
     await StoryDbModel.db.set(draftStory!);
     await load();
 
+    AnalyticsService.instance.logRestoreStoryChange(
+      story: draftStory!,
+    );
+
     if (context.mounted) MessengerService.of(context).showSnackBar("Restored");
   }
 
@@ -70,6 +75,10 @@ class StoryChangesViewModel extends BaseViewModel {
     if (resuilt == OkCancelResult.ok) {
       await StoryDbModel.db.set(draftStory!);
       await load();
+
+      AnalyticsService.instance.logRemoveStoryChanges(
+        story: draftStory!,
+      );
     }
   }
 

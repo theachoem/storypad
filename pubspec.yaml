@@ -1,7 +1,7 @@
 name: storypad
 description: Minimalist application to write stories, notes, diary!
 publish_to: "none"
-version: 2.0.0+225
+version: 2.0.1+226
 
 environment:
   sdk: ^3.5.4
@@ -36,6 +36,7 @@ dependencies:
   confetti: ^0.8.0
   google_sign_in: ^6.2.2
   firebase_core: ^3.9.0
+  firebase_analytics: ^11.4.1
   googleapis: ^13.2.0
   device_info_plus: ^11.2.0
   cached_network_image: ^3.4.1

@@ -157,7 +157,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         margin: viewModel.scrollInfo.extraExpandedHeight > 0 ? const EdgeInsets.only(bottom: 8.0) : null,
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],
-          onTap: () => Scaffold.maybeOf(context)?.openEndDrawer(),
+          onTap: () => openEndDrawer(context),
           child: FittedBox(
             child: Text(
               viewModel.year.toString(),
@@ -169,6 +169,14 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void openEndDrawer(BuildContext context) {
+    Scaffold.maybeOf(context)?.openEndDrawer();
+
+    AnalyticsService.instance.logOpenHomeEndDrawer(
+      year: viewModel.year,
     );
   }
 }

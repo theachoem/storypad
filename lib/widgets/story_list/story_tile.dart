@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -5,12 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/story_list/story_list.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;
@@ -43,7 +47,13 @@ class StoryTile extends StatelessWidget {
     );
 
     if (result == OkCancelResult.ok) {
-      await story.delete();
+      StoryDbModel originalStory = story.copyWith();
+      await originalStory.delete();
+
+      AnalyticsService.instance.logHardDeleteStory(
+        story: originalStory,
+      );
+
       if (!context.mounted) return;
 
       MessengerService.of(context).showSnackBar(
@@ -52,19 +62,141 @@ class StoryTile extends StatelessWidget {
         action: (foreground) {
           return SnackBarAction(
             label: 'Undo',
-            onPressed: () => StoryDbModel.db.set(story),
             textColor: foreground,
+            onPressed: () async {
+              StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+              if (updatedStory == null) return;
+
+              /// In all case, delete button only show inside [StoryListWithQuery],
+              /// So after undo, we should reload the list.
+              if (listContext.mounted) StoryListWithQuery.of(listContext)?.load();
+
+              AnalyticsService.instance.logUndoHardDeleteStory(
+                story: updatedStory,
+              );
+            },
           );
         },
       );
     }
   }
 
-  Future<void> import(BuildContext context) async {
-    await StoryDbModel.db.set(story);
-    if (!context.mounted) return;
+  Future<void> importIndividualStory(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+    if (updatedStory == null) return;
 
+    AnalyticsService.instance.logImportIndividualStory(
+      story: updatedStory,
+    );
+
+    if (!context.mounted) return;
     MessengerService.of(context).showSnackBar('Story restored!');
+  }
+
+  Future<void> moveToBin(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    StoryDbModel? updatedStory = await originalStory.moveToBin();
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logMoveStoryToBin(
+      story: updatedStory,
+    );
+
+    if (context.mounted) {
+      MessengerService.of(context).showSnackBar("Moved to bin!", showAction: true, action: (foreground) {
+        return SnackBarAction(
+          label: "Undo",
+          textColor: foreground,
+          onPressed: () async {
+            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+            if (updatedStory == null) return;
+
+            AnalyticsService.instance.logUndoMoveStoryToBin(
+              story: updatedStory,
+            );
+
+            return reloadHome('$runtimeType#moveToBin');
+          },
+        );
+      });
+    }
+  }
+
+  Future<void> archive(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    StoryDbModel? updatedStory = await originalStory.archive();
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logArchiveStory(
+      story: updatedStory,
+    );
+
+    if (context.mounted) {
+      MessengerService.of(context).showSnackBar("Archived!", showAction: true, action: (foreground) {
+        return SnackBarAction(
+          label: "Undo",
+          textColor: foreground,
+          onPressed: () async {
+            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+            if (updatedStory == null) return;
+
+            AnalyticsService.instance.logUndoArchiveStory(
+              story: updatedStory,
+            );
+
+            return reloadHome('$runtimeType#archive');
+          },
+        );
+      });
+    }
+  }
+
+  Future<void> putBack(BuildContext context) async {
+    StoryDbModel originalStory = story.copyWith();
+    StoryDbModel? updatedStory = await originalStory.putBack();
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logPutStoryBack(
+      story: updatedStory,
+    );
+
+    // put back most likely inside archives page (not home)
+    // reload home as the put back data could go there.
+    await reloadHome('$runtimeType#putBack');
+  }
+
+  Future<void> changeDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
+      currentDate: story.displayPathDate,
+    );
+
+    if (date != null) {
+      StoryDbModel originalStory = story.copyWith();
+      StoryDbModel? updatedStory = await originalStory.changePathDate(date);
+
+      if (updatedStory == null) return;
+      AnalyticsService.instance.logChangeStoryDate(
+        story: updatedStory,
+      );
+
+      if (date.year != story.year) {
+        // story has moved to another year which move out of home view as well -> need to reload.
+        return reloadHome('$runtimeType#changeDate');
+      }
+    }
+  }
+
+  Future<void> toggleStarred() async {
+    StoryDbModel? updatedStory = await story.toggleStarred();
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logToggleStoryStarred(
+      story: updatedStory,
+    );
   }
 
   Future<void> showInfo(BuildContext context) async {
@@ -104,68 +236,6 @@ class StoryTile extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<void> moveToBin(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    await story.moveToBin();
-
-    if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Moved to bin!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            await StoryDbModel.db.set(originalStory);
-            return reloadHome('$runtimeType#moveToBin');
-          },
-        );
-      });
-    }
-  }
-
-  Future<void> archive(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    await story.archive();
-
-    if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Archived!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            await StoryDbModel.db.set(originalStory);
-            return reloadHome('$runtimeType#archive');
-          },
-        );
-      });
-    }
-  }
-
-  Future<void> putBack(BuildContext context) async {
-    await story.putBack();
-
-    // put back most likely inside archives page (not home)
-    // reload home as the put back data could go there.
-    await reloadHome('$runtimeType#putBack');
-  }
-
-  Future<void> changeDate(BuildContext context) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
-      currentDate: story.displayPathDate,
-    );
-
-    if (date != null) {
-      await story.changePathDate(date);
-
-      if (date.year != story.year) {
-        // story has moved to another year which move out of home view as well -> need to reload.
-        return reloadHome('$runtimeType#putBack');
-      }
-    }
   }
 
   Future<void> reloadHome(String debugSource) async {
@@ -275,14 +345,12 @@ class StoryTile extends StatelessWidget {
           title: 'Import',
           leadingIconData: Icons.restore_outlined,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
-          onPressed: () => import(context),
+          onPressed: () => importIndividualStory(context),
         ),
       SpPopMenuItem(
         title: 'Info',
         leadingIconData: Icons.info,
-        onPressed: () {
-          showInfo(context);
-        },
+        onPressed: () => showInfo(context),
       )
     ];
   }
@@ -350,7 +418,7 @@ class StoryTile extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           isSelected: story.starred,
           iconSize: 18.0,
-          onPressed: viewOnly ? null : () => story.toggleStarred(),
+          onPressed: viewOnly ? null : () => toggleStarred(),
           selectedIcon: Icon(
             Icons.favorite,
             color: viewOnly ? Theme.of(context).disabledColor : ColorScheme.of(context).error,

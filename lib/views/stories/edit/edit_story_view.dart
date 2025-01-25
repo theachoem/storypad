@@ -36,6 +36,13 @@ class EditStoryRoute extends BaseRoute {
   }) : assert(initialYear == null || id == null);
 
   @override
+  Map<String, String?> get analyticsParameters {
+    return {
+      'flow_type': id == null ? 'new' : 'edit',
+    };
+  }
+
+  @override
   Widget buildPage(BuildContext context) => EditStoryView(params: this);
 }
 
