@@ -9,6 +9,8 @@ part './remote_config_object.dart';
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     communityUrl,
+    policyPrivacyUrl,
+    sourceCodeUrl,
   ];
 
   FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
