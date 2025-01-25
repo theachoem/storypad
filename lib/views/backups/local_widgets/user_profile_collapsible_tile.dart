@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
-import 'package:storypad/views/backups/backups_view_model.dart';
+import 'package:storypad/views/backups/backup_view_model.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class UserProfileCollapsibleTile extends StatelessWidget {
-  final BackupsViewModel viewModel;
+  final BackupViewModel viewModel;
   final BaseBackupSource source;
   final double avatarSize;
 

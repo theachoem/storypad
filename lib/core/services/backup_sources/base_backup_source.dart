@@ -1,21 +1,14 @@
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart' show getApplicationSupportDirectory;
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
-import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/types/file_path_type.dart';
-import 'package:storypad/initializers/device_info_initializer.dart';
-
-part 'base_backup_helper.dart';
+import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
 
 abstract class BaseBackupSource {
   String get cloudId;
@@ -41,7 +34,7 @@ abstract class BaseBackupSource {
   Future<bool> reauthenticate();
   Future<bool> signIn();
   Future<bool> signOut();
-  Future<bool> uploadFile(String fileName, io.File file);
+  Future<io.File?> saveFile(String fileName, io.File file);
   Future<CloudFileObject?> getLastestBackupFile();
   Future<CloudFileObject?> getFileByFileName(String fileName);
   Future<String?> getFileContent(CloudFileObject cloudFile);
@@ -71,16 +64,23 @@ abstract class BaseBackupSource {
     return null;
   }
 
-  Future<void> backup({
+  Future<io.File?> backup({
     required DateTime lastDbUpdatedAt,
   }) async {
-    BackupObject backup = await _BaseBackupHelper().constructBackup(
+    BackupObject backup = await BackupFileConstructor().constructBackup(
       databases: databases,
       lastUpdatedAt: lastDbUpdatedAt,
     );
 
-    final io.File file = await _BaseBackupHelper().constructFile(cloudId, backup);
-    await uploadFile(backup.fileInfo.fileNameWithExtention, file);
+    final io.File file = await BackupFileConstructor().constructFile(
+      cloudId,
+      backup,
+    );
+
+    return saveFile(
+      backup.fileInfo.fileNameWithExtention,
+      file,
+    );
   }
 
   Future<void> loadLatestBackup() async {
