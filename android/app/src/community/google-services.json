@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:892248434003:android:07ab4b2c947355a263eda6",
-        "android_client_info": {
-          "package_name": "com.juniorise.spooky"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "892248434003-7p06aqe80m3s6b6b1iui6llda2m9qcbl.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBn4IK7ySHqwlpYqWjg9BPvHdXuB4HJcy4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "892248434003-60388oarratalns41v2059obt27kk6kt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "892248434003-34uc2e5inp4l3fmcvd0bh12ao1sq4pv2.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.juniorise.spooky"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:892248434003:android:5e6ee709875438aa63eda6",
         "android_client_info": {
           "package_name": "com.juniorise.spooky.community"
@@ -50,77 +14,13 @@
       },
       "oauth_client": [
         {
-          "client_id": "892248434003-7p06aqe80m3s6b6b1iui6llda2m9qcbl.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBn4IK7ySHqwlpYqWjg9BPvHdXuB4HJcy4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "892248434003-60388oarratalns41v2059obt27kk6kt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "892248434003-34uc2e5inp4l3fmcvd0bh12ao1sq4pv2.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.juniorise.spooky"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:892248434003:android:5bb82d5f9885bd2d63eda6",
-        "android_client_info": {
-          "package_name": "com.juniorise.spooky.dev"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "892248434003-7p06aqe80m3s6b6b1iui6llda2m9qcbl.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBn4IK7ySHqwlpYqWjg9BPvHdXuB4HJcy4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "892248434003-60388oarratalns41v2059obt27kk6kt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "892248434003-34uc2e5inp4l3fmcvd0bh12ao1sq4pv2.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.juniorise.spooky"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:892248434003:android:0eddb11c9209f06463eda6",
-        "android_client_info": {
-          "package_name": "com.juniorise.spooky.staging"
-        }
-      },
-      "oauth_client": [
+          "client_id": "892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.juniorise.spooky.community",
+            "certificate_hash": "04a27735cbbc9e8bf1ccf2b734fe834ad54d4840"
+          }
+        },
         {
           "client_id": "892248434003-7p06aqe80m3s6b6b1iui6llda2m9qcbl.apps.googleusercontent.com",
           "client_type": 3

@@ -55,8 +55,26 @@ class _HomeEndDrawer extends StatelessWidget {
           buildThemeTile(context),
           if (_enableSwitchLanguage) buildLanguageTile(context),
           buildBiometricsTile(),
+          if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
+            const Divider(),
+            buildCommunityTile(context),
+          ]
         ],
       ),
+    );
+  }
+
+  Widget buildCommunityTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.forum_outlined),
+      title: const Text("Community"),
+      onTap: () async {
+        UrlOpenerService.openInCustomTab(
+          context,
+          RemoteConfigService.communityUrl.get(),
+          prefersDeepLink: true,
+        );
+      },
     );
   }
 

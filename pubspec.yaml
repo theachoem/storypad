@@ -37,6 +37,8 @@ dependencies:
   google_sign_in: ^6.2.2
   firebase_core: ^3.9.0
   firebase_analytics: ^11.4.1
+  firebase_crashlytics: ^4.3.1
+  firebase_remote_config: ^5.3.1
   googleapis: ^13.2.0
   device_info_plus: ^11.2.0
   cached_network_image: ^3.4.1

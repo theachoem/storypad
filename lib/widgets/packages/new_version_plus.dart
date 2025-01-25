@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/initializers/package_info_initializer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class VersionStatus {
   final String localVersion;
@@ -193,18 +192,6 @@ class NewVersionPlus {
           ? _parseUnicodeToString(releaseNotes)
           : releaseNotes?.replaceAll(expRemoveSc, '').replaceAll(expRemoveQuote, '"'),
     );
-  }
-
-  /// Launches the Apple App Store or Google Play Store page for the app.
-  Future<bool> launchApplicationStore(
-    String appStoreLink, {
-    LaunchMode launchMode = LaunchMode.platformDefault,
-  }) async {
-    if (await canLaunchUrl(Uri.parse(appStoreLink))) {
-      return launchUrl(Uri.parse(appStoreLink), mode: launchMode);
-    } else {
-      return false;
-    }
   }
 
   /// Function for convert text

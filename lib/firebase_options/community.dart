@@ -63,7 +63,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '892248434003',
     projectId: 'juniorise-spooky-community',
     storageBucket: 'juniorise-spooky-community.firebasestorage.app',
+    androidClientId: '892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com',
     iosClientId: '892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com',
     iosBundleId: 'com.juniorise.spooky.community',
   );
+
 }

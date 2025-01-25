@@ -4,6 +4,8 @@ import 'package:storypad/core/storages/theme_storage.dart';
 import 'package:storypad/initializers/database_initializer.dart';
 import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/initializers/file_initializer.dart';
+import 'package:storypad/initializers/firebase_crashlytics_initializer.dart';
+import 'package:storypad/initializers/firebase_remote_config_initializer.dart';
 import 'package:storypad/initializers/licenses_initializer.dart';
 import 'package:storypad/initializers/local_auth_initializer.dart';
 import 'package:storypad/initializers/package_info_initializer.dart';
@@ -22,6 +24,9 @@ void main({
   await FileInitializer.call();
   await DatabaseInitializer.call();
   await LocalAuthInitializer.call();
+
+  await FirebaseCrashlyticsInitializer.call();
+  await FirebaseRemoteConfigInitializer.call();
 
   // ui
   await ThemeStorage.instance.load();

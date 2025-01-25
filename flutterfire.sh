@@ -14,7 +14,7 @@ function run_command() {
 
 # eg. main_prod.dart
 function save_dart_main_file() {
-  TEMPLATE_DATA=$(cat "lib/main.dart.template")
+  TEMPLATE_DATA=$(cat "lib/main_flavor.dart.template")
   FLAVOR=$1
   DESTINATION="lib/main_$FLAVOR.dart"
 

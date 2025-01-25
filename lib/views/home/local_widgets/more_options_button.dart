@@ -47,7 +47,7 @@ class _MoreOptionsButton extends StatelessWidget {
       leadingIconData: Icons.code,
       title: 'Source Code',
       onPressed: () {
-        UrlOpenerService.openInCustomTab(context, 'https://github.com/theachoem/storypad');
+        UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get());
       },
     );
   }
@@ -57,7 +57,7 @@ class _MoreOptionsButton extends StatelessWidget {
       leadingIconData: Icons.policy,
       title: 'Privacy & Policy',
       onPressed: () {
-        UrlOpenerService.openInCustomTab(context, 'https://github.com/theachoem/storypad/wiki/Privacy-Policy');
+        UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get());
       },
     );
   }
@@ -71,8 +71,8 @@ class _MoreOptionsButton extends StatelessWidget {
         final InAppReview inAppReview = InAppReview.instance;
 
         Future<void> openStore() async {
-          String deeplink = 'market://details?id=PACKAGE_NAME';
-          bool launched = await NewVersionPlus().launchApplicationStore(deeplink);
+          String deeplink = 'market://details?id=${kPackageInfo.packageName}';
+          bool launched = await UrlOpenerService.launchUrlString(deeplink);
           if (launched) return;
           await inAppReview.openStoreListing();
         }

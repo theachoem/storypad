@@ -6,18 +6,38 @@ import 'package:storypad/core/services/analytics_service.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class UrlOpenerService {
-  static Future<bool> launchUrlString(String url) {
+  static Future<bool> launchUrlString(
+    String url, {
+    bool deeplinkOnly = false,
+  }) {
     final uri = Uri.parse(url);
-    return launchUrl(uri);
+
+    return launchUrl(
+      uri,
+      mode: deeplinkOnly ? launcher.LaunchMode.externalNonBrowserApplication : launcher.LaunchMode.platformDefault,
+    );
   }
 
-  static Future<bool> launchUrl(Uri uri) async {
+  static Future<bool> launchUrl(
+    Uri uri, {
+    launcher.LaunchMode mode = launcher.LaunchMode.platformDefault,
+  }) async {
     if (await launcher.canLaunchUrl(uri)) {
-      AnalyticsService.instance.logLaunchUrl(
-        url: uri.toString(),
-      );
+      bool launched = false;
 
-      return launcher.launchUrl(uri);
+      try {
+        launched = await launcher.launchUrl(uri, mode: mode);
+      } catch (e) {
+        debugPrint('$UrlOpenerService.launchUrl failed $e');
+      }
+
+      if (launched) {
+        AnalyticsService.instance.logLaunchUrl(
+          url: uri.toString(),
+        );
+      }
+
+      return launched;
     } else {
       return false;
     }
@@ -25,8 +45,9 @@ class UrlOpenerService {
 
   static Future<void> openInCustomTab(
     BuildContext context,
-    String url,
-  ) async {
+    String url, {
+    bool prefersDeepLink = false,
+  }) async {
     Color? toolbarColor = Theme.of(context).appBarTheme.backgroundColor;
     Color? foregroundColor = Theme.of(context).appBarTheme.foregroundColor;
 
@@ -36,6 +57,7 @@ class UrlOpenerService {
 
     await custom_tab.launchUrl(
       Uri.parse(url),
+      prefersDeepLink: prefersDeepLink,
       customTabsOptions: custom_tab.CustomTabsOptions(
         colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(
           toolbarColor: toolbarColor,
