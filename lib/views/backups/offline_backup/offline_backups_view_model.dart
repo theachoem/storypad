@@ -52,9 +52,12 @@ class OfflineBackupViewModel extends BaseViewModel {
     DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
     if (lastDbUpdatedAt == null) return;
 
-    final result = await backup(lastDbUpdatedAt);
-    if (!context.mounted) return;
+    final result = await MessengerService.of(context).showLoading(
+      future: () => backup(lastDbUpdatedAt),
+      debugSource: '$runtimeType#export',
+    );
 
+    if (!context.mounted || result == null) return;
     MessengerService.of(context).showSnackBar("Saved to ${result.$1}", action: (foreground) {
       return SnackBarAction(
         label: "Share",
@@ -76,10 +79,11 @@ class OfflineBackupViewModel extends BaseViewModel {
 
     if (jsonString != null) {
       Map<String, dynamic>? contents;
+      BackupObject? backup;
 
       try {
         contents = jsonDecode(jsonString);
-        if (contents == null) throw 'empty contents';
+        backup = BackupObject.fromContents(contents!);
       } catch (e) {
         if (context.mounted) MessengerService.of(context).showSnackBar("Empty or invalid file!", success: false);
         return;
@@ -87,7 +91,6 @@ class OfflineBackupViewModel extends BaseViewModel {
 
       if (!context.mounted) return;
 
-      final backup = BackupObject.fromContents(contents);
       SpNestedNavigation.maybeOf(context)?.push(
         BackupObjectViewer(backup: backup),
       );
