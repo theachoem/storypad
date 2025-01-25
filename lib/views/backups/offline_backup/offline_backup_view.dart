@@ -5,9 +5,9 @@ import 'package:storypad/core/constants/env.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/routes/base_route.dart';
 
-import 'offline_backups_view_model.dart';
+import 'offline_backup_view_model.dart';
 
-part 'offline_backups_adaptive.dart';
+part 'offline_backup_adaptive.dart';
 
 class OfflineBackupRoute extends BaseRoute {
   OfflineBackupRoute();
