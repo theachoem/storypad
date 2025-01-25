@@ -53,6 +53,42 @@ function configure() {
     --account=$ACCOUNT
     --token=$TOKEN
     --yes"
+
+  run_command "flutterfire configure
+    --project=$PRODUCT
+    --ios-bundle-id=$PACKAGE_NAME
+    --android-package-name=$PACKAGE_NAME
+    --macos-bundle-id=$PACKAGE_NAME
+    --web-app-id=$WEB_APPLICATION_ID
+    --platforms=$PLATFORMS
+    --ios-out="ios/Firebase/$FLAVOR/GoogleService-Info.plist"
+    --android-out=android/app/src/$FLAVOR/google-services.json
+    --macos-out="macos/Firebase/$FLAVOR/GoogleService-Info.plist"
+    --out="lib/firebase_options/$FLAVOR.dart"
+    --ios-build-config=Debug-$FLAVOR
+    --macos-build-config=Debug-$FLAVOR
+    --account=$ACCOUNT
+    --token=$TOKEN
+    --yes"
+
+  # IOS won't run without build-config=Debug
+  # https://github.com/theachoem/storypad/issues/243
+  run_command "flutterfire configure
+    --project=$PRODUCT
+    --ios-bundle-id=$PACKAGE_NAME
+    --android-package-name=$PACKAGE_NAME
+    --macos-bundle-id=$PACKAGE_NAME
+    --web-app-id=$WEB_APPLICATION_ID
+    --platforms=$PLATFORMS
+    --ios-out="ios/Firebase/$FLAVOR/GoogleService-Info.plist"
+    --android-out=android/app/src/$FLAVOR/google-services.json
+    --macos-out="macos/Firebase/$FLAVOR/GoogleService-Info.plist"
+    --out="lib/firebase_options/$FLAVOR.dart"
+    --ios-build-config=Profile-$FLAVOR
+    --macos-build-config=Profile-$FLAVOR
+    --account=$ACCOUNT
+    --token=$TOKEN
+    --yes"
 }
 
 function main() {
