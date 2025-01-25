@@ -1,4 +1,4 @@
-part of 'offline_backups_view.dart';
+part of 'offline_backup_view.dart';
 
 class _OfflineBackupsAdaptive extends StatelessWidget {
   const _OfflineBackupsAdaptive(this.viewModel);
@@ -9,7 +9,7 @@ class _OfflineBackupsAdaptive extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Offline Backups"),
+        title: Text("Offline Backup"),
       ),
       body: ListView(
         padding: EdgeInsets.all(16.0),

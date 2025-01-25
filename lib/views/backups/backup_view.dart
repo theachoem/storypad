@@ -10,7 +10,7 @@ import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/backups/local_widgets/user_profile_collapsible_tile.dart';
-import 'package:storypad/views/backups/offline_backup/offline_backups_view.dart';
+import 'package:storypad/views/backups/offline_backup/offline_backup_view.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 

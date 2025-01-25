@@ -16,7 +16,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
-import 'offline_backups_view.dart';
+import 'offline_backup_view.dart';
 
 class OfflineBackupViewModel extends BaseViewModel {
   final OfflineBackupRoute params;
