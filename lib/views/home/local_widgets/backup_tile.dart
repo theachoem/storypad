@@ -6,7 +6,7 @@ import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backups/backups_view.dart';
+import 'package:storypad/views/backups/backup_view.dart';
 
 class BackupTile extends StatefulWidget {
   const BackupTile({
@@ -90,7 +90,10 @@ class _SignedInTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTile(context),
-        if (!provider.syncing && !provider.synced && provider.lastDbUpdatedAt != null) buildSyncButton(),
+        if (!provider.syncing &&
+            !provider.synced &&
+            (provider.lastDbUpdatedAt != null || provider.lastSyncedAt != null))
+          buildSyncButton(),
       ],
     );
   }
@@ -157,7 +160,7 @@ class _SignedInTile extends StatelessWidget {
             color: Colors.transparent,
             child: ListTile(
               leading: leading,
-              onTap: () => BackupsRoute().push(context),
+              onTap: () => BackupRoute().push(context),
               subtitle: subtitle,
               title: RichText(
                 textScaler: MediaQuery.textScalerOf(context),

@@ -1,9 +1,9 @@
-part of 'backups_view.dart';
+part of 'backup_view.dart';
 
-class _BackupsAdaptive extends StatelessWidget {
-  const _BackupsAdaptive(this.viewModel);
+class _BackupAdaptive extends StatelessWidget {
+  const _BackupAdaptive(this.viewModel);
 
-  final BackupsViewModel viewModel;
+  final BackupViewModel viewModel;
 
   final double avatarSize = 56;
 
@@ -15,6 +15,15 @@ class _BackupsAdaptive extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text("Backups"),
+          actions: [
+            IconButton(
+              tooltip: "Offline Backup",
+              icon: Icon(Icons.folder_open),
+              onPressed: () {
+                OfflineBackupRoute().push(context);
+              },
+            ),
+          ],
         ),
         body: Stack(children: [
           if (viewModel.hasData) buildTimelineDivider(context),

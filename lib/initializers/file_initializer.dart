@@ -1,7 +1,19 @@
-import 'package:storypad/core/services/file_service.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
+late final Directory kSupportDirectory;
+late final Directory kApplicationDirectory;
 
 class FileInitializer {
   static Future<void> call() async {
-    await FileService.initialFile();
+    kSupportDirectory = await getApplicationSupportDirectory();
+
+    if (Platform.isAndroid) {
+      kApplicationDirectory = await getExternalStorageDirectory().then(
+        (data) => data ?? getApplicationDocumentsDirectory(),
+      );
+    } else {
+      kApplicationDirectory = await getApplicationDocumentsDirectory();
+    }
   }
 }

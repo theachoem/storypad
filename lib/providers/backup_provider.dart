@@ -172,6 +172,9 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     );
 
     await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');
+
+    if (!context.mounted) return;
+    MessengerService.of(context).showSnackBar("Backup is restored!");
   }
 
   void queueDeleteBackupByCloudFileId(String id) {
