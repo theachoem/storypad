@@ -43,7 +43,7 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     StoryDbModel record, {
     bool runCallbacks = true,
   }) async {
-    StoryDbModel? saved = await super.set(record);
+    StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks);
     debugPrint("🚧 StoryBox#set: ${saved?.rawChanges?.length}");
     return saved;
   }

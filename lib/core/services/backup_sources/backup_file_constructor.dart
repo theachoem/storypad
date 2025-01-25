@@ -1,13 +1,23 @@
-part of 'base_backup_source.dart';
+import 'dart:convert';
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart';
+import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/objects/backup_file_object.dart';
+import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/types/file_path_type.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
+import 'package:storypad/initializers/file_initializer.dart';
 
-class _BaseBackupHelper {
+class BackupFileConstructor {
   Future<BackupObject> constructBackup({
     required List<BaseDbAdapter<BaseDbModel>> databases,
     required DateTime lastUpdatedAt,
   }) async {
-    debugPrint('_BaseBackupHelper#constructBackup');
+    debugPrint('BackupFileConstructor#constructBackup');
     Map<String, dynamic> tables = await _constructTables(databases);
-    debugPrint('_BaseBackupHelper#constructBackup ${tables.keys}');
+    debugPrint('BackupFileConstructor#constructBackup ${tables.keys}');
 
     return BackupObject(
       tables: tables,
@@ -22,18 +32,17 @@ class _BaseBackupHelper {
     String cloudStorageId,
     BackupObject backup,
   ) async {
-    io.Directory root = await getApplicationSupportDirectory();
-    io.Directory parent = io.Directory("${root.path}/${FilePathType.backups.name}");
+    io.Directory parent = io.Directory("${kSupportDirectory.path}/${FilePathType.backups.name}");
 
     var file = io.File("${parent.path}/$cloudStorageId.json");
     if (!file.existsSync()) {
       await file.create(recursive: true);
-      debugPrint('_BaseBackupHelper#constructFile createdFile: ${file.path.replaceAll(' ', '%20')}');
+      debugPrint('BackupFileConstructor#constructFile createdFile: ${file.path.replaceAll(' ', '%20')}');
     }
 
-    debugPrint('_BaseBackupHelper#constructFile encodingJson');
+    debugPrint('BackupFileConstructor#constructFile encodingJson');
     String encodedJson = jsonEncode(backup.toContents());
-    debugPrint('_BaseBackupHelper#constructFile encodedJson');
+    debugPrint('BackupFileConstructor#constructFile encodedJson');
 
     return file.writeAsString(encodedJson);
   }

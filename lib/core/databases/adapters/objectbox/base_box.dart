@@ -3,7 +3,7 @@ import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
-import 'package:storypad/core/services/file_service.dart';
+import 'package:storypad/initializers/file_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends BaseDbAdapter<T> {
@@ -32,7 +32,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<void> initilize() async {
     if (_store != null) return;
 
-    Directory directory = Directory(FileService.addDirectory("database/objectbox"));
+    Directory directory = Directory("${kSupportDirectory.path}/database/objectbox");
     if (!await directory.exists()) await directory.create(recursive: true);
 
     _store = await openStore(

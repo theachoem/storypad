@@ -421,11 +421,11 @@ class StoryTile extends StatelessWidget {
           onPressed: viewOnly ? null : () => toggleStarred(),
           selectedIcon: Icon(
             Icons.favorite,
-            color: viewOnly ? Theme.of(context).disabledColor : ColorScheme.of(context).error,
+            color: ColorScheme.of(context).error,
           ),
           icon: Icon(
             Icons.favorite_outline,
-            color: viewOnly ? Theme.of(context).disabledColor : Theme.of(context).dividerColor,
+            color: Theme.of(context).dividerColor,
             applyTextScaling: true,
           ),
         ),

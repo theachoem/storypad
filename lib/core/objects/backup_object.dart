@@ -4,14 +4,19 @@ import 'package:storypad/core/objects/device_info_object.dart';
 class BackupObject {
   final Map<String, dynamic> tables;
   final BackupFileObject fileInfo;
+  final int version;
+
+  static const int currentVersion = 1;
 
   BackupObject({
     required this.tables,
     required this.fileInfo,
+    this.version = currentVersion,
   });
 
   static BackupObject fromContents(Map<String, dynamic> contents) {
     return BackupObject(
+      version: int.tryParse(contents['version'].toString()) ?? currentVersion,
       tables: contents['tables'],
       fileInfo: BackupFileObject(
         createdAt: DateTime.parse(contents['meta_data']['created_at']),
@@ -23,8 +28,9 @@ class BackupObject {
     );
   }
 
-  Map<String, Map<String, dynamic>> toContents() {
+  Map<String, dynamic> toContents() {
     return {
+      'version': version,
       'tables': tables,
       'meta_data': {
         'device_model': fileInfo.device.model,

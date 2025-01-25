@@ -63,9 +63,10 @@ class GoogleDriveBackupSource extends BaseBackupSource {
   }
 
   @override
-  Future<bool> uploadFile(String fileName, File file) async {
+  Future<File?> saveFile(String fileName, File file) async {
     CloudFileObject? result = await _service.uploadFile(fileName, file);
-    return result != null;
+    await file.parent.delete(recursive: true);
+    return result != null ? file : null;
   }
 
   @override
