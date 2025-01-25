@@ -35,15 +35,15 @@ class RestoreBackupService {
               bool unSyncContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
 
               if (newContent) {
-                await db.set(newRecord);
+                await db.set(newRecord, runCallbacks: false);
               } else if (unSyncContent) {
                 // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
                 // This prevents the app from incorrectly assuming the database is fully synced after restoration.
-                await db.touch(existingRecord);
+                await db.touch(existingRecord, runCallbacks: false);
               }
             }
           } else {
-            await db.set(newRecord);
+            await db.set(newRecord, runCallbacks: false);
           }
         }
       }
@@ -62,7 +62,7 @@ class RestoreBackupService {
       List<BaseDbModel>? items = datas[db.tableName];
       if (items != null) {
         for (BaseDbModel item in items) {
-          await db.set(item);
+          await db.set(item, runCallbacks: false);
         }
       }
     }

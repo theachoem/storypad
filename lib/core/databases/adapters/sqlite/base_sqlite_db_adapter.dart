@@ -8,12 +8,18 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   String get tableName => throw UnimplementedError();
 
   @override
-  Future<BaseDbModel?> create(BaseDbModel record) {
+  Future<BaseDbModel?> create(
+    BaseDbModel record, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<BaseDbModel?> delete(int id) {
+  Future<BaseDbModel?> delete(
+    int id, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 
@@ -28,7 +34,10 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<BaseDbModel?> update(BaseDbModel record) {
+  Future<BaseDbModel?> update(
+    BaseDbModel record, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 
@@ -46,12 +55,18 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<BaseDbModel?> touch(BaseDbModel record) {
+  Future<BaseDbModel?> touch(
+    BaseDbModel record, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<BaseDbModel?> set(BaseDbModel record) {
+  Future<BaseDbModel?> set(
+    BaseDbModel record, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 
@@ -66,7 +81,10 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<void> setAll(List<BaseDbModel> records) {
+  Future<void> setAll(
+    List<BaseDbModel> records, {
+    bool runCallbacks = true,
+  }) {
     throw UnimplementedError();
   }
 }

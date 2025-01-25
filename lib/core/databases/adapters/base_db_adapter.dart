@@ -18,13 +18,35 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
     Map<String, dynamic>? options,
   });
 
-  Future<T?> touch(T record);
-  Future<T?> set(T record);
-  Future<void> setAll(List<T> records);
+  Future<T?> touch(
+    T record, {
+    bool runCallbacks = true,
+  });
 
-  Future<T?> update(T record);
-  Future<T?> create(T record);
-  Future<T?> delete(int id);
+  Future<T?> set(
+    T record, {
+    bool runCallbacks = true,
+  });
+
+  Future<void> setAll(
+    List<T> records, {
+    bool runCallbacks = true,
+  });
+
+  Future<T?> update(
+    T record, {
+    bool runCallbacks = true,
+  });
+
+  Future<T?> create(
+    T record, {
+    bool runCallbacks = true,
+  });
+
+  Future<T?> delete(
+    int id, {
+    bool runCallbacks = true,
+  });
 
   bool hasDeleted(int id);
 
