@@ -64,3 +64,6 @@ env/spooky.json
 env/storypad.json
 
 ios/Flutter/GeneratedDartDefines.xcconfig
+
+# Credentials folder / repo.
+credentials/
