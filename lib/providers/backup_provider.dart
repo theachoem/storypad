@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/concerns/schedule_concern.dart';
@@ -91,6 +92,14 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
       await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
     } catch (e) {
       debugPrint("🐛 $runtimeType#_syncBackupAcrossDevices error: $e");
+
+      StackTrace? stackTrace;
+      if (e is StateError) {
+        debugPrintStack(stackTrace: e.stackTrace);
+        stackTrace = e.stackTrace;
+      }
+
+      FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
 
     setSyncing(false);
