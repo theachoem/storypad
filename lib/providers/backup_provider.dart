@@ -100,8 +100,9 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     await _loadLatestSyncedFile();
     notifyListeners();
 
-    if (_syncedFile != null && lastSyncedAt != _lastDbUpdatedAt) {
-      BackupObject? backup = await source.getBackup(_syncedFile!);
+    final previousSyncedFile = _syncedFile;
+    if (previousSyncedFile != null && lastSyncedAt != _lastDbUpdatedAt) {
+      BackupObject? backup = await source.getBackup(previousSyncedFile);
       if (backup != null) {
         debugPrint('🚧 $runtimeType#_syncBackupAcrossDevices -> restoreOnlyNewData');
         await RestoreBackupService.instance.restoreOnlyNewData(backup: backup);
@@ -110,16 +111,18 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     }
 
     if (canBackup()) {
-      final result = await source.backup(lastDbUpdatedAt: lastDbUpdatedAt!);
-      if (result == null) return;
-
-      _syncedFile = result;
-      notifyListeners();
+      CloudFileObject? uploadedSyncedFile = await source.backup(lastDbUpdatedAt: lastDbUpdatedAt!);
+      if (uploadedSyncedFile == null) return;
 
       // delete previous backup file if from same device ID.
-      if (_syncedFile != null && _syncedFile!.getFileInfo()?.device.id == _syncedFile!.getFileInfo()?.device.id) {
-        queueDeleteBackupByCloudFileId(_syncedFile!.id);
+      bool sameDeviceID = previousSyncedFile != null &&
+          previousSyncedFile.getFileInfo()?.device.id == uploadedSyncedFile.getFileInfo()?.device.id;
+      if (sameDeviceID) {
+        queueDeleteBackupByCloudFileId(previousSyncedFile.id);
       }
+
+      _syncedFile = uploadedSyncedFile;
+      notifyListeners();
     }
   }
 

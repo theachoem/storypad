@@ -29,6 +29,7 @@ class RestoreBackupService {
       if (items != null) {
         for (BaseDbModel newRecord in items) {
           BaseDbModel? existingRecord = await db.find(newRecord.id, returnDeleted: true);
+
           if (existingRecord != null) {
             if (existingRecord.updatedAt != null && newRecord.updatedAt != null) {
               bool newContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
