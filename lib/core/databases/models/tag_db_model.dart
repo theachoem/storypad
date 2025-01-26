@@ -23,6 +23,8 @@ class TagDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final String? lastSavedDeviceId;
 
+  int? storiesCount;
+
   TagDbModel({
     required this.id,
     required this.version,

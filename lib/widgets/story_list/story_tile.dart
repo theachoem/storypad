@@ -14,7 +14,7 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/story_list/story_list.dart';
+import 'package:storypad/widgets/story_list/story_list_with_query.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;

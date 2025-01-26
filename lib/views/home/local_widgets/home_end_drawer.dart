@@ -82,9 +82,13 @@ class _HomeEndDrawer extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.search),
       title: const Text('Search'),
-      onTap: () {
-        SearchRoute().push(context);
-      },
+      onTap: () => SearchRoute(
+        initialFilter: SearchFilterObject(
+          years: {viewModel.year},
+          types: {PathType.docs},
+          tagId: null,
+        ),
+      ).push(context),
     );
   }
 

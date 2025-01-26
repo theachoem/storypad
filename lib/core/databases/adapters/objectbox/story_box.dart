@@ -38,6 +38,24 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return storyCountsByYear;
   }
 
+  Future<Map<PathType, int>> getStoryCountsByType({
+    Map<String, dynamic>? filters,
+  }) async {
+    List<StoryObjectBox>? stories = await buildQuery(filters: filters).build().findAsync();
+
+    Map<PathType, int>? storyCountsByType = stories.fold<Map<PathType, int>>({}, (counts, story) {
+      final type = PathType.fromString(story.type) ?? PathType.bins;
+      counts[type] = (counts[type] ?? 0) + 1;
+      return counts;
+    });
+
+    for (PathType type in PathType.values) {
+      storyCountsByType[type] ??= 0;
+    }
+
+    return storyCountsByType;
+  }
+
   @override
   Future<StoryDbModel?> set(
     StoryDbModel record, {
@@ -53,6 +71,7 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     String? query = filters?["query"];
     List<String>? types = filters?["types"];
     int? year = filters?["year"];
+    List<int>? years = filters?["years"];
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
@@ -69,6 +88,7 @@ class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (starred == true) conditions = conditions.and(StoryObjectBox_.starred.equals(true));
     if (types != null) conditions = conditions.and(StoryObjectBox_.type.oneOf(types));
     if (year != null) conditions = conditions.and(StoryObjectBox_.year.equals(year));
+    if (years != null) conditions = conditions.and(StoryObjectBox_.year.oneOf(years));
     if (month != null) conditions = conditions.and(StoryObjectBox_.month.equals(month));
     if (day != null) conditions = conditions.and(StoryObjectBox_.day.equals(day));
 

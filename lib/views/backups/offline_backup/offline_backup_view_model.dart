@@ -22,7 +22,7 @@ import 'offline_backup_view.dart';
 
 class OfflineBackupViewModel extends BaseViewModel {
   final OfflineBackupRoute params;
-  final String exportFileName = "sahakom-$kAppName-${kDeviceInfo.model}-backup-all.json";
+  final String exportFileName = "$kAppName-${kDeviceInfo.model}-backup-all.json";
   final String parentName = "backups";
 
   OfflineBackupViewModel({

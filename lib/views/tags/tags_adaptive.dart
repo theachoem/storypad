@@ -32,7 +32,7 @@ class _TagsAdaptive extends StatelessWidget {
       itemCount: viewModel.tags?.items.length ?? 0,
       itemBuilder: (context, index) {
         final tag = viewModel.tags!.items[index];
-        final storyCount = viewModel.getStoriesCount(tag);
+        final storyCount = tag.storiesCount ?? 0;
 
         return Theme(
           // Remove theme wrapper here when this is fixed:

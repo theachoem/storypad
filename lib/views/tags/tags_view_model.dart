@@ -20,23 +20,18 @@ class TagsViewModel extends BaseViewModel {
   }
 
   CollectionDbModel<TagDbModel>? tags;
-  Map<int, int> storiesCountByTagId = {};
-  int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id]!;
 
   Future<void> load() async {
     tags = await TagDbModel.db.where();
-    storiesCountByTagId.clear();
 
-    if (tags != null) {
-      for (TagDbModel tag in tags?.items ?? []) {
-        storiesCountByTagId[tag.id] = await StoryDbModel.db.count(filters: {
-          'tag': tag.id,
-          'types': [
-            PathType.archives.name,
-            PathType.docs.name,
-          ]
-        });
-      }
+    for (TagDbModel tag in tags?.items ?? []) {
+      tag.storiesCount = await StoryDbModel.db.count(filters: {
+        'tag': tag.id,
+        'types': [
+          PathType.archives.name,
+          PathType.docs.name,
+        ]
+      });
     }
 
     notifyListeners();

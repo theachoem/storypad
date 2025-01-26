@@ -10,12 +10,12 @@ class _ShowTagAdaptive extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(viewModel.tag.title)),
       body: StoryList.withQuery(
-        tagId: viewModel.tag.id,
         viewOnly: viewModel.params.storyViewOnly,
-        types: const [
-          PathType.archives,
-          PathType.docs,
-        ],
+        filter: SearchFilterObject(
+          years: {},
+          types: {PathType.archives, PathType.docs},
+          tagId: viewModel.tag.id,
+        ),
       ),
     );
   }

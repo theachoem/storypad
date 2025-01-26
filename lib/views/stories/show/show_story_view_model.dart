@@ -118,7 +118,7 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
   }
 
   Future<void> goToChangesPage(BuildContext context) async {
-    StoryChangesRoute(id: story!.id).push(context);
+    await StoryChangesRoute(id: story!.id).push(context);
     await load(story!.id);
   }
 
