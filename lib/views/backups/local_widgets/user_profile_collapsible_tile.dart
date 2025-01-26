@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/views/backups/backup_view_model.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
@@ -77,26 +78,44 @@ class UserProfileCollapsibleTile extends StatelessWidget {
           ];
         },
         builder: (callback) {
-          return ListTile(
-            onTap: callback,
-            title: Text(
-              source.displayName ?? "",
-              style: TextStyle(color: ColorScheme.of(context).onPrimary),
-            ),
-            subtitle: source.email != null
-                ? Text(
-                    source.email!,
-                    style: TextStyle(color: ColorScheme.of(context).onPrimary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null,
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-            trailing: Icon(
-              Icons.more_vert,
-              color: ColorScheme.of(context).onPrimary,
-            ),
-          );
+          if (source.isSignedIn == true) {
+            return ListTile(
+              onTap: callback,
+              title: Text(
+                source.displayName ?? "",
+                style: TextStyle(color: ColorScheme.of(context).onPrimary),
+              ),
+              subtitle: source.email != null
+                  ? Text(
+                      source.email!,
+                      style: TextStyle(color: ColorScheme.of(context).onPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null,
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+              trailing: Icon(
+                Icons.more_vert,
+                color: ColorScheme.of(context).onPrimary,
+              ),
+            );
+          } else {
+            return ListTile(
+              onTap: () => viewModel.signIn(context),
+              title: Text(
+                'Backup',
+                style: TextStyle(color: ColorScheme.of(context).onPrimary),
+              ),
+              subtitle: Text(
+                "Sign in to Google Drive",
+                style: TextStyle(color: ColorScheme.of(context).onPrimary),
+              ),
+              trailing: Icon(
+                MdiIcons.googleDrive,
+                color: ColorScheme.of(context).onPrimary,
+              ),
+            );
+          }
         },
       ),
     );

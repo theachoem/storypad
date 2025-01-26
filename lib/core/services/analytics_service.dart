@@ -96,6 +96,22 @@ class AnalyticsService {
     );
   }
 
+  Future<void> logImportOfflineBackup() {
+    debug('logImportOfflineBackup');
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('import_offline_backup'),
+    );
+  }
+
+  Future<void> logExportOfflineBackup() {
+    debug('logExportOfflineBackup');
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('export_offline_backup'),
+    );
+  }
+
   Future<void> logSetLocale({
     required Locale newLocale,
   }) {

@@ -26,17 +26,27 @@ class MessengerService {
     bool success = true,
     SnackBarAction Function(Color? foreground)? action,
     bool showAction = true,
+    SnackBarBehavior floating = SnackBarBehavior.fixed,
+    Duration duration = const Duration(milliseconds: 4000),
   }) {
     clearSnackBars();
 
     Color? foreground = success ? null : Theme.of(context).colorScheme.onError;
     Color? background = success ? null : Theme.of(context).colorScheme.error;
+    double? width;
 
-    return state?.showSnackBar(
+    if (floating == SnackBarBehavior.fixed) {
+      width = null;
+    } else {
+      width = MediaQuery.of(context).size.width > 1000 ? 400.0 : null;
+    }
+
+    scaffoldFeatureController = state?.showSnackBar(
       SnackBar(
-        width: MediaQuery.of(context).size.width > 1000 ? 400.0 : null,
+        duration: duration,
+        width: width,
         content: Text(message, style: TextStyle(color: foreground)),
-        behavior: SnackBarBehavior.floating,
+        behavior: floating,
         backgroundColor: background,
         dismissDirection: DismissDirection.horizontal,
         action: showAction
@@ -50,6 +60,14 @@ class MessengerService {
             : null,
       ),
     );
+
+    // When we our own custom ScaffoldMessager on end drawer instead of using Scaffold. SnackBar is not auto closed.
+    // Manually close in this case.
+    Future.delayed(duration + Duration(milliseconds: 100)).then((_) {
+      clearSnackBars();
+    });
+
+    return scaffoldFeatureController;
   }
 
   void clearSnackBars() {
