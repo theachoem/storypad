@@ -6,7 +6,7 @@ import 'package:html_character_entities/html_character_entities.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:storypad/core/databases/adapters/objectbox/preference_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/databases/legacy/storypad_legacy_story_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -113,7 +113,7 @@ class StorypadLegacyDatabase {
 
       if (userInfoRows != null && userInfoRows.isNotEmpty) {
         String? nickname = userInfoRows.firstOrNull?['nickname'];
-        if (nickname != null) PreferenceBox().nickname.set(nickname);
+        if (nickname != null) PreferencesBox().nickname.set(nickname);
       }
 
       await sharedPreferences.setBool(sharePreferenceKey, true);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/databases/adapters/objectbox/preference_box.dart';
-import 'package:storypad/core/databases/adapters/objectbox/story_box.dart';
-import 'package:storypad/core/databases/adapters/objectbox/tag_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/tags_box.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -112,16 +112,16 @@ class BackupObjectViewer extends StatelessWidget {
     switch (tableName) {
       case 'stories':
         List<StoryDbModel> models =
-            tableContents.map((e) => StoryBox().modelFromJson(e)..markAsCloudViewing()).toList();
+            tableContents.map((e) => StoriesBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupStoriesTableViewer(stories: models);
         break;
       case 'tags':
-        List<TagDbModel> models = tableContents.map((e) => TagBox().modelFromJson(e)..markAsCloudViewing()).toList();
+        List<TagDbModel> models = tableContents.map((e) => TagsBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupTagsTableViewer(tags: models);
         break;
       case 'preferences':
         List<PreferenceDbModel> models =
-            tableContents.map((e) => PreferenceBox().modelFromJson(e)..markAsCloudViewing()).toList();
+            tableContents.map((e) => PreferencesBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupPreferencesTableViewer(preferences: models);
         break;
       default:

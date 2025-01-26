@@ -6,7 +6,7 @@ import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
-class PreferenceBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
+class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   _DefinedPreference get nickname => _DefinedPreference(id: 2, key: 'nickname');
 
   @override
@@ -103,13 +103,13 @@ class _DefinedPreference {
   });
 
   String? get() {
-    PreferenceObjectBox? record = PreferenceBox().box.get(id);
+    PreferenceObjectBox? record = PreferencesBox().box.get(id);
     return record?.value;
   }
 
   void set(String value) {
-    PreferenceObjectBox? record = PreferenceBox().box.get(id);
-    PreferenceBox().box.put(PreferenceObjectBox(
+    PreferenceObjectBox? record = PreferencesBox().box.get(id);
+    PreferencesBox().box.put(PreferenceObjectBox(
           id: id,
           key: key,
           value: value,
@@ -119,8 +119,8 @@ class _DefinedPreference {
   }
 
   void touch() {
-    PreferenceObjectBox? record = PreferenceBox().box.get(id);
-    PreferenceBox().box.put(PreferenceObjectBox(
+    PreferenceObjectBox? record = PreferencesBox().box.get(id);
+    PreferencesBox().box.put(PreferenceObjectBox(
           id: id,
           key: key,
           value: DateTime.now().toIso8601String(),

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:storypad/core/databases/adapters/objectbox/preference_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 
 part 'preference_db_model.g.dart';
@@ -8,7 +8,7 @@ part 'preference_db_model.g.dart';
 @CopyWith()
 @JsonSerializable()
 class PreferenceDbModel extends BaseDbModel {
-  static final PreferenceBox db = PreferenceBox();
+  static final PreferencesBox db = PreferencesBox();
 
   @override
   final int id;
