@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -37,28 +38,35 @@ class OfflineBackupViewModel extends BaseViewModel {
       allowedExtensions: ['json'],
     );
 
+    if (!context.mounted) return;
     final file = result?.files.firstOrNull;
-    final jsonString = await file?.xFile.readAsString();
+    final backup = await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#import',
+      future: () => Isolate.run(() async {
+        final jsonString = await file?.xFile.readAsString();
+        if (jsonString != null) {
+          Map<String, dynamic>? contents;
 
-    if (jsonString != null) {
-      Map<String, dynamic>? contents;
-      BackupObject? backup;
+          try {
+            contents = jsonDecode(jsonString);
+            return BackupObject.fromContents(contents!);
+          } catch (e) {
+            return null;
+          }
+        }
+      }),
+    );
 
-      try {
-        contents = jsonDecode(jsonString);
-        backup = BackupObject.fromContents(contents!);
-      } catch (e) {
-        if (context.mounted) MessengerService.of(context).showSnackBar("Empty or invalid file!", success: false);
-        return;
-      }
-
-      if (!context.mounted) return;
-
-      MessengerService.of(context).clearSnackBars();
-      SpNestedNavigation.maybeOf(context)?.push(
-        BackupObjectViewer(backup: backup),
-      );
+    if (!context.mounted) return;
+    if (backup == null) {
+      MessengerService.of(context).showSnackBar("Empty or invalid file!", success: false);
+      return;
     }
+
+    MessengerService.of(context).clearSnackBars();
+    SpNestedNavigation.maybeOf(context)?.push(
+      BackupObjectViewer(backup: backup),
+    );
   }
 
   // Experience is a bit different for both IOS / Android due to android limitation.
