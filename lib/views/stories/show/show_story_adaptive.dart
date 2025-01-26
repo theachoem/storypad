@@ -29,7 +29,9 @@ class _ShowStoryAdaptive extends StatelessWidget {
           return QuillEditor.basic(
             controller: viewModel.quillControllers[index]!,
             config: QuillEditorConfig(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0).copyWith(
+                bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+              ),
               checkBoxReadOnly: false,
               showCursor: false,
               autoFocus: false,
