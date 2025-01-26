@@ -63,8 +63,8 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
     load();
     super.initState();
 
-    TagDbModel.db.addGlobalListener(() {
-      load();
+    TagDbModel.db.addGlobalListener(() async {
+      await load();
     });
   }
 

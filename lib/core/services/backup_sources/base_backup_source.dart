@@ -25,16 +25,12 @@ abstract class BaseBackupSource {
   String? get bigImageUrl;
 
   bool? isSignedIn;
-  CloudFileObject? syncedFile;
-  DateTime? get lastSyncedAt {
-    return syncedFile?.getFileInfo()?.createdAt;
-  }
 
   Future<bool> checkIsSignedIn();
   Future<bool> reauthenticate();
   Future<bool> signIn();
   Future<bool> signOut();
-  Future<io.File?> saveFile(String fileName, io.File file);
+  Future<CloudFileObject?> saveFile(String fileName, io.File file);
   Future<CloudFileObject?> getLastestBackupFile();
   Future<CloudFileObject?> getFileByFileName(String fileName);
   Future<String?> getFileContent(CloudFileObject cloudFile);
@@ -64,7 +60,7 @@ abstract class BaseBackupSource {
     return null;
   }
 
-  Future<io.File?> backup({
+  Future<CloudFileObject?> backup({
     required DateTime lastDbUpdatedAt,
   }) async {
     BackupObject backup = await BackupFileConstructor().constructBackup(
@@ -81,15 +77,5 @@ abstract class BaseBackupSource {
       backup.fileInfo.fileNameWithExtention,
       file,
     );
-  }
-
-  Future<void> loadLatestBackup() async {
-    if (isSignedIn == null) return;
-    if (isSignedIn == false) {
-      syncedFile = null;
-      return;
-    }
-
-    syncedFile = await getLastestBackupFile();
   }
 }

@@ -28,6 +28,13 @@ class BackupViewModel extends BaseViewModel {
   bool get hasData => files?.isNotEmpty == true;
 
   Future<void> load(BuildContext context) async {
+    if (context.read<BackupProvider>().source.isSignedIn == null) return;
+    if (context.read<BackupProvider>().source.isSignedIn == false) {
+      files = null;
+      notifyListeners();
+      return;
+    }
+
     loading = true;
     files = await context.read<BackupProvider>().source.fetchAllCloudFiles().then((e) => e?.files);
 
@@ -94,11 +101,13 @@ class BackupViewModel extends BaseViewModel {
     await context
         .read<BackupProvider>()
         .signOut(context: context, showLoading: true, debugSource: '$runtimeType#signOut');
+    if (context.mounted) await load(context);
   }
 
   Future<void> signIn(BuildContext context) async {
     await context
         .read<BackupProvider>()
         .signIn(context: context, showLoading: true, debugSource: '$runtimeType#signIn');
+    if (context.mounted) await load(context);
   }
 }

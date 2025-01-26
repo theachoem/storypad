@@ -65,7 +65,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   }
 
   void addGlobalListener(
-    void Function() callback,
+    Future<void> Function() callback,
   ) {
     _globalListeners.add(callback);
   }

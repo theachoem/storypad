@@ -34,7 +34,7 @@ class HomeViewModel extends BaseViewModel {
     await load(debugSource: '$runtimeType#_construct');
     if (nickname == null && context.mounted) showInputNameSheet(context);
 
-    RestoreBackupService.instance.addListener(() {
+    RestoreBackupService.instance.addListener(() async {
       load(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }
