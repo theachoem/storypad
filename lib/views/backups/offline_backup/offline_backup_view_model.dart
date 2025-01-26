@@ -116,6 +116,8 @@ class OfflineBackupViewModel extends BaseViewModel {
       bytes: applicationFolderFile.readAsBytesSync(),
     );
 
+    // TODO: if filePath is existing file, then we don't have permission to write over it. Find way to create new file instead.
+
     if (filePath != null && context.mounted) {
       MessengerService.of(context).showSnackBar("Saved to $filePath", action: (foreground) {
         return SnackBarAction(

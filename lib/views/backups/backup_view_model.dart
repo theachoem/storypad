@@ -28,8 +28,9 @@ class BackupViewModel extends BaseViewModel {
   bool get hasData => files?.isNotEmpty == true;
 
   Future<void> load(BuildContext context) async {
-    if (context.read<BackupProvider>().source.isSignedIn == null) return;
-    if (context.read<BackupProvider>().source.isSignedIn == false) {
+    if (context.read<BackupProvider>().source.isSignedIn == null ||
+        context.read<BackupProvider>().source.isSignedIn == false) {
+      loading = false;
       files = null;
       notifyListeners();
       return;
