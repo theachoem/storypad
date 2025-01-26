@@ -41,6 +41,9 @@ class RestoreBackupService {
                 // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
                 // This prevents the app from incorrectly assuming the database is fully synced after restoration.
                 await db.touch(existingRecord, runCallbacks: false);
+              } else {
+                // this case, contents may be deleted & unchanged on other device.
+                // so we can ignore them.
               }
             }
           } else {
