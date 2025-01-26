@@ -17,7 +17,7 @@ class SearchFilterObject {
   }) {
     Map<String, dynamic> filters = {};
 
-    if (query != null) filters[query] = query;
+    if (query != null) filters['query'] = query;
     if (years.isNotEmpty) filters['years'] = years.toList();
     if (tagId != null) filters['tag'] = tagId;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
