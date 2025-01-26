@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/in_app_update_status.dart';
@@ -24,7 +23,8 @@ class InAppUpdateProvider extends ChangeNotifier {
 
   Future<void> _load() async {
     _versionStatus = await NewVersionPlus().getVersionStatus();
-    _androidInAppUpdateInfo = await _checkForUpdate();
+    _androidInAppUpdateInfo = await _getAndroidInAppUpdateInfo();
+
     debugPrint("💫 App Update Status: ${_versionStatus?.canUpdate} ${_versionStatus?.originalStoreVersion}");
 
     if (_versionStatus?.canUpdate == true || _androidInAppUpdateInfo?.canUpdate == true) {
@@ -56,7 +56,7 @@ class InAppUpdateProvider extends ChangeNotifier {
   }
 
   Future<void> _updateDireclyInApp() async {
-    _androidInAppUpdateInfo = await _checkForUpdate();
+    _androidInAppUpdateInfo = await _getAndroidInAppUpdateInfo();
 
     switch (_androidInAppUpdateInfo!.installStatus) {
       case InstallStatus.pending:
@@ -101,15 +101,16 @@ class InAppUpdateProvider extends ChangeNotifier {
     });
   }
 
-  Future<AppUpdateInfo?> _checkForUpdate() async {
-    if (!Platform.isAndroid) return null;
-
-    try {
+  Future<AppUpdateInfo?> _getAndroidInAppUpdateInfo() async {
+    Future<AppUpdateInfo?> call() async {
+      if (!Platform.isAndroid) return null;
       return InAppUpdate.checkForUpdate();
-    } on PlatformException catch (e) {
-      debugPrint("🪲 ${e.message}");
-      return null;
     }
+
+    return call().catchError((error) {
+      debugPrint("🪲 $error");
+      return null;
+    });
   }
 }
 

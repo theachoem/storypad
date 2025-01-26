@@ -127,21 +127,39 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     return updatedAt;
   }
 
-  Future<void> signOut() async {
-    await source.signOut();
-    await source.loadLatestBackup();
+  Future<void> signOut({
+    required BuildContext context,
+    required String debugSource,
+    bool showLoading = false,
+  }) async {
+    Future<void> _() async {
+      await source.signOut();
+      await source.loadLatestBackup();
+    }
+
+    showLoading
+        ? await MessengerService.of(context).showLoading(future: () => _(), debugSource: debugSource)
+        : await _();
 
     AnalyticsService.instance.logSignOut();
-
     notifyListeners();
   }
 
-  Future<void> signIn() async {
-    await source.signIn();
-    await source.loadLatestBackup();
+  Future<void> signIn({
+    required BuildContext context,
+    required String debugSource,
+    bool showLoading = false,
+  }) async {
+    Future<void> _() async {
+      await source.signIn();
+      await source.loadLatestBackup();
+    }
+
+    showLoading
+        ? await MessengerService.of(context).showLoading(future: () => _(), debugSource: debugSource)
+        : await _();
 
     AnalyticsService.instance.logSignInWithGoogle();
-
     notifyListeners();
   }
 
@@ -150,7 +168,6 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     await source.loadLatestBackup();
 
     AnalyticsService.instance.logDeleteCloudFile(cloudFile: file);
-
     notifyListeners();
   }
 
@@ -167,10 +184,7 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
       future: () => RestoreBackupService.instance.forceRestore(backup: backup),
     );
 
-    AnalyticsService.instance.logForceRestoreBackup(
-      backupFileInfo: backup.fileInfo,
-    );
-
+    AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: backup.fileInfo);
     await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');
 
     if (!context.mounted) return;

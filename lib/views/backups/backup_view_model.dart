@@ -91,11 +91,14 @@ class BackupViewModel extends BaseViewModel {
   }
 
   Future<void> signOut(BuildContext context) async {
-    await context.read<BackupProvider>().signOut();
+    await context
+        .read<BackupProvider>()
+        .signOut(context: context, showLoading: true, debugSource: '$runtimeType#signOut');
+  }
 
-    if (!context.mounted) return;
-    if (context.read<BackupProvider>().source.isSignedIn == true) return;
-
-    Navigator.maybePop(context);
+  Future<void> signIn(BuildContext context) async {
+    await context
+        .read<BackupProvider>()
+        .signIn(context: context, showLoading: true, debugSource: '$runtimeType#signIn');
   }
 }
