@@ -6,7 +6,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
-class TagBox extends BaseBox<TagObjectBox, TagDbModel> {
+class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   String get tableName => "tags";
 

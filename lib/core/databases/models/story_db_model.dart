@@ -3,7 +3,7 @@
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:storypad/core/databases/adapters/objectbox/story_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/services/story_db_constructor_service.dart';
@@ -23,7 +23,7 @@ List<String>? tagsFromJson(dynamic tags) {
 @CopyWith()
 @JsonSerializable()
 class StoryDbModel extends BaseDbModel {
-  static final StoryBox db = StoryBox();
+  static final StoriesBox db = StoriesBox();
 
   @override
   final int id;

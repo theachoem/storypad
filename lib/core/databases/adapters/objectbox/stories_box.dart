@@ -7,7 +7,7 @@ import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
-class StoryBox extends BaseBox<StoryObjectBox, StoryDbModel> {
+class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   @override
   String get tableName => "stories";
 
