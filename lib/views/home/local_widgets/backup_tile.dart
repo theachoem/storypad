@@ -116,7 +116,7 @@ class _SignedInTile extends StatelessWidget {
       );
       subtitle = Text(DateFormatService.yMEd_jmNullable(provider.lastSyncedAt) ?? '...');
     } else if (provider.lastDbUpdatedAt != null) {
-      String? deviceModel = provider.source.syncedFile?.getFileInfo()?.device.model;
+      String? deviceModel = provider.syncedFile?.getFileInfo()?.device.model;
 
       String fallbackMessage = [
         if (deviceModel != null) deviceModel,

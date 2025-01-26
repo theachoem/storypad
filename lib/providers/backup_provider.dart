@@ -17,7 +17,10 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
 
   DateTime? _lastDbUpdatedAt;
   DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
-  DateTime? get lastSyncedAt => source.lastSyncedAt;
+
+  CloudFileObject? _syncedFile;
+  CloudFileObject? get syncedFile => _syncedFile;
+  DateTime? get lastSyncedAt => _syncedFile?.getFileInfo()?.createdAt;
 
   int? _storyCount;
   bool get storyEmpty => _storyCount == 0;
@@ -31,12 +34,11 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
     notifyListeners();
   }
 
-  bool canBackup() => !storyEmpty && _lastDbUpdatedAt != null && _lastDbUpdatedAt != source.lastSyncedAt;
+  bool canBackup() => !storyEmpty && _lastDbUpdatedAt != null && _lastDbUpdatedAt != lastSyncedAt;
 
-  void _databaseListener() async {
+  Future<void> _databaseListener() async {
     debugPrint('BackupProvider#_databaseListener');
-    _lastDbUpdatedAt = await _getLastDbUpdatedAt();
-    _storyCount = await StoryDbModel.db.count();
+    await _loadLocalData();
     notifyListeners();
   }
 
@@ -48,13 +50,26 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   }
 
   Future<void> load() async {
-    _lastDbUpdatedAt = await _getLastDbUpdatedAt();
-    _storyCount = await StoryDbModel.db.count();
+    await _loadLocalData();
 
     await source.authenticate();
-    await source.loadLatestBackup();
+    await _loadLatestSyncedFile();
 
     notifyListeners();
+  }
+
+  Future<void> _loadLocalData() async {
+    _lastDbUpdatedAt = await _getLastDbUpdatedAt();
+    _storyCount = await StoryDbModel.db.count();
+  }
+
+  Future<void> _loadLatestSyncedFile() async {
+    if (source.isSignedIn == null) return;
+    if (source.isSignedIn == true) {
+      _syncedFile = await source.getLastestBackupFile();
+    } else {
+      _syncedFile = null;
+    }
   }
 
   // Synchronization flow for multiple devices:
@@ -82,29 +97,28 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   }
 
   Future<void> _syncBackupAcrossDevices() async {
-    await source.loadLatestBackup();
+    await _loadLatestSyncedFile();
+    notifyListeners();
 
-    CloudFileObject? previousSyncedFile = source.syncedFile;
-    if (previousSyncedFile != null && source.lastSyncedAt != _lastDbUpdatedAt) {
-      setSyncing(true);
-
-      BackupObject? backup = await source.getBackup(source.syncedFile!);
+    if (_syncedFile != null && lastSyncedAt != _lastDbUpdatedAt) {
+      BackupObject? backup = await source.getBackup(_syncedFile!);
       if (backup != null) {
         debugPrint('🚧 $runtimeType#_syncBackupAcrossDevices -> restoreOnlyNewData');
         await RestoreBackupService.instance.restoreOnlyNewData(backup: backup);
+        await _loadLocalData();
       }
     }
 
     if (canBackup()) {
-      setSyncing(true);
+      final result = await source.backup(lastDbUpdatedAt: lastDbUpdatedAt!);
+      if (result == null) return;
 
-      await source.backup(lastDbUpdatedAt: lastDbUpdatedAt!);
-      await source.loadLatestBackup();
+      _syncedFile = result;
+      notifyListeners();
 
       // delete previous backup file if from same device ID.
-      if (previousSyncedFile != null &&
-          previousSyncedFile.getFileInfo()?.device.id == source.syncedFile?.getFileInfo()?.device.id) {
-        queueDeleteBackupByCloudFileId(previousSyncedFile.id);
+      if (_syncedFile != null && _syncedFile!.getFileInfo()?.device.id == _syncedFile!.getFileInfo()?.device.id) {
+        queueDeleteBackupByCloudFileId(_syncedFile!.id);
       }
     }
   }
@@ -134,7 +148,7 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   }) async {
     Future<void> _() async {
       await source.signOut();
-      await source.loadLatestBackup();
+      await _loadLatestSyncedFile();
     }
 
     showLoading
@@ -152,7 +166,7 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   }) async {
     Future<void> _() async {
       await source.signIn();
-      await source.loadLatestBackup();
+      await _loadLatestSyncedFile();
     }
 
     showLoading
@@ -165,15 +179,16 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
 
   Future<void> deleteCloudFile(CloudFileObject file) async {
     await source.deleteCloudFile(file.id);
-    await source.loadLatestBackup();
+    await _loadLatestSyncedFile();
 
     AnalyticsService.instance.logDeleteCloudFile(cloudFile: file);
     notifyListeners();
   }
 
   Future<void> recheck() async {
-    _lastDbUpdatedAt = await _getLastDbUpdatedAt();
-    await source.loadLatestBackup();
+    await _loadLocalData();
+    await _loadLatestSyncedFile();
+
     debugPrint('$runtimeType#recheck synced: $synced');
     notifyListeners();
   }

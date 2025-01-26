@@ -13,7 +13,7 @@ class RestoreBackupService {
   static final RestoreBackupService instance = RestoreBackupService._();
 
   void addListener(
-    void Function() callback,
+    Future<void> Function() callback,
   ) {
     _listeners.add(callback);
   }
