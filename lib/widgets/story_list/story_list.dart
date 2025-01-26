@@ -16,12 +16,14 @@ class StoryList extends StatelessWidget {
   final void Function(StoryDbModel) onChanged;
   final void Function() onDeleted;
   final bool viewOnly;
+  final Future<void> Function()? onRefresh;
 
   const StoryList({
     super.key,
     this.stories,
     required this.onChanged,
     required this.onDeleted,
+    this.onRefresh,
     this.viewOnly = false,
   });
 
@@ -49,7 +51,14 @@ class StoryList extends StatelessWidget {
     return Stack(
       children: [
         const StoryListTimelineVerticleDivider(),
-        buildList(context),
+        if (onRefresh != null) ...[
+          RefreshIndicator.adaptive(
+            onRefresh: onRefresh!,
+            child: buildList(context),
+          )
+        ] else ...[
+          buildList(context),
+        ]
       ],
     );
   }

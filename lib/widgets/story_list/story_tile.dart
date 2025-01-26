@@ -56,6 +56,19 @@ class StoryTile extends StatelessWidget {
 
       if (!context.mounted) return;
 
+      Future<void> undoHardDelete() async {
+        StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+        if (updatedStory == null) return;
+
+        /// In all case, delete button only show inside [StoryListWithQuery],
+        /// So after undo, we should reload the list.
+        if (listContext.mounted) StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+
+        AnalyticsService.instance.logUndoHardDeleteStory(
+          story: updatedStory,
+        );
+      }
+
       MessengerService.of(context).showSnackBar(
         'Deleted successfully',
         showAction: true,
@@ -63,18 +76,7 @@ class StoryTile extends StatelessWidget {
           return SnackBarAction(
             label: 'Undo',
             textColor: foreground,
-            onPressed: () async {
-              StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-              if (updatedStory == null) return;
-
-              /// In all case, delete button only show inside [StoryListWithQuery],
-              /// So after undo, we should reload the list.
-              if (listContext.mounted) StoryListWithQuery.of(listContext)?.load();
-
-              AnalyticsService.instance.logUndoHardDeleteStory(
-                story: updatedStory,
-              );
-            },
+            onPressed: () async => undoHardDelete(),
           );
         },
       );
