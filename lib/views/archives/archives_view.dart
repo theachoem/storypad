@@ -1,5 +1,6 @@
 import 'package:storypad/core/base/view_model_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';

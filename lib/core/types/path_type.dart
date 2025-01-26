@@ -8,4 +8,8 @@ enum PathType {
   String get localized {
     return name.capitalize;
   }
+
+  static PathType? fromString(String name) {
+    return values.where((e) => e.name == name).firstOrNull;
+  }
 }

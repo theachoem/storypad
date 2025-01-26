@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 import 'package:storypad/widgets/story_list/story_list_timeline_verticle_divider.dart';
+import 'package:storypad/widgets/story_list/story_list_with_query.dart';
 import 'package:storypad/widgets/story_list/story_listener_builder.dart';
 import 'package:storypad/widgets/story_list/story_tile_list_item.dart';
 
@@ -25,16 +26,12 @@ class StoryList extends StatelessWidget {
   });
 
   static StoryListWithQuery withQuery({
-    int? year,
-    int? tagId,
-    List<PathType>? types,
+    SearchFilterObject? filter,
     String? query,
     bool viewOnly = false,
   }) {
     return StoryListWithQuery(
-      year: year,
-      tagId: tagId,
-      types: types,
+      filter: filter,
       query: query,
       viewOnly: viewOnly,
     );
@@ -88,75 +85,6 @@ class StoryList extends StatelessWidget {
             );
           },
         );
-      },
-    );
-  }
-}
-
-class StoryListWithQuery extends StatefulWidget {
-  const StoryListWithQuery({
-    super.key,
-    this.year,
-    this.tagId,
-    this.types,
-    this.query,
-    this.viewOnly = false,
-  });
-
-  final int? year;
-  final int? tagId;
-  final List<PathType>? types;
-  final String? query;
-  final bool viewOnly;
-
-  static StoryListWithQueryState? of(BuildContext context) {
-    return context.findAncestorStateOfType<StoryListWithQueryState>();
-  }
-
-  @override
-  State<StoryListWithQuery> createState() => StoryListWithQueryState();
-}
-
-class StoryListWithQueryState extends State<StoryListWithQuery> {
-  CollectionDbModel<StoryDbModel>? stories;
-
-  Future<void> load() async {
-    stories = await StoryDbModel.db.where(filters: {
-      'year': widget.year,
-      'tag': widget.tagId,
-      'types': widget.types?.map((t) => t.name).toList(),
-      'query': widget.query,
-    });
-
-    if (mounted) setState(() {});
-  }
-
-  @override
-  void didUpdateWidget(covariant StoryListWithQuery oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    load();
-  }
-
-  @override
-  void initState() {
-    load();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StoryList(
-      stories: stories,
-      viewOnly: widget.viewOnly,
-      onDeleted: () => load(),
-      onChanged: (updatedStory) {
-        if (widget.types?.contains(updatedStory.type) == true) {
-          stories = stories?.replaceElement(updatedStory);
-        } else {
-          stories = stories?.removeElement(updatedStory);
-        }
-        setState(() {});
       },
     );
   }

@@ -14,23 +14,26 @@ class _SearchAdaptive extends StatelessWidget {
           style: Theme.of(context).appBarTheme.titleTextStyle,
           keyboardType: TextInputType.text,
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: "eg. My home",
             border: InputBorder.none,
           ),
           onChanged: (value) => viewModel.search(value),
           onSubmitted: (value) => viewModel.search(value),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.tune),
+            onPressed: () => viewModel.goToFilterPage(context),
+          ),
+        ],
       ),
       body: ValueListenableBuilder<String>(
         valueListenable: viewModel.queryNotifier,
         builder: (context, query, child) {
           return StoryList.withQuery(
             query: query,
-            types: const [
-              PathType.docs,
-              PathType.archives,
-            ],
+            filter: viewModel.filter,
           );
         },
       ),

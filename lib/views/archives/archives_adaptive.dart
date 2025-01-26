@@ -42,9 +42,11 @@ class _ArchivesAdaptive extends StatelessWidget {
       ),
       body: StoryList.withQuery(
         viewOnly: true,
-        types: [
-          viewModel.type,
-        ],
+        filter: SearchFilterObject(
+          years: {},
+          types: {viewModel.type},
+          tagId: null,
+        ),
       ),
     );
   }
