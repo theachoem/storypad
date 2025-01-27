@@ -16,7 +16,9 @@ class _HomeAppBarMessage extends StatelessWidget {
         String? title;
         Widget? trailing;
 
-        bool showWelcomeMessage = provider.lastDbUpdatedAt == null || provider.lastSyncedAt == null || provider.synced;
+        bool showWelcomeMessage = provider.source.isSignedIn == true && provider.lastDbUpdatedAt == null ||
+            provider.lastSyncedAt == null ||
+            provider.synced;
 
         if (provider.syncing) {
           title = "We're syncing your data ";
