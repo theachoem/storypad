@@ -49,6 +49,7 @@ class _EditStoryAdaptive extends StatelessWidget {
             showToolbarOnTop: viewModel.showToolbarOnTop,
             showToolbarOnBottom: viewModel.showToolbarOnBottom,
             toggleToolbarPosition: viewModel.toggleToolbarPosition,
+            draftContent: viewModel.draftContent,
           );
         },
       );

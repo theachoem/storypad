@@ -4,6 +4,7 @@ class _ShowChangeAdaptive extends StatelessWidget {
   const _ShowChangeAdaptive(this.viewModel);
 
   final ShowChangeViewModel viewModel;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +27,7 @@ class _ShowChangeAdaptive extends StatelessWidget {
             autoFocus: false,
             expands: true,
             embedBuilders: [
-              ImageBlockEmbed(),
+              ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.params.content)),
               DateBlockEmbed(),
             ],
             unknownEmbedBuilder: UnknownEmbedBuilder(),

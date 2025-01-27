@@ -52,6 +52,7 @@ class StoryContentDbModel extends BaseDbModel with ComparableConcern {
   String? get displayShortBody {
     String trimBody(String body) {
       body = body.trim();
+
       int length = body.length;
       int end = body.length;
 
@@ -62,7 +63,7 @@ class StoryContentDbModel extends BaseDbModel with ComparableConcern {
         }
       }
 
-      return length > end ? body.substring(0, end) : body;
+      return length > end ? "${body.substring(0, end)}..." : body;
     }
 
     String? getDisplayBodyFor(StoryContentDbModel content) {
@@ -70,7 +71,8 @@ class StoryContentDbModel extends BaseDbModel with ComparableConcern {
 
       String body = content.plainText!.trim();
       String extract = body.length > 200 ? body.substring(0, 200) : body;
-      return body.length > 200 ? "${trimBody(extract)}..." : extract;
+
+      return trimBody(extract);
     }
 
     return getDisplayBodyFor(this);

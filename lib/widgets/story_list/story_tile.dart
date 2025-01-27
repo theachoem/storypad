@@ -1,6 +1,8 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -11,10 +13,16 @@ import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/widgets/sp_gradient_loading.dart';
+import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/story_list/story_list_with_query.dart';
+
+part 'story_tile_images.dart';
+part 'story_tile_monogram.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;
@@ -293,7 +301,11 @@ class StoryTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 16.0,
                       children: [
-                        buildMonogram(context),
+                        _StoryTileMonogram(
+                          showMonogram: showMonogram,
+                          monogramSize: monogramSize,
+                          story: story,
+                        ),
                         buildContents(hasTitle, content, context, hasBody),
                       ],
                     ),
@@ -358,6 +370,8 @@ class StoryTile extends StatelessWidget {
   }
 
   Widget buildContents(bool hasTitle, StoryContentDbModel? content, BuildContext context, bool hasBody) {
+    final images = content != null ? QuillService.imagesFromContent(content) : null;
+
     return Expanded(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (hasTitle)
@@ -382,7 +396,12 @@ class StoryTile extends StatelessWidget {
                   ),
             child: SpMarkdownBody(body: content!.displayShortBody!),
           ),
-        if (story.inArchives)
+        if (images?.isNotEmpty == true) ...[
+          SizedBox(height: 12),
+          _StoryTileImages(images: images!),
+          if (story.inArchives) SizedBox(height: 4),
+        ],
+        if (story.inArchives) ...[
           Container(
             margin: const EdgeInsets.only(top: 8.0),
             child: RichText(
@@ -396,6 +415,7 @@ class StoryTile extends StatelessWidget {
               ),
             ),
           ),
+        ]
         // if (story.inBins) buildAutoDeleteMessage(context)
       ]),
     );
@@ -432,54 +452,6 @@ class StoryTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildMonogram(BuildContext context) {
-    if (!showMonogram) {
-      return Container(
-        width: monogramSize,
-        margin: const EdgeInsets.only(top: 9.0, left: 0.5),
-        alignment: Alignment.center,
-        child: Container(
-          width: 3,
-          height: 3,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: ColorScheme.of(context).onSurface,
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      spacing: 4.0,
-      children: [
-        Container(
-          width: monogramSize,
-          color: ColorScheme.of(context).surface.withValues(),
-          child: Text(
-            DateFormatService.E(story.displayPathDate),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: TextTheme.of(context).labelMedium,
-          ),
-        ),
-        Container(
-          width: monogramSize,
-          height: monogramSize,
-          decoration: BoxDecoration(
-            color: ColorFromDayService(context: context).get(story.displayPathDate.weekday),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            story.displayPathDate.day.toString(),
-            style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
-          ),
-        ),
-      ],
     );
   }
 

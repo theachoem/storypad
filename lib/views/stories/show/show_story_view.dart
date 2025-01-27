@@ -2,6 +2,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/base/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/stories/local_widgets/story_title.dart';
 import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
