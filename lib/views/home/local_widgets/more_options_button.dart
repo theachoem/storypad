@@ -77,16 +77,19 @@ class _MoreOptionsButton extends StatelessWidget {
           await inAppReview.openStoreListing();
         }
 
-        if (await inAppReview.isAvailable()) {
-          try {
-            await inAppReview.requestReview();
-          } catch (e) {
-            debugPrint(e.toString());
-            await openStore();
-          }
-        } else {
-          await openStore();
-        }
+        await openStore();
+
+        // This is not reliable.
+        // if (await inAppReview.isAvailable()) {
+        //   try {
+        //     await inAppReview.requestReview();
+        //   } catch (e) {
+        //     debugPrint(e.toString());
+        //     await openStore();
+        //   }
+        // } else {
+        //   await openStore();
+        // }
       },
     );
   }
