@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:storypad/core/services/quill_service.dart';
 
 class SpImageViewerProvider {
   final ImageProvider provider;
@@ -35,12 +37,28 @@ class SpImagesViewer extends StatefulWidget {
     required List<String> images,
     required int initialIndex,
   }) {
+    List<(String, ImageProvider)> providers = [];
+
+    for (String imageUrl in images) {
+      ImageProvider? imageProvider;
+      if (!QuillService.urlOrExistFile(imageUrl)) continue;
+
+      if (imageUrl.startsWith('http')) {
+        imageProvider = CachedNetworkImageProvider(imageUrl);
+      } else if (File(imageUrl).existsSync()) {
+        imageProvider = FileImage(File(imageUrl));
+      }
+
+      if (imageProvider == null) continue;
+      providers.add((imageUrl, imageProvider));
+    }
+
     return SpImagesViewer(
-      initialIndex: initialIndex,
-      images: images.map((image) {
+      initialIndex: providers.length != images.length ? 0 : initialIndex,
+      images: providers.map((provider) {
         return SpImageViewerProvider(
-          provider: CachedNetworkImageProvider(image),
-          tag: image,
+          provider: provider.$2,
+          tag: provider.$1,
           alt: null,
         );
       }).toList(),

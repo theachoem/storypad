@@ -37,7 +37,7 @@ class _ShowStoryAdaptive extends StatelessWidget {
               autoFocus: false,
               expands: true,
               embedBuilders: [
-                ImageBlockEmbed(),
+                ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
                 DateBlockEmbed(),
               ],
               unknownEmbedBuilder: UnknownEmbedBuilder(),

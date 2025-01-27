@@ -5,12 +5,14 @@ class _Editor extends StatelessWidget {
   final bool showToolbarOnBottom;
   final bool showToolbarOnTop;
   final VoidCallback toggleToolbarPosition;
+  final StoryContentDbModel? draftContent;
 
   const _Editor({
     required this.controller,
     required this.showToolbarOnTop,
     required this.showToolbarOnBottom,
     required this.toggleToolbarPosition,
+    required this.draftContent,
   });
 
   @override
@@ -64,7 +66,7 @@ class _Editor extends StatelessWidget {
         enableScribble: true,
         showCursor: true,
         embedBuilders: [
-          ImageBlockEmbed(),
+          ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(draftContent)),
           DateBlockEmbed(),
         ],
         unknownEmbedBuilder: UnknownEmbedBuilder(),

@@ -1,6 +1,15 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
 
 class QuillService {
+  static bool isImageBase64(String imageUrl) {
+    if (imageUrl.startsWith('http')) return false;
+    return RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(imageUrl);
+  }
+
   static String toPlainText(Root root) {
     String plainText = root.children.map((Node e) {
       final atts = e.style.attributes;
@@ -51,5 +60,32 @@ class QuillService {
     // replace all image object to empty
     plainText = plainText.replaceAll("\uFFFC", "");
     return plainText;
+  }
+
+  static bool urlOrExistFile(String imageUrl) =>
+      isImageBase64(imageUrl) || imageUrl.startsWith('http') || File(imageUrl).existsSync();
+
+  static List<String> imagesFromContent(StoryContentDbModel? content) {
+    List<String> images = [];
+
+    try {
+      for (dynamic e in content?.pages?.expand((e) => e) ?? []) {
+        final insert = e['insert'];
+        if (insert is Map) {
+          for (MapEntry<dynamic, dynamic> e in insert.entries) {
+            if (e.value != null && e.value.isNotEmpty) {
+              String imageUrl = e.value;
+              if (urlOrExistFile(imageUrl)) {
+                images.add(e.value);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) rethrow;
+    }
+
+    return images;
   }
 }

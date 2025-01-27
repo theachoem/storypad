@@ -1,18 +1,25 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/widgets/custom_embed/unsupported.dart';
+import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class ImageBlockEmbed extends quill.EmbedBuilder {
+  final List<String> Function() fetchAllImages;
+
+  ImageBlockEmbed({
+    required this.fetchAllImages,
+  });
+
   @override
   String get key => quill.BlockEmbed.imageType;
 
@@ -22,6 +29,7 @@ class ImageBlockEmbed extends quill.EmbedBuilder {
       controller: embedContext.controller,
       readOnly: embedContext.readOnly,
       node: embedContext.node,
+      fetchAllImages: fetchAllImages,
     );
   }
 }
@@ -31,11 +39,13 @@ class _QuillImageRenderer extends StatelessWidget {
     required this.node,
     required this.controller,
     required this.readOnly,
+    required this.fetchAllImages,
   });
 
   final quill.Embed node;
   final quill.QuillController controller;
   final bool readOnly;
+  final List<String> Function() fetchAllImages;
 
   String standardizeImageUrl(String url) {
     if (url.contains('base64')) {
@@ -48,76 +58,91 @@ class _QuillImageRenderer extends StatelessWidget {
   Widget build(BuildContext context) {
     String imageUrl = standardizeImageUrl(node.value.data);
 
-    return Wrap(
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onDoubleTap: () => viewImage(context, imageUrl),
-          onTap: () => readOnly ? onTap(context, imageUrl) : null,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Hero(
-              tag: imageUrl,
-              child: buildImageByUrl(
-                imageUrl,
-                width: double.infinity,
-                context: context,
+    return LayoutBuilder(builder: (context, constraints) {
+      double width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+      double height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.textScalerOf(context).scale(node.documentOffset == 0 ? 4 : 12),
+              bottom: MediaQuery.textScalerOf(context).scale(12),
+            ),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onDoubleTap: () => viewImage(context, imageUrl),
+              onTap: () => readOnly ? onTap(context, imageUrl) : null,
+              child: Hero(
+                tag: imageUrl,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: buildImageByUrl(
+                    imageUrl,
+                    context: context,
+                    width: width,
+                    height: height,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget buildImageByUrl(
     String imageUrl, {
-    required double? width,
+    required double width,
+    required double height,
     required BuildContext context,
   }) {
-    bool isImageBase64(String imageUrl) {
-      if (imageUrl.startsWith('http')) return false;
-      return RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(imageUrl);
-    }
-
-    if (isImageBase64(imageUrl)) {
+    if (QuillService.isImageBase64(imageUrl)) {
       return Image.memory(
         base64.decode(imageUrl),
         width: width,
-        height: null,
+        height: height,
+        fit: BoxFit.cover,
       );
     } else if (imageUrl.startsWith('http')) {
-      return buildNetworkImage(imageUrl, width);
+      return buildNetworkImage(
+        imageUrl: imageUrl,
+        width: width,
+        height: height,
+      );
     } else if (File(imageUrl).existsSync()) {
       return Image.file(
         File(imageUrl),
         width: width,
-        height: null,
+        height: height,
+        fit: BoxFit.cover,
       );
     } else {
-      return SpTapEffect(
-        onTap: () {},
-        child: const QuillUnsupportedRenderer(message: "Invalid Images Sources"),
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: ColorScheme.of(context).tertiaryContainer),
+        child: const Icon(Icons.error),
       );
     }
   }
 
-  Widget buildNetworkImage(String imageUrl, double? width) {
+  Widget buildNetworkImage({
+    required String imageUrl,
+    required double width,
+    required double height,
+  }) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       width: width,
-      height: null,
-      fit: BoxFit.fitWidth,
+      height: height,
+      fit: BoxFit.cover,
       placeholder: (context, url) {
-        return Container(
+        return SpGradientLoading(
+          height: height,
           width: width,
-          height: 100,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.0),
-            color: ColorScheme.of(context).readOnly.surface3,
-          ),
-          child: const CircularProgressIndicator.adaptive(),
         );
       },
       errorWidget: (context, url, error) {
@@ -126,21 +151,23 @@ class _QuillImageRenderer extends StatelessWidget {
         return QuillUnsupportedRenderer(
           message: driveImage ? "404" : "$error\n:$imageUrl",
           buttonLabel: "Show URL",
-          onPressed: () async {
-            final result = await showOkCancelAlertDialog(
-              context: context,
-              title: "Image Sources",
-              message: url,
-              okLabel: "Copy Link",
-            );
-
-            if (result == OkCancelResult.ok) {
-              Clipboard.setData(ClipboardData(text: url));
-            }
-          },
+          onPressed: () => showSourceCopyAlert(context, url),
         );
       },
     );
+  }
+
+  Future<void> showSourceCopyAlert(BuildContext context, String url) async {
+    final result = await showOkCancelAlertDialog(
+      context: context,
+      title: "Image Sources",
+      message: url,
+      okLabel: "Copy Link",
+    );
+
+    if (result == OkCancelResult.ok) {
+      Clipboard.setData(ClipboardData(text: url));
+    }
   }
 
   Future<void> onTap(BuildContext context, String imageUrl) async {
@@ -191,9 +218,18 @@ class _QuillImageRenderer extends StatelessWidget {
   }
 
   Future<void> viewImage(BuildContext context, String imageUrl) async {
-    SpImagesViewer.fromString(
-      images: [imageUrl],
-      initialIndex: 0,
-    ).show(context);
+    final images = fetchAllImages();
+
+    if (images.contains(imageUrl)) {
+      SpImagesViewer.fromString(
+        images: images,
+        initialIndex: images.indexOf(imageUrl),
+      ).show(context);
+    } else {
+      SpImagesViewer.fromString(
+        images: [imageUrl],
+        initialIndex: 0,
+      ).show(context);
+    }
   }
 }
