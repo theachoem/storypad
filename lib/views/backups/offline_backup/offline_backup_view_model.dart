@@ -69,67 +69,22 @@ class OfflineBackupViewModel extends BaseViewModel {
     );
   }
 
-  // Experience is a bit different for both IOS / Android due to android limitation.
-  //
-  // On IOS, export -> construct backup -> save to application folder -> show success snack bar + share button.
-  // On Android, export -> construct backup -> save to application folder -> show folder to export file -> show success snack bar + share button.
   Future<void> export(BuildContext context) async {
     AnalyticsService.instance.logExportOfflineBackup();
 
     DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
     if (lastDbUpdatedAt == null) return;
 
-    final result = await MessengerService.of(context).showLoading(
+    final file = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#export',
       future: () => _constructBackupAndSaveToApplicationFolder(context, lastDbUpdatedAt),
     );
 
-    if (result == null || !context.mounted) return;
-
-    if (Platform.isIOS) {
-      return _exportIOS(context, result.$1, result.$2);
-    } else if (Platform.isAndroid) {
-      return _exportAndroid(context, result.$1, result.$2);
-    } else {
-      throw UnimplementedError();
-    }
+    if (file == null || !context.mounted) return;
+    Share.shareXFiles([XFile(file.path)]);
   }
 
-  Future<void> _exportIOS(BuildContext context, BackupObject backup, File applicationFolderFile) async {
-    MessengerService.of(context).showSnackBar(
-      "Saved to ${applicationFolderFile.path.replaceAll(kApplicationDirectory.path, "")}",
-      action: (foreground) {
-        return SnackBarAction(
-          label: "Share",
-          textColor: foreground,
-          onPressed: () => Share.shareXFiles([XFile(applicationFolderFile.path)]),
-        );
-      },
-    );
-  }
-
-  Future<void> _exportAndroid(BuildContext context, BackupObject backup, File applicationFolderFile) async {
-    String? filePath = await FilePicker.platform.saveFile(
-      fileName: exportFileName,
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-      bytes: applicationFolderFile.readAsBytesSync(),
-    );
-
-    // TODO: if filePath is existing file, then we don't have permission to write over it. Find way to create new file instead.
-
-    if (filePath != null && context.mounted) {
-      MessengerService.of(context).showSnackBar("Saved to $filePath", action: (foreground) {
-        return SnackBarAction(
-          label: "Share",
-          textColor: foreground,
-          onPressed: () => Share.shareXFiles([XFile(applicationFolderFile.path)]),
-        );
-      });
-    }
-  }
-
-  Future<(BackupObject, File)> _constructBackupAndSaveToApplicationFolder(
+  Future<File> _constructBackupAndSaveToApplicationFolder(
     BuildContext context,
     DateTime lastDbUpdatedAt,
   ) async {
@@ -143,6 +98,6 @@ class OfflineBackupViewModel extends BaseViewModel {
     await file.create(recursive: true);
     await file.writeAsString(jsonEncode(backup.toContents()));
 
-    return (backup, file);
+    return file;
   }
 }

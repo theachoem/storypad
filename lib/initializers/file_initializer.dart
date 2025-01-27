@@ -7,6 +7,7 @@ late final Directory kApplicationDirectory;
 class FileInitializer {
   static Future<void> call() async {
     kSupportDirectory = await getApplicationSupportDirectory();
-    kApplicationDirectory = await getApplicationDocumentsDirectory();
+    kApplicationDirectory =
+        (Platform.isAndroid ? await getExternalStorageDirectory() : null) ?? await getApplicationDocumentsDirectory();
   }
 }
