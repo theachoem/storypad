@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 class MessengerService {
   final BuildContext context;
@@ -26,7 +27,6 @@ class MessengerService {
     bool success = true,
     SnackBarAction Function(Color? foreground)? action,
     bool showAction = true,
-    SnackBarBehavior floating = SnackBarBehavior.fixed,
     Duration duration = const Duration(milliseconds: 4000),
   }) {
     clearSnackBars();
@@ -34,6 +34,9 @@ class MessengerService {
     Color? foreground = success ? null : Theme.of(context).colorScheme.onError;
     Color? background = success ? null : Theme.of(context).colorScheme.error;
     double? width;
+
+    bool nestedNavigation = SpNestedNavigation.maybeOf(context) != null;
+    SnackBarBehavior floating = nestedNavigation ? SnackBarBehavior.fixed : SnackBarBehavior.floating;
 
     if (floating == SnackBarBehavior.fixed) {
       width = null;
