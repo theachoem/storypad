@@ -39,20 +39,21 @@ class OfflineBackupViewModel extends BaseViewModel {
     );
 
     if (!context.mounted) return;
+
     final file = result?.files.firstOrNull;
+    if (file == null) return;
+
     final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#import',
       future: () => Isolate.run(() async {
-        final jsonString = await file?.xFile.readAsString();
-        if (jsonString != null) {
-          Map<String, dynamic>? contents;
+        final jsonString = await file.xFile.readAsString();
+        Map<String, dynamic>? contents;
 
-          try {
-            contents = jsonDecode(jsonString);
-            return BackupObject.fromContents(contents!);
-          } catch (e) {
-            return null;
-          }
+        try {
+          contents = jsonDecode(jsonString);
+          return BackupObject.fromContents(contents!);
+        } catch (e) {
+          return null;
         }
       }),
     );
