@@ -75,12 +75,17 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     notifyListeners();
   }
 
+  Future<bool> get hasDataWritten =>
+      StoryHelper.hasDataWrittenFromController(draftContent: draftContent!, quillControllers: quillControllers);
+
   Future<bool> setTags(List<int> tags) async {
     story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
     notifyListeners();
 
-    await StoryDbModel.db.set(story!);
-    lastSavedAtNotifier.value = story?.updatedAt;
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
 
     return true;
   }
@@ -89,12 +94,14 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
     notifyListeners();
 
-    await StoryDbModel.db.set(story!);
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,
     );
-
-    lastSavedAtNotifier.value = story?.updatedAt;
   }
 
   void changeTitle(BuildContext context) async {

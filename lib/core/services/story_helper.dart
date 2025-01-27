@@ -118,6 +118,14 @@ class StoryHelper {
     return pages.map((page) => _buildDocument(page)).toList();
   }
 
+  static Future<bool> hasDataWrittenFromController({
+    required StoryContentDbModel draftContent,
+    required Map<int, QuillController> quillControllers,
+  }) async {
+    final content = await StoryHelper.buildContent(draftContent, quillControllers);
+    return hasDataWritten(content);
+  }
+
   static Future<bool> hasChanges({
     required StoryContentDbModel draftContent,
     required Map<int, QuillController> quillControllers,
