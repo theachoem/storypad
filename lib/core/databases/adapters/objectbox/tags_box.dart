@@ -29,7 +29,7 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     Map<String, dynamic>? options,
   }) async {
     CollectionDbModel<TagDbModel>? result = await super.where(filters: filters);
-    List<TagDbModel> items = [...result?.items ?? []]..sort((a, b) => a.index.compareTo(b.index));
+    List<TagDbModel> items = result?.items ?? [];
 
     for (int i = 0; i < items.length; i++) {
       if (items[i].starred == null) {
@@ -47,8 +47,14 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   QueryBuilder<TagObjectBox> buildQuery({
     Map<String, dynamic>? filters,
   }) {
+    int? order = filters?["order"];
     Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull().and(TagObjectBox_.permanentlyDeletedAt.isNull());
-    return box.query(conditions);
+
+    QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
+
+    queryBuilder.order(TagObjectBox_.index, flags: order ?? 0);
+
+    return queryBuilder;
   }
 
   @override
@@ -83,7 +89,7 @@ List<TagDbModel> _objectsToModels(Map<String, dynamic> options) {
 }
 
 List<TagObjectBox> _modelsToObjects(Map<String, dynamic> options) {
-  List<TagObjectBox> models = options['models'];
+  List<TagDbModel> models = options['models'];
   return models.map((model) => _modelToObject({'model': model})).toList();
 }
 
@@ -108,6 +114,7 @@ TagDbModel _objectToModel(Map<String, dynamic> options) {
   return TagDbModel(
     id: object.id,
     version: object.version,
+    index: object.index,
     title: object.title,
     starred: object.starred,
     emoji: object.emoji,

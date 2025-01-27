@@ -28,13 +28,16 @@ class _TagsAdaptive extends StatelessWidget {
       return buildEmptyBody(context);
     }
 
-    return ListView.builder(
+    return ReorderableListView.builder(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       itemCount: viewModel.tags?.items.length ?? 0,
+      onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         final tag = viewModel.tags!.items[index];
-        final storyCount = tag.storiesCount ?? 0;
+        final storyCount = viewModel.getStoriesCount(tag);
 
         return Theme(
+          key: ValueKey(tag.id),
           // Remove theme wrapper here when this is fixed:
           // https://github.com/letsar/flutter_slidable/issues/512
           data: Theme.of(context).copyWith(
@@ -65,6 +68,7 @@ class _TagsAdaptive extends StatelessWidget {
               ],
             ),
             child: ListTile(
+              leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
               subtitle: Text(storyCount > 1 ? "$storyCount stories" : "$storyCount story"),
               onTap: () => viewModel.viewTag(context, tag),

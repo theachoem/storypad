@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
@@ -439,6 +440,15 @@ class AnalyticsService {
     return FirebaseAnalytics.instance.logEvent(
       name: sanitizeEventName('add_tag'),
       parameters: parameters,
+    );
+  }
+
+  Future<void> logReorderTags({
+    required CollectionDbModel<TagDbModel> tags,
+  }) {
+    debug('logReorderTags');
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('reorder_tags'),
     );
   }
 
