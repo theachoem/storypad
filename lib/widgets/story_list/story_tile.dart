@@ -18,15 +18,18 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/story_list/story_list_with_query.dart';
 
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
 part 'story_tile_tags.dart';
+part 'story_tile_favorite_button.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;
@@ -444,21 +447,9 @@ class StoryTile extends StatelessWidget {
       right: AppTheme.getDirectionValue(context, null, 0.0),
       child: Container(
         transform: Matrix4.identity()..translate(x, y),
-        child: IconButton(
-          tooltip: 'Star',
-          padding: const EdgeInsets.all(16.0),
-          isSelected: story.starred,
-          iconSize: 18.0,
-          onPressed: viewOnly ? null : () => toggleStarred(),
-          selectedIcon: Icon(
-            Icons.favorite,
-            color: ColorScheme.of(context).error,
-          ),
-          icon: Icon(
-            Icons.favorite_outline,
-            color: Theme.of(context).dividerColor,
-            applyTextScaling: true,
-          ),
+        child: _StoryTileFavoriteButton(
+          story: story,
+          toggleStarred: viewOnly ? null : toggleStarred,
         ),
       ),
     );
