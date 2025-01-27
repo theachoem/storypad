@@ -13,7 +13,7 @@ class SettingsRoute extends BaseRoute {
   Widget buildPage(BuildContext context) => SettingsView(params: this);
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 }
 
 class SettingsView extends StatelessWidget {

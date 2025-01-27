@@ -21,7 +21,7 @@ class FontsRoute extends BaseRoute {
   Widget buildPage(BuildContext context) => FontsView(params: this);
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 }
 
 class FontsView extends StatelessWidget {

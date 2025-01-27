@@ -18,7 +18,7 @@ class EditTagRoute extends BaseRoute {
   final List<TagDbModel> allTags;
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 
   @override
   Map<String, String?> get analyticsParameters {

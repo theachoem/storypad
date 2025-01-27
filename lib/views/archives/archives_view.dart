@@ -16,7 +16,7 @@ class ArchivesRoute extends BaseRoute {
   Widget buildPage(BuildContext context) => ArchivesView(params: this);
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 }
 
 class ArchivesView extends StatelessWidget {

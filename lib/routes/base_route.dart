@@ -3,7 +3,7 @@ import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 abstract class BaseRoute {
-  bool get nestedRoute => false;
+  bool get preferredNestedRoute => false;
 
   // Only basic user unrelated info. Most screen should return empty.
   Map<String, String?>? get analyticsParameters => null;
@@ -19,8 +19,9 @@ abstract class BaseRoute {
       analyticsParameters: analyticsParameters,
     );
 
-    if (nestedRoute) {
-      return SpNestedNavigation.maybeOf(context)!.push(buildPage(context));
+    final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
+    if (router != null) {
+      return router.push(buildPage(context));
     } else {
       return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
         return buildPage(context);

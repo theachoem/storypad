@@ -10,6 +10,14 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   String get tableName => "tags";
 
+  CollectionDbModel<TagDbModel>? initialTags;
+
+  @override
+  Future<void> initilize() async {
+    await super.initilize();
+    initialTags = await where();
+  }
+
   @override
   Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
     Condition<TagObjectBox>? conditions = TagObjectBox_.id.notNull();

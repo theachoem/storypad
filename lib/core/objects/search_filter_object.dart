@@ -6,10 +6,13 @@ class SearchFilterObject {
   Set<PathType> types;
   int? tagId;
 
+  final bool filterTagModifiable;
+
   SearchFilterObject({
     required this.years,
     required this.types,
     required this.tagId,
+    this.filterTagModifiable = true,
   });
 
   Map<String, dynamic>? toDatabaseFilter({

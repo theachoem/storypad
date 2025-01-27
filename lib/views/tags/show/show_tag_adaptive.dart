@@ -8,14 +8,18 @@ class _ShowTagAdaptive extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(viewModel.tag.title)),
+      appBar: AppBar(
+        title: Text(viewModel.tag.title),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.tune),
+            onPressed: () => viewModel.goToFilterPage(context),
+          ),
+        ],
+      ),
       body: StoryList.withQuery(
         viewOnly: viewModel.params.storyViewOnly,
-        filter: SearchFilterObject(
-          years: {},
-          types: {PathType.archives, PathType.docs},
-          tagId: viewModel.tag.id,
-        ),
+        filter: viewModel.filter,
       ),
     );
   }

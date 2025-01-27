@@ -44,7 +44,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<PathType, int> storyCountsByType = {};
 
     for (PathType type in PathType.values) {
-      storyCountsByType[type] = buildQuery(filters: {'type': type.name}).build().count();
+      storyCountsByType[type] = buildQuery(filters: {
+        ...filters ?? {},
+        'type': type.name,
+      }).build().count();
     }
 
     return storyCountsByType;

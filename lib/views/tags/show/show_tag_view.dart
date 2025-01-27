@@ -1,8 +1,6 @@
 import 'package:storypad/core/base/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/widgets/story_list/story_list.dart';
 
@@ -20,7 +18,7 @@ class ShowTagRoute extends BaseRoute {
   final bool storyViewOnly;
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 
   @override
   Widget buildPage(BuildContext context) => ShowTagView(params: this);

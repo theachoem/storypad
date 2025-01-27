@@ -7,34 +7,39 @@ class _TagsAdaptive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<TagsProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tags"),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => viewModel.addTag(context),
+            onPressed: () => provider.addTag(context),
           )
         ],
       ),
-      body: buildBody(context),
+      body: buildBody(
+        context,
+        provider,
+      ),
     );
   }
 
-  Widget buildBody(BuildContext context) {
-    if (viewModel.tags?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+  Widget buildBody(BuildContext context, TagsProvider provider) {
+    if (provider.tags?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
 
-    if (viewModel.tags?.items.isEmpty == true) {
+    if (provider.tags?.items.isEmpty == true) {
       return buildEmptyBody(context);
     }
 
     return ReorderableListView.builder(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      itemCount: viewModel.tags?.items.length ?? 0,
-      onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
+      itemCount: provider.tags?.items.length ?? 0,
+      onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
-        final tag = viewModel.tags!.items[index];
-        final storyCount = viewModel.getStoriesCount(tag);
+        final tag = provider.tags!.items[index];
+        final storyCount = provider.getStoriesCount(tag);
 
         return Theme(
           key: ValueKey(tag.id),
@@ -52,14 +57,14 @@ class _TagsAdaptive extends StatelessWidget {
               motion: const DrawerMotion(),
               children: [
                 SlidableAction(
-                  onPressed: (context) => viewModel.deleteTag(context, tag),
+                  onPressed: (context) => provider.deleteTag(context, tag),
                   backgroundColor: ColorScheme.of(context).error,
                   foregroundColor: ColorScheme.of(context).onError,
                   icon: Icons.delete,
                   label: 'Delete',
                 ),
                 SlidableAction(
-                  onPressed: (context) => viewModel.editTag(context, tag),
+                  onPressed: (context) => provider.editTag(context, tag),
                   backgroundColor: ColorScheme.of(context).secondary,
                   foregroundColor: ColorScheme.of(context).onSecondary,
                   icon: Icons.edit,
@@ -71,7 +76,7 @@ class _TagsAdaptive extends StatelessWidget {
               leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
               subtitle: Text(storyCount > 1 ? "$storyCount stories" : "$storyCount story"),
-              onTap: () => viewModel.viewTag(context, tag),
+              onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: viewModel.params.storyViewOnly),
             ),
           ),
         );
