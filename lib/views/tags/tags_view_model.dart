@@ -20,12 +20,26 @@ class TagsViewModel extends BaseViewModel {
   }
 
   CollectionDbModel<TagDbModel>? tags;
+  Map<int, int> storiesCountByTagId = {};
+
+  int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id] ?? 0;
 
   Future<void> load() async {
     tags = await TagDbModel.db.where();
 
+    if (tags != null) {
+      for (int i = 0; i < tags!.items.length; i++) {
+        TagDbModel tag = tags!.items[i];
+
+        if (tag.index != i) {
+          tag = await TagDbModel.db.set(tag.copyWith(index: i)) ?? tag;
+          tags = tags!.replaceElement(tag);
+        }
+      }
+    }
+
     for (TagDbModel tag in tags?.items ?? []) {
-      tag.storiesCount = await StoryDbModel.db.count(filters: {
+      storiesCountByTagId[tag.id] ??= await StoryDbModel.db.count(filters: {
         'tag': tag.id,
         'types': [
           PathType.archives.name,
@@ -42,6 +56,27 @@ class TagsViewModel extends BaseViewModel {
       storyViewOnly: params.storyViewOnly,
       tag: tag,
     ).push(context);
+  }
+
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    if (tags == null) return;
+
+    tags = tags!.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    notifyListeners();
+
+    AnalyticsService.instance.logReorderTags(
+      tags: tags!,
+    );
+
+    int length = tags!.items.length;
+    for (int i = 0; i < length; i++) {
+      final item = tags!.items[i];
+      if (item.index != i) {
+        await TagDbModel.db.set(item.copyWith(index: i));
+      }
+    }
+
+    await load();
   }
 
   Future<void> deleteTag(BuildContext context, TagDbModel tag) async {
