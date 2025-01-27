@@ -13,7 +13,7 @@ class OfflineBackupRoute extends BaseRoute {
   OfflineBackupRoute();
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 
   @override
   Widget buildPage(BuildContext context) => OfflineBackupView(params: this);

@@ -9,11 +9,14 @@ import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
+import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
@@ -23,6 +26,7 @@ import 'package:storypad/widgets/story_list/story_list_with_query.dart';
 
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
+part 'story_tile_tags.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;
@@ -276,6 +280,7 @@ class StoryTile extends StatelessWidget {
           motion: const DrawerMotion(),
           children: List.generate(menus.length, (index) {
             final menu = menus[index];
+
             return SlidableAction(
               icon: menu.leadingIconData,
               backgroundColor: menu.titleStyle?.color ?? ColorFromDayService(context: context).get(index + 1)!,
@@ -388,7 +393,7 @@ class StoryTile extends StatelessWidget {
           Container(
             width: double.infinity,
             margin: hasTitle
-                ? null
+                ? EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(6.0))
                 : AppTheme.getDirectionValue(
                     context,
                     const EdgeInsets.only(left: 24.0),
@@ -396,14 +401,18 @@ class StoryTile extends StatelessWidget {
                   ),
             child: SpMarkdownBody(body: content!.displayShortBody!),
           ),
+        if (story.validTags?.isNotEmpty == true) ...[
+          SizedBox(height: MediaQuery.textScalerOf(context).scale(8)),
+          _StoryTileTags(story: story),
+        ],
         if (images?.isNotEmpty == true) ...[
-          SizedBox(height: 12),
+          SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
           _StoryTileImages(images: images!),
-          if (story.inArchives) SizedBox(height: 4),
+          if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
         ],
         if (story.inArchives) ...[
           Container(
-            margin: const EdgeInsets.only(top: 8.0),
+            margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8.0)),
             child: RichText(
               textScaler: MediaQuery.textScalerOf(context),
               text: TextSpan(

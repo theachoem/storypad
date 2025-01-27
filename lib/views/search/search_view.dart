@@ -19,7 +19,7 @@ class SearchRoute extends BaseRoute {
   Widget buildPage(BuildContext context) => SearchView(params: this);
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 }
 
 class SearchView extends StatelessWidget {

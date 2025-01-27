@@ -20,7 +20,7 @@ class SearchFilterRoute extends BaseRoute {
   final SearchFilterObject? initialTune;
 
   @override
-  bool get nestedRoute => true;
+  bool get preferredNestedRoute => true;
 
   @override
   Widget buildPage(BuildContext context) => SearchFilterView(params: this);

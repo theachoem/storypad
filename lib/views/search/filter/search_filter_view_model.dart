@@ -23,12 +23,17 @@ class SearchFilterViewModel extends BaseViewModel {
   List<TagDbModel>? tags;
 
   Future<void> load() async {
-    years = await StoryDbModel.db.getStoryCountsByYear();
-    types = await StoryDbModel.db.getStoryCountsByType();
-    tags = await TagDbModel.db.where().then((e) => e?.items);
+    if (searchFilter.filterTagModifiable) {
+      years = await StoryDbModel.db.getStoryCountsByYear();
+      types = await StoryDbModel.db.getStoryCountsByType();
+      tags = await TagDbModel.db.where().then((e) => e?.items);
 
-    for (TagDbModel tag in tags ?? []) {
-      tag.storiesCount = await StoryDbModel.db.count(filters: {'tag': tag.id});
+      for (TagDbModel tag in tags ?? []) {
+        tag.storiesCount = await StoryDbModel.db.count(filters: {'tag': tag.id});
+      }
+    } else {
+      years = await StoryDbModel.db.getStoryCountsByYear(filters: {'tag': searchFilter.tagId});
+      types = await StoryDbModel.db.getStoryCountsByType(filters: {'tag': searchFilter.tagId});
     }
 
     notifyListeners();

@@ -32,7 +32,7 @@ class _SearchFilterAdaptive extends StatelessWidget {
         Divider(height: 1.0),
         SizedBox(height: 12.0),
       ],
-      if (viewModel.tags?.isNotEmpty == true) ...[
+      if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
         _Title(title: "Tags"),
         buildTags(context),
       ]
