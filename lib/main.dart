@@ -25,8 +25,8 @@ void main({
   await DatabaseInitializer.call();
   await LocalAuthInitializer.call();
 
-  await FirebaseCrashlyticsInitializer.call();
-  await FirebaseRemoteConfigInitializer.call();
+  FirebaseCrashlyticsInitializer.call();
+  FirebaseRemoteConfigInitializer.call();
 
   // ui
   await ThemeStorage.instance.load();
