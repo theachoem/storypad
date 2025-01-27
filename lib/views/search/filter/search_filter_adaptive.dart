@@ -21,15 +21,11 @@ class _SearchFilterAdaptive extends StatelessWidget {
       if (viewModel.years?.isNotEmpty == true) ...[
         _Title(title: "Years"),
         buildYears(context),
-        SizedBox(height: 16.0),
-        Divider(height: 1.0),
         SizedBox(height: 12.0),
       ],
       if (viewModel.types != null) ...[
         _Title(title: "Types"),
         buildTypes(context),
-        SizedBox(height: 16.0),
-        Divider(height: 1.0),
         SizedBox(height: 12.0),
       ],
       if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[

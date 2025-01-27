@@ -31,7 +31,7 @@ class StoryTileListItem extends StatelessWidget {
 
     bool showMonogram = previousStory == null || !previousStory.sameDayAs(story);
 
-    if (previousStory?.month != story.month) {
+    if (previousStory?.month != story.month || previousStory?.year != story.year) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

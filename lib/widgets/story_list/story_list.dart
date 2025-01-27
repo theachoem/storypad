@@ -71,6 +71,7 @@ class StoryList extends StatelessWidget {
       itemCount: stories?.items.length ?? 0,
       itemBuilder: (context, index) {
         final story = stories!.items[index];
+
         return StoryListenerBuilder(
           story: story,
           key: ValueKey(story.id),
