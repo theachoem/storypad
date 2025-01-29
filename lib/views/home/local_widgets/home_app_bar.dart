@@ -158,15 +158,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],
           onTap: () => openEndDrawer(context),
-          child: FittedBox(
-            child: Text(
-              viewModel.year.toString(),
-              overflow: TextOverflow.ellipsis,
-              style: TextTheme.of(context).displayLarge?.copyWith(color: Theme.of(context).disabledColor, height: 1.0),
-              textAlign: TextAlign.end,
-              maxLines: 1,
-            ),
-          ),
+          child: HomeAppBarYear(viewModel: viewModel),
         ),
       ),
     );
@@ -177,6 +169,69 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
 
     AnalyticsService.instance.logOpenHomeEndDrawer(
       year: viewModel.year,
+    );
+  }
+}
+
+class HomeAppBarYear extends StatelessWidget {
+  const HomeAppBarYear({
+    super.key,
+    required this.viewModel,
+  });
+
+  final HomeViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: TweenAnimationBuilder(
+            curve: Curves.easeInOutCubicEmphasized,
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: Duration(seconds: 2),
+            builder: (context, value, child) {
+              return Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        color: Theme.of(context).disabledColor,
+                      ),
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Container(
+                          height: constraints.maxHeight / 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        );
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+        ShaderMask(
+          blendMode: BlendMode.srcOut,
+          shaderCallback: (bounds) => LinearGradient(colors: [
+            Theme.of(context).appBarTheme.backgroundColor!,
+            Theme.of(context).appBarTheme.backgroundColor!,
+          ]).createShader(bounds),
+          child: FittedBox(
+            child: Text(
+              viewModel.year.toString(),
+              overflow: TextOverflow.ellipsis,
+              style: TextTheme.of(context).displayLarge?.copyWith(height: 1.0),
+              textAlign: TextAlign.end,
+              maxLines: 1,
+              softWrap: false,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
