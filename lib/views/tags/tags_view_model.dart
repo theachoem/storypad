@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/providers/tags_provider.dart';
 import 'tags_view.dart';
 
 class TagsViewModel extends BaseViewModel {
@@ -6,5 +9,8 @@ class TagsViewModel extends BaseViewModel {
 
   TagsViewModel({
     required this.params,
-  });
+    required BuildContext context,
+  }) {
+    context.read<TagsProvider>().reload();
+  }
 }

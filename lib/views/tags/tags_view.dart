@@ -34,7 +34,7 @@ class TagsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<TagsViewModel>(
-      create: (context) => TagsViewModel(params: params),
+      create: (context) => TagsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _TagsAdaptive(viewModel);
       },

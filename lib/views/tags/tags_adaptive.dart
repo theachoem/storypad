@@ -19,9 +19,12 @@ class _TagsAdaptive extends StatelessWidget {
           )
         ],
       ),
-      body: buildBody(
-        context,
-        provider,
+      body: RefreshIndicator.adaptive(
+        onRefresh: () => provider.reload(),
+        child: buildBody(
+          context,
+          provider,
+        ),
       ),
     );
   }
@@ -85,24 +88,21 @@ class _TagsAdaptive extends StatelessWidget {
   }
 
   Widget buildEmptyBody(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 200),
-            margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight),
-            child: Text(
-              "Tags will appear here",
-              textAlign: TextAlign.center,
-              style: TextTheme.of(context).bodyLarge,
-            ),
+    return LayoutBuilder(builder: (context, constraints) {
+      return SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: constraints.maxHeight,
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            "Tags will appear here.",
+            textAlign: TextAlign.center,
+            style: TextTheme.of(context).bodyLarge,
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }
