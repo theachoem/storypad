@@ -10,7 +10,7 @@ import 'package:storypad/views/tags/show/show_tag_view.dart';
 
 class TagsProvider extends ChangeNotifier {
   TagsProvider() {
-    load();
+    setup();
   }
 
   CollectionDbModel<TagDbModel>? tags = TagDbModel.db.initialTags;
@@ -18,7 +18,9 @@ class TagsProvider extends ChangeNotifier {
 
   int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id] ?? 0;
 
-  Future<void> load() async {
+  Future<void> setup() async {
+    storiesCountByTagId.clear();
+
     if (tags != null) {
       for (int i = 0; i < tags!.items.length; i++) {
         TagDbModel tag = tags!.items[i];
@@ -43,6 +45,11 @@ class TagsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reload() async {
+    tags = await TagDbModel.db.where();
+    await setup();
+  }
+
   Future<void> reorder(int oldIndex, int newIndex) async {
     if (tags == null) return;
 
@@ -61,7 +68,7 @@ class TagsProvider extends ChangeNotifier {
       }
     }
 
-    await load();
+    await reload();
   }
 
   Future<void> deleteTag(BuildContext context, TagDbModel tag) async {
@@ -73,7 +80,7 @@ class TagsProvider extends ChangeNotifier {
 
     if (result == OkCancelResult.ok) {
       await TagDbModel.db.delete(tag.id);
-      await load();
+      await reload();
 
       AnalyticsService.instance.logDeleteTag(
         tag: tag,
@@ -87,7 +94,7 @@ class TagsProvider extends ChangeNotifier {
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = tag.copyWith(title: result.first);
       await TagDbModel.db.set(newTag);
-      await load();
+      await reload();
 
       AnalyticsService.instance.logEditTag(
         tag: tag,
@@ -101,7 +108,7 @@ class TagsProvider extends ChangeNotifier {
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = TagDbModel.fromNow().copyWith(title: result.first);
       TagDbModel? tag = await TagDbModel.db.set(newTag);
-      await load();
+      await reload();
 
       if (tag == null) return;
       AnalyticsService.instance.logAddTag(
