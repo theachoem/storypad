@@ -6,6 +6,8 @@ class _Editor extends StatelessWidget {
   final bool showToolbarOnTop;
   final VoidCallback toggleToolbarPosition;
   final StoryContentDbModel? draftContent;
+  final EditStoryViewModel viewModel;
+  final EditorKeyboardState keyboardState;
 
   const _Editor({
     required this.controller,
@@ -13,15 +15,72 @@ class _Editor extends StatelessWidget {
     required this.showToolbarOnBottom,
     required this.toggleToolbarPosition,
     required this.draftContent,
+    required this.viewModel,
+    required this.keyboardState,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        buildTopToolbar(context),
-        Expanded(child: buildPagesEditor(context)),
-        buildBottomToolbar(context),
+        Column(
+          children: [
+            buildTopToolbar(context),
+            Expanded(child: buildPagesEditor(context)),
+            buildBottomToolbar(context),
+          ],
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: AnimatedContainer(
+            height: keyboardState.inAppKeboard ? viewModel.keyboardHeight - MediaQuery.of(context).padding.bottom : 0,
+            duration: Durations.medium2,
+            curve: Curves.ease,
+            child: Wrap(
+              children: [
+                SizedBox(
+                  height: viewModel.keyboardHeight - MediaQuery.of(context).padding.bottom,
+                  child: GridView.builder(
+                    itemCount: NotoAnimationEmojis.all.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 400 ~/ 80,
+                      mainAxisExtent: 150,
+                    ),
+                    itemBuilder: (context, index) {
+                      final emoji = NotoAnimationEmojis.all[index];
+                      return Container(
+                        color: Colors.red,
+                        padding: EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            LottieBuilder.network(
+                              emoji['src']!,
+                              height: 80,
+                            ),
+                            SizedBox(height: 8.0),
+                            Expanded(
+                              child: Text(
+                                emoji['label']!,
+                                textAlign: TextAlign.center,
+                                style: TextTheme.of(context).bodyMedium,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }
@@ -37,17 +96,17 @@ class _Editor extends StatelessWidget {
   }
 
   Widget buildBottomToolbar(BuildContext context) {
+    print(viewModel.keyboardHeight);
+    print(MediaQuery.of(context).padding.bottom);
     return Visibility(
       visible: showToolbarOnBottom,
       child: SpFadeIn.fromTop(
         duration: Durations.medium3,
         child: AnimatedContainer(
-          duration: Durations.medium1,
+          duration: Durations.medium2,
           curve: Curves.ease,
           color: getToolbarBackgroundColor(context),
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-          ),
+          padding: EdgeInsets.only(bottom: 0),
           child: buildToolBar(context),
         ),
       ),
@@ -96,7 +155,8 @@ class _Editor extends StatelessWidget {
             const VerticalDivider(width: 1),
             IconButton(
               icon: showToolbarOnTop ? const Icon(Icons.keyboard_arrow_down) : const Icon(Icons.keyboard_arrow_up),
-              onPressed: () => toggleToolbarPosition(),
+              // onPressed: () => toggleToolbarPosition(),
+              onPressed: () => EditorKeyboardManager.of(context)?.toggle(),
             ),
           ]),
         ),
@@ -168,5 +228,51 @@ class _Editor extends StatelessWidget {
         showClipboardPaste: false,
       ),
     );
+  }
+}
+
+enum EditorKeyboardState {
+  platformBehavior,
+  showingInAppKeyboard;
+
+  bool get inAppKeboard {
+    return this == showingInAppKeyboard;
+  }
+}
+
+class EditorKeyboardManager extends StatefulWidget {
+  const EditorKeyboardManager({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, EditorKeyboardState keyboardState) builder;
+
+  static EditorKeyboardManagerState? of(BuildContext context) {
+    return context.findAncestorStateOfType<EditorKeyboardManagerState>();
+  }
+
+  @override
+  State<EditorKeyboardManager> createState() => EditorKeyboardManagerState();
+}
+
+class EditorKeyboardManagerState extends State<EditorKeyboardManager> {
+  EditorKeyboardState state = EditorKeyboardState.platformBehavior;
+
+  void toggle() async {
+    state = state.inAppKeboard ? EditorKeyboardState.platformBehavior : EditorKeyboardState.showingInAppKeyboard;
+
+    if (state.inAppKeboard) {
+      await SystemChannels.textInput.invokeMethod('TextInput.hide');
+    } else {
+      await SystemChannels.textInput.invokeMethod('TextInput.show');
+    }
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, state);
   }
 }
