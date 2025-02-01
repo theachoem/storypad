@@ -158,7 +158,7 @@ TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
       index: (json['index'] as num?)?.toInt(),
-    );
+    )..storiesCount = (json['stories_count'] as num?)?.toInt();
 
 Map<String, dynamic> _$TagDbModelToJson(TagDbModel instance) =>
     <String, dynamic>{
@@ -171,4 +171,5 @@ Map<String, dynamic> _$TagDbModelToJson(TagDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'stories_count': instance.storiesCount,
     };

@@ -40,6 +40,7 @@ class StoryDbModel extends BaseDbModel {
 
   final bool? starred;
   final String? feeling;
+  final bool showDayCount;
 
   @JsonKey(fromJson: tagsFromJson)
   final List<String>? tags;
@@ -82,6 +83,7 @@ class StoryDbModel extends BaseDbModel {
     required this.id,
     required this.starred,
     required this.feeling,
+    required this.showDayCount,
     required this.year,
     required this.month,
     required this.day,
@@ -159,6 +161,15 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
+  Future<StoryDbModel?> toggleShowDayCount() async {
+    if (!editable) return null;
+
+    return db.set(copyWith(
+      showDayCount: !showDayCount,
+      updatedAt: DateTime.now(),
+    ));
+  }
+
   Future<StoryDbModel?> archive() async {
     if (!archivable) return null;
 
@@ -207,6 +218,7 @@ class StoryDbModel extends BaseDbModel {
       id: now.millisecondsSinceEpoch,
       starred: false,
       feeling: null,
+      showDayCount: false,
       latestChange: StoryContentDbModel.create(),
       allChanges: null,
       updatedAt: now,

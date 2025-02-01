@@ -359,6 +359,18 @@ class AnalyticsService {
     );
   }
 
+  Future<void> logToggleShowDayCount({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logToggleShowDayCount', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('toggle_show_day_count'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logPutStoryBack({
     required StoryDbModel story,
   }) {

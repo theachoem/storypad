@@ -17,6 +17,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel feeling(String? feeling);
 
+  StoryDbModel showDayCount(bool showDayCount);
+
   StoryDbModel year(int year);
 
   StoryDbModel month(int month);
@@ -57,6 +59,7 @@ abstract class _$StoryDbModelCWProxy {
     int id,
     bool? starred,
     String? feeling,
+    bool showDayCount,
     int year,
     int month,
     int day,
@@ -94,6 +97,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
 
   @override
   StoryDbModel feeling(String? feeling) => this(feeling: feeling);
+
+  @override
+  StoryDbModel showDayCount(bool showDayCount) =>
+      this(showDayCount: showDayCount);
 
   @override
   StoryDbModel year(int year) => this(year: year);
@@ -156,6 +163,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
     Object? feeling = const $CopyWithPlaceholder(),
+    Object? showDayCount = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
@@ -192,6 +200,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.feeling
           // ignore: cast_nullable_to_non_nullable
           : feeling as String?,
+      showDayCount: showDayCount == const $CopyWithPlaceholder()
+          ? _value.showDayCount
+          // ignore: cast_nullable_to_non_nullable
+          : showDayCount as bool,
       year: year == const $CopyWithPlaceholder()
           ? _value.year
           // ignore: cast_nullable_to_non_nullable
@@ -268,6 +280,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       id: (json['id'] as num).toInt(),
       starred: json['starred'] as bool?,
       feeling: json['feeling'] as String?,
+      showDayCount: json['show_day_count'] as bool,
       year: (json['year'] as num).toInt(),
       month: (json['month'] as num).toInt(),
       day: (json['day'] as num).toInt(),
@@ -299,6 +312,7 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'second': instance.second,
       'starred': instance.starred,
       'feeling': instance.feeling,
+      'show_day_count': instance.showDayCount,
       'tags': instance.tags,
       'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
       'created_at': instance.createdAt.toIso8601String(),

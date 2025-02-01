@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 2962579780537594759),
       name: 'StoryObjectBox',
-      lastPropertyId: const obx_int.IdUid(22, 7678166380701811232),
+      lastPropertyId: const obx_int.IdUid(23, 4928182202971877211),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -119,6 +119,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(22, 7678166380701811232),
             name: 'lastSavedDeviceId',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(23, 4928182202971877211),
+            name: 'showDayCount',
+            type: 1,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -306,7 +311,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
               ? null
               : fbb.writeString(object.lastSavedDeviceId!);
-          fbb.startTable(23);
+          fbb.startTable(24);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.version);
           fbb.addOffset(2, typeOffset);
@@ -326,6 +331,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(19, object.second);
           fbb.addInt64(20, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
           fbb.addOffset(21, lastSavedDeviceIdOffset);
+          fbb.addBool(22, object.showDayCount);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -358,6 +364,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 16);
           final feelingParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 18);
+          final showDayCountParam =
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 48);
           final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0));
           final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
@@ -393,6 +401,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               second: secondParam,
               starred: starredParam,
               feeling: feelingParam,
+              showDayCount: showDayCountParam,
               createdAt: createdAtParam,
               updatedAt: updatedAtParam,
               movedToBinAt: movedToBinAtParam,
@@ -613,6 +622,10 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.lastSavedDeviceId].
   static final lastSavedDeviceId =
       obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[18]);
+
+  /// See [StoryObjectBox.showDayCount].
+  static final showDayCount =
+      obx.QueryBooleanProperty<StoryObjectBox>(_entities[0].properties[19]);
 }
 
 /// [TagObjectBox] entity fields to define ObjectBox queries.

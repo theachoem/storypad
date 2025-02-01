@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "22:7678166380701811232",
+      "lastPropertyId": "23:4928182202971877211",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -103,6 +103,11 @@
           "id": "22:7678166380701811232",
           "name": "lastSavedDeviceId",
           "type": 9
+        },
+        {
+          "id": "23:4928182202971877211",
+          "name": "showDayCount",
+          "type": 1
         }
       ],
       "relations": []

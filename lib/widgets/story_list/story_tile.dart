@@ -5,6 +5,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -216,6 +217,15 @@ class StoryTile extends StatelessWidget {
     );
   }
 
+  Future<void> toggleShowDayCount() async {
+    StoryDbModel? updatedStory = await story.toggleShowDayCount();
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logToggleShowDayCount(
+      story: updatedStory,
+    );
+  }
+
   Future<void> showInfo(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -248,6 +258,28 @@ class StoryTile extends StatelessWidget {
                 title: const Text('Created'),
                 subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
               ),
+              Builder(builder: (context) {
+                final different = DateTime.now().difference(story.displayPathDate);
+                void Function()? onPressed;
+
+                if (!viewOnly) {
+                  onPressed = () async {
+                    await toggleShowDayCount();
+                    if (context.mounted) Navigator.maybePop(context);
+                  };
+                }
+
+                return ListTile(
+                  leading: const Icon(Icons.alarm),
+                  title: const Text('Looking Back'),
+                  subtitle: Text("It's been ${different.inDays} days"),
+                  trailing: OutlinedButton.icon(
+                    icon: Icon(story.showDayCount ? MdiIcons.pinOff : MdiIcons.pin),
+                    label: Text(story.showDayCount ? "Unpin" : "Pin"),
+                    onPressed: onPressed,
+                  ),
+                );
+              }),
             ],
           ),
         );
