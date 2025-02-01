@@ -16,7 +16,18 @@ class _Editor extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: buildPagesEditor(context)),
-        buildBottomToolbar(context),
+        FocusNodeBuilder(
+          focusNode: focusNode,
+          child: buildBottomToolbar(context),
+          builder: (context, focused, child) {
+            return Visibility(
+              visible: focused,
+              child: SpFadeIn.fromBottom(
+                child: child!,
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -47,7 +58,7 @@ class _Editor extends StatelessWidget {
           top: 8.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
         ),
-        autoFocus: false,
+        autoFocus: true,
         enableScribble: true,
         showCursor: true,
         embedBuilders: [
@@ -139,5 +150,41 @@ class _Editor extends StatelessWidget {
         showClipboardPaste: false,
       ),
     );
+  }
+}
+
+class FocusNodeBuilder extends StatefulWidget {
+  const FocusNodeBuilder({
+    super.key,
+    required this.focusNode,
+    required this.builder,
+    this.child,
+  });
+
+  final Widget? child;
+  final FocusNode focusNode;
+  final Widget Function(BuildContext context, bool focused, Widget? child) builder;
+
+  @override
+  State<FocusNodeBuilder> createState() => _FocusNodeBuilderState();
+}
+
+class _FocusNodeBuilderState extends State<FocusNodeBuilder> {
+  bool focused = false;
+
+  @override
+  void initState() {
+    widget.focusNode.addListener(_listener);
+    super.initState();
+  }
+
+  void _listener() {
+    focused = widget.focusNode.hasFocus;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, focused, widget.child);
   }
 }
