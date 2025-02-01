@@ -58,7 +58,7 @@ class _HomeEndDrawer extends StatelessWidget {
           if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
             const Divider(),
             buildCommunityTile(context),
-          ]
+          ],
         ],
       ),
     );

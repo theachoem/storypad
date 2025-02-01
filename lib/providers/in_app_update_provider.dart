@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:storypad/core/services/url_opener_service.dart';
+import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/types/in_app_update_status.dart';
 import 'package:storypad/widgets/packages/new_version_plus.dart';
 
@@ -44,15 +44,7 @@ class InAppUpdateProvider extends ChangeNotifier {
   }
 
   Future<void> _openApplicationStore() async {
-    // try open possible store on android.
-    if (Platform.isAndroid) {
-      String deeplink = 'market://details?id=PACKAGE_NAME';
-      bool launched = await UrlOpenerService.launchUrlString(deeplink);
-      if (launched) return;
-    }
-
-    String appStoreLink = _versionStatus!.appStoreLink;
-    await UrlOpenerService.launchUrlString(appStoreLink);
+    await AppStoreOpenerService.call();
   }
 
   Future<void> _updateDireclyInApp() async {
