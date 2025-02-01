@@ -40,7 +40,9 @@ class StoryDbModel extends BaseDbModel {
 
   final bool? starred;
   final String? feeling;
-  final bool showDayCount;
+
+  @JsonKey(name: 'show_day_count')
+  final bool? _showDayCount;
 
   @JsonKey(fromJson: tagsFromJson)
   final List<String>? tags;
@@ -83,7 +85,7 @@ class StoryDbModel extends BaseDbModel {
     required this.id,
     required this.starred,
     required this.feeling,
-    required this.showDayCount,
+    required bool? showDayCount,
     required this.year,
     required this.month,
     required this.day,
@@ -98,13 +100,15 @@ class StoryDbModel extends BaseDbModel {
     required this.lastSavedDeviceId,
     this.rawChanges,
     this.latestChange,
-  }) {
+  }) : _showDayCount = showDayCount {
     // By default, `allChanges` is null when fetched from the database for speed.
     // For backups, only `allChanges` is included, while `latestChange` and `rawChanges` are excluded.
     // This means that when converting a cloud backup JSON to a model,
     // `latestChange` and `rawChanges` should derive their values from `allChanges` instead.
     latestChange ??= allChanges?.last;
   }
+
+  bool get showDayCount => _showDayCount ?? false;
 
   bool get viewOnly => unarchivable || inBins;
 

@@ -206,11 +206,12 @@ class BackupProvider extends ChangeNotifier with ScheduleConcern {
   }
 
   Future<void> forceRestore(BackupObject backup, BuildContext context) async {
-    MessengerService.of(context).showLoading(
+    await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#forceRestore',
       future: () => RestoreBackupService.instance.forceRestore(backup: backup),
     );
 
+    if (!context.mounted) return;
     AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: backup.fileInfo);
     await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');
 
