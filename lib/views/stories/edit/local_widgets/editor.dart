@@ -81,7 +81,7 @@ class _Editor extends StatelessWidget {
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Divider(height: 1),
-        buildActualToolbar(context),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 4.0), child: buildActualToolbar(context)),
         const Divider(height: 1),
       ]),
     );
