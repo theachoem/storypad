@@ -31,6 +31,7 @@ class StoryObjectBox extends BaseObjectBox {
 
   bool? starred;
   String? feeling;
+  bool? showDayCount;
 
   @Property(type: PropertyType.date)
   DateTime createdAt;
@@ -66,6 +67,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.second,
     required this.starred,
     required this.feeling,
+    required this.showDayCount,
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,
