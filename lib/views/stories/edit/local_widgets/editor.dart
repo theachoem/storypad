@@ -2,16 +2,12 @@ part of '../edit_story_view.dart';
 
 class _Editor extends StatelessWidget {
   final QuillController controller;
-  final bool showToolbarOnBottom;
-  final bool showToolbarOnTop;
-  final VoidCallback toggleToolbarPosition;
+  final FocusNode focusNode;
   final StoryContentDbModel? draftContent;
 
   const _Editor({
+    required this.focusNode,
     required this.controller,
-    required this.showToolbarOnTop,
-    required this.showToolbarOnBottom,
-    required this.toggleToolbarPosition,
     required this.draftContent,
   });
 
@@ -19,50 +15,39 @@ class _Editor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        buildTopToolbar(context),
         Expanded(child: buildPagesEditor(context)),
         buildBottomToolbar(context),
       ],
     );
   }
 
-  Widget buildTopToolbar(BuildContext context) {
-    return Visibility(
-      visible: showToolbarOnTop,
-      child: SpFadeIn.fromBottom(
-        duration: Durations.medium3,
-        child: buildToolBar(context),
-      ),
-    );
-  }
-
   Widget buildBottomToolbar(BuildContext context) {
-    return Visibility(
-      visible: showToolbarOnBottom,
-      child: SpFadeIn.fromTop(
-        duration: Durations.medium3,
-        child: AnimatedContainer(
-          duration: Durations.medium1,
-          curve: Curves.ease,
-          color: getToolbarBackgroundColor(context),
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: buildToolBar(context),
-        ),
+    return AnimatedContainer(
+      duration: Durations.medium1,
+      curve: Curves.ease,
+      color: getToolbarBackgroundColor(context),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
       ),
+      child: buildToolBar(context),
     );
   }
 
   Widget buildPagesEditor(BuildContext context) {
     return QuillEditor.basic(
+      focusNode: focusNode,
       controller: controller,
       config: QuillEditorConfig(
+        paintCursorAboveText: false,
+        scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+        scrollable: true,
+        expands: true,
         placeholder: "...",
-        padding: const EdgeInsets.all(16.0).copyWith(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+          top: 8.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
         ),
-        autoFocus: true,
+        autoFocus: false,
         enableScribble: true,
         showCursor: true,
         embedBuilders: [
@@ -85,22 +70,8 @@ class _Editor extends StatelessWidget {
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Divider(height: 1),
-        IntrinsicHeight(
-          child: Row(children: [
-            Expanded(
-              child: SizedBox(
-                height: double.infinity,
-                child: buildActualToolbar(context),
-              ),
-            ),
-            const VerticalDivider(width: 1),
-            IconButton(
-              icon: showToolbarOnTop ? const Icon(Icons.keyboard_arrow_down) : const Icon(Icons.keyboard_arrow_up),
-              onPressed: () => toggleToolbarPosition(),
-            ),
-          ]),
-        ),
-        if (showToolbarOnTop) const Divider(height: 1),
+        buildActualToolbar(context),
+        const Divider(height: 1),
       ]),
     );
   }
@@ -118,7 +89,7 @@ class _Editor extends StatelessWidget {
             return SpQuillToolbarColorButton(
               controller: extraOptions.controller,
               isBackground: false,
-              positionedOnUpper: showToolbarOnTop,
+              positionedOnUpper: false,
             );
           }),
           backgroundColor: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
@@ -126,7 +97,7 @@ class _Editor extends StatelessWidget {
             return SpQuillToolbarColorButton(
               controller: extraOptions.controller,
               isBackground: true,
-              positionedOnUpper: showToolbarOnTop,
+              positionedOnUpper: false,
             );
           }),
         ),

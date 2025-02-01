@@ -16,13 +16,15 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
   EditStoryViewModel({
     required this.params,
   }) {
-    load(initialStory: params.story);
+    init(initialStory: params.story);
   }
 
   late final PageController pageController = PageController(initialPage: params.initialPageIndex);
+  TextEditingController? titleController;
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
 
   Map<int, QuillController> quillControllers = {};
+  Map<int, FocusNode> focusNodes = {};
   final DateTime openedOn = DateTime.now();
 
   int get currentPageIndex => pageController.page!.round().toInt();
@@ -31,11 +33,7 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
 
-  bool topToolbar = false;
-  bool get showToolbarOnTop => quillControllers.isNotEmpty && topToolbar;
-  bool get showToolbarOnBottom => quillControllers.isNotEmpty && !topToolbar;
-
-  Future<void> load({
+  Future<void> init({
     StoryDbModel? initialStory,
   }) async {
     if (params.id != null) story = initialStory ?? await StoryDbModel.db.find(params.id!);
@@ -45,6 +43,12 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     draftContent = story?.latestChange != null
         ? StoryContentDbModel.dublicate(story!.latestChange!)
         : StoryContentDbModel.create(createdAt: openedOn);
+
+    titleController = TextEditingController(text: draftContent?.title)
+      ..addListener(() {
+        draftContent = draftContent?.copyWith(title: titleController?.text);
+        _silentlySave();
+      });
 
     bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!..addPage();
@@ -67,11 +71,10 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
       });
     }
 
-    notifyListeners();
-  }
+    for (int i = 0; i < quillControllers.length; i++) {
+      focusNodes[i] = FocusNode();
+    }
 
-  void toggleToolbarPosition() {
-    topToolbar = !topToolbar;
     notifyListeners();
   }
 
@@ -104,6 +107,36 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     );
   }
 
+  Future<void> setDate(DateTime date) async {
+    story = story!.copyWith(day: date.day, month: date.month, year: date.year);
+    notifyListeners();
+
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
+    AnalyticsService.instance.logSetStoryFeeling(
+      story: story!,
+    );
+  }
+
+  Future<void> toggleShowDayCount() async {
+    if (story == null) return;
+
+    story = story!.copyWith(updatedAt: DateTime.now(), showDayCount: !story!.showDayCount);
+    notifyListeners();
+
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
+    AnalyticsService.instance.logToggleShowDayCount(
+      story: story!,
+    );
+  }
+
   void changeTitle(BuildContext context) async {
     List<String>? result = await showTextInputDialog(
       title: "Rename",
@@ -131,13 +164,16 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
 
   void _silentlySave() {
     scheduleAction(() async {
-      if (await _getHasChange()) {
-        story = await StoryDbModel.fromDetailPage(this);
-        await StoryDbModel.db.set(story!);
-
-        lastSavedAtNotifier.value = story?.updatedAt;
-      }
+      await save();
     });
+  }
+
+  Future<void> save() async {
+    if (await _getHasChange()) {
+      story = await StoryDbModel.fromDetailPage(this);
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
   }
 
   Future<bool> _getHasChange() async {
@@ -151,8 +187,10 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
 
   @override
   void dispose() {
+    titleController?.dispose();
     pageController.dispose();
     quillControllers.forEach((e, k) => k.dispose());
+    focusNodes.forEach((e, k) => k.dispose());
     lastSavedAtNotifier.dispose();
     super.dispose();
   }

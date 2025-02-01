@@ -15,37 +15,70 @@ class _ShowStoryAdaptive extends StatelessWidget {
             )
           : null,
       appBar: AppBar(
-        clipBehavior: Clip.none,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         titleSpacing: 0.0,
-        title: buildAppBarTitle(context),
         actions: buildAppBarActions(context),
-        bottom: const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1)),
       ),
-      body: PageView.builder(
+      body: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (context, _) {
+          return [
+            if (viewModel.story != null && viewModel.draftContent != null)
+              SliverToBoxAdapter(
+                child: StoryHeader(
+                  paddingTop: MediaQuery.of(context).padding.top + 8.0,
+                  story: viewModel.story!,
+                  setFeeling: viewModel.setFeeling,
+                  onToggleShowDayCount: viewModel.toggleShowDayCount,
+                  draftContent: viewModel.draftContent!,
+                  readOnly: true,
+                  onSetDate: null,
+                ),
+              ),
+          ];
+        },
+        body: buildEditor(context),
+      ),
+    );
+  }
+
+  Widget buildEditor(BuildContext context) {
+    if (viewModel.quillControllers.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(),
+      );
+    } else {
+      return PageView.builder(
         controller: viewModel.pageController,
         itemCount: viewModel.quillControllers.length,
         itemBuilder: (context, index) {
-          return QuillEditor.basic(
-            controller: viewModel.quillControllers[index]!,
-            config: QuillEditorConfig(
-              padding: const EdgeInsets.all(16.0).copyWith(
-                bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+          return SingleChildScrollView(
+            child: QuillEditor.basic(
+              controller: viewModel.quillControllers[index]!,
+              config: QuillEditorConfig(
+                scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+                scrollable: false,
+                expands: false,
+                placeholder: "...",
+                padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+                  top: 8.0,
+                  bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+                ),
+                checkBoxReadOnly: false,
+                autoFocus: false,
+                enableScribble: false,
+                showCursor: false,
+                embedBuilders: [
+                  ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
+                  DateBlockEmbed(),
+                ],
+                unknownEmbedBuilder: UnknownEmbedBuilder(),
               ),
-              checkBoxReadOnly: false,
-              showCursor: false,
-              autoFocus: false,
-              expands: true,
-              embedBuilders: [
-                ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
-                DateBlockEmbed(),
-              ],
-              unknownEmbedBuilder: UnknownEmbedBuilder(),
             ),
           );
         },
-      ),
-    );
+      );
+    }
   }
 
   Widget buildAppBarTitle(BuildContext context) {
@@ -92,49 +125,8 @@ class _ShowStoryAdaptive extends StatelessWidget {
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
       }),
-      buildSwapeableToRecentlySavedIcon(
-        child: SpFeelingButton(
-          feeling: viewModel.story?.feeling,
-          onPicked: (feeling) => viewModel.setFeeling(feeling),
-        ),
-      ),
       const SizedBox(width: 4.0),
     ];
-  }
-
-  Widget buildSwapeableToRecentlySavedIcon({
-    required Widget child,
-  }) {
-    return ValueListenableBuilder<DateTime?>(
-      valueListenable: viewModel.lastSavedAtNotifier,
-      child: child,
-      builder: (context, lastSavedAt, child) {
-        DateTime defaultExpiredEndTime = DateTime.now().subtract(const Duration(days: 1));
-        return SpCountDown(
-          endTime: lastSavedAt?.add(const Duration(seconds: 2)) ?? defaultExpiredEndTime,
-          endWidget: child!,
-          builder: (ended, context) {
-            return SpAnimatedIcons(
-              duration: Durations.long1,
-              showFirst: ended,
-              firstChild: child,
-              secondChild: Builder(builder: (context) {
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(48.0),
-                    onTap: () => Navigator.maybePop(context),
-                    child: const CircleAvatar(
-                      child: Icon(Icons.check),
-                    ),
-                  ),
-                );
-              }),
-            );
-          },
-        );
-      },
-    );
   }
 
   Widget buildPageIndicator() {

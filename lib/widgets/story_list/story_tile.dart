@@ -1,35 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
-import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
-import 'package:storypad/providers/tags_provider.dart';
-import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
-import 'package:storypad/widgets/story_list/story_list_with_query.dart';
+import 'package:storypad/widgets/sp_story_labels.dart';
+import 'package:storypad/widgets/story_list/story_tile_actions.dart';
+import 'package:storypad/widgets/story_list/story_tile_info_sheet.dart';
 
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
-part 'story_tile_tags.dart';
 part 'story_tile_favorite_button.dart';
 
 class StoryTile extends StatelessWidget {
@@ -53,242 +45,47 @@ class StoryTile extends StatelessWidget {
   /// [listContext] is still mounted even after story is removed, allow us it to read HomeViewModel & do other thiings.
   final BuildContext listContext;
 
-  Future<void> hardDelete(BuildContext context) async {
-    OkCancelResult result = await showOkCancelAlertDialog(
-      context: context,
-      isDestructiveAction: true,
-      title: "Are you sure to delete this story?",
-      message: "You can't undo this action",
-      okLabel: "Delete",
-    );
-
-    if (result == OkCancelResult.ok) {
-      StoryDbModel originalStory = story.copyWith();
-      await originalStory.delete();
-
-      AnalyticsService.instance.logHardDeleteStory(
-        story: originalStory,
-      );
-
-      if (!context.mounted) return;
-
-      Future<void> undoHardDelete() async {
-        StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-        if (updatedStory == null) return;
-
-        /// In all case, delete button only show inside [StoryListWithQuery],
-        /// So after undo, we should reload the list.
-        if (listContext.mounted) StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
-
-        AnalyticsService.instance.logUndoHardDeleteStory(
-          story: updatedStory,
-        );
-      }
-
-      MessengerService.of(context).showSnackBar(
-        'Deleted successfully',
-        showAction: true,
-        action: (foreground) {
-          return SnackBarAction(
-            label: 'Undo',
-            textColor: foreground,
-            onPressed: () async => undoHardDelete(),
-          );
-        },
-      );
-    }
-  }
-
-  Future<void> importIndividualStory(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logImportIndividualStory(
-      story: updatedStory,
-    );
-
-    if (!context.mounted) return;
-    MessengerService.of(context).showSnackBar('Story restored!');
-  }
-
-  Future<void> moveToBin(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    StoryDbModel? updatedStory = await originalStory.moveToBin();
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logMoveStoryToBin(
-      story: updatedStory,
-    );
-
-    if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Moved to bin!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-            if (updatedStory == null) return;
-
-            AnalyticsService.instance.logUndoMoveStoryToBin(
-              story: updatedStory,
-            );
-
-            return reloadHome('$runtimeType#moveToBin');
-          },
-        );
-      });
-    }
-  }
-
-  Future<void> archive(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    StoryDbModel? updatedStory = await originalStory.archive();
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logArchiveStory(
-      story: updatedStory,
-    );
-
-    if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Archived!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-            if (updatedStory == null) return;
-
-            AnalyticsService.instance.logUndoArchiveStory(
-              story: updatedStory,
-            );
-
-            return reloadHome('$runtimeType#archive');
-          },
-        );
-      });
-    }
-  }
-
-  Future<void> putBack(BuildContext context) async {
-    StoryDbModel originalStory = story.copyWith();
-    StoryDbModel? updatedStory = await originalStory.putBack();
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logPutStoryBack(
-      story: updatedStory,
-    );
-
-    // put back most likely inside archives page (not home)
-    // reload home as the put back data could go there.
-    await reloadHome('$runtimeType#putBack');
-  }
-
-  Future<void> changeDate(BuildContext context) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
-      currentDate: story.displayPathDate,
-    );
-
-    if (date != null) {
-      StoryDbModel originalStory = story.copyWith();
-      StoryDbModel? updatedStory = await originalStory.changePathDate(date);
-
-      if (updatedStory == null) return;
-      AnalyticsService.instance.logChangeStoryDate(
-        story: updatedStory,
-      );
-
-      if (date.year != story.year) {
-        // story has moved to another year which move out of home view as well -> need to reload.
-        return reloadHome('$runtimeType#changeDate');
-      }
-    }
-  }
-
-  Future<void> toggleStarred() async {
-    StoryDbModel? updatedStory = await story.toggleStarred();
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logToggleStoryStarred(
-      story: updatedStory,
-    );
-  }
-
-  Future<void> toggleShowDayCount() async {
-    StoryDbModel? updatedStory = await story.toggleShowDayCount();
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logToggleShowDayCount(
-      story: updatedStory,
-    );
-  }
-
-  Future<void> showInfo(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      useRootNavigator: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('Story Date'),
-                subtitle: Text(DateFormatService.yMEd(story.displayPathDate)),
-              ),
-              if (story.movedToBinAt != null)
-                ListTile(
-                  leading: const Icon(Icons.delete),
-                  title: const Text('Moved to bin'),
-                  subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!)),
-                ),
-              ListTile(
-                leading: const Icon(Icons.update),
-                title: const Text('Updated'),
-                subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt)),
-              ),
-              ListTile(
-                leading: const Icon(Icons.date_range),
-                title: const Text('Created'),
-                subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
-              ),
-              Builder(builder: (context) {
-                final different = DateTime.now().difference(story.displayPathDate);
-                void Function()? onPressed;
-
-                if (!viewOnly) {
-                  onPressed = () async {
-                    await toggleShowDayCount();
-                    if (context.mounted) Navigator.maybePop(context);
-                  };
-                }
-
-                return ListTile(
-                  leading: const Icon(Icons.alarm),
-                  title: const Text('Looking Back'),
-                  subtitle: Text("It's been ${different.inDays} days"),
-                  trailing: OutlinedButton.icon(
-                    icon: Icon(story.showDayCount ? MdiIcons.pinOff : MdiIcons.pin),
-                    label: Text(story.showDayCount ? "Unpin" : "Pin"),
-                    onPressed: onPressed,
-                  ),
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> reloadHome(String debugSource) async {
-    await listContext.read<HomeViewModel>().load(debugSource: debugSource);
+  List<SpPopMenuItem> buildPopUpMenus(BuildContext context) {
+    return [
+      if (story.putBackAble)
+        SpPopMenuItem(
+          title: 'Put back',
+          leadingIconData: Icons.restore_from_trash,
+          onPressed: () => StoryTileActions(story: story, listContext: listContext).putBack(context),
+        ),
+      if (story.archivable)
+        SpPopMenuItem(
+          title: 'Archive',
+          leadingIconData: Icons.archive,
+          onPressed: () => StoryTileActions(story: story, listContext: listContext).archive(context),
+        ),
+      if (story.canMoveToBin)
+        SpPopMenuItem(
+          title: 'Move to bin',
+          leadingIconData: Icons.delete,
+          titleStyle: TextStyle(color: ColorScheme.of(context).error),
+          onPressed: () => StoryTileActions(story: story, listContext: listContext).moveToBin(context),
+        ),
+      if (story.hardDeletable)
+        SpPopMenuItem(
+          title: 'Delete',
+          leadingIconData: Icons.delete,
+          titleStyle: TextStyle(color: ColorScheme.of(context).error),
+          onPressed: () => StoryTileActions(story: story, listContext: listContext).hardDelete(context),
+        ),
+      if (story.cloudViewing)
+        SpPopMenuItem(
+          title: 'Import',
+          leadingIconData: Icons.restore_outlined,
+          titleStyle: TextStyle(color: ColorScheme.of(context).primary),
+          onPressed: () => StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
+        ),
+      SpPopMenuItem(
+        title: 'Info',
+        leadingIconData: Icons.info,
+        onPressed: () => StoryTileInfoSheet(story: story).show(context),
+      )
+    ];
   }
 
   @override
@@ -360,55 +157,6 @@ class StoryTile extends StatelessWidget {
     );
   }
 
-  List<SpPopMenuItem> buildPopUpMenus(BuildContext context) {
-    return [
-      if (story.editable)
-        SpPopMenuItem(
-          title: 'Change Date',
-          leadingIconData: Icons.calendar_month,
-          onPressed: () => changeDate(context),
-        ),
-      if (story.putBackAble)
-        SpPopMenuItem(
-          title: 'Put back',
-          leadingIconData: Icons.restore_from_trash,
-          onPressed: () => putBack(context),
-        ),
-      if (story.archivable)
-        SpPopMenuItem(
-          title: 'Archive',
-          leadingIconData: Icons.archive,
-          onPressed: () => archive(context),
-        ),
-      if (story.canMoveToBin)
-        SpPopMenuItem(
-          title: 'Move to bin',
-          leadingIconData: Icons.delete,
-          titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => moveToBin(context),
-        ),
-      if (story.hardDeletable)
-        SpPopMenuItem(
-          title: 'Delete',
-          leadingIconData: Icons.delete,
-          titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => hardDelete(context),
-        ),
-      if (story.cloudViewing)
-        SpPopMenuItem(
-          title: 'Import',
-          leadingIconData: Icons.restore_outlined,
-          titleStyle: TextStyle(color: ColorScheme.of(context).primary),
-          onPressed: () => importIndividualStory(context),
-        ),
-      SpPopMenuItem(
-        title: 'Info',
-        leadingIconData: Icons.info,
-        onPressed: () => showInfo(context),
-      )
-    ];
-  }
-
   Widget buildContents(bool hasTitle, StoryContentDbModel? content, BuildContext context, bool hasBody) {
     final images = content != null ? QuillService.imagesFromContent(content) : null;
 
@@ -436,10 +184,17 @@ class StoryTile extends StatelessWidget {
                   ),
             child: SpMarkdownBody(body: content!.displayShortBody!),
           ),
-        if (story.validTags?.isNotEmpty == true) ...[
-          SizedBox(height: MediaQuery.textScalerOf(context).scale(8)),
-          _StoryTileTags(story: story),
-        ],
+        SpStoryLabels(
+          story: story,
+          fromStoryTile: true,
+          margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
+          onToggleShowDayCount: viewOnly
+              ? null
+              : () async {
+                  await StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
+                  if (context.mounted) Navigator.maybePop(context);
+                },
+        ),
         if (images?.isNotEmpty == true) ...[
           SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
           _StoryTileImages(images: images!),
@@ -460,7 +215,6 @@ class StoryTile extends StatelessWidget {
             ),
           ),
         ]
-        // if (story.inBins) buildAutoDeleteMessage(context)
       ]),
     );
   }
@@ -481,32 +235,7 @@ class StoryTile extends StatelessWidget {
         transform: Matrix4.identity()..translate(x, y),
         child: _StoryTileFavoriteButton(
           story: story,
-          toggleStarred: viewOnly ? null : toggleStarred,
-        ),
-      ),
-    );
-  }
-
-  Widget buildAutoDeleteMessage(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8.0),
-      child: RichText(
-        text: TextSpan(
-          style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).error),
-          children: [
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Icon(
-                Icons.info,
-                size: 12.0,
-                color: ColorScheme.of(context).error,
-              ),
-            ),
-            TextSpan(
-              text:
-                  ' Auto delete on ${DateFormatService.yMd((story.movedToBinAt ?? story.updatedAt).add(const Duration(days: 30)))}',
-            ),
-          ],
+          toggleStarred: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).toggleStarred,
         ),
       ),
     );

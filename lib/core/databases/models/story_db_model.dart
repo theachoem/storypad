@@ -108,6 +108,7 @@ class StoryDbModel extends BaseDbModel {
     latestChange ??= allChanges?.last;
   }
 
+  Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get showDayCount => _showDayCount ?? false;
 
   bool get viewOnly => unarchivable || inBins;
@@ -161,15 +162,6 @@ class StoryDbModel extends BaseDbModel {
 
     return db.set(copyWith(
       starred: !(starred == true),
-      updatedAt: DateTime.now(),
-    ));
-  }
-
-  Future<StoryDbModel?> toggleShowDayCount() async {
-    if (!editable) return null;
-
-    return db.set(copyWith(
-      showDayCount: !showDayCount,
       updatedAt: DateTime.now(),
     ));
   }

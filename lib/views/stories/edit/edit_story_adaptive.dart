@@ -17,24 +17,33 @@ class _EditStoryAdaptive extends StatelessWidget {
       appBar: AppBar(
         clipBehavior: Clip.none,
         titleSpacing: 0.0,
-        backgroundColor: ColorScheme.of(context).primary,
-        foregroundColor: ColorScheme.of(context).onPrimary,
-        title: viewModel.story == null
-            ? const SizedBox.shrink()
-            : StoryTitle(
-                content: viewModel.draftContent,
-                changeTitle: () => viewModel.changeTitle(context),
-                backgroundColor: ColorScheme.of(context).primary,
-                scrollable: false,
-              ),
         actions: buildAppBarActions(context),
-        bottom: const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1)),
       ),
-      body: buildBody(),
+      body: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (context, _) {
+          return [
+            if (viewModel.story != null && viewModel.draftContent != null)
+              SliverToBoxAdapter(
+                child: StoryHeader(
+                  paddingTop: MediaQuery.of(context).padding.top + 8.0,
+                  story: viewModel.story!,
+                  setFeeling: viewModel.setFeeling,
+                  onToggleShowDayCount: viewModel.toggleShowDayCount,
+                  draftContent: viewModel.draftContent!,
+                  readOnly: false,
+                  titleController: viewModel.titleController,
+                  onSetDate: viewModel.setDate,
+                ),
+              ),
+          ];
+        },
+        body: buildEditor(context),
+      ),
     );
   }
 
-  Widget buildBody() {
+  Widget buildEditor(BuildContext context) {
     if (viewModel.quillControllers.isEmpty) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -45,10 +54,8 @@ class _EditStoryAdaptive extends StatelessWidget {
         itemCount: viewModel.quillControllers.length,
         itemBuilder: (context, index) {
           return _Editor(
+            focusNode: viewModel.focusNodes[index]!,
             controller: viewModel.quillControllers[index]!,
-            showToolbarOnTop: viewModel.showToolbarOnTop,
-            showToolbarOnBottom: viewModel.showToolbarOnBottom,
-            toggleToolbarPosition: viewModel.toggleToolbarPosition,
             draftContent: viewModel.draftContent,
           );
         },
@@ -58,20 +65,22 @@ class _EditStoryAdaptive extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      const SizedBox(width: 4.0),
-      Builder(builder: (context) {
-        return IconButton(
-          icon: const Icon(Icons.sell_outlined),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-      }),
+      OutlinedButton.icon(
+        icon: Icon(Icons.check_circle_outline),
+        label: Text("Done"),
+        onPressed: () async {
+          await viewModel.save();
+          if (context.mounted) Navigator.pop(context);
+        },
+      ),
+      SizedBox(width: 8.0),
       buildSwapeableToRecentlySavedIcon(
-        child: SpFeelingButton(
-          feeling: viewModel.story?.feeling,
-          onPicked: (feeling) => viewModel.setFeeling(feeling),
-          backgroundColor: ColorScheme.of(context).onPrimary.withValues(alpha: 0.15),
-          foregroundColor: ColorScheme.of(context).onPrimary,
-        ),
+        child: Builder(builder: (context) {
+          return IconButton(
+            icon: const Icon(Icons.sell_outlined),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+          );
+        }),
       ),
       const SizedBox(width: 4.0),
     ];
@@ -86,7 +95,7 @@ class _EditStoryAdaptive extends StatelessWidget {
       builder: (context, lastSavedAt, child) {
         DateTime defaultExpiredEndTime = DateTime.now().subtract(const Duration(days: 1));
         return SpCountDown(
-          endTime: lastSavedAt?.add(const Duration(seconds: 2)) ?? defaultExpiredEndTime,
+          endTime: lastSavedAt?.add(Durations.long4) ?? defaultExpiredEndTime,
           endWidget: child!,
           builder: (ended, context) {
             return SpAnimatedIcons(

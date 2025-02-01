@@ -64,7 +64,7 @@ class DateBlockEmbed extends EmbedBuilder {
     return date;
   }
 
-  String getDayOfMonthSuffix(int dayNum) {
+  static String getDayOfMonthSuffix(int dayNum) {
     if (!(dayNum >= 1 && dayNum <= 31)) {
       throw Exception('Invalid day of month');
     }
