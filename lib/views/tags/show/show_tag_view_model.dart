@@ -20,6 +20,7 @@ class ShowTagViewModel extends BaseViewModel {
     types: {PathType.archives, PathType.docs},
     tagId: tag.id,
     filterTagModifiable: false,
+    assetId: null,
   );
 
   Future<void> goToFilterPage(BuildContext context) async {

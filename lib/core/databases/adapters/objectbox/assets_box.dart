@@ -1,0 +1,91 @@
+import 'dart:convert';
+import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
+import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/initializers/device_info_initializer.dart';
+import 'package:storypad/objectbox.g.dart';
+
+class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
+  @override
+  String get tableName => "assets";
+
+  @override
+  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
+    Condition<AssetObjectBox>? conditions = AssetObjectBox_.id.notNull();
+
+    if (fromThisDeviceOnly == true) {
+      conditions = conditions.and(AssetObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
+    }
+
+    Query<AssetObjectBox> query =
+        box.query(conditions).order(AssetObjectBox_.updatedAt, flags: Order.descending).build();
+    AssetObjectBox? object = await query.findFirstAsync();
+    return object?.updatedAt;
+  }
+
+  @override
+  QueryBuilder<AssetObjectBox> buildQuery({Map<String, dynamic>? filters}) {
+    Condition<AssetObjectBox> conditions =
+        AssetObjectBox_.id.notNull().and(AssetObjectBox_.permanentlyDeletedAt.isNull());
+    return box.query(conditions);
+  }
+
+  @override
+  AssetDbModel modelFromJson(Map<String, dynamic> json) => AssetDbModel.fromJson(json);
+
+  @override
+  Future<AssetObjectBox> modelToObject(AssetDbModel model, [Map<String, dynamic>? options]) async {
+    return AssetObjectBox(
+      id: model.id,
+      originalSource: model.originalSource,
+      cloudDestinations: jsonEncode(model.cloudDestinations),
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+    );
+  }
+
+  @override
+  Future<List<AssetObjectBox>> modelsToObjects(
+    List<AssetDbModel> models, [
+    Map<String, dynamic>? options,
+  ]) async {
+    return models.map((model) {
+      return AssetObjectBox(
+        id: model.id,
+        originalSource: model.originalSource,
+        cloudDestinations: jsonEncode(model.cloudDestinations),
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<AssetDbModel> objectToModel(AssetObjectBox object, [Map<String, dynamic>? options]) async {
+    return AssetDbModel(
+      id: object.id,
+      originalSource: object.originalSource,
+      cloudDestinations: jsonDecode(object.cloudDestinations),
+      createdAt: object.createdAt,
+      updatedAt: object.updatedAt,
+      lastSavedDeviceId: object.lastSavedDeviceId,
+    );
+  }
+
+  @override
+  Future<List<AssetDbModel>> objectsToModels(
+    List<AssetObjectBox> objects, [
+    Map<String, dynamic>? options,
+  ]) async {
+    return objects.map((object) {
+      return AssetDbModel(
+        id: object.id,
+        originalSource: object.originalSource,
+        cloudDestinations: jsonDecode(object.cloudDestinations),
+        createdAt: object.createdAt,
+        updatedAt: object.updatedAt,
+        lastSavedDeviceId: object.lastSavedDeviceId,
+      );
+    }).toList();
+  }
+}

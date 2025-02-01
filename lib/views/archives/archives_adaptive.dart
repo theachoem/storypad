@@ -46,6 +46,7 @@ class _ArchivesAdaptive extends StatelessWidget {
           years: {},
           types: {viewModel.type},
           tagId: null,
+          assetId: null,
         ),
       ),
     );

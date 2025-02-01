@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "23:4928182202971877211",
+      "lastPropertyId": "24:7561688432028578210",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -108,6 +108,11 @@
           "id": "23:4928182202971877211",
           "name": "showDayCount",
           "type": 1
+        },
+        {
+          "id": "24:7561688432028578210",
+          "name": "assets",
+          "type": 27
         }
       ],
       "relations": []
@@ -214,9 +219,53 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "5:4094713120589114734",
+      "lastPropertyId": "8:1856515659629711057",
+      "name": "AssetObjectBox",
+      "properties": [
+        {
+          "id": "1:5906669873848364603",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "3:9061464992410544713",
+          "name": "cloudDestinations",
+          "type": 9
+        },
+        {
+          "id": "4:7161480163824462596",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "5:4609595509255257773",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "6:7819533052746471106",
+          "name": "permanentlyDeletedAt",
+          "type": 10
+        },
+        {
+          "id": "7:5781354513111192719",
+          "name": "lastSavedDeviceId",
+          "type": 9
+        },
+        {
+          "id": "8:1856515659629711057",
+          "name": "originalSource",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "4:8652388247732271380",
+  "lastEntityId": "5:4094713120589114734",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -231,7 +280,8 @@
     3655265263412929559,
     4968158570417504072,
     957469211671557087,
-    8481003567609178682
+    8481003567609178682,
+    8289181544945165894
   ],
   "retiredRelationUids": [],
   "version": 1

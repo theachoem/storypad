@@ -36,18 +36,13 @@ class _StoryTileImages extends StatelessWidget {
   }) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Hero(
-            tag: images[index],
-            child: Material(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-              child: buildImage(images[index]),
-            ),
+        Material(
+          clipBehavior: Clip.hardEdge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: BorderSide(color: Theme.of(context).dividerColor),
           ),
+          child: buildImage(images[index]),
         ),
         Positioned.fill(
           child: Material(
@@ -55,18 +50,8 @@ class _StoryTileImages extends StatelessWidget {
             borderOnForeground: true,
             child: InkWell(
               borderRadius: BorderRadius.circular(8.0),
-              onLongPress: () {
-                SpImagesViewer.fromString(
-                  images: images,
-                  initialIndex: index,
-                ).show(context);
-              },
-              onTap: () {
-                SpImagesViewer.fromString(
-                  images: images,
-                  initialIndex: index,
-                ).show(context);
-              },
+              onLongPress: () => view(index, context),
+              onTap: () => view(index, context),
               child: displayMoreButton ? Center(child: Text("1+")) : null,
             ),
           ),
@@ -75,8 +60,47 @@ class _StoryTileImages extends StatelessWidget {
     );
   }
 
+  void view(int index, BuildContext context) async {
+    List<String> images = [...this.images];
+    String imageUrl = images[index];
+
+    if (imageUrl.startsWith("storypad://")) {
+      final id = int.tryParse(imageUrl.split("://").last);
+      final asset = await AssetDbModel.db.find(id ?? 0);
+      if (asset?.localFile?.existsSync() == true) {
+        var index = images.indexOf(imageUrl);
+        images[index] = asset!.localFile!.path;
+      }
+    }
+
+    if (!context.mounted) return;
+    SpImagesViewer.fromString(
+      images: images,
+      initialIndex: index,
+    ).show(context);
+  }
+
   Widget buildImage(String imageUrl) {
-    if (QuillService.isImageBase64(imageUrl)) {
+    if (imageUrl.startsWith("storypad://")) {
+      final id = int.tryParse(imageUrl.split("://").last);
+
+      return FutureBuilder(
+        future: AssetDbModel.db.find(id ?? 0),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) return SpGradientLoading(height: 56, width: 56);
+          if (snapshot.data?.localFile?.existsSync() == true) {
+            return Image.file(
+              snapshot.data!.localFile!,
+              height: 56,
+              width: 56,
+              fit: BoxFit.cover,
+            );
+          } else {
+            return Container();
+          }
+        },
+      );
+    } else if (QuillService.isImageBase64(imageUrl)) {
       return Image.memory(
         base64.decode(imageUrl),
         height: 56,

@@ -112,6 +112,14 @@ class _Editor extends StatelessWidget {
             );
           }),
         ),
+        customButtons: [
+          QuillToolbarCustomButtonOptions(
+            icon: Icon(Icons.image),
+            onPressed: () async {
+              QuillImageService(controller: controller).add(context);
+            },
+          ),
+        ],
         multiRowsDisplay: false,
         showDividers: true,
         showFontFamily: false,

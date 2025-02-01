@@ -9,9 +9,14 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
+import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 
 abstract class BaseBackupSource {
   String get cloudId;
+
+  static final List<BaseBackupSource> sources = [
+    GoogleDriveBackupSource(),
+  ];
 
   static final List<BaseDbAdapter> databases = [
     PreferenceDbModel.db,

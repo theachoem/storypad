@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
@@ -71,19 +72,15 @@ class _QuillImageRenderer extends StatelessWidget {
               bottom: MediaQuery.textScalerOf(context).scale(12),
             ),
             child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
               onDoubleTap: () => viewImage(context, imageUrl),
-              onTap: () => readOnly ? onTap(context, imageUrl) : null,
-              child: Hero(
-                tag: imageUrl,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: buildImageByUrl(
-                    imageUrl,
-                    context: context,
-                    width: width,
-                    height: height,
-                  ),
+              onTap: () => onTap(context, imageUrl),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: buildImageByUrl(
+                  imageUrl,
+                  context: context,
+                  width: width,
+                  height: height,
                 ),
               ),
             ),
@@ -99,7 +96,25 @@ class _QuillImageRenderer extends StatelessWidget {
     required double height,
     required BuildContext context,
   }) {
-    if (QuillService.isImageBase64(imageUrl)) {
+    if (imageUrl.startsWith("storypad://")) {
+      final id = int.tryParse(imageUrl.split("://").last);
+      return FutureBuilder(
+        future: AssetDbModel.db.find(id ?? 0),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) return SpGradientLoading(height: height, width: width);
+          if (snapshot.data?.localFile?.existsSync() == true) {
+            return Image.file(
+              snapshot.data!.localFile!,
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+            );
+          } else {
+            return buildErrorLoadingImage(width, height, context);
+          }
+        },
+      );
+    } else if (QuillService.isImageBase64(imageUrl)) {
       return Image.memory(
         base64.decode(imageUrl),
         width: width,
@@ -120,13 +135,17 @@ class _QuillImageRenderer extends StatelessWidget {
         fit: BoxFit.cover,
       );
     } else {
-      return Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(color: ColorScheme.of(context).tertiaryContainer),
-        child: const Icon(Icons.error),
-      );
+      return buildErrorLoadingImage(width, height, context);
     }
+  }
+
+  Widget buildErrorLoadingImage(double width, double height, BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(color: ColorScheme.of(context).tertiaryContainer),
+      child: const Icon(Icons.error),
+    );
   }
 
   Widget buildNetworkImage({
@@ -171,6 +190,17 @@ class _QuillImageRenderer extends StatelessWidget {
   }
 
   Future<void> onTap(BuildContext context, String imageUrl) async {
+    List<String> images = fetchAllImages();
+
+    if (imageUrl.startsWith("storypad://")) {
+      final id = int.tryParse(imageUrl.split("://").last);
+      final asset = await AssetDbModel.db.find(id ?? 0);
+      if (asset?.localFile?.existsSync() == true) {
+        var index = images.indexOf(imageUrl);
+        imageUrl = images[index] = asset!.localFile!.path;
+      }
+    }
+
     List<SheetAction<String>> actions = [
       if (imageUrl.startsWith('http')) ...[
         const SheetAction(
@@ -191,6 +221,7 @@ class _QuillImageRenderer extends StatelessWidget {
       ),
     ];
 
+    if (!context.mounted) return;
     if (actions.length == 1 && actions.first.key == 'view') {
       viewImage(context, imageUrl);
       return;
@@ -218,7 +249,7 @@ class _QuillImageRenderer extends StatelessWidget {
   }
 
   Future<void> viewImage(BuildContext context, String imageUrl) async {
-    final images = fetchAllImages();
+    List<String> images = fetchAllImages();
 
     if (images.contains(imageUrl)) {
       SpImagesViewer.fromString(

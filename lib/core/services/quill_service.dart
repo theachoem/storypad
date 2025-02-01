@@ -62,8 +62,13 @@ class QuillService {
     return plainText;
   }
 
+  static bool storypadUrlExist(String imageUrl) => imageUrl.startsWith("storypad://");
+
   static bool urlOrExistFile(String imageUrl) =>
-      isImageBase64(imageUrl) || imageUrl.startsWith('http') || File(imageUrl).existsSync();
+      isImageBase64(imageUrl) ||
+      imageUrl.startsWith('http') ||
+      File(imageUrl).existsSync() ||
+      storypadUrlExist(imageUrl);
 
   static List<String> imagesFromContent(StoryContentDbModel? content) {
     List<String> images = [];
