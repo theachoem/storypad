@@ -69,18 +69,6 @@ class _MoreOptionsButton extends StatelessWidget {
       titleStyle: TextStyle(color: ColorScheme.of(context).bootstrap.warning.color),
       onPressed: () async {
         await AppStoreOpenerService.call();
-
-        // This is not reliable.
-        // if (await inAppReview.isAvailable()) {
-        //   try {
-        //     await inAppReview.requestReview();
-        //   } catch (e) {
-        //     debugPrint(e.toString());
-        //     await openStore();
-        //   }
-        // } else {
-        //   await openStore();
-        // }
       },
     );
   }
