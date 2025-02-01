@@ -100,8 +100,10 @@ class HomeViewModel extends BaseViewModel {
     if (year == newYear) return;
 
     year = newYear;
-    await load(debugSource: '$runtimeType#changeYear $newYear');
+    stories = null;
+    notifyListeners();
 
+    await load(debugSource: '$runtimeType#changeYear $newYear');
     AnalyticsService.instance.logViewHome(year: year);
   }
 
