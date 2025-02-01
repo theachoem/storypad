@@ -17,7 +17,7 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel feeling(String? feeling);
 
-  StoryDbModel showDayCount(bool showDayCount);
+  StoryDbModel showDayCount(bool? showDayCount);
 
   StoryDbModel year(int year);
 
@@ -59,7 +59,7 @@ abstract class _$StoryDbModelCWProxy {
     int id,
     bool? starred,
     String? feeling,
-    bool showDayCount,
+    bool? showDayCount,
     int year,
     int month,
     int day,
@@ -99,7 +99,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel feeling(String? feeling) => this(feeling: feeling);
 
   @override
-  StoryDbModel showDayCount(bool showDayCount) =>
+  StoryDbModel showDayCount(bool? showDayCount) =>
       this(showDayCount: showDayCount);
 
   @override
@@ -203,7 +203,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       showDayCount: showDayCount == const $CopyWithPlaceholder()
           ? _value.showDayCount
           // ignore: cast_nullable_to_non_nullable
-          : showDayCount as bool,
+          : showDayCount as bool?,
       year: year == const $CopyWithPlaceholder()
           ? _value.year
           // ignore: cast_nullable_to_non_nullable
@@ -280,7 +280,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       id: (json['id'] as num).toInt(),
       starred: json['starred'] as bool?,
       feeling: json['feeling'] as String?,
-      showDayCount: json['show_day_count'] as bool,
+      showDayCount: json['show_day_count'] as bool?,
       year: (json['year'] as num).toInt(),
       month: (json['month'] as num).toInt(),
       day: (json['day'] as num).toInt(),
@@ -312,13 +312,13 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'second': instance.second,
       'starred': instance.starred,
       'feeling': instance.feeling,
-      'show_day_count': instance.showDayCount,
       'tags': instance.tags,
       'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'show_day_count': instance.showDayCount,
     };
 
 const _$PathTypeEnumMap = {
