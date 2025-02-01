@@ -28,7 +28,6 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
 
   late final PageController pageController;
   final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
-  final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
   Map<int, QuillController> quillControllers = {};
 
   int get currentPage => currentPageNotifier.value.round();
@@ -72,6 +71,19 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
 
     await StoryDbModel.db.set(story!);
     AnalyticsService.instance.logSetStoryFeeling(
+      story: story!,
+    );
+  }
+
+  Future<void> toggleShowDayCount() async {
+    if (story == null) return;
+
+    story = story!.copyWith(updatedAt: DateTime.now(), showDayCount: !story!.showDayCount);
+    notifyListeners();
+
+    await StoryDbModel.db.set(story!);
+
+    AnalyticsService.instance.logToggleShowDayCount(
       story: story!,
     );
   }
@@ -127,7 +139,6 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
       if (await _getHasChange()) {
         story = await StoryDbModel.fromShowPage(this);
         await StoryDbModel.db.set(story!);
-        lastSavedAtNotifier.value = story?.updatedAt;
       }
     });
   }
@@ -145,7 +156,6 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
     pageController.dispose();
     currentPageNotifier.dispose();
     quillControllers.forEach((e, k) => k.dispose());
-    lastSavedAtNotifier.dispose();
     super.dispose();
   }
 }
