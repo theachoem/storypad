@@ -169,7 +169,7 @@ class _TitleField extends StatelessWidget {
       style: Theme.of(context).textTheme.titleLarge,
       maxLines: null,
       maxLength: null,
-      autofocus: !readOnly,
+      autofocus: false,
       decoration: InputDecoration(
         hintText: "Title...",
         border: InputBorder.none,

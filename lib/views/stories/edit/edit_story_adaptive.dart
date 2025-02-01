@@ -66,7 +66,7 @@ class _EditStoryAdaptive extends StatelessWidget {
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
       OutlinedButton.icon(
-        icon: Icon(Icons.check_circle_outline),
+        icon: Icon(Icons.check),
         label: Text("Done"),
         onPressed: () async {
           await viewModel.save();
