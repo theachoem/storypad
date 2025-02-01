@@ -68,16 +68,7 @@ class _MoreOptionsButton extends StatelessWidget {
       title: 'Rate the App',
       titleStyle: TextStyle(color: ColorScheme.of(context).bootstrap.warning.color),
       onPressed: () async {
-        final InAppReview inAppReview = InAppReview.instance;
-
-        Future<void> openStore() async {
-          String deeplink = 'market://details?id=${kPackageInfo.packageName}';
-          bool launched = await UrlOpenerService.launchUrlString(deeplink);
-          if (launched) return;
-          await inAppReview.openStoreListing();
-        }
-
-        await openStore();
+        await AppStoreOpenerService.call();
 
         // This is not reliable.
         // if (await inAppReview.isAvailable()) {
