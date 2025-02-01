@@ -13,10 +13,8 @@ class StoryDbConstructorService {
     if (story.allChanges != null) {
       return changesToStrs(story.allChanges!);
     } else {
-      return [
-        ...existingRawChanges,
-        changesToStrs([story.latestChange!]).first,
-      ];
+      final latestChange = changesToStrs([story.latestChange!]).first;
+      return existingRawChanges.contains(latestChange) ? existingRawChanges : [...existingRawChanges, latestChange];
     }
   }
 
