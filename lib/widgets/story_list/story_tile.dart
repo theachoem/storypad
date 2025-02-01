@@ -23,6 +23,7 @@ import 'package:storypad/widgets/story_list/story_tile_info_sheet.dart';
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
 part 'story_tile_favorite_button.dart';
+part 'story_tile_contents.dart';
 
 class StoryTile extends StatelessWidget {
   static const double monogramSize = 32;
@@ -143,10 +144,21 @@ class StoryTile extends StatelessWidget {
                           monogramSize: monogramSize,
                           story: story,
                         ),
-                        buildContents(hasTitle, content, context, hasBody),
+                        _StoryTileContents(
+                          story: story,
+                          viewOnly: viewOnly,
+                          listContext: listContext,
+                          hasTitle: hasTitle,
+                          content: content,
+                          hasBody: hasBody,
+                        ),
                       ],
                     ),
-                    buildStarredButton(context)
+                    _StoryTileStarredButton(
+                      story: story,
+                      viewOnly: viewOnly,
+                      listContext: listContext,
+                    )
                   ],
                 ),
               ),
@@ -156,70 +168,21 @@ class StoryTile extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildContents(bool hasTitle, StoryContentDbModel? content, BuildContext context, bool hasBody) {
-    final images = content != null ? QuillService.imagesFromContent(content) : null;
+class _StoryTileStarredButton extends StatelessWidget {
+  const _StoryTileStarredButton({
+    required this.story,
+    required this.viewOnly,
+    required this.listContext,
+  });
 
-    return Expanded(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (hasTitle)
-          Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            child: Text(
-              content!.title!,
-              style: TextTheme.of(context).titleMedium,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        if (hasBody)
-          Container(
-            width: double.infinity,
-            margin: hasTitle
-                ? EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(6.0))
-                : AppTheme.getDirectionValue(
-                    context,
-                    const EdgeInsets.only(left: 24.0),
-                    const EdgeInsets.only(right: 24.0),
-                  ),
-            child: SpMarkdownBody(body: content!.displayShortBody!),
-          ),
-        SpStoryLabels(
-          story: story,
-          fromStoryTile: true,
-          margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
-          onToggleShowDayCount: viewOnly
-              ? null
-              : () async {
-                  await StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
-                  if (context.mounted) Navigator.maybePop(context);
-                },
-        ),
-        if (images?.isNotEmpty == true) ...[
-          SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
-          _StoryTileImages(images: images!),
-          if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
-        ],
-        if (story.inArchives) ...[
-          Container(
-            margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8.0)),
-            child: RichText(
-              textScaler: MediaQuery.textScalerOf(context),
-              text: TextSpan(
-                style: TextTheme.of(context).labelMedium,
-                children: const [
-                  WidgetSpan(child: Icon(Icons.archive_outlined, size: 16.0), alignment: PlaceholderAlignment.middle),
-                  TextSpan(text: ' Archived'),
-                ],
-              ),
-            ),
-          ),
-        ]
-      ]),
-    );
-  }
+  final StoryDbModel story;
+  final bool viewOnly;
+  final BuildContext listContext;
 
-  Widget buildStarredButton(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     double x = -16.0 * 2 + 48.0;
     double y = 16.0 * 2 - 48.0;
 
