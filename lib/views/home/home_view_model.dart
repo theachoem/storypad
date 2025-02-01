@@ -8,8 +8,10 @@ import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/in_app_review_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
+import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/local_widgets/nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -110,6 +112,11 @@ class HomeViewModel extends BaseViewModel {
   Future<void> goToNewPage(BuildContext context) async {
     await EditStoryRoute(id: null, initialYear: year).push(context);
     await load(debugSource: '$runtimeType#goToNewPage');
+
+    // https://developer.android.com/guide/playcore/in-app-review#when-to-request
+    // https://developer.apple.com/app-store/ratings-and-reviews/
+    int newCount = await NewStoriesCountStorage().increase();
+    if (newCount % 10 == 0) InAppReviewService.request();
   }
 
   void changeName(BuildContext context) async {
