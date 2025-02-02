@@ -49,6 +49,7 @@ class _Editor extends StatelessWidget {
     return QuillEditor.basic(
       focusNode: focusNode,
       controller: controller,
+      scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
       config: QuillEditorConfig(
         paintCursorAboveText: false,
         scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,

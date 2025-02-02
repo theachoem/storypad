@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -22,6 +23,7 @@ abstract class BaseBackupSource {
     PreferenceDbModel.db,
     StoryDbModel.db,
     TagDbModel.db,
+    AssetDbModel.db,
   ];
 
   String? get email;

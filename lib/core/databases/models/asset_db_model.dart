@@ -126,4 +126,11 @@ class AssetDbModel extends BaseDbModel {
 
   @override
   Map<String, dynamic> toJson() => _$AssetDbModelToJson(this);
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+  AssetDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }

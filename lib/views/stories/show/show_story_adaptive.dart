@@ -52,62 +52,32 @@ class _ShowStoryAdaptive extends StatelessWidget {
         controller: viewModel.pageController,
         itemCount: viewModel.quillControllers.length,
         itemBuilder: (context, index) {
-          return SingleChildScrollView(
-            child: QuillEditor.basic(
-              controller: viewModel.quillControllers[index]!,
-              config: QuillEditorConfig(
-                scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
-                scrollable: false,
-                expands: false,
-                placeholder: "...",
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-                  top: 8.0,
-                  bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
-                ),
-                checkBoxReadOnly: false,
-                autoFocus: false,
-                enableScribble: false,
-                showCursor: false,
-                embedBuilders: [
-                  ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
-                  DateBlockEmbed(),
-                ],
-                unknownEmbedBuilder: UnknownEmbedBuilder(),
+          return QuillEditor.basic(
+            controller: viewModel.quillControllers[index]!,
+            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+            config: QuillEditorConfig(
+              scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+              scrollable: true,
+              expands: true,
+              placeholder: "...",
+              padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+                top: 8.0,
+                bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
               ),
+              checkBoxReadOnly: false,
+              autoFocus: false,
+              enableScribble: false,
+              showCursor: false,
+              embedBuilders: [
+                ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
+                DateBlockEmbed(),
+              ],
+              unknownEmbedBuilder: UnknownEmbedBuilder(),
             ),
           );
         },
       );
     }
-  }
-
-  Widget buildAppBarTitle(BuildContext context) {
-    return SpPopupMenuButton(
-      dxGetter: (dx) => dx + 96,
-      dyGetter: (dy) => dy + 48,
-      builder: (void Function() callback) {
-        return StoryTitle(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          content: viewModel.draftContent,
-          changeTitle: () => callback(),
-        );
-      },
-      items: (BuildContext context) {
-        return [
-          SpPopMenuItem(
-            title: 'Rename',
-            leadingIconData: Icons.edit,
-            onPressed: () => viewModel.renameTitle(context),
-          ),
-          SpPopMenuItem(
-            title: 'Changes History',
-            subtitle: "${viewModel.story?.rawChanges?.length}",
-            leadingIconData: Icons.history,
-            onPressed: () => viewModel.goToChangesPage(context),
-          ),
-        ];
-      },
-    );
   }
 
   List<Widget> buildAppBarActions(BuildContext context) {
@@ -125,7 +95,29 @@ class _ShowStoryAdaptive extends StatelessWidget {
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
       }),
-      const SizedBox(width: 4.0),
+      SpPopupMenuButton(
+        items: (context) {
+          return [
+            SpPopMenuItem(
+              leadingIconData: Icons.history_sharp,
+              title: "Changes History",
+              subtitle: "${viewModel.story?.rawChanges?.length}",
+              onPressed: () => viewModel.goToChangesPage(context),
+            ),
+            SpPopMenuItem(
+              leadingIconData: Icons.info,
+              title: "Info",
+              onPressed: () => StoryInfoSheet(story: viewModel.story!).show(context),
+            ),
+          ];
+        },
+        builder: (callback) {
+          return IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: callback,
+          );
+        },
+      )
     ];
   }
 

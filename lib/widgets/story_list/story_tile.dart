@@ -16,7 +16,7 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/widgets/story_list/story_tile_actions.dart';
-import 'package:storypad/widgets/story_list/story_tile_info_sheet.dart';
+import 'package:storypad/widgets/story_list/story_info_sheet.dart';
 
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
@@ -82,7 +82,7 @@ class StoryTile extends StatelessWidget {
       SpPopMenuItem(
         title: 'Info',
         leadingIconData: Icons.info,
-        onPressed: () => StoryTileInfoSheet(story: story).show(context),
+        onPressed: () => StoryInfoSheet(story: story).show(context),
       )
     ];
   }
