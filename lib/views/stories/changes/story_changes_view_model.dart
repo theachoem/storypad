@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/base/base_view_model.dart';
@@ -21,12 +20,11 @@ class StoryChangesViewModel extends BaseViewModel {
   StoryDbModel? originalStory;
   StoryDbModel? draftStory;
 
-  int get toBeRemovedCount {
-    int originalChanges = originalStory?.allChanges?.length ?? 0;
-    int draftChanges = draftStory?.allChanges?.length ?? 0;
+  bool _editing = false;
+  bool get editing => _editing;
+  Set<int> selectedChanges = {};
 
-    return max(0, originalChanges - draftChanges);
-  }
+  int get toBeRemovedCount => selectedChanges.length;
 
   Future<void> load() async {
     originalStory = await StoryDbModel.db.find(params.id);
@@ -36,6 +34,8 @@ class StoryChangesViewModel extends BaseViewModel {
 
     if (originalStory != null) reloadIfInvalid();
 
+    _editing = false;
+    selectedChanges = {};
     notifyListeners();
   }
 
@@ -57,8 +57,24 @@ class StoryChangesViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void cancel() {
-    draftStory = originalStory;
+  void turnOnEditing() {
+    _editing = true;
+    selectedChanges.clear();
+    notifyListeners();
+  }
+
+  void turnOffEditing() {
+    _editing = false;
+    selectedChanges.clear();
+    notifyListeners();
+  }
+
+  void toggleSelection(StoryContentDbModel change) {
+    if (selectedChanges.contains(change.id)) {
+      selectedChanges.remove(change.id);
+    } else {
+      selectedChanges.add(change.id);
+    }
     notifyListeners();
   }
 
@@ -83,10 +99,13 @@ class StoryChangesViewModel extends BaseViewModel {
       context: context,
       title: "Are you sure to delete these changes?",
       message: "You can't undo this action.",
+      isDestructiveAction: true,
+      okLabel: "Delete",
     );
 
     if (resuilt == OkCancelResult.ok) {
-      await StoryDbModel.db.set(draftStory!);
+      final allChanges = [...draftStory!.allChanges!]..removeWhere((e) => selectedChanges.contains(e.id));
+      await StoryDbModel.db.set(draftStory!.copyWith(allChanges: allChanges));
       await load();
 
       AnalyticsService.instance.logRemoveStoryChanges(
