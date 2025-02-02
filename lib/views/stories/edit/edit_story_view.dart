@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extensions.dart';
-import 'package:storypad/core/services/quill_image_service.dart';
+import 'package:storypad/core/services/image_picker_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';

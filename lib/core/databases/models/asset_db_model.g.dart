@@ -11,7 +11,8 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel originalSource(String originalSource);
 
-  AssetDbModel cloudDestinations(Map<String, dynamic> cloudDestinations);
+  AssetDbModel cloudDestinations(
+      Map<String, Map<String, Map<String, String>>> cloudDestinations);
 
   AssetDbModel createdAt(DateTime createdAt);
 
@@ -28,7 +29,7 @@ abstract class _$AssetDbModelCWProxy {
   AssetDbModel call({
     int id,
     String originalSource,
-    Map<String, dynamic> cloudDestinations,
+    Map<String, Map<String, Map<String, String>>> cloudDestinations,
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
@@ -49,7 +50,8 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       this(originalSource: originalSource);
 
   @override
-  AssetDbModel cloudDestinations(Map<String, dynamic> cloudDestinations) =>
+  AssetDbModel cloudDestinations(
+          Map<String, Map<String, Map<String, String>>> cloudDestinations) =>
       this(cloudDestinations: cloudDestinations);
 
   @override
@@ -90,7 +92,7 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       cloudDestinations: cloudDestinations == const $CopyWithPlaceholder()
           ? _value.cloudDestinations
           // ignore: cast_nullable_to_non_nullable
-          : cloudDestinations as Map<String, dynamic>,
+          : cloudDestinations as Map<String, Map<String, Map<String, String>>>,
       createdAt: createdAt == const $CopyWithPlaceholder()
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
@@ -120,7 +122,14 @@ extension $AssetDbModelCopyWith on AssetDbModel {
 AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
       id: (json['id'] as num).toInt(),
       originalSource: json['original_source'] as String,
-      cloudDestinations: json['cloud_destinations'] as Map<String, dynamic>,
+      cloudDestinations:
+          (json['cloud_destinations'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(
+            k,
+            (e as Map<String, dynamic>).map(
+              (k, e) => MapEntry(k, Map<String, String>.from(e as Map)),
+            )),
+      ),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,

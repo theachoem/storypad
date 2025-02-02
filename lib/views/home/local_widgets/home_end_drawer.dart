@@ -51,7 +51,7 @@ class _HomeEndDrawer extends StatelessWidget {
           buildArchiveBinTile(context),
           ListTile(
             leading: const Icon(Icons.photo_album_outlined),
-            title: const Text('Photos'),
+            title: const Text('Library'),
             onTap: () => AssetsRoute().push(context),
           ),
           const Divider(),

@@ -5,6 +5,8 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:path/path.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 import 'package:storypad/initializers/file_initializer.dart';
 
 part 'asset_db_model.g.dart';
@@ -17,7 +19,7 @@ class AssetDbModel extends BaseDbModel {
   @override
   final int id;
   final String originalSource;
-  final Map<String, dynamic> cloudDestinations;
+  final Map<String, Map<String, Map<String, String>>> cloudDestinations;
 
   final DateTime createdAt;
 
@@ -36,15 +38,24 @@ class AssetDbModel extends BaseDbModel {
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;
 
+  String? get cloudFileName => localFile != null ? "$id${extension(localFile!.path)}" : null;
+
+  // This link is to put inside embed block.
+  String get link => "storypad://assets/$id";
+
   File? get localFile {
     final file = File(originalSource);
     if (file.existsSync()) return file;
 
-    final fileName = basename(originalSource);
-    final possibleFile = File("${kApplicationDirectory.path}/images/$fileName");
+    final possibleFile = File(downloadFilePath);
     if (possibleFile.existsSync()) return possibleFile;
 
     return null;
+  }
+
+  String get downloadFilePath {
+    final fileName = basename(originalSource);
+    return "${kApplicationDirectory.path}/images/$fileName";
   }
 
   factory AssetDbModel.fromLocalPath({
@@ -63,8 +74,53 @@ class AssetDbModel extends BaseDbModel {
     );
   }
 
+  bool isGoogleDriveUploadedFor(String? email) {
+    return getGoogleDriveIdForEmail(email ?? '') != null;
+  }
+
+  List<String>? getGoogleDriveForEmails() {
+    return cloudDestinations[GoogleDriveBackupSource().cloudId]?.keys.toList();
+  }
+
+  String? getGoogleDriveUrlForEmail(String email) {
+    final fileId = getGoogleDriveIdForEmail(email);
+    if (fileId is String) {
+      return "https://www.googleapis.com/drive/v3/files/$fileId?alt=media";
+    }
+    return null;
+  }
+
+  String? getGoogleDriveIdForEmail(String email) {
+    final service = GoogleDriveBackupSource();
+    return cloudDestinations[service.cloudId]?[email]?['file_id'];
+  }
+
   Future<AssetDbModel?> save() async => db.set(this);
   Future<void> delete() async => db.delete(id);
+
+  static Future<AssetDbModel?> findBy({
+    required String assetLink,
+  }) async {
+    int? id = int.tryParse(assetLink.split("storypad://assets/").lastOrNull ?? '');
+    return id != null ? AssetDbModel.db.find(id) : null;
+  }
+
+  AssetDbModel copyWithGoogleDriveCloudFile({
+    required CloudFileObject cloudFile,
+  }) {
+    Map<String, Map<String, Map<String, String>>> newCloudDestinations = {...cloudDestinations};
+    final service = GoogleDriveBackupSource();
+
+    newCloudDestinations[service.cloudId] ??= {};
+    newCloudDestinations[service.cloudId]![service.email!] = {
+      'file_id': cloudFile.id,
+      'file_name': cloudFile.fileName!,
+    };
+
+    return copyWith(
+      cloudDestinations: newCloudDestinations,
+    );
+  }
 
   factory AssetDbModel.fromJson(Map<String, dynamic> json) => _$AssetDbModelFromJson(json);
 

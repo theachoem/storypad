@@ -65,11 +65,34 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
     return AssetDbModel(
       id: object.id,
       originalSource: object.originalSource,
-      cloudDestinations: jsonDecode(object.cloudDestinations),
+      cloudDestinations: decodeCloudDestinations(object),
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
     );
+  }
+
+  Map<String, Map<String, Map<String, String>>> decodeCloudDestinations(AssetObjectBox object) {
+    dynamic result = jsonDecode(object.cloudDestinations);
+
+    Map<String, Map<String, Map<String, String>>> decodeData = {};
+    if (result is Map<String, dynamic>) {
+      result.forEach((l1, value) {
+        decodeData[l1] ??= {};
+        if (value is Map<String, dynamic>) {
+          value.forEach((l2, value) {
+            decodeData[l1]![l2] ??= {};
+            if (value is Map<String, dynamic>) {
+              value.forEach((l3, value) {
+                decodeData[l1]![l2]![l3] = value.toString();
+              });
+            }
+          });
+        }
+      });
+    }
+
+    return decodeData;
   }
 
   @override
@@ -81,7 +104,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       return AssetDbModel(
         id: object.id,
         originalSource: object.originalSource,
-        cloudDestinations: jsonDecode(object.cloudDestinations),
+        cloudDestinations: decodeCloudDestinations(object),
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,
         lastSavedDeviceId: object.lastSavedDeviceId,

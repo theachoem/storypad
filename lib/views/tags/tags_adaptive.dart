@@ -105,7 +105,7 @@ class _TagsAdaptive extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(24.0),
           child: Text(
-            "Tags will appear here.",
+            "Tags will appear here",
             textAlign: TextAlign.center,
             style: TextTheme.of(context).bodyLarge,
           ),

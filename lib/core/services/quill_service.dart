@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -62,14 +60,6 @@ class QuillService {
     return plainText;
   }
 
-  static bool storypadUrlExist(String imageUrl) => imageUrl.startsWith("storypad://");
-
-  static bool urlOrExistFile(String imageUrl) =>
-      isImageBase64(imageUrl) ||
-      imageUrl.startsWith('http') ||
-      File(imageUrl).existsSync() ||
-      storypadUrlExist(imageUrl);
-
   static List<String> imagesFromContent(StoryContentDbModel? content) {
     List<String> images = [];
 
@@ -79,10 +69,7 @@ class QuillService {
         if (insert is Map) {
           for (MapEntry<dynamic, dynamic> e in insert.entries) {
             if (e.value != null && e.value.isNotEmpty) {
-              String imageUrl = e.value;
-              if (urlOrExistFile(imageUrl)) {
-                images.add(e.value);
-              }
+              images.add(e.value);
             }
           }
         }

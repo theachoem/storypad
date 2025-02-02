@@ -35,11 +35,11 @@ abstract class BaseBackupSource {
   Future<bool> reauthenticate();
   Future<bool> signIn();
   Future<bool> signOut();
-  Future<CloudFileObject?> saveFile(String fileName, io.File file);
+  Future<CloudFileObject?> uploadFile(String fileName, io.File file, {String? folderName});
   Future<CloudFileObject?> getLastestBackupFile();
   Future<CloudFileObject?> getFileByFileName(String fileName);
   Future<String?> getFileContent(CloudFileObject cloudFile);
-  Future<void> deleteCloudFile(String id);
+  Future<CloudFileObject?> deleteCloudFile(String id);
 
   Future<void> authenticate() async {
     isSignedIn = await checkIsSignedIn();
@@ -78,7 +78,7 @@ abstract class BaseBackupSource {
       backup,
     );
 
-    return saveFile(
+    return uploadFile(
       backup.fileInfo.fileNameWithExtention,
       file,
     );

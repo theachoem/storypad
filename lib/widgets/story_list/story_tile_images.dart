@@ -42,7 +42,19 @@ class _StoryTileImages extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             side: BorderSide(color: Theme.of(context).dividerColor),
           ),
-          child: buildImage(images[index]),
+          child: SpImage(
+            link: images[index],
+            height: 56,
+            width: 56,
+            errorWidget: (context, url, error) {
+              return Container(
+                height: 56,
+                width: 56,
+                decoration: BoxDecoration(color: ColorScheme.of(context).readOnly.surface3),
+                child: const Icon(Icons.image_not_supported_outlined),
+              );
+            },
+          ),
         ),
         Positioned.fill(
           child: Material(
@@ -61,69 +73,11 @@ class _StoryTileImages extends StatelessWidget {
   }
 
   void view(int index, BuildContext context) async {
-    List<String> images = [...this.images];
-    String imageUrl = images[index];
-
-    if (imageUrl.startsWith("storypad://")) {
-      final id = int.tryParse(imageUrl.split("://").last);
-      final asset = await AssetDbModel.db.find(id ?? 0);
-      if (asset?.localFile?.existsSync() == true) {
-        var index = images.indexOf(imageUrl);
-        images[index] = asset!.localFile!.path;
-      }
-    }
-
     if (!context.mounted) return;
+
     SpImagesViewer.fromString(
       images: images,
       initialIndex: index,
     ).show(context);
-  }
-
-  Widget buildImage(String imageUrl) {
-    if (imageUrl.startsWith("storypad://")) {
-      final id = int.tryParse(imageUrl.split("://").last);
-
-      return FutureBuilder(
-        future: AssetDbModel.db.find(id ?? 0),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) return SpGradientLoading(height: 56, width: 56);
-          if (snapshot.data?.localFile?.existsSync() == true) {
-            return Image.file(
-              snapshot.data!.localFile!,
-              height: 56,
-              width: 56,
-              fit: BoxFit.cover,
-            );
-          } else {
-            return Container();
-          }
-        },
-      );
-    } else if (QuillService.isImageBase64(imageUrl)) {
-      return Image.memory(
-        base64.decode(imageUrl),
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-      );
-    } else if (imageUrl.startsWith('http')) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-        progressIndicatorBuilder: (context, url, progress) => SpGradientLoading(width: 56, height: 56),
-      );
-    } else if (File(imageUrl).existsSync()) {
-      return Image.file(
-        File(imageUrl),
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Container();
-    }
   }
 }

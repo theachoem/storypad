@@ -21,6 +21,7 @@ class _Editor extends StatelessWidget {
           child: buildBottomToolbar(context),
           builder: (context, focused, child) {
             return Visibility(
+              maintainState: true,
               visible: focused,
               child: SpFadeIn.fromBottom(
                 child: child!,
@@ -116,7 +117,7 @@ class _Editor extends StatelessWidget {
           QuillToolbarCustomButtonOptions(
             icon: Icon(Icons.image),
             onPressed: () async {
-              QuillImageService(controller: controller).add(context);
+              ImagePickerService(controller: controller).showSheet(context);
             },
           ),
         ],

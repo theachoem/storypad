@@ -256,7 +256,7 @@ class StoryDbModel extends BaseDbModel {
             node['insert']['image'] is String &&
             node['insert']['image'].toString().startsWith("storypad://")) {
           String image = node['insert']['image'];
-          int? assetId = int.tryParse(image.split("://").last);
+          int? assetId = int.tryParse(image.split("storypad://assets/").lastOrNull ?? '');
           if (assetId != null) assets.add(assetId);
         }
       }

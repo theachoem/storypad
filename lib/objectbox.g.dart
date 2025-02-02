@@ -239,7 +239,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(5, 4094713120589114734),
       name: 'AssetObjectBox',
-      lastPropertyId: const obx_int.IdUid(8, 1856515659629711057),
+      lastPropertyId: const obx_int.IdUid(9, 7601477478707634423),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -329,7 +329,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         4968158570417504072,
         957469211671557087,
         8481003567609178682,
-        8289181544945165894
+        8289181544945165894,
+        7601477478707634423
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -612,7 +613,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               ? null
               : fbb.writeString(object.lastSavedDeviceId!);
           final originalSourceOffset = fbb.writeString(object.originalSource);
-          fbb.startTable(9);
+          fbb.startTable(10);
           fbb.addInt64(0, object.id);
           fbb.addOffset(2, cloudDestinationsOffset);
           fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
