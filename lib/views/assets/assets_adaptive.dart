@@ -76,17 +76,35 @@ class _AssetsAdaptive extends StatelessWidget {
           dyGetter: (dy) => dy + 100,
           items: (context) {
             return [
+              if (viewModel.storiesCount[asset.id] == 0)
+                SpPopMenuItem(
+                  leadingIconData: Icons.delete,
+                  titleStyle: TextStyle(color: ColorScheme.of(context).error),
+                  title: "Delete from Google Drive",
+                  onPressed: () => provider.deleteAsset(asset),
+                )
+              else
+                SpPopMenuItem(
+                  leadingIconData: Icons.library_books,
+                  title: "Stories",
+                  onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
+                ),
               SpPopMenuItem(
-                leadingIconData: Icons.delete,
-                titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                title: "Delete from Google Drive",
-                onPressed: () => provider.deleteAsset(asset),
-              ),
+                leadingIconData: Icons.image,
+                title: "View",
+                onPressed: () {
+                  final assetLinks = provider.assets?.items.map((e) => e.link).toList() ?? [];
+                  SpImagesViewer.fromString(
+                    images: assetLinks,
+                    initialIndex: assetLinks.indexOf(asset.link),
+                  ).show(context);
+                },
+              )
             ];
           },
           builder: (callback) {
             return GestureDetector(
-              onLongPress: viewModel.storiesCount[asset.id] == 0 ? callback : null,
+              onTap: callback,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 4.0,
@@ -173,19 +191,12 @@ class _AssetsAdaptive extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context, AssetDbModel asset) {
-    return Material(
+    return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
-      color: ColorScheme.of(context).readOnly.surface2,
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        onTap: () async {
-          ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context);
-        },
-        child: SpImage(
-          link: asset.link,
-          width: 200,
-          height: 200,
-        ),
+      child: SpImage(
+        link: asset.link,
+        width: 200,
+        height: 200,
       ),
     );
   }
