@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -46,6 +47,7 @@ class StoryDbModel extends BaseDbModel {
 
   @JsonKey(fromJson: tagsFromJson)
   final List<String>? tags;
+  final List<int>? assets;
 
   /// load this manually when needed with [loadAllChanges]
   @JsonKey(name: 'changes')
@@ -95,6 +97,7 @@ class StoryDbModel extends BaseDbModel {
     required this.updatedAt,
     required this.createdAt,
     required this.tags,
+    required this.assets,
     required this.movedToBinAt,
     required this.allChanges,
     required this.lastSavedDeviceId,
@@ -220,6 +223,7 @@ class StoryDbModel extends BaseDbModel {
       updatedAt: now,
       createdAt: now,
       tags: [],
+      assets: [],
       movedToBinAt: null,
       rawChanges: null,
       lastSavedDeviceId: null,
@@ -244,7 +248,23 @@ class StoryDbModel extends BaseDbModel {
       viewModel.quillControllers,
     );
 
+    Set<int> assets = {};
+    for (var page in content.pages ?? []) {
+      for (var node in page) {
+        if (node is Map &&
+            node['insert'] is Map &&
+            node['insert']['image'] is String &&
+            node['insert']['image'].toString().startsWith("storypad://")) {
+          String image = node['insert']['image'];
+          int? assetId = int.tryParse(image.split("storypad://assets/").lastOrNull ?? '');
+          if (assetId != null) assets.add(assetId);
+        }
+      }
+    }
+
+    debugPrint("Found assets: $assets in ${viewModel.story?.id}");
     return viewModel.story!.copyWith(
+      assets: assets.toList(),
       updatedAt: DateTime.now(),
       latestChange: content,
     );

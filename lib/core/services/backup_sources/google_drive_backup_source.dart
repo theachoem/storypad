@@ -63,9 +63,12 @@ class GoogleDriveBackupSource extends BaseBackupSource {
   }
 
   @override
-  Future<CloudFileObject?> saveFile(String fileName, File file) async {
-    CloudFileObject? result = await _service.uploadFile(fileName, file);
-    await file.parent.delete(recursive: true);
+  Future<CloudFileObject?> uploadFile(
+    String fileName,
+    File file, {
+    String? folderName,
+  }) async {
+    CloudFileObject? result = await _service.uploadFile(fileName, file, folderName: folderName);
     return result;
   }
 
@@ -85,7 +88,7 @@ class GoogleDriveBackupSource extends BaseBackupSource {
   }
 
   @override
-  Future<void> deleteCloudFile(String id) {
+  Future<CloudFileObject?> deleteCloudFile(String id) {
     return _service.delete(id);
   }
 }

@@ -37,6 +37,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel tags(List<String>? tags);
 
+  StoryDbModel assets(List<int>? assets);
+
   StoryDbModel movedToBinAt(DateTime? movedToBinAt);
 
   StoryDbModel allChanges(List<StoryContentDbModel>? allChanges);
@@ -69,6 +71,7 @@ abstract class _$StoryDbModelCWProxy {
     DateTime updatedAt,
     DateTime createdAt,
     List<String>? tags,
+    List<int>? assets,
     DateTime? movedToBinAt,
     List<StoryContentDbModel>? allChanges,
     String? lastSavedDeviceId,
@@ -130,6 +133,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel tags(List<String>? tags) => this(tags: tags);
 
   @override
+  StoryDbModel assets(List<int>? assets) => this(assets: assets);
+
+  @override
   StoryDbModel movedToBinAt(DateTime? movedToBinAt) =>
       this(movedToBinAt: movedToBinAt);
 
@@ -173,6 +179,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
+    Object? assets = const $CopyWithPlaceholder(),
     Object? movedToBinAt = const $CopyWithPlaceholder(),
     Object? allChanges = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
@@ -240,6 +247,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
           : tags as List<String>?,
+      assets: assets == const $CopyWithPlaceholder()
+          ? _value.assets
+          // ignore: cast_nullable_to_non_nullable
+          : assets as List<int>?,
       movedToBinAt: movedToBinAt == const $CopyWithPlaceholder()
           ? _value.movedToBinAt
           // ignore: cast_nullable_to_non_nullable
@@ -290,6 +301,9 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       updatedAt: DateTime.parse(json['updated_at'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
       tags: tagsFromJson(json['tags']),
+      assets: (json['assets'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
       movedToBinAt: json['moved_to_bin_at'] == null
           ? null
           : DateTime.parse(json['moved_to_bin_at'] as String),
@@ -313,6 +327,7 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'starred': instance.starred,
       'feeling': instance.feeling,
       'tags': instance.tags,
+      'assets': instance.assets,
       'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),

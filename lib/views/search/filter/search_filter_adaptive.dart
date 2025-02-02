@@ -23,11 +23,6 @@ class _SearchFilterAdaptive extends StatelessWidget {
         buildYears(context),
         SizedBox(height: 12.0),
       ],
-      if (viewModel.types != null) ...[
-        _Title(title: "Types"),
-        buildTypes(context),
-        SizedBox(height: 12.0),
-      ],
       if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
         _Title(title: "Tags"),
         buildTags(context),
@@ -51,19 +46,6 @@ class _SearchFilterAdaptive extends StatelessWidget {
       selected: (int year) => viewModel.searchFilter.years.contains(year),
       onToggle: (int year) {
         viewModel.searchFilter.toggleYear(year);
-        viewModel.notifyListeners();
-      },
-    );
-  }
-
-  Widget buildTypes(BuildContext context) {
-    return _ScrollableChoiceChips<PathType>(
-      choices: viewModel.types?.keys.toList() ?? [],
-      storiesCount: (PathType type) => viewModel.types?[type] ?? 0,
-      toLabel: (PathType type) => type.localized,
-      selected: (PathType type) => viewModel.searchFilter.types.contains(type),
-      onToggle: (PathType type) {
-        viewModel.searchFilter.toggleType(type);
         viewModel.notifyListeners();
       },
     );

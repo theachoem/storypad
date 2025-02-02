@@ -36,17 +36,24 @@ class _StoryTileImages extends StatelessWidget {
   }) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Hero(
-            tag: images[index],
-            child: Material(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-              child: buildImage(images[index]),
-            ),
+        Material(
+          clipBehavior: Clip.hardEdge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+          child: SpImage(
+            link: images[index],
+            height: 56,
+            width: 56,
+            errorWidget: (context, url, error) {
+              return Container(
+                height: 56,
+                width: 56,
+                decoration: BoxDecoration(color: ColorScheme.of(context).readOnly.surface3),
+                child: const Icon(Icons.image_not_supported_outlined),
+              );
+            },
           ),
         ),
         Positioned.fill(
@@ -55,18 +62,8 @@ class _StoryTileImages extends StatelessWidget {
             borderOnForeground: true,
             child: InkWell(
               borderRadius: BorderRadius.circular(8.0),
-              onLongPress: () {
-                SpImagesViewer.fromString(
-                  images: images,
-                  initialIndex: index,
-                ).show(context);
-              },
-              onTap: () {
-                SpImagesViewer.fromString(
-                  images: images,
-                  initialIndex: index,
-                ).show(context);
-              },
+              onLongPress: () => view(index, context),
+              onTap: () => view(index, context),
               child: displayMoreButton ? Center(child: Text("1+")) : null,
             ),
           ),
@@ -75,31 +72,12 @@ class _StoryTileImages extends StatelessWidget {
     );
   }
 
-  Widget buildImage(String imageUrl) {
-    if (QuillService.isImageBase64(imageUrl)) {
-      return Image.memory(
-        base64.decode(imageUrl),
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-      );
-    } else if (imageUrl.startsWith('http')) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-        progressIndicatorBuilder: (context, url, progress) => SpGradientLoading(width: 56, height: 56),
-      );
-    } else if (File(imageUrl).existsSync()) {
-      return Image.file(
-        File(imageUrl),
-        height: 56,
-        width: 56,
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Container();
-    }
+  void view(int index, BuildContext context) async {
+    if (!context.mounted) return;
+
+    SpImagesViewer.fromString(
+      images: images,
+      initialIndex: index,
+    ).show(context);
   }
 }

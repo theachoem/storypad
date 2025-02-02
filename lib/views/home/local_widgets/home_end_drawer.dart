@@ -49,6 +49,11 @@ class _HomeEndDrawer extends StatelessWidget {
           buildSearchTile(context),
           buildTagsTile(context),
           buildArchiveBinTile(context),
+          ListTile(
+            leading: const Icon(Icons.photo_album_outlined),
+            title: const Text('Library'),
+            onTap: () => AssetsRoute().push(context),
+          ),
           const Divider(),
           const BackupTile(),
           const Divider(),
@@ -87,6 +92,7 @@ class _HomeEndDrawer extends StatelessWidget {
           years: {viewModel.year},
           types: {PathType.docs},
           tagId: null,
+          assetId: null,
         ),
       ).push(context),
     );

@@ -48,6 +48,7 @@ class StoryObjectBox extends BaseObjectBox {
 
   List<String> changes;
   List<String>? tags;
+  List<int>? assets;
 
   // for query
   String? metadata;
@@ -73,6 +74,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.movedToBinAt,
     required this.changes,
     required this.tags,
+    required this.assets,
     required this.metadata,
     this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
@@ -82,6 +84,7 @@ class StoryObjectBox extends BaseObjectBox {
   void toPermanentlyDeleted() {
     changes = [];
     tags = null;
+    assets = null;
     metadata = null;
     updatedAt = DateTime.now();
     permanentlyDeletedAt = DateTime.now();
@@ -124,6 +127,48 @@ class TagObjectBox extends BaseObjectBox {
     required this.version,
     required this.starred,
     required this.emoji,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
+  });
+
+  @override
+  void toPermanentlyDeleted() {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}
+
+@Entity()
+class AssetObjectBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+  String originalSource;
+  String cloudDestinations;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  AssetObjectBox({
+    required this.id,
+    required this.originalSource,
+    required this.cloudDestinations,
     required this.createdAt,
     required this.updatedAt,
     this.lastSavedDeviceId,
