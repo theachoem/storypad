@@ -138,13 +138,35 @@ class StoryTileActions {
     StoryDbModel? updatedStory = await originalStory.putBack();
     if (updatedStory == null) return;
 
+    await reloadHome('$runtimeType#moveToBin');
+
     AnalyticsService.instance.logPutStoryBack(
       story: updatedStory,
     );
 
-    // put back most likely inside archives page (not home)
-    // reload home as the put back data could go there.
-    await reloadHome('$runtimeType#putBack');
+    if (listContext.mounted) {
+      Future<void> undoPutBack(StoryDbModel originalStory) async {
+        StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+        if (updatedStory == null) return;
+
+        AnalyticsService.instance.logUndoPutBack(
+          story: updatedStory,
+        );
+
+        if (listContext.mounted) {
+          await StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+          await reloadHome('$runtimeType#putBack');
+        }
+      }
+
+      MessengerService.of(listContext).showSnackBar("Back in home!", showAction: true, action: (foreground) {
+        return SnackBarAction(
+          label: "Undo",
+          textColor: foreground,
+          onPressed: () => undoPutBack(originalStory),
+        );
+      });
+    }
   }
 
   Future<void> toggleStarred() async {

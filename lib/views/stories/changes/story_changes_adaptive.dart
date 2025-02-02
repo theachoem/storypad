@@ -16,9 +16,14 @@ class _StoryChangesAdaptive extends StatelessWidget {
               ? Text("Changes (${viewModel.originalStory?.allChanges?.length})")
               : const Text("Changes"),
           actions: [
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () => viewModel.turnOnEditing(),
+            Visibility(
+              visible: !viewModel.editing,
+              child: SpFadeIn.fromBottom(
+                child: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => viewModel.turnOnEditing(),
+                ),
+              ),
             ),
           ],
         ),
@@ -152,6 +157,7 @@ class _StoryChangesAdaptive extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
                   .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 spacing: 8.0,
                 children: [
                   FilledButton.tonal(
