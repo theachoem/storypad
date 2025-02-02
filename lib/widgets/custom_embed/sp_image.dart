@@ -96,7 +96,7 @@ class SpImage extends StatelessWidget {
   }
 
   Widget buildImageError(double width, double height, BuildContext context, Object? error) {
-    String message = error is StateError ? error.message : error.toString();
+    String? message = error is StateError ? error.message : error?.toString();
     return Material(
       color: ColorScheme.of(context).readOnly.surface3,
       child: InkWell(
@@ -112,15 +112,16 @@ class SpImage extends StatelessWidget {
             runSpacing: 8.0,
             children: [
               const Icon(Icons.image_not_supported_outlined),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+              if (message != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
