@@ -11,6 +11,7 @@ import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/assets/show/show_asset_view.dart';
 import 'package:storypad/widgets/custom_embed/sp_image.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'assets_view_model.dart';
