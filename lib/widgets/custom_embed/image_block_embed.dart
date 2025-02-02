@@ -66,22 +66,16 @@ class _QuillImageRenderer extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.only(
-              top: MediaQuery.textScalerOf(context).scale(node.documentOffset == 0 ? 4 : 12),
-              bottom: MediaQuery.textScalerOf(context).scale(12),
-            ),
-            child: GestureDetector(
-              onDoubleTap: () => viewImage(context, imageUrl),
-              onTap: () => onTap(context, imageUrl),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: buildImageByUrl(
-                  imageUrl,
-                  context: context,
-                  width: width,
-                  height: height,
-                ),
+          GestureDetector(
+            onDoubleTap: () => viewImage(context, imageUrl),
+            onTap: () => onTap(context, imageUrl),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: buildImageByUrl(
+                imageUrl,
+                context: context,
+                width: width,
+                height: height,
               ),
             ),
           ),
