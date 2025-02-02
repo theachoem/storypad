@@ -1,4 +1,3 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/base/base_view_model.dart';
@@ -86,34 +85,6 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
     AnalyticsService.instance.logToggleShowDayCount(
       story: story!,
     );
-  }
-
-  Future<void> renameTitle(BuildContext context) async {
-    if (story == null || draftContent == null) return;
-
-    List<String>? result = await showTextInputDialog(
-      title: "Rename",
-      context: context,
-      textFields: [
-        DialogTextField(
-          initialText: draftContent?.title,
-          maxLines: 2,
-          hintText: 'Title...',
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) return "Required";
-            return null;
-          },
-        )
-      ],
-    );
-
-    if (result != null && result.firstOrNull != null) {
-      draftContent = draftContent!.copyWith(title: result.first.trim());
-      story = story!.copyWith(latestChange: draftContent!);
-
-      StoryDbModel.db.set(story!);
-      notifyListeners();
-    }
   }
 
   Future<void> goToEditPage(BuildContext context) async {
