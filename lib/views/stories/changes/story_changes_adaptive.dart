@@ -15,6 +15,12 @@ class _StoryChangesAdaptive extends StatelessWidget {
           title: viewModel.originalStory?.allChanges?.length != null
               ? Text("Changes (${viewModel.originalStory?.allChanges?.length})")
               : const Text("Changes"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () => viewModel.turnOnEditing(),
+            ),
+          ],
         ),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
@@ -85,16 +91,39 @@ class _StoryChangesAdaptive extends StatelessWidget {
         ];
       },
       builder: (open) {
+        Widget? trailing;
+        if (isLatestChange) {
+          trailing = const Icon(Icons.lock);
+        } else {
+          trailing = viewModel.editing
+              ? Checkbox.adaptive(
+                  value: viewModel.selectedChanges.contains(change.id),
+                  onChanged: (_) => viewModel.toggleSelection(change),
+                )
+              : null;
+        }
+
         return ListTile(
-          onTap: open,
+          onLongPress: () {
+            viewModel.turnOnEditing();
+            if (!isLatestChange) {
+              viewModel.toggleSelection(change);
+            }
+          },
+          onTap: () {
+            if (viewModel.editing) {
+              if (isLatestChange) return;
+              viewModel.toggleSelection(change);
+            } else {
+              open();
+            }
+          },
           isThreeLine: true,
           title: Text(change.title ?? 'N/A'),
           contentPadding: isLatestChange
               ? const EdgeInsets.symmetric(horizontal: 16.0)
               : const EdgeInsets.only(left: 16.0, right: 4.0),
-          trailing: isLatestChange
-              ? const Icon(Icons.lock)
-              : IconButton(icon: const Icon(Icons.delete), onPressed: () => viewModel.draftRemove(change)),
+          trailing: trailing,
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -113,7 +142,7 @@ class _StoryChangesAdaptive extends StatelessWidget {
 
   Widget buildBottomNavigationBar(BuildContext context) {
     return Visibility(
-      visible: viewModel.toBeRemovedCount > 0,
+      visible: viewModel.editing,
       child: SpFadeIn.fromBottom(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -127,7 +156,7 @@ class _StoryChangesAdaptive extends StatelessWidget {
                 children: [
                   FilledButton.tonal(
                     child: const Text("Cancel"),
-                    onPressed: () => viewModel.cancel(),
+                    onPressed: () => viewModel.turnOffEditing(),
                   ),
                   FilledButton(
                     child: Text("Remove (${viewModel.toBeRemovedCount})"),
