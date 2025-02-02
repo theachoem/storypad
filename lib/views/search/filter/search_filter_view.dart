@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/routes/base_route.dart';
 
 import 'search_filter_view_model.dart';
