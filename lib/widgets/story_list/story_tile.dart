@@ -15,6 +15,7 @@ import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
+import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/story_list/story_tile_actions.dart';
 import 'package:storypad/widgets/story_list/story_info_sheet.dart';
 
@@ -46,6 +47,12 @@ class StoryTile extends StatelessWidget {
 
   List<SpPopMenuItem> buildPopUpMenus(BuildContext context) {
     return [
+      if (story.inArchives || story.inBins && onTap != null)
+        SpPopMenuItem(
+          title: 'Open',
+          leadingIconData: Icons.library_books,
+          onPressed: onTap,
+        ),
       if (story.putBackAble)
         SpPopMenuItem(
           title: 'Put back',
@@ -89,6 +96,23 @@ class StoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (story.inArchives || story.inBins) {
+      return StoryListMultiEditWrapper.tryListen(
+        context: context,
+        builder: (context, multiEditState) {
+          if (multiEditState == null) return buildStoryTile(context);
+          return buildStoryTile(context, multiEditState);
+        },
+      );
+    }
+
+    return buildStoryTile(context);
+  }
+
+  Widget buildStoryTile(
+    BuildContext context, [
+    StoryListMultiEditWrapperState? multiEditState,
+  ]) {
     StoryContentDbModel? content = story.latestChange;
 
     bool hasTitle = content?.title?.trim().isNotEmpty == true;
@@ -125,9 +149,25 @@ class StoryTile extends StatelessWidget {
           dyGetter: (double dy) => dy + kToolbarHeight,
           items: (BuildContext context) => menus,
           builder: (openPopUpMenu) {
+            void Function()? onTap;
+            void Function()? onLongPress;
+
+            if (multiEditState?.editing == true) {
+              onTap = () => multiEditState!.toggleSelection(story);
+              onLongPress = null;
+            } else if (story.inArchives || story.inBins) {
+              onTap = () => openPopUpMenu.call();
+              onLongPress = multiEditState != null && !multiEditState.editing
+                  ? () => multiEditState.turnOnEditing(initialId: story.id)
+                  : null;
+            } else {
+              onTap = this.onTap;
+              onLongPress = () => openPopUpMenu.call();
+            }
+
             return InkWell(
               onTap: onTap,
-              onLongPress: menus.isNotEmpty ? openPopUpMenu : null,
+              onLongPress: onLongPress,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
                 child: Stack(
@@ -156,6 +196,7 @@ class StoryTile extends StatelessWidget {
                       story: story,
                       viewOnly: viewOnly,
                       listContext: listContext,
+                      multiEditState: multiEditState,
                     )
                   ],
                 ),
@@ -173,11 +214,13 @@ class _StoryTileStarredButton extends StatelessWidget {
     required this.story,
     required this.viewOnly,
     required this.listContext,
+    required this.multiEditState,
   });
 
   final StoryDbModel story;
   final bool viewOnly;
   final BuildContext listContext;
+  final StoryListMultiEditWrapperState? multiEditState;
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +240,7 @@ class _StoryTileStarredButton extends StatelessWidget {
         child: _StoryTileFavoriteButton(
           story: story,
           toggleStarred: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).toggleStarred,
+          multiEditState: multiEditState,
         ),
       ),
     );

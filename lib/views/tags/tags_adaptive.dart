@@ -16,7 +16,7 @@ class _TagsAdaptive extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => provider.addTag(context),
-          )
+          ),
         ],
       ),
       body: RefreshIndicator.adaptive(

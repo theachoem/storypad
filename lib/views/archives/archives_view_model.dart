@@ -9,7 +9,13 @@ class ArchivesViewModel extends BaseViewModel {
     required this.params,
   });
 
+  int editedKey = 0;
   PathType type = PathType.archives;
+
+  void changeEditKey() {
+    editedKey++;
+    notifyListeners();
+  }
 
   void setType(PathType type) {
     this.type = type;

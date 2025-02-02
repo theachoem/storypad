@@ -95,7 +95,7 @@ class StoryChangesViewModel extends BaseViewModel {
   }
 
   Future<void> remove(BuildContext context) async {
-    OkCancelResult resuilt = await showOkCancelAlertDialog(
+    OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: "Are you sure to delete these changes?",
       message: "You can't undo this action.",
@@ -103,7 +103,7 @@ class StoryChangesViewModel extends BaseViewModel {
       okLabel: "Delete",
     );
 
-    if (resuilt == OkCancelResult.ok) {
+    if (result == OkCancelResult.ok) {
       final allChanges = [...draftStory!.allChanges!]..removeWhere((e) => selectedChanges.contains(e.id));
       await StoryDbModel.db.set(draftStory!.copyWith(allChanges: allChanges));
       await load();

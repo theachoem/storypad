@@ -4,13 +4,28 @@ class _StoryTileFavoriteButton extends StatelessWidget {
   const _StoryTileFavoriteButton({
     required this.story,
     required this.toggleStarred,
+    required this.multiEditState,
   });
 
   final StoryDbModel story;
   final Future<void> Function()? toggleStarred;
+  final StoryListMultiEditWrapperState? multiEditState;
 
   @override
   Widget build(BuildContext context) {
+    if (multiEditState == null) return buildFavoriteButton();
+
+    return SpAnimatedIcons(
+      showFirst: !multiEditState!.editing,
+      firstChild: buildFavoriteButton(),
+      secondChild: Checkbox.adaptive(
+        value: multiEditState!.selectedStories.contains(story.id),
+        onChanged: (_) => multiEditState!.toggleSelection(story),
+      ),
+    );
+  }
+
+  Widget buildFavoriteButton() {
     return CmSingleStateWidget(
       initialValue: story.starred == true,
       builder: (context, notifier) {

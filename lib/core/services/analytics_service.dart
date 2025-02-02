@@ -311,6 +311,18 @@ class AnalyticsService {
     );
   }
 
+  Future<void> logUndoPutBack({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logUndoPutBack', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('undo_put_back'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logArchiveStory({
     required StoryDbModel story,
   }) {

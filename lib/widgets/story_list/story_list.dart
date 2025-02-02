@@ -28,11 +28,13 @@ class StoryList extends StatelessWidget {
   });
 
   static StoryListWithQuery withQuery({
+    Key? key,
     SearchFilterObject? filter,
     String? query,
     bool viewOnly = false,
   }) {
     return StoryListWithQuery(
+      key: key,
       filter: filter,
       query: query,
       viewOnly: viewOnly,
