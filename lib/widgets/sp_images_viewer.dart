@@ -5,7 +5,8 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:storypad/core/services/quill_service.dart';
+import 'package:storypad/core/services/google_drive/google_drive_service.dart';
+import 'package:storypad/widgets/db_assets/db_image.dart';
 
 class SpImageViewerProvider {
   final ImageProvider provider;
@@ -41,9 +42,10 @@ class SpImagesViewer extends StatefulWidget {
 
     for (String imageUrl in images) {
       ImageProvider? imageProvider;
-      if (!QuillService.urlOrExistFile(imageUrl)) continue;
 
-      if (imageUrl.startsWith('http')) {
+      if (imageUrl.startsWith('storypad://')) {
+        imageProvider = DbImage(assetLink: imageUrl, currentUser: GoogleDriveService.instance.googleSignIn.currentUser);
+      } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);
       } else if (File(imageUrl).existsSync()) {
         imageProvider = FileImage(File(imageUrl));

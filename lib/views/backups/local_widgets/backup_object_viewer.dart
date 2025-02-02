@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/tags_box.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -11,6 +13,7 @@ import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/backups/local_widgets/table_viewers/backup_assets_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_preferences_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_stories_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_default_table_viewer.dart';
@@ -123,6 +126,11 @@ class BackupObjectViewer extends StatelessWidget {
         List<PreferenceDbModel> models =
             tableContents.map((e) => PreferencesBox().modelFromJson(e)..markAsCloudViewing()).toList();
         viewer = BackupPreferencesTableViewer(preferences: models);
+        break;
+      case 'assets':
+        List<AssetDbModel> models =
+            tableContents.map((e) => AssetsBox().modelFromJson(e)..markAsCloudViewing()).toList();
+        viewer = BackupAssetsTableViewer(assets: models);
         break;
       default:
         viewer = BackupDefaultTableViewer(tableContents: tableContents);

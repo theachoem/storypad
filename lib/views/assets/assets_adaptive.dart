@@ -1,0 +1,211 @@
+part of 'assets_view.dart';
+
+class _AssetsAdaptive extends StatelessWidget {
+  const _AssetsAdaptive(this.viewModel);
+
+  final AssetsViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<BackupProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("$kAppName Library"),
+      ),
+      bottomNavigationBar: buildBottomNavigation(provider, context),
+      body: buildBody(context, provider),
+    );
+  }
+
+  Widget buildBottomNavigation(BackupProvider provider, BuildContext context) {
+    return Visibility(
+      visible: provider.localAssets != null &&
+          provider.localAssets?.isNotEmpty == true &&
+          provider.source.isSignedIn == true,
+      child: SpFadeIn.fromBottom(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Divider(height: 1),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
+                  .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+              child: Row(
+                spacing: 8.0,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ValueListenableBuilder<int?>(
+                    valueListenable: provider.loadingAssetIdNotifier,
+                    builder: (context, loadingAssetId, child) {
+                      return FilledButton.icon(
+                        icon: Icon(MdiIcons.googleDrive),
+                        label: const Text("Upload to Google Drive"),
+                        onPressed: loadingAssetId != null ? null : () => provider.uploadAssets(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildBody(
+    BuildContext context,
+    BackupProvider provider,
+  ) {
+    if (provider.assets?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (provider.assets?.items.isEmpty == true) {
+      return buildEmptyBody(context);
+    }
+
+    return MasonryGridView.builder(
+      padding: EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      itemCount: provider.assets?.items.length ?? 0,
+      mainAxisSpacing: 8.0,
+      crossAxisSpacing: 8.0,
+      gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemBuilder: (context, index) {
+        final asset = provider.assets!.items[index];
+
+        return SpPopupMenuButton(
+          dyGetter: (dy) => dy + 100,
+          items: (context) {
+            return [
+              SpPopMenuItem(
+                leadingIconData: Icons.delete,
+                titleStyle: TextStyle(color: ColorScheme.of(context).error),
+                title: "Delete from Google Drive",
+                onPressed: () => provider.deleteAsset(asset),
+              ),
+            ];
+          },
+          builder: (callback) {
+            return GestureDetector(
+              onLongPress: viewModel.storiesCount[asset.id] == 0 ? callback : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4.0,
+                children: [
+                  Stack(
+                    children: [
+                      buildImage(context, asset),
+                      ValueListenableBuilder<int?>(
+                        valueListenable: provider.loadingAssetIdNotifier,
+                        builder: (context, loadingAssetId, child) {
+                          return buildImageStatus(
+                            context: context,
+                            asset: asset,
+                            provider: provider,
+                            loadingAssetId: loadingAssetId,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Text("${viewModel.storiesCount[asset.id]} stories"),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget buildImageStatus({
+    required BuildContext context,
+    required AssetDbModel asset,
+    required BackupProvider provider,
+    required int? loadingAssetId,
+  }) {
+    Widget child;
+
+    if (loadingAssetId == asset.id) {
+      child = const SizedBox.square(
+        dimension: 16.0,
+        child: CircularProgressIndicator.adaptive(),
+      );
+    } else if (!asset.isGoogleDriveUploadedFor(provider.source.email)) {
+      child = CircleAvatar(
+        radius: 16.0,
+        backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
+        foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
+        child: Icon(
+          Icons.cloud_off,
+          size: 20.0,
+        ),
+      );
+    } else if (asset.isGoogleDriveUploadedFor(provider.source.email)) {
+      child = Tooltip(
+        message: asset.getGoogleDriveUrlForEmail(provider.source.email!),
+        child: CircleAvatar(
+          radius: 16.0,
+          backgroundColor: ColorScheme.of(context).bootstrap.success.color,
+          foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
+          child: Icon(
+            Icons.cloud_done_outlined,
+            size: 20.0,
+          ),
+        ),
+      );
+    } else {
+      child = CircleAvatar(
+        radius: 16.0,
+        backgroundColor: ColorScheme.of(context).bootstrap.info.color,
+        foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
+        child: Icon(
+          Icons.error,
+          size: 20.0,
+        ),
+      );
+    }
+
+    return Positioned(
+      top: 8.0,
+      right: 8.0,
+      child: child,
+    );
+  }
+
+  Widget buildImage(BuildContext context, AssetDbModel asset) {
+    return Material(
+      borderRadius: BorderRadius.circular(8.0),
+      color: ColorScheme.of(context).readOnly.surface2,
+      clipBehavior: Clip.hardEdge,
+      child: InkWell(
+        onTap: () async {
+          ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context);
+        },
+        child: SpImage(
+          link: asset.link,
+          width: 200,
+          height: 200,
+        ),
+      ),
+    );
+  }
+
+  Widget buildEmptyBody(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: constraints.maxHeight,
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            "Photos will appear here",
+            textAlign: TextAlign.center,
+            style: TextTheme.of(context).bodyLarge,
+          ),
+        ),
+      );
+    });
+  }
+}

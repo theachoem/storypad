@@ -21,11 +21,13 @@ class SpTextInputsPage extends StatefulWidget {
   const SpTextInputsPage({
     super.key,
     this.appBar,
+    this.saveButtonLabel,
     required this.fields,
   });
 
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
+  final String? saveButtonLabel;
 
   @override
   State<SpTextInputsPage> createState() => _SpTextInputsPageState();
@@ -63,7 +65,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
               for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
               const SizedBox(height: 16.0),
               FilledButton.icon(
-                label: const Text("Save"),
+                label: Text(widget.saveButtonLabel ?? "Save"),
                 onPressed: () => submit(context),
               )
             ],

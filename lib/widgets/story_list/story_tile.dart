@@ -1,24 +1,22 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
+import 'package:storypad/widgets/custom_embed/sp_image.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/widgets/story_list/story_tile_actions.dart';
-import 'package:storypad/widgets/story_list/story_tile_info_sheet.dart';
+import 'package:storypad/widgets/story_list/story_info_sheet.dart';
 
 part 'story_tile_images.dart';
 part 'story_tile_monogram.dart';
@@ -84,7 +82,7 @@ class StoryTile extends StatelessWidget {
       SpPopMenuItem(
         title: 'Info',
         leadingIconData: Icons.info,
-        onPressed: () => StoryTileInfoSheet(story: story).show(context),
+        onPressed: () => StoryInfoSheet(story: story).show(context),
       )
     ];
   }

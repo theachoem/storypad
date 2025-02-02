@@ -65,59 +65,33 @@ class _EditStoryAdaptive extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      OutlinedButton.icon(
-        icon: Icon(Icons.check),
-        label: Text("Done"),
-        onPressed: () async {
-          await viewModel.save();
-          if (context.mounted) Navigator.pop(context);
+      ValueListenableBuilder(
+        valueListenable: viewModel.lastSavedAtNotifier,
+        builder: (context, lastSavedAt, child) {
+          return OutlinedButton.icon(
+            icon: SpAnimatedIcons(
+              firstChild: Icon(Icons.save),
+              secondChild: Icon(Icons.done),
+              showFirst: lastSavedAt == null,
+            ),
+            label: Text("Done"),
+            onPressed: lastSavedAt == null
+                ? null
+                : () async {
+                    await viewModel.save();
+                    if (context.mounted) Navigator.pop(context);
+                  },
+          );
         },
       ),
       SizedBox(width: 8.0),
-      buildSwapeableToRecentlySavedIcon(
-        child: Builder(builder: (context) {
-          return IconButton(
-            icon: const Icon(Icons.sell_outlined),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-          );
-        }),
-      ),
+      Builder(builder: (context) {
+        return IconButton(
+          icon: const Icon(Icons.sell_outlined),
+          onPressed: () => Scaffold.of(context).openEndDrawer(),
+        );
+      }),
       const SizedBox(width: 4.0),
     ];
-  }
-
-  Widget buildSwapeableToRecentlySavedIcon({
-    required Widget child,
-  }) {
-    return ValueListenableBuilder<DateTime?>(
-      valueListenable: viewModel.lastSavedAtNotifier,
-      child: child,
-      builder: (context, lastSavedAt, child) {
-        DateTime defaultExpiredEndTime = DateTime.now().subtract(const Duration(days: 1));
-        return SpCountDown(
-          endTime: lastSavedAt?.add(Durations.long4) ?? defaultExpiredEndTime,
-          endWidget: child!,
-          builder: (ended, context) {
-            return SpAnimatedIcons(
-              duration: Durations.long1,
-              showFirst: ended,
-              firstChild: child,
-              secondChild: Builder(builder: (context) {
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(48.0),
-                    onTap: () => Navigator.maybePop(context),
-                    child: const CircleAvatar(
-                      child: Icon(Icons.check),
-                    ),
-                  ),
-                );
-              }),
-            );
-          },
-        );
-      },
-    );
   }
 }

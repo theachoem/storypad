@@ -94,7 +94,7 @@ class _SignedInTile extends StatelessWidget {
         if (!provider.syncing &&
             !provider.synced &&
             (provider.lastDbUpdatedAt != null || provider.lastSyncedAt != null))
-          buildSyncButton(),
+          buildSyncButton(context),
       ],
     );
   }
@@ -188,13 +188,13 @@ class _SignedInTile extends StatelessWidget {
     );
   }
 
-  Widget buildSyncButton() {
+  Widget buildSyncButton(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 52.0),
       transform: Matrix4.identity()..translate(0.0, -8.0),
       child: OutlinedButton.icon(
         label: const Text("Sync"),
-        onPressed: provider.syncing ? null : () => provider.syncBackupAcrossDevices(),
+        onPressed: provider.syncing ? null : () => provider.syncBackupAcrossDevices(context),
       ),
     );
   }

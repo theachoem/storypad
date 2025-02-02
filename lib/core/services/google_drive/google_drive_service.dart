@@ -17,6 +17,7 @@ class GoogleDriveService {
   GoogleDriveService._();
 
   int requestCount = 0;
+  Map<String, String> folderDriveIdByFolderName = {};
 
   static final instance = GoogleDriveService._();
 
@@ -48,6 +49,7 @@ class GoogleDriveService {
 
       drive.FileList fileList = await client.files.list(
         spaces: "appDataFolder",
+        q: "name contains '.json'",
         orderBy: "createdTime desc",
         pageSize: 1,
       );
@@ -63,6 +65,7 @@ class GoogleDriveService {
       if (client == null) return null;
 
       drive.FileList fileList = await client.files.list(
+        q: "name contains '.json'",
         spaces: "appDataFolder",
         pageToken: nextToken,
       );
@@ -140,15 +143,26 @@ class GoogleDriveService {
     });
   }
 
-  Future<CloudFileObject?> uploadFile(String fileName, io.File file) async {
+  Future<CloudFileObject?> uploadFile(
+    String fileName,
+    io.File file, {
+    String? folderName,
+  }) async {
     return _execHandler(() async {
       debugPrint('GoogleDriveService#uploadFile $fileName');
       drive.DriveApi? client = await googleDriveClient;
+
       if (client == null) return null;
 
       drive.File fileToUpload = drive.File();
       fileToUpload.name = fileName;
       fileToUpload.parents = ["appDataFolder"];
+
+      if (folderName != null) {
+        String? folderId = await loadFolder(client, folderName);
+        if (folderId == null) return null;
+        fileToUpload.parents = [folderId];
+      }
 
       debugPrint('GoogleDriveService#uploadFile uploading...');
       drive.File recieved = await client.files.create(
@@ -167,6 +181,30 @@ class GoogleDriveService {
       debugPrint('GoogleDriveService#uploadFile uploading failed!');
       return null;
     });
+  }
+
+  Future<String?> loadFolder(drive.DriveApi client, String folderName) async {
+    if (folderDriveIdByFolderName[folderName] != null) return folderDriveIdByFolderName[folderName];
+
+    drive.FileList response = await client.files.list(
+      spaces: "appDataFolder",
+      q: "name='$folderName' and mimeType='application/vnd.google-apps.folder'",
+    );
+
+    if (response.files?.firstOrNull?.id != null) {
+      debugPrint("Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}");
+      return folderDriveIdByFolderName[folderName] = response.files!.first.id!;
+    }
+
+    drive.File folderToCreate = drive.File();
+    folderToCreate.name = folderName;
+    folderToCreate.parents = ["appDataFolder"];
+    folderToCreate.mimeType = "application/vnd.google-apps.folder";
+
+    final createdFolder = await client.files.create(folderToCreate);
+    debugPrint("Drive folder ${createdFolder.name} created: ${createdFolder.id}");
+
+    return folderDriveIdByFolderName[folderName] = createdFolder.id!;
   }
 
   Future<String?> getFileContent(CloudFileObject file) async {
@@ -205,7 +243,6 @@ class GoogleDriveService {
       if (e is drive.DetailedApiRequestError) {
         if (e.status == 401) {
           await googleSignIn.signInSilently(reAuthenticate: true);
-
           requestCount++;
           return request();
         }

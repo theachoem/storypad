@@ -1,5 +1,5 @@
 // new version plus is no longer update & has incompatibility issue with other package_info_plus.
-// we have to temporary move to internal. It's better to have seperate libary for this, so we can use on other app.
+// we have to temporary move to internal. It's better to have seperate Library for this, so we can use on other app.
 //
 // reference:
 // https://github.com/CodesFirst/new_version_plus/blob/master/lib/new_version_plus.dart

@@ -5,6 +5,7 @@ class SearchFilterObject {
   Set<int> years;
   Set<PathType> types;
   int? tagId;
+  int? assetId;
 
   final bool filterTagModifiable;
 
@@ -12,6 +13,7 @@ class SearchFilterObject {
     required this.years,
     required this.types,
     required this.tagId,
+    required this.assetId,
     this.filterTagModifiable = true,
   });
 
@@ -23,6 +25,7 @@ class SearchFilterObject {
     if (query != null) filters['query'] = query;
     if (years.isNotEmpty) filters['years'] = years.toList();
     if (tagId != null) filters['tag'] = tagId;
+    if (assetId != null) filters['asset'] = assetId;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
 
     return filters;
@@ -53,6 +56,7 @@ class SearchFilterObject {
       years: {},
       types: {},
       tagId: null,
+      assetId: null,
     );
   }
 }

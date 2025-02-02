@@ -73,6 +73,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
     int? order = filters?["order"];
     bool priority = filters?["priority"] == true;
@@ -83,6 +84,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
         StoryObjectBox_.id.notNull().and(StoryObjectBox_.permanentlyDeletedAt.isNull());
 
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+    if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred == true) conditions = conditions.and(StoryObjectBox_.starred.equals(true));
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));
     if (types != null) conditions = conditions.and(StoryObjectBox_.type.oneOf(types));
@@ -191,6 +193,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       updatedAt: object.updatedAt,
       createdAt: object.createdAt,
       tags: object.tags,
+      assets: object.assets,
       rawChanges: object.changes,
       movedToBinAt: object.movedToBinAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
@@ -249,6 +252,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       minute: story.minute ?? story.createdAt.minute,
       second: story.second ?? story.createdAt.second,
       tags: story.tags?.map((e) => e.toString()).toList(),
+      assets: story.assets?.toSet().toList(),
       starred: story.starred,
       feeling: story.feeling,
       showDayCount: story.showDayCount,

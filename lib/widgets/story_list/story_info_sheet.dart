@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 
-class StoryTileInfoSheet {
+class StoryInfoSheet {
   final StoryDbModel story;
 
-  StoryTileInfoSheet({
+  StoryInfoSheet({
     required this.story,
   });
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -9,14 +10,20 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
+import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 
 abstract class BaseBackupSource {
   String get cloudId;
+
+  static final List<BaseBackupSource> sources = [
+    GoogleDriveBackupSource(),
+  ];
 
   static final List<BaseDbAdapter> databases = [
     PreferenceDbModel.db,
     StoryDbModel.db,
     TagDbModel.db,
+    AssetDbModel.db,
   ];
 
   String? get email;
@@ -30,11 +37,11 @@ abstract class BaseBackupSource {
   Future<bool> reauthenticate();
   Future<bool> signIn();
   Future<bool> signOut();
-  Future<CloudFileObject?> saveFile(String fileName, io.File file);
+  Future<CloudFileObject?> uploadFile(String fileName, io.File file, {String? folderName});
   Future<CloudFileObject?> getLastestBackupFile();
   Future<CloudFileObject?> getFileByFileName(String fileName);
   Future<String?> getFileContent(CloudFileObject cloudFile);
-  Future<void> deleteCloudFile(String id);
+  Future<CloudFileObject?> deleteCloudFile(String id);
 
   Future<void> authenticate() async {
     isSignedIn = await checkIsSignedIn();
@@ -73,7 +80,7 @@ abstract class BaseBackupSource {
       backup,
     );
 
-    return saveFile(
+    return uploadFile(
       backup.fileInfo.fileNameWithExtention,
       file,
     );

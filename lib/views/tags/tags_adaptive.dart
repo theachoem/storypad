@@ -76,10 +76,18 @@ class _TagsAdaptive extends StatelessWidget {
               ],
             ),
             child: ListTile(
+              contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
               leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
               subtitle: Text(storyCount > 1 ? "$storyCount stories" : "$storyCount story"),
-              onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: viewModel.params.storyViewOnly),
+              trailing: TextButton(
+                child: Text("View"),
+                onPressed: () => provider.viewTag(
+                  context: context,
+                  tag: tag,
+                  storyViewOnly: viewModel.params.storyViewOnly,
+                ),
+              ),
             ),
           ),
         );
@@ -97,7 +105,7 @@ class _TagsAdaptive extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(24.0),
           child: Text(
-            "Tags will appear here.",
+            "Tags will appear here",
             textAlign: TextAlign.center,
             style: TextTheme.of(context).bodyLarge,
           ),

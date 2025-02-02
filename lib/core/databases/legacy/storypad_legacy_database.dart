@@ -103,6 +103,7 @@ class StorypadLegacyDatabase {
           createdAt: storypadStory.createOn,
           lastSavedDeviceId: null,
           tags: [],
+          assets: [],
           movedToBinAt: null,
           allChanges: [content],
         ));

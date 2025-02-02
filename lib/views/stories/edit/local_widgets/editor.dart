@@ -21,6 +21,7 @@ class _Editor extends StatelessWidget {
           child: buildBottomToolbar(context),
           builder: (context, focused, child) {
             return Visibility(
+              maintainState: true,
               visible: focused,
               child: SpFadeIn.fromBottom(
                 child: child!,
@@ -48,6 +49,7 @@ class _Editor extends StatelessWidget {
     return QuillEditor.basic(
       focusNode: focusNode,
       controller: controller,
+      scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
       config: QuillEditorConfig(
         paintCursorAboveText: false,
         scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
@@ -81,7 +83,7 @@ class _Editor extends StatelessWidget {
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Divider(height: 1),
-        buildActualToolbar(context),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 4.0), child: buildActualToolbar(context)),
         const Divider(height: 1),
       ]),
     );
@@ -112,6 +114,14 @@ class _Editor extends StatelessWidget {
             );
           }),
         ),
+        customButtons: [
+          QuillToolbarCustomButtonOptions(
+            icon: Icon(Icons.image),
+            onPressed: () async {
+              ImagePickerService(controller: controller).showSheet(context);
+            },
+          ),
+        ],
         multiRowsDisplay: false,
         showDividers: true,
         showFontFamily: false,

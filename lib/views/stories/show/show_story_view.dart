@@ -5,11 +5,11 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';
-import 'package:storypad/views/stories/local_widgets/story_title.dart';
 import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
 import 'package:storypad/widgets/custom_embed/date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/image_block_embed.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/story_list/story_info_sheet.dart';
 
 import 'show_story_view_model.dart';
 

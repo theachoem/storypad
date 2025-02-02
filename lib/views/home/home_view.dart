@@ -20,6 +20,7 @@ import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/local_auth_provider.dart';
 import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/assets/assets_view.dart';
 import 'package:storypad/views/home/local_widgets/backup_tile.dart';
 import 'package:storypad/views/home/local_widgets/home_years_view.dart';
 import 'package:storypad/views/home/local_widgets/rounded_indicator.dart';
@@ -59,7 +60,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(
       create: (context) => HomeViewModel(context),
-      builder: (context, viewModel, child) {
+      builder: (contexst, viewModel, child) {
         return _HomeAdaptive(viewModel);
       },
     );
