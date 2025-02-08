@@ -16,17 +16,25 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     required this.params,
   }) {
     init(initialStory: params.story);
+
+    pageController = PageController(initialPage: params.initialPageIndex);
+    pageController.addListener(() {
+      currentPageNotifier.value = pageController.page!;
+    });
   }
 
-  late final PageController pageController = PageController(initialPage: params.initialPageIndex);
+  late final PageController pageController;
+  late final ValueNotifier<double> currentPageNotifier = ValueNotifier(params.initialPageIndex.toDouble());
   TextEditingController? titleController;
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
 
   Map<int, QuillController> quillControllers = {};
+  Map<int, ScrollController> scrollControllers = {};
   Map<int, FocusNode> focusNodes = {};
   final DateTime openedOn = DateTime.now();
 
   int get currentPageIndex => pageController.page!.round().toInt();
+  int get currentPage => currentPageNotifier.value.round();
 
   EditingFlowType? flowType;
   StoryDbModel? story;
@@ -71,6 +79,7 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
     }
 
     for (int i = 0; i < quillControllers.length; i++) {
+      scrollControllers[i] = ScrollController();
       focusNodes[i] = FocusNode();
     }
 
@@ -163,8 +172,10 @@ class EditStoryViewModel extends BaseViewModel with ScheduleConcern {
   void dispose() {
     titleController?.dispose();
     pageController.dispose();
+    currentPageNotifier.dispose();
     quillControllers.forEach((e, k) => k.dispose());
     focusNodes.forEach((e, k) => k.dispose());
+    scrollControllers.forEach((e, k) => k.dispose());
     lastSavedAtNotifier.dispose();
     super.dispose();
   }

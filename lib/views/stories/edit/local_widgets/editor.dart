@@ -190,7 +190,7 @@ class _FocusNodeBuilderState extends State<FocusNodeBuilder> {
 
   void _listener() {
     focused = widget.focusNode.hasFocus;
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
