@@ -19,31 +19,11 @@ class _EditStoryAdaptive extends StatelessWidget {
         titleSpacing: 0.0,
         actions: buildAppBarActions(context),
       ),
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, _) {
-          return [
-            if (viewModel.story != null && viewModel.draftContent != null)
-              SliverToBoxAdapter(
-                child: StoryHeader(
-                  paddingTop: MediaQuery.of(context).padding.top + 8.0,
-                  story: viewModel.story!,
-                  setFeeling: viewModel.setFeeling,
-                  onToggleShowDayCount: viewModel.toggleShowDayCount,
-                  draftContent: viewModel.draftContent!,
-                  readOnly: false,
-                  titleController: viewModel.titleController,
-                  onSetDate: viewModel.setDate,
-                ),
-              ),
-          ];
-        },
-        body: buildEditor(context),
-      ),
+      body: buildBody(context),
     );
   }
 
-  Widget buildEditor(BuildContext context) {
+  Widget buildBody(BuildContext context) {
     if (viewModel.quillControllers.isEmpty) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -53,10 +33,33 @@ class _EditStoryAdaptive extends StatelessWidget {
         controller: viewModel.pageController,
         itemCount: viewModel.quillControllers.length,
         itemBuilder: (context, index) {
-          return _Editor(
-            focusNode: viewModel.focusNodes[index]!,
-            controller: viewModel.quillControllers[index]!,
-            draftContent: viewModel.draftContent,
+          return PrimaryScrollController(
+            controller: viewModel.scrollControllers[index]!,
+            child: NestedScrollView(
+              floatHeaderSlivers: true,
+              headerSliverBuilder: (context, _) {
+                return [
+                  if (viewModel.story != null && viewModel.draftContent != null)
+                    SliverToBoxAdapter(
+                      child: StoryHeader(
+                        paddingTop: MediaQuery.of(context).padding.top + 8.0,
+                        story: viewModel.story!,
+                        setFeeling: viewModel.setFeeling,
+                        onToggleShowDayCount: viewModel.toggleShowDayCount,
+                        draftContent: viewModel.draftContent!,
+                        readOnly: false,
+                        titleController: viewModel.titleController,
+                        onSetDate: viewModel.setDate,
+                      ),
+                    ),
+                ];
+              },
+              body: _Editor(
+                focusNode: viewModel.focusNodes[index]!,
+                controller: viewModel.quillControllers[index]!,
+                draftContent: viewModel.draftContent,
+              ),
+            ),
           );
         },
       );
@@ -65,6 +68,10 @@ class _EditStoryAdaptive extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
+      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
+        buildPageIndicator(),
+        const SizedBox(width: 16.0),
+      ],
       ValueListenableBuilder(
         valueListenable: viewModel.lastSavedAtNotifier,
         builder: (context, lastSavedAt, child) {
@@ -93,5 +100,18 @@ class _EditStoryAdaptive extends StatelessWidget {
       }),
       const SizedBox(width: 4.0),
     ];
+  }
+
+  Widget buildPageIndicator() {
+    return Container(
+      height: 48.0,
+      alignment: Alignment.center,
+      child: ValueListenableBuilder<double>(
+        valueListenable: viewModel.currentPageNotifier,
+        builder: (context, currentPage, child) {
+          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.pages?.length}');
+        },
+      ),
+    );
   }
 }

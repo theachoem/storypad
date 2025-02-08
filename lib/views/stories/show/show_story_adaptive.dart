@@ -19,30 +19,11 @@ class _ShowStoryAdaptive extends StatelessWidget {
         titleSpacing: 0.0,
         actions: buildAppBarActions(context),
       ),
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, _) {
-          return [
-            if (viewModel.story != null && viewModel.draftContent != null)
-              SliverToBoxAdapter(
-                child: StoryHeader(
-                  paddingTop: MediaQuery.of(context).padding.top + 8.0,
-                  story: viewModel.story!,
-                  setFeeling: viewModel.setFeeling,
-                  onToggleShowDayCount: viewModel.toggleShowDayCount,
-                  draftContent: viewModel.draftContent!,
-                  readOnly: true,
-                  onSetDate: null,
-                ),
-              ),
-          ];
-        },
-        body: buildEditor(context),
-      ),
+      body: bodyBody(context),
     );
   }
 
-  Widget buildEditor(BuildContext context) {
+  Widget bodyBody(BuildContext context) {
     if (viewModel.quillControllers.isEmpty) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -52,27 +33,29 @@ class _ShowStoryAdaptive extends StatelessWidget {
         controller: viewModel.pageController,
         itemCount: viewModel.quillControllers.length,
         itemBuilder: (context, index) {
-          return QuillEditor.basic(
-            controller: viewModel.quillControllers[index]!,
-            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
-            config: QuillEditorConfig(
-              scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
-              scrollable: true,
-              expands: true,
-              placeholder: "...",
-              padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-                top: 8.0,
-                bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
-              ),
-              checkBoxReadOnly: false,
-              autoFocus: false,
-              enableScribble: false,
-              showCursor: false,
-              embedBuilders: [
-                ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
-                DateBlockEmbed(),
-              ],
-              unknownEmbedBuilder: UnknownEmbedBuilder(),
+          return PrimaryScrollController(
+            controller: viewModel.scrollControllers[index]!,
+            child: NestedScrollView(
+              floatHeaderSlivers: true,
+              headerSliverBuilder: (context, _) {
+                return [
+                  if (viewModel.story != null && viewModel.draftContent != null)
+                    SliverToBoxAdapter(
+                      child: StoryHeader(
+                        paddingTop: MediaQuery.of(context).padding.top + 8.0,
+                        story: viewModel.story!,
+                        setFeeling: viewModel.setFeeling,
+                        onToggleShowDayCount: viewModel.toggleShowDayCount,
+                        draftContent: viewModel.draftContent!,
+                        readOnly: true,
+                        onSetDate: null,
+                      ),
+                    ),
+                ];
+              },
+              body: Builder(builder: (context) {
+                return buildEditor(index, context);
+              }),
             ),
           );
         },
@@ -80,11 +63,38 @@ class _ShowStoryAdaptive extends StatelessWidget {
     }
   }
 
+  Widget buildEditor(int index, BuildContext context) {
+    return QuillEditor.basic(
+      controller: viewModel.quillControllers[index]!,
+      scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+      config: QuillEditorConfig(
+        scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+        scrollable: true,
+        expands: true,
+        placeholder: "...",
+        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+          top: 8.0,
+          bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+        ),
+        checkBoxReadOnly: false,
+        autoFocus: false,
+        enableScribble: false,
+        showCursor: false,
+        embedBuilders: [
+          ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
+          DateBlockEmbed(),
+        ],
+        unknownEmbedBuilder: UnknownEmbedBuilder(),
+      ),
+    );
+  }
+
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1)
+      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
         buildPageIndicator(),
-      const SizedBox(width: 12.0),
+        const SizedBox(width: 12.0),
+      ],
       IconButton(
         onPressed: () => viewModel.goToEditPage(context),
         icon: const Icon(Icons.edit_outlined),

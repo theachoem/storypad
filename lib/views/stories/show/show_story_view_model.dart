@@ -28,6 +28,7 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
   late final PageController pageController;
   final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
   Map<int, QuillController> quillControllers = {};
+  Map<int, ScrollController> scrollControllers = {};
 
   int get currentPage => currentPageNotifier.value.round();
 
@@ -49,7 +50,8 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
     if (!alreadyHasPage) draftContent = draftContent!..addPage();
 
     quillControllers = await StoryHelper.buildQuillControllers(draftContent!, readOnly: true);
-    quillControllers.forEach((_, controller) {
+    quillControllers.forEach((key, controller) {
+      scrollControllers[key] = ScrollController();
       controller.addListener(() => _silentlySave());
     });
 
@@ -127,6 +129,7 @@ class ShowStoryViewModel extends BaseViewModel with ScheduleConcern {
     pageController.dispose();
     currentPageNotifier.dispose();
     quillControllers.forEach((e, k) => k.dispose());
+    scrollControllers.forEach((e, k) => k.dispose());
     super.dispose();
   }
 }
