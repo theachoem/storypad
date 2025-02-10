@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 
 class SpGradientLoading extends StatelessWidget {

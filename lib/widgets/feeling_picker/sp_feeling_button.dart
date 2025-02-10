@@ -1,7 +1,7 @@
 import 'package:animated_clipper/animated_clipper.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
