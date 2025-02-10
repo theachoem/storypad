@@ -16,7 +16,7 @@ Before getting started, ensure you have the following tools:
 - Ruby: 3.3.5 (for IOS)
 - Flutter: 3.27.4
 
-If you're using asdf, refer to this [guide](asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
+If you're using asdf, refer to this [guide](./docs/asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
 
 ## Setup
 
