@@ -1,7 +1,7 @@
 part of 'assets_view.dart';
 
-class _AssetsAdaptive extends StatelessWidget {
-  const _AssetsAdaptive(this.viewModel);
+class _AssetsContent extends StatelessWidget {
+  const _AssetsContent(this.viewModel);
 
   final AssetsViewModel viewModel;
 

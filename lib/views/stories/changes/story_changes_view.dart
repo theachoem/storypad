@@ -10,7 +10,7 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'story_changes_view_model.dart';
 
-part 'story_changes_adaptive.dart';
+part 'story_changes_content.dart';
 
 class StoryChangesRoute extends BaseRoute {
   final int id;
@@ -36,7 +36,7 @@ class StoryChangesView extends StatelessWidget {
     return ViewModelProvider<StoryChangesViewModel>(
       create: (context) => StoryChangesViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _StoryChangesAdaptive(viewModel);
+        return _StoryChangesContent(viewModel);
       },
     );
   }

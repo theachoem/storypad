@@ -7,7 +7,7 @@ import 'package:storypad/routes/base_route.dart';
 
 import 'tags_view_model.dart';
 
-part 'tags_adaptive.dart';
+part 'tags_content.dart';
 
 class TagsRoute extends BaseRoute {
   final bool storyViewOnly;
@@ -36,7 +36,7 @@ class TagsView extends StatelessWidget {
     return ViewModelProvider<TagsViewModel>(
       create: (context) => TagsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
-        return _TagsAdaptive(viewModel);
+        return _TagsContent(viewModel);
       },
     );
   }

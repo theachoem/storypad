@@ -1,7 +1,7 @@
 part of 'theme_view.dart';
 
-class _ThemeAdaptive extends StatelessWidget {
-  const _ThemeAdaptive(this.viewModel);
+class _ThemeContent extends StatelessWidget {
+  const _ThemeContent(this.viewModel);
 
   final ThemeViewModel viewModel;
 

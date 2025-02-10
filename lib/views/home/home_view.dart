@@ -42,7 +42,7 @@ import 'package:storypad/widgets/story_list/story_tile_list_item.dart';
 
 import 'home_view_model.dart';
 
-part 'home_adaptive.dart';
+part 'home_content.dart';
 part 'local_widgets/home_end_drawer.dart';
 part 'local_widgets/home_end_drawer_header.dart';
 part 'local_widgets/home_scaffold.dart';
@@ -61,7 +61,7 @@ class HomeView extends StatelessWidget {
     return ViewModelProvider<HomeViewModel>(
       create: (context) => HomeViewModel(context),
       builder: (contexst, viewModel, child) {
-        return _HomeAdaptive(viewModel);
+        return _HomeContent(viewModel);
       },
     );
   }

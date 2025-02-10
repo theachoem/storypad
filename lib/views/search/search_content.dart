@@ -1,7 +1,7 @@
 part of 'search_view.dart';
 
-class _SearchAdaptive extends StatelessWidget {
-  const _SearchAdaptive(this.viewModel);
+class _SearchContent extends StatelessWidget {
+  const _SearchContent(this.viewModel);
 
   final SearchViewModel viewModel;
 

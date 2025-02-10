@@ -1,7 +1,7 @@
 part of 'offline_backup_view.dart';
 
-class _OfflineBackupsAdaptive extends StatelessWidget {
-  const _OfflineBackupsAdaptive(this.viewModel);
+class _OfflineBackupsContent extends StatelessWidget {
+  const _OfflineBackupsContent(this.viewModel);
 
   final OfflineBackupViewModel viewModel;
 

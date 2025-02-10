@@ -10,7 +10,7 @@ import 'package:storypad/widgets/custom_embed/image_block_embed.dart';
 
 import 'show_change_view_model.dart';
 
-part 'show_change_adaptive.dart';
+part 'show_change_content.dart';
 
 class ShowChangeRoute extends BaseRoute {
   ShowChangeRoute({
@@ -36,7 +36,7 @@ class ShowChangeView extends StatelessWidget {
     return ViewModelProvider<ShowChangeViewModel>(
       create: (context) => ShowChangeViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ShowChangeAdaptive(viewModel);
+        return _ShowChangeContent(viewModel);
       },
     );
   }

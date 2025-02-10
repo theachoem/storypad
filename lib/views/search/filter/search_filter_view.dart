@@ -7,7 +7,7 @@ import 'package:storypad/routes/base_route.dart';
 
 import 'search_filter_view_model.dart';
 
-part 'search_filter_adaptive.dart';
+part 'search_filter_content.dart';
 part 'local_widgets/bottom_nav.dart';
 part 'local_widgets/scrollable_choice_chips.dart';
 
@@ -38,7 +38,7 @@ class SearchFilterView extends StatelessWidget {
     return ViewModelProvider<SearchFilterViewModel>(
       create: (context) => SearchFilterViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _SearchFilterAdaptive(viewModel);
+        return _SearchFilterContent(viewModel);
       },
     );
   }

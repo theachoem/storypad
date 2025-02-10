@@ -13,7 +13,7 @@ import 'package:storypad/widgets/story_list/story_info_sheet.dart';
 
 import 'show_story_view_model.dart';
 
-part 'show_story_adaptive.dart';
+part 'show_story_content.dart';
 
 class ShowStoryRoute extends BaseRoute {
   final int id;
@@ -41,7 +41,7 @@ class ShowStoryView extends StatelessWidget {
     return ViewModelProvider<ShowStoryViewModel>(
       create: (context) => ShowStoryViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
-        return _ShowStoryAdaptive(viewModel);
+        return _ShowStoryContent(viewModel);
       },
     );
   }

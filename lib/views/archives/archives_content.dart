@@ -1,7 +1,7 @@
 part of 'archives_view.dart';
 
-class _ArchivesAdaptive extends StatelessWidget {
-  const _ArchivesAdaptive(this.viewModel);
+class _ArchivesContent extends StatelessWidget {
+  const _ArchivesContent(this.viewModel);
 
   final ArchivesViewModel viewModel;
 

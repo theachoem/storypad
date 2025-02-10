@@ -7,7 +7,7 @@ import 'package:storypad/routes/base_route.dart';
 
 import 'offline_backup_view_model.dart';
 
-part 'offline_backup_adaptive.dart';
+part 'offline_backup_content.dart';
 
 class OfflineBackupRoute extends BaseRoute {
   OfflineBackupRoute();
@@ -32,7 +32,7 @@ class OfflineBackupView extends StatelessWidget {
     return ViewModelProvider<OfflineBackupViewModel>(
       create: (context) => OfflineBackupViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _OfflineBackupsAdaptive(viewModel);
+        return _OfflineBackupsContent(viewModel);
       },
     );
   }

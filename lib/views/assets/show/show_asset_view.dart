@@ -6,7 +6,7 @@ import 'package:storypad/widgets/story_list/story_list.dart';
 
 import 'show_asset_view_model.dart';
 
-part 'show_asset_adaptive.dart';
+part 'show_asset_content.dart';
 
 class ShowAssetRoute extends BaseRoute {
   ShowAssetRoute({
@@ -37,7 +37,7 @@ class ShowAssetView extends StatelessWidget {
     return ViewModelProvider<ShowAssetViewModel>(
       create: (context) => ShowAssetViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ShowAssetAdaptive(viewModel);
+        return _ShowAssetContent(viewModel);
       },
     );
   }

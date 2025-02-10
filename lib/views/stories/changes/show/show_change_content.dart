@@ -1,7 +1,7 @@
 part of 'show_change_view.dart';
 
-class _ShowChangeAdaptive extends StatelessWidget {
-  const _ShowChangeAdaptive(this.viewModel);
+class _ShowChangeContent extends StatelessWidget {
+  const _ShowChangeContent(this.viewModel);
 
   final ShowChangeViewModel viewModel;
 

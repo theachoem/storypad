@@ -1,7 +1,7 @@
 part of 'show_tag_view.dart';
 
-class _ShowTagAdaptive extends StatelessWidget {
-  const _ShowTagAdaptive(this.viewModel);
+class _ShowTagContent extends StatelessWidget {
+  const _ShowTagContent(this.viewModel);
 
   final ShowTagViewModel viewModel;
 

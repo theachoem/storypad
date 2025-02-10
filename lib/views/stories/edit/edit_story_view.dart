@@ -18,7 +18,7 @@ import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 
 import 'edit_story_view_model.dart';
 
-part 'edit_story_adaptive.dart';
+part 'edit_story_content.dart';
 part 'local_widgets/editor.dart';
 part 'local_widgets/focus_node_builder.dart';
 
@@ -61,7 +61,7 @@ class EditStoryView extends StatelessWidget {
     return ViewModelProvider<EditStoryViewModel>(
       create: (context) => EditStoryViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _EditStoryAdaptive(viewModel);
+        return _EditStoryContent(viewModel);
       },
     );
   }

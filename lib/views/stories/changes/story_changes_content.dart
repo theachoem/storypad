@@ -1,7 +1,7 @@
 part of 'story_changes_view.dart';
 
-class _StoryChangesAdaptive extends StatelessWidget {
-  const _StoryChangesAdaptive(this.viewModel);
+class _StoryChangesContent extends StatelessWidget {
+  const _StoryChangesContent(this.viewModel);
 
   final StoryChangesViewModel viewModel;
 
