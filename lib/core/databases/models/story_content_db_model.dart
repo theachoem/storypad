@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/databases/models/concerns/comparable_concern.dart';
+import 'package:storypad/core/databases/models/mixins/comparable.dart';
 
 part 'story_content_db_model.g.dart';
 
 @CopyWith()
 @JsonSerializable()
-class StoryContentDbModel extends BaseDbModel with ComparableConcern {
+class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   final int id;
   final String? title;

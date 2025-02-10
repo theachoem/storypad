@@ -26,7 +26,7 @@ class _HomeScaffold extends StatelessWidget {
             const StoryListTimelineVerticleDivider(),
             RefreshIndicator.adaptive(
               edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
-              onRefresh: () => refresh(context),
+              onRefresh: () => viewModel.refresh(context),
               child: CustomScrollView(
                 controller: viewModel.scrollInfo.scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -41,10 +41,5 @@ class _HomeScaffold extends StatelessWidget {
         );
       }),
     );
-  }
-
-  Future<void> refresh(BuildContext context) async {
-    await viewModel.load(debugSource: '$runtimeType#refresh');
-    if (context.mounted) await context.read<BackupProvider>().recheck();
   }
 }

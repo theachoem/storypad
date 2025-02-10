@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/base/base_view_model.dart';
 import 'package:storypad/core/databases/legacy/storypad_legacy_database.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -13,6 +14,7 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
@@ -69,6 +71,11 @@ class HomeViewModel extends BaseViewModel {
 
     scrollInfo.setupStoryKeys(stories?.items ?? []);
     notifyListeners();
+  }
+
+  Future<void> refresh(BuildContext context) async {
+    await load(debugSource: '$runtimeType#refresh');
+    if (context.mounted) await context.read<BackupProvider>().recheck();
   }
 
   Future<void> loadFromLegacyStorypadIfShould(BuildContext context) async {

@@ -54,7 +54,11 @@ class _ShowStoryAdaptive extends StatelessWidget {
                 ];
               },
               body: Builder(builder: (context) {
-                return buildEditor(index, context);
+                return buildEditor(
+                  index: index,
+                  context: context,
+                  scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+                );
               }),
             ),
           );
@@ -63,10 +67,14 @@ class _ShowStoryAdaptive extends StatelessWidget {
     }
   }
 
-  Widget buildEditor(int index, BuildContext context) {
+  Widget buildEditor({
+    required int index,
+    required BuildContext context,
+    required ScrollController scrollController,
+  }) {
     return QuillEditor.basic(
       controller: viewModel.quillControllers[index]!,
-      scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+      scrollController: scrollController,
       config: QuillEditorConfig(
         scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,

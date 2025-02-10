@@ -3,11 +3,13 @@ part of '../edit_story_view.dart';
 class _Editor extends StatelessWidget {
   final QuillController controller;
   final FocusNode focusNode;
+  final ScrollController scrollController;
   final StoryContentDbModel? draftContent;
 
   const _Editor({
-    required this.focusNode,
     required this.controller,
+    required this.focusNode,
+    required this.scrollController,
     required this.draftContent,
   });
 
@@ -16,7 +18,7 @@ class _Editor extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: buildPagesEditor(context)),
-        FocusNodeBuilder(
+        _FocusNodeBuilder(
           focusNode: focusNode,
           child: buildBottomToolbar(context),
           builder: (context, focused, child) {
@@ -160,41 +162,5 @@ class _Editor extends StatelessWidget {
         showClipboardPaste: false,
       ),
     );
-  }
-}
-
-class FocusNodeBuilder extends StatefulWidget {
-  const FocusNodeBuilder({
-    super.key,
-    required this.focusNode,
-    required this.builder,
-    this.child,
-  });
-
-  final Widget? child;
-  final FocusNode focusNode;
-  final Widget Function(BuildContext context, bool focused, Widget? child) builder;
-
-  @override
-  State<FocusNodeBuilder> createState() => _FocusNodeBuilderState();
-}
-
-class _FocusNodeBuilderState extends State<FocusNodeBuilder> {
-  bool focused = false;
-
-  @override
-  void initState() {
-    widget.focusNode.addListener(_listener);
-    super.initState();
-  }
-
-  void _listener() {
-    focused = widget.focusNode.hasFocus;
-    if (mounted) setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context, focused, widget.child);
   }
 }

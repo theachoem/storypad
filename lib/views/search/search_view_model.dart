@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/base/base_view_model.dart';
-import 'package:storypad/core/concerns/schedule_concern.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'search_view.dart';
 
-class SearchViewModel extends BaseViewModel with ScheduleConcern {
+class SearchViewModel extends BaseViewModel with DebounchedCallback {
   final SearchRoute params;
 
   SearchViewModel({
@@ -17,7 +17,7 @@ class SearchViewModel extends BaseViewModel with ScheduleConcern {
   late SearchFilterObject filter = params.initialFilter;
 
   void search(String query) {
-    scheduleAction(() {
+    debouncedCallback(() {
       queryNotifier.value = query.trim();
 
       AnalyticsService.instance.logSearch(

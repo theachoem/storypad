@@ -127,7 +127,7 @@ class _HomeEndDrawer extends StatelessWidget {
       leading: const Icon(Icons.language),
       title: const Text("Language"),
       subtitle: const Text("Khmer"),
-      onTap: () => const _LanguagesRoute().push(context),
+      onTap: () => const _Languages().push(context),
     );
   }
 
@@ -148,8 +148,9 @@ class _HomeEndDrawer extends StatelessWidget {
   }
 }
 
-class _LanguagesRoute extends StatelessWidget {
-  const _LanguagesRoute();
+// WIP
+class _Languages extends StatelessWidget {
+  const _Languages();
 
   Future<T?> push<T extends Object?>(BuildContext context) {
     return SpNestedNavigation.maybeOf(context)!.push(this);

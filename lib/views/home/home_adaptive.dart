@@ -55,7 +55,7 @@ class _HomeAdaptive extends StatelessWidget {
             onChanged: (StoryDbModel updatedStory) => onChanged(updatedStory),
             // onDeleted only happen when reloaded story is null which not frequently happen. We just reload in this case.
             onDeleted: () => viewModel.load(debugSource: '$runtimeType#onDeleted ${story.id}'),
-            builder: (context) {
+            builder: (_) {
               return StoryTileListItem(
                 showYear: false,
                 index: index,
