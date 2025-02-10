@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
-import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {

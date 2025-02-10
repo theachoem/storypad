@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:storypad/core/constants/theme_constant.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 part 'theme_object.g.dart';
 
@@ -17,11 +17,10 @@ class ThemeObject {
   final ThemeMode? _themeMode;
   final int? colorSeedValue;
 
-  String get fontFamily => _fontFamily ?? ThemeConstant.defaultFontFamily;
+  String get fontFamily => _fontFamily ?? kDefaultFontFamily;
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
-  FontWeight get fontWeight =>
-      fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : ThemeConstant.defaultFontWeight;
+  FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
 
   ThemeObject({
     String? fontFamily,

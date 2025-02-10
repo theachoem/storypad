@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-
-late final Directory kSupportDirectory;
-late final Directory kApplicationDirectory;
+import 'package:storypad/core/constants/app_constants.dart';
 
 class FileInitializer {
   static Future<void> call() async {

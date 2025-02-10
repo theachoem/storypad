@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/utils_colors.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -74,7 +74,7 @@ class SpColorPickerState extends State<SpColorPicker> {
   @override
   void initState() {
     super.initState();
-    _colorsSwatch.addAll(materialColors);
+    _colorsSwatch.addAll(kMaterialColors);
     _colorsSwatch.add(getBlackWhiteSwatch());
     _colorsMap = listToTreeMap(_colorsSwatch);
     _setCurrentColor();
