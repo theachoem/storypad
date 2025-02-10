@@ -4,7 +4,7 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/constants/env.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics_service.dart';

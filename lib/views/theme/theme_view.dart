@@ -1,4 +1,4 @@
-import 'package:storypad/core/base/view_model_provider.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/routes/base_route.dart';
 import 'package:storypad/views/theme/local_widgets/color_seed_tile.dart';

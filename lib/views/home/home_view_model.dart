@@ -3,7 +3,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/legacy/storypad_legacy_database.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';

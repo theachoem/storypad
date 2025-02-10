@@ -2,7 +2,7 @@ import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/base/view_model_provider.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/routes/base_route.dart';

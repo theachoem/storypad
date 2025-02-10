@@ -1,6 +1,6 @@
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/base/view_model_provider.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/routes/base_route.dart';

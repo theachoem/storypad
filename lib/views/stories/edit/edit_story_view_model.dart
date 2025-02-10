@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';

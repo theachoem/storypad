@@ -1,4 +1,4 @@
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'edit_tag_view.dart';
 
