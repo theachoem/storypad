@@ -1,9 +1,9 @@
-part of 'show_story_view.dart';
+part of 'edit_story_view.dart';
 
-class _ShowStoryAdaptive extends StatelessWidget {
-  const _ShowStoryAdaptive(this.viewModel);
+class _EditStoryContent extends StatelessWidget {
+  const _EditStoryContent(this.viewModel);
 
-  final ShowStoryViewModel viewModel;
+  final EditStoryViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -15,15 +15,15 @@ class _ShowStoryAdaptive extends StatelessWidget {
             )
           : null,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        clipBehavior: Clip.none,
         titleSpacing: 0.0,
         actions: buildAppBarActions(context),
       ),
-      body: bodyBody(context),
+      body: buildBody(context),
     );
   }
 
-  Widget bodyBody(BuildContext context) {
+  Widget buildBody(BuildContext context) {
     if (viewModel.quillControllers.isEmpty) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -47,16 +47,18 @@ class _ShowStoryAdaptive extends StatelessWidget {
                         setFeeling: viewModel.setFeeling,
                         onToggleShowDayCount: viewModel.toggleShowDayCount,
                         draftContent: viewModel.draftContent!,
-                        readOnly: true,
-                        onSetDate: null,
+                        readOnly: false,
+                        titleController: viewModel.titleController,
+                        onSetDate: viewModel.setDate,
                       ),
                     ),
                 ];
               },
               body: Builder(builder: (context) {
-                return buildEditor(
-                  index: index,
-                  context: context,
+                return _Editor(
+                  draftContent: viewModel.draftContent,
+                  controller: viewModel.quillControllers[index]!,
+                  focusNode: viewModel.focusNodes[index]!,
                   scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
                 );
               }),
@@ -67,75 +69,39 @@ class _ShowStoryAdaptive extends StatelessWidget {
     }
   }
 
-  Widget buildEditor({
-    required int index,
-    required BuildContext context,
-    required ScrollController scrollController,
-  }) {
-    return QuillEditor.basic(
-      controller: viewModel.quillControllers[index]!,
-      scrollController: scrollController,
-      config: QuillEditorConfig(
-        scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
-        scrollable: true,
-        expands: true,
-        placeholder: "...",
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-          top: 8.0,
-          bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
-        ),
-        checkBoxReadOnly: false,
-        autoFocus: false,
-        enableScribble: false,
-        showCursor: false,
-        embedBuilders: [
-          ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
-          DateBlockEmbed(),
-        ],
-        unknownEmbedBuilder: UnknownEmbedBuilder(),
-      ),
-    );
-  }
-
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
       if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
         buildPageIndicator(),
-        const SizedBox(width: 12.0),
+        const SizedBox(width: 16.0),
       ],
-      IconButton(
-        onPressed: () => viewModel.goToEditPage(context),
-        icon: const Icon(Icons.edit_outlined),
+      ValueListenableBuilder(
+        valueListenable: viewModel.lastSavedAtNotifier,
+        builder: (context, lastSavedAt, child) {
+          return OutlinedButton.icon(
+            icon: SpAnimatedIcons(
+              firstChild: Icon(Icons.save),
+              secondChild: Icon(Icons.done),
+              showFirst: lastSavedAt == null,
+            ),
+            label: Text("Done"),
+            onPressed: lastSavedAt == null
+                ? null
+                : () async {
+                    await viewModel.save();
+                    if (context.mounted) Navigator.pop(context);
+                  },
+          );
+        },
       ),
+      SizedBox(width: 8.0),
       Builder(builder: (context) {
         return IconButton(
           icon: const Icon(Icons.sell_outlined),
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
       }),
-      SpPopupMenuButton(
-        items: (context) {
-          return [
-            SpPopMenuItem(
-              leadingIconData: Icons.history_sharp,
-              title: "Changes History",
-              subtitle: "${viewModel.story?.rawChanges?.length}",
-              onPressed: () => viewModel.goToChangesPage(context),
-            ),
-            SpPopMenuItem(
-              leadingIconData: Icons.info,
-              title: "Info",
-              onPressed: () => StoryInfoSheet(story: viewModel.story!).show(context),
-            ),
-          ];
-        },
-        builder: (callback) {
-          return IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: callback,
-          );
-        },
-      )
+      const SizedBox(width: 4.0),
     ];
   }
 
@@ -151,14 +117,4 @@ class _ShowStoryAdaptive extends StatelessWidget {
       ),
     );
   }
-}
-
-class UnknownEmbedBuilder extends EmbedBuilder {
-  @override
-  Widget build(BuildContext context, EmbedContext embedContext) {
-    return const Text("Unknown");
-  }
-
-  @override
-  String get key => "unknown";
 }

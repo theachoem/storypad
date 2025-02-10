@@ -1,7 +1,7 @@
 part of 'backup_view.dart';
 
-class _BackupAdaptive extends StatelessWidget {
-  const _BackupAdaptive(this.viewModel);
+class _BackupContent extends StatelessWidget {
+  const _BackupContent(this.viewModel);
 
   final BackupViewModel viewModel;
 

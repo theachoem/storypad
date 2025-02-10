@@ -14,7 +14,7 @@ import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
 
 import 'archives_view_model.dart';
 
-part 'archives_adaptive.dart';
+part 'archives_content.dart';
 
 class ArchivesRoute extends BaseRoute {
   @override
@@ -37,7 +37,7 @@ class ArchivesView extends StatelessWidget {
     return ViewModelProvider<ArchivesViewModel>(
       create: (context) => ArchivesViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ArchivesAdaptive(viewModel);
+        return _ArchivesContent(viewModel);
       },
     );
   }

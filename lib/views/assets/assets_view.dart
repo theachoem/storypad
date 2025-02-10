@@ -16,7 +16,7 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'assets_view_model.dart';
 
-part 'assets_adaptive.dart';
+part 'assets_content.dart';
 
 class AssetsRoute extends BaseRoute {
   AssetsRoute();
@@ -41,7 +41,7 @@ class AssetsView extends StatelessWidget {
     return ViewModelProvider<AssetsViewModel>(
       create: (context) => AssetsViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _AssetsAdaptive(viewModel);
+        return _AssetsContent(viewModel);
       },
     );
   }

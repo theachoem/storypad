@@ -1,7 +1,7 @@
 part of 'settings_view.dart';
 
-class _SettingsAdaptive extends StatelessWidget {
-  const _SettingsAdaptive(this.viewModel);
+class _SettingsContent extends StatelessWidget {
+  const _SettingsContent(this.viewModel);
 
   final SettingsViewModel viewModel;
 

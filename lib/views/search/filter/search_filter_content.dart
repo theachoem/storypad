@@ -1,7 +1,7 @@
 part of 'search_filter_view.dart';
 
-class _SearchFilterAdaptive extends StatelessWidget {
-  const _SearchFilterAdaptive(this.viewModel);
+class _SearchFilterContent extends StatelessWidget {
+  const _SearchFilterContent(this.viewModel);
 
   final SearchFilterViewModel viewModel;
 

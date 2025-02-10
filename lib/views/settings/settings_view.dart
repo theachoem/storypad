@@ -4,7 +4,7 @@ import 'package:storypad/routes/base_route.dart';
 
 import 'settings_view_model.dart';
 
-part 'settings_adaptive.dart';
+part 'settings_content.dart';
 
 class SettingsRoute extends BaseRoute {
   SettingsRoute();
@@ -29,7 +29,7 @@ class SettingsView extends StatelessWidget {
     return ViewModelProvider<SettingsViewModel>(
       create: (context) => SettingsViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _SettingsAdaptive(viewModel);
+        return _SettingsContent(viewModel);
       },
     );
   }

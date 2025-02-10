@@ -1,7 +1,7 @@
 part of 'tags_view.dart';
 
-class _TagsAdaptive extends StatelessWidget {
-  const _TagsAdaptive(this.viewModel);
+class _TagsContent extends StatelessWidget {
+  const _TagsContent(this.viewModel);
 
   final TagsViewModel viewModel;
 

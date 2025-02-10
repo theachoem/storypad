@@ -12,7 +12,7 @@ import 'package:storypad/widgets/sticky_header/sticky_header.dart';
 
 import 'fonts_view_model.dart';
 
-part 'fonts_adaptive.dart';
+part 'fonts_content.dart';
 
 class FontsRoute extends BaseRoute {
   FontsRoute();
@@ -37,7 +37,7 @@ class FontsView extends StatelessWidget {
     return ViewModelProvider<FontsViewModel>(
       create: (context) => FontsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
-        return _FontsAdaptive(viewModel);
+        return _FontsContent(viewModel);
       },
     );
   }

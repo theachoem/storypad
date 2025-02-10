@@ -6,7 +6,7 @@ import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
 import 'edit_tag_view_model.dart';
 
-part 'edit_tag_adaptive.dart';
+part 'edit_tag_content.dart';
 
 class EditTagRoute extends BaseRoute {
   EditTagRoute({
@@ -44,7 +44,7 @@ class EditTagView extends StatelessWidget {
     return ViewModelProvider<EditTagViewModel>(
       create: (context) => EditTagViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _EditTagAdaptive(viewModel);
+        return _EditTagContent(viewModel);
       },
     );
   }

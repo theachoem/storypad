@@ -1,7 +1,7 @@
 part of 'edit_tag_view.dart';
 
-class _EditTagAdaptive extends StatelessWidget {
-  const _EditTagAdaptive(this.viewModel);
+class _EditTagContent extends StatelessWidget {
+  const _EditTagContent(this.viewModel);
 
   final EditTagViewModel viewModel;
 

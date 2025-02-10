@@ -1,6 +1,6 @@
 {
-  "BookMe+ View Adaptive": {
-    "prefix": "view_adaptive",
+  "BookMe+ View Content": {
+    "prefix": "view_content",
     "body": [
       "part of '${TM_FILENAME_BASE/(.*)_adaptive/$1/}_view.dart';",
       "",
@@ -65,7 +65,7 @@
       "    return ViewModelProvider<${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}ViewModel>(",
       "      create: (context) => ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}ViewModel(params: params),",
       "      builder: (context, viewModel, child) {",
-      "        return _${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Adaptive(viewModel);",
+      "        return _${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Content(viewModel);",
       "      },",
       "    );",
       "  }",

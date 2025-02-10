@@ -1,7 +1,7 @@
 part of 'fonts_view.dart';
 
-class _FontsAdaptive extends StatelessWidget {
-  const _FontsAdaptive(this.viewModel);
+class _FontsContent extends StatelessWidget {
+  const _FontsContent(this.viewModel);
 
   final FontsViewModel viewModel;
 

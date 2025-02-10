@@ -6,7 +6,7 @@ import 'package:storypad/widgets/story_list/story_list.dart';
 
 import 'search_view_model.dart';
 
-part 'search_adaptive.dart';
+part 'search_content.dart';
 
 class SearchRoute extends BaseRoute {
   SearchRoute({
@@ -35,7 +35,7 @@ class SearchView extends StatelessWidget {
     return ViewModelProvider<SearchViewModel>(
       create: (context) => SearchViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _SearchAdaptive(viewModel);
+        return _SearchContent(viewModel);
       },
     );
   }

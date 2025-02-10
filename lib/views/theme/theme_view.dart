@@ -8,7 +8,7 @@ import 'package:storypad/views/theme/local_widgets/theme_mode_tile.dart';
 
 import 'theme_view_model.dart';
 
-part 'theme_adaptive.dart';
+part 'theme_content.dart';
 
 class ThemeRoute extends BaseRoute {
   ThemeRoute();
@@ -33,7 +33,7 @@ class ThemeView extends StatelessWidget {
     return ViewModelProvider<ThemeViewModel>(
       create: (context) => ThemeViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ThemeAdaptive(viewModel);
+        return _ThemeContent(viewModel);
       },
     );
   }

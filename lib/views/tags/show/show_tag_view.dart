@@ -6,7 +6,7 @@ import 'package:storypad/widgets/story_list/story_list.dart';
 
 import 'show_tag_view_model.dart';
 
-part 'show_tag_adaptive.dart';
+part 'show_tag_content.dart';
 
 class ShowTagRoute extends BaseRoute {
   ShowTagRoute({
@@ -37,7 +37,7 @@ class ShowTagView extends StatelessWidget {
     return ViewModelProvider<ShowTagViewModel>(
       create: (context) => ShowTagViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ShowTagAdaptive(viewModel);
+        return _ShowTagContent(viewModel);
       },
     );
   }

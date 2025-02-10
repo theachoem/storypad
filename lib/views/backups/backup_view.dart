@@ -16,7 +16,7 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'backup_view_model.dart';
 
-part 'backup_adaptive.dart';
+part 'backup_content.dart';
 
 class BackupRoute extends BaseRoute {
   BackupRoute();
@@ -41,7 +41,7 @@ class BackupView extends StatelessWidget {
     return ViewModelProvider<BackupViewModel>(
       create: (context) => BackupViewModel(context: context, params: params),
       builder: (context, viewModel, child) {
-        return _BackupAdaptive(viewModel);
+        return _BackupContent(viewModel);
       },
     );
   }
