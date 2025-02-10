@@ -1,4 +1,4 @@
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'archives_view.dart';
 

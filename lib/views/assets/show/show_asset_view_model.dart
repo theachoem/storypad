@@ -1,4 +1,4 @@
-import 'package:storypad/core/base/base_view_model.dart';
+import 'package:storypad/widgets/view/base_view_model.dart';
 import 'show_asset_view.dart';
 
 class ShowAssetViewModel extends BaseViewModel {

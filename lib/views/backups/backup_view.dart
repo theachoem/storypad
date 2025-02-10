@@ -2,7 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/base/view_model_provider.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';

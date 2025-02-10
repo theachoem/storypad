@@ -1,5 +1,5 @@
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/base/view_model_provider.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
