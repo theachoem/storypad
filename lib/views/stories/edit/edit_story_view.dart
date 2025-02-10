@@ -3,7 +3,7 @@ import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/image_picker_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/routes/base_route.dart';

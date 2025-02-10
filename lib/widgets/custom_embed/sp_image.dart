@@ -4,7 +4,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/providers/backup_provider.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/extensions/color_scheme_extensions.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/routes/utils/animated_page_route.dart';
 
