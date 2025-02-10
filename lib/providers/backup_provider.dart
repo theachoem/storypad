@@ -3,7 +3,7 @@ import 'dart:isolate';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/concerns/schedule_concern.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -16,13 +16,13 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 
-part 'concerns/asset_backup_concern.dart';
+part 'mixins/asset_backup_mixin.dart';
 
 class _BaseBackupProvider extends ChangeNotifier {
   final BaseBackupSource source = GoogleDriveBackupSource();
 }
 
-class BackupProvider extends _BaseBackupProvider with ScheduleConcern, _AssetBackupConcern {
+class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _AssetBackupConcern {
   DateTime? _lastDbUpdatedAt;
   DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
 

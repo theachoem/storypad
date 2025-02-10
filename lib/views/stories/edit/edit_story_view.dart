@@ -20,6 +20,7 @@ import 'edit_story_view_model.dart';
 
 part 'edit_story_adaptive.dart';
 part 'local_widgets/editor.dart';
+part 'local_widgets/focus_node_builder.dart';
 
 class EditStoryRoute extends BaseRoute {
   final int? id;

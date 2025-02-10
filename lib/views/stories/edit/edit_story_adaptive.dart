@@ -54,11 +54,14 @@ class _EditStoryAdaptive extends StatelessWidget {
                     ),
                 ];
               },
-              body: _Editor(
-                focusNode: viewModel.focusNodes[index]!,
-                controller: viewModel.quillControllers[index]!,
-                draftContent: viewModel.draftContent,
-              ),
+              body: Builder(builder: (context) {
+                return _Editor(
+                  draftContent: viewModel.draftContent,
+                  controller: viewModel.quillControllers[index]!,
+                  focusNode: viewModel.focusNodes[index]!,
+                  scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+                );
+              }),
             ),
           );
         },

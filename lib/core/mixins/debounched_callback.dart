@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-mixin ScheduleConcern {
+mixin DebounchedCallback {
   final Map<String, Timer?> _timers = {};
   Timer? _singleTimer;
 
@@ -10,7 +10,7 @@ mixin ScheduleConcern {
     return _singleTimer;
   }
 
-  void scheduleAction(
+  void debouncedCallback(
     VoidCallback callback, {
     Duration duration = const Duration(milliseconds: 300),
     String? key,
