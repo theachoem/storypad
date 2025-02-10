@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:storypad/initializers/package_info_initializer.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 class LicensesInitializer {
   static void call() {

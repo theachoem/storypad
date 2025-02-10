@@ -3,7 +3,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/theme_constant.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extensions.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/routes/utils/animated_page_route.dart';
@@ -145,8 +145,8 @@ class AppTheme extends StatelessWidget {
       return builder(lightScheme, darkScheme);
     } else {
       return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        lightDynamic ??= ColorScheme.fromSeed(seedColor: ThemeConstant.defaultSeed, brightness: Brightness.light);
-        darkDynamic ??= ColorScheme.fromSeed(seedColor: ThemeConstant.defaultSeed, brightness: Brightness.dark);
+        lightDynamic ??= ColorScheme.fromSeed(seedColor: kDefaultColorSeed, brightness: Brightness.light);
+        darkDynamic ??= ColorScheme.fromSeed(seedColor: kDefaultColorSeed, brightness: Brightness.dark);
 
         return builder(lightDynamic, darkDynamic);
       });

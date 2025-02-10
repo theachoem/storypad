@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:storypad/initializers/package_info_initializer.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 class VersionStatus {
   final String localVersion;

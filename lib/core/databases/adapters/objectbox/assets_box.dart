@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/initializers/device_info_initializer.dart';
 import 'package:storypad/objectbox.g.dart';
 
 class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {

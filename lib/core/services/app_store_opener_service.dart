@@ -1,6 +1,6 @@
 import 'package:in_app_review/in_app_review.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/initializers/package_info_initializer.dart';
 
 class AppStoreOpenerService {
   static Future<void> call() async {

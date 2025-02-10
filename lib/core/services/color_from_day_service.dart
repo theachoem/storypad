@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/utils_colors.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 class ColorFromDayService {
   final BuildContext context;
@@ -8,12 +8,12 @@ class ColorFromDayService {
     required this.context,
   });
 
-  Color? get(int day) {
-    return colors()[day];
+  Color? get(int weekday) {
+    return colors()[weekday];
   }
 
   Map<int, Color> colors() {
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return darkMode ? colorsByDayDark : colorsByDayLight;
+    return darkMode ? kColorsByDayDark : kColorsByDayLight;
   }
 }

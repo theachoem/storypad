@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/types/file_path_type.dart';
-import 'package:storypad/initializers/device_info_initializer.dart';
-import 'package:storypad/initializers/file_initializer.dart';
 
 class BackupFileConstructor {
   Future<BackupObject> constructBackup({
