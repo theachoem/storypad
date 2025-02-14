@@ -1,4 +1,4 @@
-import 'package:storypad/core/extensions/string_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 enum PathType {
   docs,
@@ -6,7 +6,14 @@ enum PathType {
   archives;
 
   String get localized {
-    return name.capitalize;
+    switch (this) {
+      case docs:
+        return tr("general.path_type.docs");
+      case bins:
+        return tr("general.path_type.bins");
+      case archives:
+        return tr("general.path_type.archives");
+    }
   }
 
   static PathType? fromString(String name) {

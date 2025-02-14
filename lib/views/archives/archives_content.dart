@@ -9,20 +9,24 @@ class _ArchivesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoryListMultiEditWrapper(
       builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: buildTitle(context),
-            actions: [buildEditButton(context)],
-          ),
-          bottomNavigationBar: buildBottomNavigationBar(context),
-          body: StoryList.withQuery(
-            key: ValueKey(viewModel.editedKey),
-            viewOnly: true,
-            filter: SearchFilterObject(
-              years: {},
-              types: {viewModel.type},
-              tagId: null,
-              assetId: null,
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+          child: Scaffold(
+            appBar: AppBar(
+              title: buildTitle(context),
+              actions: [buildEditButton(context)],
+            ),
+            bottomNavigationBar: buildBottomNavigationBar(context),
+            body: StoryList.withQuery(
+              key: ValueKey(viewModel.editedKey),
+              viewOnly: true,
+              filter: SearchFilterObject(
+                years: {},
+                types: {viewModel.type},
+                tagId: null,
+                assetId: null,
+              ),
             ),
           ),
         );
@@ -92,38 +96,44 @@ class _ArchivesContent extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Divider(height: 1),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                      .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    spacing: 8.0,
-                    children: [
-                      FilledButton.tonal(
-                        child: const Text("Cancel"),
-                        onPressed: () => state.turnOffEditing(),
-                      ),
-                      FilledButton(
-                        child: Text("Delete"),
-                        onPressed: () async {
-                          OkCancelResult result = await showOkCancelAlertDialog(
-                            context: context,
-                            title: "Are you sure to delete these stories?",
-                            message: "You can't undo this action.",
-                            isDestructiveAction: true,
-                            okLabel: "Delete",
-                          );
+                SizedBox(
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
+                        .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      spacing: 8.0,
+                      children: [
+                        FilledButton.tonal(
+                          child: Text(tr("button.cancel")),
+                          onPressed: () => state.turnOffEditing(),
+                        ),
+                        FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+                          child: Text(tr("button.delete")),
+                          onPressed: () async {
+                            OkCancelResult result = await showOkCancelAlertDialog(
+                              context: context,
+                              title: tr("dialog.are_you_sure_to_delete_these_stories.title"),
+                              message: tr("dialog.are_you_sure_to_delete_these_stories.message"),
+                              isDestructiveAction: true,
+                              okLabel: tr("button.delete"),
+                            );
 
-                          if (result == OkCancelResult.ok) {
-                            for (int i = 0; i < state.selectedStories.length; i++) {
-                              int id = state.selectedStories.elementAt(i);
-                              await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
+                            if (result == OkCancelResult.ok) {
+                              for (int i = 0; i < state.selectedStories.length; i++) {
+                                int id = state.selectedStories.elementAt(i);
+                                await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
+                              }
+                              state.turnOffEditing();
                             }
-                            state.turnOffEditing();
-                          }
-                        },
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

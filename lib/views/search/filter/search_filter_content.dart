@@ -9,7 +9,7 @@ class _SearchFilterContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Filter"),
+        title: Text(tr("page.search_filter.title")),
       ),
       body: buildBody(context),
       bottomNavigationBar: _BottomNav(viewModel: viewModel),
@@ -19,12 +19,12 @@ class _SearchFilterContent extends StatelessWidget {
   Widget buildBody(BuildContext context) {
     final children = [
       if (viewModel.years?.isNotEmpty == true) ...[
-        _Title(title: "Years"),
+        _Title(title: tr("general.years")),
         buildYears(context),
         SizedBox(height: 12.0),
       ],
       if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
-        _Title(title: "Tags"),
+        _Title(title: tr("general.tags")),
         buildTags(context),
       ]
     ];

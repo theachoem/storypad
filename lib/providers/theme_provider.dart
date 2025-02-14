@@ -10,16 +10,6 @@ class ThemeProvider extends ChangeNotifier {
   ThemeObject get theme => _theme;
   ThemeMode get themeMode => theme.themeMode;
 
-  Locale? currentLocale;
-  void setCurrentLocale(Locale value) {
-    currentLocale = value;
-    notifyListeners();
-
-    AnalyticsService.instance.logSetLocale(
-      newLocale: value,
-    );
-  }
-
   void setColorSeed(Color color) {
     _theme = _theme.copyWithNewColor(color, removeIfSame: true);
     storage.writeObject(_theme);

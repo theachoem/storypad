@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -228,7 +229,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');
 
     if (!context.mounted) return;
-    MessengerService.of(context).showSnackBar("Backup is restored!");
+    MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));
   }
 
   void queueDeleteBackupByCloudFileId(String id) {

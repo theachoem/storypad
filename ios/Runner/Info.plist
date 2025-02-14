@@ -35,6 +35,26 @@
         </array>
         <key>CFBundleVersion</key>
         <string>$(FLUTTER_BUILD_NUMBER)</string>
+        <key>CFBundleLocalizations</key>
+        <array>
+            <string>ar</string>
+            <string>de-DE</string>
+            <string>en</string>
+            <string>es-419</string>
+            <string>es-ES</string>
+            <string>fr-FR</string>
+            <string>hi-IN</string>
+            <string>id</string>
+            <string>it-IT</string>
+            <string>ja-JP</string>
+            <string>km</string>
+            <string>ko-KR</string>
+            <string>pl-PL</string>
+            <string>pt-BR</string>
+            <string>th</string>
+            <string>vi-VN</string>
+            <string>zh-CN</string>
+        </array>
         <key>GIDClientID</key>
         <string>$(GOOGLE_CLIENT_ID)</string>
         <key>LSRequiresIPhoneOS</key>

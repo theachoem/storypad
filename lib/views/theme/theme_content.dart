@@ -9,7 +9,7 @@ class _ThemeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Theme"),
+        title: Text(tr("page.theme.title")),
       ),
       body: ListView(
         children: const [

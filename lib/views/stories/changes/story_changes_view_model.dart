@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -120,7 +121,11 @@ class StoryChangesViewModel extends BaseViewModel {
     bool shouldPop = true;
 
     if (toBeRemovedCount > 0) {
-      OkCancelResult result = await showOkCancelAlertDialog(context: context, title: "Are you to discard changes?");
+      OkCancelResult result = await showOkCancelAlertDialog(
+        context: context,
+        title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+        okLabel: tr("button.discard"),
+      );
       shouldPop = result == OkCancelResult.ok;
     }
 

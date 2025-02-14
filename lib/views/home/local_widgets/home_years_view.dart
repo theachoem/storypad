@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -41,17 +42,17 @@ class HomeYearsViewState extends State<HomeYearsView> {
 
   Future<void> addYear(BuildContext context, HomeViewModel viewModel) async {
     dynamic result = await SpNestedNavigation.maybeOf(context)?.push(SpTextInputsPage(
-      appBar: AppBar(title: const Text("Add Year")),
+      appBar: AppBar(title: Text(tr("page.add_year.title"))),
       fields: [
         SpTextInputField(
-          hintText: 'eg. 2004',
+          hintText: tr("input.year.hint"),
           keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
           validator: (value) {
             int? year = int.tryParse(value ?? '');
 
-            if (year == null) return "Invalid";
-            if (year > DateTime.now().year + 1000) return "Invalid";
-            if (years?.keys.contains(year) == true) return "Already exist!";
+            if (year == null) return tr("input.message.invalid");
+            if (year > DateTime.now().year + 1000) return tr("input.message.invalid");
+            if (years?.keys.contains(year) == true) return tr("input.message.already_exist");
 
             return null;
           },
@@ -101,7 +102,7 @@ class HomeYearsViewState extends State<HomeYearsView> {
         onTap: () => viewModel.changeYear(entry.key),
         selected: selected,
         title: Text(entry.key.toString()),
-        subtitle: Text(entry.value > 1 ? "${entry.value} stories" : "${entry.value} story"),
+        subtitle: Text(plural("plural.story", entry.value)),
         trailing: Visibility(
           visible: selected,
           child: const Icon(Icons.check),

@@ -14,7 +14,7 @@ class _MoreOptionsButton extends StatelessWidget {
           buildOpenSourceRepo(context),
           SpPopMenuItem(
             leadingIconData: MdiIcons.license,
-            title: 'Licenses',
+            title: tr("list_tile.licenses.title"),
             onPressed: () {
               AnalyticsService.instance.logLicenseView();
               showLicensePage(
@@ -28,13 +28,16 @@ class _MoreOptionsButton extends StatelessWidget {
           if (kDebugMode)
             SpPopMenuItem(
               leadingIconData: MdiIcons.googleDrive,
-              title: "Google Drive API",
-              subtitle: "${GoogleDriveService.instance.requestCount} requests",
+              title: tr("list_tile.google_drive_api.title"),
+              subtitle: tr("list_tile.google_drive_api.subtitle_args", namedArgs: {
+                'REQUESTS_COUNT': GoogleDriveService.instance.requestCount.toString(),
+              }),
             )
         ];
       },
       builder: (open) {
         return IconButton(
+          tooltip: tr('button.more_options'),
           onPressed: open,
           icon: const Icon(Icons.more_vert),
         );
@@ -45,7 +48,7 @@ class _MoreOptionsButton extends StatelessWidget {
   SpPopMenuItem buildOpenSourceRepo(BuildContext context) {
     return SpPopMenuItem(
       leadingIconData: Icons.code,
-      title: 'Source Code',
+      title: tr("list_tile.source_code.title"),
       onPressed: () {
         UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get());
       },
@@ -55,7 +58,7 @@ class _MoreOptionsButton extends StatelessWidget {
   SpPopMenuItem buildPolicyPrivacyItem(BuildContext context) {
     return SpPopMenuItem(
       leadingIconData: Icons.policy,
-      title: 'Privacy & Policy',
+      title: tr("list_tile.privacy_policy.title"),
       onPressed: () {
         UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get());
       },
@@ -65,7 +68,7 @@ class _MoreOptionsButton extends StatelessWidget {
   SpPopMenuItem buildRateItem(BuildContext context) {
     return SpPopMenuItem(
       leadingIconData: Icons.star,
-      title: 'Rate the App',
+      title: tr("list_tile.rate.title"),
       titleStyle: TextStyle(color: ColorScheme.of(context).bootstrap.warning.color),
       onPressed: () async {
         await AppStoreOpenerService.call();

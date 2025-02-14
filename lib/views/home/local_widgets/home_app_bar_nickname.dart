@@ -51,7 +51,9 @@ class _HomeAppBarNicknameState extends State<_HomeAppBarNickname> with SingleTic
     return Stack(
       children: [
         Text(
-          widget.nickname != null ? "Hello ${widget.nickname}" : "Hello",
+          tr("page.home.app_bar.hello_nickname", namedArgs: {
+            "NICKNAME": widget.nickname ?? "",
+          }),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),

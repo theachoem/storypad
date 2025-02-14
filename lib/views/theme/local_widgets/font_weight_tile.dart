@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
@@ -17,15 +18,15 @@ class FontWeightTile extends StatelessWidget {
       dyGetter: (dy) => dy + 44.0,
       items: (context) => FontWeight.values.map((fontWeight) {
         final descriptions = {
-          100: 'Thin',
-          200: 'Extra-light',
-          300: 'Light',
-          400: 'Normal (default)',
-          500: 'Medium',
-          600: 'Semi-bold',
-          700: 'Bold',
-          800: 'Extra-bold',
-          900: 'Black',
+          100: tr("general.font_weight.thin"),
+          200: tr("general.font_weight.extra_light"),
+          300: tr("general.font_weight.light"),
+          400: tr("general.font_weight.normal"),
+          500: tr("general.font_weight.medium"),
+          600: tr("general.font_weight.semi_bold"),
+          700: tr("general.font_weight.bold"),
+          800: tr("general.font_weight.extra_bold"),
+          900: tr("general.font_weight.black"),
         };
 
         return SpPopMenuItem(
@@ -37,7 +38,7 @@ class FontWeightTile extends StatelessWidget {
       builder: (open) {
         return ListTile(
           leading: const Icon(Icons.format_size_outlined),
-          title: const Text("Font Weight"),
+          title: Text(tr("list_tile.font_weight.title")),
           subtitle: Text(provider.theme.fontWeight.value.toString()),
           onTap: () => open(),
         );

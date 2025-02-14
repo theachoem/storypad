@@ -12,14 +12,19 @@ class _StoryChangesContent extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
       child: Scaffold(
         appBar: AppBar(
-          title: viewModel.originalStory?.allChanges?.length != null
-              ? Text("Changes (${viewModel.originalStory?.allChanges?.length})")
-              : const Text("Changes"),
+          title: Text(
+            [
+              tr("page.changes_history.title"),
+              if (viewModel.originalStory?.allChanges?.length != null)
+                "(${viewModel.originalStory?.allChanges?.length})",
+            ].join(" "),
+          ),
           actions: [
             Visibility(
               visible: !viewModel.editing,
               child: SpFadeIn.fromBottom(
                 child: IconButton(
+                  tooltip: tr("button.edit"),
                   icon: Icon(Icons.edit),
                   onPressed: () => viewModel.turnOnEditing(),
                 ),
@@ -66,8 +71,11 @@ class _StoryChangesContent extends StatelessWidget {
         text: TextSpan(children: [
           WidgetSpan(child: Icon(Icons.info, size: 16.0, color: ColorScheme.of(context).onSecondary)),
           TextSpan(
-            text: " You have ${allChanges?.length} changes stored, using a lot of space. You should remove some.",
             style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).onSecondary),
+            text: " ${tr(
+              "page.changes_history.too_many_changes_warning_message",
+              namedArgs: {'CHANGES_COUNT': allChanges?.length.toString() ?? tr('general.na')},
+            )}",
           )
         ]),
       ),
@@ -81,7 +89,7 @@ class _StoryChangesContent extends StatelessWidget {
       items: (context) {
         return [
           SpPopMenuItem(
-            title: "View",
+            title: tr("button.view"),
             leadingIconData: Icons.book,
             onPressed: () {
               ShowChangeRoute(content: change).push(context);
@@ -90,7 +98,7 @@ class _StoryChangesContent extends StatelessWidget {
           if (!isLatestChange)
             SpPopMenuItem(
               leadingIconData: Icons.restore,
-              title: "Restore this version",
+              title: tr("button.restore_this_version"),
               onPressed: () => viewModel.restore(context, change),
             ),
         ];
@@ -124,7 +132,7 @@ class _StoryChangesContent extends StatelessWidget {
             }
           },
           isThreeLine: true,
-          title: Text(change.title ?? 'N/A'),
+          title: Text(change.title ?? tr("general.na")),
           contentPadding: isLatestChange
               ? const EdgeInsets.symmetric(horizontal: 16.0)
               : const EdgeInsets.only(left: 16.0, right: 4.0),
@@ -133,7 +141,7 @@ class _StoryChangesContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                DateFormatService.yMEd_jm(change.createdAt),
+                DateFormatService.yMEd_jm(change.createdAt, context.locale),
                 style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).primary),
               ),
               const SizedBox(height: 4.0),
@@ -153,22 +161,28 @@ class _StoryChangesContent extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Divider(height: 1),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                  .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                spacing: 8.0,
-                children: [
-                  FilledButton.tonal(
-                    child: const Text("Cancel"),
-                    onPressed: () => viewModel.turnOffEditing(),
-                  ),
-                  FilledButton(
-                    child: Text("Remove (${viewModel.toBeRemovedCount})"),
-                    onPressed: () => viewModel.remove(context),
-                  ),
-                ],
+            SizedBox(
+              width: double.infinity,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
+                    .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+                scrollDirection: Axis.horizontal,
+                reverse: true,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: 8.0,
+                  children: [
+                    FilledButton.tonal(
+                      child: Text(tr("button.cancel")),
+                      onPressed: () => viewModel.turnOffEditing(),
+                    ),
+                    FilledButton(
+                      style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+                      child: Text("${tr("button.delete")} (${viewModel.toBeRemovedCount})"),
+                      onPressed: () => viewModel.remove(context),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

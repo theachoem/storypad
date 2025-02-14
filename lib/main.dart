@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
@@ -19,6 +20,7 @@ void main({
   await Firebase.initializeApp(options: firebaseOptions);
 
   // core
+  await EasyLocalization.ensureInitialized();
   await PackageInfoInitializer.call();
   await DeviceInfoInitializer.call();
   await FileInitializer.call();

@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -117,9 +119,11 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
 
         return CheckboxListTile(
           title: Text(tag.title),
-          subtitle: Text(storyCount > 1 ? "$storyCount stories" : "$storyCount story"),
+          subtitle: Text(plural("plural.story", storyCount)),
           value: selectedTags.contains(tag.id) == true,
           onChanged: (bool? value) async {
+            HapticFeedback.selectionClick();
+
             if (value == true) {
               selectedTags = {...selectedTags, tag.id}.toList();
               setState(() {});
@@ -155,7 +159,7 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
             constraints: const BoxConstraints(maxWidth: 200),
             margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight),
             child: Text(
-              "Tags will appear here",
+              tr("page.tags.empty_message"),
               textAlign: TextAlign.center,
               style: TextTheme.of(context).bodyLarge,
             ),

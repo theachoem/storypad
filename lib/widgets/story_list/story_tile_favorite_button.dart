@@ -32,7 +32,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
         final animationDuration = Durations.medium1;
 
         return IconButton(
-          tooltip: 'Star',
+          tooltip: tr("button.star"),
           padding: const EdgeInsets.all(16.0),
           iconSize: 18.0,
           onPressed: toggleStarred == null

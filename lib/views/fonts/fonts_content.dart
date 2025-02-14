@@ -11,7 +11,7 @@ class _FontsContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Fonts"),
+        title: Text(tr("page.fonts.title")),
         bottom: buildSearchBar(themeProvider, context),
       ),
       body: buildBody(themeProvider, context),
@@ -82,8 +82,8 @@ class _FontsContent extends StatelessWidget {
       items: (BuildContext context) {
         return [
           SpPopMenuItem(
-            title: "Use this font",
-            subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            title: tr("list_tile.use_this_font.title"),
+            subtitle: tr("list_tile.use_this_font.loreum_ipsum"),
             subtitleStyle: GoogleFonts.getFont(fontFamily),
             trailingIconData: Icons.keyboard_arrow_right,
             onPressed: () {

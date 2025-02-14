@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/services/date_format_service.dart';
@@ -12,7 +13,7 @@ class DateBlockEmbed extends EmbedBuilder {
     // bool readOnly = embedContext.readOnly;
     DateTime? date = getDate(embedContext);
 
-    if (date == null) return const Text("Unknown");
+    if (date == null) return Text(tr("general.unknown"));
 
     return Row(
       children: [
@@ -30,7 +31,7 @@ class DateBlockEmbed extends EmbedBuilder {
               children: [
                 Text(getDayOfMonthSuffix(date.day).toLowerCase(), style: TextTheme.of(context).labelSmall),
                 Text(
-                  DateFormatService.yM(date),
+                  DateFormatService.yM(date, context.locale),
                   style: TextTheme.of(context).labelMedium,
                 ),
               ],
@@ -66,7 +67,7 @@ class DateBlockEmbed extends EmbedBuilder {
 
   static String getDayOfMonthSuffix(int dayNum) {
     if (!(dayNum >= 1 && dayNum <= 31)) {
-      throw Exception('Invalid day of month');
+      throw Exception('invalid_day_of_month');
     }
 
     if (dayNum >= 11 && dayNum <= 13) {

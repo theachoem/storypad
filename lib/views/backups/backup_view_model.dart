@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -52,9 +53,9 @@ class BackupViewModel extends BaseViewModel {
     for (CloudFileObject file in files ?? []) {
       if (file.getFileInfo() == null) return;
 
-      backupsGroupByDevice[file.getFileInfo()?.device.id ?? 'N/A'] ??= [];
-      backupsGroupByDevice[file.getFileInfo()?.device.id ?? 'N/A']?.add(file);
-      backupsGroupByDevice[file.getFileInfo()?.device.id ?? 'N/A']
+      backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")] ??= [];
+      backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")]?.add(file);
+      backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")]
           ?.sort((a, b) => a.getFileInfo()!.createdAt.compareTo(b.getFileInfo()!.createdAt));
     }
 
