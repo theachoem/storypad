@@ -16,7 +16,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return EasyLocalization(
       path: 'translations',
-      supportedLocales: AppLocale.supportedLocales,
+      supportedLocales: AppLocale.supportedLocales.values.toList(),
       fallbackLocale: AppLocale.fallbackLocale,
       child: AppTheme(builder: (context, theme, darkTheme, themeMode) {
         return MaterialApp(

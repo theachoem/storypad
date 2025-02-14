@@ -101,6 +101,11 @@ class StoryTileActions {
                 story: updatedStory,
               );
 
+              // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
+              if (listContext.mounted) {
+                await StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+              }
+
               return reloadHome('$runtimeType#moveToBin');
             },
           );
