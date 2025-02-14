@@ -14,10 +14,10 @@ class _BackupContent extends StatelessWidget {
     return SpDefaultScrollController(builder: (context, controller) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Backups"),
+          title: Text(tr('page.backups.title')),
           actions: [
             IconButton(
-              tooltip: "Offline Backup",
+              tooltip: tr('general.offline_backup'),
               icon: Icon(Icons.folder_open),
               onPressed: () {
                 OfflineBackupRoute().push(context);
@@ -60,10 +60,10 @@ class _BackupContent extends StatelessWidget {
   }
 
   SliverPadding buildSliverEmpty() {
-    return const SliverPadding(
+    return SliverPadding(
       padding: EdgeInsets.all(16.0),
       sliver: SliverToBoxAdapter(
-        child: Text("No backups found."),
+        child: Text(tr("general.no_backup_found")),
       ),
     );
   }
@@ -100,21 +100,21 @@ class _BackupContent extends StatelessWidget {
 
     final menus = [
       SpPopMenuItem(
-        title: 'View',
+        title: tr("button.view"),
         leadingIconData: Icons.info,
         onPressed: () => viewModel.openCloudFile(context, file),
       ),
       SpPopMenuItem(
-        title: 'Delete',
+        title: tr("button.delete"),
         leadingIconData: Icons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         onPressed: () async {
           OkCancelResult userResponse = await showOkCancelAlertDialog(
             context: context,
-            title: "Are you sure to delete this backup?",
-            message: "You can't undo this action.",
+            title: tr("dialog.are_you_sure_to_delete_this_backup.title"),
+            message: tr("dialog.are_you_sure_to_delete_this_backup.message"),
             isDestructiveAction: true,
-            okLabel: "Delete",
+            okLabel: tr("button.delete"),
           );
 
           if (userResponse == OkCancelResult.ok && context.mounted) {
@@ -167,8 +167,9 @@ class _BackupContent extends StatelessWidget {
                     Expanded(
                       child: ListTile(
                         contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
-                        title: Text(fileInfo?.device.model ?? 'Unknown'),
-                        subtitle: Text(DateFormatService.yMEd_jmNullable(fileInfo?.createdAt) ?? 'N/A'),
+                        title: Text(fileInfo?.device.model ?? tr("general.unknown")),
+                        subtitle: Text(
+                            DateFormatService.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na")),
                       ),
                     ),
                   ],
@@ -229,7 +230,7 @@ class _BackupContent extends StatelessWidget {
           width: monogramSize,
           color: ColorScheme.of(context).surface.withValues(),
           child: Text(
-            DateFormatService.E(date),
+            DateFormatService.E(date, context.locale),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

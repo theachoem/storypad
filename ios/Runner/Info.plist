@@ -35,6 +35,12 @@
         </array>
         <key>CFBundleVersion</key>
         <string>$(FLUTTER_BUILD_NUMBER)</string>
+        <key>CFBundleLocalizations</key>
+        <array>
+            <string>en</string>
+            <string>km</string>
+            <string>ar</string>
+        </array>
         <key>GIDClientID</key>
         <string>$(GOOGLE_CLIENT_ID)</string>
         <key>LSRequiresIPhoneOS</key>

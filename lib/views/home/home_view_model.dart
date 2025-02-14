@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -92,13 +93,13 @@ class HomeViewModel extends BaseViewModel {
 
       OkCancelResult userAction = await showOkAlertDialog(
         context: context,
-        title: 'Error importing data from previous version!',
-        message: "Please contact developer for support & avoid data loss.",
+        title: tr("dialog.error_importing_data_from_legacy_storypad.title"),
+        message: tr("dialog.error_importing_data_from_legacy_storypad.message"),
       );
 
       if (userAction == OkCancelResult.ok && context.mounted) {
         Clipboard.setData(ClipboardData(text: message));
-        MessengerService.of(context).showSnackBar("Error code copied to your clipboard");
+        MessengerService.of(context).showSnackBar(tr("snack_bar.copy_error_to_clipboard_success"));
       }
     }
   }

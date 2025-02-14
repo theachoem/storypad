@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
 
@@ -30,13 +31,13 @@ class NicknameBottomSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Hello",
+                tr("dialog.what_should_i_call_you.title"),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
               ),
               Text(
-                "What should I call you?",
+                tr("dialog.what_should_i_call_you.message"),
                 overflow: TextOverflow.ellipsis,
                 style: TextTheme.of(context).bodyLarge,
                 maxLines: 2,
@@ -48,11 +49,11 @@ class NicknameBottomSheet extends StatelessWidget {
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.name,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) return "Required";
+                  if (value == null || value.trim().isEmpty) return tr("general.required");
                   return null;
                 },
-                decoration: const InputDecoration(
-                  hintText: 'Your nickname...',
+                decoration: InputDecoration(
+                  hintText: tr("input.nickname.hint"),
                 ),
               ),
               const SizedBox(height: 8.0),
@@ -64,7 +65,7 @@ class NicknameBottomSheet extends StatelessWidget {
                     bool unchanged = value.text.trim().isEmpty || value.text.trim() == nickname;
                     return FilledButton(
                       onPressed: unchanged ? null : () => save(),
-                      child: nickname == null ? const Text("Save") : const Text("Update"),
+                      child: nickname == null ? Text(tr("button.save")) : Text(tr("button.update")),
                     );
                   },
                 ),

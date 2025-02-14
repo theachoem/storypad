@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 
 class BackupTagsTableViewer extends StatelessWidget {
@@ -19,7 +20,7 @@ class BackupTagsTableViewer extends StatelessWidget {
         return ListTile(
           leading: const Icon(Icons.sell),
           title: Text(tag.title),
-          subtitle: Text(DateFormatService.yMEd_jmNullable(tag.updatedAt) ?? 'N/A'),
+          subtitle: Text(DateFormatService.yMEd_jmNullable(tag.updatedAt, context.locale) ?? tr("general.na")),
         );
       },
     );

@@ -5,6 +5,7 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
@@ -49,45 +50,45 @@ class StoryTile extends StatelessWidget {
     return [
       if (story.inArchives || story.inBins && onTap != null)
         SpPopMenuItem(
-          title: 'Open',
+          title: tr('button.open'),
           leadingIconData: Icons.library_books,
           onPressed: onTap,
         ),
       if (story.putBackAble)
         SpPopMenuItem(
-          title: 'Put back',
+          title: tr('button.put_back'),
           leadingIconData: Icons.restore_from_trash,
           onPressed: () => StoryTileActions(story: story, listContext: listContext).putBack(context),
         ),
       if (story.archivable)
         SpPopMenuItem(
-          title: 'Archive',
+          title: tr('button.archive'),
           leadingIconData: Icons.archive,
           onPressed: () => StoryTileActions(story: story, listContext: listContext).archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
-          title: 'Move to bin',
+          title: tr('button.move_to_bin'),
           leadingIconData: Icons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => StoryTileActions(story: story, listContext: listContext).moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
-          title: 'Delete',
+          title: tr('button.delete'),
           leadingIconData: Icons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => StoryTileActions(story: story, listContext: listContext).hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
-          title: 'Import',
+          title: tr('button.import'),
           leadingIconData: Icons.restore_outlined,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
           onPressed: () => StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
         ),
       SpPopMenuItem(
-        title: 'Info',
+        title: tr('button.info'),
         leadingIconData: Icons.info,
         onPressed: () => StoryInfoSheet(story: story).show(context),
       )
@@ -136,11 +137,20 @@ class StoryTile extends StatelessWidget {
           children: List.generate(menus.length, (index) {
             final menu = menus[index];
 
-            return SlidableAction(
-              icon: menu.leadingIconData,
-              backgroundColor: menu.titleStyle?.color ?? ColorFromDayService(context: context).get(index + 1)!,
-              foregroundColor: ColorScheme.of(context).onPrimary,
-              onPressed: (context) => menu.onPressed?.call(),
+            return CustomSlidableAction(
+              backgroundColor: index.isEven
+                  ? ColorScheme.of(context).readOnly.surface1!
+                  : ColorScheme.of(context).readOnly.surface3!,
+              foregroundColor: menu.titleStyle?.color,
+              onPressed: null,
+              padding: EdgeInsets.zero,
+              child: Tooltip(
+                message: menu.title,
+                child: IconButton(
+                  onPressed: () => menu.onPressed?.call(),
+                  icon: Icon(menu.leadingIconData, color: menu.titleStyle?.color),
+                ),
+              ),
             );
           }),
         ),

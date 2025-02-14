@@ -15,6 +15,7 @@ class _HomeContent extends StatelessWidget {
         appBar: HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         floatingActionButton: FloatingActionButton(
+          tooltip: tr("button.new_story"),
           onPressed: () => viewModel.goToNewPage(context),
           child: const Icon(Icons.edit),
         ),

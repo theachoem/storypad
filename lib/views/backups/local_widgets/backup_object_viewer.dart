@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,7 @@ class BackupObjectViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? backupAt = DateFormatService.yMEd_jmNullable(backup.fileInfo.createdAt);
+    String? backupAt = DateFormatService.yMEd_jmNullable(backup.fileInfo.createdAt, context.locale);
 
     return Scaffold(
       appBar: AppBar(

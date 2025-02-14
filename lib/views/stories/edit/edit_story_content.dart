@@ -84,7 +84,7 @@ class _EditStoryContent extends StatelessWidget {
               secondChild: Icon(Icons.done),
               showFirst: lastSavedAt == null,
             ),
-            label: Text("Done"),
+            label: Text(tr("button.done")),
             onPressed: lastSavedAt == null
                 ? null
                 : () async {
@@ -97,6 +97,7 @@ class _EditStoryContent extends StatelessWidget {
       SizedBox(width: 8.0),
       Builder(builder: (context) {
         return IconButton(
+          tooltip: tr("page.tags.title"),
           icon: const Icon(Icons.sell_outlined),
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );

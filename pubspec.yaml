@@ -19,9 +19,10 @@ dependencies:
   device_info_plus: ^11.2.0
   dismissible_page: ^1.0.2
   dynamic_color: ^1.7.0
+  easy_localization: ^3.0.7+1
   file_picker: ^8.1.7
-  firebase_core: ^3.11.0
   firebase_analytics: ^11.4.2
+  firebase_core: ^3.11.0
   firebase_crashlytics: ^4.3.2
   firebase_remote_config: ^5.4.0
   flutter_custom_tabs: ^2.1.0
@@ -51,6 +52,7 @@ dependencies:
   provider: ^6.1.2
   share_plus: ^10.1.4
   shared_preferences: ^2.3.4
+  slang: ^4.4.1
   sqflite: ^2.4.1
 
 dev_dependencies:
@@ -63,9 +65,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   objectbox_generator: any
+  slang_build_runner: ^4.4.2
 
 flutter:
   uses-material-design: true
   assets:
+    - translations/
     - assets/lotties/
     - assets/emoji-64/

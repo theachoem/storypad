@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/string_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -20,7 +20,7 @@ class ThemeModeTile extends StatelessWidget {
       items: (context) => ThemeMode.values.map((mode) {
         return SpPopMenuItem(
           selected: mode == provider.themeMode,
-          title: mode.name.capitalize,
+          title: getLocalizedThemeMode(mode),
           onPressed: () => provider.setThemeMode(mode),
         );
       }).toList(),
@@ -32,11 +32,22 @@ class ThemeModeTile extends StatelessWidget {
             secondChild: const Icon(Icons.light_mode),
             showFirst: provider.isDarkMode(context),
           ),
-          title: const Text('Theme Mode'),
-          subtitle: Text(provider.themeMode.name.capitalize),
+          title: Text(tr('list_tile.theme_mode.title')),
+          subtitle: Text(getLocalizedThemeMode(provider.themeMode)),
           onTap: () => open(),
         );
       },
     );
+  }
+
+  String getLocalizedThemeMode(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.dark:
+        return tr("general.theme_mode.dark");
+      case ThemeMode.light:
+        return tr("general.theme_mode.light");
+      case ThemeMode.system:
+        return tr("general.theme_mode.system");
+    }
   }
 }

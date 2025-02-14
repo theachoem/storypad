@@ -35,6 +35,8 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       return counts;
     });
 
+    storyCountsByYear[DateTime.now().year] ??= 0;
+
     return storyCountsByYear;
   }
 

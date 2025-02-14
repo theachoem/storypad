@@ -9,6 +9,10 @@ class _HomeEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String message = tr('page.home.empty_message', namedArgs: {
+      "YEAR": viewModel.year.toString(),
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -22,18 +26,12 @@ class _HomeEmpty extends StatelessWidget {
             text: TextSpan(
               style: TextTheme.of(context).bodyLarge,
               children: [
-                const TextSpan(text: 'Please click on'),
+                TextSpan(text: message.split("{EDIT_BUTTON}").first),
                 const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Icon(
-                      Icons.edit,
-                      size: 16.0,
-                    ),
-                  ),
+                  child: Icon(Icons.edit, size: 16.0),
                   alignment: PlaceholderAlignment.middle,
                 ),
-                TextSpan(text: 'to add story to ${viewModel.year}'),
+                TextSpan(text: message.split("{EDIT_BUTTON}").last),
               ],
             ),
           ),

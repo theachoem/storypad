@@ -41,6 +41,10 @@ class StoryListMultiEditWrapper extends StatelessWidget {
 
   final Widget Function(BuildContext context) builder;
 
+  static StoryListMultiEditWrapperState of(BuildContext context) {
+    return context.read<StoryListMultiEditWrapperState>();
+  }
+
   static tryListen({
     required BuildContext context,
     required Widget Function(BuildContext context, StoryListMultiEditWrapperState? state) builder,

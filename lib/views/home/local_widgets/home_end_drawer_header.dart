@@ -22,7 +22,7 @@ class _HomeEndDrawerHeader extends StatelessWidget {
             RichText(
               textScaler: MediaQuery.textScalerOf(context),
               text: TextSpan(
-                text: "Switch",
+                text: tr("button.switch"),
                 style: TextTheme.of(context).labelLarge,
                 children: const [
                   WidgetSpan(

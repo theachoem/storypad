@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 
 class SpFeelingPicker extends StatefulWidget {
@@ -125,7 +124,7 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
               ),
               const SizedBox(height: 8.0),
               Text(
-                feeling.value.value.replaceAll("_", "\n").capitalize,
+                feeling.value.translation,
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

@@ -25,7 +25,7 @@ openjdk 21 2023-09-19
 
 ### Troubleshooting
 
-If `which java` returns a different path than `~/.asdf/shims/java`, ensure that you add `$JAVA_HOME` to your shell configuration. Refer to [this guide](https://github.com/asdf-vm/asdf-ruby) for details on how to configure `$JAVA_HOME`.
+If `which java` returns a different path than `~/.asdf/shims/java`, ensure that you add `$JAVA_HOME` to your shell configuration. Refer to [this guide](https://github.com/halcyon/asdf-java?tab=readme-ov-file#java_home) for details on how to configure `$JAVA_HOME`.
 
 ### References
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -65,7 +66,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
               for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
               const SizedBox(height: 16.0),
               FilledButton.icon(
-                label: Text(widget.saveButtonLabel ?? "Save"),
+                label: Text(widget.saveButtonLabel ?? tr("button.save")),
                 onPressed: () => submit(context),
               )
             ],

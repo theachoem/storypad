@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -126,7 +127,7 @@ class _DateSelector extends StatelessWidget {
 
   Widget buildMonthYear(BuildContext context) {
     return Text(
-      DateFormatService.yM(story.displayPathDate),
+      DateFormatService.yM(story.displayPathDate, context.locale),
       style: TextTheme.of(context).labelMedium,
     );
   }
@@ -171,7 +172,7 @@ class _TitleField extends StatelessWidget {
       maxLength: null,
       autofocus: false,
       decoration: InputDecoration(
-        hintText: "Title...",
+        hintText: tr("input.title.hint"),
         border: InputBorder.none,
         isCollapsed: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
