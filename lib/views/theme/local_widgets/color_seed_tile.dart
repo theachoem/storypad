@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
@@ -29,8 +30,8 @@ class ColorSeedTile extends StatelessWidget {
       },
       builder: (void Function() open) {
         return ListTile(
-          title: const Text("Seed Color"),
-          subtitle: Text(provider.theme.colorSeed != null ? "Custom" : "Default"),
+          title: Text(tr("list_tile.color_seed.title")),
+          subtitle: Text(provider.theme.colorSeed != null ? tr("general.custom") : tr("general.default")),
           leading: Container(
             width: 24,
             height: 24,

@@ -1,6 +1,8 @@
 import 'package:animated_clipper/animated_clipper.dart';
 import 'package:confetti/confetti.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
@@ -84,6 +86,8 @@ class _SpFeelingButtonState extends State<SpFeelingButton> {
         return SpFeelingPicker(
           feeling: widget.feeling,
           onPicked: (feeling) {
+            HapticFeedback.selectionClick();
+
             widget.onPicked(feeling);
             callback();
 
@@ -117,13 +121,16 @@ class _SpFeelingButtonState extends State<SpFeelingButton> {
           child: Material(
             type: MaterialType.circle,
             color: widget.backgroundColor ?? ColorScheme.of(context).readOnly.surface1,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(48.0),
-              onTap: callback,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: FeelingObject.feelingsMap[widget.feeling]?.image64.image(width: 24) ??
-                    Icon(Icons.add_reaction_sharp, color: widget.foregroundColor),
+            child: Tooltip(
+              message: FeelingObject.feelingsMap[widget.feeling]?.translation ?? tr("button.set_feeling"),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(48.0),
+                onTap: callback,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: FeelingObject.feelingsMap[widget.feeling]?.image64.image(width: 24) ??
+                      Icon(Icons.add_reaction_sharp, color: widget.foregroundColor),
+                ),
               ),
             ),
           ),

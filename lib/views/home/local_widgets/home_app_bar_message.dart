@@ -7,7 +7,7 @@ class _HomeAppBarMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BackupProvider>(
       child: Text(
-        "What did you have in mind?",
+        tr('page.home.app_bar.messages.what_in_ur_mind'),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextTheme.of(context).bodyLarge,
@@ -21,7 +21,7 @@ class _HomeAppBarMessage extends StatelessWidget {
             provider.synced;
 
         if (provider.syncing) {
-          title = "We're syncing your data ";
+          title = "${tr("page.home.app_bar.messages.we_syncing_ur_data")} ";
           trailing = Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: const SizedBox.square(
@@ -30,7 +30,7 @@ class _HomeAppBarMessage extends StatelessWidget {
             ),
           );
         } else {
-          title = "Ready to sync your data? ";
+          title = "${tr("page.home.app_bar.messages.ready_to_syn_data")} ";
           trailing = Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: const Icon(

@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
@@ -20,9 +21,9 @@ class StoryTileActions {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       isDestructiveAction: true,
-      title: "Are you sure to delete this story?",
-      message: "You can't undo this action",
-      okLabel: "Delete",
+      title: tr("dialog.are_you_sure_to_delete_this_story.title"),
+      message: tr("dialog.are_you_sure_to_delete_this_story.message"),
+      okLabel: tr("button.delete"),
     );
 
     if (result == OkCancelResult.ok) {
@@ -49,11 +50,11 @@ class StoryTileActions {
       }
 
       MessengerService.of(context).showSnackBar(
-        'Deleted successfully',
+        tr("snack_bar.delete_success"),
         showAction: true,
         action: (foreground) {
           return SnackBarAction(
-            label: 'Undo',
+            label: tr("button.undo"),
             textColor: foreground,
             onPressed: () async => undoHardDelete(),
           );
@@ -72,7 +73,7 @@ class StoryTileActions {
     );
 
     if (!context.mounted) return;
-    MessengerService.of(context).showSnackBar('Story restored!');
+    MessengerService.of(context).showSnackBar(tr("snack_bar.restore_individual_success"));
   }
 
   Future<void> moveToBin(BuildContext context) async {
@@ -85,22 +86,31 @@ class StoryTileActions {
     );
 
     if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Moved to bin!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-            if (updatedStory == null) return;
+      MessengerService.of(context).showSnackBar(
+        tr("snack_bar.move_to_bin_success"),
+        showAction: true,
+        action: (foreground) {
+          return SnackBarAction(
+            label: tr("button.undo"),
+            textColor: foreground,
+            onPressed: () async {
+              StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+              if (updatedStory == null) return;
 
-            AnalyticsService.instance.logUndoMoveStoryToBin(
-              story: updatedStory,
-            );
+              AnalyticsService.instance.logUndoMoveStoryToBin(
+                story: updatedStory,
+              );
 
-            return reloadHome('$runtimeType#moveToBin');
-          },
-        );
-      });
+              // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
+              if (listContext.mounted) {
+                await StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+              }
+
+              return reloadHome('$runtimeType#moveToBin');
+            },
+          );
+        },
+      );
     }
   }
 
@@ -114,22 +124,26 @@ class StoryTileActions {
     );
 
     if (context.mounted) {
-      MessengerService.of(context).showSnackBar("Archived!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () async {
-            StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-            if (updatedStory == null) return;
+      MessengerService.of(context).showSnackBar(
+        tr("snack_bar.archive_success"),
+        showAction: true,
+        action: (foreground) {
+          return SnackBarAction(
+            label: tr("button.undo"),
+            textColor: foreground,
+            onPressed: () async {
+              StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+              if (updatedStory == null) return;
 
-            AnalyticsService.instance.logUndoArchiveStory(
-              story: updatedStory,
-            );
+              AnalyticsService.instance.logUndoArchiveStory(
+                story: updatedStory,
+              );
 
-            return reloadHome('$runtimeType#archive');
-          },
-        );
-      });
+              return reloadHome('$runtimeType#archive');
+            },
+          );
+        },
+      );
     }
   }
 
@@ -159,13 +173,17 @@ class StoryTileActions {
         }
       }
 
-      MessengerService.of(listContext).showSnackBar("Back in home!", showAction: true, action: (foreground) {
-        return SnackBarAction(
-          label: "Undo",
-          textColor: foreground,
-          onPressed: () => undoPutBack(originalStory),
-        );
-      });
+      MessengerService.of(listContext).showSnackBar(
+        tr("snack_bar.put_back_success"),
+        showAction: true,
+        action: (foreground) {
+          return SnackBarAction(
+            label: tr("button.undo"),
+            textColor: foreground,
+            onPressed: () => undoPutBack(originalStory),
+          );
+        },
+      );
     }
   }
 

@@ -15,7 +15,7 @@ class _SearchContent extends StatelessWidget {
           keyboardType: TextInputType.text,
           autofocus: false,
           decoration: InputDecoration(
-            hintText: "eg. My home",
+            hintText: tr("input.story_search.hint"),
             border: InputBorder.none,
           ),
           onChanged: (value) => viewModel.search(value),
@@ -23,6 +23,7 @@ class _SearchContent extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            tooltip: tr("page.search_filter.title"),
             icon: Icon(Icons.tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),

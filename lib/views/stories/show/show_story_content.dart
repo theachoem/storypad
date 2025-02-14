@@ -104,11 +104,13 @@ class _ShowStoryContent extends StatelessWidget {
         const SizedBox(width: 12.0),
       ],
       IconButton(
+        tooltip: tr("button.edit"),
         onPressed: () => viewModel.goToEditPage(context),
         icon: const Icon(Icons.edit_outlined),
       ),
       Builder(builder: (context) {
         return IconButton(
+          tooltip: tr("page.tags.title"),
           icon: const Icon(Icons.sell_outlined),
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
@@ -118,19 +120,20 @@ class _ShowStoryContent extends StatelessWidget {
           return [
             SpPopMenuItem(
               leadingIconData: Icons.history_sharp,
-              title: "Changes History",
+              title: tr("page.changes_history.title"),
               subtitle: "${viewModel.story?.rawChanges?.length}",
               onPressed: () => viewModel.goToChangesPage(context),
             ),
             SpPopMenuItem(
               leadingIconData: Icons.info,
-              title: "Info",
+              title: tr("button.info"),
               onPressed: () => StoryInfoSheet(story: viewModel.story!).show(context),
             ),
           ];
         },
         builder: (callback) {
           return IconButton(
+            tooltip: tr("button.more_options"),
             icon: Icon(Icons.more_vert),
             onPressed: callback,
           );
@@ -156,7 +159,7 @@ class _ShowStoryContent extends StatelessWidget {
 class UnknownEmbedBuilder extends EmbedBuilder {
   @override
   Widget build(BuildContext context, EmbedContext embedContext) {
-    return const Text("Unknown");
+    return Text(tr("general.unknown"));
   }
 
   @override

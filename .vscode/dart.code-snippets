@@ -2,12 +2,12 @@
   "BookMe+ View Content": {
     "prefix": "view_content",
     "body": [
-      "part of '${TM_FILENAME_BASE/(.*)_adaptive/$1/}_view.dart';",
+      "part of '${TM_FILENAME_BASE/(.*)_content/$1/}_view.dart';",
       "",
       "class _${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends StatelessWidget {",
       "  const _${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}(this.viewModel);",
       "",
-      "  final ${TM_FILENAME_BASE/(.*)_adaptive/${1:/pascalcase}/}ViewModel viewModel;",
+      "  final ${TM_FILENAME_BASE/(.*)_content/${1:/pascalcase}/}ViewModel viewModel;",
       "",
       "  @override",
       "  Widget build(BuildContext context) {",
@@ -20,7 +20,7 @@
   "BookMe+ View Model": {
     "prefix": "view_model",
     "body": ["",
-      "import 'package:storypad/core/base/base_view_model.dart';",
+      "import 'package:storypad/widgets/view/base_view_model.dart';",
       "import '${TM_FILENAME_BASE/(.*)_view_model/$1/}_view.dart';",
       "",
       "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends BaseViewModel {",
@@ -36,13 +36,13 @@
   "BookMe+ View": {
     "prefix": "view",
     "body": [
-      "import 'package:storypad/core/base/view_model_provider.dart';",
+      "import 'package:storypad/widgets/view/view_model_provider.dart';",
       "import 'package:flutter/material.dart';",
       "import 'package:storypad/routes/base_route.dart';",
       "",
       "import '${TM_FILENAME_BASE/_view/_view_model/}.dart';",
       "",
-      "part '${TM_FILENAME_BASE/_view/_adaptive/}.dart';",
+      "part '${TM_FILENAME_BASE/_view/_content/}.dart';",
       "",
       "class ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Route extends BaseRoute {",
       "  ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Route();",

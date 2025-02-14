@@ -11,7 +11,7 @@ class _AssetsContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("$kAppName Library"),
+        title: Text(tr("page.library.title_with_app_name")),
       ),
       bottomNavigationBar: buildBottomNavigation(provider, context),
       body: buildBody(context, provider),
@@ -40,7 +40,7 @@ class _AssetsContent extends StatelessWidget {
                     builder: (context, loadingAssetId, child) {
                       return FilledButton.icon(
                         icon: Icon(MdiIcons.googleDrive),
-                        label: const Text("Upload to Google Drive"),
+                        label: Text(tr("button.upload_to_google_drive")),
                         onPressed: loadingAssetId != null ? null : () => provider.uploadAssets(),
                       );
                     },
@@ -80,18 +80,18 @@ class _AssetsContent extends StatelessWidget {
                 SpPopMenuItem(
                   leadingIconData: Icons.delete,
                   titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                  title: "Delete from Google Drive",
+                  title: tr("button.delete_from_google_drive"),
                   onPressed: () => provider.deleteAsset(asset),
                 )
               else
                 SpPopMenuItem(
                   leadingIconData: Icons.library_books,
-                  title: "Stories",
+                  title: tr("general.stories"),
                   onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
                 ),
               SpPopMenuItem(
                 leadingIconData: Icons.image,
-                title: "View",
+                title: tr("button.view"),
                 onPressed: () {
                   final assetLinks = provider.assets?.items.map((e) => e.link).toList() ?? [];
                   SpImagesViewer.fromString(
@@ -125,7 +125,9 @@ class _AssetsContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text("${viewModel.storiesCount[asset.id]} stories"),
+                  Text(
+                    plural("plural.story", viewModel.storiesCount[asset.id] ?? 0),
+                  ),
                 ],
               ),
             );
@@ -211,7 +213,7 @@ class _AssetsContent extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(24.0),
           child: Text(
-            "Photos will appear here",
+            tr("page.library.empty_message"),
             textAlign: TextAlign.center,
             style: TextTheme.of(context).bodyLarge,
           ),

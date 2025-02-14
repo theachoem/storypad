@@ -12,6 +12,7 @@ class _ShowTagContent extends StatelessWidget {
         title: Text(viewModel.tag.title),
         actions: [
           IconButton(
+            tooltip: tr("page.search_filter.title"),
             icon: Icon(Icons.tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),

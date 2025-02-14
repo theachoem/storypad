@@ -11,7 +11,7 @@ class _TagsContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tags"),
+        title: Text(tr("page.tags.title")),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -64,14 +64,14 @@ class _TagsContent extends StatelessWidget {
                   backgroundColor: ColorScheme.of(context).error,
                   foregroundColor: ColorScheme.of(context).onError,
                   icon: Icons.delete,
-                  label: 'Delete',
+                  label: tr("button.delete"),
                 ),
                 SlidableAction(
                   onPressed: (context) => provider.editTag(context, tag),
                   backgroundColor: ColorScheme.of(context).secondary,
                   foregroundColor: ColorScheme.of(context).onSecondary,
                   icon: Icons.edit,
-                  label: 'Edit',
+                  label: tr("button.edit"),
                 ),
               ],
             ),
@@ -79,9 +79,9 @@ class _TagsContent extends StatelessWidget {
               contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
               leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
-              subtitle: Text(storyCount > 1 ? "$storyCount stories" : "$storyCount story"),
+              subtitle: Text(plural("plural.story", storyCount)),
               trailing: TextButton(
-                child: Text("View"),
+                child: Text(tr("button.view")),
                 onPressed: () => provider.viewTag(
                   context: context,
                   tag: tag,
@@ -105,7 +105,7 @@ class _TagsContent extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(24.0),
           child: Text(
-            "Tags will appear here",
+            tr("page.tags.empty_message"),
             textAlign: TextAlign.center,
             style: TextTheme.of(context).bodyLarge,
           ),

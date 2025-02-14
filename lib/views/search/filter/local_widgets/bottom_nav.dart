@@ -13,24 +13,29 @@ class _BottomNav extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Divider(height: 1),
-        Container(
+        SizedBox(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-              .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-          child: Row(
-            spacing: 8.0,
-            children: [
-              FilledButton.tonalIcon(
-                icon: Icon(Icons.clear),
-                label: const Text("Clear"),
-                onPressed: () => viewModel.reset(context),
-              ),
-              FilledButton.icon(
-                icon: Icon(Icons.search),
-                label: const Text("Search"),
-                onPressed: () => viewModel.search(context),
-              ),
-            ],
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
+                .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+            scrollDirection: Axis.horizontal,
+            reverse: true,
+            child: Row(
+              spacing: 8.0,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FilledButton.tonalIcon(
+                  icon: Icon(Icons.clear),
+                  label: Text(tr("button.clear")),
+                  onPressed: () => viewModel.reset(context),
+                ),
+                FilledButton.icon(
+                  icon: Icon(Icons.search),
+                  label: Text(tr("button.search")),
+                  onPressed: () => viewModel.search(context),
+                ),
+              ],
+            ),
           ),
         ),
       ],

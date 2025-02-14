@@ -14,7 +14,7 @@ class AppTheme extends StatelessWidget {
     required this.builder,
   });
 
-  final Widget Function(ThemeData theme, ThemeData darkTheme, ThemeMode themeMode) builder;
+  final Widget Function(BuildContext context, ThemeData theme, ThemeData darkTheme, ThemeMode themeMode) builder;
 
   // default text direction
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
@@ -36,7 +36,7 @@ class AppTheme extends StatelessWidget {
         builder: (ColorScheme lightDynamic, ColorScheme darkDynamic) {
           final theme = getTheme(ThemeData.light(), lightDynamic, provider);
           final darkTheme = getTheme(ThemeData.dark(), darkDynamic, provider);
-          return builder(theme, darkTheme, provider.themeMode);
+          return builder(context, theme, darkTheme, provider.themeMode);
         },
       );
     });

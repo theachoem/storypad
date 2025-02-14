@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/date_format_service.dart';
@@ -22,24 +23,24 @@ class StoryInfoSheet {
             children: [
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('Story Date'),
-                subtitle: Text(DateFormatService.yMEd(story.displayPathDate)),
+                title: Text(tr('list_tile.story_date.title')),
+                subtitle: Text(DateFormatService.yMEd(story.displayPathDate, context.locale)),
               ),
               if (story.movedToBinAt != null)
                 ListTile(
                   leading: const Icon(Icons.delete),
-                  title: const Text('Moved to bin'),
-                  subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!)),
+                  title: Text(tr('list_tile.moved_to_bin_at.title')),
+                  subtitle: Text(DateFormatService.yMEd_jm(story.movedToBinAt!, context.locale)),
                 ),
               ListTile(
                 leading: const Icon(Icons.update),
-                title: const Text('Updated'),
-                subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt)),
+                title: Text(tr("list_tile.updated_at.title")),
+                subtitle: Text(DateFormatService.yMEd_jm(story.updatedAt, context.locale)),
               ),
               ListTile(
                 leading: const Icon(Icons.date_range),
-                title: const Text('Created'),
-                subtitle: Text(DateFormatService.yMEd_jm(story.createdAt)),
+                title: Text(tr("list_tile.created_at.title")),
+                subtitle: Text(DateFormatService.yMEd_jm(story.createdAt, context.locale)),
               ),
             ],
           ),

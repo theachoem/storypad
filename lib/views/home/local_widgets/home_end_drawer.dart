@@ -1,7 +1,5 @@
 part of '../home_view.dart';
 
-const bool _enableSwitchLanguage = false;
-
 class _HomeEndDrawer extends StatelessWidget {
   const _HomeEndDrawer(this.viewModel);
 
@@ -51,14 +49,14 @@ class _HomeEndDrawer extends StatelessWidget {
           buildArchiveBinTile(context),
           ListTile(
             leading: const Icon(Icons.photo_album_outlined),
-            title: const Text('Library'),
+            title: Text(tr("page.library.title")),
             onTap: () => AssetsRoute().push(context),
           ),
           const Divider(),
           const BackupTile(),
           const Divider(),
           buildThemeTile(context),
-          if (_enableSwitchLanguage) buildLanguageTile(context),
+          buildLanguageTile(context),
           buildBiometricsTile(),
           if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
             const Divider(),
@@ -72,7 +70,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildCommunityTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.forum_outlined),
-      title: const Text("Community"),
+      title: Text(tr("list_tile.community.title")),
       onTap: () async {
         UrlOpenerService.openInCustomTab(
           context,
@@ -86,7 +84,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildSearchTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.search),
-      title: const Text('Search'),
+      title: Text(tr("list_tile.community.title")),
       onTap: () => SearchRoute(
         initialFilter: SearchFilterObject(
           years: {viewModel.year},
@@ -101,7 +99,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildTagsTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.sell_outlined),
-      title: const Text('Tags'),
+      title: Text(tr("page.tags.title")),
       onTap: () => TagsRoute().push(context),
     );
   }
@@ -109,7 +107,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildArchiveBinTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.archive_outlined),
-      title: const Text('Archives / Bin'),
+      title: Text(tr("page.archive_or_bin.title")),
       onTap: () => ArchivesRoute().push(context),
     );
   }
@@ -117,7 +115,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildThemeTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.color_lens_outlined),
-      title: const Text('Theme'),
+      title: Text(tr("page.theme.title")),
       onTap: () => ThemeRoute().push(context),
     );
   }
@@ -125,9 +123,9 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildLanguageTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.language),
-      title: const Text("Language"),
-      subtitle: const Text("Khmer"),
-      onTap: () => const _Languages().push(context),
+      title: Text(tr("page.language.title")),
+      subtitle: Text(AppLocale.getLanguageNativeName(context.locale)),
+      onTap: () => LanguagesRoute().push(context),
     );
   }
 
@@ -138,50 +136,12 @@ class _HomeEndDrawer extends StatelessWidget {
           visible: provider.canCheckBiometrics,
           child: SwitchListTile.adaptive(
             secondary: const Icon(Icons.lock),
-            title: const Text('Biometrics Lock'),
+            title: Text(tr("list_tile.biometrics_lock.title")),
             value: provider.localAuthEnabled,
             onChanged: (value) => provider.setEnable(value),
           ),
         );
       },
-    );
-  }
-}
-
-// WIP
-class _Languages extends StatelessWidget {
-  const _Languages();
-
-  Future<T?> push<T extends Object?>(BuildContext context) {
-    return SpNestedNavigation.maybeOf(context)!.push(this);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    Iterable<Locale> supportedLocales = context.findAncestorWidgetOfExactType<MaterialApp>()?.supportedLocales ?? [];
-
-    return Scaffold(
-      appBar: AppBar(),
-      body: ListView.builder(
-        itemCount: supportedLocales.length,
-        itemBuilder: (context, index) {
-          bool selected = themeProvider.currentLocale?.languageCode == supportedLocales.elementAt(index).languageCode;
-
-          return ListTile(
-            title: Text(supportedLocales.elementAt(index).languageCode.toUpperCase()),
-            trailing: Visibility(
-              visible: selected,
-              child: SpFadeIn.fromBottom(
-                child: const Icon(Icons.check),
-              ),
-            ),
-            onTap: () {
-              context.read<ThemeProvider>().setCurrentLocale(supportedLocales.elementAt(index));
-            },
-          );
-        },
-      ),
     );
   }
 }
