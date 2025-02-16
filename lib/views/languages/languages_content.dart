@@ -25,7 +25,7 @@ class _LanguagesContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       bottomNavigationBar: MaterialBanner(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).colorScheme.readOnly.surface2,
         contentTextStyle:
             Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
         padding: EdgeInsetsDirectional.only(
@@ -34,16 +34,20 @@ class _LanguagesContent extends StatelessWidget {
           end: 16.0,
           bottom: 4.0,
         ),
-        leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSecondary),
-        content: Text("Help improve translations or request a language on GitHub!"),
+        leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurface),
+        content: Text(
+          "If you notice any translation mistakes or want to request a new language, let us know on GitHub.",
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
         forceActionsBelow: true,
         actions: [
           Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-            child: OutlinedButton(
-              child: Text(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: 4.0),
+            child: OutlinedButton.icon(
+              icon: Icon(MdiIcons.github),
+              label: Text(
                 "OPEN GITHUB",
-                style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
               onPressed: () {
                 UrlOpenerService.openInCustomTab(context, RemoteConfigService.localizationSupportUrl.get());
@@ -60,7 +64,7 @@ class _LanguagesContent extends StatelessWidget {
           bool selected = context.locale.toLanguageTag() == locale.toLanguageTag();
 
           return ListTile(
-            title: Text(AppLocale.getLanguageNativeName(locale)),
+            title: Text(kNativeLanguageNames[locale.toLanguageTag()]!),
             trailing: Visibility(
               visible: selected,
               child: SpFadeIn.fromBottom(

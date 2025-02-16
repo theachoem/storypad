@@ -1,4 +1,7 @@
 {
+  "_meta.locale": "en",
+  "_meta.language_name": "English",
+  "_meta.native_name": "English",
   "button.archive": "Archive",
   "button.cancel": "Cancel",
   "button.clear": "Clear",
@@ -176,8 +179,8 @@
   "page.library.title_with_app_name": "StoryPad Library",
   "page.new_tag.title": "Edit Tag",
   "page.offline_backup.title": "Offline backup",
-  "page.search.title": "Search",
   "page.search_filter.title": "Filter",
+  "page.search.title": "Search",
   "page.tags.empty_message": "Tags will appear here",
   "page.tags.title": "Tags",
   "page.theme.title": "Theme",

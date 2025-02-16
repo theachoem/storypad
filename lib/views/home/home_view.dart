@@ -5,7 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/objects/app_locale.dart';
+import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/views/languages/languages_view.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
