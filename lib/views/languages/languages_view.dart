@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/core/objects/app_locale.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';

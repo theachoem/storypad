@@ -124,7 +124,7 @@ class _HomeEndDrawer extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.language),
       title: Text(tr("page.language.title")),
-      subtitle: Text(AppLocale.getLanguageNativeName(context.locale)),
+      subtitle: Text(kNativeLanguageNames[context.locale.toLanguageTag()]!),
       onTap: () => LanguagesRoute().push(context),
     );
   }
