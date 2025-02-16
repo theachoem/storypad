@@ -17,7 +17,7 @@ class _BackupContent extends StatelessWidget {
           title: Text(tr('page.backups.title')),
           actions: [
             IconButton(
-              tooltip: tr('general.offline_backup'),
+              tooltip: tr('page.offline_backup.title'),
               icon: Icon(Icons.folder_open),
               onPressed: () {
                 OfflineBackupRoute().push(context);

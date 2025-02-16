@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -18,7 +19,11 @@ class BackupAssetsTableViewer extends StatelessWidget {
         final asset = assets[index];
         return ListTile(
           title: Text(basename(asset.originalSource)),
-          subtitle: Text("Uploaded to ${asset.getGoogleDriveForEmails()?.join(", ")}"),
+          subtitle: Text(
+            tr('general.uploaded_to_args', namedArgs: {
+              'URL': asset.getGoogleDriveForEmails()?.join(", ") ?? tr('general.na'),
+            }),
+          ),
         );
       },
     );

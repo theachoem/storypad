@@ -9,28 +9,28 @@ class _OfflineBackupsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Offline Backup"),
+        title: Text(tr('page.offline_backup.title"')),
       ),
       body: ListView(
         padding: EdgeInsets.all(16.0),
         children: [
           _Card(
-            title: "Export Backup",
-            subtitle: "Save stories to your device offline",
+            title: tr('list_tile.export_backup.title'),
+            subtitle: tr('list_tile.export_backup.subtitle'),
             action: FilledButton.tonalIcon(
               icon: Icon(Icons.download),
-              label: Text("Export"),
+              label: Text(tr('button.export')),
               onPressed:
                   context.read<BackupProvider>().lastDbUpdatedAt == null ? null : () => viewModel.export(context),
             ),
           ),
           SizedBox(height: 12.0),
           _Card(
-            title: "Import Backup",
-            subtitle: "Import backup from your device into $kAppName",
+            title: tr('list_tile.import_backup.title'),
+            subtitle: tr('list_tile.import_backup.subtitle', namedArgs: {'APP_NAME': kAppName}),
             action: FilledButton.tonalIcon(
               icon: Icon(Icons.folder_open),
-              label: Text("Import"),
+              label: Text(tr('button.import')),
               onPressed: () => viewModel.import(context),
             ),
           ),

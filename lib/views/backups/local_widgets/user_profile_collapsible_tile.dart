@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
@@ -71,7 +72,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
         items: (BuildContext context) {
           return [
             SpPopMenuItem(
-              title: 'Log out',
+              title: tr('button.sign_out'),
               titleStyle: TextStyle(color: ColorScheme.of(context).error),
               onPressed: () => viewModel.signOut(context),
             )
@@ -103,11 +104,11 @@ class UserProfileCollapsibleTile extends StatelessWidget {
             return ListTile(
               onTap: () => viewModel.signIn(context),
               title: Text(
-                'Backup',
+                tr('list_tile.backup.title'),
                 style: TextStyle(color: ColorScheme.of(context).onPrimary),
               ),
               subtitle: Text(
-                "Sign in to Google Drive",
+                tr("list_tile.backup.unsignin_subtitle"),
                 style: TextStyle(color: ColorScheme.of(context).onPrimary),
               ),
               trailing: Icon(
