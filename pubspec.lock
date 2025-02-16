@@ -1568,7 +1568,7 @@ packages:
     source: sdk
     version: "0.0.0"
   slang:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: slang
       sha256: "2778b88f05ffc23fd0a37436f607bf2a541d0b6b922e69a8ea5bbd50c2427d18"
