@@ -59,7 +59,7 @@ class BackupObjectViewer extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.icon(
         icon: const Icon(Icons.restore),
-        label: const Text("Restore"),
+        label: Text(tr("button.restore")),
         onPressed: () => restore(context),
       ),
       body: ListView.builder(
@@ -70,31 +70,40 @@ class BackupObjectViewer extends StatelessWidget {
           final documentCount = value is List ? value.length : 0;
 
           IconData leadingIconData;
+          String tableName;
 
           switch (table.key) {
             case 'stories':
               leadingIconData = Icons.library_books;
+              tableName = tr("general.stories");
               break;
             case 'tags':
               leadingIconData = Icons.sell;
+              tableName = tr("general.tags");
               break;
             case 'preferences':
               leadingIconData = MdiIcons.table;
+              tableName = tr("general.preferences");
+              break;
+            case 'assets':
+              leadingIconData = MdiIcons.table;
+              tableName = tr("general.assets");
               break;
             default:
               leadingIconData = MdiIcons.table;
+              tableName = table.key;
               break;
           }
 
           return ListTile(
             leading: Icon(leadingIconData),
             title: Text(table.key.capitalize),
-            subtitle: Text(documentCount > 1 ? '$documentCount rows' : '$documentCount row'),
+            subtitle: Text(plural("plural.row", documentCount)),
             onTap: () {
               if (value is List) {
                 List<Map<String, dynamic>> tableContents = value.whereType<Map<String, dynamic>>().toList();
                 viewBackupObject(
-                  tableName: table.key,
+                  tableName: tableName,
                   context: context,
                   tableContents: tableContents,
                 );

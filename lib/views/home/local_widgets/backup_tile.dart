@@ -104,7 +104,7 @@ class _SignedInTile extends StatelessWidget {
         dimension: 24.0,
         child: CircularProgressIndicator.adaptive(),
       );
-      subtitle = Text(tr("status.syncing"));
+      subtitle = Text(tr("general.syncing"));
     } else if (provider.synced) {
       leading = Icon(
         Icons.cloud_done,

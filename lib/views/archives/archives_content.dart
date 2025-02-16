@@ -113,7 +113,7 @@ class _ArchivesContent extends StatelessWidget {
                         ),
                         FilledButton(
                           style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
-                          child: Text(tr("button.delete")),
+                          child: Text("${tr("button.delete")} (${state.selectedStories.length})"),
                           onPressed: () async {
                             OkCancelResult result = await showOkCancelAlertDialog(
                               context: context,

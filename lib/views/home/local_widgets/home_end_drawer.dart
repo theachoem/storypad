@@ -84,7 +84,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildSearchTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.search),
-      title: Text(tr("list_tile.community.title")),
+      title: Text(tr("page.search.title")),
       onTap: () => SearchRoute(
         initialFilter: SearchFilterObject(
           years: {viewModel.year},

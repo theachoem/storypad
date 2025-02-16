@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -58,7 +59,7 @@ class OfflineBackupViewModel extends BaseViewModel {
 
     if (!context.mounted) return;
     if (backup == null) {
-      MessengerService.of(context).showSnackBar("Empty or invalid file!", success: false);
+      MessengerService.of(context).showSnackBar(tr("snack_bar.empty_or_invalid_file"), success: false);
       return;
     }
 
