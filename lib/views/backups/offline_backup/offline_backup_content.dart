@@ -9,7 +9,7 @@ class _OfflineBackupsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr('page.offline_backup.title"')),
+        title: Text(tr('page.offline_backup.title')),
       ),
       body: ListView(
         padding: EdgeInsets.all(16.0),
