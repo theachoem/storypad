@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/objects/app_locale.dart';
+import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/sp_local_auth_wrapper.dart';
 
@@ -16,8 +16,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return EasyLocalization(
       path: 'translations',
-      supportedLocales: AppLocale.supportedLocales.values.toList(),
-      fallbackLocale: AppLocale.fallbackLocale,
+      supportedLocales: kSupportedLocales,
+      fallbackLocale: kFallbackLocale,
       child: AppTheme(builder: (context, theme, darkTheme, themeMode) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,

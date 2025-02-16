@@ -37,9 +37,9 @@
         <string>$(FLUTTER_BUILD_NUMBER)</string>
         <key>CFBundleLocalizations</key>
         <array>
+            <string>en</string>
             <string>ar</string>
             <string>de-DE</string>
-            <string>en</string>
             <string>es-419</string>
             <string>es-ES</string>
             <string>fr-FR</string>
