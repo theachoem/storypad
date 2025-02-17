@@ -26,7 +26,7 @@ class _BackupContent extends StatelessWidget {
           ],
         ),
         body: Stack(children: [
-          if (viewModel.hasData) buildTimelineDivider(context),
+          if (viewModel.hasData) _TimelineDivider(avatarSize: avatarSize, context: context),
           RefreshIndicator.adaptive(
             onRefresh: () => viewModel.load(context),
             child: CustomScrollView(
@@ -97,32 +97,7 @@ class _BackupContent extends StatelessWidget {
 
     final previousFileInfo = previousFile?.getFileInfo();
     final fileInfo = file.getFileInfo();
-
-    final menus = [
-      SpPopMenuItem(
-        title: tr("button.view"),
-        leadingIconData: Icons.info,
-        onPressed: () => viewModel.openCloudFile(context, file),
-      ),
-      SpPopMenuItem(
-        title: tr("button.delete"),
-        leadingIconData: Icons.delete,
-        titleStyle: TextStyle(color: ColorScheme.of(context).error),
-        onPressed: () async {
-          OkCancelResult userResponse = await showOkCancelAlertDialog(
-            context: context,
-            title: tr("dialog.are_you_sure_to_delete_this_backup.title"),
-            message: tr("dialog.are_you_sure_to_delete_this_backup.message"),
-            isDestructiveAction: true,
-            okLabel: tr("button.delete"),
-          );
-
-          if (userResponse == OkCancelResult.ok && context.mounted) {
-            await viewModel.deleteCloudFile(context, file);
-          }
-        },
-      ),
-    ];
+    final menus = getGroupMenus(context, file);
 
     return Theme(
       // Remove theme wrapper here when this is fixed:
@@ -163,13 +138,14 @@ class _BackupContent extends StatelessWidget {
                 child: Row(
                   spacing: 16.0,
                   children: [
-                    buildMonogram(context, fileInfo, previousFileInfo),
+                    _BackupTileMonogram(context: context, fileInfo: fileInfo, previousFileInfo: previousFileInfo),
                     Expanded(
                       child: ListTile(
                         contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
                         title: Text(fileInfo?.device.model ?? tr("general.unknown")),
                         subtitle: Text(
-                            DateFormatService.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na")),
+                          DateFormatService.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na"),
+                        ),
                       ),
                     ),
                   ],
@@ -182,75 +158,31 @@ class _BackupContent extends StatelessWidget {
     );
   }
 
-  Widget buildTimelineDivider(BuildContext context) {
-    return Positioned(
-      top: 0,
-      bottom: 0,
-      left: AppTheme.getDirectionValue(context, null, (avatarSize + 12) / 2),
-      right: AppTheme.getDirectionValue(context, (avatarSize + 12) / 2, null),
-      child: const VerticalDivider(
-        width: 1,
-        indent: 0.0,
+  List<SpPopMenuItem> getGroupMenus(BuildContext context, CloudFileObject file) {
+    return [
+      SpPopMenuItem(
+        title: tr("button.view"),
+        leadingIconData: Icons.info,
+        onPressed: () => viewModel.openCloudFile(context, file),
       ),
-    );
-  }
+      SpPopMenuItem(
+        title: tr("button.delete"),
+        leadingIconData: Icons.delete,
+        titleStyle: TextStyle(color: ColorScheme.of(context).error),
+        onPressed: () async {
+          OkCancelResult userResponse = await showOkCancelAlertDialog(
+            context: context,
+            title: tr("dialog.are_you_sure_to_delete_this_backup.title"),
+            message: tr("dialog.are_you_sure_to_delete_this_backup.message"),
+            isDestructiveAction: true,
+            okLabel: tr("button.delete"),
+          );
 
-  Widget buildMonogram(BuildContext context, BackupFileObject? fileInfo, BackupFileObject? previousFileInfo) {
-    double monogramSize = 32;
-
-    bool showMonogram = true;
-    if (fileInfo == null) {
-      showMonogram = false;
-    } else if (previousFileInfo != null) {
-      showMonogram = !previousFileInfo.sameDayAs(fileInfo);
-    }
-
-    if (!showMonogram) {
-      return Container(
-        width: monogramSize,
-        margin: const EdgeInsets.only(top: 9.0, left: 0.5),
-        alignment: Alignment.center,
-        child: Container(
-          width: 3,
-          height: 3,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: ColorScheme.of(context).onSurface,
-          ),
-        ),
-      );
-    }
-
-    final date = fileInfo!.createdAt;
-
-    return Column(
-      spacing: 4.0,
-      children: [
-        Container(
-          width: monogramSize,
-          color: ColorScheme.of(context).surface.withValues(),
-          child: Text(
-            DateFormatService.E(date, context.locale),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: TextTheme.of(context).labelMedium,
-          ),
-        ),
-        Container(
-          width: monogramSize,
-          height: monogramSize,
-          decoration: BoxDecoration(
-            color: ColorFromDayService(context: context).get(date.weekday),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            date.day.toString(),
-            style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
-          ),
-        ),
-      ],
-    );
+          if (userResponse == OkCancelResult.ok && context.mounted) {
+            await viewModel.deleteCloudFile(context, file);
+          }
+        },
+      ),
+    ];
   }
 }

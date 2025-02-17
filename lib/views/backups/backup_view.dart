@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
@@ -18,6 +19,8 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'backup_view_model.dart';
 
 part 'backup_content.dart';
+part 'local_widgets/backup_tile_monogram.dart';
+part 'local_widgets/timeline_divider.dart';
 
 class BackupRoute extends BaseRoute {
   BackupRoute();
