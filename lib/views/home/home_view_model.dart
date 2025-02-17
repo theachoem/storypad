@@ -147,6 +147,19 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
+  void onAStoryReloaded(StoryDbModel updatedStory) {
+    if (updatedStory.type != PathType.docs) {
+      stories = stories?.removeElement(updatedStory);
+      debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onChanged');
+    } else {
+      stories = stories?.replaceElement(updatedStory);
+      debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onChanged');
+    }
+
+    scrollInfo.setupStoryKeys(stories?.items ?? []);
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     scrollInfo.dispose();
