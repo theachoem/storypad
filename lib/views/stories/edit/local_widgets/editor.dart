@@ -117,13 +117,14 @@ class _Editor extends StatelessWidget {
           }),
         ),
         customButtons: [
-          QuillToolbarCustomButtonOptions(
-            tooltip: FlutterQuillLocalizations.of(context)?.image,
-            icon: Icon(Icons.image),
-            onPressed: () async {
-              ImagePickerService(controller: controller).showSheet(context);
-            },
-          ),
+          if (kStoryPad)
+            QuillToolbarCustomButtonOptions(
+              tooltip: FlutterQuillLocalizations.of(context)?.image,
+              icon: Icon(Icons.image),
+              onPressed: () async {
+                ImagePickerService(controller: controller).showSheet(context);
+              },
+            ),
         ],
         multiRowsDisplay: false,
         showDividers: true,
