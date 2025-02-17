@@ -17,7 +17,7 @@ class FakeStorage extends ObjectStorage<FakeObject> {
 void main() {
   SharedPreferences.setMockInitialValues({});
 
-  group("FakeStorage < ObjectStorage", () {
+  group("ObjectStorage", () {
     test("it write & return 'chheng' object from storage", () async {
       FakeStorage fakeStorage = FakeStorage();
       FakeObject expectedObject = const FakeObject("chheng", 12);
