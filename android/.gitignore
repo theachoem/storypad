@@ -15,3 +15,5 @@ GeneratedPluginRegistrant.java
 !community_debug.keystore
 !keys/community/community_keystore.jks
 !keys/community/community_key.properties
+
+app/.cxx
