@@ -35,7 +35,7 @@ class LanguagesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<LanguagesViewModel>(
-      create: (context) => LanguagesViewModel(params: params),
+      create: (context) => LanguagesViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _LanguagesContent(viewModel);
       },
