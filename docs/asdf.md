@@ -66,7 +66,7 @@ To install Flutter using **asdf**, run the following commands:
 
 ```sh
 asdf plugin add flutter
-asdf install flutter 3.27.4-stable
+asdf install flutter 3.29.0-stable
 ```
 
 Additional Setup:
@@ -89,7 +89,7 @@ $ which flutter
 ~/.asdf/shims/flutter
 
 $ flutter --version
-Flutter 3.27.4 • channel stable • https://github.com/flutter/flutter.git
+Flutter 3.29.0 • channel stable • https://github.com/flutter/flutter.git
 
 $ flutter doctor
 ```
@@ -113,8 +113,8 @@ $ flutter doctor
    Then, uninstall and reinstall Flutter:
 
    ```sh
-   asdf uninstall flutter 3.27.4-stable
-   asdf install flutter 3.27.4-stable
+   asdf uninstall flutter 3.29.0-stable
+   asdf install flutter 3.29.0-stable
    ```
 
 ### References
