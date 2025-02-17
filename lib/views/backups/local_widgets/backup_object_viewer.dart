@@ -10,7 +10,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -70,39 +69,41 @@ class BackupObjectViewer extends StatelessWidget {
           final documentCount = value is List ? value.length : 0;
 
           IconData leadingIconData;
-          String tableName;
+          String tableName = table.key;
+          String translateTabledName;
 
           switch (table.key) {
             case 'stories':
               leadingIconData = Icons.library_books;
-              tableName = tr("general.stories");
+              translateTabledName = tr("general.stories");
               break;
             case 'tags':
               leadingIconData = Icons.sell;
-              tableName = tr("general.tags");
+              translateTabledName = tr("general.tags");
               break;
             case 'preferences':
               leadingIconData = MdiIcons.table;
-              tableName = tr("general.preferences");
+              translateTabledName = tr("general.preferences");
               break;
             case 'assets':
               leadingIconData = MdiIcons.table;
-              tableName = tr("general.assets");
+              translateTabledName = tr("general.assets");
               break;
             default:
               leadingIconData = MdiIcons.table;
-              tableName = table.key;
+              translateTabledName = table.key;
               break;
           }
 
           return ListTile(
             leading: Icon(leadingIconData),
-            title: Text(table.key.capitalize),
+            title: Text(translateTabledName),
             subtitle: Text(plural("plural.row", documentCount)),
             onTap: () {
               if (value is List) {
                 List<Map<String, dynamic>> tableContents = value.whereType<Map<String, dynamic>>().toList();
                 viewBackupObject(
+                  translateTabledName: translateTabledName,
                   tableName: tableName,
                   context: context,
                   tableContents: tableContents,
@@ -117,6 +118,7 @@ class BackupObjectViewer extends StatelessWidget {
 
   void viewBackupObject({
     required String tableName,
+    required String translateTabledName,
     required BuildContext context,
     required List<Map<String, dynamic>> tableContents,
   }) {
@@ -150,7 +152,7 @@ class BackupObjectViewer extends StatelessWidget {
     SpNestedNavigation.maybeOf(context)?.push(Builder(builder: (context) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(tableName.capitalize),
+          title: Text(translateTabledName),
         ),
         body: viewer,
       );
