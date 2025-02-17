@@ -14,7 +14,7 @@ Before getting started, ensure you have the following tools:
 
 - Java: 21 [(LTS)](https://www.oracle.com/java/technologies/java-se-support-roadmap.html) (for Android)
 - Ruby: 3.3.5 (for IOS)
-- Flutter: 3.27.4
+- Flutter: 3.29.0
 
 If you're using asdf, refer to this [guide](./docs/asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
 
