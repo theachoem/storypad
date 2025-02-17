@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1 दिन पहले",
   "plural.day_ago.other": "{} दिन पहले",
   "plural.row.one": "1 पंक्ति",
-  "plural.row.other": "1 पंक्तियाँ",
+  "plural.row.other": "{}पंक्तियाँ",
   "plural.story.one": "1 कहानी",
   "plural.story.other": "{} कहानियाँ",
   "snack_bar.archive_success": "संग्रहीत!",

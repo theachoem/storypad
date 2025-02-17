@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1일 전",
   "plural.day_ago.other": "{}일 전",
   "plural.row.one": "1줄",
-  "plural.row.other": "1줄",
+  "plural.row.other": "{}행",
   "plural.story.one": "스토리 1개",
   "plural.story.other": "{} 스토리",
   "snack_bar.archive_success": "보관되었습니다!",

@@ -21,7 +21,6 @@ import 'offline_backup_view.dart';
 
 class OfflineBackupViewModel extends BaseViewModel {
   final OfflineBackupRoute params;
-  final String exportFileName = "$kAppName-${kDeviceInfo.model}-backup-all.json";
   final String parentName = "backups";
 
   OfflineBackupViewModel({
@@ -75,29 +74,41 @@ class OfflineBackupViewModel extends BaseViewModel {
     DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
     if (lastDbUpdatedAt == null) return;
 
-    final file = await MessengerService.of(context).showLoading(
+    final String exportFileName = "$kAppName-${kDeviceInfo.model}-backup-${DateTime.now().toIso8601String()}.json";
+
+    final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#export',
-      future: () => _constructBackupAndSaveToApplicationFolder(context, lastDbUpdatedAt),
+      future: () => BackupFileConstructor().constructBackup(
+        databases: BaseBackupSource.databases,
+        lastUpdatedAt: lastDbUpdatedAt,
+      ),
     );
 
-    if (file == null || !context.mounted) return;
-    Share.shareXFiles([XFile(file.path)]);
-  }
+    if (backup == null || !context.mounted) return;
+    if (Platform.isIOS) {
+      final file = File("${kSupportDirectory.path}/$parentName/$exportFileName");
 
-  Future<File> _constructBackupAndSaveToApplicationFolder(
-    BuildContext context,
-    DateTime lastDbUpdatedAt,
-  ) async {
-    BackupObject backup = await BackupFileConstructor().constructBackup(
-      databases: BaseBackupSource.databases,
-      lastUpdatedAt: lastDbUpdatedAt,
-    );
+      await file.create(recursive: true);
+      await file.writeAsString(jsonEncode(backup.toContents()));
 
-    final file = File("${kApplicationDirectory.path}/$parentName/$exportFileName");
+      await FilePicker.platform.saveFile(
+        fileName: exportFileName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        bytes: file.readAsBytesSync(),
+      );
 
-    await file.create(recursive: true);
-    await file.writeAsString(jsonEncode(backup.toContents()));
-
-    return file;
+      await Share.shareXFiles([XFile(file.path)]);
+      await file.delete();
+    } else if (Platform.isAndroid) {
+      await FilePicker.platform.saveFile(
+        fileName: exportFileName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        bytes: utf8.encode(jsonEncode(backup.toContents())),
+      );
+    } else {
+      throw UnimplementedError();
+    }
   }
 }

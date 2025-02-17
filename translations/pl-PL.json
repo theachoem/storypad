@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1 dzień temu",
   "plural.day_ago.other": "{} dni temu",
   "plural.row.one": "1 rząd",
-  "plural.row.other": "1 rzędy",
+  "plural.row.other": "{} wierszy",
   "plural.story.one": "1 historia",
   "plural.story.other": "{} historie",
   "snack_bar.archive_success": "Zarchiwizowane!",
