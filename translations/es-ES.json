@@ -187,7 +187,7 @@
   "plural.day_ago.one": "Hace 1 día",
   "plural.day_ago.other": "{} días atrás",
   "plural.row.one": "1 fila",
-  "plural.row.other": "1 filas",
+  "plural.row.other": "{} filas",
   "plural.story.one": "1 historia",
   "plural.story.other": "{} historias",
   "snack_bar.archive_success": "¡Archivado!",

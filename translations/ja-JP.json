@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1日前",
   "plural.day_ago.other": "{} 日前",
   "plural.row.one": "1行",
-  "plural.row.other": "1行",
+  "plural.row.other": "{} 行",
   "plural.story.one": "1話",
   "plural.story.other": "{} ストーリー",
   "snack_bar.archive_success": "アーカイブされました！",

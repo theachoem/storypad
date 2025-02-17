@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1 วันที่ผ่านมา",
   "plural.day_ago.other": "{} วันที่แล้ว",
   "plural.row.one": "1 แถว",
-  "plural.row.other": "1 แถว",
+  "plural.row.other": "{} แถว",
   "plural.story.one": "1 เรื่อง",
   "plural.story.other": "{} เรื่อง",
   "snack_bar.archive_success": "เก็บถาวรแล้ว!",

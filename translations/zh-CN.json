@@ -187,7 +187,7 @@
   "plural.day_ago.one": "1 天前",
   "plural.day_ago.other": "{} 天前",
   "plural.row.one": "1 行",
-  "plural.row.other": "1 行",
+  "plural.row.other": "{} 行",
   "plural.story.one": "1 个故事",
   "plural.story.other": "{} 个故事",
   "snack_bar.archive_success": "已存档！",

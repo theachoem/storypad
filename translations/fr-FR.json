@@ -187,7 +187,7 @@
   "plural.day_ago.one": "il y a 1 jour",
   "plural.day_ago.other": "il y a {} jours",
   "plural.row.one": "1 rangée",
-  "plural.row.other": "1 rangées",
+  "plural.row.other": "{} lignes",
   "plural.story.one": "1 histoire",
   "plural.story.other": "{} histoires",
   "snack_bar.archive_success": "Archivé !",
