@@ -47,11 +47,12 @@ class _HomeEndDrawer extends StatelessWidget {
           buildSearchTile(context),
           buildTagsTile(context),
           buildArchiveBinTile(context),
-          ListTile(
-            leading: const Icon(Icons.photo_album_outlined),
-            title: Text(tr("page.library.title")),
-            onTap: () => AssetsRoute().push(context),
-          ),
+          if (kStoryPad)
+            ListTile(
+              leading: const Icon(Icons.photo_album_outlined),
+              title: Text(tr("page.library.title")),
+              onTap: () => AssetsRoute().push(context),
+            ),
           const Divider(),
           const BackupTile(),
           const Divider(),
