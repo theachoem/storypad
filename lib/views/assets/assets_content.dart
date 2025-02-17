@@ -77,12 +77,7 @@ class _AssetsContent extends StatelessWidget {
           items: (context) {
             return [
               if (viewModel.storiesCount[asset.id] == 0)
-                SpPopMenuItem(
-                  leadingIconData: Icons.delete,
-                  titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                  title: tr("button.delete_from_google_drive"),
-                  onPressed: () => provider.deleteAsset(asset),
-                )
+                buildDeleteButton(context, provider, asset)
               else
                 SpPopMenuItem(
                   leadingIconData: Icons.library_books,
@@ -135,6 +130,24 @@ class _AssetsContent extends StatelessWidget {
         );
       },
     );
+  }
+
+  SpPopMenuItem buildDeleteButton(BuildContext context, BackupProvider provider, AssetDbModel asset) {
+    if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
+      return SpPopMenuItem(
+        leadingIconData: Icons.delete,
+        titleStyle: TextStyle(color: ColorScheme.of(context).error),
+        title: tr("button.delete_from_google_drive"),
+        onPressed: () => provider.deleteAsset(asset),
+      );
+    } else {
+      return SpPopMenuItem(
+        leadingIconData: Icons.delete,
+        titleStyle: TextStyle(color: ColorScheme.of(context).error),
+        title: tr("button.delete"),
+        onPressed: () => provider.deleteAsset(asset),
+      );
+    }
   }
 
   Widget buildImageStatus({

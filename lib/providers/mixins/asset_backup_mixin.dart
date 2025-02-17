@@ -46,6 +46,15 @@ mixin _AssetBackupConcern on _BaseBackupProvider {
   }
 
   Future<void> deleteAsset(AssetDbModel asset) async {
+    final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+
+    // when image is not yet upload, allow delete locally.
+    if (uploadedEmails.isEmpty) {
+      await asset.delete();
+      notifyListeners();
+      return;
+    }
+
     if (source.email == null) return;
     final fileId = asset.getGoogleDriveIdForEmail(source.email!);
 
