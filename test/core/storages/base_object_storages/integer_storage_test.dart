@@ -7,7 +7,7 @@ class FakeStorage extends IntegerStorage {}
 void main() {
   SharedPreferences.setMockInitialValues({});
 
-  group("FakeStorage < IntegerStorage", () {
+  group("IntegerStorage", () {
     test("it write & return 12345 from storage", () async {
       final fakeStorage = FakeStorage();
 

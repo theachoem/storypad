@@ -7,7 +7,7 @@ class FakeBoolStorage extends BoolStorage {}
 void main() {
   SharedPreferences.setMockInitialValues({});
 
-  group("FakeBoolStorage < BoolStorage", () {
+  group("BoolStorage", () {
     test("it return true from storage", () async {
       final fakeStorage = FakeBoolStorage();
 

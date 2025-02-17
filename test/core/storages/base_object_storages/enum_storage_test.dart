@@ -15,7 +15,7 @@ class FakeEnumStorage extends EnumStorage<FakeEnum> {
 void main() {
   SharedPreferences.setMockInitialValues({});
 
-  group("FakeEnumStorage < EnumStorage", () {
+  group("EnumStorage", () {
     test("it return enum 'car' from storage", () async {
       final fakeStorage = FakeEnumStorage();
 
