@@ -48,39 +48,36 @@ class _HomeContent extends StatelessWidget {
       sliver: SliverList.builder(
         itemCount: viewModel.stories?.items.length ?? 0,
         itemBuilder: (context, index) {
-          StoryDbModel story = viewModel.stories!.items[index];
-
-          return StoryListenerBuilder(
-            key: viewModel.scrollInfo.storyKeys[index],
-            story: story,
-            onChanged: (StoryDbModel updatedStory) => onChanged(updatedStory),
-            // onDeleted only happen when reloaded story is null which not frequently happen. We just reload in this case.
-            onDeleted: () => viewModel.load(debugSource: '$runtimeType#onDeleted ${story.id}'),
-            builder: (_) {
-              return StoryTileListItem(
-                showYear: false,
-                index: index,
-                stories: viewModel.stories!,
-                onTap: () => viewModel.goToViewPage(context, story),
-                listContext: listContext,
-              );
-            },
+          return buildStoryTile(
+            index: index,
+            context: context,
+            listContext: listContext,
           );
         },
       ),
     );
   }
 
-  void onChanged(StoryDbModel updatedStory) {
-    if (updatedStory.type != PathType.docs) {
-      viewModel.stories = viewModel.stories?.removeElement(updatedStory);
-      debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onChanged');
-    } else {
-      viewModel.stories = viewModel.stories?.replaceElement(updatedStory);
-      debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onChanged');
-    }
-
-    viewModel.scrollInfo.setupStoryKeys(viewModel.stories?.items ?? []);
-    viewModel.notifyListeners();
+  Widget buildStoryTile({
+    required int index,
+    required BuildContext context,
+    required BuildContext listContext,
+  }) {
+    StoryDbModel story = viewModel.stories!.items[index];
+    return StoryListenerBuilder(
+      key: viewModel.scrollInfo.storyKeys[index],
+      story: story,
+      onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
+      onDeleted: () => viewModel.load(debugSource: '$runtimeType#onDeleted ${story.id}'),
+      builder: (_) {
+        return StoryTileListItem(
+          showYear: false,
+          index: index,
+          stories: viewModel.stories!,
+          onTap: () => viewModel.goToViewPage(context, story),
+          listContext: listContext,
+        );
+      },
+    );
   }
 }
