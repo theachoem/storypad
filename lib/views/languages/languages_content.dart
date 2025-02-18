@@ -58,23 +58,23 @@ class _FeedbackBanner extends StatelessWidget {
       padding: EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0),
       leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurface),
       content: Text(
-        "If you notice any translation mistakes or want to request a new language, let us know on GitHub.",
+        tr('list_tile.ask_for_locale_suggestion.subtitle'),
         style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       ),
       forceActionsBelow: true,
       actions: [
-        buildOpenGitHubButton(context),
+        buildSuggestButton(context),
       ],
     );
   }
 
-  Widget buildOpenGitHubButton(BuildContext context) {
+  Widget buildSuggestButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: 4.0),
       child: OutlinedButton.icon(
-        icon: Icon(MdiIcons.github),
+        icon: Icon(Icons.fact_check_outlined),
         label: Text(
-          "OPEN GITHUB",
+          tr('button.suggest'),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         onPressed: () {

@@ -27,6 +27,7 @@
   "button.sign_in": "登入",
   "button.sign_out": "登出",
   "button.star": "星星",
+  "button.suggest": "建议",
   "button.switch": "转变",
   "button.sync": "同步",
   "button.undo": "撤消",
@@ -49,6 +50,7 @@
   "dialog.what_should_i_call_you.message": "我该怎么称呼你？",
   "dialog.what_should_i_call_you.title": "你好",
   "general.assets": "资产",
+  "general.beta": "贝塔",
   "general.custom": "风俗",
   "general.default": "默认",
   "general.defaults": "默认值",
@@ -136,6 +138,7 @@
   "input.tag.hint": "例如。个人的",
   "input.title.hint": "标题...",
   "input.year.hint": "例如。 2004年",
+  "list_tile.ask_for_locale_suggestion.subtitle": "注意到错误或需要新语言？与我们分享您的建议！",
   "list_tile.backup.some_data_has_not_sync_subtitle": "部分数据尚未同步",
   "list_tile.backup.title": "备份",
   "list_tile.backup.unsignin_subtitle": "登录 Google 云端硬盘",
@@ -196,6 +199,6 @@
   "snack_bar.empty_or_invalid_file": "文件为空或无效！",
   "snack_bar.force_restore_success": "备份已恢复！",
   "snack_bar.move_to_bin_success": "搬到垃圾箱了！",
-  "snack_bar.put_back_success": "回家了！",
+  "snack_bar.put_back_success": "回家啦！",
   "snack_bar.restore_individual_success": "故事还原！"
 }

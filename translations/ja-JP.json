@@ -27,6 +27,7 @@
   "button.sign_in": "サインイン",
   "button.sign_out": "サインアウト",
   "button.star": "星",
+  "button.suggest": "提案する",
   "button.switch": "スイッチ",
   "button.sync": "同期",
   "button.undo": "元に戻す",
@@ -49,6 +50,7 @@
   "dialog.what_should_i_call_you.message": "何と呼べばいいでしょうか？",
   "dialog.what_should_i_call_you.title": "こんにちは",
   "general.assets": "資産",
+  "general.beta": "ベータ",
   "general.custom": "カスタム",
   "general.default": "デフォルト",
   "general.defaults": "デフォルト",
@@ -136,6 +138,7 @@
   "input.tag.hint": "例えば。個人的",
   "input.title.hint": "タイトル...",
   "input.year.hint": "例えば。 2004年",
+  "list_tile.ask_for_locale_suggestion.subtitle": "間違いに気づいた場合、または新しい言語が必要ですか?あなたの提案を私たちと共有してください！",
   "list_tile.backup.some_data_has_not_sync_subtitle": "一部のデータはまだ同期されていません",
   "list_tile.backup.title": "バックアップ",
   "list_tile.backup.unsignin_subtitle": "Google ドライブにサインインする",
@@ -196,6 +199,6 @@
   "snack_bar.empty_or_invalid_file": "ファイルが空か無効です!",
   "snack_bar.force_restore_success": "バックアップが復元されました！",
   "snack_bar.move_to_bin_success": "ビンに移動しました！",
-  "snack_bar.put_back_success": "家に帰りましょう！",
+  "snack_bar.put_back_success": "家に戻りましょう！",
   "snack_bar.restore_individual_success": "ストーリーが復活しました！"
 }
