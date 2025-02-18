@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+options=$1
+
+case "$options" in
+--clean)
+  FILE="bin/localization/data.csv"
+  if [ -f "$FILE" ]; then
+    rm -f "$FILE"
+    echo "Cleaning: $FILE"
+  fi
+  ;;
+esac
+
+CMD="dart bin/localization/build.dart"
+
+echo "Executing: $CMD"
+exec $CMD

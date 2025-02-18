@@ -140,24 +140,34 @@ class StoryDbModel extends BaseDbModel {
         [story.displayPathDate.year, story.displayPathDate.month, story.displayPathDate.day].join("-");
   }
 
-  Future<StoryDbModel?> putBack() async {
+  Future<StoryDbModel?> putBack({
+    bool runCallbacks = true,
+  }) async {
     if (!putBackAble) return null;
 
-    return db.set(copyWith(
-      type: PathType.docs,
-      updatedAt: DateTime.now(),
-      movedToBinAt: null,
-    ));
+    return db.set(
+      runCallbacks: runCallbacks,
+      copyWith(
+        type: PathType.docs,
+        updatedAt: DateTime.now(),
+        movedToBinAt: null,
+      ),
+    );
   }
 
-  Future<StoryDbModel?> moveToBin() async {
+  Future<StoryDbModel?> moveToBin({
+    bool runCallbacks = true,
+  }) async {
     if (!canMoveToBin) return null;
 
-    return db.set(copyWith(
-      type: PathType.bins,
-      updatedAt: DateTime.now(),
-      movedToBinAt: DateTime.now(),
-    ));
+    return db.set(
+      runCallbacks: runCallbacks,
+      copyWith(
+        type: PathType.bins,
+        updatedAt: DateTime.now(),
+        movedToBinAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<StoryDbModel?> toggleStarred() async {

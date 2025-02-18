@@ -57,7 +57,7 @@ class StoryTile extends StatelessWidget {
       if (story.putBackAble)
         SpPopMenuItem(
           title: tr('button.put_back'),
-          leadingIconData: Icons.restore_from_trash,
+          leadingIconData: Icons.settings_backup_restore,
           onPressed: () => StoryTileActions(story: story, listContext: listContext).putBack(context),
         ),
       if (story.archivable)
@@ -75,8 +75,8 @@ class StoryTile extends StatelessWidget {
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
-          title: tr('button.delete'),
-          leadingIconData: Icons.delete,
+          title: tr('button.permanent_delete'),
+          leadingIconData: Icons.delete_forever,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => StoryTileActions(story: story, listContext: listContext).hardDelete(context),
         ),
@@ -130,6 +130,7 @@ class StoryTile extends StatelessWidget {
         ),
       ),
       child: Slidable(
+        enabled: !story.inArchives && !story.inBins,
         closeOnScroll: true,
         key: ValueKey(story.id),
         endActionPane: ActionPane(

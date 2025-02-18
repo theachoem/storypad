@@ -16,6 +16,10 @@ enum PathType {
     }
   }
 
+  bool get isArchives => this == archives;
+  bool get isBins => this == bins;
+  bool get isDocs => this == docs;
+
   static PathType? fromString(String name) {
     return values.where((e) => e.name == name).firstOrNull;
   }

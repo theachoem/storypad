@@ -15,7 +15,10 @@ class _ArchivesContent extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: buildTitle(context),
-              actions: [buildEditButton(context)],
+              actions: [
+                buildEditButton(context),
+                buildMoreEditingOptionsButton(context),
+              ],
             ),
             bottomNavigationBar: buildBottomNavigationBar(context),
             body: StoryList.withQuery(
@@ -40,7 +43,7 @@ class _ArchivesContent extends StatelessWidget {
       builder: (context, state) {
         return Visibility(
           visible: !state.editing,
-          child: SpFadeIn.fromBottom(
+          child: SpFadeIn.fromRight(
             child: IconButton(
               icon: Icon(Icons.edit),
               onPressed: () => state.turnOnEditing(),
@@ -73,10 +76,13 @@ class _ArchivesContent extends StatelessWidget {
           child: RichText(
             textScaler: MediaQuery.textScalerOf(context),
             text: TextSpan(
-              style: TextTheme.of(context).titleLarge,
               text: viewModel.type.localized,
+              style: TextTheme.of(context).titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
+                  ),
               children: const [
-                WidgetSpan(child: Icon(Icons.arrow_drop_down)),
+                WidgetSpan(child: Icon(Icons.arrow_drop_down), alignment: PlaceholderAlignment.middle),
               ],
             ),
           ),
@@ -112,31 +118,65 @@ class _ArchivesContent extends StatelessWidget {
                           onPressed: () => state.turnOffEditing(),
                         ),
                         FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
-                          child: Text("${tr("button.delete")} (${state.selectedStories.length})"),
-                          onPressed: () async {
-                            OkCancelResult result = await showOkCancelAlertDialog(
-                              context: context,
-                              title: tr("dialog.are_you_sure_to_delete_these_stories.title"),
-                              message: tr("dialog.are_you_sure_to_delete_these_stories.message"),
-                              isDestructiveAction: true,
-                              okLabel: tr("button.delete"),
-                            );
-
-                            if (result == OkCancelResult.ok) {
-                              for (int i = 0; i < state.selectedStories.length; i++) {
-                                int id = state.selectedStories.elementAt(i);
-                                await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
-                              }
-                              state.turnOffEditing();
-                            }
-                          },
+                          style: viewModel.type.isBins
+                              ? FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error)
+                              : null,
+                          child: Text(
+                            "${viewModel.type.isBins ? tr("button.permanent_delete") : tr("button.move_to_bin")} (${state.selectedStories.length})",
+                          ),
+                          onPressed: () => viewModel.type.isBins
+                              ? viewModel.permanantDeleteAll(context)
+                              : viewModel.moveToBinAll(context),
                         ),
                       ],
                     ),
                   ),
                 ),
               ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildMoreEditingOptionsButton(BuildContext context) {
+    return StoryListMultiEditWrapper.listen(
+      context: context,
+      builder: (context, state) {
+        return Visibility(
+          visible: state.selectedStories.isNotEmpty,
+          child: SpFadeIn.fromRight(
+            child: SpPopupMenuButton(
+              items: (BuildContext context) {
+                return [
+                  SpPopMenuItem(
+                    title: tr("button.put_back_all"),
+                    leadingIconData: Icons.settings_backup_restore,
+                    onPressed: () => viewModel.putBackAll(context),
+                  ),
+                  if (viewModel.type.isArchives)
+                    SpPopMenuItem(
+                      title: tr("button.move_to_bin_all"),
+                      leadingIconData: Icons.delete,
+                      onPressed: () => viewModel.moveToBinAll(context),
+                    ),
+                  // for bin, "delete all" already show in bottom nav.
+                  if (viewModel.type.isArchives)
+                    SpPopMenuItem(
+                      title: tr("button.permanent_delete_all"),
+                      leadingIconData: Icons.delete_forever,
+                      titleStyle: TextStyle(color: ColorScheme.of(context).error),
+                      onPressed: () => viewModel.permanantDeleteAll(context),
+                    ),
+                ];
+              },
+              builder: (callback) {
+                return IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: callback,
+                );
+              },
             ),
           ),
         );
