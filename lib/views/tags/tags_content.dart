@@ -40,6 +40,13 @@ class _TagsContent extends StatelessWidget {
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       itemCount: provider.tags?.items.length ?? 0,
       onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
+      proxyDecorator: (child, index, animation) {
+        print(animation);
+        return Container(
+          color: Theme.of(context).colorScheme.readOnly.surface5,
+          child: child,
+        );
+      },
       itemBuilder: (context, index) {
         final tag = provider.tags!.items[index];
         final storyCount = provider.getStoriesCount(tag);
@@ -76,6 +83,7 @@ class _TagsContent extends StatelessWidget {
               ],
             ),
             child: ListTile(
+              tileColor: Colors.transparent,
               contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
               leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
