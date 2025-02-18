@@ -63,7 +63,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
         }
       }
 
-      return length > end ? "${body.substring(0, end)}..." : body;
+      return length >= end ? "${body.substring(0, end)}..." : body;
     }
 
     String? getDisplayBodyFor(StoryContentDbModel content) {
