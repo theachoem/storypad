@@ -122,7 +122,7 @@ class _SpFeelingButtonState extends State<SpFeelingButton> {
             type: MaterialType.circle,
             color: widget.backgroundColor ?? ColorScheme.of(context).readOnly.surface1,
             child: Tooltip(
-              message: FeelingObject.feelingsMap[widget.feeling]?.translation ?? tr("button.set_feeling"),
+              message: FeelingObject.feelingsMap[widget.feeling]?.translation(context) ?? tr("button.set_feeling"),
               child: InkWell(
                 borderRadius: BorderRadius.circular(48.0),
                 onTap: callback,

@@ -41,7 +41,6 @@ class _TagsContent extends StatelessWidget {
       itemCount: provider.tags?.items.length ?? 0,
       onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
       proxyDecorator: (child, index, animation) {
-        print(animation);
         return Container(
           color: Theme.of(context).colorScheme.readOnly.surface5,
           child: child,

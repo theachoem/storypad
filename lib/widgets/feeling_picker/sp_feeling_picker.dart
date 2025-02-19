@@ -124,7 +124,7 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
               ),
               const SizedBox(height: 8.0),
               Text(
-                feeling.value.translation,
+                feeling.value.translation(context),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
