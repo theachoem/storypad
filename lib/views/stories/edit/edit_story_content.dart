@@ -85,12 +85,7 @@ class _EditStoryContent extends StatelessWidget {
               showFirst: lastSavedAt == null,
             ),
             label: Text(tr("button.done")),
-            onPressed: lastSavedAt == null
-                ? null
-                : () async {
-                    await viewModel.save();
-                    if (context.mounted) Navigator.pop(context);
-                  },
+            onPressed: lastSavedAt == null ? null : () => viewModel.done(context),
           );
         },
       ),

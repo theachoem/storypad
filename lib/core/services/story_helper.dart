@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/quill_service.dart';
 
 class StoryHelper {
@@ -135,5 +137,40 @@ class StoryHelper {
     final content = await StoryHelper.buildContent(draftContent, quillControllers);
     if (!ignoredEmpty && !hasDataWritten(content)) return false;
     return content.hasChanges(latestChange);
+  }
+
+  static Future<bool> shouldRevert({
+    required StoryDbModel currentStory,
+    required StoryDbModel initialStory,
+  }) async {
+    return compute(_shouldRevert, {
+      'currentStory': currentStory,
+      'initialStory': initialStory,
+    });
+  }
+
+  static bool _shouldRevert(Map<String, dynamic> params) {
+    StoryDbModel currentStory = params['currentStory'];
+    StoryDbModel initialStory = params['initialStory'];
+
+    Map<String, dynamic> currentStoryJson = currentStory.toJson()
+      ..remove('updated_at')
+      ..remove('changes');
+    currentStoryJson['latest_change'] = currentStory.latestChange?.toJson()
+      ?..remove('id')
+      ..remove('created_at')
+      ..remove('plain_text')
+      ..remove('metadata');
+
+    Map<String, dynamic> initialStoryJson = initialStory.toJson()
+      ..remove('updated_at')
+      ..remove('changes');
+    initialStoryJson['latest_change'] = initialStory.latestChange?.toJson()
+      ?..remove('id')
+      ..remove('created_at')
+      ..remove('plain_text')
+      ..remove('metadata');
+
+    return jsonEncode(currentStoryJson) == jsonEncode(initialStoryJson);
   }
 }

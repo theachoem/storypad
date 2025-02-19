@@ -40,10 +40,14 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
 
+  // for for compare if after user edit end up same paragraph,
+  // we need to revert back.
+  StoryDbModel? initialStory;
+
   Future<void> init({
     StoryDbModel? initialStory,
   }) async {
-    if (params.id != null) story = initialStory ?? await StoryDbModel.db.find(params.id!);
+    if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
 
     story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear);
@@ -152,14 +156,14 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<void> save() async {
-    if (await _getHasChange()) {
+    if (await _hasChange()) {
       story = await StoryDbModel.fromDetailPage(this);
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
   }
 
-  Future<bool> _getHasChange() async {
+  Future<bool> _hasChange() async {
     return StoryHelper.hasChanges(
       draftContent: draftContent!,
       quillControllers: quillControllers,
@@ -168,8 +172,28 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     );
   }
 
+  Future<void> done(BuildContext context) async {
+    await save();
+    await revertIfNoChange();
+    if (context.mounted) Navigator.pop(context);
+  }
+
+  Future<void> revertIfNoChange() async {
+    if (story == null || initialStory == null) return;
+    if (story?.updatedAt == initialStory?.updatedAt) return;
+
+    bool shouldRevert = await StoryHelper.shouldRevert(currentStory: story!, initialStory: initialStory!);
+    if (shouldRevert) {
+      debugPrint("Reverting story back... ${initialStory?.id}");
+
+      story = initialStory;
+      await StoryDbModel.db.set(initialStory!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+  }
+
   @override
-  void dispose() {
+  void dispose() async {
     titleController?.dispose();
     pageController.dispose();
     currentPageNotifier.dispose();
