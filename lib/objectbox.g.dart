@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 2962579780537594759),
       name: 'StoryObjectBox',
-      lastPropertyId: const obx_int.IdUid(24, 7561688432028578210),
+      lastPropertyId: const obx_int.IdUid(25, 5807327571729293497),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -129,6 +129,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(24, 7561688432028578210),
             name: 'assets',
             type: 27,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(25, 5807327571729293497),
+            name: 'preferences',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -364,7 +369,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
               : fbb.writeString(object.lastSavedDeviceId!);
           final assetsOffset =
               object.assets == null ? null : fbb.writeListInt64(object.assets!);
-          fbb.startTable(25);
+          final preferencesOffset = object.preferences == null
+              ? null
+              : fbb.writeString(object.preferences!);
+          fbb.startTable(26);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.version);
           fbb.addOffset(2, typeOffset);
@@ -386,6 +394,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(21, lastSavedDeviceIdOffset);
           fbb.addBool(22, object.showDayCount);
           fbb.addOffset(23, assetsOffset);
+          fbb.addOffset(24, preferencesOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -440,6 +449,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
                   .vTableGetNullable(buffer, rootOffset, 50);
           final metadataParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 36);
+          final preferencesParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 52);
           final lastSavedDeviceIdParam =
               const fb.StringReader(asciiOptimization: true)
                   .vTableGetNullable(buffer, rootOffset, 46);
@@ -466,6 +478,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               tags: tagsParam,
               assets: assetsParam,
               metadata: metadataParam,
+              preferences: preferencesParam,
               lastSavedDeviceId: lastSavedDeviceIdParam,
               permanentlyDeletedAt: permanentlyDeletedAtParam);
 
@@ -748,6 +761,10 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.assets].
   static final assets = obx.QueryIntegerVectorProperty<StoryObjectBox>(
       _entities[0].properties[20]);
+
+  /// See [StoryObjectBox.preferences].
+  static final preferences =
+      obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[21]);
 }
 
 /// [TagObjectBox] entity fields to define ObjectBox queries.

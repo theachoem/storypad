@@ -17,8 +17,6 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel feeling(String? feeling);
 
-  StoryDbModel showDayCount(bool? showDayCount);
-
   StoryDbModel year(int year);
 
   StoryDbModel month(int month);
@@ -34,6 +32,8 @@ abstract class _$StoryDbModelCWProxy {
   StoryDbModel updatedAt(DateTime updatedAt);
 
   StoryDbModel createdAt(DateTime createdAt);
+
+  StoryDbModel preferences(StoryPreferencesDbModel? preferences);
 
   StoryDbModel tags(List<String>? tags);
 
@@ -61,7 +61,6 @@ abstract class _$StoryDbModelCWProxy {
     int id,
     bool? starred,
     String? feeling,
-    bool? showDayCount,
     int year,
     int month,
     int day,
@@ -70,6 +69,7 @@ abstract class _$StoryDbModelCWProxy {
     int? second,
     DateTime updatedAt,
     DateTime createdAt,
+    StoryPreferencesDbModel? preferences,
     List<String>? tags,
     List<int>? assets,
     DateTime? movedToBinAt,
@@ -102,10 +102,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel feeling(String? feeling) => this(feeling: feeling);
 
   @override
-  StoryDbModel showDayCount(bool? showDayCount) =>
-      this(showDayCount: showDayCount);
-
-  @override
   StoryDbModel year(int year) => this(year: year);
 
   @override
@@ -128,6 +124,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
 
   @override
   StoryDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
+
+  @override
+  StoryDbModel preferences(StoryPreferencesDbModel? preferences) =>
+      this(preferences: preferences);
 
   @override
   StoryDbModel tags(List<String>? tags) => this(tags: tags);
@@ -169,7 +169,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
     Object? feeling = const $CopyWithPlaceholder(),
-    Object? showDayCount = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
@@ -178,6 +177,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? second = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
+    Object? preferences = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
     Object? assets = const $CopyWithPlaceholder(),
     Object? movedToBinAt = const $CopyWithPlaceholder(),
@@ -207,10 +207,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.feeling
           // ignore: cast_nullable_to_non_nullable
           : feeling as String?,
-      showDayCount: showDayCount == const $CopyWithPlaceholder()
-          ? _value.showDayCount
-          // ignore: cast_nullable_to_non_nullable
-          : showDayCount as bool?,
       year: year == const $CopyWithPlaceholder()
           ? _value.year
           // ignore: cast_nullable_to_non_nullable
@@ -243,6 +239,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
+      preferences: preferences == const $CopyWithPlaceholder()
+          ? _value.preferences
+          // ignore: cast_nullable_to_non_nullable
+          : preferences as StoryPreferencesDbModel?,
       tags: tags == const $CopyWithPlaceholder()
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
@@ -291,7 +291,6 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       id: (json['id'] as num).toInt(),
       starred: json['starred'] as bool?,
       feeling: json['feeling'] as String?,
-      showDayCount: json['show_day_count'] as bool?,
       year: (json['year'] as num).toInt(),
       month: (json['month'] as num).toInt(),
       day: (json['day'] as num).toInt(),
@@ -300,6 +299,10 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       second: (json['second'] as num?)?.toInt(),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
+      preferences: json['preferences'] == null
+          ? null
+          : StoryPreferencesDbModel.fromJson(
+              json['preferences'] as Map<String, dynamic>),
       tags: tagsFromJson(json['tags']),
       assets: (json['assets'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -331,9 +334,9 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'preferences': instance.preferences?.toJson(),
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
-      'show_day_count': instance.showDayCount,
     };
 
 const _$PathTypeEnumMap = {

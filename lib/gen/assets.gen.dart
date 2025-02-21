@@ -9,6 +9,82 @@
 
 import 'package:flutter/widgets.dart';
 
+class $TranslationsGen {
+  const $TranslationsGen();
+
+  /// File path: translations/ar.json
+  String get ar => 'translations/ar.json';
+
+  /// File path: translations/de-DE.json
+  String get deDE => 'translations/de-DE.json';
+
+  /// File path: translations/en.json
+  String get en => 'translations/en.json';
+
+  /// File path: translations/es-419.json
+  String get es419 => 'translations/es-419.json';
+
+  /// File path: translations/es-ES.json
+  String get esES => 'translations/es-ES.json';
+
+  /// File path: translations/fr-FR.json
+  String get frFR => 'translations/fr-FR.json';
+
+  /// File path: translations/hi-IN.json
+  String get hiIN => 'translations/hi-IN.json';
+
+  /// File path: translations/id.json
+  String get id => 'translations/id.json';
+
+  /// File path: translations/it-IT.json
+  String get itIT => 'translations/it-IT.json';
+
+  /// File path: translations/ja-JP.json
+  String get jaJP => 'translations/ja-JP.json';
+
+  /// File path: translations/km.json
+  String get km => 'translations/km.json';
+
+  /// File path: translations/ko-KR.json
+  String get koKR => 'translations/ko-KR.json';
+
+  /// File path: translations/pl-PL.json
+  String get plPL => 'translations/pl-PL.json';
+
+  /// File path: translations/pt-BR.json
+  String get ptBR => 'translations/pt-BR.json';
+
+  /// File path: translations/th.json
+  String get th => 'translations/th.json';
+
+  /// File path: translations/vi-VN.json
+  String get viVN => 'translations/vi-VN.json';
+
+  /// File path: translations/zh-CN.json
+  String get zhCN => 'translations/zh-CN.json';
+
+  /// List of all assets
+  List<String> get values => [
+        ar,
+        deDE,
+        en,
+        es419,
+        esES,
+        frFR,
+        hiIN,
+        id,
+        itIT,
+        jaJP,
+        km,
+        koKR,
+        plPL,
+        ptBR,
+        th,
+        viVN,
+        zhCN
+      ];
+}
+
 class $AssetsEmoji64Gen {
   const $AssetsEmoji64Gen();
 
@@ -282,10 +358,11 @@ class $AssetsLottiesGen {
 }
 
 class Assets {
-  Assets._();
+  const Assets._();
 
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
+  static const $TranslationsGen translations = $TranslationsGen();
 }
 
 class AssetGenImage {
@@ -321,7 +398,7 @@ class AssetGenImage {
     bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.low,
+    FilterQuality filterQuality = FilterQuality.medium,
     int? cacheWidth,
     int? cacheHeight,
   }) {
