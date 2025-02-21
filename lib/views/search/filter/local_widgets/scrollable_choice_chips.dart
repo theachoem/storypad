@@ -38,24 +38,25 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
                   text: "$label ",
                   style: TextTheme.of(context).labelMedium,
                   children: [
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: ColorScheme.of(context).readOnly.surface5,
-                          borderRadius: BorderRadius.circular(48.0),
-                        ),
-                        child: Text(
-                          storyCount.toString(),
-                          style: TextTheme.of(context).labelSmall,
-                          textHeightBehavior: TextHeightBehavior(
-                            applyHeightToFirstAscent: false,
-                            applyHeightToLastDescent: false,
+                    if (storyCount != null)
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: ColorScheme.of(context).readOnly.surface5,
+                            borderRadius: BorderRadius.circular(48.0),
+                          ),
+                          child: Text(
+                            storyCount.toString(),
+                            style: TextTheme.of(context).labelSmall,
+                            textHeightBehavior: TextHeightBehavior(
+                              applyHeightToFirstAscent: false,
+                              applyHeightToLastDescent: false,
+                            ),
                           ),
                         ),
-                      ),
-                    )
+                      )
                   ],
                 ),
               ),

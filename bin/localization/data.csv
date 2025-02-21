@@ -121,6 +121,7 @@ general.font_weight.semi_bold,Semi-bold,شبه جريئة,Halbfett,Semi-negrita,
 general.font_weight.thin,Thin,رفيع,Dünn,Delgado,Delgado,Mince,पतला,Tipis,Magro,薄い,ស្តើង,얇은,Cienki,Afinar,บาง,Gầy,薄的
 general.na,N/A,لا يوجد,N / A,N / A,N / A,N / A,एन/ए,T/A,N / A,該当なし,គ្មាន,해당 없음,Nie dotyczy,N / D,ไม่มี,không áp dụng,不适用
 general.no_backup_found,No backups found.,لم يتم العثور على نسخ احتياطية.,Keine Backups gefunden.,No se encontraron copias de seguridad.,No se encontraron copias de seguridad.,Aucune sauvegarde trouvée.,कोई बैकअप नहीं मिला.,Tidak ada cadangan yang ditemukan.,Nessun backup trovato.,バックアップが見つかりませんでした。,រកមិនឃើញការបម្រុងទុកទេ។,백업을 찾을 수 없습니다.,Nie znaleziono kopii zapasowych.,Nenhum backup encontrado.,ไม่พบข้อมูลสำรอง,Không tìm thấy bản sao lưu nào.,未找到备份。
+general.others,Others,آحرون,Andere,Otros,Otros,Autres,अन्य,Yang lain,Altri,その他,ផ្សេងៗ,기타,Inni,Outros,คนอื่น,Người khác,其他的
 general.path_type.archives,Archives,أرشيف,Archiv,Archivo,Archivo,Archives,अभिलेखागार,Arsip,Archivi,アーカイブ,បណ្ណសារ,아카이브,Archiwa,Arquivos,หอจดหมายเหตุ,Lưu trữ,档案
 general.path_type.bins,Bins,صناديق,Mülleimer,Contenedores,Contenedores,Bacs,डिब्बे,Tempat sampah,Contenitori,ビン,ធុងសំរាម,쓰레기통,Pojemniki,Caixas,ถังขยะ,Thùng,垃圾箱
 general.path_type.docs,Docs,المستندات,Dokumente,Documentos,Documentos,Documents,डॉक्स,dokumen,Documenti,ドキュメント,ឯកសារ,문서,Dokumenty,Documentos,เอกสาร,Tài liệu,文档

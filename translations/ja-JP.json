@@ -2,6 +2,7 @@
   "_meta.locale": "ja-JP",
   "_meta.language_name": "Japanese (Japan)",
   "_meta.native_name": "日本語 (日本)",
+  "_fomula": "数式",
   "button.archive": "アーカイブ",
   "button.cancel": "キャンセル",
   "button.clear": "クリア",
@@ -121,6 +122,7 @@
   "general.font_weight.thin": "薄い",
   "general.na": "該当なし",
   "general.no_backup_found": "バックアップが見つかりませんでした。",
+  "general.others": "その他",
   "general.path_type.archives": "アーカイブ",
   "general.path_type.bins": "ビン",
   "general.path_type.docs": "ドキュメント",
@@ -177,7 +179,7 @@
   "page.changes_history.too_many_changes_warning_message": "{CHANGES_COUNT} 件の変更が保存されており、多くのスペースを使用しています。一部を削除する必要があります。",
   "page.edit_tag.title": "新しいタグ",
   "page.fonts.title": "フォント",
-  "page.home.app_bar.hello_nickname": "こんにちは、{ニックネーム}",
+  "page.home.app_bar.hello_nickname": "こんにちは、{NICKNAME}",
   "page.home.app_bar.messages.ready_to_syn_data": "データを同期する準備はできましたか?",
   "page.home.app_bar.messages.we_syncing_ur_data": "データを同期しています",
   "page.home.app_bar.messages.what_in_ur_mind": "何を考えていましたか？",
@@ -205,6 +207,6 @@
   "snack_bar.empty_or_invalid_file": "ファイルが空か無効です!",
   "snack_bar.force_restore_success": "バックアップが復元されました！",
   "snack_bar.move_to_bin_success": "ビンに移動しました！",
-  "snack_bar.put_back_success": "家に戻りましょう！",
+  "snack_bar.put_back_success": "家に帰りましょう！",
   "snack_bar.restore_individual_success": "ストーリーが復活しました！"
 }
