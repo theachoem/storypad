@@ -7,6 +7,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/story_db_constructor_service.dart';
 import 'package:storypad/core/services/story_helper.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -42,9 +43,6 @@ class StoryDbModel extends BaseDbModel {
   final bool? starred;
   final String? feeling;
 
-  @JsonKey(name: 'show_day_count')
-  final bool? _showDayCount;
-
   @JsonKey(fromJson: tagsFromJson)
   final List<String>? tags;
   final List<int>? assets;
@@ -63,9 +61,9 @@ class StoryDbModel extends BaseDbModel {
 
   @override
   final DateTime updatedAt;
-
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
+  final StoryPreferencesDbModel? preferences;
 
   DateTime get displayPathDate {
     return DateTime(
@@ -87,7 +85,6 @@ class StoryDbModel extends BaseDbModel {
     required this.id,
     required this.starred,
     required this.feeling,
-    required bool? showDayCount,
     required this.year,
     required this.month,
     required this.day,
@@ -96,6 +93,7 @@ class StoryDbModel extends BaseDbModel {
     required this.second,
     required this.updatedAt,
     required this.createdAt,
+    required this.preferences,
     required this.tags,
     required this.assets,
     required this.movedToBinAt,
@@ -103,7 +101,7 @@ class StoryDbModel extends BaseDbModel {
     required this.lastSavedDeviceId,
     this.rawChanges,
     this.latestChange,
-  }) : _showDayCount = showDayCount {
+  }) {
     // By default, `allChanges` is null when fetched from the database for speed.
     // For backups, only `allChanges` is included, while `latestChange` and `rawChanges` are excluded.
     // This means that when converting a cloud backup JSON to a model,
@@ -112,7 +110,8 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
-  bool get showDayCount => _showDayCount ?? false;
+  bool get showDayCount => preferences?.showDayCount ?? false;
+  String? get starIcon => preferences?.starIcon;
 
   bool get viewOnly => unarchivable || inBins;
 
@@ -179,6 +178,17 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
+  Future<StoryDbModel?> updateStarIcon({
+    required String starIcon,
+  }) async {
+    if (!editable) return null;
+
+    return db.set(copyWithPreferences(
+      starIcon: starIcon,
+      updatedAt: DateTime.now(),
+    ));
+  }
+
   Future<StoryDbModel?> archive() async {
     if (!archivable) return null;
 
@@ -205,6 +215,20 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
+  StoryDbModel copyWithPreferences({
+    bool? showDayCount,
+    String? starIcon,
+    DateTime? updatedAt,
+  }) {
+    return copyWith(
+      updatedAt: updatedAt ?? this.updatedAt,
+      preferences: (preferences ?? StoryPreferencesDbModel.create()).copyWith(
+        starIcon: starIcon ?? preferences?.starIcon,
+        showDayCount: showDayCount ?? preferences?.showDayCount,
+      ),
+    );
+  }
+
   factory StoryDbModel.fromNow() {
     final now = DateTime.now();
     return StoryDbModel.fromDate(now);
@@ -227,7 +251,7 @@ class StoryDbModel extends BaseDbModel {
       id: now.millisecondsSinceEpoch,
       starred: false,
       feeling: null,
-      showDayCount: false,
+      preferences: StoryPreferencesDbModel.create(),
       latestChange: StoryContentDbModel.create(),
       allChanges: null,
       updatedAt: now,

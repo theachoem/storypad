@@ -31,6 +31,9 @@ class StoryObjectBox extends BaseObjectBox {
 
   bool? starred;
   String? feeling;
+
+  // deprecated
+  // TODO: removed after May 2025
   bool? showDayCount;
 
   @Property(type: PropertyType.date)
@@ -52,6 +55,7 @@ class StoryObjectBox extends BaseObjectBox {
 
   // for query
   String? metadata;
+  String? preferences;
 
   @override
   String? lastSavedDeviceId;
@@ -76,6 +80,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.tags,
     required this.assets,
     required this.metadata,
+    required this.preferences,
     this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
   });

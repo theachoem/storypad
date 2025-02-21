@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:storypad/app_theme.dart';
@@ -6,11 +7,13 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/objects/story_icon_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/widgets/custom_embed/sp_image.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -252,6 +255,7 @@ class _StoryTileStarredButton extends StatelessWidget {
           story: story,
           toggleStarred: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).toggleStarred,
           multiEditState: multiEditState,
+          updateStarIcon: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).updateStarIcon,
         ),
       ),
     );

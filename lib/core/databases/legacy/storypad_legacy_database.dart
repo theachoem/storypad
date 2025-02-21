@@ -92,7 +92,7 @@ class StorypadLegacyDatabase {
           id: storypadStory.createOn.millisecondsSinceEpoch,
           starred: storypadStory.isFavorite,
           feeling: storypadStory.feeling,
-          showDayCount: false,
+          preferences: null,
           year: storypadStory.forDate.year,
           month: storypadStory.forDate.month,
           day: storypadStory.forDate.day,

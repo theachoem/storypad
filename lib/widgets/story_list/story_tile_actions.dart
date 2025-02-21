@@ -196,8 +196,21 @@ class StoryTileActions {
     );
   }
 
+  Future<void> updateStarIcon(String starIcon) async {
+    StoryDbModel? updatedStory = await story.updateStarIcon(starIcon: starIcon);
+    if (updatedStory == null) return;
+
+    AnalyticsService.instance.logUpdateStarIcon(
+      story: updatedStory,
+    );
+  }
+
   Future<void> toggleShowDayCount() async {
-    final updatedStory = story.copyWith(updatedAt: DateTime.now(), showDayCount: !story.showDayCount);
+    final updatedStory = story.copyWithPreferences(
+      updatedAt: DateTime.now(),
+      showDayCount: !story.showDayCount,
+    );
+
     await StoryDbModel.db.set(updatedStory);
 
     AnalyticsService.instance.logToggleShowDayCount(

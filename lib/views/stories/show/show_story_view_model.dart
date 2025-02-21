@@ -79,7 +79,11 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
   Future<void> toggleShowDayCount() async {
     if (story == null) return;
 
-    story = story!.copyWith(updatedAt: DateTime.now(), showDayCount: !story!.showDayCount);
+    story = story!.copyWithPreferences(
+      showDayCount: !story!.showDayCount,
+      updatedAt: DateTime.now(),
+    );
+
     notifyListeners();
 
     await StoryDbModel.db.set(story!);

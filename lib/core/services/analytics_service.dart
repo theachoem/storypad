@@ -371,6 +371,18 @@ class AnalyticsService {
     );
   }
 
+  Future<void> logUpdateStarIcon({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logUpdateStarIcon', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('update_star_icon'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logToggleShowDayCount({
     required StoryDbModel story,
   }) {
@@ -485,6 +497,8 @@ class AnalyticsService {
       'day': story.day.toString(),
       'feeling': story.feeling,
       'total_changes': story.rawChanges?.length.toString(),
+      'preferred_star_icon': story.preferences?.starIcon,
+      'preferred_show_day_count': story.preferences?.showDayCount?.toString(),
     });
   }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
@@ -180,12 +181,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<String, dynamic>? options = map['options'];
 
     Iterable<PathType> types = PathType.values.where((e) => e.name == object.type);
+
     return StoryDbModel(
       type: types.isNotEmpty ? types.first : PathType.docs,
       id: object.id,
       starred: object.starred,
       feeling: object.feeling,
-      showDayCount: object.showDayCount ?? false,
       year: object.year,
       month: object.month,
       day: object.day,
@@ -196,6 +197,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       createdAt: object.createdAt,
       tags: object.tags,
       assets: object.assets,
+      preferences: StoryDbConstructorService.decodePreferences(object),
       rawChanges: object.changes,
       movedToBinAt: object.movedToBinAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
@@ -257,13 +259,14 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       assets: story.assets?.toSet().toList(),
       starred: story.starred,
       feeling: story.feeling,
-      showDayCount: story.showDayCount,
+      showDayCount: null,
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
       movedToBinAt: story.movedToBinAt,
       metadata: story.latestChange?.safeMetadata,
       changes: StoryDbConstructorService.changesToRawChanges(story),
       permanentlyDeletedAt: null,
+      preferences: story.preferences != null ? jsonEncode(story.preferences?.toJson()) : null,
     );
   }
 }
