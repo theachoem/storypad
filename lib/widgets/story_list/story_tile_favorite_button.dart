@@ -144,13 +144,11 @@ class _StoryTileFavoriteButton extends StatelessWidget {
               firstChild: Icon(
                 StoryIconObject.icons[story.starIcon]?.filledIcon ?? StoryIconObject.fallbackIcon.filledIcon,
                 color: ColorScheme.of(context).error,
-                size: 16.0,
                 applyTextScaling: true,
               ),
               secondChild: Icon(
                 StoryIconObject.icons[story.starIcon]?.outlineIcon ?? StoryIconObject.fallbackIcon.outlineIcon,
                 color: Theme.of(context).dividerColor,
-                size: 16.0,
                 applyTextScaling: true,
               ),
             ),
