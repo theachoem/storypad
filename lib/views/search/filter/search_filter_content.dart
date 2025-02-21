@@ -26,7 +26,19 @@ class _SearchFilterContent extends StatelessWidget {
       if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
         _Title(title: tr("general.tags")),
         buildTags(context),
-      ]
+        SizedBox(height: 12.0),
+      ],
+      Divider(),
+      CheckboxListTile.adaptive(
+        tristate: true,
+        value: viewModel.searchFilter.starred,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+        title: Text(tr("button.star")),
+        onChanged: (value) {
+          viewModel.searchFilter.setStarred(value);
+          viewModel.notifyListeners();
+        },
+      ),
     ];
 
     if (children.isEmpty) return const Center(child: CircularProgressIndicator.adaptive());

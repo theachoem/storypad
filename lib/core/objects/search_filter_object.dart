@@ -6,6 +6,7 @@ class SearchFilterObject {
   Set<PathType> types;
   int? tagId;
   int? assetId;
+  bool? starred;
 
   final bool filterTagModifiable;
 
@@ -14,6 +15,7 @@ class SearchFilterObject {
     required this.types,
     required this.tagId,
     required this.assetId,
+    this.starred,
     this.filterTagModifiable = true,
   });
 
@@ -26,6 +28,7 @@ class SearchFilterObject {
     if (years.isNotEmpty) filters['years'] = years.toList();
     if (tagId != null) filters['tag'] = tagId;
     if (assetId != null) filters['asset'] = assetId;
+    if (starred != null) filters['starred'] = starred;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
 
     return filters;
@@ -45,6 +48,10 @@ class SearchFilterObject {
     } else {
       types.add(type);
     }
+  }
+
+  void setStarred(bool? value) {
+    starred = value;
   }
 
   void toggleTag(TagDbModel tag) {
