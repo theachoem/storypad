@@ -91,7 +91,10 @@ class _StoryTileFavoriteButton extends StatelessWidget {
         children: StoryIconObject.icons.entries.map((entry) {
           Widget child;
 
-          if (entry.key == story.starIcon) {
+          bool defaultIcon =
+              story.starIcon == null && entry.value.filledIcon == StoryIconObject.fallbackIcon.filledIcon;
+
+          if (entry.key == story.starIcon || defaultIcon) {
             child = IconButton.filledTonal(
               icon: Icon(entry.value.outlineIcon),
               onPressed: () => updateStarIcon?.call(entry.key),
