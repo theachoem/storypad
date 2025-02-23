@@ -89,7 +89,7 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
       decoration: BoxDecoration(
         color: ColorScheme.of(context).surface,
         borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.1), width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: GridView.builder(
         controller: controller,

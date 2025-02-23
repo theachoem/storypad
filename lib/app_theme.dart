@@ -58,6 +58,8 @@ class AppTheme extends StatelessWidget {
       ),
     };
 
+    Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
+
     return theme.copyWith(
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
@@ -70,10 +72,15 @@ class AppTheme extends StatelessWidget {
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         backgroundColor: colorScheme.readOnly.surface1,
       ),
+      tabBarTheme: TabBarTheme(
+        dividerColor: dividerColor,
+      ),
       drawerTheme: const DrawerThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         endShape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
+      dividerColor: dividerColor,
+      dividerTheme: DividerThemeData(color: dividerColor),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
