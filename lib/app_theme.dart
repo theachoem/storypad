@@ -43,7 +43,9 @@ class AppTheme extends StatelessWidget {
   }
 
   ThemeData getTheme(ThemeData theme, ColorScheme colorScheme, ThemeProvider provider) {
-    bool blackout = colorScheme.surface == Colors.black;
+    bool blackout = colorScheme.onSurface == Colors.white;
+    bool darkMode = colorScheme.brightness == Brightness.dark;
+    bool lightMode = !darkMode;
 
     TextStyle calculateTextStyle(TextStyle textStyle, FontWeight defaultFontWeight) {
       return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, provider.theme.fontWeight));
@@ -70,7 +72,7 @@ class AppTheme extends StatelessWidget {
       appBarTheme: AppBarTheme(
         centerTitle: false,
         titleSpacing: NavigationToolbar.kMiddleSpacing,
-        backgroundColor: colorScheme.readOnly.surface1,
+        backgroundColor: lightMode ? colorScheme.surface : colorScheme.readOnly.surface1,
       ),
       tabBarTheme: TabBarTheme(
         dividerColor: dividerColor,
@@ -122,7 +124,10 @@ class AppTheme extends StatelessWidget {
         onSecondary: Colors.black,
         error: Colors.red[200]!,
         onError: Colors.white,
-        surface: Colors.black,
+        surface: Color.alphaBlend(
+          Colors.white.withValues(alpha: 0.05),
+          Colors.black,
+        ),
         onSurface: Colors.white,
         surfaceContainerHighest: Colors.white,
         secondaryContainer: Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Colors.black),
