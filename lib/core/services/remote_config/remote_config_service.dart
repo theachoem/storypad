@@ -39,7 +39,7 @@ class RemoteConfigService {
   static const localizationSupportUrl = _RemoteConfigObject<String>(
     'LOCALIZATION_SUPPORT_URL',
     _RemoteConfigValueType.string,
-    'https://github.com/theachoem/storypad/issues/257',
+    'https://storypad.juniorise.com/contributions/localization',
   );
 
   static const policyPrivacyUrl = _RemoteConfigObject<String>(

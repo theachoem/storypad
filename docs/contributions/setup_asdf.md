@@ -1,4 +1,10 @@
-# ASDF Guide
+---
+layout: default
+parent: Contribution
+title: Setup ASDF
+---
+
+# Setup ASDF
 
 StoryPad uses **asdf** to manage versions for Flutter, Java, and Ruby. If you are using a different version manager, you can ignore this documentation & install the tools based on the versions specified in the [.tool-versions](../.tool-versions) file.
 
@@ -119,6 +125,4 @@ $ flutter doctor
 
 ### References
 
-- https://github.com/asdf-community/asdf-flutter
-
----
+- [https://github.com/asdf-community/asdf-flutter](https://github.com/asdf-community/asdf-flutter)

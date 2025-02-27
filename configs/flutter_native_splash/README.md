@@ -1,4 +1,4 @@
-# Spooky Native Splash
+# Native Splash
 
 ```sh
 dart run flutter_native_splash:create --flavors community,spooky,storypad

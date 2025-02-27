@@ -1,3 +1,10 @@
+---
+layout: minimal
+title: Spooky
+parent: Privacy Policy
+last_modified_date: 2025-02-27
+---
+
 # Privacy Policy
 
 **Spooky** ("we," "us," or "our") is committed to safeguarding the privacy of our users ("user" or "you"). This Privacy Policy outlines how we collect, use, disclose, and protect your information when you access our mobile application (“App”). Please review this Privacy Policy carefully. **If you do not agree with the terms of this Privacy Policy, please refrain from accessing or using the App.**
@@ -31,6 +38,6 @@ By using this App, you consent to the terms of this Privacy Policy.
 
 If you have any questions or concerns regarding this Privacy Policy, please contact us:
 
-**Thea CHOEM**
+Juniorise  
 Phnom Penh, Cambodia  
-**Email:** [theacheng.g6@gmail.com](mailto:theacheng.g6@gmail.com)
+Email: [theacheng.g6@gmail.com](mailto:theacheng.g6@gmail.com)
