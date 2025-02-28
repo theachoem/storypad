@@ -6,9 +6,11 @@ class SpNestedNavigation extends StatefulWidget {
   const SpNestedNavigation({
     super.key,
     required this.initialScreen,
+    this.backgroundColor,
   });
 
   final Widget initialScreen;
+  final Color? backgroundColor;
 
   static SpNestedNavigationState? maybeOf(BuildContext context) {
     return context.findRootAncestorStateOfType<SpNestedNavigationState>();
@@ -30,6 +32,7 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
       AnimatedPageRoute.sharedAxis(
         type: SharedAxisTransitionType.horizontal,
         builder: (context) => screen,
+        fillColor: widget.backgroundColor,
       ),
     );
   }
@@ -40,19 +43,18 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
+    return Navigator(
       clipBehavior: Clip.hardEdge,
-      child: Navigator(
-        key: navigationKey,
-        onGenerateRoute: (setting) {
-          return AnimatedPageRoute.sharedAxis(
-            type: SharedAxisTransitionType.horizontal,
-            builder: (context) {
-              return widget.initialScreen;
-            },
-          );
-        },
-      ),
+      key: navigationKey,
+      onGenerateRoute: (setting) {
+        return AnimatedPageRoute.sharedAxis(
+          type: SharedAxisTransitionType.horizontal,
+          fillColor: widget.backgroundColor,
+          builder: (context) {
+            return widget.initialScreen;
+          },
+        );
+      },
     );
   }
 }

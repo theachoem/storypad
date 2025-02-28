@@ -60,6 +60,13 @@ general.beta,Beta,بيتا,Beta,Beta,Beta,Bêta,बीटा,Beta,Beta,ベータ
 general.custom,Custom,مخصص,Brauch,Costumbre,Costumbre,Coutume,रिवाज़,Kebiasaan,Costume,カスタム,ផ្ទាល់ខ្លួន,관습,Zwyczaj,Personalizado,กำหนดเอง,Phong tục,风俗
 general.default,Default,تقصير,Standard,Por defecto,Por defecto,Défaut,गलती करना,Bawaan,Predefinito,デフォルト,លំនាំដើម,기본,Domyślny,Padrão,ค่าเริ่มต้น,Mặc định,默认
 general.defaults,Defaults,الافتراضيات,Standardeinstellungen,Valores predeterminados,Valores predeterminados,Valeurs par défaut,चूक,Default,Predefiniti,デフォルト,លំនាំដើម,기본값,Domyślne,Padrões,ค่าเริ่มต้น,Mặc định,默认值
+general.feeling_group.anger,Anger,الغضب,Wut,Enojo,Enojo,Colère,गुस्सा,Amarah,Rabbia,怒り,កំហឹង,화,Gniew,Raiva,ความโกรธ,Sự tức giận,愤怒
+general.feeling_group.disgust,Disgust,الاشمئزاز,Ekel,Asco,Asco,Dégoût,घृणा,Menjijikkan,Disgusto,嫌悪,ស្អប់ខ្ពើម,싫음,Niesmak,Nojo,รังเกียจ,ghê tởm,厌恶
+general.feeling_group.fear,Fear,يخاف,Furcht,Miedo,Miedo,Peur,डर,Takut,Paura,恐れ,ការភ័យខ្លាច,두려움,Strach,Temer,กลัว,Nỗi sợ,害怕
+general.feeling_group.joy,Joy,مرح,Freude,Alegría,Alegría,Joie,आनंद,Sukacita,Gioia,喜び,ភាពរីករាយ,기쁨,Radość,Alegria,จอย,Vui sướng,喜悦
+general.feeling_group.neutral,Neutral,حيادي,Neutral,Neutral,Neutral,Neutre,तटस्थ,Netral,Neutro,中性,អព្យាក្រឹត,중립적,Neutralny,Neutro,เป็นกลาง,Trung lập,中性的
+general.feeling_group.other,Others,آحرون,Andere,Otros,Otros,Autres,अन्य,Yang lain,Altri,その他,ផ្សេងៗ,기타,Inni,Outros,คนอื่น,Người khác,其他的
+general.feeling_group.sadness,Sadness,الحزن,Traurigkeit,Tristeza,Tristeza,Tristesse,उदासी,Kesedihan,Tristezza,悲しみ,ទុក្ខព្រួយ,비애,Smutek,Tristeza,ความโศกเศร้า,Nỗi buồn,悲伤
 general.feeling.annoy_someone,Annoy Someone,إزعاج شخص ما,Jemanden ärgern,Molestar a alguien,Molestar a alguien,Ennuyer quelqu'un,किसी को परेशान करना,Mengganggu Seseorang,Infastidire qualcuno,誰かを困らせる,រំខាននរណាម្នាក់,누군가를 괴롭히다,Zdenerwować kogoś,Irritar alguém,รบกวนใครสักคน,Làm phiền ai đó,惹恼某人
 general.feeling.beaming,Beaming,مبتهجا,Strahlend,Radiante,Radiante,Radieux,बीम करने,Berseri-seri,Raggiante,光る,បន្លឺឡើង,빛나는,Rozpromieniony,Radiante,ยิ้มแย้มแจ่มใส,Rạng rỡ,喜气洋洋
 general.feeling.blowing,Blowing,تهب,Blasen,Soplo,Soplo,Souffler,आंधी,Hembusan,Soffiando,吹く,ផ្លុំ,취주,Dmuchanie,Sopro,เป่า,thổi,吹
