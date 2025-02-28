@@ -1,6 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/gen/assets.gen.dart';
+// ignore_for_file: constant_identifier_names
+
+import 'package:easy_localization/easy_localization.dart' show tr;
+import 'package:flutter/material.dart' show BuildContext, IconData, Icons;
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:storypad/gen/assets.gen.dart' show AssetGenImage, Assets;
+
+part '../types/feeling_group.dart';
 
 class FeelingObject {
   final String value;
@@ -13,7 +18,72 @@ class FeelingObject {
     required this.image64,
   });
 
-  static Map<String, FeelingObject> feelingsMap = {
+  static Map<FeelingGroup, List<String>> feelignGroups = {
+    FeelingGroup.joy: [
+      'positive_feelings',
+      'smiling_halo',
+      'slightly_smiling',
+      'beaming',
+      'cheerfulness',
+      'smiling_broadly',
+      'laughter',
+      'really_funny',
+      'something_cool',
+      'excited',
+      'lovely',
+      'in_love',
+      'blowing',
+      'cuteness',
+      'winking',
+      'annoy_someone',
+      'getting_rich',
+      'crazy',
+      'zany',
+      'savoring_food',
+    ],
+    FeelingGroup.sadness: [
+      'crying',
+      'loudly_crying',
+      'downcast',
+      'disappointed',
+      'tired',
+    ],
+    FeelingGroup.fear: [
+      'nervousness',
+      'fearful',
+      'worry',
+      'grinning_sweat',
+    ],
+    FeelingGroup.anger: [
+      'serious',
+      'pouting',
+      'mistrust',
+    ],
+    FeelingGroup.neutral: [
+      'neutral',
+      'confused',
+      'expressionless',
+      'head_bandage',
+      'medical_mask',
+      'speechlessness',
+      'flushed',
+    ],
+    FeelingGroup.other: [
+      'nerd',
+      'monocle',
+      'sleeping',
+      'dizzy',
+      'suggestive_smile',
+      'wow',
+      'devil',
+      'drooling',
+      'vomiting',
+      'nauseated',
+      'rolling_eyes',
+    ]
+  };
+
+  static Map<String, FeelingObject> feelingsByKey = {
     "beaming": FeelingObject(
       value: "beaming",
       translation: (context) => tr("general.feeling.beaming", context: context),
