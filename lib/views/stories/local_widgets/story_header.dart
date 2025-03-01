@@ -105,7 +105,7 @@ class _DateSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       InkWell(
-        onTap: onChangeDate == null ? null : () => changeDate(context),
+        onTap: readOnly || onChangeDate == null ? null : () => changeDate(context),
         borderRadius: BorderRadius.circular(4.0),
         child: Row(
           children: [
