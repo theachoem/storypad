@@ -2,12 +2,12 @@ import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'assets_view.dart';
+import 'library_view.dart';
 
-class AssetsViewModel extends BaseViewModel {
-  final AssetsRoute params;
+class LibraryViewModel extends BaseViewModel {
+  final LibraryRoute params;
 
-  AssetsViewModel({
+  LibraryViewModel({
     required this.params,
   }) {
     load();

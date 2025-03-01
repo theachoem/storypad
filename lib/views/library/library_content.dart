@@ -1,9 +1,9 @@
-part of 'assets_view.dart';
+part of 'library_view.dart';
 
-class _AssetsContent extends StatelessWidget {
-  const _AssetsContent(this.viewModel);
+class _LibraryContent extends StatelessWidget {
+  const _LibraryContent(this.viewModel);
 
-  final AssetsViewModel viewModel;
+  final LibraryViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

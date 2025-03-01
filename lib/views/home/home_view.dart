@@ -17,7 +17,7 @@ import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/local_auth_provider.dart';
-import 'package:storypad/views/assets/assets_view.dart';
+import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/home/local_widgets/backup_tile.dart';
 import 'package:storypad/views/home/local_widgets/home_years_view.dart';
 import 'package:storypad/views/home/local_widgets/rounded_indicator.dart';

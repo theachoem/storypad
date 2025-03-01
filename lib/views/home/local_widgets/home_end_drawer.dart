@@ -48,7 +48,7 @@ class _HomeEndDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.photo_album_outlined),
               title: Text(tr("page.library.title")),
-              onTap: () => AssetsRoute().push(context),
+              onTap: () => LibraryRoute().push(context),
             ),
           const Divider(),
           const BackupTile(),
