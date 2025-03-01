@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class UrlOpenerService {

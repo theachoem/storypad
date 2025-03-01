@@ -4,7 +4,7 @@ import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_helper.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';

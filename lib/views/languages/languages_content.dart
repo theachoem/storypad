@@ -34,7 +34,7 @@ class _LanguagesContent extends StatelessWidget {
       ),
       onTap: () {
         context.setLocale(viewModel.supportedLocales.elementAt(index));
-        AnalyticsService.instance.logSetLocale(
+        AnalyticsUserProperyService.instance.logSetLocale(
           newLocale: viewModel.supportedLocales.elementAt(index),
         );
       },

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/tags/edit/edit_tag_view.dart';
 import 'package:storypad/views/tags/show/show_tag_view.dart';

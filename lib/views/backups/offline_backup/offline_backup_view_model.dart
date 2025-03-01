@@ -8,7 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';

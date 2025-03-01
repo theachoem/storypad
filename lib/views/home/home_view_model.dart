@@ -6,7 +6,7 @@ import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/in_app_review_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';

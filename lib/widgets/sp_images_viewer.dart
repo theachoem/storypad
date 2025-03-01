@@ -5,6 +5,7 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/widgets/db_assets/db_image.dart';
 
@@ -69,6 +70,11 @@ class SpImagesViewer extends StatefulWidget {
 
   Future<void> show(BuildContext context) async {
     if (images.isEmpty) return;
+
+    AnalyticsService.instance.logViewImages(
+      imagesCount: images.length,
+    );
+
     await context.pushTransparentRoute(
       this,
       backgroundColor: Colors.transparent,
