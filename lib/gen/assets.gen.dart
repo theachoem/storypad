@@ -347,6 +347,17 @@ class $AssetsEmoji64Gen {
       ];
 }
 
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/reddit_logo_500x500.png
+  AssetGenImage get redditLogo500x500 =>
+      const AssetGenImage('assets/images/reddit_logo_500x500.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [redditLogo500x500];
+}
+
 class $AssetsLottiesGen {
   const $AssetsLottiesGen();
 
@@ -361,6 +372,7 @@ class Assets {
   const Assets._();
 
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $TranslationsGen translations = $TranslationsGen();
 }
