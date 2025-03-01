@@ -47,8 +47,23 @@ class SpFeelingButton extends StatelessWidget {
                 onTap: callback,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child:
-                      FeelingObject.feelingsByKey[feeling]?.image64.image(width: 24) ?? Icon(Icons.add_reaction_sharp),
+                  child: AnimatedSwitcher(
+                    switchInCurve: Curves.ease,
+                    switchOutCurve: Curves.ease,
+                    duration: Durations.medium3,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: FeelingObject.feelingsByKey[feeling]?.image64
+                            .image(width: 24, key: ValueKey('feeling-$feeling')) ??
+                        Icon(Icons.add_reaction_sharp, key: ValueKey('feeling-none')),
+                  ),
                 ),
               ),
             ),
