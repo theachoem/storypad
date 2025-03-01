@@ -1,17 +1,13 @@
 import 'dart:math';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
-import 'package:storypad/core/databases/legacy/storypad_legacy_database.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics_service.dart';
 import 'package:storypad/core/services/in_app_review_service.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -25,28 +21,31 @@ part './local_widgets/home_scroll_info.dart';
 class HomeViewModel extends BaseViewModel {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
-  HomeViewModel(BuildContext context) {
+  HomeViewModel({
+    required BuildContext context,
+    required HomeInitializerData? initialData,
+  }) {
     AnalyticsService.instance.logViewHome(year: year);
 
-    _construct(context);
-  }
+    setStories(initialData?.stories);
+    nickname = initialData?.nickname;
+    initialData?.legacyStorypadMigrationResponse?.showPendingMessage(context);
 
-  Future<void> _construct(BuildContext context) async {
-    nickname = PreferenceDbModel.db.nickname.get();
-    await loadFromLegacyStorypadIfShould(context);
-    if (!context.mounted) return;
-
-    await load(debugSource: '$runtimeType#_construct');
     if (nickname == null && context.mounted) showInputNameSheet(context);
 
     RestoreBackupService.instance.addListener(() async {
-      load(debugSource: '$runtimeType#_listenToRestoreService');
+      reload(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }
 
   String? nickname;
   int year = DateTime.now().year;
-  CollectionDbModel<StoryDbModel>? stories;
+  CollectionDbModel<StoryDbModel>? _stories;
+  CollectionDbModel<StoryDbModel>? get stories => _stories;
+  void setStories(CollectionDbModel<StoryDbModel>? value) {
+    _stories = value;
+    scrollInfo.setupStoryKeys(stories?.items ?? []);
+  }
 
   List<int> get months {
     List<int> months = stories?.items.map((e) => e.month).toSet().toList() ?? [];
@@ -59,59 +58,33 @@ class HomeViewModel extends BaseViewModel {
     if (context.mounted) changeName(context);
   }
 
-  Future<void> load({
+  Future<void> reload({
     required String debugSource,
   }) async {
     debugPrint('🚧 Reload home from $debugSource 🏠');
 
     nickname = PreferenceDbModel.db.nickname.get();
-    stories = await StoryDbModel.db.where(filters: {
+    setStories(await StoryDbModel.db.where(filters: {
       'year': year,
       'types': [PathType.docs.name],
-    });
+    }));
 
-    scrollInfo.setupStoryKeys(stories?.items ?? []);
     notifyListeners();
   }
 
   Future<void> refresh(BuildContext context) async {
-    await load(debugSource: '$runtimeType#refresh');
+    await reload(debugSource: '$runtimeType#refresh');
     if (context.mounted) await context.read<BackupProvider>().recheck();
-  }
-
-  Future<void> loadFromLegacyStorypadIfShould(BuildContext context) async {
-    (bool, String) result = await StorypadLegacyDatabase.instance.transferToObjectBoxIfNotYet();
-
-    bool success = result.$1;
-    String message = result.$2;
-
-    if (success) {
-      if (!context.mounted) return;
-      // if (kDebugMode) MessengerService.of(context).showSnackBar(message);
-    } else {
-      if (!context.mounted) return;
-
-      OkCancelResult userAction = await showOkAlertDialog(
-        context: context,
-        title: tr("dialog.error_importing_data_from_legacy_storypad.title"),
-        message: tr("dialog.error_importing_data_from_legacy_storypad.message"),
-      );
-
-      if (userAction == OkCancelResult.ok && context.mounted) {
-        Clipboard.setData(ClipboardData(text: message));
-        MessengerService.of(context).showSnackBar(tr("snack_bar.copy_error_to_clipboard_success"));
-      }
-    }
   }
 
   Future<void> changeYear(int newYear) async {
     if (year == newYear) return;
 
     year = newYear;
-    stories = null;
+    setStories(null);
     notifyListeners();
 
-    await load(debugSource: '$runtimeType#changeYear $newYear');
+    await reload(debugSource: '$runtimeType#changeYear $newYear');
     AnalyticsService.instance.logViewHome(year: year);
   }
 
@@ -121,7 +94,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> goToNewPage(BuildContext context) async {
     await EditStoryRoute(id: null, initialYear: year).push(context);
-    await load(debugSource: '$runtimeType#goToNewPage');
+    await reload(debugSource: '$runtimeType#goToNewPage');
 
     // https://developer.android.com/guide/playcore/in-app-review#when-to-request
     // https://developer.apple.com/app-store/ratings-and-reviews/
@@ -149,10 +122,10 @@ class HomeViewModel extends BaseViewModel {
 
   void onAStoryReloaded(StoryDbModel updatedStory) {
     if (updatedStory.type != PathType.docs) {
-      stories = stories?.removeElement(updatedStory);
+      setStories(stories?.removeElement(updatedStory));
       debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onChanged');
     } else {
-      stories = stories?.replaceElement(updatedStory);
+      setStories(stories?.replaceElement(updatedStory));
       debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onChanged');
     }
 

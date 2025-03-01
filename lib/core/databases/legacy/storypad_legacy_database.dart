@@ -6,6 +6,7 @@ import 'package:html_character_entities/html_character_entities.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/databases/legacy/storypad_legacy_story_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -15,9 +16,6 @@ import 'package:storypad/core/types/path_type.dart';
 import 'package:sqflite/sqflite.dart' as sqlite;
 
 class StorypadLegacyDatabase {
-  StorypadLegacyDatabase._();
-  static final instance = StorypadLegacyDatabase._();
-
   sqlite.Database? _database;
   bool get exist => _database != null;
 
@@ -46,16 +44,18 @@ class StorypadLegacyDatabase {
 
   String singleQuote = "▘";
   Future<(bool, String)> transferToObjectBoxIfNotYet() async {
-    String? databasePath = await _getDatabasePath();
-    if (databasePath == null) return (true, 'File is not exist!');
-
-    _database ??= await _openDatabase(databasePath);
-    if (!exist) return (true, 'Could not open database $databasePath');
+    if (!kStoryPad) return (true, 'Only for StoryPad');
 
     String sharePreferenceKey = "LegacyStoryPadImported";
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool? imported = sharedPreferences.getBool(sharePreferenceKey);
     if (imported == true) return (true, 'Already Imported');
+
+    String? databasePath = await _getDatabasePath();
+    if (databasePath == null) return (true, 'File is not exist!');
+
+    _database ??= await _openDatabase(databasePath);
+    if (!exist) return (true, 'Could not open database $databasePath');
 
     List<Map<dynamic, dynamic>>? storyRows = await _database?.query('story');
     List<Map<dynamic, dynamic>>? userInfoRows = await _database?.query('user_info');

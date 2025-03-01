@@ -10,6 +10,20 @@ abstract class BaseRoute {
 
   Widget buildPage(BuildContext context);
 
+  Future<T?> pushReplacement<T extends Object?>(
+    BuildContext context, {
+    bool rootNavigator = false,
+  }) {
+    return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) {
+          return buildPage(context);
+        },
+      ),
+    );
+  }
+
   Future<T?> push<T extends Object?>(
     BuildContext context, {
     bool rootNavigator = false,

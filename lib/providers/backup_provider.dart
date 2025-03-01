@@ -55,7 +55,10 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     for (var database in BaseBackupSource.databases) {
       database.addGlobalListener(_databaseListener);
     }
-    load();
+
+    Future.delayed(Duration(seconds: 1)).then((_) {
+      load();
+    });
   }
 
   Future<void> load() async {
@@ -226,7 +229,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
 
     if (!context.mounted) return;
     AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: backup.fileInfo);
-    await context.read<HomeViewModel>().load(debugSource: '$runtimeType#forceRestore');
+    await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#forceRestore');
 
     if (!context.mounted) return;
     MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));
