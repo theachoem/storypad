@@ -7,6 +7,14 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return StoryListMultiEditWrapper(
+      builder: (BuildContext context) {
+        return buildScaffold(context);
+      },
+    );
+  }
+
+  Widget buildScaffold(BuildContext context) {
     return DefaultTabController(
       length: viewModel.months.length,
       child: _HomeScaffold(
@@ -14,12 +22,44 @@ class _HomeContent extends StatelessWidget {
         endDrawer: _HomeEndDrawer(viewModel),
         appBar: HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
-        floatingActionButton: FloatingActionButton(
-          tooltip: tr("button.new_story"),
-          onPressed: () => viewModel.goToNewPage(context),
-          child: const Icon(Icons.edit),
+        bottomNavigationBar: buildBottomNavigationBar(context),
+        floatingActionButton: StoryListMultiEditWrapper.listen(
+          context: context,
+          builder: (context, state) {
+            return Visibility(
+              visible: !state.editing,
+              child: FloatingActionButton(
+                tooltip: tr("button.new_story"),
+                onPressed: () => viewModel.goToNewPage(context),
+                child: const Icon(Icons.edit),
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget buildBottomNavigationBar(BuildContext context) {
+    return StoryListMultiEditWrapper.listen(
+      context: context,
+      builder: (context, state) {
+        return SpMultiEditBottomNavBar(
+          editing: state.editing,
+          onCancel: () => state.turnOffEditing(),
+          buttons: [
+            OutlinedButton(
+              child: Text("${tr("button.archive")} (${state.selectedStories.length})"),
+              onPressed: () => state.archiveAll(context),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+              child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
+              onPressed: () => state.moveToBinAll(context),
+            ),
+          ],
+        );
+      },
     );
   }
 

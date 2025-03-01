@@ -7,6 +7,7 @@ class _HomeScaffold extends StatelessWidget {
     required this.appBar,
     required this.body,
     required this.floatingActionButton,
+    required this.bottomNavigationBar,
   });
 
   final HomeViewModel viewModel;
@@ -14,12 +15,15 @@ class _HomeScaffold extends StatelessWidget {
   final Widget appBar;
   final Widget body;
   final Widget floatingActionButton;
+  final Widget bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawerEnableOpenDragGesture: true,
       endDrawer: endDrawer,
       floatingActionButton: floatingActionButton,
+      bottomNavigationBar: bottomNavigationBar,
       body: Builder(builder: (context) {
         return Stack(
           children: [

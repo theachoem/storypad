@@ -87,13 +87,10 @@ class _TagsContent extends StatelessWidget {
               leading: Icon(Icons.drag_indicator),
               title: Text(tag.title),
               subtitle: Text(plural("plural.story", storyCount)),
-              trailing: TextButton(
-                child: Text(tr("button.view")),
-                onPressed: () => provider.viewTag(
-                  context: context,
-                  tag: tag,
-                  storyViewOnly: viewModel.params.storyViewOnly,
-                ),
+              onTap: () => provider.viewTag(
+                context: context,
+                tag: tag,
+                storyViewOnly: viewModel.params.storyViewOnly,
               ),
             ),
           ),

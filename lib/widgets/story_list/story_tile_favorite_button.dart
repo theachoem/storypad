@@ -20,9 +20,16 @@ class _StoryTileFavoriteButton extends StatelessWidget {
     return SpAnimatedIcons(
       showFirst: !multiEditState!.editing,
       firstChild: buildFavoriteButton(),
-      secondChild: Checkbox.adaptive(
-        value: multiEditState!.selectedStories.contains(story.id),
-        onChanged: (_) => multiEditState!.toggleSelection(story),
+      secondChild: Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints(
+          minWidth: 50.0,
+          minHeight: 50.0,
+        ),
+        child: Checkbox.adaptive(
+          value: multiEditState!.selectedStories.contains(story.id),
+          onChanged: (_) => multiEditState!.toggleSelection(story),
+        ),
       ),
     );
   }
