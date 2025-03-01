@@ -3,10 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart' show FeelingObject;
-import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart' as solution_a;
+import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart' show SpFloatingPopUpButton;
-
-// import 'package:storypad/widgets/feeling_picker/sp_feeling_picker_single_page.dart' as solution_b;
 
 class SpFeelingButton extends StatelessWidget {
   const SpFeelingButton({
@@ -23,10 +21,11 @@ class SpFeelingButton extends StatelessWidget {
     return SpFloatingPopUpButton(
       estimatedFloatingWidth: 300,
       bottomToTop: false,
-      dyGetter: (dy) => dy + 64,
+      margin: 12.0,
+      dyGetter: (dy) => dy + 48 + 8,
       pathBuilder: PathBuilders.slideDown,
       floatingBuilder: (void Function() callback) {
-        return solution_a.SpFeelingPicker(
+        return SpFeelingPicker(
           feeling: feeling,
           onPicked: (feeling) async {
             await onPicked(feeling);

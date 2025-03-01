@@ -12,6 +12,7 @@ class SpFloatingPopUpButton extends StatefulWidget {
     required this.dyGetter,
     required this.estimatedFloatingWidth,
     this.bottomToTop = true,
+    this.margin = 8,
     this.pathBuilder = PathBuilders.circleOut,
   });
 
@@ -19,6 +20,7 @@ class SpFloatingPopUpButton extends StatefulWidget {
   final Widget Function(VoidCallback open) builder;
   final Widget Function(VoidCallback close) floatingBuilder;
   final double estimatedFloatingWidth;
+  final double margin;
   final bool bottomToTop;
   final PathBuilder pathBuilder;
 
@@ -81,8 +83,8 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
         double bottom = 0;
 
         // make sure it 8 pixel inside view.
-        left = max(left, 8);
-        right = max(right, 8);
+        left = max(left, widget.margin);
+        right = max(right, widget.margin);
 
         if (offset.dx >= constraints.maxWidth / 2) {
           left = null;

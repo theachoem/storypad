@@ -42,7 +42,7 @@ class _HomeScaffold extends StatelessWidget {
           Positioned(
             left: 0,
             right: 0,
-            bottom: MediaQuery.of(context).padding.bottom,
+            bottom: MediaQuery.of(context).padding.bottom + 12.0,
             child: _AppUpdateFloatingButton(),
           ),
         ],
