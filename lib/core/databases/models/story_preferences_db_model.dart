@@ -9,10 +9,12 @@ part 'story_preferences_db_model.g.dart';
 class StoryPreferencesDbModel extends BaseDbModel {
   final String? starIcon;
   final bool? showDayCount;
+  final bool? showTime;
 
   StoryPreferencesDbModel({
     required this.showDayCount,
     required this.starIcon,
+    required this.showTime,
   });
 
   @override
@@ -25,6 +27,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     return StoryPreferencesDbModel(
       showDayCount: false,
       starIcon: null,
+      showTime: false,
     );
   }
 

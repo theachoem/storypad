@@ -208,7 +208,7 @@ class StoryTileActions {
   Future<void> toggleShowDayCount() async {
     final updatedStory = story.copyWithPreferences(
       updatedAt: DateTime.now(),
-      showDayCount: !story.showDayCount,
+      showDayCount: !story.preferredShowDayCount,
     );
 
     await StoryDbModel.db.set(updatedStory);

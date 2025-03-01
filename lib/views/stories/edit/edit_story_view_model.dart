@@ -137,7 +137,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     if (story == null) return;
 
     story = story!.copyWithPreferences(
-      showDayCount: !story!.showDayCount,
+      showDayCount: !story!.preferredShowDayCount,
       updatedAt: DateTime.now(),
     );
 

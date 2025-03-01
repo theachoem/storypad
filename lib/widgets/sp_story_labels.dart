@@ -43,8 +43,9 @@ class SpStoryLabels extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               OutlinedButton.icon(
-                icon: Icon(story.showDayCount ? MdiIcons.pinOff : MdiIcons.pin, color: ColorScheme.of(context).primary),
-                label: Text(story.showDayCount ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
+                icon: Icon(story.preferredShowDayCount ? MdiIcons.pinOff : MdiIcons.pin,
+                    color: ColorScheme.of(context).primary),
+                label: Text(story.preferredShowDayCount ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
                 onPressed: onToggleShowDayCount == null
                     ? null
                     : () async {
@@ -64,7 +65,7 @@ class SpStoryLabels extends StatelessWidget {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = buildTags(tagProvider, context);
 
-    bool shouldShowDayCount = story.showDayCount || !fromStoryTile;
+    bool shouldShowDayCount = story.preferredShowDayCount || !fromStoryTile;
     if (shouldShowDayCount && story.dateDifferentCount.inDays > 0) {
       children.add(buildPin(
         context: context,

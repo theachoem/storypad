@@ -110,8 +110,9 @@ class StoryDbModel extends BaseDbModel {
   }
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
-  bool get showDayCount => preferences?.showDayCount ?? false;
-  String? get starIcon => preferences?.starIcon;
+  bool get preferredShowDayCount => preferences?.showDayCount ?? false;
+  String? get preferredStarIcon => preferences?.starIcon;
+  bool get preferredShowTime => preferences?.showTime ?? false;
 
   bool get viewOnly => unarchivable || inBins;
 
@@ -224,12 +225,14 @@ class StoryDbModel extends BaseDbModel {
     bool? showDayCount,
     String? starIcon,
     DateTime? updatedAt,
+    bool? showTime,
   }) {
     return copyWith(
       updatedAt: updatedAt ?? this.updatedAt,
       preferences: (preferences ?? StoryPreferencesDbModel.create()).copyWith(
         starIcon: starIcon ?? preferences?.starIcon,
         showDayCount: showDayCount ?? preferences?.showDayCount,
+        showTime: showTime ?? preferences?.showTime,
       ),
     );
   }

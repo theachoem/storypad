@@ -99,9 +99,9 @@ class _StoryTileFavoriteButton extends StatelessWidget {
           Widget child;
 
           bool defaultIcon =
-              story.starIcon == null && entry.value.filledIcon == StoryIconObject.fallbackIcon.filledIcon;
+              story.preferredStarIcon == null && entry.value.filledIcon == StoryIconObject.fallbackIcon.filledIcon;
 
-          if (entry.key == story.starIcon || defaultIcon) {
+          if (entry.key == story.preferredStarIcon || defaultIcon) {
             child = IconButton.filledTonal(
               icon: Icon(entry.value.outlineIcon),
               onPressed: () => updateStarIcon?.call(entry.key),
@@ -144,17 +144,17 @@ class _StoryTileFavoriteButton extends StatelessWidget {
         valueListenable: notifier,
         builder: (context, starred, child) {
           return Transform.scale(
-            scale: StoryIconObject.icons[story.starIcon]?.scale ?? StoryIconObject.fallbackIcon.scale,
+            scale: StoryIconObject.icons[story.preferredStarIcon]?.scale ?? StoryIconObject.fallbackIcon.scale,
             child: SpAnimatedIcons(
               duration: animationDuration,
               showFirst: starred,
               firstChild: Icon(
-                StoryIconObject.icons[story.starIcon]?.filledIcon ?? StoryIconObject.fallbackIcon.filledIcon,
+                StoryIconObject.icons[story.preferredStarIcon]?.filledIcon ?? StoryIconObject.fallbackIcon.filledIcon,
                 color: ColorScheme.of(context).error,
                 applyTextScaling: true,
               ),
               secondChild: Icon(
-                StoryIconObject.icons[story.starIcon]?.outlineIcon ?? StoryIconObject.fallbackIcon.outlineIcon,
+                StoryIconObject.icons[story.preferredStarIcon]?.outlineIcon ?? StoryIconObject.fallbackIcon.outlineIcon,
                 color: Theme.of(context).dividerColor,
                 applyTextScaling: true,
               ),
