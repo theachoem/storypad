@@ -46,10 +46,11 @@ class _EditStoryContent extends StatelessWidget {
                         story: viewModel.story!,
                         setFeeling: viewModel.setFeeling,
                         onToggleShowDayCount: viewModel.toggleShowDayCount,
+                        onToggleShowTime: viewModel.toggleShowTime,
                         draftContent: viewModel.draftContent!,
                         readOnly: false,
                         titleController: viewModel.titleController,
-                        onSetDate: viewModel.setDate,
+                        onChangeDate: viewModel.changeDate,
                       ),
                     ),
                 ];

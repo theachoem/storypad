@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/services/date_format_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
 
 class SpStoryLabels extends StatelessWidget {
@@ -12,6 +13,8 @@ class SpStoryLabels extends StatelessWidget {
     super.key,
     required this.story,
     required this.onToggleShowDayCount,
+    required this.onToggleShowTime,
+    required this.onChangeDate,
     this.margin = EdgeInsets.zero,
     this.fromStoryTile = false,
   });
@@ -20,6 +23,8 @@ class SpStoryLabels extends StatelessWidget {
   final EdgeInsets margin;
   final bool fromStoryTile;
   final Future<void> Function()? onToggleShowDayCount;
+  final Future<void> Function()? onToggleShowTime;
+  final Future<void> Function(DateTime dateTime)? onChangeDate;
 
   Future<void> showDayCountSheet(BuildContext context) async {
     await showModalBottomSheet(
@@ -60,6 +65,37 @@ class SpStoryLabels extends StatelessWidget {
     );
   }
 
+  Future<void> showTimePickerDialog(BuildContext context) async {
+    final newTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(story.displayPathDate),
+      builder: (context, child) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            child!,
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
+              icon: Icon(story.preferredShowTime ? MdiIcons.pinOff : MdiIcons.pin,
+                  color: ColorScheme.of(context).primary),
+              label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
+              onPressed: onToggleShowTime == null
+                  ? null
+                  : () async {
+                      onToggleShowTime!();
+                      if (context.mounted) Navigator.maybePop(context);
+                    },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newTime != null) {
+      await onChangeDate?.call(story.copyWith(hour: newTime.hour, minute: newTime.minute).displayPathDate);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
@@ -72,6 +108,17 @@ class SpStoryLabels extends StatelessWidget {
         title: "📌 ${plural("plural.day_ago", story.dateDifferentCount.inDays)}",
         onTap: () => showDayCountSheet(context),
       ));
+    }
+
+    bool showTime = story.preferredShowTime || !fromStoryTile;
+    if (showTime) {
+      children.add(
+        buildPin(
+          context: context,
+          title: DateFormatService.jm(story.displayPathDate, context.locale),
+          onTap: () => showTimePickerDialog(context),
+        ),
+      );
     }
 
     if (children.isEmpty) return SizedBox.shrink();
