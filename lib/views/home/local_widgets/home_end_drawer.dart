@@ -55,6 +55,7 @@ class _HomeEndDrawer extends StatelessWidget {
           const Divider(),
           buildThemeTile(context),
           LanguageTile(),
+          buildBiometricsTile(),
           if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
             const Divider(),
             CommunityTile(),
