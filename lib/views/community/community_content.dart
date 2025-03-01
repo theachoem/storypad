@@ -13,7 +13,7 @@ class _CommunityContent extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          SizedBox(height: 8.0),
+          SizedBox(height: 12.0),
           CommunityCard(),
           SizedBox(height: 12.0),
           ListTile(

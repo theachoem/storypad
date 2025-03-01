@@ -24,26 +24,29 @@ class _HomeScaffold extends StatelessWidget {
       endDrawer: endDrawer,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
-      body: Builder(builder: (context) {
-        return Stack(
-          children: [
-            const StoryListTimelineVerticleDivider(),
-            RefreshIndicator.adaptive(
-              edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
-              onRefresh: () => viewModel.refresh(context),
-              child: CustomScrollView(
-                controller: viewModel.scrollInfo.scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  appBar,
-                  body,
-                ],
-              ),
+      body: Stack(
+        children: [
+          const StoryListTimelineVerticleDivider(),
+          RefreshIndicator.adaptive(
+            edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
+            onRefresh: () => viewModel.refresh(context),
+            child: CustomScrollView(
+              controller: viewModel.scrollInfo.scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                appBar,
+                body,
+              ],
             ),
-            const _AppUpdateFloatingButton(),
-          ],
-        );
-      }),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).padding.bottom,
+            child: _AppUpdateFloatingButton(),
+          ),
+        ],
+      ),
     );
   }
 }
