@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -51,7 +50,7 @@ class StoryTile extends StatelessWidget {
 
   List<SpPopMenuItem> buildPopUpMenus(BuildContext context) {
     return [
-      if (story.inArchives || story.inBins && onTap != null)
+      if (story.inArchives && story.inBins && onTap != null)
         SpPopMenuItem(
           title: tr('button.open'),
           leadingIconData: Icons.library_books,
@@ -100,17 +99,13 @@ class StoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (story.inArchives || story.inBins) {
-      return StoryListMultiEditWrapper.tryListen(
-        context: context,
-        builder: (context, multiEditState) {
-          if (multiEditState == null) return buildStoryTile(context);
-          return buildStoryTile(context, multiEditState);
-        },
-      );
-    }
-
-    return buildStoryTile(context);
+    return StoryListMultiEditWrapper.tryListen(
+      context: context,
+      builder: (context, multiEditState) {
+        if (multiEditState == null) return buildStoryTile(context);
+        return buildStoryTile(context, multiEditState);
+      },
+    );
   }
 
   Widget buildStoryTile(
@@ -132,92 +127,68 @@ class StoryTile extends StatelessWidget {
           style: ButtonStyle(iconColor: WidgetStatePropertyAll(ColorScheme.of(context).onPrimary)),
         ),
       ),
-      child: Slidable(
-        enabled: !story.inArchives && !story.inBins,
-        closeOnScroll: true,
-        key: ValueKey(story.id),
-        endActionPane: ActionPane(
-          motion: const DrawerMotion(),
-          children: List.generate(menus.length, (index) {
-            final menu = menus[index];
+      child: SpPopupMenuButton(
+        smartDx: true,
+        dyGetter: (double dy) => dy + kToolbarHeight,
+        items: (BuildContext context) => menus,
+        builder: (openPopUpMenu) {
+          void Function()? onTap;
+          void Function()? onLongPress;
 
-            return CustomSlidableAction(
-              backgroundColor: index.isEven
-                  ? ColorScheme.of(context).readOnly.surface1!
-                  : ColorScheme.of(context).readOnly.surface3!,
-              foregroundColor: menu.titleStyle?.color,
-              onPressed: null,
-              padding: EdgeInsets.zero,
-              child: Tooltip(
-                message: menu.title,
-                child: IconButton(
-                  onPressed: () => menu.onPressed?.call(),
-                  icon: Icon(menu.leadingIconData, color: menu.titleStyle?.color),
-                ),
-              ),
-            );
-          }),
-        ),
-        child: SpPopupMenuButton(
-          smartDx: true,
-          dyGetter: (double dy) => dy + kToolbarHeight,
-          items: (BuildContext context) => menus,
-          builder: (openPopUpMenu) {
-            void Function()? onTap;
-            void Function()? onLongPress;
-
-            if (multiEditState?.editing == true) {
-              onTap = () => multiEditState!.toggleSelection(story);
+          if (multiEditState != null) {
+            if (multiEditState.editing) {
+              onTap = () => multiEditState.toggleSelection(story);
               onLongPress = null;
             } else if (story.inArchives || story.inBins) {
               onTap = () => openPopUpMenu.call();
-              onLongPress = multiEditState != null && !multiEditState.editing
-                  ? () => multiEditState.turnOnEditing(initialId: story.id)
-                  : null;
+              onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
             } else {
               onTap = this.onTap;
-              onLongPress = () => openPopUpMenu.call();
+              onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
             }
+          } else {
+            onTap = this.onTap;
+            onLongPress = () => openPopUpMenu.call();
+          }
 
-            return InkWell(
-              onTap: onTap,
-              onLongPress: onLongPress,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 16.0,
-                      children: [
-                        _StoryTileMonogram(
-                          showMonogram: showMonogram,
-                          monogramSize: monogramSize,
-                          story: story,
-                        ),
-                        _StoryTileContents(
-                          story: story,
-                          viewOnly: viewOnly,
-                          listContext: listContext,
-                          hasTitle: hasTitle,
-                          content: content,
-                          hasBody: hasBody,
-                        ),
-                      ],
-                    ),
-                    _StoryTileStarredButton(
-                      story: story,
-                      viewOnly: viewOnly,
-                      listContext: listContext,
-                      multiEditState: multiEditState,
-                    )
-                  ],
-                ),
+          return InkWell(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 16.0,
+                    children: [
+                      _StoryTileMonogram(
+                        showMonogram: showMonogram,
+                        monogramSize: monogramSize,
+                        story: story,
+                      ),
+                      _StoryTileContents(
+                        story: story,
+                        viewOnly: viewOnly,
+                        listContext: listContext,
+                        hasTitle: hasTitle,
+                        content: content,
+                        hasBody: hasBody,
+                      ),
+                    ],
+                  ),
+                  _StoryTileStarredButton(
+                    story: story,
+                    viewOnly: viewOnly,
+                    listContext: listContext,
+                    multiEditState: multiEditState,
+                  )
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

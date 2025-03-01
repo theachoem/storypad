@@ -55,39 +55,39 @@ class _ArchivesContent extends StatelessWidget {
   }
 
   Widget buildTitle(BuildContext context) {
-    return SpPopupMenuButton(
-      dyGetter: (dy) => dy + 48,
-      dxGetter: (dx) => dx - 48.0,
-      items: (context) {
-        return [PathType.archives, PathType.bins].map((type) {
-          return SpPopMenuItem(
-            selected: type == viewModel.type,
-            title: type.localized,
-            onPressed: () {
-              context.read<StoryListMultiEditWrapperState>().turnOffEditing();
-              viewModel.setType(type);
-            },
-          );
-        }).toList();
-      },
-      builder: (open) {
-        return SpTapEffect(
-          onTap: open,
-          child: RichText(
-            textScaler: MediaQuery.textScalerOf(context),
-            text: TextSpan(
-              text: viewModel.type.localized,
-              style: TextTheme.of(context).titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
-                  ),
-              children: const [
-                WidgetSpan(child: Icon(Icons.arrow_drop_down), alignment: PlaceholderAlignment.middle),
-              ],
+    Widget buildType({
+      required PathType type,
+    }) {
+      return Text(
+        type.localized,
+        style: TextTheme.of(context).titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
             ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => viewModel.setType(viewModel.type.isArchives ? PathType.bins : PathType.archives),
+      child: Wrap(
+        spacing: 4.0,
+        runSpacing: 4.0,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        runAlignment: WrapAlignment.center,
+        alignment: WrapAlignment.center,
+        children: [
+          SpCrossFade(
+            showFirst: viewModel.type == PathType.bins,
+            firstChild: buildType(type: PathType.bins),
+            secondChild: buildType(type: PathType.archives),
           ),
-        );
-      },
+          Icon(
+            Icons.swap_horiz,
+            size: 24.0,
+            color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
+          )
+        ],
+      ),
     );
   }
 
@@ -95,46 +95,22 @@ class _ArchivesContent extends StatelessWidget {
     return StoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
-        return Visibility(
-          visible: state.editing,
-          child: SpFadeIn.fromBottom(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Divider(height: 1),
-                SizedBox(
-                  width: double.infinity,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                        .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-                    scrollDirection: Axis.horizontal,
-                    reverse: true,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      spacing: 8.0,
-                      children: [
-                        FilledButton.tonal(
-                          child: Text(tr("button.cancel")),
-                          onPressed: () => state.turnOffEditing(),
-                        ),
-                        FilledButton(
-                          style: viewModel.type.isBins
-                              ? FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error)
-                              : null,
-                          child: Text(
-                            "${viewModel.type.isBins ? tr("button.permanent_delete") : tr("button.move_to_bin")} (${state.selectedStories.length})",
-                          ),
-                          onPressed: () => viewModel.type.isBins
-                              ? viewModel.permanantDeleteAll(context)
-                              : viewModel.moveToBinAll(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return SpMultiEditBottomNavBar(
+          editing: state.editing,
+          onCancel: () => state.turnOffEditing(),
+          buttons: [
+            if (viewModel.type.isBins)
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+                child: Text("${tr("button.permanent_delete")} (${state.selectedStories.length})"),
+                onPressed: () => state.permanantDeleteAll(context),
+              ),
+            if (viewModel.type.isArchives)
+              FilledButton(
+                child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
+                onPressed: () => state.moveToBinAll(context),
+              ),
+          ],
         );
       },
     );
@@ -153,13 +129,13 @@ class _ArchivesContent extends StatelessWidget {
                   SpPopMenuItem(
                     title: tr("button.put_back_all"),
                     leadingIconData: Icons.settings_backup_restore,
-                    onPressed: () => viewModel.putBackAll(context),
+                    onPressed: () => state.putBackAll(context),
                   ),
                   if (viewModel.type.isArchives)
                     SpPopMenuItem(
                       title: tr("button.move_to_bin_all"),
                       leadingIconData: Icons.delete,
-                      onPressed: () => viewModel.moveToBinAll(context),
+                      onPressed: () => state.moveToBinAll(context),
                     ),
                   // for bin, "delete all" already show in bottom nav.
                   if (viewModel.type.isArchives)
@@ -167,7 +143,7 @@ class _ArchivesContent extends StatelessWidget {
                       title: tr("button.permanent_delete_all"),
                       leadingIconData: Icons.delete_forever,
                       titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                      onPressed: () => viewModel.permanantDeleteAll(context),
+                      onPressed: () => state.permanantDeleteAll(context),
                     ),
                 ];
               },

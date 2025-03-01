@@ -22,11 +22,7 @@ class EditTagRoute extends BaseRoute {
   bool get preferredNestedRoute => true;
 
   @override
-  Map<String, String?> get analyticsParameters {
-    return {
-      'flow_type': tag == null ? 'new' : 'edit',
-    };
-  }
+  String get className => tag == null ? 'NewTagRoute' : 'EditTagRoute';
 
   @override
   Widget buildPage(BuildContext context) => EditTagView(params: this);

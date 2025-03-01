@@ -189,13 +189,18 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
-  Future<StoryDbModel?> archive() async {
+  Future<StoryDbModel?> archive({
+    bool runCallbacks = true,
+  }) async {
     if (!archivable) return null;
 
-    return db.set(copyWith(
-      type: PathType.archives,
-      updatedAt: DateTime.now(),
-    ));
+    return db.set(
+      runCallbacks: runCallbacks,
+      copyWith(
+        type: PathType.archives,
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<void> delete() async {

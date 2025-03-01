@@ -11,30 +11,31 @@ class _StoryChangesContent extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            [
-              tr("page.changes_history.title"),
-              if (viewModel.originalStory?.allChanges?.length != null)
-                "(${viewModel.originalStory?.allChanges?.length})",
-            ].join(" "),
-          ),
-          actions: [
-            Visibility(
-              visible: !viewModel.editing,
-              child: SpFadeIn.fromBottom(
-                child: IconButton(
-                  tooltip: tr("button.edit"),
-                  icon: Icon(Icons.edit),
-                  onPressed: () => viewModel.turnOnEditing(),
-                ),
-              ),
-            ),
-          ],
-        ),
+        appBar: buildAppBar(),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text([
+        tr("page.changes_history.title"),
+        if (viewModel.originalStory?.allChanges?.length != null) "(${viewModel.originalStory?.allChanges?.length})",
+      ].join(" ")),
+      actions: [
+        Visibility(
+          visible: !viewModel.editing,
+          child: SpFadeIn.fromBottom(
+            child: IconButton(
+              tooltip: tr("button.edit"),
+              icon: Icon(Icons.edit),
+              onPressed: () => viewModel.turnOnEditing(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -154,40 +155,16 @@ class _StoryChangesContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigationBar(BuildContext context) {
-    return Visibility(
-      visible: viewModel.editing,
-      child: SpFadeIn.fromBottom(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Divider(height: 1),
-            SizedBox(
-              width: double.infinity,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                    .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  spacing: 8.0,
-                  children: [
-                    FilledButton.tonal(
-                      child: Text(tr("button.cancel")),
-                      onPressed: () => viewModel.turnOffEditing(),
-                    ),
-                    FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
-                      child: Text("${tr("button.delete")} (${viewModel.toBeRemovedCount})"),
-                      onPressed: () => viewModel.remove(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+    return SpMultiEditBottomNavBar(
+      editing: viewModel.editing,
+      onCancel: () => viewModel.turnOffEditing(),
+      buttons: [
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+          child: Text("${tr("button.delete")} (${viewModel.toBeRemovedCount})"),
+          onPressed: () => viewModel.remove(context),
         ),
-      ),
+      ],
     );
   }
 }
