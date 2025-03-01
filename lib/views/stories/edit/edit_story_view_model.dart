@@ -119,8 +119,16 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     );
   }
 
-  Future<void> setDate(DateTime date) async {
-    story = story!.copyWith(day: date.day, month: date.month, year: date.year);
+  Future<void> changeDate(DateTime date) async {
+    story = story!.copyWith(
+      year: date.year,
+      month: date.month,
+      day: date.day,
+      hour: date.hour,
+      minute: date.minute,
+      second: date.second,
+    );
+
     notifyListeners();
 
     if (await hasDataWritten) {
@@ -128,7 +136,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
       lastSavedAtNotifier.value = story?.updatedAt;
     }
 
-    AnalyticsService.instance.logSetStoryFeeling(
+    AnalyticsService.instance.logChangeStoryDate(
       story: story!,
     );
   }
@@ -137,7 +145,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     if (story == null) return;
 
     story = story!.copyWithPreferences(
-      showDayCount: !story!.showDayCount,
+      showDayCount: !story!.preferredShowDayCount,
       updatedAt: DateTime.now(),
     );
 
@@ -149,6 +157,26 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     }
 
     AnalyticsService.instance.logToggleShowDayCount(
+      story: story!,
+    );
+  }
+
+  Future<void> toggleShowTime() async {
+    if (story == null) return;
+
+    story = story!.copyWithPreferences(
+      showTime: !story!.preferredShowTime,
+      updatedAt: DateTime.now(),
+    );
+
+    notifyListeners();
+
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
+    AnalyticsService.instance.logToggleShowTime(
       story: story!,
     );
   }

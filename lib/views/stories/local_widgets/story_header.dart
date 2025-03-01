@@ -17,7 +17,8 @@ class StoryHeader extends StatelessWidget {
     required this.draftContent,
     required this.readOnly,
     required this.onToggleShowDayCount,
-    required this.onSetDate,
+    required this.onToggleShowTime,
+    required this.onChangeDate,
     this.titleController,
   });
 
@@ -27,7 +28,8 @@ class StoryHeader extends StatelessWidget {
   final TextEditingController? titleController;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
-  final Future<void> Function(DateTime)? onSetDate;
+  final Future<void> Function() onToggleShowTime;
+  final Future<void> Function(DateTime) onChangeDate;
   final bool readOnly;
 
   @override
@@ -44,7 +46,7 @@ class StoryHeader extends StatelessWidget {
                 child: _DateSelector(
                   story: story,
                   readOnly: readOnly,
-                  onSetDate: onSetDate,
+                  onChangeDate: onChangeDate,
                 ),
               ),
               SpFeelingButton(
@@ -55,9 +57,11 @@ class StoryHeader extends StatelessWidget {
           ),
         ),
         SpStoryLabels(
-          onToggleShowDayCount: onToggleShowDayCount,
           story: story,
           margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          onToggleShowDayCount: onToggleShowDayCount,
+          onToggleShowTime: onToggleShowTime,
+          onChangeDate: onChangeDate,
         ),
         if (draftContent.title?.trim().isNotEmpty == true || !readOnly) ...[
           _TitleField(
@@ -77,12 +81,12 @@ class _DateSelector extends StatelessWidget {
   const _DateSelector({
     required this.story,
     required this.readOnly,
-    required this.onSetDate,
+    required this.onChangeDate,
   });
 
   final StoryDbModel story;
   final bool readOnly;
-  final Future<void> Function(DateTime)? onSetDate;
+  final Future<void> Function(DateTime)? onChangeDate;
 
   Future<void> changeDate(BuildContext context) async {
     DateTime? date = await showDatePicker(
@@ -93,7 +97,7 @@ class _DateSelector extends StatelessWidget {
     );
 
     if (date != null) {
-      onSetDate?.call(date);
+      onChangeDate?.call(date);
     }
   }
 
@@ -101,7 +105,7 @@ class _DateSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       InkWell(
-        onTap: onSetDate == null ? null : () => changeDate(context),
+        onTap: onChangeDate == null ? null : () => changeDate(context),
         borderRadius: BorderRadius.circular(4.0),
         child: Row(
           children: [

@@ -310,6 +310,18 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logToggleShowTime({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logToggleShowTime', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('toggle_show_time'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logPutStoryBack({
     required StoryDbModel story,
   }) {
@@ -433,6 +445,7 @@ class AnalyticsService extends BaseAnalyticsService {
       'total_changes': story.rawChanges?.length.toString(),
       'preferred_star_icon': story.preferences?.starIcon,
       'preferred_show_day_count': story.preferences?.showDayCount?.toString(),
+      'preferred_show_time': story.preferences?.showTime?.toString(),
     });
   }
 

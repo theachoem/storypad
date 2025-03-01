@@ -208,12 +208,42 @@ class StoryTileActions {
   Future<void> toggleShowDayCount() async {
     final updatedStory = story.copyWithPreferences(
       updatedAt: DateTime.now(),
-      showDayCount: !story.showDayCount,
+      showDayCount: !story.preferredShowDayCount,
     );
 
     await StoryDbModel.db.set(updatedStory);
 
     AnalyticsService.instance.logToggleShowDayCount(
+      story: updatedStory,
+    );
+  }
+
+  Future<void> toggleShowTime() async {
+    final updatedStory = story.copyWithPreferences(
+      updatedAt: DateTime.now(),
+      showTime: !story.preferredShowTime,
+    );
+
+    await StoryDbModel.db.set(updatedStory);
+
+    AnalyticsService.instance.logToggleShowTime(
+      story: updatedStory,
+    );
+  }
+
+  Future<void> changeDate(DateTime newDateTime) async {
+    final updatedStory = story.copyWith(
+      year: newDateTime.year,
+      month: newDateTime.month,
+      day: newDateTime.day,
+      hour: newDateTime.hour,
+      minute: newDateTime.minute,
+      second: newDateTime.second,
+    );
+
+    await StoryDbModel.db.set(updatedStory);
+
+    AnalyticsService.instance.logChangeStoryDate(
       story: updatedStory,
     );
   }

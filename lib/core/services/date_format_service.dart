@@ -34,6 +34,10 @@ class DateFormatService {
     return DateFormat.yMEd(locale.toLanguageTag()).format(date);
   }
 
+  static String jm(DateTime date, Locale locale) {
+    return DateFormat.jm(locale.toLanguageTag()).format(date);
+  }
+
   static String jms(DateTime date, Locale locale) {
     return DateFormat.jms(locale.toLanguageTag()).format(date);
   }

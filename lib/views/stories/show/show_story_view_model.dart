@@ -76,19 +76,52 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
     );
   }
 
+  Future<void> changeDate(DateTime date) async {
+    story = story!.copyWith(
+      year: date.year,
+      month: date.month,
+      day: date.day,
+      hour: date.hour,
+      minute: date.minute,
+      second: date.second,
+    );
+
+    notifyListeners();
+    await StoryDbModel.db.set(story!);
+
+    AnalyticsService.instance.logChangeStoryDate(
+      story: story!,
+    );
+  }
+
   Future<void> toggleShowDayCount() async {
     if (story == null) return;
 
     story = story!.copyWithPreferences(
-      showDayCount: !story!.showDayCount,
+      showDayCount: !story!.preferredShowDayCount,
       updatedAt: DateTime.now(),
     );
 
     notifyListeners();
-
     await StoryDbModel.db.set(story!);
 
     AnalyticsService.instance.logToggleShowDayCount(
+      story: story!,
+    );
+  }
+
+  Future<void> toggleShowTime() async {
+    if (story == null) return;
+
+    story = story!.copyWithPreferences(
+      showTime: !story!.preferredShowTime,
+      updatedAt: DateTime.now(),
+    );
+
+    notifyListeners();
+    await StoryDbModel.db.set(story!);
+
+    AnalyticsService.instance.logToggleShowTime(
       story: story!,
     );
   }

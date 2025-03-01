@@ -11,6 +11,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel starIcon(String? starIcon);
 
+  StoryPreferencesDbModel showTime(bool? showTime);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -20,6 +22,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
   StoryPreferencesDbModel call({
     bool? showDayCount,
     String? starIcon,
+    bool? showTime,
   });
 }
 
@@ -39,6 +42,9 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(starIcon: starIcon);
 
   @override
+  StoryPreferencesDbModel showTime(bool? showTime) => this(showTime: showTime);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -49,6 +55,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
   StoryPreferencesDbModel call({
     Object? showDayCount = const $CopyWithPlaceholder(),
     Object? starIcon = const $CopyWithPlaceholder(),
+    Object? showTime = const $CopyWithPlaceholder(),
   }) {
     return StoryPreferencesDbModel(
       showDayCount: showDayCount == const $CopyWithPlaceholder()
@@ -59,6 +66,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.starIcon
           // ignore: cast_nullable_to_non_nullable
           : starIcon as String?,
+      showTime: showTime == const $CopyWithPlaceholder()
+          ? _value.showTime
+          // ignore: cast_nullable_to_non_nullable
+          : showTime as bool?,
     );
   }
 }
@@ -79,6 +90,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
     StoryPreferencesDbModel(
       showDayCount: json['show_day_count'] as bool?,
       starIcon: json['star_icon'] as String?,
+      showTime: json['show_time'] as bool?,
     );
 
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
@@ -86,4 +98,5 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
     <String, dynamic>{
       'star_icon': instance.starIcon,
       'show_day_count': instance.showDayCount,
+      'show_time': instance.showTime,
     };
