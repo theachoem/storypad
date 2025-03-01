@@ -18,28 +18,27 @@ class FeelingObject {
     required this.image64,
   });
 
-  static Map<FeelingGroup, List<String>> feelignGroups = {
+  static const Map<FeelingGroup, List<String>> feelignGroups = {
     FeelingGroup.joy: [
       'positive_feelings',
       'smiling_halo',
-      'slightly_smiling',
-      'beaming',
       'cheerfulness',
+      'beaming',
       'smiling_broadly',
       'laughter',
       'really_funny',
-      'something_cool',
-      'excited',
-      'lovely',
+      'winking',
       'in_love',
+      'lovely',
       'blowing',
       'cuteness',
-      'winking',
       'annoy_someone',
-      'getting_rich',
+      'savoring_food',
       'crazy',
       'zany',
-      'savoring_food',
+      'something_cool',
+      'excited',
+      'getting_rich',
     ],
     FeelingGroup.sadness: [
       'crying',
@@ -61,12 +60,14 @@ class FeelingObject {
     ],
     FeelingGroup.neutral: [
       'neutral',
+      'slightly_smiling',
       'confused',
       'expressionless',
       'head_bandage',
       'medical_mask',
       'speechlessness',
       'flushed',
+      'rolling_eyes',
     ],
     FeelingGroup.other: [
       'nerd',
@@ -79,11 +80,10 @@ class FeelingObject {
       'drooling',
       'vomiting',
       'nauseated',
-      'rolling_eyes',
     ]
   };
 
-  static Map<String, FeelingObject> feelingsByKey = {
+  static final Map<String, FeelingObject> feelingsByKey = {
     "beaming": FeelingObject(
       value: "beaming",
       translation: (context) => tr("general.feeling.beaming", context: context),
@@ -217,12 +217,12 @@ class FeelingObject {
     "grinning_sweat": FeelingObject(
       value: "grinning_sweat",
       translation: (context) => tr("general.feeling.grinning_sweat", context: context),
-      image64: Assets.emoji64.grinningFaceWithSmilingEyes64x641395548,
+      image64: Assets.emoji64.grinningFaceWithSweat64x641395555,
     ),
     "smiling_broadly": FeelingObject(
       value: "smiling_broadly",
       translation: (context) => tr("general.feeling.smiling_broadly", context: context),
-      image64: Assets.emoji64.grinningFaceWithSweat64x641395555,
+      image64: Assets.emoji64.grinningFaceWithSmilingEyes64x641395548,
     ),
     "laughter": FeelingObject(
       value: "laughter",
