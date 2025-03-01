@@ -7,7 +7,7 @@ class _AppUpdateFloatingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InAppUpdateProvider>(builder: (context, provider, child) {
       return Visibility(
-        visible: true,
+        visible: provider.displayStatus != null,
         child: SpFadeIn.fromBottom(
           child: Center(
             child: SpLoopAnimationBuilder(

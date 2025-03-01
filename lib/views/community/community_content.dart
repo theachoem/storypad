@@ -9,11 +9,12 @@ class _CommunityContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: Text(tr('page.community.title')),
       ),
       body: ListView(
         children: [
-          SizedBox(height: 12.0),
+          SizedBox(height: 8.0),
           CommunityCard(),
           SizedBox(height: 12.0),
           ListTile(
