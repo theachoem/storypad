@@ -68,7 +68,7 @@ class _HomeContent extends StatelessWidget {
       key: viewModel.scrollInfo.storyKeys[index],
       story: story,
       onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
-      onDeleted: () => viewModel.load(debugSource: '$runtimeType#onDeleted ${story.id}'),
+      onDeleted: () => viewModel.reload(debugSource: '$runtimeType#onDeleted ${story.id}'),
       builder: (_) {
         return StoryTileListItem(
           showYear: false,

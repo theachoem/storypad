@@ -1,10 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/views/home/local_widgets/community_tile.dart' show CommunityTile;
 import 'package:storypad/views/home/local_widgets/language_tile.dart';
+import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -50,13 +51,18 @@ part 'local_widgets/home_empty.dart';
 part 'local_widgets/app_update_floating_button.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  const HomeView({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(
-      create: (context) => HomeViewModel(context),
-      builder: (contexst, viewModel, child) {
+      create: (context) => HomeViewModel(
+        initialData: HomeInitializer.getAndClear(),
+        context: context,
+      ),
+      builder: (context, viewModel, child) {
         return _HomeContent(viewModel);
       },
     );

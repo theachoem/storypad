@@ -219,6 +219,6 @@ class StoryTileActions {
   }
 
   Future<void> reloadHome(String debugSource) async {
-    await listContext.read<HomeViewModel>().load(debugSource: debugSource);
+    await listContext.read<HomeViewModel>().reload(debugSource: debugSource);
   }
 }

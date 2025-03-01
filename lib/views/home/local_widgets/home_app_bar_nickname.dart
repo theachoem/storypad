@@ -68,20 +68,13 @@ class _HomeAppBarNicknameState extends State<_HomeAppBarNickname> with SingleTic
                   ..scale(5.0)
                   ..translate(-24.0, 0.0),
                 transformAlignment: Alignment.center,
-                child: LottieBuilder.asset(
-                  'assets/lotties/sparkle.lottie',
-                  decoder: customDecoder,
+                child: SpDotLottieBuilder(
+                  asset: 'assets/lotties/sparkle.lottie',
                 ),
               ),
             ),
           )
       ],
     );
-  }
-
-  Future<LottieComposition?> customDecoder(List<int> bytes) {
-    return LottieComposition.decodeZip(bytes, filePicker: (files) {
-      return files.where((f) => f.name.startsWith('animations/') && f.name.endsWith('.json')).firstOrNull;
-    });
   }
 }

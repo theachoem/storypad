@@ -90,7 +90,7 @@ class ArchivesViewModel extends BaseViewModel {
     }
 
     if (context.mounted) {
-      await context.read<HomeViewModel>().load(debugSource: '$runtimeType#putBackAll');
+      await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
     }
   }
 
