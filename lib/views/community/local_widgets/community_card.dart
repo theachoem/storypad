@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/gen/assets.gen.dart';
@@ -12,20 +11,10 @@ class CommunityCard extends StatelessWidget {
     super.key,
   });
 
-  Future<void> forceOpenApp(Uri uri) async {
-    bool opened = await UrlOpenerService.launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
-    if (!opened) {
-      await AppStoreOpenerService.call(
-        packageName: 'com.reddit.frontpage',
-        appStoreId: '1064216828',
-      );
-    }
-  }
-
-  Future<void> openCustomTab(BuildContext context, Uri uri) async {
+  Future<void> openCustomTab(BuildContext context) async {
     await UrlOpenerService.openInCustomTab(
       context,
-      uri.toString(),
+      RemoteConfigService.communityUrl.get(),
       prefersDeepLink: true,
     );
   }
@@ -34,15 +23,7 @@ class CommunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SpTapEffect(
       effects: [SpTapEffectType.scaleDown],
-      onTap: () async {
-        final uri = Uri.parse(RemoteConfigService.communityUrl.get());
-
-        if (uri.queryParameters['reddit_approved'] == 'yes') {
-          await openCustomTab(context, uri);
-        } else {
-          await forceOpenApp(uri);
-        }
-      },
+      onTap: () => openCustomTab(context),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.symmetric(horizontal: 16.0),
