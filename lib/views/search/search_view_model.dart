@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'search_view.dart';
 

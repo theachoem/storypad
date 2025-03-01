@@ -40,6 +40,15 @@ class EditStoryRoute extends BaseRoute {
   }) : assert(initialYear == null || id == null);
 
   @override
+  String get className {
+    if (id == null) {
+      return "NewStoryRoute";
+    } else {
+      return "EditStoryRoute";
+    }
+  }
+
+  @override
   Map<String, String?> get analyticsParameters {
     return {
       'flow_type': id == null ? 'new' : 'edit',

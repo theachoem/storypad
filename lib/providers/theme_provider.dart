@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/theme_object.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
 
 class ThemeProvider extends ChangeNotifier {
@@ -15,7 +15,7 @@ class ThemeProvider extends ChangeNotifier {
     storage.writeObject(_theme);
     notifyListeners();
 
-    AnalyticsService.instance.logSetColorSeedTheme(
+    AnalyticsUserProperyService.instance.logSetColorSeedTheme(
       newColor: _theme.colorSeed,
     );
   }
@@ -26,7 +26,7 @@ class ThemeProvider extends ChangeNotifier {
       storage.writeObject(_theme);
       notifyListeners();
 
-      AnalyticsService.instance.logSetThemeMode(
+      AnalyticsUserProperyService.instance.logSetThemeMode(
         newThemeMode: value,
       );
     }
@@ -37,7 +37,7 @@ class ThemeProvider extends ChangeNotifier {
     storage.writeObject(_theme);
     notifyListeners();
 
-    AnalyticsService.instance.logSetFontWeight(
+    AnalyticsUserProperyService.instance.logSetFontWeight(
       newFontWeight: fontWeight,
     );
   }
@@ -47,7 +47,7 @@ class ThemeProvider extends ChangeNotifier {
     storage.writeObject(_theme);
     notifyListeners();
 
-    AnalyticsService.instance.logSetFontFamily(
+    AnalyticsUserProperyService.instance.logSetFontFamily(
       newFontFamily: fontFamily,
     );
   }

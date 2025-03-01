@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:path/path.dart' as path;
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/custom_embed/sp_image.dart';
 
 class ImagePickerService {
@@ -86,6 +87,9 @@ class _PhotoSheet extends StatelessWidget {
       );
 
       final savedAsset = await asset.save();
+
+      AnalyticsService.instance.logInsertNewPhoto();
+
       if (savedAsset != null && context.mounted) {
         Navigator.maybePop(context, savedAsset);
       }

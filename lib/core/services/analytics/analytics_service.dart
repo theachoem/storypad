@@ -1,32 +1,23 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/services/analytics/base_analytics_service.dart';
 import 'package:storypad/routes/base_route.dart';
 
-// Service for managing analytics events without logging user-identifiable information.
-class AnalyticsService {
+// Logging analytics events without user-identifiable information.
+class AnalyticsService extends BaseAnalyticsService {
   AnalyticsService._();
-
-  static final AnalyticsService instance = AnalyticsService._();
-
-  void debug(String logMethod, [Map<String, Object>? printData]) {
-    if (printData != null) {
-      debugPrint('🎯 $runtimeType#$logMethod -> $printData');
-    } else {
-      debugPrint('🎯 $runtimeType#$logMethod');
-    }
-  }
+  static AnalyticsService get instance => AnalyticsService._();
 
   Future<void> logViewRoute({
     required BaseRoute routeObject,
     Map<String, String?>? analyticsParameters,
   }) {
-    String screenName = routeObject.runtimeType.toString().replaceAll("Route", "");
-    String screenClass = routeObject.runtimeType.toString().replaceAll("Route", "View");
+    String screenName = routeObject.analyticScreenName;
+    String screenClass = routeObject.analyticScreenClass;
     Map<String, Object>? parameters = sanitizeParameters(analyticsParameters ?? {});
 
     debug(
@@ -113,58 +104,6 @@ class AnalyticsService {
     );
   }
 
-  Future<void> logSetLocale({
-    required Locale newLocale,
-  }) {
-    final parameters = sanitizeParameters({'new_locale': newLocale.toLanguageTag()});
-    debug('logSetLocale', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_locale'),
-      parameters: parameters,
-    );
-  }
-
-  Future<void> logSetColorSeedTheme({
-    Color? newColor,
-  }) {
-    // TODO: fix deprecated_member_use
-    // ignore: deprecated_member_use
-    final parameters = sanitizeParameters({'new_color': newColor?.value.toString()});
-    debug('logSetColorSeedTheme', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_color_seed'),
-      parameters: parameters,
-    );
-  }
-
-  Future<void> logSetThemeMode({
-    required ThemeMode newThemeMode,
-  }) {
-    final parameters = sanitizeParameters({'new_theme_mode': newThemeMode.name});
-    debug('logSetThemeMode', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_theme_mode'),
-      parameters: parameters,
-    );
-  }
-
-  Future<void> logSetFontWeight({
-    required FontWeight newFontWeight,
-  }) {
-    final parameters = sanitizeParameters({'new_font_weight': newFontWeight.value.toString()});
-    debug('logSetFontWeight', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_font_weight'),
-      parameters: sanitizeParameters({
-        'new_font_weight': newFontWeight.value.toString(),
-      }),
-    );
-  }
-
   Future<void> logSignOut() {
     debug('logSignOut');
     return FirebaseAnalytics.instance.logEvent(
@@ -176,30 +115,6 @@ class AnalyticsService {
     debug('logSignInWithGoogle');
     return FirebaseAnalytics.instance.logLogin(
       loginMethod: 'google',
-    );
-  }
-
-  Future<void> logSetFontFamily({
-    required String newFontFamily,
-  }) {
-    final parameters = sanitizeParameters({'new_font_family': newFontFamily});
-    debug('logSetFontFamily', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_font_family'),
-      parameters: parameters,
-    );
-  }
-
-  Future<void> logSetLocalAuth({
-    required bool enable,
-  }) {
-    final parameters = sanitizeParameters({'enable': enable.toString()});
-    debug('logSetLocalAuth', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_local_auth'),
-      parameters: parameters,
     );
   }
 
@@ -485,6 +400,25 @@ class AnalyticsService {
     debug('logReorderTags');
     return FirebaseAnalytics.instance.logEvent(
       name: sanitizeEventName('reorder_tags'),
+    );
+  }
+
+  Future<void> logInsertNewPhoto() {
+    debug('logInsertNewPhoto');
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('insert_new_photo'),
+    );
+  }
+
+  Future<void> logViewImages({
+    required int imagesCount,
+  }) {
+    final parameters = sanitizeParameters({'images_count': imagesCount.toString()});
+    debug('logViewImages', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('view_images'),
+      parameters: parameters,
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/services/local_auth_service.dart';
 
 class LocalAuthProvider extends ChangeNotifier {
@@ -14,7 +14,7 @@ class LocalAuthProvider extends ChangeNotifier {
     // to alert latest data to UI.
     notifyListeners();
 
-    AnalyticsService.instance.logSetLocalAuth(
+    AnalyticsUserProperyService.instance.logSetLocalAuth(
       enable: value,
     );
   }

@@ -10,7 +10,7 @@ import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/services/analytics_service.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
