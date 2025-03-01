@@ -18,6 +18,9 @@ class CommunityRoute extends BaseRoute {
   CommunityRoute();
 
   @override
+  bool get preferredNestedRoute => true;
+
+  @override
   Widget buildPage(BuildContext context) => CommunityView(params: this);
 }
 
