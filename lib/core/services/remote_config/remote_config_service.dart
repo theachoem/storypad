@@ -9,6 +9,7 @@ part './remote_config_object.dart';
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     communityUrl,
+    faqUrl,
     localizationSupportUrl,
     policyPrivacyUrl,
     sourceCodeUrl,
@@ -34,6 +35,12 @@ class RemoteConfigService {
     'COMMUNITY_URL',
     _RemoteConfigValueType.string,
     'https://www.reddit.com/r/StoryPad',
+  );
+
+  static const faqUrl = _RemoteConfigObject<String>(
+    'FAQ_URL',
+    _RemoteConfigValueType.string,
+    'https://storypad.juniorise.com',
   );
 
   static const localizationSupportUrl = _RemoteConfigObject<String>(

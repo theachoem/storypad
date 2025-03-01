@@ -334,9 +334,9 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'preferences': instance.preferences?.toJson(),
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'preferences': instance.preferences?.toJson(),
     };
 
 const _$PathTypeEnumMap = {
