@@ -1,45 +1,41 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/services/local_auth_service.dart';
-import 'package:storypad/providers/local_auth_provider.dart';
+import 'package:storypad/providers/app_lock_provider.dart';
 
-class SpLocalAuthWrapper extends StatelessWidget {
-  const SpLocalAuthWrapper({
+class SpAppLockWrapper extends StatelessWidget {
+  const SpAppLockWrapper({
     super.key,
     required this.child,
   });
 
   final Widget child;
 
-  static bool authenticated(BuildContext context) {
-    return context.findAncestorStateOfType<_LockedState>()?.authenticated == true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalAuthProvider>(
+    return Consumer<AppLockProvider>(
       child: child,
       builder: (context, provider, child) {
-        if (provider.shouldShowLock) return _Locked(child: child!);
-        return child!;
+        return Stack(
+          children: [
+            child!,
+            if (provider.hasAppLock) _LockedBarrier(),
+          ],
+        );
       },
     );
   }
 }
 
-class _Locked extends StatefulWidget {
-  const _Locked({
-    required this.child,
-  });
-
-  final Widget child;
+class _LockedBarrier extends StatefulWidget {
+  const _LockedBarrier();
 
   @override
-  State<_Locked> createState() => _LockedState();
+  State<_LockedBarrier> createState() => _LockedBarrierState();
 }
 
-class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController animationController;
 
   bool authenticated = false;
@@ -55,8 +51,6 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
       value: 1.0,
       duration: Durations.long1,
     );
-
-    authenticate();
   }
 
   @override
@@ -96,24 +90,26 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
     }
   }
 
-  Future<void> authenticate() async {
-    try {
-      authenticated = await LocalAuthService.instance.authenticate();
-    } catch (e) {
-      debugPrint("👤 Authenticate local auth failed: $e");
-    }
+  Future<bool> authenticate() async {
+    await Future.microtask(() {});
+
+    final context = this.context;
+    if (!context.mounted) return false;
+
+    bool authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
 
     if (authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);
     }
+
+    return authenticated;
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        widget.child,
         if (showBarrier) buildBlurFilter(),
         if (showBarrier) buildUnlockButton(context),
       ],
@@ -127,7 +123,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: ColorScheme.of(context).surface.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -142,9 +138,21 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
       child: Center(
         child: FadeTransition(
           opacity: animationController,
-          child: FilledButton.icon(
-            onPressed: () => authenticate(),
-            label: const Text("Unlock"),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4.0,
+            children: [
+              FilledButton.icon(
+                icon: Icon(Icons.lock_outline),
+                onPressed: () => authenticate(),
+                label: Text(tr('button.unlock')),
+              ),
+              if (context.read<AppLockProvider>().appLock.pin != null)
+                OutlinedButton.icon(
+                  onPressed: () => context.read<AppLockProvider>().forgotPin(context),
+                  label: Text(tr('button.forgot_pin')),
+                ),
+            ],
           ),
         ),
       ),

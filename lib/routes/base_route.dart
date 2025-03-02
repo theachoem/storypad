@@ -15,6 +15,25 @@ abstract class BaseRoute {
 
   Widget buildPage(BuildContext context);
 
+  Future<T?> pushReplacement<T extends Object?>(
+    BuildContext context, {
+    bool rootNavigator = false,
+  }) {
+    AnalyticsService.instance.logViewRoute(
+      routeObject: this,
+      analyticsParameters: analyticsParameters,
+    );
+
+    final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
+    if (router != null) {
+      return router.pushReplacement(buildPage(context));
+    } else {
+      return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(MaterialPageRoute(builder: (context) {
+        return buildPage(context);
+      }));
+    }
+  }
+
   Future<T?> push<T extends Object?>(
     BuildContext context, {
     bool rootNavigator = false,

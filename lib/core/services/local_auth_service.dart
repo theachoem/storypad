@@ -1,34 +1,30 @@
 import 'package:local_auth/local_auth.dart';
-import 'package:storypad/core/storages/local_auth_enabled_storage.dart';
 
 class LocalAuthService {
-  LocalAuthService._();
-
-  static final LocalAuthService instance = LocalAuthService._();
   final LocalAuthentication auth = LocalAuthentication();
 
-  bool? _localAuthEnabled;
+  bool? _isDeviceSupported;
   bool? _canCheckBiometrics;
+  List<BiometricType>? enrolledBiometrics;
 
-  bool get localAuthEnabled => _localAuthEnabled!;
-  bool get canCheckBiometrics => _canCheckBiometrics!;
-
-  Future<void> setEnable(bool value) async {
-    await LocalAuthEnabledStorage().write(value);
-    await load();
-  }
+  bool? get canCheckBiometrics => _canCheckBiometrics;
+  bool get enrolledBothFingerprintAndFace => enrolledFingerprint && enrolledFace;
+  bool get enrolledFingerprint => enrolledBiometrics?.contains(BiometricType.fingerprint) == true;
+  bool get enrolledFace => enrolledBiometrics?.contains(BiometricType.face) == true;
+  bool get enrolledOtherBiometrics => _canCheckBiometrics == true;
 
   Future<void> load() async {
-    bool isDeviceSupported = await auth.isDeviceSupported();
-
-    _canCheckBiometrics = isDeviceSupported && await auth.canCheckBiometrics;
-    _localAuthEnabled = await LocalAuthEnabledStorage().read() == true;
+    _isDeviceSupported = await auth.isDeviceSupported();
+    _canCheckBiometrics = await auth.canCheckBiometrics;
+    if (_isDeviceSupported!) enrolledBiometrics = await auth.getAvailableBiometrics();
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> authenticate({
+    required String title,
+  }) async {
     await auth.stopAuthentication();
     return auth.authenticate(
-      localizedReason: 'Unlock to open the app',
+      localizedReason: title,
       options: const AuthenticationOptions(
         stickyAuth: true,
       ),

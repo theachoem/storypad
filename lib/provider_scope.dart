@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/local_auth_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/providers/theme_provider.dart';
 
@@ -22,8 +22,8 @@ class ProviderScope extends StatelessWidget {
         ListenableProvider<TagsProvider>(
           create: (context) => TagsProvider(),
         ),
-        ListenableProvider<LocalAuthProvider>(
-          create: (context) => LocalAuthProvider(),
+        ListenableProvider<AppLockProvider>(
+          create: (context) => AppLockProvider(),
         ),
         ListenableProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),

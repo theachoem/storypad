@@ -55,7 +55,7 @@ class _HomeEndDrawer extends StatelessWidget {
           const Divider(),
           buildThemeTile(context),
           LanguageTile(),
-          buildBiometricsTile(),
+          buildAppLockTile(context),
           if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
             const Divider(),
             CommunityTile(),
@@ -104,19 +104,11 @@ class _HomeEndDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildBiometricsTile() {
-    return Consumer<LocalAuthProvider>(
-      builder: (context, provider, child) {
-        return Visibility(
-          visible: provider.canCheckBiometrics,
-          child: SwitchListTile.adaptive(
-            secondary: const Icon(Icons.lock),
-            title: Text(tr("list_tile.biometrics_lock.title")),
-            value: provider.localAuthEnabled,
-            onChanged: (value) => provider.setEnable(value),
-          ),
-        );
-      },
+  Widget buildAppLockTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.lock_outline),
+      title: Text("App Lock"),
+      onTap: () => AppLocksRoute().push(context),
     );
   }
 }
