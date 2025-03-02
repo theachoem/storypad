@@ -11,11 +11,7 @@ import 'security_questions_view_model.dart';
 part 'security_questions_content.dart';
 
 class SecurityQuestionsRoute extends BaseRoute {
-  SecurityQuestionsRoute({
-    this.showDoneButton = false,
-  });
-
-  final bool showDoneButton;
+  SecurityQuestionsRoute();
 
   @override
   bool get preferredNestedRoute => true;
@@ -35,7 +31,7 @@ class SecurityQuestionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<SecurityQuestionsViewModel>(
-      create: (context) => SecurityQuestionsViewModel(params: params),
+      create: (context) => SecurityQuestionsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _SecurityQuestionsContent(viewModel);
       },

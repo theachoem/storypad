@@ -8,24 +8,20 @@ class _SecurityQuestionsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppLockProvider>(context);
+    final bool saveable = provider.appLock.securityAnswers.toString() != viewModel.securityAnswers.toString() &&
+        provider.appLock.securityAnswers?.isNotEmpty == true;
 
     return Scaffold(
       appBar: AppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: viewModel.params.showDoneButton
-          ? FilledButton.icon(
-              icon: Icon(Icons.done),
-              label: Text(tr('button.done')),
-              onPressed:
-                  provider.appLock.securityAnswers?.isNotEmpty == true ? () => Navigator.maybePop(context) : null,
-            )
-          : null,
-      body: ListView.builder(
-        itemCount: AppLockQuestion.values.length,
-        itemBuilder: (context, index) {
-          final question = AppLockQuestion.values.elementAt(index);
-          final answer = provider.appLock.securityAnswers?[question];
-
+      floatingActionButton: FilledButton.icon(
+        icon: Icon(Icons.save_outlined),
+        label: Text(tr('button.done')),
+        onPressed: saveable ? () => viewModel.save(context) : null,
+      ),
+      body: ListView(
+        children: AppLockQuestion.values.map((question) {
+          final answer = viewModel.securityAnswers[question];
           return ListTile(
             title: Text(question.translatedQuestion),
             subtitle: answer != null ? Text(List.generate(answer.length, (e) => "*").join("")) : null,
@@ -34,7 +30,7 @@ class _SecurityQuestionsContent extends StatelessWidget {
                 : const Icon(Icons.keyboard_arrow_right),
             onTap: () => viewModel.goToEnterAnswerFor(question, context),
           );
-        },
+        }).toList(),
       ),
     );
   }
