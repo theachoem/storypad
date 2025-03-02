@@ -1,24 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/services/local_auth_service.dart';
-import 'package:storypad/providers/local_auth_provider.dart';
+import 'package:storypad/providers/app_lock_provider.dart';
 
-class SpLocalAuthWrapper extends StatelessWidget {
-  const SpLocalAuthWrapper({
+class SpAppLockWrapper extends StatelessWidget {
+  const SpAppLockWrapper({
     super.key,
     required this.child,
   });
 
   final Widget child;
 
-  static bool authenticated(BuildContext context) {
-    return context.findAncestorStateOfType<_LockedState>()?.authenticated == true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalAuthProvider>(
+    return Consumer<AppLockProvider>(
       child: child,
       builder: (context, provider, child) {
         if (provider.shouldShowLock) return _Locked(child: child!);
@@ -98,7 +93,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
 
   Future<void> authenticate() async {
     try {
-      authenticated = await LocalAuthService.instance.authenticate();
+      // authenticated = await LocalAuthService.instance.authenticate();
     } catch (e) {
       debugPrint("👤 Authenticate local auth failed: $e");
     }

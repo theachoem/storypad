@@ -5,7 +5,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/views/home/home_view.dart';
-import 'package:storypad/widgets/sp_local_auth_wrapper.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -35,7 +35,7 @@ class App extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: (context, child) {
-            return SpLocalAuthWrapper(child: child!);
+            return SpAppLockWrapper(child: child!);
           },
         );
       }),

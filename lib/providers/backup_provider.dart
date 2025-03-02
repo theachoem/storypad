@@ -63,8 +63,6 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
 
   Future<void> load() async {
     await source.authenticate();
-    notifyListeners();
-
     await _loadLocalData();
     await _loadLatestSyncedFile();
 

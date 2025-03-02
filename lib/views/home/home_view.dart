@@ -5,6 +5,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/views/home/local_widgets/community_tile.dart' show CommunityTile;
 import 'package:storypad/views/home/local_widgets/language_tile.dart';
+import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
@@ -19,7 +20,6 @@ import 'package:storypad/core/services/remote_config/remote_config_service.dart'
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/local_auth_provider.dart';
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/home/local_widgets/backup_tile.dart';
 import 'package:storypad/views/home/local_widgets/home_years_view.dart';

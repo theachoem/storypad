@@ -1,0 +1,41 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
+import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
+import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/routes/base_route.dart';
+
+import 'app_locks_view_model.dart';
+
+part 'app_locks_content.dart';
+
+class AppLocksRoute extends BaseRoute {
+  AppLocksRoute();
+
+  @override
+  bool get preferredNestedRoute => true;
+
+  @override
+  Widget buildPage(BuildContext context) => AppLocksView(params: this);
+}
+
+class AppLocksView extends StatelessWidget {
+  const AppLocksView({
+    super.key,
+    required this.params,
+  });
+
+  final AppLocksRoute params;
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelProvider<AppLocksViewModel>(
+      create: (context) => AppLocksViewModel(params: params),
+      builder: (context, viewModel, child) {
+        return _AppLocksContent(viewModel);
+      },
+    );
+  }
+}

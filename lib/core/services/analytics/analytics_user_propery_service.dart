@@ -63,15 +63,4 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
       value: newFontFamily,
     );
   }
-
-  Future<void> logSetLocalAuth({
-    required bool enable,
-  }) {
-    debug('logSetLocalAuth', {'value': enable.toString()});
-
-    return FirebaseAnalytics.instance.setUserProperty(
-      name: 'local_auth',
-      value: enable.toString(),
-    );
-  }
 }
