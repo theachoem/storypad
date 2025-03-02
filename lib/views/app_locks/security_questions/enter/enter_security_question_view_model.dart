@@ -1,4 +1,3 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,22 +21,6 @@ class EnterSecurityQuestionViewModel extends BaseViewModel {
       context: context,
       answer: controller.value.text,
     );
-  }
-
-  Future<void> clear(BuildContext context) async {
-    final result = await showOkCancelAlertDialog(
-      context: context,
-      isDestructiveAction: true,
-      title: tr("dialog.are_you_sure.title"),
-      okLabel: tr("button.clear"),
-    );
-
-    if (context.mounted && result == OkCancelResult.ok) {
-      await saveAnswer(
-        answer: null,
-        context: context,
-      );
-    }
   }
 
   Future<void> saveAnswer({

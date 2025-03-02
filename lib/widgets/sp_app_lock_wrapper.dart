@@ -1,7 +1,10 @@
 import 'dart:ui';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
+import 'package:storypad/widgets/sp_pin_unlock.dart';
 
 class SpAppLockWrapper extends StatelessWidget {
   const SpAppLockWrapper({
@@ -11,13 +14,18 @@ class SpAppLockWrapper extends StatelessWidget {
 
   final Widget child;
 
+  static Future<void> authenticateIfHas(BuildContext context) async {
+    if (context.read<AppLockProvider>().hasAppLock) {
+      await context.findAncestorStateOfType<_LockedState>()?.authenticate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppLockProvider>(
       child: child,
       builder: (context, provider, child) {
-        if (provider.shouldShowLock) return _Locked(child: child!);
-        return child!;
+        return _Locked(child: child!);
       },
     );
   }
@@ -50,8 +58,6 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
       value: 1.0,
       duration: Durations.long1,
     );
-
-    authenticate();
   }
 
   @override
@@ -92,15 +98,62 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
   }
 
   Future<void> authenticate() async {
-    try {
-      // authenticated = await LocalAuthService.instance.authenticate();
-    } catch (e) {
-      debugPrint("👤 Authenticate local auth failed: $e");
+    await Future.microtask(() {});
+
+    final context = this.context;
+    if (!context.mounted) return;
+
+    bool authenticated;
+
+    if (context.read<AppLockProvider>().appLock.pin != null) {
+      authenticated = await SpPinUnlock.openConfirmation(
+        context: context,
+        title: SpPinUnlockTitle.enter_your_pin,
+        invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
+        correctPin: context.read<AppLockProvider>().appLock.pin!,
+        onConfirmWithBiometrics: context.read<AppLockProvider>().localAuth.canCheckBiometrics == true
+            ? () =>
+                context.read<AppLockProvider>().localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
+            : null,
+      );
+    } else {
+      authenticated = await context
+          .read<AppLockProvider>()
+          .localAuth
+          .authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
     }
 
     if (authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);
+    }
+  }
+
+  Future<void> forgotPin() async {
+    final context = this.context;
+    final questions = context.read<AppLockProvider>().appLock.securityAnswers?.keys.toList() ?? [];
+
+    final selectedQuestion = await showConfirmationDialog(
+      context: context,
+      title: '',
+      toggleable: false,
+      actions: questions.map((question) {
+        return AlertDialogAction(key: question, label: question.translatedQuestion);
+      }).toList(),
+    );
+
+    if (context.mounted && selectedQuestion != null) {
+      final answer = context.read<AppLockProvider>().appLock.securityAnswers![selectedQuestion];
+      final corrected = await showTextAnswerDialog(
+        context: context,
+        title: selectedQuestion.translatedQuestion,
+        isCaseSensitive: false,
+        keyword: answer!,
+      );
+
+      if (context.mounted && corrected == true) {
+        context.read<AppLockProvider>().forceResetPIN(context);
+      }
     }
   }
 
@@ -122,7 +175,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: ColorScheme.of(context).surface.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -137,9 +190,21 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
       child: Center(
         child: FadeTransition(
           opacity: animationController,
-          child: FilledButton.icon(
-            onPressed: () => authenticate(),
-            label: const Text("Unlock"),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4.0,
+            children: [
+              FilledButton.icon(
+                icon: Icon(Icons.lock_outline),
+                onPressed: () => authenticate(),
+                label: Text(tr('button.unlock')),
+              ),
+              if (context.read<AppLockProvider>().appLock.pin != null)
+                OutlinedButton.icon(
+                  onPressed: () => forgotPin(),
+                  label: Text(tr('button.forgot_pin')),
+                ),
+            ],
           ),
         ),
       ),

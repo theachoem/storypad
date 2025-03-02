@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
@@ -10,7 +11,11 @@ import 'security_questions_view_model.dart';
 part 'security_questions_content.dart';
 
 class SecurityQuestionsRoute extends BaseRoute {
-  SecurityQuestionsRoute();
+  SecurityQuestionsRoute({
+    this.showDoneButton = false,
+  });
+
+  final bool showDoneButton;
 
   @override
   bool get preferredNestedRoute => true;

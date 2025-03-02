@@ -21,7 +21,9 @@ class _AppLocksContent extends StatelessWidget {
             SwitchListTile.adaptive(
               secondary: const Icon(Icons.lock_outline),
               title: Text(tr('general.pin')),
-              subtitle: Text("******"),
+              subtitle: provider.appLock.pin != null
+                  ? Text(List.generate(provider.appLock.pin!.length, (e) => "*").join())
+                  : null,
               value: provider.appLock.pin != null,
               onChanged: (value) => provider.togglePIN(context),
             ),
@@ -50,28 +52,28 @@ class _AppLocksContent extends StatelessWidget {
         secondary: const Icon(Icons.face_unlock_outlined),
         title: Text(tr("general.biometrics_lock")),
         value: provider.appLock.enabledBiometric == true,
-        onChanged: (value) => provider.toggleBiometrics(),
+        onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledFace) {
       return SwitchListTile.adaptive(
         secondary: const Icon(Icons.face_unlock_outlined),
         title: Text(tr("general.face_unlock")),
         value: provider.appLock.enabledBiometric == true,
-        onChanged: (value) => provider.toggleBiometrics(),
+        onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledFingerprint) {
       return SwitchListTile.adaptive(
         secondary: const Icon(Icons.fingerprint_outlined),
         title: Text(tr("general.fingerprint")),
         value: provider.appLock.enabledBiometric == true,
-        onChanged: (value) => provider.toggleBiometrics(),
+        onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledOtherBiometrics) {
       return SwitchListTile.adaptive(
         secondary: const Icon(Icons.fingerprint),
         title: Text(tr("general.biometrics_lock")),
         value: provider.appLock.enabledBiometric == true,
-        onChanged: (value) => provider.toggleBiometrics(),
+        onChanged: (value) => provider.toggleBiometrics(context),
       );
     }
     return null;

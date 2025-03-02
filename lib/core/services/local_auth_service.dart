@@ -7,6 +7,7 @@ class LocalAuthService {
   bool? _canCheckBiometrics;
   List<BiometricType>? enrolledBiometrics;
 
+  bool? get canCheckBiometrics => _canCheckBiometrics;
   bool get enrolledBothFingerprintAndFace => enrolledFingerprint && enrolledFace;
   bool get enrolledFingerprint => enrolledBiometrics?.contains(BiometricType.fingerprint) == true;
   bool get enrolledFace => enrolledBiometrics?.contains(BiometricType.face) == true;
@@ -18,10 +19,12 @@ class LocalAuthService {
     if (_isDeviceSupported!) enrolledBiometrics = await auth.getAvailableBiometrics();
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> authenticate({
+    required String title,
+  }) async {
     await auth.stopAuthentication();
     return auth.authenticate(
-      localizedReason: 'Unlock to open the app',
+      localizedReason: title,
       options: const AuthenticationOptions(
         stickyAuth: true,
       ),

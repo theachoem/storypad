@@ -18,6 +18,14 @@ class AppLocksRoute extends BaseRoute {
   bool get preferredNestedRoute => true;
 
   @override
+  Future<T?> push<T extends Object?>(
+    BuildContext context, {
+    bool rootNavigator = false,
+  }) {
+    return super.push(context, rootNavigator: rootNavigator);
+  }
+
+  @override
   Widget buildPage(BuildContext context) => AppLocksView(params: this);
 }
 

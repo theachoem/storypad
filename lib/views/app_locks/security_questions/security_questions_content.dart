@@ -8,8 +8,18 @@ class _SecurityQuestionsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppLockProvider>(context);
+
     return Scaffold(
       appBar: AppBar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: viewModel.params.showDoneButton
+          ? FilledButton.icon(
+              icon: Icon(Icons.done),
+              label: Text(tr('button.done')),
+              onPressed:
+                  provider.appLock.securityAnswers?.isNotEmpty == true ? () => Navigator.maybePop(context) : null,
+            )
+          : null,
       body: ListView.builder(
         itemCount: AppLockQuestion.values.length,
         itemBuilder: (context, index) {

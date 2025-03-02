@@ -6,6 +6,7 @@ import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/views/home/local_widgets/community_tile.dart' show CommunityTile;
 import 'package:storypad/views/home/local_widgets/language_tile.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
@@ -59,14 +60,16 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<HomeViewModel>(
-      create: (context) => HomeViewModel(
-        initialData: HomeInitializer.getAndClear(),
-        context: context,
+    return SpAppLockWrapper(
+      child: ViewModelProvider<HomeViewModel>(
+        create: (context) => HomeViewModel(
+          initialData: HomeInitializer.getAndClear(),
+          context: context,
+        ),
+        builder: (context, viewModel, child) {
+          return _HomeContent(viewModel);
+        },
       ),
-      builder: (context, viewModel, child) {
-        return _HomeContent(viewModel);
-      },
     );
   }
 }
