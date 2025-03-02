@@ -3,7 +3,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
-import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/routes/base_route.dart';
@@ -23,13 +22,13 @@ class AppLocksRoute extends BaseRoute {
     BuildContext context, {
     bool rootNavigator = false,
   }) async {
-    await SpAppLockWrapper.authenticateIfHas(context);
+    bool authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
+    if (!authenticated || !context.mounted) return null;
 
-    if (context.mounted) {
-      return super.push(context, rootNavigator: rootNavigator);
-    }
-
-    return null;
+    return super.push(
+      context,
+      rootNavigator: rootNavigator,
+    );
   }
 
   @override

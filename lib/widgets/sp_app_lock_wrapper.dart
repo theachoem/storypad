@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
-import 'package:storypad/widgets/sp_pin_unlock.dart';
 
 class SpAppLockWrapper extends StatelessWidget {
   const SpAppLockWrapper({
@@ -13,12 +12,6 @@ class SpAppLockWrapper extends StatelessWidget {
 
   final Widget child;
 
-  static Future<void> authenticateIfHas(BuildContext context) async {
-    if (context.read<AppLockProvider>().hasAppLock) {
-      await context.findAncestorStateOfType<_LockedState>()?.authenticate();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AppLockProvider>(
@@ -27,7 +20,7 @@ class SpAppLockWrapper extends StatelessWidget {
         return Stack(
           children: [
             child!,
-            if (provider.hasAppLock) _Locked(),
+            if (provider.hasAppLock) _LockedBarrier(),
           ],
         );
       },
@@ -35,14 +28,14 @@ class SpAppLockWrapper extends StatelessWidget {
   }
 }
 
-class _Locked extends StatefulWidget {
-  const _Locked();
+class _LockedBarrier extends StatefulWidget {
+  const _LockedBarrier();
 
   @override
-  State<_Locked> createState() => _LockedState();
+  State<_LockedBarrier> createState() => _LockedBarrierState();
 }
 
-class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController animationController;
 
   bool authenticated = false;
@@ -97,36 +90,20 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
     }
   }
 
-  Future<void> authenticate() async {
+  Future<bool> authenticate() async {
     await Future.microtask(() {});
 
     final context = this.context;
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
 
-    bool authenticated;
-
-    if (context.read<AppLockProvider>().appLock.pin != null) {
-      authenticated = await SpPinUnlock.confirmation(
-        context: context,
-        title: SpPinUnlockTitle.enter_your_pin,
-        invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
-        correctPin: context.read<AppLockProvider>().appLock.pin!,
-        onConfirmWithBiometrics: context.read<AppLockProvider>().localAuth.canCheckBiometrics == true
-            ? () =>
-                context.read<AppLockProvider>().localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
-            : null,
-      ).push(context);
-    } else {
-      authenticated = await context
-          .read<AppLockProvider>()
-          .localAuth
-          .authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
-    }
+    bool authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
 
     if (authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);
     }
+
+    return authenticated;
   }
 
   @override

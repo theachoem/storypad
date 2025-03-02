@@ -188,6 +188,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: pinSize,
             children: List.generate(pin.length, (index) {
+              final bool invalid = pin.length >= 4 && !widget.validator(pin);
               return Visibility(
                 visible: pin.length > index,
                 child: SpFadeIn.bound(
@@ -195,7 +196,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
                     width: pinSize,
                     height: pinSize,
                     decoration: BoxDecoration(
-                      color: ColorScheme.of(context).primary,
+                      color: invalid ? ColorScheme.of(context).error : ColorScheme.of(context).primary,
                       shape: BoxShape.circle,
                     ),
                   ),

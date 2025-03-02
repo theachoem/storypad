@@ -42,6 +42,23 @@ class AppLockProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> authenticateIfHas(BuildContext context) async {
+    if (!hasAppLock) return true;
+    if (appLock.pin != null) {
+      return SpPinUnlock.confirmation(
+        context: context,
+        title: SpPinUnlockTitle.enter_your_pin,
+        invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
+        correctPin: appLock.pin!,
+        onConfirmWithBiometrics: localAuth.canCheckBiometrics == true
+            ? () => localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
+            : null,
+      ).push(context);
+    } else {
+      return localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
+    }
+  }
+
   Future<void> togglePIN(BuildContext context) async {
     if (appLock.pin == null) {
       await setPIN(context);
