@@ -5,33 +5,13 @@ import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/app_lock_object.dart' show $AppLockObjectCopyWith, AppLockObject;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/core/services/local_auth_service.dart' show LocalAuthService;
 import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorage;
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
 import 'package:storypad/initializers/app_lock_initializer.dart';
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
 import 'package:storypad/widgets/sp_pin_unlock.dart';
-
-class AvoidDublicateCall<T> {
-  Completer<T>? _completer;
-
-  Future<T> run(Future<T> Function() callback) async {
-    final result = await _execute(callback);
-    _completer = null;
-    return result;
-  }
-
-  Future<T> _execute(Future<T> Function() callback) {
-    if (_completer != null) return _completer!.future;
-    _completer = Completer<T>();
-
-    callback().then((value) {
-      return _completer?.complete(value);
-    });
-
-    return _completer!.future;
-  }
-}
 
 class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {
@@ -65,7 +45,7 @@ class AppLockProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  final avoidDublciated = AvoidDublicateCall<bool>();
+  final avoidDublciated = AvoidDublicatedCallService<bool>();
   Future<bool> authenticateIfHas(BuildContext context) async {
     return avoidDublciated.run(() async {
       if (!hasAppLock) return true;
