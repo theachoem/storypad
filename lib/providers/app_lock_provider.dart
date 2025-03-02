@@ -50,12 +50,12 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   Future<void> clearPIN(BuildContext context) async {
-    bool authenticated = await SpPinUnlock.openConfirmation(
+    bool authenticated = await SpPinUnlock.confirmation(
       context: context,
       correctPin: appLock.pin!,
       title: SpPinUnlockTitle.confirm_your_pin,
       invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
-    );
+    ).push(context);
 
     if (context.mounted && authenticated) {
       await storage.writeObject(appLock.copyWith(pin: null));
@@ -64,28 +64,23 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   Future<void> setPIN(BuildContext context) async {
-    String? newPin = await SpPinUnlock.askForPin(
+    SpPinUnlock.askForPin(
       context: context,
       title: SpPinUnlockTitle.enter_your_pin,
       invalidPinTitle: SpPinUnlockTitle.must_be_4_or_6_digits,
-    );
-
-    if (context.mounted && newPin != null) {
-      bool authenticated = await SpPinUnlock.openConfirmation(
-        context: context,
-        correctPin: newPin,
+      onValidated: (context, pin) => SpPinUnlock.confirmation(
         title: SpPinUnlockTitle.confirm_your_pin,
-        invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
-      );
-
-      if (context.mounted && authenticated) {
-        await SecurityQuestionsRoute().push(context);
-        if (appLock.securityAnswers?.keys.isNotEmpty == true) {
-          await storage.writeObject(appLock.copyWith(pin: newPin));
-          await reload();
-        }
-      }
-    }
+        context: context,
+        correctPin: pin!,
+        onValidated: (context, pin) async {
+          await SecurityQuestionsRoute().pushReplacement(context);
+          if (appLock.securityAnswers?.keys.isNotEmpty == true) {
+            await storage.writeObject(appLock.copyWith(pin: pin));
+            await reload();
+          }
+        },
+      ).pushReplacement(context),
+    ).push(context);
   }
 
   Future<void> setSecurityAnswer(Map<AppLockQuestion, String> securityAnswers) async {

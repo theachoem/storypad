@@ -37,6 +37,16 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
     );
   }
 
+  Future<T?> pushReplacement<T>(Widget screen) {
+    return navigationKey.currentState!.pushReplacement(
+      AnimatedPageRoute.sharedAxis(
+        type: SharedAxisTransitionType.horizontal,
+        builder: (context) => screen,
+        fillColor: widget.backgroundColor,
+      ),
+    );
+  }
+
   void pop<T>() {
     return navigationKey.currentState!.pop();
   }

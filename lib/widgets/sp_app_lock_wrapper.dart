@@ -106,7 +106,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
     bool authenticated;
 
     if (context.read<AppLockProvider>().appLock.pin != null) {
-      authenticated = await SpPinUnlock.openConfirmation(
+      authenticated = await SpPinUnlock.confirmation(
         context: context,
         title: SpPinUnlockTitle.enter_your_pin,
         invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
@@ -115,7 +115,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
             ? () =>
                 context.read<AppLockProvider>().localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
             : null,
-      );
+      ).push(context);
     } else {
       authenticated = await context
           .read<AppLockProvider>()

@@ -43,65 +43,73 @@ class SpPinUnlock extends StatefulWidget {
   final void Function(BuildContext context, String? pin) onValidated;
   final Future<bool> Function()? onConfirmWithBiometrics;
 
-  static Future<bool> openConfirmation({
+  factory SpPinUnlock.confirmation({
     required BuildContext context,
     required String correctPin,
     SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
     SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.incorrect_pin,
     Future<bool> Function()? onConfirmWithBiometrics,
-  }) async {
-    final nestedNavigation = SpNestedNavigation.maybeOf(context);
-    final Widget lockView = SpPinUnlock(
+    void Function(BuildContext context, String? pin)? onValidated,
+  }) {
+    return SpPinUnlock(
       title: title.translatedTitle,
       invalidPinTitle: invalidPinTitle.translatedTitle,
       validator: (pin) => correctPin == pin,
-      onValidated: (context, _) => Navigator.maybePop(context, true),
+      onValidated: onValidated ?? (context, _) => Navigator.maybePop(context, true),
       onConfirmWithBiometrics: onConfirmWithBiometrics,
     );
+  }
+
+  factory SpPinUnlock.askForPin({
+    required BuildContext context,
+    SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
+    SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.must_be_4_or_6_digits,
+    void Function(BuildContext context, String? pin)? onValidated,
+  }) {
+    return SpPinUnlock(
+      title: title.translatedTitle,
+      invalidPinTitle: invalidPinTitle.translatedTitle,
+      validator: (pin) => pin.length == 4 || pin.length == 4,
+      onValidated: onValidated ?? (context, pin) => Navigator.maybePop(context, pin),
+    );
+  }
+
+  Future<bool> push(BuildContext context) async {
+    final nestedNavigation = SpNestedNavigation.maybeOf(context);
 
     dynamic confirmed;
     if (nestedNavigation != null) {
-      confirmed = await nestedNavigation.push(lockView);
+      confirmed = await nestedNavigation.push(this);
     } else {
       confirmed = await Navigator.of(context).push(
         AnimatedPageRoute.sharedAxis(
           fullscreenDialog: true,
           type: SharedAxisTransitionType.vertical,
-          builder: (context) => lockView,
+          builder: (context) => this,
         ),
       );
     }
+
     return confirmed == true;
   }
 
-  static Future<String?> askForPin({
-    required BuildContext context,
-    SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
-    SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.must_be_4_or_6_digits,
-  }) async {
+  Future<bool> pushReplacement(BuildContext context) async {
     final nestedNavigation = SpNestedNavigation.maybeOf(context);
-    final Widget lockView = SpPinUnlock(
-      title: title.translatedTitle,
-      invalidPinTitle: invalidPinTitle.translatedTitle,
-      validator: (pin) => pin.length == 4 || pin.length == 4,
-      onValidated: (context, pin) => Navigator.maybePop(context, pin),
-    );
 
-    dynamic pin;
+    dynamic confirmed;
     if (nestedNavigation != null) {
-      pin = await nestedNavigation.push(lockView);
+      confirmed = await nestedNavigation.pushReplacement(this);
     } else {
-      pin = await Navigator.of(context).push(
+      confirmed = await Navigator.of(context).pushReplacement(
         AnimatedPageRoute.sharedAxis(
           fullscreenDialog: true,
           type: SharedAxisTransitionType.vertical,
-          builder: (context) => lockView,
+          builder: (context) => this,
         ),
       );
     }
 
-    if (pin is String) return pin;
-    return null;
+    return confirmed == true;
   }
 
   @override
@@ -111,7 +119,9 @@ class SpPinUnlock extends StatefulWidget {
 class _SpPinUnlockState extends State<SpPinUnlock> {
   String pin = "";
 
-  void addPin(int pinItem) {
+  void addPin(int pinItem) async {
+    if (pin.length >= 6) return;
+
     pin += pinItem.toString();
     setState(() {});
 
