@@ -114,55 +114,55 @@ class AppTheme extends StatelessWidget {
     required ThemeProvider provider,
     required Widget Function(ColorScheme lightDynamic, ColorScheme darkDynamic) builder,
   }) {
-    if (provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white) {
-      final darkScheme = ColorScheme.dark(
-        outline: Colors.white10,
-        outlineVariant: Colors.white24,
-        primary: Colors.white,
-        onPrimary: Colors.black,
-        secondary: Colors.white,
-        onSecondary: Colors.black,
-        error: Colors.red[200]!,
-        onError: Colors.white,
-        surface: Color.alphaBlend(
-          Colors.white.withValues(alpha: 0.05),
-          Colors.black,
-        ),
-        onSurface: Colors.white,
-        surfaceContainerHighest: Colors.white,
-        secondaryContainer: Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Colors.black),
-        onSecondaryContainer: Colors.white,
-      );
+    return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      if (provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white) {
+        final darkScheme = ColorScheme.dark(
+          outline: Colors.white10,
+          outlineVariant: Colors.white24,
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          secondary: Colors.white,
+          onSecondary: Colors.black,
+          error: Colors.red[200]!,
+          onError: Colors.white,
+          surface: Color.alphaBlend(
+            Colors.white.withValues(alpha: 0.05),
+            Colors.black,
+          ),
+          onSurface: Colors.white,
+          surfaceContainerHighest: Colors.white,
+          secondaryContainer: Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Colors.black),
+          onSecondaryContainer: Colors.white,
+        );
 
-      final lightScheme = ColorScheme.light(
-        outline: Colors.black12,
-        outlineVariant: Colors.black26,
-        primary: Colors.black87,
-        onPrimary: Colors.white,
-        secondary: Colors.black,
-        onSecondary: Colors.white,
-        error: Colors.red[600]!,
-        onError: Colors.black,
-        surface: Colors.white,
-        onSurface: Colors.black,
-        surfaceContainerHighest: Colors.white,
-        secondaryContainer: Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Colors.white),
-        onSecondaryContainer: Colors.black,
-      );
+        final lightScheme = ColorScheme.light(
+          outline: Colors.black12,
+          outlineVariant: Colors.black26,
+          primary: Colors.black87,
+          onPrimary: Colors.white,
+          secondary: Colors.black,
+          onSecondary: Colors.white,
+          error: Colors.red[600]!,
+          onError: Colors.black,
+          surface: Colors.white,
+          onSurface: Colors.black,
+          surfaceContainerHighest: Colors.white,
+          secondaryContainer: Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Colors.white),
+          onSecondaryContainer: Colors.black,
+        );
 
-      return builder(lightScheme, darkScheme);
-    } else if (provider.theme.colorSeed != null) {
-      final lightScheme = ColorScheme.fromSeed(seedColor: provider.theme.colorSeed!, brightness: Brightness.light);
-      final darkScheme = ColorScheme.fromSeed(seedColor: provider.theme.colorSeed!, brightness: Brightness.dark);
-      return builder(lightScheme, darkScheme);
-    } else {
-      return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        return builder(lightScheme, darkScheme);
+      } else if (provider.theme.colorSeed != null) {
+        final lightScheme = ColorScheme.fromSeed(seedColor: provider.theme.colorSeed!, brightness: Brightness.light);
+        final darkScheme = ColorScheme.fromSeed(seedColor: provider.theme.colorSeed!, brightness: Brightness.dark);
+        return builder(lightScheme, darkScheme);
+      } else {
         lightDynamic ??= ColorScheme.fromSeed(seedColor: kDefaultColorSeed, brightness: Brightness.light);
         darkDynamic ??= ColorScheme.fromSeed(seedColor: kDefaultColorSeed, brightness: Brightness.dark);
+      }
 
-        return builder(lightDynamic, darkDynamic);
-      });
-    }
+      return builder(lightDynamic, darkDynamic);
+    });
   }
 
   FontWeight calculateFontWeight(FontWeight defaultWeight, FontWeight currentWeight) {

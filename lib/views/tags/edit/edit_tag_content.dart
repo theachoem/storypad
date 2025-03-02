@@ -9,7 +9,7 @@ class _EditTagContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SpTextInputsPage(
       appBar: AppBar(
-        title: viewModel.tag != null ? Text(tr("page.edit_tag.title")) : Text(tr("page.add_tag.title")),
+        title: viewModel.tag != null ? Text(tr("page.edit_tag.title")) : Text(tr("page.new_tag.title")),
       ),
       fields: [
         SpTextInputField(
