@@ -20,7 +20,10 @@ class SpAppLockWrapper extends StatelessWidget {
         return Stack(
           children: [
             child!,
-            if (provider.hasAppLock) _LockedBarrier(),
+            Visibility(
+              visible: provider.hasAppLock,
+              child: _LockedBarrier(),
+            )
           ],
         );
       },
@@ -51,6 +54,8 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
       value: 1.0,
       duration: Durations.long1,
     );
+
+    authenticate();
   }
 
   @override
@@ -59,10 +64,6 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     animationController.dispose();
     super.dispose();
   }
-
-  // when native sheet close, it also trigger [resumed] which lead to loop calling [authenticate]
-  // this variable is to ensure that if closed, no need to recall [authenticate]
-  bool authenticatedSheetClosed = true;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -75,35 +76,28 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
         break;
       case AppLifecycleState.paused:
         authenticated = false;
-        authenticatedSheetClosed = false;
         break;
       case AppLifecycleState.resumed:
-        if (authenticatedSheetClosed) return;
-        if (authenticated) return;
-        if (animationController.value != 1) animationController.animateTo(1);
-        if (showBarrier != true) setState(() => showBarrier = true);
-
         await authenticate();
-        authenticatedSheetClosed = true;
-
         break;
     }
   }
 
-  Future<bool> authenticate() async {
+  Future<void> authenticate() async {
     await Future.microtask(() {});
 
+    if (authenticated) return;
+    if (animationController.value != 1) animationController.animateTo(1);
+    if (showBarrier != true) setState(() => showBarrier = true);
+
     final context = this.context;
-    if (!context.mounted) return false;
+    if (!context.mounted) return;
 
-    bool authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
-
+    authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
     if (authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);
     }
-
-    return authenticated;
   }
 
   @override

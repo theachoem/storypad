@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
@@ -9,6 +11,27 @@ import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion
 import 'package:storypad/initializers/app_lock_initializer.dart';
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
 import 'package:storypad/widgets/sp_pin_unlock.dart';
+
+class AvoidDublicateCall<T> {
+  Completer<T>? _completer;
+
+  Future<T> run(Future<T> Function() callback) async {
+    final result = await _execute(callback);
+    _completer = null;
+    return result;
+  }
+
+  Future<T> _execute(Future<T> Function() callback) {
+    if (_completer != null) return _completer!.future;
+    _completer = Completer<T>();
+
+    callback().then((value) {
+      return _completer?.complete(value);
+    });
+
+    return _completer!.future;
+  }
+}
 
 class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {
@@ -42,21 +65,24 @@ class AppLockProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  final avoidDublciated = AvoidDublicateCall<bool>();
   Future<bool> authenticateIfHas(BuildContext context) async {
-    if (!hasAppLock) return true;
-    if (appLock.pin != null) {
-      return SpPinUnlock.confirmation(
-        context: context,
-        title: SpPinUnlockTitle.enter_your_pin,
-        invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
-        correctPin: appLock.pin!,
-        onConfirmWithBiometrics: localAuth.canCheckBiometrics == true
-            ? () => localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
-            : null,
-      ).push(context);
-    } else {
-      return localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
-    }
+    return avoidDublciated.run(() async {
+      if (!hasAppLock) return true;
+      if (appLock.pin != null) {
+        return SpPinUnlock.confirmation(
+          context: context,
+          title: SpPinUnlockTitle.enter_your_pin,
+          invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
+          correctPin: appLock.pin!,
+          onConfirmWithBiometrics: appLock.enabledBiometric == true && localAuth.canCheckBiometrics == true
+              ? () => localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
+              : null,
+        ).push(context);
+      } else {
+        return localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
+      }
+    });
   }
 
   Future<void> togglePIN(BuildContext context) async {

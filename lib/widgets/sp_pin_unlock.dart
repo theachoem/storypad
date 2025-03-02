@@ -2,6 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/routes/utils/animated_page_route.dart' show AnimatedPageRoute, SharedAxisTransitionType;
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -136,9 +137,20 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
   }
 
   Future<void> confirmWithBiometrics() async {
-    final authenticated = await widget.onConfirmWithBiometrics!();
+    final authenticated = await widget.onConfirmWithBiometrics!.call();
     final context = this.context;
     if (context.mounted && authenticated) widget.onValidated(context, null);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.onConfirmWithBiometrics != null) {
+      Future.microtask(() {
+        confirmWithBiometrics();
+      });
+    }
   }
 
   @override
@@ -151,9 +163,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
     final children = [
       Flexible(child: buildPinPreview(context, pinSize)),
-      Flexible(
-        child: FittedBox(child: buildPins(itemSize, spacing, context)),
-      ),
+      Flexible(child: FittedBox(child: buildPins(itemSize, spacing, context))),
     ];
 
     return Scaffold(
@@ -230,7 +240,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               alignment: Alignment.center,
               child: Text(
                 pin.toString(),
-                style: TextTheme.of(context).displaySmall,
+                style: TextTheme.of(context).headlineMedium,
                 textAlign: TextAlign.center,
               ),
             );
@@ -257,7 +267,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               alignment: Alignment.center,
               child: Text(
                 "0",
-                style: TextTheme.of(context).displaySmall,
+                style: TextTheme.of(context).headlineSmall,
                 textAlign: TextAlign.center,
               ),
             );
@@ -283,7 +293,12 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             shape: CircleBorder(),
             child: InkWell(
               customBorder: CircleBorder(),
-              onTap: onPressed,
+              onTap: onPressed != null
+                  ? () {
+                      HapticFeedback.selectionClick();
+                      onPressed!();
+                    }
+                  : null,
               child: child,
             ),
           );
