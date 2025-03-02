@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
 import 'package:flutter/material.dart' show WidgetsBinding, WidgetsFlutterBinding, runApp;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:storypad/app.dart' show App;
+import 'package:storypad/initializers/app_lock_initializer.dart';
 import 'package:storypad/initializers/database_initializer.dart' show DatabaseInitializer;
 import 'package:storypad/initializers/device_info_initializer.dart' show DeviceInfoInitializer;
 import 'package:storypad/initializers/file_initializer.dart' show FileInitializer;
@@ -27,6 +28,7 @@ void main({
     await FileInitializer.call();
     await DatabaseInitializer.call();
     await HomeInitializer.call();
+    await AppLockInitializer.call();
 
     FirebaseCrashlyticsInitializer.call();
     FirebaseRemoteConfigInitializer.call();

@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,18 +24,19 @@ class SpAppLockWrapper extends StatelessWidget {
     return Consumer<AppLockProvider>(
       child: child,
       builder: (context, provider, child) {
-        return _Locked(child: child!);
+        return Stack(
+          children: [
+            child!,
+            if (provider.hasAppLock) _Locked(),
+          ],
+        );
       },
     );
   }
 }
 
 class _Locked extends StatefulWidget {
-  const _Locked({
-    required this.child,
-  });
-
-  final Widget child;
+  const _Locked();
 
   @override
   State<_Locked> createState() => _LockedState();
@@ -129,39 +129,10 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
     }
   }
 
-  Future<void> forgotPin() async {
-    final context = this.context;
-    final questions = context.read<AppLockProvider>().appLock.securityAnswers?.keys.toList() ?? [];
-
-    final selectedQuestion = await showConfirmationDialog(
-      context: context,
-      title: '',
-      toggleable: false,
-      actions: questions.map((question) {
-        return AlertDialogAction(key: question, label: question.translatedQuestion);
-      }).toList(),
-    );
-
-    if (context.mounted && selectedQuestion != null) {
-      final answer = context.read<AppLockProvider>().appLock.securityAnswers![selectedQuestion];
-      final corrected = await showTextAnswerDialog(
-        context: context,
-        title: selectedQuestion.translatedQuestion,
-        isCaseSensitive: false,
-        keyword: answer!,
-      );
-
-      if (context.mounted && corrected == true) {
-        context.read<AppLockProvider>().forceResetPIN(context);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        widget.child,
         if (showBarrier) buildBlurFilter(),
         if (showBarrier) buildUnlockButton(context),
       ],
@@ -201,7 +172,7 @@ class _LockedState extends State<_Locked> with SingleTickerProviderStateMixin, W
               ),
               if (context.read<AppLockProvider>().appLock.pin != null)
                 OutlinedButton.icon(
-                  onPressed: () => forgotPin(),
+                  onPressed: () => context.read<AppLockProvider>().forgotPin(context),
                   label: Text(tr('button.forgot_pin')),
                 ),
             ],

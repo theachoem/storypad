@@ -23,15 +23,19 @@ class HomeViewModel extends BaseViewModel {
 
   HomeViewModel({
     required BuildContext context,
-    required HomeInitializerData? initialData,
   }) {
     AnalyticsService.instance.logViewHome(year: year);
 
-    setStories(initialData?.stories);
-    nickname = initialData?.nickname;
-    initialData?.legacyStorypadMigrationResponse?.showPendingMessage(context);
+    final initialData = HomeInitializer.getAndClear();
 
-    if (nickname == null && context.mounted) showInputNameSheet(context);
+    if (initialData != null) {
+      setStories(initialData.stories);
+      nickname = initialData.nickname;
+      initialData.legacyStorypadMigrationResponse?.showPendingMessage(context);
+      if (nickname == null && context.mounted) showInputNameSheet(context);
+    } else {
+      reload(debugSource: 'HomeViewModel#_constructor');
+    }
 
     RestoreBackupService.instance.addListener(() async {
       reload(debugSource: '$runtimeType#_listenToRestoreService');

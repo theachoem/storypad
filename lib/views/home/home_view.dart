@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/views/home/local_widgets/community_tile.dart' show CommunityTile;
 import 'package:storypad/views/home/local_widgets/language_tile.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
@@ -60,16 +59,13 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpAppLockWrapper(
-      child: ViewModelProvider<HomeViewModel>(
-        create: (context) => HomeViewModel(
-          initialData: HomeInitializer.getAndClear(),
-          context: context,
-        ),
-        builder: (context, viewModel, child) {
-          return _HomeContent(viewModel);
-        },
-      ),
+    return ViewModelProvider<HomeViewModel>(
+      create: (context) => HomeViewModel(context: context),
+      builder: (context, viewModel, child) {
+        return SpAppLockWrapper(
+          child: _HomeContent(viewModel),
+        );
+      },
     );
   }
 }
