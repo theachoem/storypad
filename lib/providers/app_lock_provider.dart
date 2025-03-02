@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/app_lock_object.dart' show $AppLockObjectCopyWith, AppLockObject;
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/local_auth_service.dart' show LocalAuthService;
 import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorage;
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
@@ -58,6 +59,7 @@ class AppLockProvider extends ChangeNotifier {
     ).push(context);
 
     if (context.mounted && authenticated) {
+      AnalyticsService.instance.logClearPIN();
       await storage.writeObject(appLock.copyWith(pin: null));
       await reload();
     }
@@ -75,6 +77,7 @@ class AppLockProvider extends ChangeNotifier {
         onValidated: (context, pin) async {
           await SecurityQuestionsRoute().pushReplacement(context);
           if (appLock.securityAnswers?.keys.isNotEmpty == true) {
+            AnalyticsService.instance.logSetPIN();
             await storage.writeObject(appLock.copyWith(pin: pin));
             await reload();
           }
@@ -90,6 +93,7 @@ class AppLockProvider extends ChangeNotifier {
 
   Future<void> toggleBiometrics(BuildContext context) async {
     bool authenticated = await localAuth.authenticate(title: tr('dialog.unlock_to_continue.title'));
+
     if (authenticated) {
       await storage.writeObject(appLock.copyWith(enabledBiometric: !(appLock.enabledBiometric == true)));
       await reload();

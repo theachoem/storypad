@@ -434,6 +434,26 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logClearPIN() {
+    final parameters = sanitizeParameters({});
+    debug('logClearPIN', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('clear_pin'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logSetPIN() {
+    final parameters = sanitizeParameters({});
+    debug('logSetPIN', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('set_pin'),
+      parameters: parameters,
+    );
+  }
+
   Map<String, Object>? storyAnalyticParameters(StoryDbModel story) {
     return sanitizeParameters({
       'type': story.type.name,
