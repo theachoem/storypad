@@ -35,7 +35,7 @@ class _HomeEndDrawer extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top,
-          bottom: MediaQuery.of(context).padding.bottom,
+          bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
         children: [
           const _HomeEndDrawerHeader(),
