@@ -8,8 +8,9 @@ class _SecurityQuestionsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppLockProvider>(context);
+
     final bool saveable = provider.appLock.securityAnswers.toString() != viewModel.securityAnswers.toString() &&
-        provider.appLock.securityAnswers?.isNotEmpty == true;
+        viewModel.securityAnswers.isNotEmpty == true;
 
     return Scaffold(
       appBar: AppBar(),

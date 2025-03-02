@@ -27,7 +27,7 @@ class SecurityQuestionsViewModel extends BaseViewModel {
     AppLockQuestion question,
     BuildContext context,
   ) async {
-    final answer = context.read<AppLockProvider>().appLock.securityAnswers?[question];
+    final answer = securityAnswers[question];
     final updatedAnswer = await EnterSecurityQuestionRoute(
       question: question,
       answer: answer,
