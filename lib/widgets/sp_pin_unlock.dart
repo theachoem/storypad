@@ -155,22 +155,25 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
   @override
   Widget build(BuildContext context) {
-    final double itemSize = MediaQuery.textScalerOf(context).scale(72.0);
-    final double spacing = MediaQuery.textScalerOf(context).scale(16.0);
-    final double pinSize = MediaQuery.textScalerOf(context).scale(16.0);
+    return LayoutBuilder(builder: (context, constraints) {
+      final double itemSize = MediaQuery.textScalerOf(context).scale(72.0);
+      final double spacing = MediaQuery.textScalerOf(context).scale(16.0);
+      final double pinSize = MediaQuery.textScalerOf(context).scale(16.0);
 
-    bool landscape = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+      bool landscape = constraints.maxWidth > constraints.maxHeight;
+      bool displayInRow = landscape && constraints.maxHeight < 700;
 
-    final children = [
-      Flexible(child: buildPinPreview(context, pinSize)),
-      Flexible(child: FittedBox(child: buildPins(itemSize, spacing, context))),
-    ];
+      final children = [
+        Flexible(child: buildPinPreview(context, pinSize)),
+        Flexible(child: FittedBox(child: buildPins(itemSize, spacing, context))),
+      ];
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(forceMaterialTransparency: true),
-      body: landscape ? Row(children: children) : Column(children: children),
-    );
+      return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(forceMaterialTransparency: true),
+        body: displayInRow ? Row(children: children) : Column(children: children),
+      );
+    });
   }
 
   Widget buildPinPreview(BuildContext context, double pinSize) {
