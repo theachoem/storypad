@@ -147,7 +147,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
     final double spacing = MediaQuery.textScalerOf(context).scale(16.0);
     final double pinSize = MediaQuery.textScalerOf(context).scale(16.0);
 
-    bool landscape = MediaQuery.of(context).size.height > MediaQuery.of(context).size.width;
+    bool landscape = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     final children = [
       Flexible(child: buildPinPreview(context, pinSize)),
@@ -159,7 +159,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(forceMaterialTransparency: true),
-      body: landscape ? Column(children: children) : Row(children: children),
+      body: landscape ? Row(children: children) : Column(children: children),
     );
   }
 
