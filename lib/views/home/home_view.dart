@@ -15,7 +15,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';

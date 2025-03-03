@@ -21,13 +21,12 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     createdAt: object.createdAt,
     tags: object.tags,
     assets: object.assets,
-    preferences: StoryDbConstructorService.decodePreferences(object),
+    preferences: decodePreferences(object),
     rawChanges: object.changes,
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
-    latestChange:
-        object.changes.isNotEmpty ? StoryDbConstructorService.rawChangesToChanges([object.changes.last]).first : null,
-    allChanges: options?['all_changes'] == true ? StoryDbConstructorService.rawChangesToChanges(object.changes) : null,
+    latestChange: object.changes.isNotEmpty ? StoryRawToChangesService.call([object.changes.last]).first : null,
+    allChanges: options?['all_changes'] == true ? StoryRawToChangesService.call(object.changes) : null,
   );
 }
 
@@ -87,8 +86,24 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
     metadata: story.latestChange?.safeMetadata,
-    changes: StoryDbConstructorService.changesToRawChanges(story),
+    changes: StoryChangesToRawService.call(story),
     permanentlyDeletedAt: null,
     preferences: story.preferences != null ? jsonEncode(story.preferences?.toJson()) : null,
   );
+}
+
+StoryPreferencesDbModel decodePreferences(StoryObjectBox object) {
+  StoryPreferencesDbModel? preferences;
+
+  if (object.preferences != null) {
+    try {
+      preferences = StoryPreferencesDbModel.fromJson(jsonDecode(object.preferences!));
+    } catch (e) {
+      debugPrint(".decodePreferences error: $e");
+    }
+  }
+
+  preferences ??= StoryPreferencesDbModel.create();
+  if (object.showDayCount != null) preferences = preferences.copyWith(showDayCount: object.showDayCount);
+  return preferences;
 }

@@ -11,7 +11,7 @@ import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_assets_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_preferences_table_viewer.dart';
@@ -34,7 +34,7 @@ class BackupObjectViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? backupAt = DateFormatService.yMEd_jmNullable(backup.fileInfo.createdAt, context.locale);
+    String? backupAt = DateFormatHelper.yMEd_jmNullable(backup.fileInfo.createdAt, context.locale);
 
     return Scaffold(
       appBar: AppBar(

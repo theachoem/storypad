@@ -20,8 +20,8 @@ class _LibraryContent extends StatelessWidget {
 
   Widget buildBottomNavigation(BackupProvider provider, BuildContext context) {
     return Visibility(
-      visible: provider.localAssets != null &&
-          provider.localAssets?.isNotEmpty == true &&
+      visible: provider.assetBackupState.localAssets != null &&
+          provider.assetBackupState.localAssets?.isNotEmpty == true &&
           provider.source.isSignedIn == true,
       child: SpFadeIn.fromBottom(
         child: Column(
@@ -36,12 +36,12 @@ class _LibraryContent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ValueListenableBuilder<int?>(
-                    valueListenable: provider.loadingAssetIdNotifier,
+                    valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
                     builder: (context, loadingAssetId, child) {
                       return FilledButton.icon(
                         icon: Icon(MdiIcons.googleDrive),
                         label: Text(tr("button.upload_to_google_drive")),
-                        onPressed: loadingAssetId != null ? null : () => provider.uploadAssets(),
+                        onPressed: loadingAssetId != null ? null : () => provider.assetBackupState.uploadAssets(),
                       );
                     },
                   ),
@@ -58,19 +58,22 @@ class _LibraryContent extends StatelessWidget {
     BuildContext context,
     BackupProvider provider,
   ) {
-    if (provider.assets?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (provider.assets?.items.isEmpty == true) {
+    if (provider.assetBackupState.assets?.items == null) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    if (provider.assetBackupState.assets?.items.isEmpty == true) {
       return buildEmptyBody(context);
     }
 
     return MasonryGridView.builder(
       padding: EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-      itemCount: provider.assets?.items.length ?? 0,
+      itemCount: provider.assetBackupState.assets?.items.length ?? 0,
       mainAxisSpacing: 8.0,
       crossAxisSpacing: 8.0,
       gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemBuilder: (context, index) {
-        final asset = provider.assets!.items[index];
+        final asset = provider.assetBackupState.assets!.items[index];
 
         return SpPopupMenuButton(
           dyGetter: (dy) => dy + 100,
@@ -88,7 +91,7 @@ class _LibraryContent extends StatelessWidget {
                 leadingIconData: Icons.image,
                 title: tr("button.view"),
                 onPressed: () {
-                  final assetLinks = provider.assets?.items.map((e) => e.link).toList() ?? [];
+                  final assetLinks = provider.assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
                   SpImagesViewer.fromString(
                     images: assetLinks,
                     initialIndex: assetLinks.indexOf(asset.link),
@@ -108,7 +111,7 @@ class _LibraryContent extends StatelessWidget {
                     children: [
                       buildImage(context, asset),
                       ValueListenableBuilder<int?>(
-                        valueListenable: provider.loadingAssetIdNotifier,
+                        valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
                         builder: (context, loadingAssetId, child) {
                           return buildImageStatus(
                             context: context,
@@ -138,14 +141,14 @@ class _LibraryContent extends StatelessWidget {
         leadingIconData: Icons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete_from_google_drive"),
-        onPressed: () => provider.deleteAsset(asset),
+        onPressed: () => provider.assetBackupState.deleteAsset(asset),
       );
     } else {
       return SpPopMenuItem(
         leadingIconData: Icons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete"),
-        onPressed: () => provider.deleteAsset(asset),
+        onPressed: () => provider.assetBackupState.deleteAsset(asset),
       );
     }
   }

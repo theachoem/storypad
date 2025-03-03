@@ -29,6 +29,7 @@ class ImageBlockEmbed extends quill.EmbedBuilder {
   }
 }
 
+// TODO: add translation here.
 class _QuillImageRenderer extends StatelessWidget {
   const _QuillImageRenderer({
     required this.node,

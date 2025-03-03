@@ -5,7 +5,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
-import 'package:storypad/routes/base_route.dart';
+import 'package:storypad/widgets/view/base_route.dart';
 
 // Logging analytics events without user-identifiable information.
 class AnalyticsService extends BaseAnalyticsService {

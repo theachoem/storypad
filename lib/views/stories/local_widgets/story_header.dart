@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
-import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/widgets/custom_embed/date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
@@ -131,7 +131,7 @@ class _DateSelector extends StatelessWidget {
 
   Widget buildMonthYear(BuildContext context) {
     return Text(
-      DateFormatService.yM(story.displayPathDate, context.locale),
+      DateFormatHelper.yM(story.displayPathDate, context.locale),
       style: TextTheme.of(context).labelMedium,
     );
   }

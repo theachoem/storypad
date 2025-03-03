@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/routes/base_route.dart';
+import 'package:storypad/widgets/view/base_route.dart';
 import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
 import 'edit_tag_view_model.dart';

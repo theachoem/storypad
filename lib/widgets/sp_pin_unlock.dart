@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/routes/utils/animated_page_route.dart' show AnimatedPageRoute, SharedAxisTransitionType;
+import 'package:storypad/core/helpers/animated_route_helper.dart' show AnimatedRouteHelper, SharedAxisTransitionType;
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
@@ -83,7 +83,7 @@ class SpPinUnlock extends StatefulWidget {
       confirmed = await nestedNavigation.push(this);
     } else {
       confirmed = await Navigator.of(context).push(
-        AnimatedPageRoute.sharedAxis(
+        AnimatedRouteHelper.sharedAxis(
           fullscreenDialog: true,
           type: SharedAxisTransitionType.vertical,
           builder: (context) => this,
@@ -102,7 +102,7 @@ class SpPinUnlock extends StatefulWidget {
       confirmed = await nestedNavigation.pushReplacement(this);
     } else {
       confirmed = await Navigator.of(context).pushReplacement(
-        AnimatedPageRoute.sharedAxis(
+        AnimatedRouteHelper.sharedAxis(
           fullscreenDialog: true,
           type: SharedAxisTransitionType.vertical,
           builder: (context) => this,

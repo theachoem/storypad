@@ -4,7 +4,7 @@ import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/routes/base_route.dart';
+import 'package:storypad/widgets/view/base_route.dart';
 
 import 'security_questions_view_model.dart';
 

@@ -66,7 +66,7 @@ class _Editor extends StatelessWidget {
         enableScribble: true,
         showCursor: true,
         embedBuilders: [
-          ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(draftContent)),
+          ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(draftContent)),
           DateBlockEmbed(),
         ],
         unknownEmbedBuilder: UnknownEmbedBuilder(),

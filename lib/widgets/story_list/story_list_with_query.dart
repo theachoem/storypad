@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/services/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/widgets/story_list/story_list.dart';
 
 class StoryListWithQuery extends StatefulWidget {

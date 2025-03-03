@@ -46,7 +46,7 @@ class _BackupTileMonogram extends StatelessWidget {
           width: monogramSize,
           color: ColorScheme.of(context).surface.withValues(),
           child: Text(
-            DateFormatService.E(date, context.locale),
+            DateFormatHelper.E(date, context.locale),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

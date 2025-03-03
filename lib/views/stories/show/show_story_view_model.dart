@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/services/stories/story_has_changed_service.dart';
+import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/story_helper.dart';
 import 'package:storypad/views/stories/changes/story_changes_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
@@ -49,7 +50,7 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
     bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!..addPage();
 
-    quillControllers = await StoryHelper.buildQuillControllers(draftContent!, readOnly: true);
+    quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: true);
     quillControllers.forEach((key, controller) {
       scrollControllers[key] = ScrollController();
       controller.addListener(() => _silentlySave());
@@ -154,7 +155,7 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<bool> _getHasChange() async {
-    return StoryHelper.hasChanges(
+    return StoryHasChangedService.call(
       draftContent: draftContent!,
       quillControllers: quillControllers,
       latestChange: story!.latestChange!,

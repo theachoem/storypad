@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/tags_provider.dart';
 
 class SpStoryLabels extends StatelessWidget {
@@ -115,7 +115,7 @@ class SpStoryLabels extends StatelessWidget {
       children.add(
         buildPin(
           context: context,
-          title: DateFormatService.jm(story.displayPathDate, context.locale),
+          title: DateFormatHelper.jm(story.displayPathDate, context.locale),
           onTap: () => showTimePickerDialog(context),
         ),
       );

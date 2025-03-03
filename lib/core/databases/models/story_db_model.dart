@@ -8,8 +8,8 @@ import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/story_db_constructor_service.dart';
-import 'package:storypad/core/services/story_helper.dart';
+import 'package:storypad/core/services/stories/story_content_builder_service.dart';
+import 'package:storypad/core/services/stories/story_raw_to_changes_servce.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
@@ -221,6 +221,14 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
+  Future<StoryDbModel> loadAllChanges() async {
+    if (rawChanges != null) {
+      List<StoryContentDbModel> changes = await compute(StoryRawToChangesService.call, rawChanges!);
+      return copyWith(allChanges: changes);
+    }
+    return copyWith();
+  }
+
   StoryDbModel copyWithPreferences({
     bool? showDayCount,
     String? starIcon,
@@ -273,7 +281,7 @@ class StoryDbModel extends BaseDbModel {
   }
 
   static Future<StoryDbModel> fromShowPage(ShowStoryViewModel viewModel) async {
-    StoryContentDbModel content = await StoryHelper.buildContent(
+    StoryContentDbModel content = await StoryContentBuilderService.call(
       viewModel.draftContent!,
       viewModel.quillControllers,
     );
@@ -285,7 +293,7 @@ class StoryDbModel extends BaseDbModel {
   }
 
   static Future<StoryDbModel> fromDetailPage(EditStoryViewModel viewModel) async {
-    StoryContentDbModel content = await StoryHelper.buildContent(
+    StoryContentDbModel content = await StoryContentBuilderService.call(
       viewModel.draftContent!,
       viewModel.quillControllers,
     );
@@ -327,10 +335,6 @@ class StoryDbModel extends BaseDbModel {
     );
 
     return initialStory;
-  }
-
-  Future<StoryDbModel> loadAllChanges() async {
-    return StoryDbConstructorService.loadAllChanges(this);
   }
 
   factory StoryDbModel.fromJson(Map<String, dynamic> json) => _$StoryDbModelFromJson(json);

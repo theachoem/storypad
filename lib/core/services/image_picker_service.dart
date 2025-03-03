@@ -52,6 +52,8 @@ class ImagePickerService {
   }
 }
 
+// TODO: extract this
+
 class _PhotoSheet extends StatelessWidget {
   const _PhotoSheet({
     required this.assets,

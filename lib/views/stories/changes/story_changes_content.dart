@@ -142,7 +142,7 @@ class _StoryChangesContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                DateFormatService.yMEd_jm(change.createdAt, context.locale),
+                DateFormatHelper.yMEd_jm(change.createdAt, context.locale),
                 style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).primary),
               ),
               const SizedBox(height: 4.0),

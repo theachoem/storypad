@@ -2,7 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 export 'package:animations/src/shared_axis_transition.dart';
 
-class AnimatedPageRoute {
+class AnimatedRouteHelper {
   static Route<T> fadeThrough<T>({
     required WidgetBuilder builder,
     RouteSettings? settings,

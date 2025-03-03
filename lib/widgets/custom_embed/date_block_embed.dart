@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/services/date_format_service.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 
 class DateBlockEmbed extends EmbedBuilder {
   @override
@@ -31,7 +31,7 @@ class DateBlockEmbed extends EmbedBuilder {
               children: [
                 Text(getDayOfMonthSuffix(date.day).toLowerCase(), style: TextTheme.of(context).labelSmall),
                 Text(
-                  DateFormatService.yM(date, context.locale),
+                  DateFormatHelper.yM(date, context.locale),
                   style: TextTheme.of(context).labelMedium,
                 ),
               ],

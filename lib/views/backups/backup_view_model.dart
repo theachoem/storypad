@@ -68,7 +68,7 @@ class BackupViewModel extends BaseViewModel {
     }
 
     for (String id in toRemoveBackupsIds) {
-      context.read<BackupProvider>().queueDeleteBackupByCloudFileId(id);
+      context.read<BackupProvider>().queueDeleteBackupState.delete(id);
     }
   }
 

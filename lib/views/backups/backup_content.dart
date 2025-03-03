@@ -144,7 +144,7 @@ class _BackupContent extends StatelessWidget {
                         contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
                         title: Text(fileInfo?.device.model ?? tr("general.unknown")),
                         subtitle: Text(
-                          DateFormatService.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na"),
+                          DateFormatHelper.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na"),
                         ),
                       ),
                     ),

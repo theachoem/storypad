@@ -19,7 +19,7 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = content != null ? QuillService.imagesFromContent(content) : null;
+    final images = content != null ? StoryExtractImageFromContentService.call(content) : null;
 
     return Expanded(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -90,7 +90,7 @@ class _ShowStoryContent extends StatelessWidget {
         enableScribble: false,
         showCursor: false,
         embedBuilders: [
-          ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.draftContent)),
+          ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.draftContent)),
           DateBlockEmbed(),
         ],
         unknownEmbedBuilder: UnknownEmbedBuilder(),

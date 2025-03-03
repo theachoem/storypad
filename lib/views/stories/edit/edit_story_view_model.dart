@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/services/stories/story_has_changed_service.dart';
+import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
+import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
+import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/story_helper.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 
@@ -72,7 +75,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
         )..addListener(() => _silentlySave());
       }
     } else {
-      quillControllers = await StoryHelper.buildQuillControllers(
+      quillControllers = await StoryContentToQuillControllersService.call(
         draftContent!,
         readOnly: false,
       );
@@ -91,7 +94,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<bool> get hasDataWritten =>
-      StoryHelper.hasDataWrittenFromController(draftContent: draftContent!, quillControllers: quillControllers);
+      StoryHasDataWrittenService.callByController(draftContent: draftContent!, quillControllers: quillControllers);
 
   Future<bool> setTags(List<int> tags) async {
     story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
@@ -196,7 +199,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<bool> _hasChange() async {
-    return StoryHelper.hasChanges(
+    return StoryHasChangedService.call(
       draftContent: draftContent!,
       quillControllers: quillControllers,
       latestChange: story!.latestChange!,
@@ -214,7 +217,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     if (story == null || initialStory == null) return;
     if (story?.updatedAt == initialStory?.updatedAt) return;
 
-    bool shouldRevert = await StoryHelper.shouldRevert(currentStory: story!, initialStory: initialStory!);
+    bool shouldRevert = await StoryShouldRevertChangeService.call(currentStory: story!, initialStory: initialStory!);
     if (shouldRevert) {
       debugPrint("Reverting story back... ${initialStory?.id}");
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/routes/utils/animated_page_route.dart';
+import 'package:storypad/core/helpers/animated_route_helper.dart';
 
 // Nested navigation inside same parent. Eg. navigations in dialog.
 class SpNestedNavigation extends StatefulWidget {
@@ -29,7 +29,7 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   Future<T?> push<T>(Widget screen) {
     return navigationKey.currentState!.push<T>(
-      AnimatedPageRoute.sharedAxis(
+      AnimatedRouteHelper.sharedAxis(
         type: SharedAxisTransitionType.horizontal,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
@@ -39,7 +39,7 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   Future<T?> pushReplacement<T>(Widget screen) {
     return navigationKey.currentState!.pushReplacement(
-      AnimatedPageRoute.sharedAxis(
+      AnimatedRouteHelper.sharedAxis(
         type: SharedAxisTransitionType.horizontal,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
@@ -57,7 +57,7 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
       clipBehavior: Clip.hardEdge,
       key: navigationKey,
       onGenerateRoute: (setting) {
-        return AnimatedPageRoute.sharedAxis(
+        return AnimatedRouteHelper.sharedAxis(
           type: SharedAxisTransitionType.horizontal,
           fillColor: widget.backgroundColor,
           builder: (context) {

@@ -9,7 +9,8 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
+import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/core/services/backup_sources/backup_to_file_service.dart';
 import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 
 abstract class BaseBackupSource {
@@ -70,12 +71,12 @@ abstract class BaseBackupSource {
   Future<CloudFileObject?> backup({
     required DateTime lastDbUpdatedAt,
   }) async {
-    BackupObject backup = await BackupFileConstructor().constructBackup(
+    BackupObject backup = await BackupDatabasesToBackupObjectService.call(
       databases: databases,
       lastUpdatedAt: lastDbUpdatedAt,
     );
 
-    final io.File file = await BackupFileConstructor().constructFile(
+    final io.File file = await BackupToFileService.call(
       cloudId,
       backup,
     );

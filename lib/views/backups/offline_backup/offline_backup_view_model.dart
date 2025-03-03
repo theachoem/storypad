@@ -5,11 +5,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/backup_sources/backup_file_constructor.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
@@ -78,7 +78,7 @@ class OfflineBackupViewModel extends BaseViewModel {
 
     final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#export',
-      future: () => BackupFileConstructor().constructBackup(
+      future: () => BackupDatabasesToBackupObjectService.call(
         databases: BaseBackupSource.databases,
         lastUpdatedAt: lastDbUpdatedAt,
       ),

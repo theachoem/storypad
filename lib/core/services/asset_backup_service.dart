@@ -1,13 +1,23 @@
-// ignore_for_file: library_private_types_in_public_api
+import 'dart:isolate';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 
-part of '../backup_provider.dart';
+class AssetBackupService {
+  final void Function() notifyListeners;
+  final BaseBackupSource source;
 
-mixin _AssetBackupConcern on _BaseBackupProvider {
+  AssetBackupService({
+    required this.notifyListeners,
+    required this.source,
+  });
+
   CollectionDbModel<AssetDbModel>? assets;
   List<AssetDbModel>? localAssets;
   ValueNotifier<int?> loadingAssetIdNotifier = ValueNotifier(null);
 
-  Future<void> _loadAssets() async {
+  Future<void> loadAssets() async {
     assets = await AssetDbModel.db.where();
 
     final items = assets?.items ?? [];
@@ -40,7 +50,7 @@ mixin _AssetBackupConcern on _BaseBackupProvider {
       }
     }
 
-    await _loadAssets();
+    await loadAssets();
     debugPrint('🚧 $runtimeType#uploadAssets -> Done with remain un-uploaded assets: ${localAssets?.length}');
     notifyListeners();
   }
@@ -91,9 +101,5 @@ mixin _AssetBackupConcern on _BaseBackupProvider {
     return null;
   }
 
-  @override
-  void dispose() {
-    loadingAssetIdNotifier.dispose();
-    super.dispose();
-  }
+  void dispose() => loadingAssetIdNotifier.dispose();
 }

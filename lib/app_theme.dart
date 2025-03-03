@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
-import 'package:storypad/routes/utils/animated_page_route.dart';
+import 'package:storypad/core/helpers/animated_route_helper.dart';
 
 class AppTheme extends StatelessWidget {
   const AppTheme({

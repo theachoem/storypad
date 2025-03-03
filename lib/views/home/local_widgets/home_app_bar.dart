@@ -64,7 +64,7 @@ class HomeAppBar extends StatelessWidget {
     return Container(
       height: viewModel.scrollInfo.appBar(context).indicatorHeight - 2,
       alignment: Alignment.center,
-      child: Text(DateFormatService.MMM(DateTime(2000, month), context.locale)),
+      child: Text(DateFormatHelper.MMM(DateTime(2000, month), context.locale)),
     );
   }
 }

@@ -1,29 +1,33 @@
 import 'dart:async';
-import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
-import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/asset_backup_service.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/core/services/restore_backup_service.dart';
+import 'package:storypad/core/services/queue_delete_backup_service.dart';
+import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 
-part 'mixins/asset_backup_mixin.dart';
-
-class _BaseBackupProvider extends ChangeNotifier {
+class BackupProvider extends ChangeNotifier with DebounchedCallback {
   final BaseBackupSource source = GoogleDriveBackupSource();
-}
 
-class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _AssetBackupConcern {
+  late final AssetBackupService assetBackupState = AssetBackupService(
+    notifyListeners: notifyListeners,
+    source: source,
+  );
+
+  late final QueueDeleteBackupService queueDeleteBackupState = QueueDeleteBackupService(
+    source: source,
+  );
+
   DateTime? _lastDbUpdatedAt;
   DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
 
@@ -72,7 +76,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
   Future<void> _loadLocalData() async {
     _lastDbUpdatedAt = await _getLastDbUpdatedAt();
     _storyCount = await StoryDbModel.db.count();
-    await _loadAssets();
+    await assetBackupState.loadAssets();
   }
 
   Future<void> _loadLatestSyncedFile() async {
@@ -100,8 +104,8 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     setSyncing(true);
 
     try {
-      await uploadAssets();
-      if (localAssets != null && localAssets?.isNotEmpty == true) return;
+      await assetBackupState.uploadAssets();
+      if (assetBackupState.localAssets != null && assetBackupState.localAssets?.isNotEmpty == true) return;
       await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
     } catch (e) {
       debugPrint("🐛 $runtimeType#_syncBackupAcrossDevices error: $e");
@@ -140,7 +144,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
       bool sameDeviceID = previousSyncedFile != null &&
           previousSyncedFile.getFileInfo()?.device.id == uploadedSyncedFile.getFileInfo()?.device.id;
       if (sameDeviceID) {
-        queueDeleteBackupByCloudFileId(previousSyncedFile.id);
+        queueDeleteBackupState.delete(previousSyncedFile.id);
       }
 
       _syncedFile = uploadedSyncedFile;
@@ -174,7 +178,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     Future<void> _() async {
       await source.signOut();
       await _loadLatestSyncedFile();
-      await _loadAssets();
+      await assetBackupState.loadAssets();
     }
 
     showLoading
@@ -193,7 +197,7 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     Future<void> _() async {
       await source.signIn();
       await _loadLatestSyncedFile();
-      await _loadAssets();
+      await assetBackupState.loadAssets();
     }
 
     showLoading
@@ -234,28 +238,9 @@ class BackupProvider extends _BaseBackupProvider with DebounchedCallback, _Asset
     MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));
   }
 
-  void queueDeleteBackupByCloudFileId(String id) {
-    _toDeleteBackupIds.add(id);
-    _deletingBackupTimer ??= Timer.periodic(const Duration(seconds: 1), (_) async {
-      String? toDeleteId = _toDeleteBackupIds.firstOrNull;
-      debugPrint('BackupProvider#deleteHistoryQueue queue timer: $_deletingBackupId');
-
-      if (toDeleteId == null) {
-        _deletingBackupTimer?.cancel();
-        _deletingBackupTimer = null;
-        return;
-      }
-
-      if (_deletingBackupId != null) return;
-      _deletingBackupId = toDeleteId;
-      await source.deleteCloudFile(toDeleteId);
-
-      _deletingBackupId = null;
-      if (_toDeleteBackupIds.contains(toDeleteId)) _toDeleteBackupIds.remove(toDeleteId);
-    });
+  @override
+  void dispose() {
+    assetBackupState.dispose();
+    super.dispose();
   }
-
-  final Set<String> _toDeleteBackupIds = {};
-  Timer? _deletingBackupTimer;
-  String? _deletingBackupId;
 }

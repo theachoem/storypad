@@ -36,7 +36,7 @@ class _StoryTileMonogram extends StatelessWidget {
           width: monogramSize,
           color: ColorScheme.of(context).surface.withValues(),
           child: Text(
-            DateFormatService.E(story.displayPathDate, context.locale),
+            DateFormatHelper.E(story.displayPathDate, context.locale),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

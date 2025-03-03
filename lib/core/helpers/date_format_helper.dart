@@ -3,7 +3,7 @@
 import 'dart:ui';
 import 'package:intl/intl.dart';
 
-class DateFormatService {
+class DateFormatHelper {
   static String E(DateTime date, Locale locale) {
     return DateFormat.E(locale.toLanguageTag()).format(date);
   }

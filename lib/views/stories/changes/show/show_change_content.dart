@@ -27,7 +27,7 @@ class _ShowChangeContent extends StatelessWidget {
             autoFocus: false,
             expands: true,
             embedBuilders: [
-              ImageBlockEmbed(fetchAllImages: () => QuillService.imagesFromContent(viewModel.params.content)),
+              ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.params.content)),
               DateBlockEmbed(),
             ],
             unknownEmbedBuilder: UnknownEmbedBuilder(),

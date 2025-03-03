@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
-import 'package:storypad/core/services/quill_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/db_assets/db_image.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
@@ -35,6 +34,11 @@ class SpImage extends StatelessWidget {
 
   double get defaultSize => 50;
 
+  static bool isImageBase64(String content) {
+    if (content.startsWith('http')) return false;
+    return RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(content);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (link.startsWith("storypad://")) {
@@ -57,7 +61,7 @@ class SpImage extends StatelessWidget {
           },
         );
       });
-    } else if (QuillService.isImageBase64(link)) {
+    } else if (isImageBase64(link)) {
       return Image.memory(
         base64.decode(link),
         width: width,

@@ -7,7 +7,6 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/stories/changes/story_changes_view.dart';
-import 'package:storypad/core/services/story_db_constructor_service.dart';
 
 class StoryChangesViewModel extends BaseViewModel {
   final StoryChangesRoute params;
@@ -41,7 +40,7 @@ class StoryChangesViewModel extends BaseViewModel {
   }
 
   /// For old data before v2.2.3, changes is saved dublicated. In that case, save new original story which contains valid allChanges.
-  /// This will be pass to [StoryDbConstructorService]
+  /// This will be pass to [StoryHelper]
   Future<void> reloadIfInvalid() async {
     if (originalStory?.allChanges?.length != originalStory?.rawChanges?.length) {
       debugPrint(

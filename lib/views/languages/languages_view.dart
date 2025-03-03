@@ -7,7 +7,7 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/routes/base_route.dart';
+import 'package:storypad/widgets/view/base_route.dart';
 
 import 'languages_view_model.dart';
 

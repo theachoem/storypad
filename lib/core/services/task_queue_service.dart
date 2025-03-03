@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class TaskQueue {
+class TaskQueueService {
   final List<(Future<void> Function(), void Function())> _tasksQueue = [];
   Future? _currentTask;
 

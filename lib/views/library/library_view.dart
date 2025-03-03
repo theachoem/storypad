@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/routes/base_route.dart';
+import 'package:storypad/widgets/view/base_route.dart';
 import 'package:storypad/views/library/show/show_asset_view.dart';
 import 'package:storypad/widgets/custom_embed/sp_image.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
