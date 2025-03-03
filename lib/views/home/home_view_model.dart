@@ -17,6 +17,7 @@ import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
 part './local_widgets/home_scroll_info.dart';
+part 'local_widgets/home_scroll_app_bar_info.dart';
 
 class HomeViewModel extends BaseViewModel {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
