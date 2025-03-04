@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+# Command:
+# bin/pubspec/outdated
+
+flutter pub outdated

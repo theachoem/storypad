@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+# Use this [bin/flutterfire] to reconfigure firebase in this project.
+# It is already configured for community.
+# So most of the time, this does not needed until there are new necessary changes to Firebase project.
+#
+# Commands:
+# bin/flutterfire --community
+# bin/flutterfire --spooky
+# bin/flutterfire --storypad
+
 function exit_if_file_not_exist() {
   if ! [[ -f $1 ]]; then
     echo "🚨 $2"

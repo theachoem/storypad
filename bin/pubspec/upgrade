@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+# Command:
+# bin/pubspec/upgrade
+
+flutter pub upgrade --major-versions

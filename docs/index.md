@@ -3,7 +3,7 @@ layout: home
 nav_order: 1
 ---
 
-<img src="https://github.com/user-attachments/assets/dedc5e14-5e6f-499f-93a7-ad6ff11f622e" alt="cover.jpg" style="border-radius: 8px;">
+<img src="https://github.com/user-attachments/assets/dedc5e14-5e6f-499f-93a7-ad6ff11f622e" alt="StoryPad Minimalist Writing App Cover" style="border-radius: 8px;">
 
 # StoryPad
 

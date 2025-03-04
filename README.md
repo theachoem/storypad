@@ -2,9 +2,11 @@
 
 # StoryPad 📝
 
-First journal with Material 3 design! StoryPad is a minimalist design application to write stories, journals, notes, diaries, todo, etc. We offer a variety of features that you can expect for your daily usage.
+A place for your thoughts, memories, and stories.
 
-<!-- [![App Store](https://img.shields.io/badge/App_Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white)](https://apps.apple.com/us/app/spooky/id1629372753?platform=iphone) -->
+StoryPad is a minimalist app designed for writing your diaries, stories, notes, and reflections. Built with Material 3, it’s simple, elegant, and made for the moments you want to capture.
+
+With full transparency, StoryPad is open-source and ad-free, ensuring a smooth and trustworthy experience.
 
 [![Play Store](https://img.shields.io/badge/Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.tc.writestory)
 

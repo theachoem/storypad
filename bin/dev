@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# Use this [bin/dev] to run Flutter project in specific flavor.
+#
+# Commands:
 # bin/dev --community
 # bin/dev --storypad
 # bin/dev --spooky
@@ -26,5 +29,5 @@ esac
 # Remove 1st args
 shift
 
-echo "Executing: $CMD $@"
-eval "$CMD $@"
+echo "Executing: $CMD"
+eval $CMD

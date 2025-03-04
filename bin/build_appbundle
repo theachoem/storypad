@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+# Commands:
+# bin/build_appbundle --community
+# bin/build_appbundle --storypad
+# bin/build_appbundle --spooky
+
+FLAVOR=$1
+
+case "$FLAVOR" in
+--storypad)
+  CMD="flutter build appbundle --release --flavor storypad --dart-define-from-file=env/storypad.json --target=lib/main_storypad.dart"
+  ;;
+--spooky)
+  CMD="flutter build appbundle --release --flavor spooky --dart-define-from-file=env/spooky.json --target=lib/main_spooky.dart"
+  ;;
+--community | "")
+  CMD="flutter build appbundle --release --flavor community --dart-define-from-file=env/community.json --target=lib/main_community.dart"
+  ;;
+*)
+  echo "Invalid option: $FLAVOR"
+  echo "Usage: bin/dev [--storypad | --spooky | --community]"
+  exit 1
+  ;;
+esac
+
+echo "Executing: $CMD"
+exec $CMD
