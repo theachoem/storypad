@@ -12,7 +12,7 @@ class _HomeScrollAppBarInfo {
     scaler = MediaQuery.textScalerOf(context);
   }
 
-  final double contentsMarginTop = 20;
+  final double contentsMarginTop = 24;
   final double helloTextBaseHeight = 28;
   final double questionTextBaseHeight = 24;
   final double contentsMarginBottom = 8;
