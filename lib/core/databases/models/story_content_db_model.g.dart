@@ -19,8 +19,6 @@ abstract class _$StoryContentDbModelCWProxy {
 
   StoryContentDbModel metadata(String? metadata);
 
-  StoryContentDbModel draft(bool? draft);
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -34,7 +32,6 @@ abstract class _$StoryContentDbModelCWProxy {
     DateTime createdAt,
     List<List<dynamic>>? pages,
     String? metadata,
-    bool? draft,
   });
 }
 
@@ -65,9 +62,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
   StoryContentDbModel metadata(String? metadata) => this(metadata: metadata);
 
   @override
-  StoryContentDbModel draft(bool? draft) => this(draft: draft);
-
-  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -82,7 +76,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? pages = const $CopyWithPlaceholder(),
     Object? metadata = const $CopyWithPlaceholder(),
-    Object? draft = const $CopyWithPlaceholder(),
   }) {
     return StoryContentDbModel(
       id: id == const $CopyWithPlaceholder()
@@ -109,10 +102,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
           ? _value.metadata
           // ignore: cast_nullable_to_non_nullable
           : metadata as String?,
-      draft: draft == const $CopyWithPlaceholder()
-          ? _value.draft
-          // ignore: cast_nullable_to_non_nullable
-          : draft as bool?,
     );
   }
 }
@@ -138,7 +127,6 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as List<dynamic>)
           .toList(),
       metadata: json['metadata'] as String?,
-      draft: json['draft'] as bool?,
     );
 
 Map<String, dynamic> _$StoryContentDbModelToJson(
@@ -148,7 +136,6 @@ Map<String, dynamic> _$StoryContentDbModelToJson(
       'title': instance.title,
       'plain_text': instance.plainText,
       'created_at': instance.createdAt.toIso8601String(),
-      'draft': instance.draft,
       'metadata': instance.metadata,
       'pages': instance.pages,
     };

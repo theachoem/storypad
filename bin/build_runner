@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+CMD="dart run build_runner build"
+
+echo "Executing: $CMD"
+exec $CMD

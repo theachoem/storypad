@@ -89,7 +89,7 @@ class StoryList extends StatelessWidget {
               listContext: listContext,
               onTap: () {
                 if (viewOnly) {
-                  ShowChangeRoute(content: story.latestChange!).push(context);
+                  ShowChangeRoute(content: story.latestContent!).push(context);
                 } else {
                   ShowStoryRoute(id: story.id, story: story).push(context);
                 }

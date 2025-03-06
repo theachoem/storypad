@@ -7,7 +7,11 @@ class StoryHasDataWrittenService {
     required StoryContentDbModel draftContent,
     required Map<int, QuillController> quillControllers,
   }) async {
-    final content = await StoryContentBuilderService.call(draftContent, quillControllers);
+    final content = await StoryContentBuilderService.call(
+      draftContent: draftContent,
+      quillControllers: quillControllers,
+    );
+
     return callByContent(content);
   }
 

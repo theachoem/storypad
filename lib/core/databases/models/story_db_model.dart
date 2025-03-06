@@ -9,7 +9,6 @@ import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_content_builder_service.dart';
-import 'package:storypad/core/services/stories/story_raw_to_changes_servce.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
@@ -47,16 +46,8 @@ class StoryDbModel extends BaseDbModel {
   final List<String>? tags;
   final List<int>? assets;
 
-  /// load this manually when needed with [loadAllChanges]
-  @JsonKey(name: 'changes')
-  final List<StoryContentDbModel>? allChanges;
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  late StoryContentDbModel? latestChange;
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final List<String>? rawChanges;
-
+  final StoryContentDbModel? latestContent;
+  final StoryContentDbModel? draftContent;
   final DateTime createdAt;
 
   @override
@@ -80,7 +71,7 @@ class StoryDbModel extends BaseDbModel {
   List<int>? get validTags => tags?.map((e) => int.tryParse(e)).whereType<int>().toList();
 
   StoryDbModel({
-    this.version = 1,
+    this.version = 2,
     required this.type,
     required this.id,
     required this.starred,
@@ -97,17 +88,10 @@ class StoryDbModel extends BaseDbModel {
     required this.tags,
     required this.assets,
     required this.movedToBinAt,
-    required this.allChanges,
+    required this.latestContent,
+    required this.draftContent,
     required this.lastSavedDeviceId,
-    this.rawChanges,
-    this.latestChange,
-  }) {
-    // By default, `allChanges` is null when fetched from the database for speed.
-    // For backups, only `allChanges` is included, while `latestChange` and `rawChanges` are excluded.
-    // This means that when converting a cloud backup JSON to a model,
-    // `latestChange` and `rawChanges` should derive their values from `allChanges` instead.
-    latestChange ??= allChanges?.last;
-  }
+  });
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences?.showDayCount ?? false;
@@ -138,6 +122,16 @@ class StoryDbModel extends BaseDbModel {
   bool sameDayAs(StoryDbModel story) {
     return [displayPathDate.year, displayPathDate.month, displayPathDate.day].join("-") ==
         [story.displayPathDate.year, story.displayPathDate.month, story.displayPathDate.day].join("-");
+  }
+
+  StoryContentDbModel generateDraftContent() {
+    if (draftContent != null) {
+      return draftContent!;
+    } else if (latestContent != null) {
+      return StoryContentDbModel.dublicate(latestContent!);
+    } else {
+      return StoryContentDbModel.create(createdAt: DateTime.now());
+    }
   }
 
   Future<StoryDbModel?> putBack({
@@ -221,14 +215,6 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
-  Future<StoryDbModel> loadAllChanges() async {
-    if (rawChanges != null) {
-      List<StoryContentDbModel> changes = await compute(StoryRawToChangesService.call, rawChanges!);
-      return copyWith(allChanges: changes);
-    }
-    return copyWith();
-  }
-
   StoryDbModel copyWithPreferences({
     bool? showDayCount,
     String? starIcon,
@@ -268,34 +254,47 @@ class StoryDbModel extends BaseDbModel {
       starred: false,
       feeling: null,
       preferences: StoryPreferencesDbModel.create(),
-      latestChange: StoryContentDbModel.create(),
-      allChanges: null,
+      latestContent: StoryContentDbModel.create(),
+      draftContent: StoryContentDbModel.create(),
       updatedAt: now,
       createdAt: now,
       tags: [],
       assets: [],
       movedToBinAt: null,
-      rawChanges: null,
       lastSavedDeviceId: null,
     );
   }
 
-  static Future<StoryDbModel> fromShowPage(ShowStoryViewModel viewModel) async {
+  static Future<StoryDbModel> fromShowPage(
+    ShowStoryViewModel viewModel, {
+    required bool draft,
+  }) async {
     StoryContentDbModel content = await StoryContentBuilderService.call(
-      viewModel.draftContent!,
-      viewModel.quillControllers,
+      draftContent: viewModel.draftContent!,
+      quillControllers: viewModel.quillControllers,
     );
 
-    return viewModel.story!.copyWith(
-      updatedAt: DateTime.now(),
-      latestChange: content,
-    );
+    if (draft) {
+      return viewModel.story!.copyWith(
+        updatedAt: DateTime.now(),
+        draftContent: content,
+      );
+    } else {
+      return viewModel.story!.copyWith(
+        updatedAt: DateTime.now(),
+        latestContent: content,
+        draftContent: null,
+      );
+    }
   }
 
-  static Future<StoryDbModel> fromDetailPage(EditStoryViewModel viewModel) async {
+  static Future<StoryDbModel> fromDetailPage(
+    EditStoryViewModel viewModel, {
+    required bool draft,
+  }) async {
     StoryContentDbModel content = await StoryContentBuilderService.call(
-      viewModel.draftContent!,
-      viewModel.quillControllers,
+      draftContent: viewModel.draftContent!,
+      quillControllers: viewModel.quillControllers,
     );
 
     Set<int> assets = {};
@@ -313,11 +312,19 @@ class StoryDbModel extends BaseDbModel {
     }
 
     debugPrint("Found assets: $assets in ${viewModel.story?.id}");
-    return viewModel.story!.copyWith(
-      assets: assets.toList(),
-      updatedAt: DateTime.now(),
-      latestChange: content,
-    );
+
+    if (draft) {
+      return viewModel.story!.copyWith(
+        updatedAt: DateTime.now(),
+        draftContent: content,
+      );
+    } else {
+      return viewModel.story!.copyWith(
+        updatedAt: DateTime.now(),
+        latestContent: content,
+        draftContent: null,
+      );
+    }
   }
 
   factory StoryDbModel.startYearStory(int year) {
@@ -327,7 +334,7 @@ class StoryDbModel extends BaseDbModel {
     Delta delta = Delta()..insert(body);
 
     initialStory = initialStory.copyWith(
-      latestChange: initialStory.latestChange!.copyWith(
+      latestContent: initialStory.latestContent!.copyWith(
         title: "Let's Begin: $year ✨",
         pages: [delta.toJson()],
         plainText: body,

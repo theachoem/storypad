@@ -41,13 +41,11 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel movedToBinAt(DateTime? movedToBinAt);
 
-  StoryDbModel allChanges(List<StoryContentDbModel>? allChanges);
+  StoryDbModel latestContent(StoryContentDbModel? latestContent);
+
+  StoryDbModel draftContent(StoryContentDbModel? draftContent);
 
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
-
-  StoryDbModel rawChanges(List<String>? rawChanges);
-
-  StoryDbModel latestChange(StoryContentDbModel? latestChange);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -73,10 +71,9 @@ abstract class _$StoryDbModelCWProxy {
     List<String>? tags,
     List<int>? assets,
     DateTime? movedToBinAt,
-    List<StoryContentDbModel>? allChanges,
+    StoryContentDbModel? latestContent,
+    StoryContentDbModel? draftContent,
     String? lastSavedDeviceId,
-    List<String>? rawChanges,
-    StoryContentDbModel? latestChange,
   });
 }
 
@@ -140,20 +137,16 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       this(movedToBinAt: movedToBinAt);
 
   @override
-  StoryDbModel allChanges(List<StoryContentDbModel>? allChanges) =>
-      this(allChanges: allChanges);
+  StoryDbModel latestContent(StoryContentDbModel? latestContent) =>
+      this(latestContent: latestContent);
+
+  @override
+  StoryDbModel draftContent(StoryContentDbModel? draftContent) =>
+      this(draftContent: draftContent);
 
   @override
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       this(lastSavedDeviceId: lastSavedDeviceId);
-
-  @override
-  StoryDbModel rawChanges(List<String>? rawChanges) =>
-      this(rawChanges: rawChanges);
-
-  @override
-  StoryDbModel latestChange(StoryContentDbModel? latestChange) =>
-      this(latestChange: latestChange);
 
   @override
 
@@ -181,10 +174,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? tags = const $CopyWithPlaceholder(),
     Object? assets = const $CopyWithPlaceholder(),
     Object? movedToBinAt = const $CopyWithPlaceholder(),
-    Object? allChanges = const $CopyWithPlaceholder(),
+    Object? latestContent = const $CopyWithPlaceholder(),
+    Object? draftContent = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
-    Object? rawChanges = const $CopyWithPlaceholder(),
-    Object? latestChange = const $CopyWithPlaceholder(),
   }) {
     return StoryDbModel(
       version: version == const $CopyWithPlaceholder()
@@ -255,22 +247,18 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.movedToBinAt
           // ignore: cast_nullable_to_non_nullable
           : movedToBinAt as DateTime?,
-      allChanges: allChanges == const $CopyWithPlaceholder()
-          ? _value.allChanges
+      latestContent: latestContent == const $CopyWithPlaceholder()
+          ? _value.latestContent
           // ignore: cast_nullable_to_non_nullable
-          : allChanges as List<StoryContentDbModel>?,
+          : latestContent as StoryContentDbModel?,
+      draftContent: draftContent == const $CopyWithPlaceholder()
+          ? _value.draftContent
+          // ignore: cast_nullable_to_non_nullable
+          : draftContent as StoryContentDbModel?,
       lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
           : lastSavedDeviceId as String?,
-      rawChanges: rawChanges == const $CopyWithPlaceholder()
-          ? _value.rawChanges
-          // ignore: cast_nullable_to_non_nullable
-          : rawChanges as List<String>?,
-      latestChange: latestChange == const $CopyWithPlaceholder()
-          ? _value.latestChange
-          // ignore: cast_nullable_to_non_nullable
-          : latestChange as StoryContentDbModel?,
     );
   }
 }
@@ -286,7 +274,7 @@ extension $StoryDbModelCopyWith on StoryDbModel {
 // **************************************************************************
 
 StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
-      version: (json['version'] as num?)?.toInt() ?? 1,
+      version: (json['version'] as num?)?.toInt() ?? 2,
       type: $enumDecode(_$PathTypeEnumMap, json['type']),
       id: (json['id'] as num).toInt(),
       starred: json['starred'] as bool?,
@@ -310,9 +298,14 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       movedToBinAt: json['moved_to_bin_at'] == null
           ? null
           : DateTime.parse(json['moved_to_bin_at'] as String),
-      allChanges: (json['changes'] as List<dynamic>?)
-          ?.map((e) => StoryContentDbModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      latestContent: json['latest_content'] == null
+          ? null
+          : StoryContentDbModel.fromJson(
+              json['latest_content'] as Map<String, dynamic>),
+      draftContent: json['draft_content'] == null
+          ? null
+          : StoryContentDbModel.fromJson(
+              json['draft_content'] as Map<String, dynamic>),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
     );
 
@@ -331,7 +324,8 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'feeling': instance.feeling,
       'tags': instance.tags,
       'assets': instance.assets,
-      'changes': instance.allChanges?.map((e) => e.toJson()).toList(),
+      'latest_content': instance.latestContent?.toJson(),
+      'draft_content': instance.draftContent?.toJson(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),

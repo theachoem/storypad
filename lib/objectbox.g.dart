@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 2962579780537594759),
       name: 'StoryObjectBox',
-      lastPropertyId: const obx_int.IdUid(25, 5807327571729293497),
+      lastPropertyId: const obx_int.IdUid(29, 2326009534719657446),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -133,6 +133,16 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(25, 5807327571729293497),
             name: 'preferences',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(28, 421098968365083050),
+            name: 'latestContent',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(29, 2326009534719657446),
+            name: 'draftContent',
             type: 9,
             flags: 0)
       ],
@@ -335,7 +345,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         957469211671557087,
         8481003567609178682,
         8289181544945165894,
-        7601477478707634423
+        7601477478707634423,
+        5301328484806180063,
+        8536407145733065373
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -372,7 +384,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final preferencesOffset = object.preferences == null
               ? null
               : fbb.writeString(object.preferences!);
-          fbb.startTable(26);
+          final latestContentOffset = object.latestContent == null
+              ? null
+              : fbb.writeString(object.latestContent!);
+          final draftContentOffset = object.draftContent == null
+              ? null
+              : fbb.writeString(object.draftContent!);
+          fbb.startTable(30);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.version);
           fbb.addOffset(2, typeOffset);
@@ -395,6 +413,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addBool(22, object.showDayCount);
           fbb.addOffset(23, assetsOffset);
           fbb.addOffset(24, preferencesOffset);
+          fbb.addOffset(27, latestContentOffset);
+          fbb.addOffset(28, draftContentOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -436,6 +456,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final movedToBinAtParam = movedToBinAtValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(movedToBinAtValue);
+          final latestContentParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 58);
+          final draftContentParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 60);
           final changesParam = const fb.ListReader<String>(
                   fb.StringReader(asciiOptimization: true),
                   lazy: false)
@@ -474,6 +500,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               createdAt: createdAtParam,
               updatedAt: updatedAtParam,
               movedToBinAt: movedToBinAtParam,
+              latestContent: latestContentParam,
+              draftContent: draftContentParam,
               changes: changesParam,
               tags: tagsParam,
               assets: assetsParam,
@@ -765,6 +793,14 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.preferences].
   static final preferences =
       obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[21]);
+
+  /// See [StoryObjectBox.latestContent].
+  static final latestContent =
+      obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[22]);
+
+  /// See [StoryObjectBox.draftContent].
+  static final draftContent =
+      obx.QueryStringProperty<StoryObjectBox>(_entities[0].properties[23]);
 }
 
 /// [TagObjectBox] entity fields to define ObjectBox queries.

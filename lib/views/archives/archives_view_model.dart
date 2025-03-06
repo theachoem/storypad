@@ -35,6 +35,7 @@ class ArchivesViewModel extends BaseViewModel {
       OkCancelResult result = await showOkCancelAlertDialog(
         context: context,
         title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+        isDestructiveAction: true,
         okLabel: tr("button.discard"),
       );
       shouldPop = result == OkCancelResult.ok;

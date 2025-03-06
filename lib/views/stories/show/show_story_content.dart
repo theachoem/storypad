@@ -50,6 +50,7 @@ class _ShowStoryContent extends StatelessWidget {
                         draftContent: viewModel.draftContent!,
                         readOnly: true,
                         onChangeDate: viewModel.changeDate,
+                        draftActions: viewModel.getDraftActions(context),
                       ),
                     ),
                 ];
@@ -119,12 +120,6 @@ class _ShowStoryContent extends StatelessWidget {
       SpPopupMenuButton(
         items: (context) {
           return [
-            SpPopMenuItem(
-              leadingIconData: Icons.history_sharp,
-              title: tr("page.changes_history.title"),
-              subtitle: "${viewModel.story?.rawChanges?.length}",
-              onPressed: () => viewModel.goToChangesPage(context),
-            ),
             SpPopMenuItem(
               leadingIconData: Icons.info,
               title: tr("button.info"),

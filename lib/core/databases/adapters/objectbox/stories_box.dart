@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:html_character_entities/html_character_entities.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/stories/story_raw_to_changes_servce.dart';
-import 'package:storypad/core/services/stories/story_changes_to_raw_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
 
@@ -15,6 +15,29 @@ part 'helpers/stories_box_transformer.dart';
 class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   @override
   String get tableName => "stories";
+
+  Future<void> migrateDataToV2() async {
+    final conditions = StoryObjectBox_.id
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
+        .and(StoryObjectBox_.version.equals(1));
+
+    final queryBuilder = box.query(conditions);
+    final boxes = await queryBuilder.build().findAsync();
+
+    int count = 0;
+
+    for (var storyBox in boxes) {
+      if (storyBox.version == 1) {
+        storyBox.latestContent = storyBox.changes.last;
+        storyBox.changes = [];
+        storyBox.version = 2;
+        await box.putAsync(storyBox);
+      }
+    }
+
+    debugPrint('🤾‍♀️ Migrated Stories: $count');
+  }
 
   @override
   Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
@@ -27,6 +50,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Query<StoryObjectBox> query =
         box.query(conditions).order(StoryObjectBox_.updatedAt, flags: Order.descending).build();
     StoryObjectBox? object = await query.findFirstAsync();
+
     return object?.updatedAt;
   }
 
@@ -66,7 +90,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     bool runCallbacks = true,
   }) async {
     StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks);
-    debugPrint("🚧 StoryBox#set: ${saved?.rawChanges?.length}");
+    debugPrint("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
     return saved;
   }
 
@@ -136,6 +160,23 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
   @override
   StoryDbModel modelFromJson(Map<String, dynamic> json) {
+    /// Migrate to v2, mostly from backup file. For DB level check: [StoriesBox#migrateDataToV2]
+    if (json['version'] == 1) {
+      final changes = json['changes'];
+
+      if (changes is List) {
+        final latestContent = changes.last;
+
+        if (latestContent is Map<String, dynamic>) {
+          json['latest_content'] = latestContent;
+          json['version'] = 2;
+
+          // model no longer has changes field.
+          json.remove('changes');
+        }
+      }
+    }
+
     return StoryDbModel.fromJson(json);
   }
 

@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -6,7 +7,20 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
+
+class SpStoryLabelsDraftActions {
+  final Future<void> Function() onContinueEditing;
+  final Future<void> Function() onDiscardDraft;
+  final Future<void> Function() onViewPrevious;
+
+  SpStoryLabelsDraftActions({
+    required this.onContinueEditing,
+    required this.onDiscardDraft,
+    required this.onViewPrevious,
+  });
+}
 
 class SpStoryLabels extends StatelessWidget {
   const SpStoryLabels({
@@ -15,6 +29,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
     required this.onChangeDate,
+    this.draftActions,
     this.margin = EdgeInsets.zero,
     this.fromStoryTile = false,
   });
@@ -22,6 +37,7 @@ class SpStoryLabels extends StatelessWidget {
   final StoryDbModel story;
   final EdgeInsets margin;
   final bool fromStoryTile;
+  final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function()? onToggleShowTime;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
@@ -63,6 +79,48 @@ class SpStoryLabels extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> showDraftSheet(BuildContext context) async {
+    final action = await showModalActionSheet(
+      context: context,
+      actions: [
+        SheetAction(
+          label: tr("button.continue_editing"),
+          icon: Icons.edit,
+          key: "continue_editing",
+          isDefaultAction: true,
+        ),
+        SheetAction(
+          label: tr("button.view_previous"),
+          icon: Icons.compare,
+          key: "view_previous",
+        ),
+        SheetAction(
+          label: tr("button.discard_draft"),
+          icon: Icons.clear,
+          key: "discard_draft",
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+
+    switch (action) {
+      case "continue_editing":
+        AnalyticsService.instance.logStoryContinueEdit(story: story);
+        draftActions!.onContinueEditing();
+        break;
+      case "discard_draft":
+        AnalyticsService.instance.logStoryDiscardDraft(story: story);
+        draftActions!.onDiscardDraft();
+        break;
+      case "view_previous":
+        AnalyticsService.instance.logStoryViewPrevious(story: story);
+        draftActions!.onViewPrevious();
+        break;
+      default:
+        break;
+    }
   }
 
   Future<void> showTimePickerDialog(BuildContext context) async {
@@ -121,6 +179,19 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    bool showDraft = false;
+    if (story.draftContent != null) showDraft = fromStoryTile || draftActions != null;
+    if (showDraft) {
+      children.add(
+        buildPin(
+          leadingIconData: Icons.edit_note,
+          context: context,
+          title: tr("general.draft"),
+          onTap: draftActions != null ? () => showDraftSheet(context) : null,
+        ),
+      );
+    }
+
     if (children.isEmpty) return SizedBox.shrink();
     return Container(
       padding: margin,
@@ -152,7 +223,28 @@ class SpStoryLabels extends StatelessWidget {
     required BuildContext context,
     required String title,
     required void Function()? onTap,
+    IconData? leadingIconData,
   }) {
+    Widget text;
+
+    if (leadingIconData != null) {
+      text = RichText(
+        textScaler: MediaQuery.textScalerOf(context),
+        text: TextSpan(
+          style: TextTheme.of(context).labelMedium,
+          children: [
+            WidgetSpan(child: Icon(leadingIconData, size: 16.0), alignment: PlaceholderAlignment.middle),
+            TextSpan(text: " $title"),
+          ],
+        ),
+      );
+    } else {
+      text = Text(
+        title,
+        style: TextTheme.of(context).labelMedium,
+      );
+    }
+
     return Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
       color: ColorScheme.of(context).readOnly.surface2,
@@ -164,10 +256,7 @@ class SpStoryLabels extends StatelessWidget {
             horizontal: MediaQuery.textScalerOf(context).scale(7),
             vertical: MediaQuery.textScalerOf(context).scale(1),
           ),
-          child: Text(
-            title,
-            style: TextTheme.of(context).labelMedium,
-          ),
+          child: text,
         ),
       ),
     );
