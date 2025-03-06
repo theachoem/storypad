@@ -168,6 +168,7 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
       if (await _getHasChange()) {
         story = await StoryDbModel.fromShowPage(this, draft: true);
         await StoryDbModel.db.set(story!);
+        notifyListeners();
       }
     });
   }

@@ -186,18 +186,22 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
 
   void _silentlySave() {
     debouncedCallback(() async {
-      await save(draft: true);
+      await draftSave();
     });
   }
 
-  Future<void> save({
-    required bool draft,
-  }) async {
+  Future<void> draftSave() async {
     if (await _hasChange()) {
-      story = await StoryDbModel.fromDetailPage(this, draft: draft);
+      story = await StoryDbModel.fromDetailPage(this, draft: true);
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
+  }
+
+  Future<void> saveWithoutCheck() async {
+    story = await StoryDbModel.fromDetailPage(this, draft: false);
+    await StoryDbModel.db.set(story!);
+    lastSavedAtNotifier.value = story?.updatedAt;
   }
 
   Future<bool> _hasChange() async {
@@ -210,7 +214,8 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<void> done(BuildContext context) async {
-    await save(draft: false);
+    // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
+    await saveWithoutCheck();
     await revertIfNoChange();
     if (context.mounted) Navigator.pop(context);
   }
