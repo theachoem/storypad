@@ -32,6 +32,8 @@ aux_links:
     - "https://github.com/theachoem/storypad"
 aux_links_new_tab: true
 
+color_scheme: dark
+
 # Build settings
 # theme: minima
 remote_theme: pmarsceill/just-the-docs

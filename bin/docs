@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+CMD="cd docs && bundle exec jekyll serve"
+
+echo "Executing: $CMD"
+exec sh -c "$CMD"

@@ -5,13 +5,17 @@ import 'package:storypad/core/services/stories/story_content_builder_service.dar
 
 class StoryHasChangedService {
   static Future<bool> call({
-    required StoryContentDbModel draftContent,
     required Map<int, QuillController> quillControllers,
-    required StoryContentDbModel latestChange,
+    required StoryContentDbModel latestContent,
+    required StoryContentDbModel draftContent,
     bool ignoredEmpty = true,
   }) async {
-    final content = await StoryContentBuilderService.call(draftContent, quillControllers);
+    final content = await StoryContentBuilderService.call(
+      draftContent: draftContent,
+      quillControllers: quillControllers,
+    );
+
     if (!ignoredEmpty && !StoryHasDataWrittenService.callByContent(content)) return false;
-    return content.hasChanges(latestChange);
+    return content.hasChanges(latestContent);
   }
 }

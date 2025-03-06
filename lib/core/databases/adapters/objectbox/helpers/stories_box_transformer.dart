@@ -1,12 +1,25 @@
 part of '../stories_box.dart';
 
+StoryContentDbModel _stringToContent(String str) {
+  String decoded = HtmlCharacterEntities.decode(str);
+  dynamic json = jsonDecode(decoded);
+  return StoryContentDbModel.fromJson(json);
+}
+
+String _contentToString(StoryContentDbModel content) {
+  Map<String, dynamic> json = content.toJson();
+  String encoded = jsonEncode(json);
+  return HtmlCharacterEntities.encode(encoded);
+}
+
 StoryDbModel _objectToModel(Map<String, dynamic> map) {
   StoryObjectBox object = map['object'];
-  Map<String, dynamic>? options = map['options'];
+  // Map<String, dynamic>? options = map['options'];
 
   Iterable<PathType> types = PathType.values.where((e) => e.name == object.type);
 
   return StoryDbModel(
+    version: object.version,
     type: types.isNotEmpty ? types.first : PathType.docs,
     id: object.id,
     starred: object.starred,
@@ -22,11 +35,10 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     tags: object.tags,
     assets: object.assets,
     preferences: decodePreferences(object),
-    rawChanges: object.changes,
+    latestContent: object.latestContent != null ? _stringToContent(object.latestContent!) : null,
+    draftContent: object.draftContent != null ? _stringToContent(object.draftContent!) : null,
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
-    latestChange: object.changes.isNotEmpty ? StoryRawToChangesService.call([object.changes.last]).first : null,
-    allChanges: options?['all_changes'] == true ? StoryRawToChangesService.call(object.changes) : null,
   );
 }
 
@@ -85,8 +97,10 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
-    metadata: story.latestChange?.safeMetadata,
-    changes: StoryChangesToRawService.call(story),
+    metadata: story.latestContent?.safeMetadata,
+    latestContent: story.latestContent != null ? _contentToString(story.latestContent!) : null,
+    draftContent: story.draftContent != null ? _contentToString(story.draftContent!) : null,
+    changes: [],
     permanentlyDeletedAt: null,
     preferences: story.preferences != null ? jsonEncode(story.preferences?.toJson()) : null,
   );

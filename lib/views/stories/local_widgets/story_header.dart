@@ -13,9 +13,10 @@ class StoryHeader extends StatelessWidget {
     super.key,
     required this.paddingTop,
     required this.story,
-    required this.setFeeling,
     required this.draftContent,
     required this.readOnly,
+    required this.draftActions,
+    required this.setFeeling,
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
     required this.onChangeDate,
@@ -26,6 +27,7 @@ class StoryHeader extends StatelessWidget {
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
   final TextEditingController? titleController;
+  final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
@@ -62,6 +64,7 @@ class StoryHeader extends StatelessWidget {
           onToggleShowDayCount: onToggleShowDayCount,
           onToggleShowTime: onToggleShowTime,
           onChangeDate: onChangeDate,
+          draftActions: draftActions,
         ),
         if (draftContent.title?.trim().isNotEmpty == true || !readOnly) ...[
           _TitleField(

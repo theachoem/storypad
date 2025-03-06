@@ -13,7 +13,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   final String? title;
   final String? plainText;
   final DateTime createdAt;
-  final bool? draft;
 
   @override
   List<String>? get includeCompareKeys => ['title', 'pages'];
@@ -38,7 +37,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.createdAt,
     required this.pages,
     required this.metadata,
-    required this.draft,
   });
 
   void addPage() {
@@ -96,7 +94,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       createdAt: createdAt ?? DateTime.now(),
       pages: null,
       metadata: null,
-      draft: true,
     );
   }
 
@@ -135,7 +132,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       'plain_text',
       'created_at',
       'metadata',
-      'draft',
     ];
   }
 }

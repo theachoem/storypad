@@ -1,13 +1,16 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
+import 'package:storypad/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/views/stories/changes/story_changes_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
@@ -42,10 +45,7 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
     StoryDbModel? initialStory,
   }) async {
     story = initialStory ?? await StoryDbModel.db.find(id);
-
-    draftContent = story?.latestChange != null
-        ? StoryContentDbModel.dublicate(story!.latestChange!)
-        : StoryContentDbModel.create(createdAt: DateTime.now());
+    draftContent = story!.generateDraftContent();
 
     bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!..addPage();
@@ -127,6 +127,29 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
     );
   }
 
+  SpStoryLabelsDraftActions getDraftActions(BuildContext context) {
+    return SpStoryLabelsDraftActions(
+      onContinueEditing: () => goToEditPage(context),
+      onDiscardDraft: () async {
+        OkCancelResult result = await showOkCancelAlertDialog(
+          context: context,
+          isDestructiveAction: true,
+          title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+          okLabel: tr("button.discard"),
+        );
+
+        if (result == OkCancelResult.ok) {
+          await StoryDbModel.db.set(story!.copyWith(draftContent: null));
+          await load(story!.id);
+        }
+      },
+      onViewPrevious: () async {
+        await ShowChangeRoute(content: story!.latestContent!).push(context);
+        await load(story!.id);
+      },
+    );
+  }
+
   Future<void> goToEditPage(BuildContext context) async {
     if (draftContent == null || draftContent?.pages == null || pageController.page == null) return;
 
@@ -140,15 +163,10 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
     await load(story!.id);
   }
 
-  Future<void> goToChangesPage(BuildContext context) async {
-    await StoryChangesRoute(id: story!.id).push(context);
-    await load(story!.id);
-  }
-
   void _silentlySave() {
     debouncedCallback(() async {
       if (await _getHasChange()) {
-        story = await StoryDbModel.fromShowPage(this);
+        story = await StoryDbModel.fromShowPage(this, draft: true);
         await StoryDbModel.db.set(story!);
       }
     });
@@ -156,9 +174,9 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
 
   Future<bool> _getHasChange() async {
     return StoryHasChangedService.call(
-      draftContent: draftContent!,
       quillControllers: quillControllers,
-      latestChange: story!.latestChange!,
+      latestContent: story?.draftContent ?? story!.latestContent!,
+      draftContent: draftContent!,
     );
   }
 

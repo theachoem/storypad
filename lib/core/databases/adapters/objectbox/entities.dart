@@ -49,7 +49,13 @@ class StoryObjectBox extends BaseObjectBox {
   @Property(type: PropertyType.date)
   DateTime? permanentlyDeletedAt;
 
+  String? latestContent;
+  String? draftContent;
+
+  // deprecated
+  // TODO: remove when possible
   List<String> changes;
+
   List<String>? tags;
   List<int>? assets;
 
@@ -76,7 +82,9 @@ class StoryObjectBox extends BaseObjectBox {
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,
-    required this.changes,
+    required this.latestContent,
+    required this.draftContent,
+    @Deprecated('deprecated') required this.changes,
     required this.tags,
     required this.assets,
     required this.metadata,
@@ -87,7 +95,8 @@ class StoryObjectBox extends BaseObjectBox {
 
   @override
   void toPermanentlyDeleted() {
-    changes = [];
+    latestContent = null;
+    draftContent = null;
     tags = null;
     assets = null;
     metadata = null;

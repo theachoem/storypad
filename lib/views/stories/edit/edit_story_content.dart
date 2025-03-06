@@ -7,19 +7,23 @@ class _EditStoryContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: viewModel.story != null
-          ? TagsEndDrawer(
-              onUpdated: (tags) => viewModel.setTags(tags),
-              initialTags: viewModel.story?.validTags ?? [],
-            )
-          : null,
-      appBar: AppBar(
-        clipBehavior: Clip.none,
-        titleSpacing: 0.0,
-        actions: buildAppBarActions(context),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+      child: Scaffold(
+        endDrawer: viewModel.story != null
+            ? TagsEndDrawer(
+                onUpdated: (tags) => viewModel.setTags(tags),
+                initialTags: viewModel.story?.validTags ?? [],
+              )
+            : null,
+        appBar: AppBar(
+          clipBehavior: Clip.none,
+          titleSpacing: 0.0,
+          actions: buildAppBarActions(context),
+        ),
+        body: buildBody(context),
       ),
-      body: buildBody(context),
     );
   }
 
@@ -51,6 +55,7 @@ class _EditStoryContent extends StatelessWidget {
                         readOnly: false,
                         titleController: viewModel.titleController,
                         onChangeDate: viewModel.changeDate,
+                        draftActions: null,
                       ),
                     ),
                 ];

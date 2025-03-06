@@ -9,5 +9,11 @@ class DatabaseInitializer {
     await TagDbModel.db.initilize();
     await PreferenceDbModel.db.initilize();
     await AssetDbModel.db.initilize();
+
+    await migrateData();
+  }
+
+  static Future<void> migrateData() async {
+    await StoryDbModel.db.migrateDataToV2();
   }
 }

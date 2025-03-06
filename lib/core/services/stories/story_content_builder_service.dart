@@ -4,11 +4,12 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 
 class StoryContentBuilderService {
-  static Future<StoryContentDbModel> call(
-    StoryContentDbModel draftContent,
-    Map<int, QuillController> quillControllers,
-  ) async {
+  static Future<StoryContentDbModel> call({
+    required StoryContentDbModel draftContent,
+    required Map<int, QuillController> quillControllers,
+  }) async {
     final pages = _pagesData(draftContent, quillControllers).values.toList();
+
     return await compute(_buildContent, {
       'draft_content': draftContent,
       'updated_pages': pages,

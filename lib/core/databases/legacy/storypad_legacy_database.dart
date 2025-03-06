@@ -105,7 +105,8 @@ class StorypadLegacyDatabase {
           tags: [],
           assets: [],
           movedToBinAt: null,
-          allChanges: [content],
+          latestContent: content,
+          draftContent: null,
         ));
       }
 

@@ -1,3 +1,5 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
@@ -54,9 +56,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
 
     story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear);
-    draftContent = story?.latestChange != null
-        ? StoryContentDbModel.dublicate(story!.latestChange!)
-        : StoryContentDbModel.create(createdAt: openedOn);
+    draftContent = story!.generateDraftContent();
 
     titleController = TextEditingController(text: draftContent?.title)
       ..addListener(() {
@@ -186,13 +186,15 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
 
   void _silentlySave() {
     debouncedCallback(() async {
-      await save();
+      await save(draft: true);
     });
   }
 
-  Future<void> save() async {
+  Future<void> save({
+    required bool draft,
+  }) async {
     if (await _hasChange()) {
-      story = await StoryDbModel.fromDetailPage(this);
+      story = await StoryDbModel.fromDetailPage(this, draft: draft);
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
@@ -200,15 +202,15 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
 
   Future<bool> _hasChange() async {
     return StoryHasChangedService.call(
-      draftContent: draftContent!,
       quillControllers: quillControllers,
-      latestChange: story!.latestChange!,
+      latestContent: story?.draftContent ?? story!.latestContent!,
+      draftContent: draftContent!,
       ignoredEmpty: flowType == EditingFlowType.update,
     );
   }
 
   Future<void> done(BuildContext context) async {
-    await save();
+    await save(draft: false);
     await revertIfNoChange();
     if (context.mounted) Navigator.pop(context);
   }
@@ -225,6 +227,30 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
       await StoryDbModel.db.set(initialStory!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
+  }
+
+  Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
+    if (didPop) return;
+
+    bool shouldPop = true;
+
+    if (story?.updatedAt != initialStory?.updatedAt) {
+      OkCancelResult result = await showOkCancelAlertDialog(
+        context: context,
+        isDestructiveAction: true,
+        title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+        okLabel: tr("button.discard"),
+      );
+
+      if (result == OkCancelResult.ok) {
+        await StoryDbModel.db.set(initialStory!);
+        shouldPop = true;
+      } else {
+        shouldPop = false;
+      }
+    }
+
+    if (shouldPop && context.mounted) Navigator.of(context).pop(result);
   }
 
   @override

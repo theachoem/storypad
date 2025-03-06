@@ -346,26 +346,38 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
-  Future<void> logRestoreStoryChange({
+  Future<void> logStoryContinueEdit({
     required StoryDbModel story,
   }) {
     final parameters = storyAnalyticParameters(story);
-    debug('logRestoreStoryChange', parameters);
+    debug('logStoryContinueEdit', parameters);
 
     return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('set_story_feeling'),
+      name: sanitizeEventName('story_continue_edit'),
       parameters: parameters,
     );
   }
 
-  Future<void> logRemoveStoryChanges({
+  Future<void> logStoryViewPrevious({
     required StoryDbModel story,
   }) {
     final parameters = storyAnalyticParameters(story);
-    debug('logRemoveStoryChanges', parameters);
+    debug('logStoryViewPrevious', parameters);
 
     return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('remove_story_changes'),
+      name: sanitizeEventName('story_view_previous'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logStoryDiscardDraft({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logDiscardDraft', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('story_discard_draft'),
       parameters: parameters,
     );
   }
@@ -456,13 +468,14 @@ class AnalyticsService extends BaseAnalyticsService {
 
   Map<String, Object>? storyAnalyticParameters(StoryDbModel story) {
     return sanitizeParameters({
+      'version': story.version.toString(),
       'type': story.type.name,
       'starred': story.starred.toString(),
       'year': story.year.toString(),
       'month': story.month.toString(),
       'day': story.day.toString(),
       'feeling': story.feeling,
-      'total_changes': story.rawChanges?.length.toString(),
+      'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
       'preferred_star_icon': story.preferences?.starIcon,
       'preferred_show_day_count': story.preferences?.showDayCount?.toString(),
       'preferred_show_time': story.preferences?.showTime?.toString(),
