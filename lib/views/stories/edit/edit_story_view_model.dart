@@ -41,7 +41,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   int get currentPageIndex => pageController.page!.round().toInt();
   int get currentPage => currentPageNotifier.value.round();
 
-  EditingFlowType? flowType;
+  late final EditingFlowType flowType;
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
 
@@ -237,21 +237,35 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
     if (didPop) return;
 
-    bool shouldPop = true;
-
-    if (story?.updatedAt != initialStory?.updatedAt) {
-      OkCancelResult result = await showOkCancelAlertDialog(
+    Future<OkCancelResult> showConfirmDialog(BuildContext context) async {
+      return showOkCancelAlertDialog(
         context: context,
         isDestructiveAction: true,
         title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
         okLabel: tr("button.discard"),
       );
+    }
 
-      if (result == OkCancelResult.ok) {
-        await StoryDbModel.db.set(initialStory!);
-        shouldPop = true;
-      } else {
-        shouldPop = false;
+    bool shouldPop = true;
+    if (flowType == EditingFlowType.create) {
+      if (story?.id != null) {
+        OkCancelResult result = await showConfirmDialog(context);
+        if (result == OkCancelResult.ok) {
+          await StoryDbModel.db.delete(story!.id);
+          shouldPop = true;
+        } else {
+          shouldPop = false;
+        }
+      }
+    } else if (flowType == EditingFlowType.update) {
+      if (story?.updatedAt != initialStory?.updatedAt) {
+        OkCancelResult result = await showConfirmDialog(context);
+        if (result == OkCancelResult.ok) {
+          await StoryDbModel.db.set(initialStory!);
+          shouldPop = true;
+        } else {
+          shouldPop = false;
+        }
       }
     }
 
