@@ -25,7 +25,6 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://storypad.juniorise.com" # the base hostname & protocol for your site, e.g. http://example.com
 
 logo: assets/logo.png
-favicon_ico: assets/favicon_io/favicon.ico
 
 aux_links:
   "Source Code":
@@ -39,7 +38,9 @@ color_scheme: dark
 remote_theme: pmarsceill/just-the-docs
 plugins:
   - jekyll-feed
+  - jekyll-sitemap
 
 footer_content: 'Copyright &copy;2021-2025 Juniorise. Distributed by a <a href="https://github.com/theachoem/storypad/blob/develop/LICENSE">GNU GENERAL PUBLIC LICENSE.</a>'
 last_edit_timestamp: true
 last_edit_time_format: "%b %e %Y" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
+

@@ -25,3 +25,5 @@ StoryPad is designed with one thing in mind: to provide you with a clean, distra
 - **Ad-Free**: We believe in a clean experience without interruptions. StoryPad is ad-free, ensuring you can write without distractions.
 
 > StoryPad is here to give you the freedom to write without distractions, while also keeping your data private and safe. We believe in simplicity, privacy, and transparency, and we’re proud to offer an app that reflects those values.
+
+{: .no_toc .text-delta }
