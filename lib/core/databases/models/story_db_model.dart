@@ -255,7 +255,7 @@ class StoryDbModel extends BaseDbModel {
       feeling: null,
       preferences: StoryPreferencesDbModel.create(),
       latestContent: StoryContentDbModel.create(),
-      draftContent: StoryContentDbModel.create(),
+      draftContent: null,
       updatedAt: now,
       createdAt: now,
       tags: [],
