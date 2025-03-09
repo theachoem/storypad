@@ -38,7 +38,10 @@ class AnimatedRouteHelper {
       settings: settings,
       pageBuilder: (context, animation, secondaryAnimation) => builder(context),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeScaleTransition(animation: animation, child: child);
+        return FadeScaleTransition(
+          animation: animation,
+          child: child,
+        );
       },
     );
   }
@@ -58,7 +61,7 @@ class AnimatedRouteHelper {
       pageBuilder: (context, animation, secondaryAnimation) => builder(context),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SharedAxisTransition(
-          fillColor: fillColor,
+          fillColor: fillColor ?? Theme.of(context).scaffoldBackgroundColor,
           animation: animation,
           secondaryAnimation: secondaryAnimation,
           transitionType: type,
