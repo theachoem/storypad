@@ -14,7 +14,11 @@ import 'languages_view_model.dart';
 part 'languages_content.dart';
 
 class LanguagesRoute extends BaseRoute {
-  LanguagesRoute();
+  LanguagesRoute({
+    this.showBetaBanner = true,
+  });
+
+  final bool showBetaBanner;
 
   @override
   bool get preferredNestedRoute => true;

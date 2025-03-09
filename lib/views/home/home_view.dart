@@ -8,6 +8,7 @@ import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
+import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,9 @@ class HomeView extends StatelessWidget {
       create: (context) => HomeViewModel(context: context),
       builder: (context, viewModel, child) {
         return SpAppLockWrapper(
-          child: _HomeContent(viewModel),
+          child: SpOnboardingWrappper(
+            child: _HomeContent(viewModel),
+          ),
         );
       },
     );

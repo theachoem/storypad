@@ -29,6 +29,11 @@ class _CommunityContent extends StatelessWidget {
           ),
           Divider(),
           ListTile(
+            leading: Icon(Icons.waving_hand_outlined),
+            title: Text(tr('general.onboard_page')),
+            onTap: () => SpOnboardingWrappper.open(context),
+          ),
+          ListTile(
             leading: Icon(Icons.code),
             title: Text(tr("list_tile.source_code.title")),
             subtitle: Text(kPackageInfo.version),

@@ -107,7 +107,7 @@ class _HomeEndDrawer extends StatelessWidget {
   Widget buildAppLockTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.lock_outline),
-      title: Text("App Lock"),
+      title: Text(tr("page.app_lock.title")),
       onTap: () => AppLocksRoute().push(context),
     );
   }

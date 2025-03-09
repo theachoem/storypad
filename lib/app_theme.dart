@@ -51,13 +51,12 @@ class AppTheme extends StatelessWidget {
       return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, provider.theme.fontWeight));
     }
 
+    final shareAxisTransition = SharedAxisPageTransitionsBuilder(
+        transitionType: SharedAxisTransitionType.vertical, fillColor: colorScheme.surface);
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: SharedAxisPageTransitionsBuilder(
-        transitionType: SharedAxisTransitionType.vertical,
-        fillColor: colorScheme.surface,
-      ),
+      TargetPlatform.iOS: shareAxisTransition,
+      TargetPlatform.macOS: shareAxisTransition,
+      TargetPlatform.android: shareAxisTransition,
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);

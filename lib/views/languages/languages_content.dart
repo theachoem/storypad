@@ -9,7 +9,7 @@ class _LanguagesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      bottomNavigationBar: _FeedbackBanner(context: context),
+      bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
       body: ListView.builder(
         padding: EdgeInsets.only(bottom: 16.0),
         itemCount: viewModel.supportedLocales.length,

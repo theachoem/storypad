@@ -78,20 +78,23 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
       onTap: () async {
         setState(() => visible = false);
 
-        await SpNestedNavigation.maybeOf(context)?.push(
-          _FeelingGroupItemPicker(
-            group: group,
-            feeling: feeling,
-            onPicked: (context, feeling) {
-              if (this.feeling == feeling) feeling = null;
-              setState(() => this.feeling = feeling);
-              return widget.onPicked(feeling);
-            },
-            onHeightChanged: (childHeight) {
-              widget.onHeightChanged(childHeight);
-            },
-          ),
-        );
+        await Navigator.of(context).push(AnimatedRouteHelper.sharedAxis(
+          type: SharedAxisTransitionType.horizontal,
+          builder: (context) {
+            return _FeelingGroupItemPicker(
+              group: group,
+              feeling: feeling,
+              onPicked: (context, feeling) {
+                if (this.feeling == feeling) feeling = null;
+                setState(() => this.feeling = feeling);
+                return widget.onPicked(feeling);
+              },
+              onHeightChanged: (childHeight) {
+                widget.onHeightChanged(childHeight);
+              },
+            );
+          },
+        ));
 
         setState(() => visible = true);
         widget.onHeightChanged(gridCardHeight);

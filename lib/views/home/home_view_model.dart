@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/initializers/home_initializer.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -26,17 +25,7 @@ class HomeViewModel extends BaseViewModel {
     required BuildContext context,
   }) {
     AnalyticsService.instance.logViewHome(year: year);
-
-    final initialData = HomeInitializer.getAndClear();
-
-    if (initialData != null) {
-      setStories(initialData.stories);
-      nickname = initialData.nickname;
-      initialData.legacyStorypadMigrationResponse?.showPendingMessage(context);
-      if (nickname == null && context.mounted) showInputNameSheet(context);
-    } else {
-      reload(debugSource: 'HomeViewModel#_constructor');
-    }
+    reload(debugSource: 'HomeViewModel#_constructor');
 
     RestoreBackupService.instance.addListener(() async {
       reload(debugSource: '$runtimeType#_listenToRestoreService');
@@ -56,11 +45,6 @@ class HomeViewModel extends BaseViewModel {
     List<int> months = stories?.items.map((e) => e.month).toSet().toList() ?? [];
     if (months.isEmpty) months.add(DateTime.now().month);
     return months;
-  }
-
-  Future<void> showInputNameSheet(BuildContext context) async {
-    await Future.delayed(Durations.long3);
-    if (context.mounted) changeName(context);
   }
 
   Future<void> reload({
