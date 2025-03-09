@@ -33,7 +33,6 @@ class HomeViewModel extends BaseViewModel {
       setStories(initialData.stories);
       nickname = initialData.nickname;
       initialData.legacyStorypadMigrationResponse?.showPendingMessage(context);
-      if (nickname == null && context.mounted) showInputNameSheet(context);
     } else {
       reload(debugSource: 'HomeViewModel#_constructor');
     }
@@ -56,11 +55,6 @@ class HomeViewModel extends BaseViewModel {
     List<int> months = stories?.items.map((e) => e.month).toSet().toList() ?? [];
     if (months.isEmpty) months.add(DateTime.now().month);
     return months;
-  }
-
-  Future<void> showInputNameSheet(BuildContext context) async {
-    await Future.delayed(Durations.long3);
-    if (context.mounted) changeName(context);
   }
 
   Future<void> reload({
