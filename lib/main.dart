@@ -8,7 +8,7 @@ import 'package:storypad/initializers/device_info_initializer.dart' show DeviceI
 import 'package:storypad/initializers/file_initializer.dart' show FileInitializer;
 import 'package:storypad/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
 import 'package:storypad/initializers/firebase_remote_config_initializer.dart' show FirebaseRemoteConfigInitializer;
-import 'package:storypad/initializers/home_initializer.dart';
+import 'package:storypad/initializers/legacy_storypad_initializer.dart';
 import 'package:storypad/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/initializers/onboarding_initializer.dart';
 import 'package:storypad/initializers/package_info_initializer.dart' show PackageInfoInitializer;
@@ -35,7 +35,7 @@ void main({
 
     // ui
     await ThemeInitializer.call();
-    await HomeInitializer.call();
+    await LegacyStoryPadInitializer.call();
     await OnboardingInitializer.call();
 
     LicensesInitializer.call();
