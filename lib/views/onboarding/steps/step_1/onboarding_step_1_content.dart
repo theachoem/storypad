@@ -17,7 +17,7 @@ class _OnboardingStep1Content extends StatelessWidget {
         children: [
           VisibleWhenNotified(
             notifier: viewModel.showHomePageNotifier,
-            child: _FadeInBuilder(
+            child: FadeInBuilder(
               transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
               duration: Duration(milliseconds: 100),
               child: HomeScreenshot(),
@@ -25,7 +25,7 @@ class _OnboardingStep1Content extends StatelessWidget {
           ),
           VisibleWhenNotified(
             notifier: viewModel.showStoryDetailsPageNotifier,
-            child: _FadeInBuilder(
+            child: FadeInBuilder(
               duration: viewModel.storyDetailsAnimationDuration,
               transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(360.0, 0.0, a.value)!),
               child: StoryDetailsScreenshot(),

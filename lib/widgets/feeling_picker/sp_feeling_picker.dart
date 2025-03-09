@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/helpers/animated_route_helper.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/widgets/feeling_picker/feeling_object_card.dart' show FeelingObjectCard;
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -39,19 +40,22 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
         color: ColorScheme.of(context).surface,
         border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
-      child: Wrap(
-        children: [
-          SpNestedNavigation(
-            backgroundColor: Colors.transparent,
-            initialScreen: _FeelingGroupPicker(
-              feeling: widget.feeling,
-              onPicked: widget.onPicked,
-              onHeightChanged: (height) async {
-                setState(() => this.height = height);
-              },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Wrap(
+          children: [
+            SpNestedNavigation(
+              backgroundColor: Colors.transparent,
+              initialScreen: _FeelingGroupPicker(
+                feeling: widget.feeling,
+                onPicked: widget.onPicked,
+                onHeightChanged: (height) async {
+                  setState(() => this.height = height);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

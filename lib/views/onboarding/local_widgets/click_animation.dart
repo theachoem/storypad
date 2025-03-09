@@ -50,24 +50,26 @@ class _ClickAnimationState extends State<ClickAnimation> {
       left: widget.left,
       bottom: widget.bottom,
       right: widget.right,
-      child: AnimatedOpacity(
-        duration: Durations.medium1,
-        opacity: opacity,
-        child: Container(
-          width: 64,
-          height: 64,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Center(
-                  child: buildInnerCircle(),
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          duration: Durations.medium1,
+          opacity: opacity,
+          child: Container(
+            width: 64,
+            height: 64,
+            alignment: Alignment.center,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Center(
+                    child: buildInnerCircle(),
+                  ),
                 ),
-              ),
-              Positioned.fill(
-                child: buildOutsideCircle(),
-              ),
-            ],
+                Positioned.fill(
+                  child: buildOutsideCircle(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

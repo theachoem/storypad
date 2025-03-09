@@ -1,7 +1,9 @@
-part of '../onboarding_step_1_view.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 
-class _FadeInBuilder extends StatelessWidget {
-  const _FadeInBuilder({
+class FadeInBuilder extends StatelessWidget {
+  const FadeInBuilder({
+    super.key,
     required this.child,
     required this.transformBuilder,
     this.duration = const Duration(seconds: 1),
