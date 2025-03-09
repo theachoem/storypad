@@ -70,5 +70,6 @@ flutter:
   assets:
     - translations/
     - assets/images/
+    - assets/images/onboarding/
     - assets/lotties/
     - assets/emoji-64/

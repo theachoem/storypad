@@ -350,12 +350,20 @@ class $AssetsEmoji64Gen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/onboarding
+  $AssetsImagesOnboardingGen get onboarding =>
+      const $AssetsImagesOnboardingGen();
+
   /// File path: assets/images/reddit_logo_500x500.png
   AssetGenImage get redditLogo500x500 =>
       const AssetGenImage('assets/images/reddit_logo_500x500.png');
 
+  /// File path: assets/images/storypad_logo_512x512.png
+  AssetGenImage get storypadLogo512x512 =>
+      const AssetGenImage('assets/images/storypad_logo_512x512.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [redditLogo500x500];
+  List<AssetGenImage> get values => [redditLogo500x500, storypadLogo512x512];
 }
 
 class $AssetsLottiesGen {
@@ -366,6 +374,84 @@ class $AssetsLottiesGen {
 
   /// List of all assets
   List<String> get values => [sparkle];
+}
+
+class $AssetsImagesOnboardingGen {
+  const $AssetsImagesOnboardingGen();
+
+  /// File path: assets/images/onboarding/dark_drawer_not_signed_in_221x510.jpg
+  AssetGenImage get darkDrawerNotSignedIn221x510 => const AssetGenImage(
+      'assets/images/onboarding/dark_drawer_not_signed_in_221x510.jpg');
+
+  /// File path: assets/images/onboarding/dark_drawer_signed_in_221x510.jpg
+  AssetGenImage get darkDrawerSignedIn221x510 => const AssetGenImage(
+      'assets/images/onboarding/dark_drawer_signed_in_221x510.jpg');
+
+  /// File path: assets/images/onboarding/dark_drawer_synced_221x510.jpg
+  AssetGenImage get darkDrawerSynced221x510 => const AssetGenImage(
+      'assets/images/onboarding/dark_drawer_synced_221x510.jpg');
+
+  /// File path: assets/images/onboarding/dark_drawer_syning_221x510.jpg
+  AssetGenImage get darkDrawerSyning221x510 => const AssetGenImage(
+      'assets/images/onboarding/dark_drawer_syning_221x510.jpg');
+
+  /// File path: assets/images/onboarding/dark_home_300x360.jpg
+  AssetGenImage get darkHome300x360 =>
+      const AssetGenImage('assets/images/onboarding/dark_home_300x360.jpg');
+
+  /// File path: assets/images/onboarding/dark_story_details_300x360.jpg
+  AssetGenImage get darkStoryDetails300x360 => const AssetGenImage(
+      'assets/images/onboarding/dark_story_details_300x360.jpg');
+
+  /// File path: assets/images/onboarding/light_drawer_not_signed_in_221x510.jpg
+  AssetGenImage get lightDrawerNotSignedIn221x510 => const AssetGenImage(
+      'assets/images/onboarding/light_drawer_not_signed_in_221x510.jpg');
+
+  /// File path: assets/images/onboarding/light_drawer_signed_in_221x510.jpg
+  AssetGenImage get lightDrawerSignedIn221x510 => const AssetGenImage(
+      'assets/images/onboarding/light_drawer_signed_in_221x510.jpg');
+
+  /// File path: assets/images/onboarding/light_drawer_synced_221x510.jpg
+  AssetGenImage get lightDrawerSynced221x510 => const AssetGenImage(
+      'assets/images/onboarding/light_drawer_synced_221x510.jpg');
+
+  /// File path: assets/images/onboarding/light_drawer_syning_221x510.jpg
+  AssetGenImage get lightDrawerSyning221x510 => const AssetGenImage(
+      'assets/images/onboarding/light_drawer_syning_221x510.jpg');
+
+  /// File path: assets/images/onboarding/light_home_300x360.jpg
+  AssetGenImage get lightHome300x360 =>
+      const AssetGenImage('assets/images/onboarding/light_home_300x360.jpg');
+
+  /// File path: assets/images/onboarding/light_story_details_300x360.jpg
+  AssetGenImage get lightStoryDetails300x360 => const AssetGenImage(
+      'assets/images/onboarding/light_story_details_300x360.jpg');
+
+  /// File path: assets/images/onboarding/toolbar_dark_1690x70.jpg
+  AssetGenImage get toolbarDark1690x70 =>
+      const AssetGenImage('assets/images/onboarding/toolbar_dark_1690x70.jpg');
+
+  /// File path: assets/images/onboarding/toolbar_light_1690x70.jpg
+  AssetGenImage get toolbarLight1690x70 =>
+      const AssetGenImage('assets/images/onboarding/toolbar_light_1690x70.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        darkDrawerNotSignedIn221x510,
+        darkDrawerSignedIn221x510,
+        darkDrawerSynced221x510,
+        darkDrawerSyning221x510,
+        darkHome300x360,
+        darkStoryDetails300x360,
+        lightDrawerNotSignedIn221x510,
+        lightDrawerSignedIn221x510,
+        lightDrawerSynced221x510,
+        lightDrawerSyning221x510,
+        lightHome300x360,
+        lightStoryDetails300x360,
+        toolbarDark1690x70,
+        toolbarLight1690x70
+      ];
 }
 
 class Assets {
