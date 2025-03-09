@@ -88,18 +88,21 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
       return widget.child;
     }
 
-    return Material(
-      color: ColorScheme.of(context).surface,
-      child: Stack(
-        children: [
-          buildHomeAnimation(child: widget.child),
-          buildOnboardingAnimation(
-            child: SpNestedNavigation(
-              transitionType: SharedAxisTransitionType.vertical,
-              initialScreen: OnboardingView(params: OnboardingRoute()),
+    return PopScope(
+      canPop: false,
+      child: Material(
+        color: ColorScheme.of(context).surface,
+        child: Stack(
+          children: [
+            buildHomeAnimation(child: widget.child),
+            buildOnboardingAnimation(
+              child: SpNestedNavigation(
+                transitionType: SharedAxisTransitionType.vertical,
+                initialScreen: OnboardingView(params: OnboardingRoute()),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

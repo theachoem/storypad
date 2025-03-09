@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
-import 'package:flutter/material.dart' show WidgetsBinding, WidgetsFlutterBinding, runApp;
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter/material.dart' show WidgetsFlutterBinding, runApp;
 import 'package:storypad/app.dart' show App;
 import 'package:storypad/initializers/app_lock_initializer.dart';
 import 'package:storypad/initializers/database_initializer.dart' show DatabaseInitializer;
@@ -19,38 +18,30 @@ import 'package:firebase_core/firebase_core.dart' show Firebase, FirebaseOptions
 void main({
   FirebaseOptions? firebaseOptions,
 }) async {
-  await _showSplashScreen(() async {
-    await Firebase.initializeApp(options: firebaseOptions);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: firebaseOptions);
 
-    // core
-    await EasyLocalization.ensureInitialized();
-    await PackageInfoInitializer.call();
-    await DeviceInfoInitializer.call();
-    await FileInitializer.call();
-    await DatabaseInitializer.call();
-    await AppLockInitializer.call();
+  // core
+  await EasyLocalization.ensureInitialized();
+  await PackageInfoInitializer.call();
+  await DeviceInfoInitializer.call();
+  await FileInitializer.call();
+  await DatabaseInitializer.call();
+  await AppLockInitializer.call();
 
-    FirebaseCrashlyticsInitializer.call();
-    FirebaseRemoteConfigInitializer.call();
+  FirebaseCrashlyticsInitializer.call();
+  FirebaseRemoteConfigInitializer.call();
 
-    // ui
-    await ThemeInitializer.call();
-    await LegacyStoryPadInitializer.call();
-    await OnboardingInitializer.call();
+  // ui
+  await ThemeInitializer.call();
+  await LegacyStoryPadInitializer.call();
+  await OnboardingInitializer.call();
 
-    LicensesInitializer.call();
-  });
+  LicensesInitializer.call();
 
   runApp(
     const ProviderScope(
       child: App(),
     ),
   );
-}
-
-Future<void> _showSplashScreen(Future<void> Function() callback) async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await callback();
-  FlutterNativeSplash.remove();
 }
