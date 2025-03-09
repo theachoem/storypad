@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/steps/step_1/onboarding_step_1_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -5,6 +6,12 @@ import 'package:storypad/widgets/view/base_route.dart';
 
 class OnboardingHelloRoute extends BaseRoute {
   OnboardingHelloRoute();
+
+  @override
+  bool get preferredNestedRoute => true;
+
+  @override
+  SharedAxisTransitionType get transitionType => SharedAxisTransitionType.vertical;
 
   @override
   Widget buildPage(BuildContext context) => OnboardingHelloView(params: this);

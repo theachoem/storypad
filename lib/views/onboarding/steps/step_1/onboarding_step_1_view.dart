@@ -1,3 +1,6 @@
+import 'package:animations/animations.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/view/base_route.dart';
@@ -11,6 +14,9 @@ class OnboardingStep1Route extends BaseRoute {
 
   @override
   bool get preferredNestedRoute => true;
+
+  @override
+  SharedAxisTransitionType get transitionType => SharedAxisTransitionType.vertical;
 
   @override
   Widget buildPage(BuildContext context) => OnboardingStep1View(params: this);

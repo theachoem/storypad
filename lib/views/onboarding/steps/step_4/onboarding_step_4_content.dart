@@ -7,10 +7,20 @@ class _OnboardingStep4Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-      ),
+    return OnboardingTemplate(
+      title: tr("page.onboarding_step4.title"),
+      description: tr("page.onboarding_step4.description"),
+      currentStep: 4,
+      maxStep: 4,
+      actionButton: buildActionButton(context),
+      demo: null,
+    );
+  }
+
+  Widget buildActionButton(BuildContext context) {
+    return FilledButton(
+      child: Text(tr("button.get_started")),
+      onPressed: () => viewModel.getStarted(context),
     );
   }
 }

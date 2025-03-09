@@ -45,6 +45,7 @@ class _OnboardingContent extends StatelessWidget {
           style: TextTheme.of(context).titleLarge,
           textAlign: TextAlign.center,
         ),
+        SizedBox(height: 8.0),
         Text(
           tr("dialog.what_should_i_call_you.message"),
           style: TextTheme.of(context).bodyLarge,

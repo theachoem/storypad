@@ -7,10 +7,20 @@ class _OnboardingStep3Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-      ),
+    return OnboardingTemplate(
+      title: tr('page.onboarding_step3.title'),
+      description: tr('page.onboarding_step3.description'),
+      currentStep: 3,
+      maxStep: 4,
+      actionButton: buildActionButton(context),
+      demo: SizedBox(),
+    );
+  }
+
+  Widget buildActionButton(BuildContext context) {
+    return OutlinedButton(
+      child: Text(tr("button.next")),
+      onPressed: () => viewModel.next(context),
     );
   }
 }

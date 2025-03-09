@@ -27,20 +27,26 @@ class SpNestedNavigation extends StatefulWidget {
 class SpNestedNavigationState extends State<SpNestedNavigation> {
   final GlobalKey<NavigatorState> navigationKey = GlobalKey();
 
-  Future<T?> push<T>(Widget screen) {
+  Future<T?> push<T>(
+    Widget screen, {
+    SharedAxisTransitionType type = SharedAxisTransitionType.horizontal,
+  }) {
     return navigationKey.currentState!.push<T>(
       AnimatedRouteHelper.sharedAxis(
-        type: SharedAxisTransitionType.horizontal,
+        type: type,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
       ),
     );
   }
 
-  Future<T?> pushReplacement<T>(Widget screen) {
+  Future<T?> pushReplacement<T>(
+    Widget screen, {
+    SharedAxisTransitionType type = SharedAxisTransitionType.horizontal,
+  }) {
     return navigationKey.currentState!.pushReplacement(
       AnimatedRouteHelper.sharedAxis(
-        type: SharedAxisTransitionType.horizontal,
+        type: type,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
       ),

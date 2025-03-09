@@ -64,7 +64,7 @@ class HomeView extends StatelessWidget {
       create: (context) => HomeViewModel(context: context),
       builder: (context, viewModel, child) {
         return SpAppLockWrapper(
-          child: OnboardingWrappper(
+          child: SpOnboardingWrappper(
             child: _HomeContent(viewModel),
           ),
         );
