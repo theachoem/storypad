@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/views/onboarding/steps/step_2/onboarding_step_2_view.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'onboarding_step_1_view.dart';
@@ -19,50 +22,65 @@ class OnboardingStep1ViewModel extends BaseViewModel {
   final ValueNotifier<bool> showStoryClickedNotifier = ValueNotifier(false);
   final ValueNotifier<bool> showStoryDetailsPageNotifier = ValueNotifier(false);
 
+  bool _navigating = false;
+
+  Future<void> next(BuildContext context) async {
+    if (_navigating) return;
+    _navigating = true;
+
+    await showClickAnimation();
+    await showStoryDetailsPageAnimation();
+    await hideHomePageAnimation();
+
+    _navigating = false;
+    if (!context.mounted) return;
+    await OnboardingStep2Route().push(context);
+
+    resetAnimations();
+    startAnimations();
+  }
+
   void startAnimations() async {
+    if (disposed) return;
+
     await Future.delayed(Duration(seconds: 2));
     await showClickAnimation();
     await showStoryDetailsPageAnimation();
   }
 
-  Future<void> next(BuildContext context) async {
-    await showClickAnimation();
-    await showStoryDetailsPageAnimation();
-    await hideHomePageAnimation();
-
-    if (!context.mounted) return;
-
-    await OnboardingStep2Route().push(context);
-    resetAnimations();
-
-    await Future.delayed(Duration(milliseconds: 350));
-    startAnimations();
-  }
-
+  final AvoidDublicatedCallService _clickAnimation = AvoidDublicatedCallService();
   Future<void> showClickAnimation() async {
-    if (disposed) return;
-    if (showStoryClickedNotifier.value == false) {
-      showStoryClickedNotifier.value = true;
+    return _clickAnimation.run(() async {
+      if (disposed) return;
+      if (showStoryClickedNotifier.value == false) {
+        showStoryClickedNotifier.value = true;
 
-      await Future.delayed(clickDuration);
-      await Future.delayed(Duration(milliseconds: 350));
-    }
+        await Future.delayed(clickDuration);
+        await Future.delayed(Duration(milliseconds: 350));
+      }
+    });
   }
 
+  final AvoidDublicatedCallService _storyDetailsPageAnimation = AvoidDublicatedCallService();
   Future<void> showStoryDetailsPageAnimation() async {
-    if (disposed) return;
-    if (showStoryDetailsPageNotifier.value == false) {
-      showStoryDetailsPageNotifier.value = true;
-      await Future.delayed(storyDetailsAnimationDuration);
-    }
+    return _storyDetailsPageAnimation.run(() async {
+      if (disposed) return;
+      if (showStoryDetailsPageNotifier.value == false) {
+        showStoryDetailsPageNotifier.value = true;
+        await Future.delayed(storyDetailsAnimationDuration);
+      }
+    });
   }
 
+  final AvoidDublicatedCallService _homePageAnimation = AvoidDublicatedCallService();
   Future<void> hideHomePageAnimation() async {
-    if (disposed) return;
-    if (showHomePageNotifier.value == true) {
-      showHomePageNotifier.value = false;
-      await Future.delayed(Duration(milliseconds: 500));
-    }
+    return _homePageAnimation.run(() async {
+      if (disposed) return;
+      if (showHomePageNotifier.value == true) {
+        showHomePageNotifier.value = false;
+        await Future.delayed(Duration(milliseconds: 500));
+      }
+    });
   }
 
   void resetAnimations() {

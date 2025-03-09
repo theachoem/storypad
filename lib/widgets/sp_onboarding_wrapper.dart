@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/initializers/onboarding_initializer.dart';
 import 'package:storypad/views/onboarding/onboarding_view.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
@@ -16,6 +17,10 @@ class SpOnboardingWrappper extends StatefulWidget {
     context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.close();
   }
 
+  static void open(BuildContext context) {
+    context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.open();
+  }
+
   @override
   State<SpOnboardingWrappper> createState() => _SpOnboardingWrappperState();
 }
@@ -27,7 +32,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
   final transitionDuration = Duration(milliseconds: 750);
 
   bool onboarding = false;
-  bool onboarded = false;
+  bool onboarded = OnboardingInitializer.onboarded ?? !OnboardingInitializer.isNewUser;
 
   @override
   void initState() {
@@ -37,6 +42,14 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
       onboardingAnimationController = AnimationController(vsync: this, duration: transitionDuration, value: 1.0);
       homeAnimationController = AnimationController(vsync: this, duration: transitionDuration, value: 0.0);
     }
+  }
+
+  Future<void> open() async {
+    onboarded = false;
+    setState(() {});
+
+    onboardingAnimationController ??= AnimationController(vsync: this, duration: transitionDuration, value: 1.0);
+    homeAnimationController ??= AnimationController(vsync: this, duration: transitionDuration, value: 0.0);
   }
 
   Future<void> close() async {
@@ -83,9 +96,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
           buildOnboardingAnimation(
             child: SpNestedNavigation(
               transitionType: SharedAxisTransitionType.vertical,
-              initialScreen: OnboardingView(
-                params: OnboardingRoute(),
-              ),
+              initialScreen: OnboardingView(params: OnboardingRoute()),
             ),
           ),
         ],
@@ -107,7 +118,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
         ),
         builder: (context, child) {
           return Container(
-            transform: Matrix4.identity()..translate(lerpDouble(56.0, 0.0, homeAnimation.value)!, 0.0),
+            transform: Matrix4.identity()..translate(0.0, lerpDouble(56.0, 0.0, homeAnimation.value)!),
             child: child,
           );
         },
@@ -129,7 +140,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
         ),
         builder: (context, child) {
           return Container(
-            transform: Matrix4.identity()..translate(lerpDouble(-56.0, 0.0, animation.value)!, 0.0),
+            transform: Matrix4.identity()..translate(0.0, lerpDouble(-56.0, 0.0, animation.value)!),
             child: child,
           );
         },

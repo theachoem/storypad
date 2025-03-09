@@ -12,7 +12,7 @@ class _PrivacyPolicyText extends StatelessWidget {
     return SpTapEffect(
       onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
       child: Text(
-        "Read our Privacy & Policy",
+        tr("general.read_our_privacy_policy"),
         style: TextTheme.of(context).bodyMedium?.copyWith(
               decoration: TextDecoration.underline,
             ),

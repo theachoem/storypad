@@ -19,7 +19,7 @@ class _OnboardingStep1Content extends StatelessWidget {
             notifier: viewModel.showHomePageNotifier,
             child: FadeInBuilder(
               transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
-              duration: Duration(milliseconds: 100),
+              duration: Duration(milliseconds: 1000),
               child: HomeScreenshot(),
             ),
           ),

@@ -1,13 +1,18 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/steps/step_1/onboarding_step_1_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/view/base_route.dart';
 
 class OnboardingHelloRoute extends BaseRoute {
-  OnboardingHelloRoute();
+  OnboardingHelloRoute({
+    required this.nickname,
+  });
 
   @override
   bool get preferredNestedRoute => true;
+
+  final String nickname;
 
   @override
   Widget buildPage(BuildContext context) => OnboardingHelloView(params: this);
@@ -30,7 +35,7 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 2)).then((e) {
+    Future.delayed(Duration(seconds: 1, milliseconds: 500)).then((e) {
       final context = this.context;
       if (!context.mounted) return;
 
@@ -60,15 +65,19 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "Hello Thea",
+              tr("page.home.app_bar.hello_nickname", namedArgs: {
+                'NICKNAME': widget.params.nickname,
+              }),
               style: TextTheme.of(context).titleLarge,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8.0),
-            Text(
-              "Let's explore StoryPad together!",
-              style: TextTheme.of(context).bodyLarge,
-              textAlign: TextAlign.center,
+            Container(
+              margin: EdgeInsets.only(top: 8.0),
+              child: Text(
+                tr("page.onboarding_hello.description"),
+                style: TextTheme.of(context).bodyLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
           ].asMap().entries.map((entry) {
             return SpFadeIn.fromTop(

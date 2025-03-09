@@ -10,7 +10,16 @@ class _OnboardingContent extends StatelessWidget {
     return Form(
       child: Scaffold(
         extendBody: true,
-        appBar: AppBar(forceMaterialTransparency: true),
+        appBar: AppBar(
+          forceMaterialTransparency: true,
+          actions: [
+            IconButton(
+              tooltip: tr("page.language.title"),
+              icon: Icon(Icons.language_outlined),
+              onPressed: () => LanguagesRoute(showBetaBanner: false).push(context),
+            ),
+          ],
+        ),
         body: SingleChildScrollView(
           reverse: true,
           padding: const EdgeInsets.all(16.0),
@@ -31,34 +40,42 @@ class _OnboardingContent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
-        SizedBox(height: 36),
-        SizedBox(
+        Container(
+          margin: EdgeInsets.only(top: 36),
           width: double.infinity,
           child: Assets.images.storypadLogo512x512.image(
             width: 120,
             height: 120,
           ),
         ),
-        SizedBox(height: 16),
-        Text(
-          tr("dialog.what_should_i_call_you.title"),
-          style: TextTheme.of(context).titleLarge,
-          textAlign: TextAlign.center,
+        Container(
+          margin: EdgeInsets.only(top: 16),
+          child: Text(
+            tr("dialog.what_should_i_call_you.title"),
+            style: TextTheme.of(context).titleLarge,
+            textAlign: TextAlign.center,
+          ),
         ),
-        SizedBox(height: 8.0),
-        Text(
-          tr("dialog.what_should_i_call_you.message"),
-          style: TextTheme.of(context).bodyLarge,
-          textAlign: TextAlign.center,
+        Container(
+          margin: EdgeInsets.only(top: 8),
+          child: Text(
+            tr("dialog.what_should_i_call_you.message"),
+            style: TextTheme.of(context).bodyLarge,
+            textAlign: TextAlign.center,
+          ),
         ),
-        SizedBox(height: 32.0),
-        _NicknameField(viewModel: viewModel),
-        SizedBox(height: 16.0),
-        _NextButton(viewModel: viewModel),
+        Container(
+          margin: EdgeInsets.only(top: 32),
+          child: _NicknameField(viewModel: viewModel),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 16),
+          child: _NextButton(viewModel: viewModel),
+        ),
       ].asMap().entries.map((entry) {
         return SpFadeIn.fromTop(
           delay: Durations.medium1 * entry.key,
-          duration: Durations.medium4,
+          duration: Durations.long3,
           child: entry.value,
         );
       }).toList(),

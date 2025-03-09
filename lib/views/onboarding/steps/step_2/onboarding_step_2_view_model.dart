@@ -20,8 +20,10 @@ class OnboardingStep2ViewModel extends BaseViewModel {
   final ValueNotifier<bool> showToolbarNotifier = ValueNotifier(false);
   final ScrollController toolbarScrollController = ScrollController();
 
-  void next(BuildContext context) {
-    OnboardingStep3Route().push(context);
+  void next(BuildContext context) async {
+    await OnboardingStep3Route().push(context);
+    resetAnimations();
+    startAnimations();
   }
 
   Future<void> startAnimations() async {
@@ -32,6 +34,12 @@ class OnboardingStep2ViewModel extends BaseViewModel {
     await showToolbar();
 
     enableAutoscrollToolbar();
+  }
+
+  void resetAnimations() {
+    feelingClickedNotifier.value = false;
+    selectedFeelingNotifier.value = null;
+    showToolbarNotifier.value = false;
   }
 
   Future<void> showFeelingClickAnimation() async {
@@ -56,6 +64,9 @@ class OnboardingStep2ViewModel extends BaseViewModel {
 
   void enableAutoscrollToolbar() {
     if (disposed) return;
+    if (!toolbarScrollController.hasClients) return;
+    if (toolbarScrollController.offset != 0) toolbarScrollController.jumpTo(0.0);
+
     toolbarScrollController.animateTo(
       toolbarScrollController.position.maxScrollExtent,
       duration: Duration(seconds: 40),
