@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/onboarding_view.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
@@ -74,78 +75,65 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
       return widget.child;
     }
 
-    final animation = onboardingAnimationController!.drive(CurveTween(curve: Curves.fastEaseInToSlowEaseOut));
-    final homeAnimation = homeAnimationController!.drive(CurveTween(curve: Curves.fastEaseInToSlowEaseOut));
-
     return Material(
       color: ColorScheme.of(context).surface,
       child: Stack(
         children: [
-          Visibility(
-            visible: onboarding,
-            child: AnimatedBuilder(
-              animation: homeAnimation,
-              child: FadeTransition(
-                opacity: homeAnimation,
-                child: widget.child,
+          buildHomeAnimation(child: widget.child),
+          buildOnboardingAnimation(
+            child: SpNestedNavigation(
+              transitionType: SharedAxisTransitionType.vertical,
+              initialScreen: OnboardingView(
+                params: OnboardingRoute(),
               ),
-              builder: (context, child) {
-                return Container(
-                  transform: Matrix4.identity()..translate(lerpDouble(56.0, 0.0, homeAnimation.value)!, 0.0),
-                  child: child,
-                );
-              },
-            ),
-          ),
-          Visibility(
-            visible: !onboarded,
-            child: AnimatedBuilder(
-              animation: animation,
-              child: FadeTransition(
-                opacity: animation,
-                child: SpNestedNavigation(
-                  initialScreen: OnboardingView(
-                    params: OnboardingRoute(),
-                  ),
-                ),
-              ),
-              builder: (context, child) {
-                return Container(
-                  transform: Matrix4.identity()..translate(lerpDouble(-56.0, 0.0, animation.value)!, 0.0),
-                  child: child,
-                );
-              },
             ),
           ),
         ],
       ),
     );
   }
-}
 
-class CutMiddleCircleClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-
-    // Draw a full circle
-    path.addOval(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    // Define the middle cut area (horizontal cut)
-    double cutHeight = size.height * 0.3;
-    Rect cutRect = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height / 2),
-      width: size.width,
-      height: cutHeight,
+  Widget buildHomeAnimation({
+    required Widget child,
+  }) {
+    final homeAnimation = homeAnimationController!.drive(CurveTween(curve: Curves.fastEaseInToSlowEaseOut));
+    return Visibility(
+      visible: onboarding,
+      child: AnimatedBuilder(
+        animation: homeAnimation,
+        child: FadeTransition(
+          opacity: homeAnimation,
+          child: child,
+        ),
+        builder: (context, child) {
+          return Container(
+            transform: Matrix4.identity()..translate(lerpDouble(56.0, 0.0, homeAnimation.value)!, 0.0),
+            child: child,
+          );
+        },
+      ),
     );
-
-    // Cut out the middle part
-    path.addRect(cutRect);
-    path.fillType = PathFillType.evenOdd;
-
-    return path;
   }
 
-  @override
-  bool shouldReclip(CutMiddleCircleClipper oldClipper) => false;
+  Widget buildOnboardingAnimation({
+    required Widget child,
+  }) {
+    final animation = onboardingAnimationController!.drive(CurveTween(curve: Curves.fastEaseInToSlowEaseOut));
+    return Visibility(
+      visible: !onboarded,
+      child: AnimatedBuilder(
+        animation: animation,
+        child: FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        builder: (context, child) {
+          return Container(
+            transform: Matrix4.identity()..translate(lerpDouble(-56.0, 0.0, animation.value)!, 0.0),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
 }

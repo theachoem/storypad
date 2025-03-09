@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
@@ -14,8 +13,6 @@ abstract class BaseRoute {
   String get analyticScreenName => className.replaceAll("Route", "");
   String get analyticScreenClass => className.replaceAll("Route", "View");
 
-  SharedAxisTransitionType get transitionType => SharedAxisTransitionType.horizontal;
-
   Widget buildPage(BuildContext context);
 
   Future<T?> pushReplacement<T extends Object?>(
@@ -29,7 +26,7 @@ abstract class BaseRoute {
 
     final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
     if (router != null) {
-      return router.pushReplacement(buildPage(context), type: transitionType);
+      return router.pushReplacement(buildPage(context));
     } else {
       return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(MaterialPageRoute(builder: (context) {
         return buildPage(context);
@@ -48,7 +45,7 @@ abstract class BaseRoute {
 
     final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
     if (router != null) {
-      return router.push(buildPage(context), type: transitionType);
+      return router.push(buildPage(context));
     } else {
       return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
         return buildPage(context);

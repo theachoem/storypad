@@ -11,6 +11,7 @@ class SpFadeIn extends StatelessWidget {
     this.builder,
     this.delay,
     this.onFadeIn,
+    this.onCustomControllerLoaded,
     bool testCurves = false,
   }) : testCurves = kDebugMode && testCurves;
 
@@ -20,6 +21,7 @@ class SpFadeIn extends StatelessWidget {
   final Duration? delay;
   final Duration duration;
   final void Function()? onFadeIn;
+  final void Function(AnimationController controller)? onCustomControllerLoaded;
   final Widget Function(BuildContext context, Animation<double> animation, Widget child)? builder;
 
   factory SpFadeIn.fromLeft({
@@ -196,6 +198,7 @@ class SpFadeIn extends StatelessWidget {
       curve: curve,
       testCurves: testCurves,
       onFadeIn: onFadeIn,
+      onCustomControllerLoaded: onCustomControllerLoaded,
       builder: (context, animation) {
         return builder != null
             ? builder!(context, animation, child)
@@ -215,6 +218,7 @@ class _AnimationState extends StatefulWidget {
     required this.builder,
     required this.onFadeIn,
     required this.testCurves,
+    required this.onCustomControllerLoaded,
   });
 
   final bool testCurves;
@@ -222,6 +226,9 @@ class _AnimationState extends StatefulWidget {
   final Curve curve;
   final void Function()? onFadeIn;
   final Widget Function(BuildContext context, Animation<double> animation) builder;
+
+  // manully controll the animation
+  final void Function(AnimationController controller)? onCustomControllerLoaded;
 
   @override
   State<_AnimationState> createState() => __AnimationStateState();
@@ -299,9 +306,13 @@ class __AnimationStateState extends State<_AnimationState> with SingleTickerProv
         await Future.delayed(Durations.short2);
       }
     } else {
-      controller.forward().then((e) {
-        widget.onFadeIn?.call();
-      });
+      if (widget.onCustomControllerLoaded != null) {
+        widget.onCustomControllerLoaded!(controller);
+      } else {
+        controller.forward().then((e) {
+          widget.onFadeIn?.call();
+        });
+      }
     }
   }
 

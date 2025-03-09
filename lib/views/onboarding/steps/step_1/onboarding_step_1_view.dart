@@ -1,6 +1,11 @@
-import 'package:animations/animations.dart';
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/views/onboarding/local_widgets/click_animation.dart';
+import 'package:storypad/views/onboarding/local_widgets/home_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
+import 'package:storypad/views/onboarding/local_widgets/story_details_screenshot.dart';
+import 'package:storypad/views/onboarding/local_widgets/visible_when_notified.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/view/base_route.dart';
@@ -8,15 +13,13 @@ import 'package:storypad/widgets/view/base_route.dart';
 import 'onboarding_step_1_view_model.dart';
 
 part 'onboarding_step_1_content.dart';
+part 'local_widgets/fade_in_builder.dart';
 
 class OnboardingStep1Route extends BaseRoute {
   OnboardingStep1Route();
 
   @override
   bool get preferredNestedRoute => true;
-
-  @override
-  SharedAxisTransitionType get transitionType => SharedAxisTransitionType.vertical;
 
   @override
   Widget buildPage(BuildContext context) => OnboardingStep1View(params: this);

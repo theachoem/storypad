@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/gen/assets.gen.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -15,9 +14,6 @@ class OnboardingRoute extends BaseRoute {
 
   @override
   bool get preferredNestedRoute => true;
-
-  @override
-  SharedAxisTransitionType get transitionType => SharedAxisTransitionType.vertical;
 
   @override
   Widget buildPage(BuildContext context) => OnboardingView(params: this);

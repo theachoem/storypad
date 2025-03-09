@@ -13,7 +13,34 @@ class _OnboardingStep1Content extends StatelessWidget {
       currentStep: 1,
       maxStep: 4,
       actionButton: buildActionButton(context),
-      demo: SizedBox(),
+      demo: Stack(
+        children: [
+          VisibleWhenNotified(
+            notifier: viewModel.showHomePageNotifier,
+            child: _FadeInBuilder(
+              transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
+              duration: Duration(milliseconds: 100),
+              child: HomeScreenshot(),
+            ),
+          ),
+          VisibleWhenNotified(
+            notifier: viewModel.showStoryDetailsPageNotifier,
+            child: _FadeInBuilder(
+              duration: viewModel.storyDetailsAnimationDuration,
+              transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(360.0, 0.0, a.value)!),
+              child: StoryDetailsScreenshot(),
+            ),
+          ),
+          VisibleWhenNotified(
+            notifier: viewModel.showStoryClickedNotifier,
+            child: ClickAnimation(
+              left: 0,
+              right: 0,
+              top: 188,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

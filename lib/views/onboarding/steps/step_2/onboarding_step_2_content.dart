@@ -13,7 +13,7 @@ class _OnboardingStep2Content extends StatelessWidget {
       currentStep: 2,
       maxStep: 4,
       actionButton: buildActionButton(context),
-      demo: SizedBox(),
+      demo: StoryDetailsScreenshot(),
     );
   }
 

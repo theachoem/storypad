@@ -8,9 +8,76 @@ class OnboardingStep1ViewModel extends BaseViewModel {
 
   OnboardingStep1ViewModel({
     required this.params,
-  });
+  }) {
+    startAnimations();
+  }
 
-  void next(BuildContext context) {
-    OnboardingStep2Route().push(context);
+  final Duration clickDuration = Duration(milliseconds: 500);
+  final Duration storyDetailsAnimationDuration = Duration(milliseconds: 1000);
+
+  final ValueNotifier<bool> showHomePageNotifier = ValueNotifier(true);
+  final ValueNotifier<bool> showStoryClickedNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> showStoryDetailsPageNotifier = ValueNotifier(false);
+
+  void startAnimations() async {
+    await Future.delayed(Duration(seconds: 2));
+    await showClickAnimation();
+    await showStoryDetailsPageAnimation();
+  }
+
+  Future<void> next(BuildContext context) async {
+    await showClickAnimation();
+    await showStoryDetailsPageAnimation();
+    await hideHomePageAnimation();
+
+    if (!context.mounted) return;
+
+    await OnboardingStep2Route().push(context);
+    resetAnimations();
+
+    await Future.delayed(Duration(milliseconds: 350));
+    startAnimations();
+  }
+
+  Future<void> showClickAnimation() async {
+    if (disposed) return;
+    if (showStoryClickedNotifier.value == false) {
+      showStoryClickedNotifier.value = true;
+
+      await Future.delayed(clickDuration);
+      await Future.delayed(Duration(milliseconds: 350));
+    }
+  }
+
+  Future<void> showStoryDetailsPageAnimation() async {
+    if (disposed) return;
+    if (showStoryDetailsPageNotifier.value == false) {
+      showStoryDetailsPageNotifier.value = true;
+      await Future.delayed(storyDetailsAnimationDuration);
+    }
+  }
+
+  Future<void> hideHomePageAnimation() async {
+    if (disposed) return;
+    if (showHomePageNotifier.value == true) {
+      showHomePageNotifier.value = false;
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+  }
+
+  void resetAnimations() {
+    if (disposed) return;
+
+    showHomePageNotifier.value = true;
+    showStoryClickedNotifier.value = false;
+    showStoryDetailsPageNotifier.value = false;
+  }
+
+  @override
+  void dispose() {
+    showHomePageNotifier.dispose();
+    showStoryClickedNotifier.dispose();
+    showStoryDetailsPageNotifier.dispose();
+    super.dispose();
   }
 }

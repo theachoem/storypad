@@ -7,10 +7,12 @@ class SpNestedNavigation extends StatefulWidget {
     super.key,
     required this.initialScreen,
     this.backgroundColor,
+    this.transitionType = SharedAxisTransitionType.horizontal,
   });
 
   final Widget initialScreen;
   final Color? backgroundColor;
+  final SharedAxisTransitionType transitionType;
 
   static SpNestedNavigationState? maybeOf(BuildContext context) {
     return context.findRootAncestorStateOfType<SpNestedNavigationState>();
@@ -27,26 +29,20 @@ class SpNestedNavigation extends StatefulWidget {
 class SpNestedNavigationState extends State<SpNestedNavigation> {
   final GlobalKey<NavigatorState> navigationKey = GlobalKey();
 
-  Future<T?> push<T>(
-    Widget screen, {
-    SharedAxisTransitionType type = SharedAxisTransitionType.horizontal,
-  }) {
+  Future<T?> push<T>(Widget screen) {
     return navigationKey.currentState!.push<T>(
       AnimatedRouteHelper.sharedAxis(
-        type: type,
+        type: widget.transitionType,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
       ),
     );
   }
 
-  Future<T?> pushReplacement<T>(
-    Widget screen, {
-    SharedAxisTransitionType type = SharedAxisTransitionType.horizontal,
-  }) {
+  Future<T?> pushReplacement<T>(Widget screen) {
     return navigationKey.currentState!.pushReplacement(
       AnimatedRouteHelper.sharedAxis(
-        type: type,
+        type: widget.transitionType,
         builder: (context) => screen,
         fillColor: widget.backgroundColor,
       ),
@@ -59,18 +55,21 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      clipBehavior: Clip.hardEdge,
-      key: navigationKey,
-      onGenerateRoute: (setting) {
-        return AnimatedRouteHelper.sharedAxis(
-          type: SharedAxisTransitionType.horizontal,
-          fillColor: widget.backgroundColor,
-          builder: (context) {
-            return widget.initialScreen;
-          },
-        );
-      },
+    return HeroControllerScope(
+      controller: MaterialApp.createMaterialHeroController(),
+      child: Navigator(
+        clipBehavior: Clip.hardEdge,
+        key: navigationKey,
+        onGenerateRoute: (setting) {
+          return AnimatedRouteHelper.sharedAxis(
+            type: widget.transitionType,
+            fillColor: widget.backgroundColor,
+            builder: (context) {
+              return widget.initialScreen;
+            },
+          );
+        },
+      ),
     );
   }
 }
