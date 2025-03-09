@@ -35,8 +35,8 @@ class _OnboardingContent extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: Assets.images.storypadLogo512x512.image(
-            width: 150,
-            height: 150,
+            width: 120,
+            height: 120,
           ),
         ),
         SizedBox(height: 16),

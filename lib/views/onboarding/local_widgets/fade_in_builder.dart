@@ -6,11 +6,13 @@ class FadeInBuilder extends StatelessWidget {
     super.key,
     required this.child,
     required this.transformBuilder,
+    this.curve = Curves.fastEaseInToSlowEaseOut,
     this.duration = const Duration(seconds: 1),
   });
 
   final Widget child;
   final Duration duration;
+  final Curve curve;
   final Matrix4? Function(Animation<double> animation) transformBuilder;
 
   @override

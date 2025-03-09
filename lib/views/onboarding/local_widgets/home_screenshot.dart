@@ -4,7 +4,10 @@ import 'package:storypad/gen/assets.gen.dart';
 class HomeScreenshot extends StatelessWidget {
   const HomeScreenshot({
     super.key,
+    this.child,
   });
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +18,8 @@ class HomeScreenshot extends StatelessWidget {
       child: Container(
         width: 300,
         height: 360,
+        clipBehavior: Clip.hardEdge,
+        alignment: Alignment.centerRight,
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(color: Theme.of(context).dividerColor),
@@ -27,6 +32,7 @@ class HomeScreenshot extends StatelessWidget {
                 .provider(),
           ),
         ),
+        child: child,
       ),
     );
   }
