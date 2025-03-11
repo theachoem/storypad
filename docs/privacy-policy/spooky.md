@@ -2,7 +2,7 @@
 layout: minimal
 title: Spooky
 parent: Privacy Policy
-last_modified_date: 2025-02-27
+last_modified_date: 2025-03-12
 ---
 
 # Privacy Policy
@@ -34,10 +34,5 @@ Important Note: Only non-identifiable data is transmitted to Google Analytics. T
 
 By using this App, you consent to the terms of this Privacy Policy.
 
-## Contact Information
-
-If you have any questions or concerns regarding this Privacy Policy, please contact us:
-
-Juniorise  
-Phnom Penh, Cambodia  
-Email: [theacheng.g6@gmail.com](mailto:theacheng.g6@gmail.com)
+Juniorise
+Phnom Penh, Cambodia
