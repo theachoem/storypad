@@ -29,5 +29,5 @@ esac
 # Remove 1st args
 shift
 
-echo "Executing: $CMD"
-eval $CMD
+echo "Executing: $CMD $1"
+eval $CMD $1

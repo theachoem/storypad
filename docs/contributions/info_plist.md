@@ -1,10 +1,10 @@
 ---
 layout: default
 parent: Contribution
-title: Info plist
+title: Info.plist
 ---
 
-# Info plist
+# Info.plist
 
 ## File picker
 
