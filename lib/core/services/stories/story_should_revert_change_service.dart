@@ -5,9 +5,13 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 
 class StoryShouldRevertChangeService {
   static Future<bool> call({
-    required StoryDbModel currentStory,
-    required StoryDbModel initialStory,
+    required StoryDbModel? currentStory,
+    required StoryDbModel? initialStory,
   }) async {
+    if (currentStory == null || initialStory == null) return false;
+    if (currentStory.updatedAt == initialStory.updatedAt) return false;
+    if (initialStory.draftStory == true) return false;
+
     return compute(_shouldRevert, {
       'currentStory': currentStory,
       'initialStory': initialStory,

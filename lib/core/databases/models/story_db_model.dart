@@ -93,6 +93,8 @@ class StoryDbModel extends BaseDbModel {
     required this.lastSavedDeviceId,
   });
 
+  bool get draftStory => draftContent != null;
+
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences?.showDayCount ?? false;
   String? get preferredStarIcon => preferences?.starIcon;
@@ -316,6 +318,7 @@ class StoryDbModel extends BaseDbModel {
     if (draft) {
       return viewModel.story!.copyWith(
         updatedAt: DateTime.now(),
+        latestContent: viewModel.story?.latestContent ?? content,
         draftContent: content,
       );
     } else {

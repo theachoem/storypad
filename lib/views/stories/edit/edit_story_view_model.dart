@@ -53,6 +53,8 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     StoryDbModel? initialStory,
   }) async {
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
+    if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
+
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
 
     story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear);
@@ -221,10 +223,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<void> revertIfNoChange() async {
-    if (story == null || initialStory == null) return;
-    if (story?.updatedAt == initialStory?.updatedAt) return;
-
-    bool shouldRevert = await StoryShouldRevertChangeService.call(currentStory: story!, initialStory: initialStory!);
+    bool shouldRevert = await StoryShouldRevertChangeService.call(currentStory: story, initialStory: initialStory);
     if (shouldRevert) {
       debugPrint("Reverting story back... ${initialStory?.id}");
 
