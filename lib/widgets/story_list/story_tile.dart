@@ -112,7 +112,7 @@ class StoryTile extends StatelessWidget {
     BuildContext context, [
     StoryListMultiEditWrapperState? multiEditState,
   ]) {
-    StoryContentDbModel? content = story.latestContent;
+    StoryContentDbModel? content = story.draftContent ?? story.latestContent;
 
     bool hasTitle = content?.title?.trim().isNotEmpty == true;
     bool hasBody = content?.displayShortBody != null && content?.displayShortBody?.trim().isNotEmpty == true;
