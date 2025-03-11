@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/mixins/comparable.dart';
+import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 
 part 'story_content_db_model.g.dart';
 
@@ -48,32 +49,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   }
 
   String? get displayShortBody {
-    String trimBody(String body) {
-      body = body.trim();
-
-      int length = body.length;
-      int end = body.length;
-
-      List<String> endWiths = ["- [", "- [x", "- [ ]", "- [x]", "-"];
-      for (String ew in endWiths) {
-        if (body.endsWith(ew)) {
-          end = length - ew.length;
-        }
-      }
-
-      return length >= end ? "${body.substring(0, end)}..." : body;
-    }
-
-    String? getDisplayBodyFor(StoryContentDbModel content) {
-      if (content.plainText == null) return null;
-
-      String body = content.plainText!.trim();
-      String extract = body.length > 200 ? body.substring(0, 200) : body;
-
-      return trimBody(extract);
-    }
-
-    return getDisplayBodyFor(this);
+    return plainText != null ? MarkdownBodyShortenerService.call(plainText!) : null;
   }
 
   factory StoryContentDbModel.dublicate(StoryContentDbModel oldContent) {
