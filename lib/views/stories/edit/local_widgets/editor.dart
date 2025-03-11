@@ -59,7 +59,7 @@ class _Editor extends StatelessWidget {
         expands: true,
         placeholder: "...",
         padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-          top: 8.0,
+          top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
         ),
         autoFocus: true,
@@ -69,7 +69,7 @@ class _Editor extends StatelessWidget {
           ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(draftContent)),
           DateBlockEmbed(),
         ],
-        unknownEmbedBuilder: UnknownEmbedBuilder(),
+        unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
       ),
     );
   }

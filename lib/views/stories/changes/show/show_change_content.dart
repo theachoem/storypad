@@ -52,7 +52,7 @@ class _ShowChangeContent extends StatelessWidget {
                     fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.params.content)),
                 DateBlockEmbed(),
               ],
-              unknownEmbedBuilder: UnknownEmbedBuilder(),
+              unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
             ),
           );
         },

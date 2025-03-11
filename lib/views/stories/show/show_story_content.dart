@@ -53,6 +53,7 @@ class _ShowStoryContent extends StatelessWidget {
                         draftActions: viewModel.getDraftActions(context),
                       ),
                     ),
+                  SpSliverStickyDivider.sliver(),
                 ];
               },
               body: Builder(builder: (context) {
@@ -83,7 +84,7 @@ class _ShowStoryContent extends StatelessWidget {
         expands: true,
         placeholder: "...",
         padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-          top: 8.0,
+          top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
         ),
         checkBoxReadOnly: false,
@@ -94,7 +95,7 @@ class _ShowStoryContent extends StatelessWidget {
           ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.draftContent)),
           DateBlockEmbed(),
         ],
-        unknownEmbedBuilder: UnknownEmbedBuilder(),
+        unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
       ),
     );
   }
@@ -150,14 +151,4 @@ class _ShowStoryContent extends StatelessWidget {
       ),
     );
   }
-}
-
-class UnknownEmbedBuilder extends EmbedBuilder {
-  @override
-  Widget build(BuildContext context, EmbedContext embedContext) {
-    return Text(tr("general.unknown"));
-  }
-
-  @override
-  String get key => "unknown";
 }

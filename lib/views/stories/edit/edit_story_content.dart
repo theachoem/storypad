@@ -58,6 +58,7 @@ class _EditStoryContent extends StatelessWidget {
                         draftActions: null,
                       ),
                     ),
+                  SpSliverStickyDivider.sliver(),
                 ];
               },
               body: Builder(builder: (context) {
