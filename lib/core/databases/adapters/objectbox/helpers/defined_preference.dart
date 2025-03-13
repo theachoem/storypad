@@ -16,10 +16,12 @@ class _DefinedPreference {
 
   void set(String value) {
     PreferenceObjectBox? record = PreferencesBox().box.get(id);
+    if (record?.value.trim() == value.trim()) return;
+
     PreferencesBox().box.put(PreferenceObjectBox(
           id: id,
           key: key,
-          value: value,
+          value: value.trim(),
           createdAt: record?.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         ));

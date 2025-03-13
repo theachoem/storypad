@@ -66,6 +66,7 @@ class HomeView extends StatelessWidget {
         return SpAppLockWrapper(
           child: SpOnboardingWrappper(
             child: _HomeContent(viewModel),
+            onOnboarded: () => viewModel.reload(debugSource: '$runtimeType#onOnboarded'),
           ),
         );
       },

@@ -9,9 +9,11 @@ class SpOnboardingWrappper extends StatefulWidget {
   const SpOnboardingWrappper({
     super.key,
     required this.child,
+    required this.onOnboarded,
   });
 
   final Widget child;
+  final void Function() onOnboarded;
 
   static void close(BuildContext context) {
     context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.close();
@@ -60,12 +62,14 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
 
     await Future.delayed(transitionDuration * 0.8);
 
-    homeAnimationController?.forward().then((_) {
+    await homeAnimationController?.forward().then((_) {
       onboarded = true;
       setState(() {});
 
       clean();
     });
+
+    widget.onOnboarded();
   }
 
   void clean() {
