@@ -79,6 +79,11 @@ class _ShowStoryContent extends StatelessWidget {
       controller: viewModel.quillControllers[index]!,
       scrollController: scrollController,
       config: QuillEditorConfig(
+        contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
+          rawEditorState,
+          editable: false,
+          onEdit: () => viewModel.goToEditPage(context),
+        ),
         scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,
         expands: true,

@@ -11,19 +11,15 @@ const Color kDefaultColorSeed = Colors.orange;
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
 
-// make sure to initial PackageInfoInitializer
-late final PackageInfo kPackageInfo;
-
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
 
-// make sure to initial DeviceInfoInitializer
-late final DeviceInfoObject kDeviceInfo;
-
-// make sure to initial FileInitializer
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;
+late final DeviceInfoObject kDeviceInfo;
+late final PackageInfo kPackageInfo;
+late final bool kCanNativeLookupText;
 
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
 const Map<int, Color> kColorsByDayLight = {
