@@ -7,7 +7,12 @@ import 'package:storypad/core/objects/device_info_object.dart';
 const String kAppName = String.fromEnvironment('APP_NAME');
 
 const Color kSplashColor = Colors.transparent;
-const Color kDefaultColorSeed = Colors.orange;
+
+Color get kDefaultColorSeed => Platform.isIOS ? kDefaultColorSeedIos : kDefaultColorSeedAndroid;
+
+const Color kDefaultColorSeedIos = Colors.black;
+const Color kDefaultColorSeedAndroid = Colors.orange;
+
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
 
