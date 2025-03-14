@@ -45,6 +45,7 @@ class _ArchivesContent extends StatelessWidget {
           visible: !state.editing,
           child: SpFadeIn.fromRight(
             child: IconButton(
+              tooltip: tr("button.edit"),
               icon: Icon(Icons.edit),
               onPressed: () => state.turnOnEditing(),
             ),
@@ -149,6 +150,7 @@ class _ArchivesContent extends StatelessWidget {
               },
               builder: (callback) {
                 return IconButton(
+                  tooltip: tr("button.more_options"),
                   icon: Icon(Icons.more_vert),
                   onPressed: callback,
                 );

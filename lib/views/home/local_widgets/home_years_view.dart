@@ -78,6 +78,7 @@ class HomeYearsViewState extends State<HomeYearsView> {
       appBar: AppBar(
         actions: [
           IconButton(
+            tooltip: tr("page.add_year.title"),
             icon: const Icon(Icons.add),
             onPressed: () async => addYear(context, viewModel),
           ),

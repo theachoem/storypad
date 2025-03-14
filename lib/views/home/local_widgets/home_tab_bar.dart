@@ -84,6 +84,7 @@ class _HomeTabBar extends StatelessWidget {
 
   Widget buildButton(BuildContext context, bool filtered) {
     return IconButton(
+      tooltip: tr("page.search_filter.title"),
       color: filtered ? ColorScheme.of(context).bootstrap.info.color : null,
       iconSize: 20.0,
       icon: Icon(MdiIcons.tuneVariant),

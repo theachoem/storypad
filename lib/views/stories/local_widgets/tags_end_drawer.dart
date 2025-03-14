@@ -92,6 +92,7 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
         actions: [
           Builder(builder: (context) {
             return IconButton(
+              tooltip: tr("button.edit"),
               icon: const Icon(Icons.edit),
               onPressed: () => TagsRoute(storyViewOnly: true).push(context),
             );

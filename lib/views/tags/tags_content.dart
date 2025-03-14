@@ -14,6 +14,7 @@ class _TagsContent extends StatelessWidget {
         title: Text(tr("page.tags.title")),
         actions: [
           IconButton(
+            tooltip: tr("page.new_tag.title"),
             icon: const Icon(Icons.add),
             onPressed: () => provider.addTag(context),
           ),
