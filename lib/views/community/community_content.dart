@@ -58,6 +58,12 @@ class _CommunityContent extends StatelessWidget {
             title: Text(tr("list_tile.rate.title")),
             onTap: () => AppStoreOpenerService.call(),
           ),
+          ListTile(
+            leading: Icon(Icons.ios_share_rounded),
+            title: Text(tr("list_tile.share_app.title")),
+            subtitle: Text(tr("list_tile.share_app.subtitle")),
+            onTap: () => ShareAppService.call(context),
+          ),
         ],
       ),
     );
