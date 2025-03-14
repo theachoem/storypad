@@ -27,44 +27,7 @@ class HomeAppBar extends StatelessWidget {
   PreferredSize buildTabBar(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight()),
-      child: TabBar(
-        indicatorSize: TabBarIndicatorSize.tab,
-        enableFeedback: true,
-        tabAlignment: TabAlignment.start,
-        isScrollable: true,
-        indicatorAnimation: TabIndicatorAnimation.linear,
-        labelColor: Theme.of(context).colorScheme.onPrimary,
-        unselectedLabelColor: Theme.of(context).colorScheme.primary,
-        padding: EdgeInsets.only(
-          left: 14.0,
-          right: 14.0,
-          top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
-          bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
-        ),
-        indicator: RoundedIndicator.simple(
-          height: viewModel.scrollInfo.appBar(context).indicatorHeight,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        onTap: (index) {
-          viewModel.scrollInfo.moveToMonthIndex(
-            months: viewModel.months,
-            targetMonthIndex: index,
-            context: context,
-          );
-        },
-        splashBorderRadius: BorderRadius.circular(viewModel.scrollInfo.appBar(context).indicatorHeight / 2),
-        tabs: viewModel.months.map((month) {
-          return buildMonthTab(context, month);
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget buildMonthTab(BuildContext context, int month) {
-    return Container(
-      height: viewModel.scrollInfo.appBar(context).indicatorHeight - 2,
-      alignment: Alignment.center,
-      child: Text(DateFormatHelper.MMM(DateTime(2000, month), context.locale)),
+      child: _HomeTabBar(viewModel: viewModel),
     );
   }
 }

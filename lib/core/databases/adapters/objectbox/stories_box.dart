@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:html_character_entities/html_character_entities.dart';
@@ -65,8 +66,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     });
 
     storyCountsByYear[DateTime.now().year] ??= 0;
-
-    return storyCountsByYear;
+    return SplayTreeMap<int, int>.from(storyCountsByYear, (a, b) => b.compareTo(a));
   }
 
   Future<Map<PathType, int>> getStoryCountsByType({

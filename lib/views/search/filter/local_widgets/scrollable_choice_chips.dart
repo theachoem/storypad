@@ -15,7 +15,7 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
   final int? Function(T choice) storiesCount;
   final String Function(T choice) toLabel;
   final bool Function(T choice) selected;
-  final void Function(T choice) onToggle;
+  final void Function(T choice)? onToggle;
   final double? wrapWidth;
 
   @override
@@ -61,7 +61,7 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
                 ),
               ),
               selected: selected(choice),
-              onSelected: (_) => onToggle(choice),
+              onSelected: onToggle != null ? (_) => onToggle!(choice) : null,
             );
           }),
         ),

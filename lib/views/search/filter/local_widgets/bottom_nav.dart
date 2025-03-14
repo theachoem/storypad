@@ -27,7 +27,7 @@ class _BottomNav extends StatelessWidget {
                 FilledButton.tonalIcon(
                   icon: Icon(Icons.clear),
                   label: Text(tr("button.clear")),
-                  onPressed: () => viewModel.reset(context),
+                  onPressed: viewModel.filtered ? () => viewModel.reset(context) : null,
                 ),
                 FilledButton.icon(
                   icon: Icon(Icons.search),

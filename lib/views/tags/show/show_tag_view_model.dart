@@ -22,7 +22,6 @@ class ShowTagViewModel extends BaseViewModel {
     years: {},
     types: {},
     tagId: tag.id,
-    filterTagModifiable: false,
     assetId: null,
   );
 
@@ -40,7 +39,12 @@ class ShowTagViewModel extends BaseViewModel {
   }
 
   Future<void> goToFilterPage(BuildContext context) async {
-    final result = await SearchFilterRoute(initialTune: filter).push(context);
+    final result = await SearchFilterRoute(
+      initialTune: filter,
+      multiSelectYear: true,
+      filterTagModifiable: false,
+      resetTune: SearchFilterObject(years: {}, types: {}, tagId: tag.id, assetId: null),
+    ).push(context);
 
     if (result is SearchFilterObject) {
       filter = result;

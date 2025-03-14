@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
 class HomeYearsView extends StatefulWidget {
@@ -98,15 +99,35 @@ class HomeYearsViewState extends State<HomeYearsView> {
   List<Widget> buildYearsTiles(HomeViewModel viewModel) {
     return years!.entries.map((entry) {
       bool selected = viewModel.year == entry.key;
-      return ListTile(
-        onTap: () => viewModel.changeYear(entry.key),
-        selected: selected,
-        title: Text(entry.key.toString()),
-        subtitle: Text(plural("plural.story", entry.value)),
-        trailing: Visibility(
-          visible: selected,
-          child: const Icon(Icons.check),
-        ),
+      return SpSingleStateWidget.listen(
+        initialValue: false,
+        builder: (context, loading, loadingNotifier) {
+          return Stack(
+            children: [
+              ListTile(
+                onTap: () async {
+                  loadingNotifier.value = true;
+                  await viewModel.changeYear(entry.key);
+                  loadingNotifier.value = false;
+                },
+                selected: selected,
+                title: Text(entry.key.toString()),
+                subtitle: Text(plural("plural.story", entry.value)),
+                trailing: Visibility(visible: selected, child: const Icon(Icons.check)),
+              ),
+              AnimatedContainer(
+                duration: Durations.long4,
+                width: double.infinity,
+                height: loading ? 4.0 : 0,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(),
+                child: Wrap(
+                  children: [LinearProgressIndicator()],
+                ),
+              ),
+            ],
+          );
+        },
       );
     }).toList();
   }

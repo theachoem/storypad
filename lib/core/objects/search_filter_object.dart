@@ -1,14 +1,17 @@
-import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'search_filter_object.g.dart';
+
+@CopyWith()
+@JsonSerializable()
 class SearchFilterObject {
-  Set<int> years;
-  Set<PathType> types;
-  int? tagId;
-  int? assetId;
-  bool? starred;
-
-  final bool filterTagModifiable;
+  final Set<int> years;
+  final Set<PathType> types;
+  final int? tagId;
+  final int? assetId;
+  final bool? starred;
 
   SearchFilterObject({
     required this.years,
@@ -16,7 +19,6 @@ class SearchFilterObject {
     required this.tagId,
     required this.assetId,
     this.starred,
-    this.filterTagModifiable = true,
   });
 
   Map<String, dynamic>? toDatabaseFilter({
@@ -34,36 +36,17 @@ class SearchFilterObject {
     return filters;
   }
 
-  void toggleYear(int year) {
-    if (years.contains(year)) {
-      years.remove(year);
-    } else {
-      years.add(year);
-    }
-  }
-
-  void toggleType(PathType type) {
-    if (types.contains(type)) {
-      types.remove(type);
-    } else {
-      types.add(type);
-    }
-  }
-
-  void setStarred(bool? value) {
-    starred = value;
-  }
-
-  void toggleTag(TagDbModel tag) {
-    tagId = tag.id == tagId ? null : tag.id;
-  }
-
-  factory SearchFilterObject.initial() {
+  factory SearchFilterObject.initial({
+    Set<int>? years,
+  }) {
     return SearchFilterObject(
-      years: {},
+      years: years ?? {},
       types: {},
       tagId: null,
       assetId: null,
     );
   }
+
+  Map<String, dynamic> toJson() => _$SearchFilterObjectToJson(this);
+  factory SearchFilterObject.fromJson(Map<String, dynamic> json) => _$SearchFilterObjectFromJson(json);
 }
