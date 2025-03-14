@@ -182,7 +182,7 @@ class _TitleField extends StatelessWidget {
         hintText: tr("input.title.hint"),
         border: InputBorder.none,
         isCollapsed: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8.0, bottom: 12.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 12.0, bottom: 12.0),
       ),
     );
   }
