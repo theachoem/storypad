@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/core/storages/search_filter_storage.dart';
+import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -24,16 +28,26 @@ class HomeViewModel extends BaseViewModel {
   HomeViewModel({
     required BuildContext context,
   }) {
-    AnalyticsService.instance.logViewHome(year: year);
-    reload(debugSource: 'HomeViewModel#_constructor');
+    nickname = PreferenceDbModel.db.nickname.get();
 
-    RestoreBackupService.instance.addListener(() async {
-      reload(debugSource: '$runtimeType#_listenToRestoreService');
+    loadSearchFilter().then((e) {
+      AnalyticsService.instance.logViewHome(year: currentSearchFilter.years.first);
+      reload(debugSource: 'HomeViewModel#_constructor');
+
+      RestoreBackupService.instance.addListener(() async {
+        reload(debugSource: '$runtimeType#_listenToRestoreService');
+      });
     });
   }
 
   String? nickname;
-  int year = DateTime.now().year;
+
+  int get currentYear => DateTime.now().year;
+  int get year => currentSearchFilter.years.firstOrNull ?? currentYear;
+
+  bool get filtered =>
+      jsonEncode(currentSearchFilter.toDatabaseFilter()) != jsonEncode(initialSearchFilter.toDatabaseFilter());
+
   CollectionDbModel<StoryDbModel>? _stories;
   CollectionDbModel<StoryDbModel>? get stories => _stories;
   void setStories(CollectionDbModel<StoryDbModel>? value) {
@@ -47,18 +61,27 @@ class HomeViewModel extends BaseViewModel {
     return months;
   }
 
+  SearchFilterObject get initialSearchFilter => SearchFilterObject.initial().copyWith(years: {currentYear});
+  SearchFilterObject? _currentSearchFilter;
+  SearchFilterObject get currentSearchFilter => _currentSearchFilter ?? initialSearchFilter;
+
   Future<void> reload({
     required String debugSource,
   }) async {
     debugPrint('🚧 Reload home from $debugSource 🏠');
 
     nickname = PreferenceDbModel.db.nickname.get();
-    setStories(await StoryDbModel.db.where(filters: {
-      'year': year,
-      'types': [PathType.docs.name],
-    }));
+    final stories = await StoryDbModel.db.where(filters: currentSearchFilter.toDatabaseFilter());
 
+    setStories(stories);
     notifyListeners();
+  }
+
+  Future<void> loadSearchFilter() async {
+    _currentSearchFilter = await SearchFilterStorage().readObject() ?? SearchFilterObject.initial();
+    if (_currentSearchFilter?.years.isEmpty == true) {
+      _currentSearchFilter = _currentSearchFilter!.copyWith(years: {currentYear});
+    }
   }
 
   Future<void> refresh(BuildContext context) async {
@@ -69,16 +92,29 @@ class HomeViewModel extends BaseViewModel {
   Future<void> changeYear(int newYear) async {
     if (year == newYear) return;
 
-    year = newYear;
-    setStories(null);
-    notifyListeners();
-
+    _currentSearchFilter = currentSearchFilter.copyWith(years: {newYear});
     await reload(debugSource: '$runtimeType#changeYear $newYear');
     AnalyticsService.instance.logViewHome(year: year);
   }
 
   Future<void> goToViewPage(BuildContext context, StoryDbModel story) async {
     await ShowStoryRoute(id: story.id, story: story).push(context);
+  }
+
+  Future<void> goToFilter(BuildContext context, {bool save = false}) async {
+    final result = await SearchFilterRoute(
+      initialTune: currentSearchFilter,
+      resetTune: SearchFilterObject.initial(years: {currentYear}),
+      multiSelectYear: false,
+      filterTagModifiable: true,
+      allowSaveSearchFilter: false,
+    ).push(context);
+
+    if (result is SearchFilterObject) {
+      _currentSearchFilter = result;
+
+      await reload(debugSource: '$runtimeType#goToFilter');
+    }
   }
 
   Future<void> goToNewPage(BuildContext context) async {

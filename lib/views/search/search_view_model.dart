@@ -33,7 +33,12 @@ class SearchViewModel extends BaseViewModel with DebounchedCallback {
   }
 
   Future<void> goToFilterPage(BuildContext context) async {
-    final result = await SearchFilterRoute(initialTune: filter).push(context);
+    final result = await SearchFilterRoute(
+      initialTune: filter,
+      multiSelectYear: true,
+      filterTagModifiable: true,
+      resetTune: SearchFilterObject.initial(),
+    ).push(context);
 
     if (result is SearchFilterObject) {
       filter = result;

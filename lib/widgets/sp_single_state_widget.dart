@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
 
-class CmSingleStateWidget<T> extends StatefulWidget {
-  const CmSingleStateWidget({
+class SpSingleStateWidget<T> extends StatefulWidget {
+  const SpSingleStateWidget({
     super.key,
     required this.initialValue,
     required this.builder,
   });
 
+  factory SpSingleStateWidget.listen({
+    required T initialValue,
+    required Widget Function(BuildContext context, T value, CmValueNotifier<T> notifier) builder,
+  }) {
+    return SpSingleStateWidget(
+      initialValue: initialValue,
+      builder: (context, notifier) {
+        return ValueListenableBuilder(
+          valueListenable: notifier,
+          builder: (context, value, child) {
+            return builder(context, value, notifier);
+          },
+        );
+      },
+    );
+  }
+
   final T initialValue;
   final Widget Function(BuildContext context, CmValueNotifier<T> notifier) builder;
 
   @override
-  State<CmSingleStateWidget<T>> createState() => _CmSingleStateWidgetState<T>();
+  State<SpSingleStateWidget<T>> createState() => _SpSingleStateWidgetState<T>();
 }
 
-class _CmSingleStateWidgetState<T> extends State<CmSingleStateWidget<T>> {
+class _SpSingleStateWidgetState<T> extends State<SpSingleStateWidget<T>> {
   late final CmValueNotifier<T> stateNotifier;
 
   @override

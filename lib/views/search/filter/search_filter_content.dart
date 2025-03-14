@@ -10,6 +10,7 @@ class _SearchFilterContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(tr("page.search_filter.title")),
+        actions: [_RememberSwitcher(viewModel: viewModel)],
       ),
       body: buildBody(context),
       bottomNavigationBar: _BottomNav(viewModel: viewModel),
@@ -23,7 +24,7 @@ class _SearchFilterContent extends StatelessWidget {
         buildYears(context),
         SizedBox(height: 12.0),
       ],
-      if (viewModel.searchFilter.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
+      if (viewModel.params.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
         _Title(title: tr("general.tags")),
         buildTags(context),
         SizedBox(height: 12.0),
@@ -34,10 +35,7 @@ class _SearchFilterContent extends StatelessWidget {
         value: viewModel.searchFilter.starred,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
         title: Text(tr("button.star")),
-        onChanged: (value) {
-          viewModel.searchFilter.setStarred(value);
-          viewModel.notifyListeners();
-        },
+        onChanged: (value) => viewModel.setStarred(value),
       ),
     ];
 
@@ -53,13 +51,10 @@ class _SearchFilterContent extends StatelessWidget {
     return _ScrollableChoiceChips<int>(
       wrapWidth: 800,
       choices: viewModel.years?.keys.toList() ?? [],
-      storiesCount: (int year) => viewModel.years?[year] ?? 0,
+      storiesCount: (int year) => viewModel.years?[year],
       toLabel: (int year) => year.toString(),
       selected: (int year) => viewModel.searchFilter.years.contains(year),
-      onToggle: (int year) {
-        viewModel.searchFilter.toggleYear(year);
-        viewModel.notifyListeners();
-      },
+      onToggle: (int year) => viewModel.toggleYear(year),
     );
   }
 
@@ -70,10 +65,39 @@ class _SearchFilterContent extends StatelessWidget {
       storiesCount: (TagDbModel tag) => tag.storiesCount,
       toLabel: (TagDbModel tag) => tag.title,
       selected: (TagDbModel tag) => viewModel.searchFilter.tagId == tag.id,
-      onToggle: (TagDbModel tag) {
-        viewModel.searchFilter.toggleTag(tag);
-        viewModel.notifyListeners();
-      },
+      onToggle: (TagDbModel tag) => viewModel.toggleTag(tag),
+    );
+  }
+}
+
+class _RememberSwitcher extends StatelessWidget {
+  const _RememberSwitcher({
+    required this.viewModel,
+  });
+
+  final SearchFilterViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: viewModel.params.allowSaveSearchFilter,
+      child: SpFadeIn(
+        delay: Durations.medium1,
+        child: GestureDetector(
+          onTap: () => viewModel.setSavingSearchFilter(!(viewModel.savingSearchFilterEnabled == true)),
+          child: Row(
+            spacing: 0.0,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(tr('button.remember')),
+              Checkbox.adaptive(
+                value: viewModel.savingSearchFilterEnabled == true,
+                onChanged: (value) => viewModel.setSavingSearchFilter(value!),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

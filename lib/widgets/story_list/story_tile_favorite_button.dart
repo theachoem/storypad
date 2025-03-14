@@ -35,7 +35,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
   }
 
   Widget buildFavoriteButton() {
-    return CmSingleStateWidget(
+    return SpSingleStateWidget(
       initialValue: story.starred == true,
       builder: (context, notifier) {
         final animationDuration = Durations.medium1;

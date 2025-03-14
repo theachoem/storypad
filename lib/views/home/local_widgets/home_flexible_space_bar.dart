@@ -10,6 +10,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlexibleSpaceBar(
+      collapseMode: CollapseMode.pin,
       background: Container(
         alignment: Alignment.bottomCenter,
         margin: EdgeInsets.only(

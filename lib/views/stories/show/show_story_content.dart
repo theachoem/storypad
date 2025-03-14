@@ -127,7 +127,7 @@ class _ShowStoryContent extends StatelessWidget {
         items: (context) {
           return [
             SpPopMenuItem(
-              leadingIconData: Icons.info,
+              leadingIconData: Icons.info_outline,
               title: tr("button.info"),
               onPressed: () => StoryInfoSheet(story: viewModel.story!).show(context),
             ),

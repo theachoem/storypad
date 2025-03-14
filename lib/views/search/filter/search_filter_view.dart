@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -15,9 +16,20 @@ part 'local_widgets/scrollable_choice_chips.dart';
 class SearchFilterRoute extends BaseRoute {
   SearchFilterRoute({
     required this.initialTune,
+    required this.multiSelectYear,
+    required this.filterTagModifiable,
+    required this.resetTune,
+    this.allowSaveSearchFilter = false,
   });
 
-  final SearchFilterObject? initialTune;
+  final SearchFilterObject initialTune;
+  final SearchFilterObject resetTune;
+  final bool multiSelectYear;
+  final bool filterTagModifiable;
+
+  // This is not used yet. Allowing user to save make app a bit more complex to used.
+  // Let's enable it when ready.
+  final bool allowSaveSearchFilter;
 
   @override
   bool get preferredNestedRoute => true;
