@@ -1,7 +1,7 @@
-part of 'home_sheet.dart';
+part of 'home_end_drawer.dart';
 
-class _HomeSheetHeader extends StatelessWidget {
-  const _HomeSheetHeader(this.viewModel);
+class _HomeEndDrawerHeader extends StatelessWidget {
+  const _HomeEndDrawerHeader(this.viewModel);
 
   final HomeViewModel viewModel;
 

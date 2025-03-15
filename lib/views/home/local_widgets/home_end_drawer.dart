@@ -16,25 +16,11 @@ import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/tags/tags_view.dart';
 import 'package:storypad/views/theme/theme_view.dart';
-import 'package:storypad/widgets/view/base_route.dart';
 
-part 'home_sheet_header.dart';
+part 'home_end_drawer_header.dart';
 
-class HomeSheetRoute extends BaseRoute {
-  final HomeViewModel viewModel;
-
-  HomeSheetRoute({
-    required this.viewModel,
-  });
-
-  @override
-  Widget buildPage(BuildContext context) {
-    return HomeSheet(viewModel);
-  }
-}
-
-class HomeSheet extends StatelessWidget {
-  const HomeSheet(this.viewModel, {super.key});
+class HomeEndDrawer extends StatelessWidget {
+  const HomeEndDrawer(this.viewModel, {super.key});
 
   final HomeViewModel viewModel;
 
@@ -58,7 +44,7 @@ class HomeSheet extends StatelessWidget {
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
         children: [
-          _HomeSheetHeader(viewModel),
+          _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
           buildSearchTile(context),
