@@ -78,8 +78,7 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
       onTap: () async {
         setState(() => visible = false);
 
-        await Navigator.of(context).push(AnimatedRouteHelper.sharedAxis(
-          type: SharedAxisTransitionType.horizontal,
+        await Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
             return _FeelingGroupItemPicker(
               group: group,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
@@ -133,6 +134,12 @@ class HomeViewModel extends BaseViewModel {
     // https://developer.apple.com/app-store/ratings-and-reviews/
     int newCount = await NewStoriesCountStorage().increase();
     if (newCount % 10 == 0) InAppReviewService.request();
+  }
+
+  Future<void> openModal(BuildContext context) async {
+    AppTheme.isIOS(context);
+
+    Navigator.of(context);
   }
 
   void changeName(BuildContext context) async {

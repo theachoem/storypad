@@ -1,10 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/helpers/animated_route_helper.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/widgets/feeling_picker/feeling_object_card.dart' show FeelingObjectCard;
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 part 'feeling_group_picker.dart';
 part 'feeling_group_item_picker.dart';
@@ -44,15 +42,18 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
         borderRadius: BorderRadius.circular(16.0),
         child: Wrap(
           children: [
-            SpNestedNavigation(
-              backgroundColor: Colors.transparent,
-              initialScreen: _FeelingGroupPicker(
-                feeling: widget.feeling,
-                onPicked: widget.onPicked,
-                onHeightChanged: (height) async {
-                  setState(() => this.height = height);
-                },
-              ),
+            Navigator(
+              onGenerateRoute: (settings) {
+                return MaterialPageRoute(builder: (context) {
+                  return _FeelingGroupPicker(
+                    feeling: widget.feeling,
+                    onPicked: widget.onPicked,
+                    onHeightChanged: (height) async {
+                      setState(() => this.height = height);
+                    },
+                  );
+                });
+              },
             ),
           ],
         ),

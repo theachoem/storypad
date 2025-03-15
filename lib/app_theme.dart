@@ -19,6 +19,7 @@ class AppTheme extends StatelessWidget {
   // default text direction
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
   static bool rtl(BuildContext context) => Directionality.of(context) == TextDirection.rtl;
+  static bool isIOS(BuildContext context) => Theme.of(context).platform == TargetPlatform.iOS;
 
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
@@ -52,11 +53,11 @@ class AppTheme extends StatelessWidget {
     }
 
     final shareAxisTransition = SharedAxisPageTransitionsBuilder(
-        transitionType: SharedAxisTransitionType.vertical, fillColor: colorScheme.surface);
+        transitionType: SharedAxisTransitionType.horizontal, fillColor: colorScheme.surface);
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
       TargetPlatform.iOS: shareAxisTransition,
-      TargetPlatform.macOS: shareAxisTransition,
-      TargetPlatform.android: shareAxisTransition,
+      TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);

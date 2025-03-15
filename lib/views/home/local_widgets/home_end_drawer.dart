@@ -1,7 +1,7 @@
 part of '../home_view.dart';
 
-class _HomeEndDrawer extends StatelessWidget {
-  const _HomeEndDrawer(this.viewModel);
+class HomeEndDrawer extends StatelessWidget {
+  const HomeEndDrawer(this.viewModel, {super.key});
 
   final HomeViewModel viewModel;
 
@@ -38,7 +38,7 @@ class _HomeEndDrawer extends StatelessWidget {
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
         children: [
-          const _HomeEndDrawerHeader(),
+          _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
           buildSearchTile(context),
