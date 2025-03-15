@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
 
@@ -20,7 +21,7 @@ late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;
 late final DeviceInfoObject kDeviceInfo;
 late final PackageInfo kPackageInfo;
-late final bool kCanNativeLookupText;
+late final List<ProcessTextAction> kProcessTextActions;
 
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
 const Map<int, Color> kColorsByDayLight = {
