@@ -72,7 +72,7 @@ class _HomeTabBar extends StatelessWidget {
             ),
           ),
           child: SpAnimatedIcons.fadeScale(
-            duration: Durations.long3,
+            duration: Durations.long1,
             firstChild: buildButton(context, true),
             secondChild: buildButton(context, false),
             showFirst: viewModel.filtered,
