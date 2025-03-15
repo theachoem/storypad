@@ -4,9 +4,9 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart' show AppStoreOpenerService;
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
-import 'package:storypad/core/services/share_app_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/community/local_widgets/community_card.dart';
+import 'package:storypad/widgets/bottom_sheets/share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +18,6 @@ part 'community_content.dart';
 
 class CommunityRoute extends BaseRoute {
   CommunityRoute();
-
-  @override
-  bool get preferredNestedRoute => true;
 
   @override
   Widget buildPage(BuildContext context) => CommunityView(params: this);

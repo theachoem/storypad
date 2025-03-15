@@ -5,14 +5,12 @@ abstract class BaseBottomSheet {
 
   Future<T?> show<T>({
     required BuildContext context,
-    bool rootNavigator = false,
-    bool isScrollControlled = false,
   }) {
     return showModalBottomSheet(
-      useRootNavigator: rootNavigator,
+      useRootNavigator: true,
       context: context,
       showDragHandle: true,
-      isScrollControlled: isScrollControlled,
+      isScrollControlled: true,
       builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(

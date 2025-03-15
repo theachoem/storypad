@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 
 abstract class BaseRoute {
-  bool get preferredNestedRoute => false;
-
   // Only basic user unrelated info. Most screen should return empty.
   Map<String, String?>? get analyticsParameters => null;
 

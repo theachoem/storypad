@@ -33,9 +33,6 @@ class SearchFilterRoute extends BaseRoute {
   final bool allowSaveSearchFilter;
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => SearchFilterView(params: this);
 }
 

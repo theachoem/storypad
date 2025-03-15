@@ -18,9 +18,6 @@ part 'archives_content.dart';
 class ArchivesRoute extends BaseRoute {
   @override
   Widget buildPage(BuildContext context) => ArchivesView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class ArchivesView extends StatelessWidget {

@@ -20,9 +20,6 @@ class FontsRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => FontsView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class FontsView extends StatelessWidget {

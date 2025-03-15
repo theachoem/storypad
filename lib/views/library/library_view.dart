@@ -23,9 +23,6 @@ class LibraryRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => LibraryView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class LibraryView extends StatelessWidget {

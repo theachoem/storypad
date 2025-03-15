@@ -22,9 +22,6 @@ class ShowTagRoute extends BaseRoute {
   final bool storyViewOnly;
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => ShowTagView(params: this);
 }
 

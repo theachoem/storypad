@@ -19,9 +19,6 @@ class ShowAssetRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => ShowAssetView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class ShowAssetView extends StatelessWidget {

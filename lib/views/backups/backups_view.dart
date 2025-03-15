@@ -27,9 +27,6 @@ class BackupsRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => BackupView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class BackupView extends StatelessWidget {
