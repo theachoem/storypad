@@ -69,7 +69,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                   child: _HomeAppBarNickname(nickname: viewModel.nickname),
                 ),
                 SpTapEffect(
-                  onTap: () => viewModel.openModal(context),
+                  onTap: () => viewModel.openEndDrawer(context),
                   child: const _HomeAppBarMessage(),
                 ),
               ],
@@ -93,7 +93,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         margin: viewModel.scrollInfo.extraExpandedHeight > 0 ? const EdgeInsets.only(bottom: 8.0) : null,
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],
-          onTap: () => viewModel.openModal(context),
+          onTap: () => viewModel.openEndDrawer(context),
           child: FittedBox(
             child: Text(
               viewModel.year.toString(),

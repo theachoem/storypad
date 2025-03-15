@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 
 abstract class BaseBottomSheet {
   const BaseBottomSheet();
 
+  String get className => runtimeType.toString();
+
+  String get analyticScreenName => className.replaceAll("BottomSheet", "");
+  String get analyticScreenClass => className;
+
   Future<T?> show<T>({
     required BuildContext context,
   }) {
+    AnalyticsService.instance.logViewSheet(bottomSheet: this);
+
     return showModalBottomSheet(
       useRootNavigator: true,
       context: context,

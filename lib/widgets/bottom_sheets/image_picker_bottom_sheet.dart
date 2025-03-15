@@ -34,6 +34,8 @@ class ImagePickerBottomSheet extends BaseBottomSheet {
 
       controller.replaceText(index, length, BlockEmbed.image(asset.link), null);
       controller.moveCursorToPosition(index + 1);
+
+      AnalyticsService.instance.logInsertNewPhoto();
     }
   }
 
@@ -63,8 +65,6 @@ class ImagePickerBottomSheet extends BaseBottomSheet {
       );
 
       final savedAsset = await asset.save();
-
-      AnalyticsService.instance.logInsertNewPhoto();
 
       if (savedAsset != null && context.mounted) {
         Navigator.maybePop(context, savedAsset);

@@ -6,6 +6,7 @@ import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
 // Logging analytics events without user-identifiable information.
 class AnalyticsService extends BaseAnalyticsService {
@@ -29,6 +30,21 @@ class AnalyticsService extends BaseAnalyticsService {
       screenClass: screenClass,
       screenName: screenName,
       parameters: parameters,
+    );
+  }
+
+  Future<void> logViewSheet({
+    required BaseBottomSheet bottomSheet,
+  }) async {
+    String screenName = bottomSheet.analyticScreenName;
+    String screenClass = bottomSheet.analyticScreenClass;
+
+    debug('logViewRoute', {'screen_name': screenName, 'screen_class': screenClass});
+
+    return FirebaseAnalytics.instance.logScreenView(
+      screenClass: screenClass,
+      screenName: screenName,
+      parameters: null,
     );
   }
 

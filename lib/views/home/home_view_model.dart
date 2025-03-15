@@ -137,7 +137,7 @@ class HomeViewModel extends BaseViewModel {
     if (newCount % 10 == 0) InAppReviewService.request();
   }
 
-  Future<void> openModal(BuildContext context) async {
+  Future<void> openEndDrawer(BuildContext context) async {
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
   }
@@ -170,5 +170,3 @@ class HomeViewModel extends BaseViewModel {
     super.dispose();
   }
 }
-
-class ModalSide {}
