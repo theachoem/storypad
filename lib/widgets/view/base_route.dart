@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 abstract class BaseRoute {
   bool get preferredNestedRoute => false;
@@ -24,14 +23,9 @@ abstract class BaseRoute {
       analyticsParameters: analyticsParameters,
     );
 
-    final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
-    if (router != null) {
-      return router.pushReplacement(buildPage(context));
-    } else {
-      return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(MaterialPageRoute(builder: (context) {
-        return buildPage(context);
-      }));
-    }
+    return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(MaterialPageRoute(builder: (context) {
+      return buildPage(context);
+    }));
   }
 
   Future<T?> push<T extends Object?>(
@@ -43,13 +37,8 @@ abstract class BaseRoute {
       analyticsParameters: analyticsParameters,
     );
 
-    final router = preferredNestedRoute ? SpNestedNavigation.maybeOf(context) : null;
-    if (router != null) {
-      return router.push(buildPage(context));
-    } else {
-      return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
-        return buildPage(context);
-      }));
-    }
+    return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
+      return buildPage(context);
+    }));
   }
 }

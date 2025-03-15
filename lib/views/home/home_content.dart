@@ -19,7 +19,7 @@ class _HomeContent extends StatelessWidget {
       length: viewModel.months.length,
       child: _HomeScaffold(
         viewModel: viewModel,
-        endDrawer: HomeEndDrawer(viewModel),
+        endDrawer: HomeSheet(viewModel),
         appBar: HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),

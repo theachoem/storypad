@@ -1,26 +1,22 @@
 part of '../home_view.dart';
 
-class HomeEndDrawer extends StatelessWidget {
-  const HomeEndDrawer(this.viewModel, {super.key});
+class HomeSheet extends StatelessWidget {
+  const HomeSheet(this.viewModel, {super.key});
 
   final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(child: ScaffoldMessenger(
-      child: Scaffold(
-        body: SpEndDrawerTheme(
-          child: SpNestedNavigation(
-            initialScreen: Builder(builder: (childContext) {
-              return buildDrawer(
-                context: childContext,
-                closeDrawer: () => Navigator.of(context).pop(),
-              );
-            }),
-          ),
-        ),
+    return Drawer(
+      child: SpNestedNavigation(
+        initialScreen: Builder(builder: (childContext) {
+          return buildDrawer(
+            context: childContext,
+            closeDrawer: () => Navigator.of(context).pop(),
+          );
+        }),
       ),
-    ));
+    );
   }
 
   Widget buildDrawer({

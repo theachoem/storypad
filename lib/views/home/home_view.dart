@@ -32,7 +32,6 @@ import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/tags/tags_view.dart';
 import 'package:storypad/views/theme/theme_view.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
-import 'package:storypad/widgets/sp_end_drawer_theme.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_measure_size.dart';
@@ -45,7 +44,7 @@ import 'package:storypad/widgets/story_list/story_tile_list_item.dart';
 import 'home_view_model.dart';
 
 part 'home_content.dart';
-part 'local_widgets/home_end_drawer.dart';
+part 'local_widgets/home_sheet.dart';
 part 'local_widgets/home_end_drawer_header.dart';
 part 'local_widgets/home_scaffold.dart';
 part 'local_widgets/home_app_bar.dart';

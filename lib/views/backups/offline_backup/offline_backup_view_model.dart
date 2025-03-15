@@ -15,7 +15,6 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 import 'offline_backup_view.dart';
 
@@ -63,9 +62,9 @@ class OfflineBackupViewModel extends BaseViewModel {
     }
 
     MessengerService.of(context).clearSnackBars();
-    SpNestedNavigation.maybeOf(context)?.push(
-      BackupObjectViewer(backup: backup),
-    );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => BackupObjectViewer(backup: backup),
+    ));
   }
 
   Future<void> export(BuildContext context) async {

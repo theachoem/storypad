@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/initializers/onboarding_initializer.dart';
 import 'package:storypad/views/onboarding/onboarding_view.dart';
@@ -101,7 +100,6 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
             buildHomeAnimation(child: widget.child),
             buildOnboardingAnimation(
               child: SpNestedNavigation(
-                transitionType: SharedAxisTransitionType.vertical,
                 initialScreen: OnboardingView(params: OnboardingRoute()),
               ),
             ),

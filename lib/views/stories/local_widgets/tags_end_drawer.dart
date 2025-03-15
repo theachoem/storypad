@@ -6,7 +6,6 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/tags/tags_view.dart';
-import 'package:storypad/widgets/sp_end_drawer_theme.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 class TagsEndDrawer extends StatefulWidget {
@@ -73,10 +72,8 @@ class _TagsEndDrawerState extends State<TagsEndDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SpEndDrawerTheme(
-        child: SpNestedNavigation(
-          initialScreen: buildDrawer(context),
-        ),
+      child: SpNestedNavigation(
+        initialScreen: buildDrawer(context),
       ),
     );
   }

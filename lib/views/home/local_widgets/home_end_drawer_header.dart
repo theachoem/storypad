@@ -8,7 +8,7 @@ class _HomeEndDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => SpNestedNavigation.maybeOf(context)?.push(const HomeYearsView()),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeYearsView())),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

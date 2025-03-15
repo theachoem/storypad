@@ -9,6 +9,12 @@ class _EditTagContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SpTextInputsPage(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.show_chart),
+            onPressed: () => MessengerService.of(context).showSnackBar("message"),
+          ),
+        ],
         title: viewModel.tag != null ? Text(tr("page.edit_tag.title")) : Text(tr("page.new_tag.title")),
       ),
       fields: [

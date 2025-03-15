@@ -55,9 +55,9 @@ class AppTheme extends StatelessWidget {
     final shareAxisTransition = SharedAxisPageTransitionsBuilder(
         transitionType: SharedAxisTransitionType.horizontal, fillColor: colorScheme.surface);
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.iOS: shareAxisTransition,
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.android: shareAxisTransition,
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);

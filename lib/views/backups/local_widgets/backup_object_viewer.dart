@@ -18,7 +18,6 @@ import 'package:storypad/views/backups/local_widgets/table_viewers/backup_prefer
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_stories_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_default_table_viewer.dart';
 import 'package:storypad/views/backups/local_widgets/table_viewers/backup_tags_table_viewer.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 class BackupObjectViewer extends StatelessWidget {
   const BackupObjectViewer({
@@ -149,13 +148,13 @@ class BackupObjectViewer extends StatelessWidget {
         break;
     }
 
-    SpNestedNavigation.maybeOf(context)?.push(Builder(builder: (context) {
-      return Scaffold(
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => Scaffold(
         appBar: AppBar(
           title: Text(translateTabledName),
         ),
         body: viewer,
-      );
-    }));
+      ),
+    ));
   }
 }

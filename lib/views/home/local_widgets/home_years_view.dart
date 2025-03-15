@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view_model.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
@@ -42,24 +41,26 @@ class HomeYearsViewState extends State<HomeYearsView> {
   }
 
   Future<void> addYear(BuildContext context, HomeViewModel viewModel) async {
-    dynamic result = await SpNestedNavigation.maybeOf(context)?.push(SpTextInputsPage(
-      appBar: AppBar(title: Text(tr("page.add_year.title"))),
-      fields: [
-        SpTextInputField(
-          hintText: tr("input.year.hint"),
-          keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
-          validator: (value) {
-            int? year = int.tryParse(value ?? '');
+    dynamic result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SpTextInputsPage(
+        appBar: AppBar(title: Text(tr("page.add_year.title"))),
+        fields: [
+          SpTextInputField(
+            hintText: tr("input.year.hint"),
+            keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
+            validator: (value) {
+              int? year = int.tryParse(value ?? '');
 
-            if (year == null) return tr("input.message.invalid");
-            if (year > DateTime.now().year + 1000) return tr("input.message.invalid");
-            if (years?.keys.contains(year) == true) return tr("input.message.already_exist");
+              if (year == null) return tr("input.message.invalid");
+              if (year > DateTime.now().year + 1000) return tr("input.message.invalid");
+              if (years?.keys.contains(year) == true) return tr("input.message.already_exist");
 
-            return null;
-          },
-        ),
-      ],
-    ));
+              return null;
+            },
+          ),
+        ],
+      );
+    }));
 
     if (result is List<String> && result.isNotEmpty && context.mounted) {
       int year = int.parse(result.first);

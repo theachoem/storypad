@@ -8,7 +8,6 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'backup_view.dart';
 
 class BackupViewModel extends BaseViewModel {
@@ -84,7 +83,10 @@ class BackupViewModel extends BaseViewModel {
 
     if (backup != null && context.mounted) {
       loadedBackups[cloudFile.id] = backup;
-      SpNestedNavigation.maybeOf(context)?.push(BackupObjectViewer(backup: backup));
+
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => BackupObjectViewer(backup: backup),
+      ));
     }
   }
 
