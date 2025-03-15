@@ -1,13 +1,11 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/internal.dart';
-import 'package:storypad/core/services/native_look_up_text_service.dart';
-import 'package:storypad/core/services/validator/validator.dart';
-import 'package:url_launcher/url_launcher.dart' as launcher;
+import 'package:storypad/core/constants/app_constants.dart';
 
 class QuillContextMenuHelper {
   static AdaptiveTextSelectionToolbar get(
@@ -26,8 +24,42 @@ class QuillContextMenuHelper {
       onSearchWeb: Platform.isIOS ? () => rawEditorState.searchWebForSelection(SelectionChangedCause.toolbar) : null,
       onShare: () => rawEditorState.shareSelection(SelectionChangedCause.toolbar),
       onLiveTextInput: null,
-      onLookUp: NativeLookUpTextService.call(text),
+      onLookUp: defaultTargetPlatform == TargetPlatform.iOS
+          ? () => rawEditorState.lookUpSelection(SelectionChangedCause.toolbar)
+          : null,
     );
+
+    for (final ProcessTextAction action in kProcessTextActions) {
+      buttonItems.add(
+        ContextMenuButtonItem(
+          label: action.label,
+          onPressed: () async {
+            if (text.isNotEmpty) {
+              final String? processedText = await DefaultProcessTextService()
+                  .processTextAction(action.id, text, rawEditorState.controller.readOnly);
+
+              // If an activity does not return a modified version, just hide the toolbar.
+              // Otherwise use the result to replace the selected text.
+              if (processedText != null && rawEditorState.controller.readOnly) {
+                int index = rawEditorState.controller.selection.start;
+                int length = rawEditorState.controller.selection.end - index;
+
+                rawEditorState.controller
+                    .replaceText(index, length, processedText, rawEditorState.controller.selection);
+
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  if (rawEditorState.mounted) {
+                    rawEditorState.bringIntoView(rawEditorState.textEditingValue.selection.extent);
+                  }
+                }, debugLabel: 'EditableText.bringSelectionIntoView');
+              }
+
+              rawEditorState.hideToolbar();
+            }
+          },
+        ),
+      );
+    }
 
     if (!editable) {
       buttonItems.insert(
@@ -35,18 +67,6 @@ class QuillContextMenuHelper {
         ContextMenuButtonItem(
           label: rawEditorState.context.loc.edit,
           onPressed: onEdit,
-        ),
-      );
-    }
-
-    if (isEmail(text.trim())) {
-      buttonItems.add(
-        ContextMenuButtonItem(
-          label: tr("button.open"),
-          onPressed: () {
-            final Uri uri = Uri.parse("mailto:${text.trim()}");
-            launcher.launchUrl(uri);
-          },
         ),
       );
     }
