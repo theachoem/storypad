@@ -12,7 +12,16 @@ import 'theme_view_model.dart';
 part 'theme_content.dart';
 
 class ThemeRoute extends BaseRoute {
-  ThemeRoute();
+  ThemeRoute({
+    this.fromOnboarding = false,
+  });
+
+  final bool fromOnboarding;
+
+  @override
+  Map<String, String?>? get analyticsParameters {
+    return {'from_onboarding': fromOnboarding.toString()};
+  }
 
   @override
   Widget buildPage(BuildContext context) => ThemeView(params: this);

@@ -16,7 +16,11 @@ class _OnboardingContent extends StatelessWidget {
             IconButton(
               tooltip: tr("page.language.title"),
               icon: Icon(Icons.language_outlined),
-              onPressed: () => LanguagesRoute(showBetaBanner: false).push(context),
+              onPressed: () => LanguagesRoute(
+                showBetaBanner: false,
+                showThemeFAB: true,
+                fromOnboarding: true,
+              ).push(context),
             ),
           ],
         ),

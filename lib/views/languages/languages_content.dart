@@ -10,6 +10,11 @@ class _LanguagesContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
+      floatingActionButton: viewModel.params.showThemeFAB
+          ? FloatingActionButton(
+              child: Icon(Icons.color_lens_outlined),
+              onPressed: () => ThemeRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context))
+          : null,
       body: ListView.builder(
         padding: EdgeInsets.only(bottom: 16.0),
         itemCount: viewModel.supportedLocales.length,
