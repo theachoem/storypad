@@ -8,9 +8,7 @@ class _HomeSheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => HomeYearsView(viewModel: viewModel)),
-      ),
+      onTap: () => HomeYearsRoute(viewModel: viewModel).push(context),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
