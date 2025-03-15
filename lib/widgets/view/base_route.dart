@@ -43,31 +43,4 @@ abstract class BaseRoute {
       return buildPage(context);
     }));
   }
-
-  Future<T?> showSheet<T extends Object?>(
-    BuildContext context, {
-    bool rootNavigator = false,
-    bool isScrollControlled = false,
-  }) async {
-    AnalyticsService.instance.logViewRoute(
-      routeObject: this,
-      analyticsParameters: analyticsParameters,
-    );
-
-    return showModalBottomSheet(
-      useRootNavigator: rootNavigator,
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: isScrollControlled,
-      builder: (context) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            scaffoldBackgroundColor: Colors.transparent,
-            appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
-          ),
-          child: buildPage(context),
-        );
-      },
-    );
-  }
 }

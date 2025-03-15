@@ -63,7 +63,7 @@ class AppTheme extends StatelessWidget {
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
 
     return theme.copyWith(
-      // platform: TargetPlatform.android,
+      platform: TargetPlatform.android,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
