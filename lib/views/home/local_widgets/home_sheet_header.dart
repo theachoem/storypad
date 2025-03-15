@@ -1,14 +1,16 @@
-part of '../home_view.dart';
+part of 'home_sheet.dart';
 
-class _HomeEndDrawerHeader extends StatelessWidget {
-  const _HomeEndDrawerHeader(this.viewModel);
+class _HomeSheetHeader extends StatelessWidget {
+  const _HomeSheetHeader(this.viewModel);
 
   final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeYearsView())),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => HomeYearsView(viewModel: viewModel)),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

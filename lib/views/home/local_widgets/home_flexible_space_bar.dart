@@ -69,7 +69,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                   child: _HomeAppBarNickname(nickname: viewModel.nickname),
                 ),
                 SpTapEffect(
-                  onTap: () => Scaffold.of(context).openEndDrawer(),
+                  onTap: () => viewModel.openModal(context),
                   child: const _HomeAppBarMessage(),
                 ),
               ],
@@ -93,7 +93,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         margin: viewModel.scrollInfo.extraExpandedHeight > 0 ? const EdgeInsets.only(bottom: 8.0) : null,
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],
-          onTap: () => openEndDrawer(context),
+          onTap: () => viewModel.openModal(context),
           child: FittedBox(
             child: Text(
               viewModel.year.toString(),
@@ -105,14 +105,6 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void openEndDrawer(BuildContext context) {
-    Scaffold.maybeOf(context)?.openEndDrawer();
-
-    AnalyticsService.instance.logOpenHomeEndDrawer(
-      year: viewModel.year,
     );
   }
 }

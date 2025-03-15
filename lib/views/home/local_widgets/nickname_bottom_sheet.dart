@@ -1,6 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
+import 'package:storypad/widgets/view/base_route.dart';
+
+class NicknameBottomSheetRoute extends BaseRoute {
+  final String? nickname;
+
+  NicknameBottomSheetRoute({
+    required this.nickname,
+  });
+
+  @override
+  Widget buildPage(BuildContext context) {
+    return NicknameBottomSheet(nickname: nickname);
+  }
+}
 
 class NicknameBottomSheet extends StatelessWidget {
   const NicknameBottomSheet({

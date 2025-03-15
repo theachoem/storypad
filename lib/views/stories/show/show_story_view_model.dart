@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
@@ -158,7 +159,7 @@ class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
       initialPageIndex: currentPage,
       quillControllers: quillControllers,
       story: story,
-    ).push(context, rootNavigator: true);
+    ).push(context, rootNavigator: !AppTheme.isIOS(context));
 
     await load(story!.id);
   }

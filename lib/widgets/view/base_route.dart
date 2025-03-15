@@ -14,6 +14,22 @@ abstract class BaseRoute {
 
   Widget buildPage(BuildContext context);
 
+  Future<T?> push<T extends Object?>(
+    BuildContext context, {
+    bool rootNavigator = false,
+  }) async {
+    AnalyticsService.instance.logViewRoute(
+      routeObject: this,
+      analyticsParameters: analyticsParameters,
+    );
+
+    if (!context.mounted) return null;
+
+    return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
+      return buildPage(context);
+    }));
+  }
+
   Future<T?> pushReplacement<T extends Object?>(
     BuildContext context, {
     bool rootNavigator = false,
@@ -28,17 +44,30 @@ abstract class BaseRoute {
     }));
   }
 
-  Future<T?> push<T extends Object?>(
+  Future<T?> showSheet<T extends Object?>(
     BuildContext context, {
     bool rootNavigator = false,
-  }) {
+    bool isScrollControlled = false,
+  }) async {
     AnalyticsService.instance.logViewRoute(
       routeObject: this,
       analyticsParameters: analyticsParameters,
     );
 
-    return Navigator.of(context, rootNavigator: rootNavigator).push(MaterialPageRoute(builder: (context) {
-      return buildPage(context);
-    }));
+    return showModalBottomSheet(
+      useRootNavigator: rootNavigator,
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: isScrollControlled,
+      builder: (context) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            scaffoldBackgroundColor: Colors.transparent,
+            appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
+          ),
+          child: buildPage(context),
+        );
+      },
+    );
   }
 }

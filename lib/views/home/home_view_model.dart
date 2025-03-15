@@ -116,11 +116,10 @@ class HomeViewModel extends BaseViewModel {
       multiSelectYear: false,
       filterTagModifiable: true,
       allowSaveSearchFilter: false,
-    ).push(context);
+    ).showSheet(context);
 
     if (result is SearchFilterObject) {
       _currentSearchFilter = result;
-
       await reload(debugSource: '$runtimeType#goToFilter');
     }
   }
@@ -135,17 +134,15 @@ class HomeViewModel extends BaseViewModel {
     if (newCount % 10 == 0) InAppReviewService.request();
   }
 
-  Future<void> openModal(BuildContext context) async {}
+  Future<void> openModal(BuildContext context) async {
+    AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
+    Scaffold.of(context).openEndDrawer();
+  }
 
   void changeName(BuildContext context) async {
-    dynamic result = await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      sheetAnimationStyle: AnimationStyle(curve: Curves.fastEaseInToSlowEaseOut, duration: Durations.long4),
+    final result = await NicknameBottomSheetRoute(nickname: nickname).showSheet(
+      context,
       isScrollControlled: true,
-      builder: (context) {
-        return NicknameBottomSheet(nickname: nickname);
-      },
     );
 
     if (result is String) {

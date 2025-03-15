@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view_model.dart';
@@ -8,7 +7,12 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_text_inputs_page.dart';
 
 class HomeYearsView extends StatefulWidget {
-  const HomeYearsView({super.key});
+  const HomeYearsView({
+    super.key,
+    required this.viewModel,
+  });
+
+  final HomeViewModel viewModel;
 
   @override
   State<HomeYearsView> createState() => HomeYearsViewState();
@@ -40,7 +44,7 @@ class HomeYearsViewState extends State<HomeYearsView> {
     setState(() {});
   }
 
-  Future<void> addYear(BuildContext context, HomeViewModel viewModel) async {
+  Future<void> addYear(BuildContext context) async {
     dynamic result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return SpTextInputsPage(
         appBar: AppBar(title: Text(tr("page.add_year.title"))),
@@ -68,39 +72,38 @@ class HomeYearsViewState extends State<HomeYearsView> {
       StoryDbModel initialStory = StoryDbModel.startYearStory(year);
       await StoryDbModel.db.set(initialStory);
       await load();
-      await viewModel.changeYear(year);
+      await widget.viewModel.changeYear(year);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
             tooltip: tr("page.add_year.title"),
             icon: const Icon(Icons.add),
-            onPressed: () async => addYear(context, viewModel),
+            onPressed: () async => addYear(context),
           ),
         ],
       ),
-      body: buildBody(viewModel),
+      body: buildBody(),
     );
   }
 
-  Widget buildBody(HomeViewModel viewModel) {
+  Widget buildBody() {
     if (years == null) return const Center(child: CircularProgressIndicator.adaptive());
     return ListView(
       children: [
-        ...buildYearsTiles(viewModel),
+        ...buildYearsTiles(),
       ],
     );
   }
 
-  List<Widget> buildYearsTiles(HomeViewModel viewModel) {
+  List<Widget> buildYearsTiles() {
     return years!.entries.map((entry) {
-      bool selected = viewModel.year == entry.key;
+      bool selected = widget.viewModel.year == entry.key;
       return SpSingleStateWidget.listen(
         initialValue: false,
         builder: (context, loading, loadingNotifier) {
@@ -109,7 +112,7 @@ class HomeYearsViewState extends State<HomeYearsView> {
               ListTile(
                 onTap: () async {
                   loadingNotifier.value = true;
-                  await viewModel.changeYear(entry.key);
+                  await widget.viewModel.changeYear(entry.key);
                   loadingNotifier.value = false;
                 },
                 selected: selected,

@@ -1,4 +1,37 @@
-part of '../home_view.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
+import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/views/app_locks/app_locks_view.dart';
+import 'package:storypad/views/archives/archives_view.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/views/home/local_widgets/backup_tile.dart';
+import 'package:storypad/views/home/local_widgets/community_tile.dart';
+import 'package:storypad/views/home/local_widgets/home_years_view.dart';
+import 'package:storypad/views/home/local_widgets/language_tile.dart';
+import 'package:storypad/views/library/library_view.dart';
+import 'package:storypad/views/search/search_view.dart';
+import 'package:storypad/views/tags/tags_view.dart';
+import 'package:storypad/views/theme/theme_view.dart';
+import 'package:storypad/widgets/view/base_route.dart';
+
+part 'home_sheet_header.dart';
+
+class HomeSheetRoute extends BaseRoute {
+  final HomeViewModel viewModel;
+
+  HomeSheetRoute({
+    required this.viewModel,
+  });
+
+  @override
+  Widget buildPage(BuildContext context) {
+    return HomeSheet(viewModel);
+  }
+}
 
 class HomeSheet extends StatelessWidget {
   const HomeSheet(this.viewModel, {super.key});
@@ -7,34 +40,25 @@ class HomeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: SpNestedNavigation(
-        initialScreen: Builder(builder: (childContext) {
-          return buildDrawer(
-            context: childContext,
-            closeDrawer: () => Navigator.of(context).pop(),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget buildDrawer({
-    required BuildContext context,
-    required void Function() closeDrawer,
-  }) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         forceMaterialTransparency: true,
+        automaticallyImplyLeading: false,
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => Navigator.of(context, rootNavigator: true).pop())
+        ],
       ),
       body: ListView(
+        controller: PrimaryScrollController.maybeOf(context),
+        physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top,
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
         children: [
-          _HomeEndDrawerHeader(viewModel),
+          _HomeSheetHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
           buildSearchTile(context),
