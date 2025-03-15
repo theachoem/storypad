@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
@@ -14,16 +15,14 @@ import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 import 'offline_backup_view.dart';
 
-class OfflineBackupViewModel extends BaseViewModel {
-  final OfflineBackupRoute params;
+class OfflineBackupsViewModel extends BaseViewModel {
+  final OfflineBackupsRoute params;
   final String parentName = "backups";
 
-  OfflineBackupViewModel({
+  OfflineBackupsViewModel({
     required this.params,
   });
 
@@ -63,9 +62,7 @@ class OfflineBackupViewModel extends BaseViewModel {
     }
 
     MessengerService.of(context).clearSnackBars();
-    SpNestedNavigation.maybeOf(context)?.push(
-      BackupObjectViewer(backup: backup),
-    );
+    ShowBackupsRoute(backup).push(context);
   }
 
   Future<void> export(BuildContext context) async {

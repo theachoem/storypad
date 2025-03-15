@@ -122,9 +122,7 @@ class _Editor extends StatelessWidget {
             QuillToolbarCustomButtonOptions(
               tooltip: FlutterQuillLocalizations.of(context)?.image,
               icon: Icon(Icons.image),
-              onPressed: () async {
-                ImagePickerService(controller: controller).showSheet(context);
-              },
+              onPressed: () => ImagePickerBottomSheet.showPicker(context: context, controller: controller),
             ),
         ],
         multiRowsDisplay: false,

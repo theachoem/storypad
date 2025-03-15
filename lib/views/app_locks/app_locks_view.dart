@@ -15,9 +15,6 @@ class AppLocksRoute extends BaseRoute {
   AppLocksRoute();
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Future<T?> push<T extends Object?>(
     BuildContext context, {
     bool rootNavigator = false,

@@ -18,9 +18,6 @@ class EnterSecurityQuestionRoute extends BaseRoute {
   final String? answer;
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Map<String, String?>? get analyticsParameters {
     return {
       'question': question.translatedQuestion,

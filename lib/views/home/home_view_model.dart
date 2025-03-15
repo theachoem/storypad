@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
+import 'package:storypad/widgets/bottom_sheets/search_filter_bottom_sheet.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -15,7 +16,7 @@ import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/home/local_widgets/nickname_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
@@ -110,17 +111,18 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> goToFilter(BuildContext context, {bool save = false}) async {
-    final result = await SearchFilterRoute(
-      initialTune: currentSearchFilter,
-      resetTune: initialSearchFilter,
-      multiSelectYear: false,
-      filterTagModifiable: true,
-      allowSaveSearchFilter: false,
-    ).push(context);
+    final result = await SearchFilterBottomSheet(
+      params: SearchFilterRoute(
+        initialTune: currentSearchFilter,
+        resetTune: initialSearchFilter,
+        multiSelectYear: false,
+        filterTagModifiable: true,
+        allowSaveSearchFilter: false,
+      ),
+    ).show(context: context);
 
     if (result is SearchFilterObject) {
       _currentSearchFilter = result;
-
       await reload(debugSource: '$runtimeType#goToFilter');
     }
   }
@@ -135,17 +137,13 @@ class HomeViewModel extends BaseViewModel {
     if (newCount % 10 == 0) InAppReviewService.request();
   }
 
-  void changeName(BuildContext context) async {
-    dynamic result = await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      sheetAnimationStyle: AnimationStyle(curve: Curves.fastEaseInToSlowEaseOut, duration: Durations.long4),
-      isScrollControlled: true,
-      builder: (context) {
-        return NicknameBottomSheet(nickname: nickname);
-      },
-    );
+  Future<void> openModal(BuildContext context) async {
+    AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
+    Scaffold.of(context).openEndDrawer();
+  }
 
+  void changeName(BuildContext context) async {
+    final result = await NicknameBottomSheet(nickname: nickname).show(context: context);
     if (result is String) {
       PreferenceDbModel.db.nickname.set(result);
       nickname = PreferenceDbModel.db.nickname.get();
@@ -172,3 +170,5 @@ class HomeViewModel extends BaseViewModel {
     super.dispose();
   }
 }
+
+class ModalSide {}

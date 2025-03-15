@@ -1,17 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
 
-class NicknameBottomSheet extends StatelessWidget {
+class NicknameBottomSheet extends BaseBottomSheet {
   const NicknameBottomSheet({
-    super.key,
     required this.nickname,
   });
 
   final String? nickname;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, double bottomPadding) {
     return SpDefaultTextController(
       initialText: nickname,
       withForm: true,
@@ -70,11 +70,7 @@ class NicknameBottomSheet extends StatelessWidget {
                   },
                 ),
               ),
-              AnimatedContainer(
-                curve: Curves.fastEaseInToSlowEaseOut,
-                duration: Durations.long2,
-                height: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-              )
+              buildBottomPadding(bottomPadding)
             ],
           ),
         );

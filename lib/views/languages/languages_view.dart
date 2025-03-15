@@ -21,9 +21,6 @@ class LanguagesRoute extends BaseRoute {
   final bool showBetaBanner;
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => LanguagesView(params: this);
 }
 

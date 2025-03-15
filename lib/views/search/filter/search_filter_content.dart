@@ -9,8 +9,13 @@ class _SearchFilterContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: Text(tr("page.search_filter.title")),
-        actions: [_RememberSwitcher(viewModel: viewModel)],
+        actions: [
+          _RememberSwitcher(viewModel: viewModel),
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => Navigator.of(context, rootNavigator: true).pop())
+        ],
       ),
       body: buildBody(context),
       bottomNavigationBar: _BottomNav(viewModel: viewModel),

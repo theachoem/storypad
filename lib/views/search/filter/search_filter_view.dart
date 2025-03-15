@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,6 @@ class SearchFilterRoute extends BaseRoute {
   // This is not used yet. Allowing user to save make app a bit more complex to used.
   // Let's enable it when ready.
   final bool allowSaveSearchFilter;
-
-  @override
-  bool get preferredNestedRoute => true;
 
   @override
   Widget buildPage(BuildContext context) => SearchFilterView(params: this);

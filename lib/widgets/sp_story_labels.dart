@@ -9,6 +9,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/days_count_bottom_sheet.dart';
 
 class SpStoryLabelsDraftActions {
   final Future<void> Function() onContinueEditing;
@@ -42,46 +43,7 @@ class SpStoryLabels extends StatelessWidget {
   final Future<void> Function()? onToggleShowTime;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
 
-  Future<void> showDayCountSheet(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      useRootNavigator: true,
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                tr("dialog.lookings_back.title"),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              Text(
-                plural("dialog.lookings_back.subtitle", story.dateDifferentCount.inDays),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: ColorScheme.of(context).primary),
-              ),
-              SizedBox(height: 16.0),
-              OutlinedButton.icon(
-                icon: Icon(story.preferredShowDayCount ? MdiIcons.pinOff : MdiIcons.pin,
-                    color: ColorScheme.of(context).primary),
-                label: Text(story.preferredShowDayCount ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
-                onPressed: onToggleShowDayCount == null
-                    ? null
-                    : () async {
-                        onToggleShowDayCount!();
-                        if (context.mounted) Navigator.maybePop(context);
-                      },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> showDraftSheet(BuildContext context) async {
+  Future<void> showDraftActionSheet(BuildContext context) async {
     final action = await showModalActionSheet(
       context: context,
       actions: [
@@ -161,11 +123,16 @@ class SpStoryLabels extends StatelessWidget {
 
     bool shouldShowDayCount = story.preferredShowDayCount || !fromStoryTile;
     if (shouldShowDayCount && story.dateDifferentCount.inDays > 0) {
-      children.add(buildPin(
-        context: context,
-        title: "📌 ${plural("plural.day_ago", story.dateDifferentCount.inDays)}",
-        onTap: () => showDayCountSheet(context),
-      ));
+      children.add(
+        buildPin(
+          context: context,
+          title: "📌 ${plural("plural.day_ago", story.dateDifferentCount.inDays)}",
+          onTap: () => DaysCountBottomSheet(
+            story: story,
+            onToggleShowDayCount: onToggleShowDayCount,
+          ).show(context: context),
+        ),
+      );
     }
 
     bool showTime = story.preferredShowTime || !fromStoryTile;
@@ -187,7 +154,7 @@ class SpStoryLabels extends StatelessWidget {
           leadingIconData: Icons.edit_note,
           context: context,
           title: tr("general.draft"),
-          onTap: draftActions != null ? () => showDraftSheet(context) : null,
+          onTap: draftActions != null ? () => showDraftActionSheet(context) : null,
         ),
       );
     }

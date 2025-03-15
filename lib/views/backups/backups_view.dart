@@ -16,20 +16,17 @@ import 'package:storypad/views/backups/offline_backup/offline_backup_view.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
-import 'backup_view_model.dart';
+import 'backups_view_model.dart';
 
-part 'backup_content.dart';
+part 'backups_content.dart';
 part 'local_widgets/backup_tile_monogram.dart';
 part 'local_widgets/timeline_divider.dart';
 
-class BackupRoute extends BaseRoute {
-  BackupRoute();
+class BackupsRoute extends BaseRoute {
+  BackupsRoute();
 
   @override
   Widget buildPage(BuildContext context) => BackupView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class BackupView extends StatelessWidget {
@@ -38,14 +35,14 @@ class BackupView extends StatelessWidget {
     required this.params,
   });
 
-  final BackupRoute params;
+  final BackupsRoute params;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<BackupViewModel>(
-      create: (context) => BackupViewModel(context: context, params: params),
+    return ViewModelProvider<BackupsViewModel>(
+      create: (context) => BackupsViewModel(context: context, params: params),
       builder: (context, viewModel, child) {
-        return _BackupContent(viewModel);
+        return _BackupsContent(viewModel);
       },
     );
   }

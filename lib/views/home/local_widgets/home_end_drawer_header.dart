@@ -1,14 +1,14 @@
-part of '../home_view.dart';
+part of 'home_end_drawer.dart';
 
 class _HomeEndDrawerHeader extends StatelessWidget {
-  const _HomeEndDrawerHeader();
+  const _HomeEndDrawerHeader(this.viewModel);
+
+  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<HomeViewModel>(context);
-
     return InkWell(
-      onTap: () => SpNestedNavigation.maybeOf(context)?.push(const HomeYearsView()),
+      onTap: () => HomeYearsRoute(viewModel: viewModel).push(context),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -16,7 +16,7 @@ class _HomeEndDrawerHeader extends StatelessWidget {
           spacing: 4.0,
           children: [
             Text(
-              provider.year.toString(),
+              viewModel.year.toString(),
               style: TextTheme.of(context).displayMedium?.copyWith(color: ColorScheme.of(context).primary),
             ),
             RichText(

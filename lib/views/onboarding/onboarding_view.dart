@@ -14,9 +14,6 @@ class OnboardingRoute extends BaseRoute {
   OnboardingRoute();
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => OnboardingView(params: this);
 }
 

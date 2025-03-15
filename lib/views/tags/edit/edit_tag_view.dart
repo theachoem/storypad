@@ -19,9 +19,6 @@ class EditTagRoute extends BaseRoute {
   final List<TagDbModel> allTags;
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   String get className => tag == null ? 'NewTagRoute' : 'EditTagRoute';
 
   @override

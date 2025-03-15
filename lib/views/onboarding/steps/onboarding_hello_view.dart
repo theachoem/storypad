@@ -9,9 +9,6 @@ class OnboardingHelloRoute extends BaseRoute {
     required this.nickname,
   });
 
-  @override
-  bool get preferredNestedRoute => true;
-
   final String nickname;
 
   @override

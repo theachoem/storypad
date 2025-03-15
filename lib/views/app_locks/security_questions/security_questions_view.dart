@@ -14,9 +14,6 @@ class SecurityQuestionsRoute extends BaseRoute {
   SecurityQuestionsRoute();
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => SecurityQuestionsView(params: this);
 }
 

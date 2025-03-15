@@ -3,7 +3,7 @@ part of 'offline_backup_view.dart';
 class _OfflineBackupsContent extends StatelessWidget {
   const _OfflineBackupsContent(this.viewModel);
 
-  final OfflineBackupViewModel viewModel;
+  final OfflineBackupsViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

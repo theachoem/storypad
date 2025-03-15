@@ -4,9 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/helpers/animated_route_helper.dart' show AnimatedRouteHelper, SharedAxisTransitionType;
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 enum SpPinUnlockTitle {
   enter_your_pin,
@@ -76,39 +74,23 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> push(BuildContext context) async {
-    final nestedNavigation = SpNestedNavigation.maybeOf(context);
-
-    dynamic confirmed;
-    if (nestedNavigation != null) {
-      confirmed = await nestedNavigation.push(this);
-    } else {
-      confirmed = await Navigator.of(context).push(
-        AnimatedRouteHelper.sharedAxis(
-          fullscreenDialog: true,
-          type: SharedAxisTransitionType.vertical,
-          builder: (context) => this,
-        ),
-      );
-    }
+    dynamic confirmed = await Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => this,
+      ),
+    );
 
     return confirmed == true;
   }
 
   Future<bool> pushReplacement(BuildContext context) async {
-    final nestedNavigation = SpNestedNavigation.maybeOf(context);
-
-    dynamic confirmed;
-    if (nestedNavigation != null) {
-      confirmed = await nestedNavigation.pushReplacement(this);
-    } else {
-      confirmed = await Navigator.of(context).pushReplacement(
-        AnimatedRouteHelper.sharedAxis(
-          fullscreenDialog: true,
-          type: SharedAxisTransitionType.vertical,
-          builder: (context) => this,
-        ),
-      );
-    }
+    dynamic confirmed = await Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => this,
+      ),
+    );
 
     return confirmed == true;
   }

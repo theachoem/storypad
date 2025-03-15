@@ -2,19 +2,18 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/widgets/view/base_view_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backups/local_widgets/backup_object_viewer.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
-import 'backup_view.dart';
+import 'backups_view.dart';
 
-class BackupViewModel extends BaseViewModel {
-  final BackupRoute params;
+class BackupsViewModel extends BaseViewModel {
+  final BackupsRoute params;
 
-  BackupViewModel({
+  BackupsViewModel({
     required this.params,
     required BuildContext context,
   }) {
@@ -84,7 +83,7 @@ class BackupViewModel extends BaseViewModel {
 
     if (backup != null && context.mounted) {
       loadedBackups[cloudFile.id] = backup;
-      SpNestedNavigation.maybeOf(context)?.push(BackupObjectViewer(backup: backup));
+      ShowBackupsRoute(backup).push(context);
     }
   }
 

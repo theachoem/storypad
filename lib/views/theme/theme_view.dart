@@ -16,9 +16,6 @@ class ThemeRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => ThemeView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class ThemeView extends StatelessWidget {

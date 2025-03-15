@@ -20,9 +20,6 @@ class OnboardingStep3Route extends BaseRoute {
   OnboardingStep3Route();
 
   @override
-  bool get preferredNestedRoute => true;
-
-  @override
   Widget buildPage(BuildContext context) => OnboardingStep3View(params: this);
 }
 

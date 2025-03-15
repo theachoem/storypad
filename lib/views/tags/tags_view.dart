@@ -20,9 +20,6 @@ class TagsRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => TagsView(params: this);
-
-  @override
-  bool get preferredNestedRoute => true;
 }
 
 class TagsView extends StatelessWidget {
