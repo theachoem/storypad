@@ -40,7 +40,7 @@ class SearchViewModel extends BaseViewModel with DebounchedCallback {
       initialTune: filter,
       multiSelectYear: true,
       filterTagModifiable: true,
-      resetTune: SearchFilterObject.initial(),
+      resetTune: SearchFilterObject(years: {}, types: {}, tagId: null, assetId: null),
     ).push(context);
 
     if (result is SearchFilterObject) {

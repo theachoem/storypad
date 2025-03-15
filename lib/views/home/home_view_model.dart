@@ -61,7 +61,13 @@ class HomeViewModel extends BaseViewModel {
     return months;
   }
 
-  SearchFilterObject get initialSearchFilter => SearchFilterObject.initial().copyWith(years: {currentYear});
+  SearchFilterObject get initialSearchFilter => SearchFilterObject(
+        years: {currentYear},
+        types: {PathType.docs},
+        tagId: null,
+        assetId: null,
+      );
+
   SearchFilterObject? _currentSearchFilter;
   SearchFilterObject get currentSearchFilter => _currentSearchFilter ?? initialSearchFilter;
 
@@ -78,7 +84,9 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> loadSearchFilter() async {
-    _currentSearchFilter = await SearchFilterStorage().readObject() ?? SearchFilterObject.initial();
+    _currentSearchFilter = await SearchFilterStorage().readObject() ?? initialSearchFilter;
+    _currentSearchFilter = _currentSearchFilter!.copyWith(types: {PathType.docs});
+
     if (_currentSearchFilter?.years.isEmpty == true) {
       _currentSearchFilter = _currentSearchFilter!.copyWith(years: {currentYear});
     }
@@ -104,7 +112,7 @@ class HomeViewModel extends BaseViewModel {
   Future<void> goToFilter(BuildContext context, {bool save = false}) async {
     final result = await SearchFilterRoute(
       initialTune: currentSearchFilter,
-      resetTune: SearchFilterObject.initial(years: {currentYear}),
+      resetTune: initialSearchFilter,
       multiSelectYear: false,
       filterTagModifiable: true,
       allowSaveSearchFilter: false,

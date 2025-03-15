@@ -36,17 +36,6 @@ class SearchFilterObject {
     return filters;
   }
 
-  factory SearchFilterObject.initial({
-    Set<int>? years,
-  }) {
-    return SearchFilterObject(
-      years: years ?? {},
-      types: {},
-      tagId: null,
-      assetId: null,
-    );
-  }
-
   Map<String, dynamic> toJson() => _$SearchFilterObjectToJson(this);
   factory SearchFilterObject.fromJson(Map<String, dynamic> json) => _$SearchFilterObjectFromJson(json);
 }
