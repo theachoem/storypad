@@ -7,7 +7,7 @@ import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';

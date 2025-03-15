@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/years_view/new/new_year_view.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'home_years_view.dart';
 
 class HomeYearsViewModel extends BaseViewModel {

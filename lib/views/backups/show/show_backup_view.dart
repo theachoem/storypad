@@ -4,8 +4,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 
-import 'package:storypad/widgets/view/view_model_provider.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'show_backup_view_model.dart';
 

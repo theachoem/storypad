@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/views/tags/edit/edit_tag_view.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';

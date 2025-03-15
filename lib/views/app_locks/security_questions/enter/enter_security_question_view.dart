@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/types/app_lock_question.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'enter_security_question_view_model.dart';
 

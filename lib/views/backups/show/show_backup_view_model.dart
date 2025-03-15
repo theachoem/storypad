@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/tables/show/show_table_view.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'show_backup_view.dart';
 
 class ShowBackupsViewModel extends BaseViewModel {

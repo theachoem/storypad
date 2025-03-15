@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/story_list/story_list.dart';
 
 import 'search_view_model.dart';

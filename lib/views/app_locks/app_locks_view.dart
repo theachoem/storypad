@@ -3,9 +3,9 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'app_locks_view_model.dart';
 

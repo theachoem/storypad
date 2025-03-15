@@ -11,9 +11,9 @@ import 'package:storypad/views/backups/tables/local_widgets/backup_default_table
 import 'package:storypad/views/backups/tables/local_widgets/backup_preferences_table_viewer.dart';
 import 'package:storypad/views/backups/tables/local_widgets/backup_stories_table_viewer.dart';
 import 'package:storypad/views/backups/tables/local_widgets/backup_tags_table_viewer.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'show_table_view_model.dart';
 

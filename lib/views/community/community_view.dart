@@ -8,9 +8,9 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/community/local_widgets/community_card.dart';
 import 'package:storypad/widgets/bottom_sheets/share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'community_view_model.dart';
 

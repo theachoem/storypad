@@ -1,7 +1,7 @@
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/story_list/story_list.dart';
 
 import 'show_asset_view_model.dart';

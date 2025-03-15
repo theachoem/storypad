@@ -1,4 +1,4 @@
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'community_view.dart';
 
 class CommunityViewModel extends BaseViewModel {

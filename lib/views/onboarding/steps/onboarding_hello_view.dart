@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/steps/step_1/onboarding_step_1_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 class OnboardingHelloRoute extends BaseRoute {
   OnboardingHelloRoute({

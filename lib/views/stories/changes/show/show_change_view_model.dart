@@ -1,6 +1,6 @@
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 
 class ShowChangeViewModel extends BaseViewModel {

@@ -10,7 +10,7 @@ import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';

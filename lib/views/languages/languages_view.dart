@@ -5,9 +5,9 @@ import 'package:storypad/core/services/analytics/analytics_user_propery_service.
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'languages_view_model.dart';
 

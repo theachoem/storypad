@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 
 class ViewModelProvider<T extends BaseViewModel> extends StatelessWidget {
   const ViewModelProvider({

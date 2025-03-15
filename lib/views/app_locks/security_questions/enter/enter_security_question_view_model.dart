@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'enter_security_question_view.dart';
 
 class EnterSecurityQuestionViewModel extends BaseViewModel {

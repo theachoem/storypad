@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/core/storages/recently_selected_fonts_storage.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'fonts_view.dart';

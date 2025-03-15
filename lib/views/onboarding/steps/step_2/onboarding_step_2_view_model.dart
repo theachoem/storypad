@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/steps/step_3/onboarding_step_3_view.dart';
-import 'package:storypad/widgets/view/base_view_model.dart';
+import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'onboarding_step_2_view.dart';
 
 class OnboardingStep2ViewModel extends BaseViewModel {

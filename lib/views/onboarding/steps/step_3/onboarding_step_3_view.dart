@@ -8,9 +8,9 @@ import 'package:storypad/views/onboarding/local_widgets/home_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/views/onboarding/local_widgets/visible_when_notified.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 import 'onboarding_step_3_view_model.dart';
 

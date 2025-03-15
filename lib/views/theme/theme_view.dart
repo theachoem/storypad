@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/widgets/view/view_model_provider.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/view/base_route.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/theme/local_widgets/color_seed_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
