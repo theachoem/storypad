@@ -3,6 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/views/home/local_widgets/home_end_drawer.dart';
+import 'package:storypad/views/theme/theme_view.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
