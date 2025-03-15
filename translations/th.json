@@ -56,7 +56,7 @@
   "dialog.are_you_sure_to_delete_this_backup.title": "คุณแน่ใจหรือว่าจะลบข้อมูลสำรองนี้",
   "dialog.are_you_sure_to_delete_this_story.message": "คุณไม่สามารถยกเลิกการกระทำนี้ได้",
   "dialog.are_you_sure_to_delete_this_story.title": "คุณแน่ใจหรือว่าจะลบเรื่องราวนี้?",
-  "dialog.are_you_sure_to_discard_these_changes.title": "คุณต้องการยกเลิกการเปลี่ยนแปลงเหล่านี้หรือไม่?",
+  "dialog.are_you_sure_to_discard_these_changes.title": "คุณแน่ใจหรือไม่ที่จะยกเลิกการเปลี่ยนแปลงเหล่านี้",
   "dialog.are_you_sure_to_move_to_bin_these_stories.title": "คุณแน่ใจหรือว่าจะย้ายเรื่องราวเหล่านี้ไปที่ถังขยะ?",
   "dialog.are_you_sure_to_put_back_these_stories.title": "คุณแน่ใจหรือว่าจะนำเรื่องราวเหล่านี้กลับมา?",
   "dialog.are_you_sure.title": "คุณแน่ใจเหรอ?",

@@ -56,7 +56,7 @@
   "dialog.are_you_sure_to_delete_this_backup.title": "Möchten Sie dieses Backup wirklich löschen?",
   "dialog.are_you_sure_to_delete_this_story.message": "Sie können diese Aktion nicht rückgängig machen",
   "dialog.are_you_sure_to_delete_this_story.title": "Möchten Sie diese Geschichte wirklich löschen?",
-  "dialog.are_you_sure_to_discard_these_changes.title": "Sollen Sie diese Änderungen verwerfen?",
+  "dialog.are_you_sure_to_discard_these_changes.title": "Sind Sie sicher, dass Sie diese Änderungen verwerfen?",
   "dialog.are_you_sure_to_move_to_bin_these_stories.title": "Sind Sie sicher, dass Sie diese Geschichten in den Papierkorb verschieben?",
   "dialog.are_you_sure_to_put_back_these_stories.title": "Sind Sie sicher, dass Sie diese Geschichten zurückstellen?",
   "dialog.are_you_sure.title": "Bist du sicher?",

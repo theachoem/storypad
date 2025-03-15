@@ -56,7 +56,7 @@
   "dialog.are_you_sure_to_delete_this_backup.title": "您确定要删除此备份吗？",
   "dialog.are_you_sure_to_delete_this_story.message": "您无法撤消此操作",
   "dialog.are_you_sure_to_delete_this_story.title": "您确定要删除这个故事吗？",
-  "dialog.are_you_sure_to_discard_these_changes.title": "您要放弃这些更改吗？",
+  "dialog.are_you_sure_to_discard_these_changes.title": "您确定要放弃这些更改吗？",
   "dialog.are_you_sure_to_move_to_bin_these_stories.title": "您确定将这些故事移至垃圾箱吗？",
   "dialog.are_you_sure_to_put_back_these_stories.title": "你确定要把这些故事放回去吗？",
   "dialog.are_you_sure.title": "你确定吗？",

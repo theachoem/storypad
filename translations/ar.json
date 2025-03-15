@@ -56,7 +56,7 @@
   "dialog.are_you_sure_to_delete_this_backup.title": "هل أنت متأكد من حذف هذه النسخة الاحتياطية؟",
   "dialog.are_you_sure_to_delete_this_story.message": "لا يمكنك التراجع عن هذا الإجراء",
   "dialog.are_you_sure_to_delete_this_story.title": "هل أنت متأكد من حذف هذه القصة؟",
-  "dialog.are_you_sure_to_discard_these_changes.title": "هل ستتجاهل هذه التغييرات؟",
+  "dialog.are_you_sure_to_discard_these_changes.title": "هل أنت متأكد من تجاهل هذه التغييرات؟",
   "dialog.are_you_sure_to_move_to_bin_these_stories.title": "هل أنت متأكد من نقل هذه القصص إلى سلة المهملات؟",
   "dialog.are_you_sure_to_put_back_these_stories.title": "هل أنت متأكد من إعادة هذه القصص؟",
   "dialog.are_you_sure.title": "هل أنت متأكد؟",

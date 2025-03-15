@@ -56,7 +56,7 @@
   "dialog.are_you_sure_to_delete_this_backup.title": "このバックアップを削除してもよろしいですか?",
   "dialog.are_you_sure_to_delete_this_story.message": "この操作を元に戻すことはできません",
   "dialog.are_you_sure_to_delete_this_story.title": "このストーリーを削除してもよろしいですか?",
-  "dialog.are_you_sure_to_discard_these_changes.title": "これらの変更を破棄しますか?",
+  "dialog.are_you_sure_to_discard_these_changes.title": "これらの変更を破棄してもよろしいですか?",
   "dialog.are_you_sure_to_move_to_bin_these_stories.title": "これらのストーリーをビンに移動してもよろしいですか?",
   "dialog.are_you_sure_to_put_back_these_stories.title": "これらの話を元に戻してもよろしいですか?",
   "dialog.are_you_sure.title": "本気ですか？",
