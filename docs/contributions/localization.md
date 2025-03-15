@@ -2,6 +2,11 @@
 layout: default
 parent: Contribution
 title: Localization
+contributors:
+  - name: "I'm Acoustic"
+    image: "https://lh3.googleusercontent.com/a-/ALV-UjX9zmgpk7EMLTS1AQHLrkAP3W1ocR0rWqMs6qtbm6q8biYfxMs=s100-c"
+  - name: "Seavleng Hong"
+    image: "https://lh3.googleusercontent.com/a-/ALV-UjX9pKrVd7eP4oaT0tarwNEZCTKVaS0YLqnzXI9GqcO3wa3Rbz0usQ=s100-c"
 ---
 
 # Localization
@@ -21,4 +26,12 @@ If your language is not listed, or you spot any translation glitches, feel free 
 3. If you see any translation errors or feel a translation can be better, add your suggestions!
 4. We’ll review the updates and apply them in the app with the next release.
 
+## Contributors
+
 Thank you for helping us make StoryPad better for users around the world!
+
+<div>
+{% for contributor in page.contributors %}
+<img style="width: 48px;" src="{{ contributor.image }}" alt="{{ contributor.name }}" />
+{% endfor %}
+</div>

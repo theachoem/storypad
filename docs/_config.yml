@@ -31,7 +31,7 @@ aux_links:
     - "https://github.com/theachoem/storypad"
 aux_links_new_tab: true
 
-color_scheme: dark
+color_scheme: light
 
 # Build settings
 # theme: minima
