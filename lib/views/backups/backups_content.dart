@@ -1,9 +1,9 @@
-part of 'backup_view.dart';
+part of 'backups_view.dart';
 
-class _BackupContent extends StatelessWidget {
-  const _BackupContent(this.viewModel);
+class _BackupsContent extends StatelessWidget {
+  const _BackupsContent(this.viewModel);
 
-  final BackupViewModel viewModel;
+  final BackupsViewModel viewModel;
 
   final double avatarSize = 56;
 
@@ -20,7 +20,7 @@ class _BackupContent extends StatelessWidget {
               tooltip: tr('page.offline_backup.title'),
               icon: Icon(Icons.folder_open),
               onPressed: () {
-                OfflineBackupRoute().push(context);
+                OfflineBackupsRoute().push(context);
               },
             ),
           ],

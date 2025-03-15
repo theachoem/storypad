@@ -3,12 +3,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
-import 'package:storypad/views/backups/backup_view_model.dart';
+import 'package:storypad/views/backups/backups_view_model.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class UserProfileCollapsibleTile extends StatelessWidget {
-  final BackupViewModel viewModel;
+  final BackupsViewModel viewModel;
   final BaseBackupSource source;
   final double avatarSize;
 

@@ -10,8 +10,8 @@ import 'offline_backup_view_model.dart';
 
 part 'offline_backup_content.dart';
 
-class OfflineBackupRoute extends BaseRoute {
-  OfflineBackupRoute();
+class OfflineBackupsRoute extends BaseRoute {
+  OfflineBackupsRoute();
 
   @override
   bool get preferredNestedRoute => true;
@@ -26,12 +26,12 @@ class OfflineBackupView extends StatelessWidget {
     required this.params,
   });
 
-  final OfflineBackupRoute params;
+  final OfflineBackupsRoute params;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<OfflineBackupViewModel>(
-      create: (context) => OfflineBackupViewModel(params: params),
+    return ViewModelProvider<OfflineBackupsViewModel>(
+      create: (context) => OfflineBackupsViewModel(params: params),
       builder: (context, viewModel, child) {
         return _OfflineBackupsContent(viewModel);
       },
