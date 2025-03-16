@@ -31,7 +31,9 @@ class ThemeObject {
         _themeMode = themeMode;
 
   factory ThemeObject.initial() {
-    return ThemeObject();
+    return ThemeObject(
+      colorSeedValue: Colors.black.value,
+    );
   }
 
   ThemeObject copyWith({
