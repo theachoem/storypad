@@ -67,7 +67,6 @@ class StoryThemeBottomSheet extends BaseBottomSheet {
                   onThemeChanged(notifier.value);
                 },
               ),
-              buildBottomPadding(bottomPadding),
             ],
           ),
         );
