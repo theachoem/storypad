@@ -93,10 +93,12 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     final context = this.context;
     if (!context.mounted) return;
 
-    authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
-    if (authenticated) {
-      await animationController.reverse(from: 1.0);
-      setState(() => showBarrier = false);
+    if (ModalRoute.of(context)?.isCurrent == true) {
+      authenticated = await context.read<AppLockProvider>().authenticateIfHas(context);
+      if (authenticated) {
+        await animationController.reverse(from: 1.0);
+        setState(() => showBarrier = false);
+      }
     }
   }
 

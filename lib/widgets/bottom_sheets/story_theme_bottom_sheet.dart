@@ -8,7 +8,6 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
-import 'package:storypad/views/theme/local_widgets/theme_mode_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
@@ -41,13 +40,16 @@ class StoryThemeBottomSheet extends BaseBottomSheet {
                 notifier: notifier,
                 theme: theme,
               ),
-              ThemeModeTile(
-                currentThemeMode: theme.themeMode ?? ThemeMode.system,
-                onChanged: (ThemeMode themeMode) {
-                  notifier.value = notifier.value.copyWith(themeMode: themeMode);
-                  onThemeChanged(notifier.value);
-                },
-              ),
+              // This give more problem on navigation.
+              // Let's disable it for now.
+              //
+              // ThemeModeTile(
+              //   currentThemeMode: theme.themeMode ?? ThemeMode.system,
+              //   onChanged: (ThemeMode themeMode) {
+              //     notifier.value = notifier.value.copyWith(themeMode: themeMode);
+              //     onThemeChanged(notifier.value);
+              //   },
+              // ),
               FontWeightTile(
                 currentFontWeight: theme.fontWeight,
                 onChanged: (value) {

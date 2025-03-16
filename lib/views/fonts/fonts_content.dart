@@ -7,19 +7,22 @@ class _FontsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(tr("page.fonts.title")),
-        bottom: buildSearchBar(context),
-        actions: [
-          IconButton(
-            tooltip: "https://fonts.google.com",
-            icon: Icon(Icons.travel_explore_outlined),
-            onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(tr("page.fonts.title")),
+          bottom: buildSearchBar(context),
+          actions: [
+            IconButton(
+              tooltip: "https://fonts.google.com",
+              icon: Icon(Icons.travel_explore_outlined),
+              onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
+            ),
+          ],
+        ),
+        body: buildBody(context),
       ),
-      body: buildBody(context),
     );
   }
 
