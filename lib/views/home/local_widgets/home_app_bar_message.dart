@@ -16,11 +16,10 @@ class _HomeAppBarMessage extends StatelessWidget {
         String? title;
         Widget? trailing;
 
-        bool showWelcomeMessage = provider.source.isSignedIn == true && provider.lastDbUpdatedAt == null ||
-            provider.lastSyncedAt == null ||
-            provider.synced;
+        bool showWelcomeMessage = true;
 
         if (provider.syncing) {
+          showWelcomeMessage = false;
           title = "${tr("page.home.app_bar.messages.we_syncing_ur_data")} ";
           trailing = Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -30,14 +29,17 @@ class _HomeAppBarMessage extends StatelessWidget {
             ),
           );
         } else {
-          title = "${tr("page.home.app_bar.messages.ready_to_syn_data")} ";
-          trailing = Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: const Icon(
-              Icons.cloud_off,
-              size: 16.0,
-            ),
-          );
+          // title = "${tr("page.home.app_bar.messages.ready_to_syn_data")} ";
+          // trailing = Container(
+          //   margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          //   child: const Icon(
+          //     Icons.cloud_off,
+          //     size: 16.0,
+          //   ),
+          // );
+          showWelcomeMessage = true;
+          title = null;
+          trailing = null;
         }
 
         return SpCrossFade(
@@ -52,9 +54,7 @@ class _HomeAppBarMessage extends StatelessWidget {
             text: TextSpan(
               style: TextTheme.of(context).bodyLarge,
               text: title,
-              children: [
-                WidgetSpan(alignment: PlaceholderAlignment.middle, child: trailing),
-              ],
+              children: trailing == null ? null : [WidgetSpan(alignment: PlaceholderAlignment.middle, child: trailing)],
             ),
           ),
         );
