@@ -3,6 +3,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
@@ -89,6 +90,7 @@ class StoryThemeBottomSheet extends BaseBottomSheet {
           backgroundColor: null,
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           onTap: () {
+            HapticFeedback.selectionClick();
             notifier.value = notifier.value.copyWith(colorSeedValue: null, themeMode: null);
             onThemeChanged(notifier.value);
           },
