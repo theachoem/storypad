@@ -3,6 +3,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/core/helpers/animated_route_helper.dart';
@@ -133,17 +134,25 @@ class AppTheme extends StatelessWidget {
     return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
 
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: provider.theme.colorSeed,
-        brightness: Brightness.light,
-        dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-      );
+      ColorScheme lightScheme;
+      ColorScheme darkScheme;
 
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: provider.theme.colorSeed,
-        brightness: Brightness.dark,
-        dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-      );
+      if (provider.theme.colorSeed == null && lightDynamic != null && darkDynamic != null) {
+        lightScheme = lightDynamic;
+        darkScheme = darkDynamic;
+      } else {
+        lightScheme = ColorScheme.fromSeed(
+          seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+          brightness: Brightness.light,
+          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+        );
+
+        darkScheme = ColorScheme.fromSeed(
+          seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+          brightness: Brightness.dark,
+          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+        );
+      }
 
       return builder(lightScheme, darkScheme);
     });

@@ -1,3 +1,4 @@
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/theme_object.dart';
 import 'package:storypad/core/storages/base_object_storages/object_storage.dart';
 
@@ -10,6 +11,12 @@ class ThemeStorage extends ObjectStorage<ThemeObject> {
 
   Future<void> load() async {
     _theme = await readObject();
+
+    if (_theme == null) {
+      // ignore: deprecated_member_use
+      _theme = ThemeObject(colorSeedValue: kDefaultColorSeed.value);
+      await writeObject(_theme!);
+    }
   }
 
   @override

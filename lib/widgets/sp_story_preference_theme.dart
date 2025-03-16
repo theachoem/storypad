@@ -20,7 +20,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    Color seedColor = preferences?.colorSeed ?? themeProvider.theme.colorSeed;
+    Color? seedColor = preferences?.colorSeed ?? themeProvider.theme.colorSeed;
     bool monochrome = seedColor == Colors.black || seedColor == Colors.white;
     Brightness brightness;
 
@@ -37,11 +37,18 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         break;
     }
 
-    ColorScheme colorScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: brightness,
-      dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-    );
+    ColorScheme colorScheme;
+
+    if (seedColor == null) {
+      // TODO: this does not custom theme yet.
+      colorScheme = Theme.of(context).colorScheme;
+    } else {
+      colorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: brightness,
+        dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+      );
+    }
 
     return Theme(
       data: AppTheme.getTheme(
