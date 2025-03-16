@@ -45,6 +45,7 @@ class HomeViewModel extends BaseViewModel {
 
   int get currentYear => DateTime.now().year;
   int get year => currentSearchFilter.years.firstOrNull ?? currentYear;
+  int? get filteredTagId => currentSearchFilter.tagId;
 
   bool get filtered =>
       jsonEncode(currentSearchFilter.toDatabaseFilter()) != jsonEncode(initialSearchFilter.toDatabaseFilter());
@@ -128,7 +129,11 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> goToNewPage(BuildContext context) async {
-    await EditStoryRoute(id: null, initialYear: year).push(context);
+    await EditStoryRoute(
+      id: null,
+      initialYear: year,
+      initialTagId: filteredTagId,
+    ).push(context);
     await reload(debugSource: '$runtimeType#goToNewPage');
 
     // https://developer.android.com/guide/playcore/in-app-review#when-to-request

@@ -2,9 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
-import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/views/archives/archives_view.dart';
 import 'package:storypad/views/home/home_view_model.dart';
@@ -75,14 +73,7 @@ class HomeEndDrawer extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.search),
       title: Text(tr("page.search.title")),
-      onTap: () => SearchRoute(
-        initialFilter: SearchFilterObject(
-          years: {viewModel.year},
-          types: {PathType.docs},
-          tagId: null,
-          assetId: null,
-        ),
-      ).push(context),
+      onTap: () => SearchRoute().push(context),
     );
   }
 

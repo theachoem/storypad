@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -17,7 +18,15 @@ class SearchViewModel extends BaseViewModel with DebounchedCallback {
   });
 
   ValueNotifier<String> queryNotifier = ValueNotifier('');
-  late SearchFilterObject filter = params.initialFilter;
+
+  final SearchFilterObject initialFilter = SearchFilterObject(
+    years: {},
+    types: {PathType.docs},
+    tagId: null,
+    assetId: null,
+  );
+
+  late SearchFilterObject filter = initialFilter;
 
   void search(String query) {
     debouncedCallback(() {
@@ -40,7 +49,7 @@ class SearchViewModel extends BaseViewModel with DebounchedCallback {
       initialTune: filter,
       multiSelectYear: true,
       filterTagModifiable: true,
-      resetTune: SearchFilterObject(years: {}, types: {}, tagId: null, assetId: null),
+      resetTune: initialFilter,
     ).push(context);
 
     if (result is SearchFilterObject) {

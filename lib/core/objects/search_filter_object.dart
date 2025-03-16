@@ -33,6 +33,11 @@ class SearchFilterObject {
     if (starred != null) filters['starred'] = starred;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
 
+    // Search whole database when has query.
+    if (query != null && query.trim().isNotEmpty == true) {
+      filters['types'] = PathType.values.map((e) => e.name).toList();
+    }
+
     return filters;
   }
 

@@ -35,10 +35,7 @@ class TagsProvider extends ChangeNotifier {
     for (TagDbModel tag in tags?.items ?? []) {
       storiesCountByTagId[tag.id] ??= await StoryDbModel.db.count(filters: {
         'tag': tag.id,
-        'types': [
-          PathType.archives.name,
-          PathType.docs.name,
-        ]
+        'types': [PathType.docs.name]
       });
     }
 

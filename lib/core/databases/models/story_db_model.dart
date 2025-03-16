@@ -242,6 +242,7 @@ class StoryDbModel extends BaseDbModel {
   factory StoryDbModel.fromDate(
     DateTime date, {
     int? initialYear,
+    int? initialTagId,
   }) {
     final now = DateTime.now();
     return StoryDbModel(
@@ -260,7 +261,7 @@ class StoryDbModel extends BaseDbModel {
       draftContent: null,
       updatedAt: now,
       createdAt: now,
-      tags: [],
+      tags: initialTagId != null ? [initialTagId.toString()] : [],
       assets: [],
       movedToBinAt: null,
       lastSavedDeviceId: null,

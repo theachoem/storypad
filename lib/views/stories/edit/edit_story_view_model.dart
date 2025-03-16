@@ -57,7 +57,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
 
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
 
-    story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear);
+    story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear, initialTagId: params.initialTagId);
     draftContent = story!.generateDraftContent();
 
     titleController = TextEditingController(text: draftContent?.title)
@@ -247,7 +247,7 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
 
     bool shouldPop = true;
     if (flowType == EditingFlowType.create) {
-      if (story?.id != null) {
+      if (lastSavedAtNotifier.value != null) {
         OkCancelResult result = await showConfirmDialog(context);
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id);

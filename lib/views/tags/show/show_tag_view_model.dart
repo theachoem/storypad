@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/tags/edit/edit_tag_view.dart';
 import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/base_view/base_view_model.dart';
@@ -23,7 +24,7 @@ class ShowTagViewModel extends BaseViewModel {
 
   late SearchFilterObject filter = SearchFilterObject(
     years: {},
-    types: {},
+    types: {PathType.docs},
     tagId: tag.id,
     assetId: null,
   );

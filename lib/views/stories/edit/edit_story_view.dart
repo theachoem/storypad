@@ -29,6 +29,7 @@ part 'local_widgets/focus_node_builder.dart';
 class EditStoryRoute extends BaseRoute {
   final int? id;
   final int? initialYear;
+  final int? initialTagId;
   final int initialPageIndex;
   final Map<int, QuillController>? quillControllers;
   final StoryDbModel? story;
@@ -39,6 +40,7 @@ class EditStoryRoute extends BaseRoute {
     this.initialPageIndex = 0,
     this.quillControllers,
     this.story,
+    this.initialTagId,
   }) : assert(initialYear == null || id == null);
 
   @override
@@ -52,8 +54,11 @@ class EditStoryRoute extends BaseRoute {
 
   @override
   Map<String, String?> get analyticsParameters {
+    if (id != null) return {};
+
     return {
-      'flow_type': id == null ? 'new' : 'edit',
+      'year': initialYear.toString(),
+      'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };
   }
 

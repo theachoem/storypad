@@ -32,14 +32,25 @@ class SearchFilterViewModel extends BaseViewModel {
     if (params.allowSaveSearchFilter) _savingSearchFilterEnabled = await SearchFilterStorage().readObject() != null;
 
     if (params.filterTagModifiable) {
-      years = await StoryDbModel.db.getStoryCountsByYear();
+      years = await StoryDbModel.db.getStoryCountsByYear(
+        filters: {
+          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+        },
+      );
+
       tags = await TagDbModel.db.where().then((e) => e?.items);
 
       for (TagDbModel tag in tags ?? []) {
-        tag.storiesCount = await StoryDbModel.db.count(filters: {'tag': tag.id});
+        tag.storiesCount = await StoryDbModel.db.count(filters: {
+          'tag': tag.id,
+          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+        });
       }
     } else {
-      years = await StoryDbModel.db.getStoryCountsByYear(filters: {'tag': searchFilter.tagId});
+      years = await StoryDbModel.db.getStoryCountsByYear(filters: {
+        'tag': searchFilter.tagId,
+        if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+      });
     }
 
     notifyListeners();
