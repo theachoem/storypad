@@ -33,6 +33,12 @@ class App extends StatelessWidget {
           ],
           supportedLocales: context.supportedLocales,
           locale: context.locale,
+          builder: (context, child) {
+            return GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: child,
+            );
+          },
         );
       }),
     );

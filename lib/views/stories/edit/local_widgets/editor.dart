@@ -53,6 +53,7 @@ class _Editor extends StatelessWidget {
       controller: controller,
       scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
       config: QuillEditorConfig(
+        keyboardAppearance: Theme.of(context).brightness,
         contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(rawEditorState, editable: true),
         paintCursorAboveText: false,
         scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
