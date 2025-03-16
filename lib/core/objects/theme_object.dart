@@ -19,8 +19,10 @@ class ThemeObject {
 
   String get fontFamily => _fontFamily ?? kDefaultFontFamily;
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
-  Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
+  Color get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : kDefaultColorSeed;
   FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
+
+  bool get colorSeedCustomized => colorSeedValue != kDefaultColorSeed.value;
 
   ThemeObject({
     String? fontFamily,

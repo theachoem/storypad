@@ -7,12 +7,26 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 class FontWeightTile extends StatelessWidget {
   const FontWeightTile({
     super.key,
+    required this.currentFontWeight,
+    required this.onChanged,
   });
+
+  final FontWeight currentFontWeight;
+  final void Function(FontWeight value) onChanged;
+
+  static Widget globalTheme() {
+    return Consumer<ThemeProvider>(
+      builder: (context, provider, child) {
+        return FontWeightTile(
+          currentFontWeight: provider.theme.fontWeight,
+          onChanged: (FontWeight fontWeight) => provider.setFontWeight(fontWeight),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    ThemeProvider provider = Provider.of<ThemeProvider>(context);
-
     return SpPopupMenuButton(
       smartDx: true,
       dyGetter: (dy) => dy + 44.0,
@@ -30,16 +44,16 @@ class FontWeightTile extends StatelessWidget {
         };
 
         return SpPopMenuItem(
-          selected: fontWeight == provider.theme.fontWeight,
+          selected: fontWeight == currentFontWeight,
           title: "${fontWeight.value} - ${descriptions[fontWeight.value]}",
-          onPressed: () => provider.setFontWeight(fontWeight),
+          onPressed: () => onChanged(fontWeight),
         );
       }).toList(),
       builder: (open) {
         return ListTile(
           leading: const Icon(Icons.format_size_outlined),
           title: Text(tr("list_tile.font_weight.title")),
-          subtitle: Text(provider.theme.fontWeight.value.toString()),
+          subtitle: Text(currentFontWeight.value.toString()),
           onTap: () => open(),
         );
       },

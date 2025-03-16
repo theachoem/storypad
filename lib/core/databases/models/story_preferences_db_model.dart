@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 
 part 'story_preferences_db_model.g.dart';
@@ -11,10 +13,22 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final bool? showDayCount;
   final bool? showTime;
 
+  final int? colorSeedValue;
+  final String? fontFamily;
+  final int? fontWeightIndex;
+  final ThemeMode? themeMode;
+
+  Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
+  FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
+
   StoryPreferencesDbModel({
     required this.showDayCount,
     required this.starIcon,
     required this.showTime,
+    required this.colorSeedValue,
+    required this.fontFamily,
+    required this.fontWeightIndex,
+    required this.themeMode,
   });
 
   @override
@@ -28,7 +42,15 @@ class StoryPreferencesDbModel extends BaseDbModel {
       showDayCount: false,
       starIcon: null,
       showTime: false,
+      colorSeedValue: null,
+      fontFamily: null,
+      fontWeightIndex: null,
+      themeMode: null,
     );
+  }
+
+  Map<String, dynamic> toNonNullJson() {
+    return toJson()..removeWhere((e, value) => value == null);
   }
 
   @override

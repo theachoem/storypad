@@ -338,6 +338,18 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logUpdateStoryPreferences({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logUpdateStoryPreferences', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('update_story_preferences'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logPutStoryBack({
     required StoryDbModel story,
   }) {
@@ -492,9 +504,9 @@ class AnalyticsService extends BaseAnalyticsService {
       'day': story.day.toString(),
       'feeling': story.feeling,
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
-      'preferred_star_icon': story.preferences?.starIcon,
-      'preferred_show_day_count': story.preferences?.showDayCount?.toString(),
-      'preferred_show_time': story.preferences?.showTime?.toString(),
+      'preferred_star_icon': story.preferences.starIcon,
+      'preferred_show_day_count': story.preferences.showDayCount?.toString(),
+      'preferred_show_time': story.preferences.showTime?.toString(),
     });
   }
 

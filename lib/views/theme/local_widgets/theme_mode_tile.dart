@@ -8,20 +8,43 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 class ThemeModeTile extends StatelessWidget {
   const ThemeModeTile({
     super.key,
+    required this.currentThemeMode,
+    required this.onChanged,
   });
+
+  final ThemeMode currentThemeMode;
+  final void Function(ThemeMode themeMode) onChanged;
+
+  static Widget globalTheme() {
+    return Consumer<ThemeProvider>(
+      builder: (context, provider, child) {
+        return ThemeModeTile(
+          currentThemeMode: provider.theme.themeMode,
+          onChanged: (ThemeMode themeMode) => provider.setThemeMode(themeMode),
+        );
+      },
+    );
+  }
+
+  bool isDarkMode(BuildContext context) {
+    if (currentThemeMode == ThemeMode.system) {
+      Brightness? brightness = View.of(context).platformDispatcher.platformBrightness;
+      return brightness == Brightness.dark;
+    } else {
+      return currentThemeMode == ThemeMode.dark;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    ThemeProvider provider = Provider.of<ThemeProvider>(context);
-
     return SpPopupMenuButton(
       smartDx: true,
       dyGetter: (dy) => dy + 44.0,
       items: (context) => ThemeMode.values.map((mode) {
         return SpPopMenuItem(
-          selected: mode == provider.themeMode,
+          selected: mode == currentThemeMode,
           title: getLocalizedThemeMode(mode),
-          onPressed: () => provider.setThemeMode(mode),
+          onPressed: () => onChanged(mode),
         );
       }).toList(),
       builder: (open) {
@@ -30,17 +53,17 @@ class ThemeModeTile extends StatelessWidget {
             duration: Durations.medium4,
             firstChild: const Icon(Icons.dark_mode),
             secondChild: const Icon(Icons.light_mode),
-            showFirst: provider.isDarkMode(context),
+            showFirst: isDarkMode(context),
           ),
           title: Text(tr('list_tile.theme_mode.title')),
-          subtitle: Text(getLocalizedThemeMode(provider.themeMode)),
+          subtitle: Text(getLocalizedThemeMode(currentThemeMode)),
           onTap: () => open(),
         );
       },
     );
   }
 
-  String getLocalizedThemeMode(ThemeMode mode) {
+  static String getLocalizedThemeMode(ThemeMode mode) {
     switch (mode) {
       case ThemeMode.dark:
         return tr("general.theme_mode.dark");

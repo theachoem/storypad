@@ -10,14 +10,36 @@ class _ThemeContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(tr("page.theme.title")),
+        actions: [
+          SpPopupMenuButton(
+            items: (context) {
+              return [
+                SpPopMenuItem(
+                  leadingIconData: Icons.restart_alt_outlined,
+                  title: tr("button.reset"),
+                  onPressed: () {
+                    context.read<ThemeProvider>().reset();
+                  },
+                ),
+              ];
+            },
+            builder: (callback) {
+              return IconButton(
+                tooltip: tr("button.more_options"),
+                icon: Icon(Icons.more_vert),
+                onPressed: callback,
+              );
+            },
+          )
+        ],
       ),
       body: ListView(
-        children: const [
-          ThemeModeTile(),
+        children: [
+          ThemeModeTile.globalTheme(),
           ColorSeedTile(),
           Divider(),
-          FontFamilyTile(),
-          FontWeightTile(),
+          FontFamilyTile.globalTheme(),
+          FontWeightTile.globalTheme(),
         ],
       ),
     );

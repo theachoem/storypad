@@ -1,6 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -54,7 +54,10 @@ class StoryDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
-  final StoryPreferencesDbModel? preferences;
+
+  @JsonKey(name: 'preferences')
+  final StoryPreferencesDbModel? _preferences;
+  StoryPreferencesDbModel get preferences => _preferences ?? StoryPreferencesDbModel.create();
 
   DateTime get displayPathDate {
     return DateTime(
@@ -84,21 +87,25 @@ class StoryDbModel extends BaseDbModel {
     required this.second,
     required this.updatedAt,
     required this.createdAt,
-    required this.preferences,
+    StoryPreferencesDbModel? preferences,
     required this.tags,
     required this.assets,
     required this.movedToBinAt,
     required this.latestContent,
     required this.draftContent,
     required this.lastSavedDeviceId,
-  });
+  }) : _preferences = preferences;
 
   bool get draftStory => draftContent != null;
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
-  bool get preferredShowDayCount => preferences?.showDayCount ?? false;
-  String? get preferredStarIcon => preferences?.starIcon;
-  bool get preferredShowTime => preferences?.showTime ?? false;
+  bool get preferredShowDayCount => preferences.showDayCount ?? false;
+  String? get preferredStarIcon => preferences.starIcon;
+  bool get preferredShowTime => preferences.showTime ?? false;
+
+  String? get preferredFontFamily => preferences.fontFamily;
+  int? get preferredFontWeightIndex => preferences.fontWeightIndex;
+  ThemeMode? get preferredThemeMode => preferences.themeMode;
 
   bool get viewOnly => unarchivable || inBins;
 
@@ -175,13 +182,13 @@ class StoryDbModel extends BaseDbModel {
     ));
   }
 
-  Future<StoryDbModel?> updateStarIcon({
-    required String starIcon,
+  Future<StoryDbModel?> updatePreferences({
+    required StoryPreferencesDbModel preferences,
   }) async {
     if (!editable) return null;
 
-    return db.set(copyWithPreferences(
-      starIcon: starIcon,
+    return db.set(copyWith(
+      preferences: preferences,
       updatedAt: DateTime.now(),
     ));
   }
@@ -215,22 +222,6 @@ class StoryDbModel extends BaseDbModel {
       hour: displayPathDate.hour,
       minute: displayPathDate.minute,
     ));
-  }
-
-  StoryDbModel copyWithPreferences({
-    bool? showDayCount,
-    String? starIcon,
-    DateTime? updatedAt,
-    bool? showTime,
-  }) {
-    return copyWith(
-      updatedAt: updatedAt ?? this.updatedAt,
-      preferences: (preferences ?? StoryPreferencesDbModel.create()).copyWith(
-        starIcon: starIcon ?? preferences?.starIcon,
-        showDayCount: showDayCount ?? preferences?.showDayCount,
-        showTime: showTime ?? preferences?.showTime,
-      ),
-    );
   }
 
   factory StoryDbModel.fromNow() {

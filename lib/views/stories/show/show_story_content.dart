@@ -123,6 +123,14 @@ class _ShowStoryContent extends StatelessWidget {
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
       }),
+      IconButton(
+        tooltip: tr("page.theme.title"),
+        icon: Icon(Icons.color_lens_outlined),
+        onPressed: () => StoryThemeBottomSheet(
+          story: viewModel.story!,
+          onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+        ).show(context: context),
+      ),
       SpPopupMenuButton(
         items: (context) {
           return [

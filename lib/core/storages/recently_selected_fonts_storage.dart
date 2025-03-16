@@ -8,8 +8,8 @@ class RecentlySelectedFontsStorage extends ListStorage<String> {
     result.insert(0, value);
     result = result.toSet().toList();
 
-    if (result.length > 3) {
-      result = result.getRange(0, 3).toList();
+    if (result.length > 10) {
+      result = result.getRange(0, 10).toList();
     }
 
     await writeList(result);

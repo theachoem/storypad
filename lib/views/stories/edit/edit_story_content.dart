@@ -18,7 +18,7 @@ class _EditStoryContent extends StatelessWidget {
               )
             : null,
         appBar: AppBar(
-          clipBehavior: Clip.none,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           titleSpacing: 0.0,
           actions: buildAppBarActions(context),
         ),
@@ -104,6 +104,14 @@ class _EditStoryContent extends StatelessWidget {
           onPressed: () => Scaffold.of(context).openEndDrawer(),
         );
       }),
+      IconButton(
+        tooltip: tr("page.theme.title"),
+        icon: Icon(Icons.color_lens_outlined),
+        onPressed: () => StoryThemeBottomSheet(
+          story: viewModel.story!,
+          onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+        ).show(context: context),
+      ),
       const SizedBox(width: 4.0),
     ];
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/home/home_view_model.dart';
@@ -197,7 +198,10 @@ class StoryTileActions {
   }
 
   Future<void> updateStarIcon(String starIcon) async {
-    StoryDbModel? updatedStory = await story.updateStarIcon(starIcon: starIcon);
+    StoryDbModel? updatedStory = await story.updatePreferences(
+      preferences: story.preferences.copyWith(starIcon: starIcon),
+    );
+
     if (updatedStory == null) return;
 
     AnalyticsService.instance.logUpdateStarIcon(
@@ -206,12 +210,11 @@ class StoryTileActions {
   }
 
   Future<void> toggleShowDayCount() async {
-    final updatedStory = story.copyWithPreferences(
-      updatedAt: DateTime.now(),
-      showDayCount: !story.preferredShowDayCount,
+    StoryDbModel? updatedStory = await story.updatePreferences(
+      preferences: story.preferences.copyWith(showDayCount: !story.preferredShowDayCount),
     );
 
-    await StoryDbModel.db.set(updatedStory);
+    if (updatedStory == null) return;
 
     AnalyticsService.instance.logToggleShowDayCount(
       story: updatedStory,
@@ -219,12 +222,11 @@ class StoryTileActions {
   }
 
   Future<void> toggleShowTime() async {
-    final updatedStory = story.copyWithPreferences(
-      updatedAt: DateTime.now(),
-      showTime: !story.preferredShowTime,
+    StoryDbModel? updatedStory = await story.updatePreferences(
+      preferences: story.preferences.copyWith(showTime: !story.preferredShowTime),
     );
 
-    await StoryDbModel.db.set(updatedStory);
+    if (updatedStory == null) return;
 
     AnalyticsService.instance.logToggleShowTime(
       story: updatedStory,

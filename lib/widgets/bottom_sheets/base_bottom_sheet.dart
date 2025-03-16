@@ -9,6 +9,9 @@ abstract class BaseBottomSheet {
   String get analyticScreenName => className.replaceAll("BottomSheet", "");
   String get analyticScreenClass => className;
 
+  Color? get barrierColor => null;
+  Color? getBackgroundColor(BuildContext context) => null;
+
   Future<T?> show<T>({
     required BuildContext context,
   }) {
@@ -19,6 +22,8 @@ abstract class BaseBottomSheet {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      barrierColor: barrierColor,
+      backgroundColor: getBackgroundColor(context),
       builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(

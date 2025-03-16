@@ -147,11 +147,17 @@ class _DateSelector extends StatelessWidget {
   }
 
   Widget buildDay(BuildContext context) {
+    Color? color;
+
+    if (story.preferences.colorSeedValue != null) {
+      color = ColorScheme.of(context).primary;
+    } else {
+      color = ColorFromDayService(context: context).get(story.displayPathDate.weekday);
+    }
+
     return Text(
       story.day.toString().padLeft(2, '0'),
-      style: TextTheme.of(context)
-          .headlineLarge
-          ?.copyWith(color: ColorFromDayService(context: context).get(story.displayPathDate.weekday)),
+      style: TextTheme.of(context).headlineLarge?.copyWith(color: color),
     );
   }
 }

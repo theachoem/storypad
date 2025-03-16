@@ -7,12 +7,10 @@ class _FontsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(tr("page.fonts.title")),
-        bottom: buildSearchBar(themeProvider, context),
+        bottom: buildSearchBar(context),
         actions: [
           IconButton(
             tooltip: "https://fonts.google.com",
@@ -21,24 +19,25 @@ class _FontsContent extends StatelessWidget {
           ),
         ],
       ),
-      body: buildBody(themeProvider, context),
+      body: buildBody(context),
     );
   }
 
-  PreferredSize buildSearchBar(ThemeProvider themeProvider, BuildContext context) {
+  PreferredSize buildSearchBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(56.0 + 12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SearchAnchor.bar(
+          isFullScreen: false,
           suggestionsBuilder: (context, controller) {
             final fuzzy = Fuzzy<String>(viewModel.fonts, options: FuzzyOptions(isCaseSensitive: false));
             List<Result<String>> result = fuzzy.search(controller.text.trim());
             result.sort((a, b) => a.score.compareTo(b.score));
 
             return result.map((fontFamily) {
-              return buildFontFamilyTile(context, fontFamily.item, themeProvider);
+              return buildFontFamilyTile(context, fontFamily.item);
             }).toList();
           },
         ),
@@ -46,7 +45,7 @@ class _FontsContent extends StatelessWidget {
     );
   }
 
-  Widget buildBody(ThemeProvider themeProvider, BuildContext context) {
+  Widget buildBody(BuildContext context) {
     if (viewModel.fontGroups == null) return const Center(child: CircularProgressIndicator.adaptive());
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(bottom: MediaQuery.of(context).padding.bottom),
@@ -70,7 +69,7 @@ class _FontsContent extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 16.0),
             child: Column(
               children: List.generate(fontGroup.fontFamilies.length, (index) {
-                return buildFontFamilyTile(context, fontGroup.fontFamilies[index], themeProvider);
+                return buildFontFamilyTile(context, fontGroup.fontFamilies[index]);
               }),
             ),
           ),
@@ -82,7 +81,6 @@ class _FontsContent extends StatelessWidget {
   Widget buildFontFamilyTile(
     BuildContext context,
     String fontFamily,
-    ThemeProvider themeProvider,
   ) {
     return SpPopupMenuButton(
       dyGetter: (dy) => dy + 88.0,
@@ -93,16 +91,14 @@ class _FontsContent extends StatelessWidget {
             subtitle: tr("list_tile.use_this_font.loreum_ipsum"),
             subtitleStyle: GoogleFonts.getFont(fontFamily),
             trailingIconData: Icons.keyboard_arrow_right,
-            onPressed: () {
-              viewModel.changeFont(themeProvider, fontFamily);
-            },
+            onPressed: () => viewModel.changeFont(fontFamily),
           )
         ];
       },
       builder: (open) {
-        bool selected = themeProvider.theme.fontFamily == fontFamily;
+        bool selected = viewModel.currentFontFamily == fontFamily;
         return ListTile(
-          selected: themeProvider.theme.fontFamily == fontFamily,
+          selected: viewModel.currentFontFamily == fontFamily,
           onTap: () => open(),
           title: Text(fontFamily),
           trailing: Visibility(
