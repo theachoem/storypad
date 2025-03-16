@@ -3,7 +3,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/core/helpers/animated_route_helper.dart';
@@ -20,6 +19,7 @@ class AppTheme extends StatelessWidget {
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
   static bool rtl(BuildContext context) => Directionality.of(context) == TextDirection.rtl;
   static bool isIOS(BuildContext context) => Theme.of(context).platform == TargetPlatform.iOS;
+  static bool isDarkMode(BuildContext context) => Theme.of(context).brightness == Brightness.dark;
 
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
@@ -35,21 +35,37 @@ class AppTheme extends StatelessWidget {
       return buildColorScheme(
         provider: provider,
         builder: (ColorScheme lightDynamic, ColorScheme darkDynamic) {
-          final theme = getTheme(ThemeData.light(), lightDynamic, provider);
-          final darkTheme = getTheme(ThemeData.dark(), darkDynamic, provider);
+          final theme = getTheme(
+            colorScheme: lightDynamic,
+            fontFamily: provider.theme.fontFamily,
+            fontWeight: provider.theme.fontWeight,
+          );
+
+          final darkTheme = getTheme(
+            colorScheme: darkDynamic,
+            fontFamily: provider.theme.fontFamily,
+            fontWeight: provider.theme.fontWeight,
+          );
+
           return builder(context, theme, darkTheme, provider.themeMode);
         },
       );
     });
   }
 
-  ThemeData getTheme(ThemeData theme, ColorScheme colorScheme, ThemeProvider provider) {
+  static ThemeData getTheme({
+    required ColorScheme colorScheme,
+    required String fontFamily,
+    required FontWeight fontWeight,
+  }) {
     bool blackout = colorScheme.onSurface == Colors.white;
     bool darkMode = colorScheme.brightness == Brightness.dark;
     bool lightMode = !darkMode;
 
+    ThemeData baseTheme = darkMode ? ThemeData.dark() : ThemeData.light();
+
     TextStyle calculateTextStyle(TextStyle textStyle, FontWeight defaultFontWeight) {
-      return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, provider.theme.fontWeight));
+      return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, fontWeight));
     }
 
     final shareAxisTransition = SharedAxisPageTransitionsBuilder(
@@ -62,7 +78,7 @@ class AppTheme extends StatelessWidget {
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
 
-    return theme.copyWith(
+    return baseTheme.copyWith(
       // platform: TargetPlatform.android,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
@@ -88,23 +104,23 @@ class AppTheme extends StatelessWidget {
       ),
       bottomSheetTheme: BottomSheetThemeData(backgroundColor: blackout ? colorScheme.readOnly.surface2 : null),
       textTheme: GoogleFonts.getTextTheme(
-        provider.theme.fontFamily,
+        fontFamily,
         TextTheme(
-          displayLarge: calculateTextStyle(theme.textTheme.displayLarge!, FontWeight.w400),
-          displayMedium: calculateTextStyle(theme.textTheme.displayMedium!, FontWeight.w400),
-          displaySmall: calculateTextStyle(theme.textTheme.displaySmall!, FontWeight.w400),
-          headlineLarge: calculateTextStyle(theme.textTheme.headlineLarge!, FontWeight.w400),
-          headlineMedium: calculateTextStyle(theme.textTheme.headlineMedium!, FontWeight.w400),
-          headlineSmall: calculateTextStyle(theme.textTheme.headlineSmall!, FontWeight.w400),
-          titleLarge: calculateTextStyle(theme.textTheme.titleLarge!, FontWeight.w400),
-          titleMedium: calculateTextStyle(theme.textTheme.titleMedium!, FontWeight.w400),
-          titleSmall: calculateTextStyle(theme.textTheme.titleSmall!, FontWeight.w500),
-          bodyLarge: calculateTextStyle(theme.textTheme.bodyLarge!, FontWeight.w400),
-          bodyMedium: calculateTextStyle(theme.textTheme.bodyMedium!, FontWeight.w400),
-          bodySmall: calculateTextStyle(theme.textTheme.bodySmall!, FontWeight.w400),
-          labelLarge: calculateTextStyle(theme.textTheme.labelLarge!, FontWeight.w500),
-          labelMedium: calculateTextStyle(theme.textTheme.labelMedium!, FontWeight.w500),
-          labelSmall: calculateTextStyle(theme.textTheme.labelSmall!, FontWeight.w500),
+          displayLarge: calculateTextStyle(baseTheme.textTheme.displayLarge!, FontWeight.w400),
+          displayMedium: calculateTextStyle(baseTheme.textTheme.displayMedium!, FontWeight.w400),
+          displaySmall: calculateTextStyle(baseTheme.textTheme.displaySmall!, FontWeight.w400),
+          headlineLarge: calculateTextStyle(baseTheme.textTheme.headlineLarge!, FontWeight.w400),
+          headlineMedium: calculateTextStyle(baseTheme.textTheme.headlineMedium!, FontWeight.w400),
+          headlineSmall: calculateTextStyle(baseTheme.textTheme.headlineSmall!, FontWeight.w400),
+          titleLarge: calculateTextStyle(baseTheme.textTheme.titleLarge!, FontWeight.w400),
+          titleMedium: calculateTextStyle(baseTheme.textTheme.titleMedium!, FontWeight.w400),
+          titleSmall: calculateTextStyle(baseTheme.textTheme.titleSmall!, FontWeight.w500),
+          bodyLarge: calculateTextStyle(baseTheme.textTheme.bodyLarge!, FontWeight.w400),
+          bodyMedium: calculateTextStyle(baseTheme.textTheme.bodyMedium!, FontWeight.w400),
+          bodySmall: calculateTextStyle(baseTheme.textTheme.bodySmall!, FontWeight.w400),
+          labelLarge: calculateTextStyle(baseTheme.textTheme.labelLarge!, FontWeight.w500),
+          labelMedium: calculateTextStyle(baseTheme.textTheme.labelMedium!, FontWeight.w500),
+          labelSmall: calculateTextStyle(baseTheme.textTheme.labelSmall!, FontWeight.w500),
         ),
       ),
     );
@@ -115,40 +131,25 @@ class AppTheme extends StatelessWidget {
     required Widget Function(ColorScheme lightDynamic, ColorScheme darkDynamic) builder,
   }) {
     return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      if (provider.theme.colorSeed != null) {
-        bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
-        final lightScheme = ColorScheme.fromSeed(
-          seedColor: provider.theme.colorSeed!,
-          brightness: Brightness.light,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
-        final darkScheme = ColorScheme.fromSeed(
-          seedColor: provider.theme.colorSeed!,
-          brightness: Brightness.dark,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
-        return builder(lightScheme, darkScheme);
-      } else {
-        bool monochrome = kDefaultColorSeed == Colors.black || kDefaultColorSeed == Colors.white;
+      bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
 
-        lightDynamic ??= ColorScheme.fromSeed(
-          seedColor: kDefaultColorSeed,
-          brightness: Brightness.light,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
+      final lightScheme = ColorScheme.fromSeed(
+        seedColor: provider.theme.colorSeed,
+        brightness: Brightness.light,
+        dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+      );
 
-        darkDynamic ??= ColorScheme.fromSeed(
-          seedColor: kDefaultColorSeed,
-          brightness: Brightness.dark,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
-      }
+      final darkScheme = ColorScheme.fromSeed(
+        seedColor: provider.theme.colorSeed,
+        brightness: Brightness.dark,
+        dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+      );
 
-      return builder(lightDynamic, darkDynamic);
+      return builder(lightScheme, darkScheme);
     });
   }
 
-  FontWeight calculateFontWeight(FontWeight defaultWeight, FontWeight currentWeight) {
+  static FontWeight calculateFontWeight(FontWeight defaultWeight, FontWeight currentWeight) {
     int changeBy = defaultWeight == FontWeight.w400 ? 0 : 1;
     Map<int, FontWeight> fontWeights = {
       0: FontWeight.w100,

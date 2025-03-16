@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/theme_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
@@ -9,6 +10,16 @@ class ThemeProvider extends ChangeNotifier {
   ThemeObject _theme = storage.theme;
   ThemeObject get theme => _theme;
   ThemeMode get themeMode => theme.themeMode;
+
+  void reset() {
+    _theme = ThemeObject.initial();
+    storage.remove();
+    notifyListeners();
+
+    AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
+    AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
+    AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);
+  }
 
   void setColorSeed(Color color) {
     _theme = _theme.copyWithNewColor(color, removeIfSame: true);
@@ -60,15 +71,6 @@ class ThemeProvider extends ChangeNotifier {
     } else {
       bool isDarkMode = themeMode == ThemeMode.dark;
       setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
-    }
-  }
-
-  bool isDarkMode(BuildContext context) {
-    if (themeMode == ThemeMode.system) {
-      Brightness? brightness = View.of(context).platformDispatcher.platformBrightness;
-      return brightness == Brightness.dark;
-    } else {
-      return themeMode == ThemeMode.dark;
     }
   }
 }

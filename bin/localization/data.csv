@@ -29,6 +29,7 @@ button.pin_to_home,Pin to home,دبوس إلى المنزل,An die Startseite an
 button.put_back,Put back,أعد,Zurücklegen,Volver,Volver,Remettre,पहली अवस्था में लाना,Kembali,Rimetti a posto,元に戻す,ដាក់មកវិញ,다시 넣어,Położyć z powrotem,Colocar de volta,ใส่กลับ,Đặt lại,放回去
 button.put_back_all,Put all back,ضع كل شيء مرة أخرى,Lege alles zurück,Pon todo de vuelta,Pon todo de vuelta,Remettez tout en place,सब वापस रख दो,Kembalikan semuanya,Rimetti tutto a posto,全部元に戻して,ដាក់មកវិញទាំងអស់។,모두 다시 넣어,Odłóż wszystko z powrotem,Coloque tudo de volta,ใส่กลับทั้งหมด,Đặt lại tất cả,全部放回去
 button.remember,Remember,يتذكر,Erinnern,Recordar,Recordar,Souviens-toi,याद करना,Ingat,Ricordare,覚えて,ចងចាំ,기억하다,Pamiętać,Lembrar,จดจำ,Nhớ,记住
+button.reset,Reset,إعادة ضبط,Zurücksetzen,Reiniciar,Reiniciar,Réinitialiser,रीसेट करें,Mengatur ulang,Reset,リセット,កំណត់ឡើងវិញ,다시 놓기,Nastawić,Reiniciar,รีเซ็ต,Cài lại,重置
 button.restore,Restore,يعيد,Wiederherstellen,Restaurar,Restaurar,Restaurer,पुनर्स्थापित करना,Memulihkan,Ripristinare,復元する,ស្តារ,복원하다,Przywrócić,Restaurar,คืนค่า,Khôi phục,恢复
 button.restore_this_version,Restore this version,استعادة هذا الإصدار,Stellen Sie diese Version wieder her,Restaurar esta versión,Restaurar esta versión,Restaurer cette version,इस संस्करण को पुनर्स्थापित करें,Pulihkan versi ini,Ripristina questa versione,このバージョンを復元する,ស្តារកំណែនេះ,이 버전을 복원하세요,Przywróć tę wersję,Restaurar esta versão,คืนค่าเวอร์ชันนี้,Khôi phục phiên bản này,恢复此版本
 button.save,Save,يحفظ,Speichern,Ahorrar,Ahorrar,Sauvegarder,बचाना,Menyimpan,Salva,保存,រក្សាទុក,구하다,Ratować,Salvar,บันทึก,Cứu,节省

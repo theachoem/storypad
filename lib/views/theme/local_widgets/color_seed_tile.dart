@@ -31,7 +31,7 @@ class ColorSeedTile extends StatelessWidget {
       builder: (void Function() open) {
         return ListTile(
           title: Text(tr("list_tile.color_seed.title")),
-          subtitle: Text(provider.theme.colorSeed != null ? tr("general.custom") : tr("general.default")),
+          subtitle: Text(provider.theme.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
           leading: Container(
             width: 24,
             height: 24,
@@ -43,8 +43,8 @@ class ColorSeedTile extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: provider.theme.colorSeed != null
-                    ? provider.theme.colorSeed!
+                color: provider.theme.colorSeedCustomized
+                    ? provider.theme.colorSeed
                     : Theme.of(context).colorScheme.primary,
               ),
             ),

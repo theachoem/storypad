@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
@@ -149,8 +150,8 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   Future<void> toggleShowDayCount() async {
     if (story == null) return;
 
-    story = story!.copyWithPreferences(
-      showDayCount: !story!.preferredShowDayCount,
+    story = story!.copyWith(
+      preferences: story!.preferences.copyWith(showDayCount: !story!.preferredShowDayCount),
       updatedAt: DateTime.now(),
     );
 
@@ -169,8 +170,8 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
   Future<void> toggleShowTime() async {
     if (story == null) return;
 
-    story = story!.copyWithPreferences(
-      showTime: !story!.preferredShowTime,
+    story = story!.copyWith(
+      preferences: story!.preferences.copyWith(showTime: !story!.preferredShowTime),
       updatedAt: DateTime.now(),
     );
 
@@ -182,6 +183,20 @@ class EditStoryViewModel extends BaseViewModel with DebounchedCallback {
     }
 
     AnalyticsService.instance.logToggleShowTime(
+      story: story!,
+    );
+  }
+
+  Future<void> changePreferences(StoryPreferencesDbModel preferences) async {
+    story = story!.copyWith(updatedAt: DateTime.now(), preferences: preferences);
+    notifyListeners();
+
+    if (await hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
+    AnalyticsService.instance.logUpdateStoryPreferences(
       story: story!,
     );
   }

@@ -30,6 +30,7 @@
   "button.put_back": "元に戻す",
   "button.put_back_all": "全部元に戻して",
   "button.remember": "覚えて",
+  "button.reset": "リセット",
   "button.restore": "復元する",
   "button.restore_this_version": "このバージョンを復元する",
   "button.save": "保存",

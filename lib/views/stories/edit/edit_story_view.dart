@@ -4,6 +4,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/widgets/bottom_sheets/image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/story_theme_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
 import 'package:storypad/widgets/sp_sliver_sticky_divider.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
@@ -19,6 +20,7 @@ import 'package:storypad/widgets/custom_embed/image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
+import 'package:storypad/widgets/sp_story_preference_theme.dart';
 
 import 'edit_story_view_model.dart';
 
@@ -79,7 +81,10 @@ class EditStoryView extends StatelessWidget {
     return ViewModelProvider<EditStoryViewModel>(
       create: (context) => EditStoryViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _EditStoryContent(viewModel);
+        return SpStoryPreferenceTheme(
+          preferences: viewModel.story?.preferences,
+          child: _EditStoryContent(viewModel),
+        );
       },
     );
   }

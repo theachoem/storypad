@@ -1,7 +1,7 @@
 import 'package:animated_clipper/animated_clipper.dart' show PathBuilders;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/objects/feeling_object.dart' show FeelingObject;
 import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart' show SpFloatingPopUpButton;
@@ -38,7 +38,7 @@ class SpFeelingButton extends StatelessWidget {
           margin: const EdgeInsets.all(4.0),
           child: Material(
             type: MaterialType.circle,
-            color: ColorScheme.of(context).readOnly.surface1,
+            color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.05),
             child: Tooltip(
               message: FeelingObject.feelingsByKey[feeling]?.translation(context) ?? tr("button.set_feeling"),
               child: InkWell(

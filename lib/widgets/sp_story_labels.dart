@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -214,7 +214,7 @@ class SpStoryLabels extends StatelessWidget {
 
     return Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-      color: ColorScheme.of(context).readOnly.surface2,
+      color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
       child: InkWell(
         borderRadius: BorderRadius.circular(4.0),
         onTap: onTap,
