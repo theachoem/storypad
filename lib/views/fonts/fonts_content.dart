@@ -13,6 +13,13 @@ class _FontsContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr("page.fonts.title")),
         bottom: buildSearchBar(themeProvider, context),
+        actions: [
+          IconButton(
+            tooltip: "https://fonts.google.com",
+            icon: Icon(Icons.travel_explore_outlined),
+            onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
+          ),
+        ],
       ),
       body: buildBody(themeProvider, context),
     );
