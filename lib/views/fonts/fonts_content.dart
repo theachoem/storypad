@@ -47,34 +47,58 @@ class _FontsContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     if (viewModel.fontGroups == null) return const Center(child: CircularProgressIndicator.adaptive());
+    return Scrollbar(
+      thumbVisibility: true,
+      interactive: true,
+      child: buildListView(context),
+    );
+  }
+
+  Widget buildListView(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(bottom: MediaQuery.of(context).padding.bottom),
-      itemCount: viewModel.fontGroups!.length,
+      itemCount: viewModel.fonts.length + viewModel.fontGroups!.length,
       itemBuilder: (context, index) {
-        final fontGroup = viewModel.fontGroups![index];
+        if (index < viewModel.fontGroups!.length) {
+          final fontGroup = viewModel.fontGroups![index];
+          return StickyHeader(
+            header: buildGroupHeader(context, fontGroup.label),
+            content: Container(
+              margin: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                children: List.generate(fontGroup.fontFamilies.length, (index) {
+                  return buildFontFamilyTile(context, fontGroup.fontFamilies[index]);
+                }),
+              ),
+            ),
+          );
+        } else {
+          int actualIndex = index - viewModel.fontGroups!.length;
+          final previousFont = actualIndex > 0 ? viewModel.fonts[actualIndex - 1] : null;
+          final font = viewModel.fonts[actualIndex];
 
-        return StickyHeader(
-          header: Container(
-            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              spacing: 16.0,
-              children: [
-                Text(fontGroup.label, style: TextTheme.of(context).titleLarge),
-                const Expanded(child: Divider(height: 1))
-              ],
-            ),
-          ),
-          content: Container(
-            margin: const EdgeInsets.only(bottom: 16.0),
-            child: Column(
-              children: List.generate(fontGroup.fontFamilies.length, (index) {
-                return buildFontFamilyTile(context, fontGroup.fontFamilies[index]);
-              }),
-            ),
-          ),
-        );
+          return Column(
+            children: [
+              if (previousFont == null || previousFont[0] != font[0]) buildGroupHeader(context, font[0]),
+              buildFontFamilyTile(context, font),
+            ],
+          );
+        }
       },
+    );
+  }
+
+  Widget buildGroupHeader(BuildContext context, String groupLabel) {
+    return Container(
+      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        spacing: 16.0,
+        children: [
+          Text(groupLabel, style: TextTheme.of(context).titleLarge),
+          const Expanded(child: Divider(height: 1))
+        ],
+      ),
     );
   }
 

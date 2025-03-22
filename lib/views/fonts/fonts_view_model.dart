@@ -60,14 +60,13 @@ class FontsViewModel extends BaseViewModel {
       groupedFonts.putIfAbsent(label, () => []).add(font);
     }
 
-    List<FontGroup> fontGroups = groupedFonts.entries.map((entry) {
-      return FontGroup(label: entry.key, fontFamilies: entry.value);
-    }).toList();
+    // List<FontGroup> fontGroups = groupedFonts.entries.map((entry) {
+    //   return FontGroup(label: entry.key, fontFamilies: entry.value);
+    // }).toList();
 
     return [
       FontGroup(label: tr("general.defaults"), fontFamilies: [kDefaultFontFamily]),
       if (recentlySelectedFonts != null) FontGroup(label: tr("general.recently"), fontFamilies: recentlySelectedFonts!),
-      ...fontGroups,
     ];
   }
 
