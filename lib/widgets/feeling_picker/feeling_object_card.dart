@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
+part of './sp_feeling_picker.dart';
 
-class FeelingObjectCard extends StatelessWidget {
-  const FeelingObjectCard({
-    super.key,
+class _FeelingObjectCard extends StatelessWidget {
+  const _FeelingObjectCard({
     required this.name,
     required this.selected,
     required this.icon,

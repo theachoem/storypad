@@ -7,7 +7,7 @@ class _SearchContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoryListMultiEditWrapper(
+    return SpStoryListMultiEditWrapper(
       builder: (BuildContext context) {
         return PopScope(
           canPop: false,
@@ -45,7 +45,7 @@ class _SearchContent extends StatelessWidget {
       body: ValueListenableBuilder<String>(
         valueListenable: viewModel.queryNotifier,
         builder: (context, query, child) {
-          return StoryList.withQuery(
+          return SpStoryList.withQuery(
             query: query,
             filter: viewModel.filter,
           );
@@ -55,7 +55,7 @@ class _SearchContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigationBar(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return SpMultiEditBottomNavBar(

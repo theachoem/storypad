@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/base_view/base_view_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'archives_view.dart';
@@ -31,7 +31,7 @@ class ArchivesViewModel extends BaseViewModel {
 
     bool shouldPop = true;
 
-    if (StoryListMultiEditWrapper.of(context).selectedStories.isNotEmpty) {
+    if (SpStoryListMultiEditWrapper.of(context).selectedStories.isNotEmpty) {
       OkCancelResult result = await showOkCancelAlertDialog(
         context: context,
         title: tr("dialog.are_you_sure_to_discard_these_changes.title"),

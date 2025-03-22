@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 
-class DateBlockEmbed extends EmbedBuilder {
+class SpDateBlockEmbed extends EmbedBuilder {
   @override
   String get key => 'date';
 

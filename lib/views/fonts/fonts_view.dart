@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/sticky_header/sticky_header.dart';
+import 'package:storypad/widgets/packages/sticky_header/sticky_header.dart';
 
 import 'fonts_view_model.dart';
 

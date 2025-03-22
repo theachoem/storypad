@@ -6,7 +6,7 @@ import 'package:storypad/core/services/app_store_opener_service.dart' show AppSt
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/community/local_widgets/community_card.dart';
-import 'package:storypad/widgets/bottom_sheets/share_app_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';

@@ -124,7 +124,7 @@ class _FeelingGroupItemPickerState extends State<_FeelingGroupItemPicker> {
         controller: controller,
         children: List.generate(feelings.length, (index) {
           final String item = feelings[index];
-          return FeelingObjectCard(
+          return _FeelingObjectCard(
             showSuffixIcon: false,
             name: FeelingObject.feelingsByKey[item]!.translation(context),
             selected: feeling == item,

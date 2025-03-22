@@ -68,7 +68,7 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
     final moods = FeelingObject.feelignGroups[group]!;
     final bool selected = FeelingObject.feelignGroups[group]?.contains(feeling) == true;
 
-    return FeelingObjectCard(
+    return _FeelingObjectCard(
       showSuffixIcon: true,
       name: group.translatedName,
       selected: selected,

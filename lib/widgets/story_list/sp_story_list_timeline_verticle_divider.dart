@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
-import 'package:storypad/widgets/story_list/story_tile.dart';
+import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
-class StoryListTimelineVerticleDivider extends StatelessWidget {
-  const StoryListTimelineVerticleDivider({
+class SpSpStoryListTimelineVerticleDivider extends StatelessWidget {
+  const SpSpStoryListTimelineVerticleDivider({
     super.key,
   });
 
@@ -15,11 +15,11 @@ class StoryListTimelineVerticleDivider extends StatelessWidget {
       left: AppTheme.getDirectionValue(
         context,
         null,
-        MediaQuery.of(context).padding.left + 16.0 + StoryTile.monogramSize / 2,
+        MediaQuery.of(context).padding.left + 16.0 + SpStoryTile.monogramSize / 2,
       ),
       right: AppTheme.getDirectionValue(
         context,
-        MediaQuery.of(context).padding.left + 16.0 + StoryTile.monogramSize / 2,
+        MediaQuery.of(context).padding.left + 16.0 + SpStoryTile.monogramSize / 2,
         null,
       ),
       child: const VerticalDivider(

@@ -7,7 +7,7 @@ class _ArchivesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoryListMultiEditWrapper(
+    return SpStoryListMultiEditWrapper(
       builder: (BuildContext context) {
         return PopScope(
           canPop: false,
@@ -21,7 +21,7 @@ class _ArchivesContent extends StatelessWidget {
               ],
             ),
             bottomNavigationBar: buildBottomNavigationBar(context),
-            body: StoryList.withQuery(
+            body: SpStoryList.withQuery(
               key: ValueKey(viewModel.editedKey),
               viewOnly: true,
               filter: SearchFilterObject(
@@ -38,7 +38,7 @@ class _ArchivesContent extends StatelessWidget {
   }
 
   Widget buildEditButton(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return Visibility(
@@ -93,7 +93,7 @@ class _ArchivesContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigationBar(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return SpMultiEditBottomNavBar(
@@ -118,7 +118,7 @@ class _ArchivesContent extends StatelessWidget {
   }
 
   Widget buildMoreEditingOptionsButton(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return Visibility(

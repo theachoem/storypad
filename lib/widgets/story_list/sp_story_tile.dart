@@ -10,7 +10,8 @@ import 'package:storypad/core/objects/story_icon_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
-import 'package:storypad/widgets/custom_embed/sp_image.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
+import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
@@ -18,19 +19,25 @@ import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
-import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/story_list/story_tile_actions.dart';
-import 'package:storypad/widgets/story_list/story_info_sheet.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 
-part 'story_tile_images.dart';
-part 'story_tile_monogram.dart';
-part 'story_tile_favorite_button.dart';
-part 'story_tile_contents.dart';
+part 'local_widgets/story_tile_images.dart';
+part 'local_widgets/story_tile_monogram.dart';
+part 'local_widgets/story_tile_favorite_button.dart';
+part 'local_widgets/story_tile_contents.dart';
+part 'local_widgets/story_tile_actions.dart';
 
-class StoryTile extends StatelessWidget {
+class SpStoryTile extends StatelessWidget {
   static const double monogramSize = 32;
 
-  const StoryTile({
+  const SpStoryTile({
     super.key,
     required this.story,
     required this.showMonogram,
@@ -60,46 +67,46 @@ class StoryTile extends StatelessWidget {
         SpPopMenuItem(
           title: tr('button.put_back'),
           leadingIconData: Icons.settings_backup_restore,
-          onPressed: () => StoryTileActions(story: story, listContext: listContext).putBack(context),
+          onPressed: () => _StoryTileActions(story: story, listContext: listContext).putBack(context),
         ),
       if (story.archivable)
         SpPopMenuItem(
           title: tr('button.archive'),
           leadingIconData: Icons.archive,
-          onPressed: () => StoryTileActions(story: story, listContext: listContext).archive(context),
+          onPressed: () => _StoryTileActions(story: story, listContext: listContext).archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
           title: tr('button.move_to_bin'),
           leadingIconData: Icons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => StoryTileActions(story: story, listContext: listContext).moveToBin(context),
+          onPressed: () => _StoryTileActions(story: story, listContext: listContext).moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
           title: tr('button.permanent_delete'),
           leadingIconData: Icons.delete_forever,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => StoryTileActions(story: story, listContext: listContext).hardDelete(context),
+          onPressed: () => _StoryTileActions(story: story, listContext: listContext).hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
           title: tr('button.import'),
           leadingIconData: Icons.restore_outlined,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
-          onPressed: () => StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
+          onPressed: () => _StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
         ),
       SpPopMenuItem(
         title: tr('button.info'),
         leadingIconData: Icons.info,
-        onPressed: () => StoryInfoSheet(story: story).show(context),
+        onPressed: () => SpStoryInfoSheet(story: story).show(context: context),
       )
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return StoryListMultiEditWrapper.tryListen(
+    return SpStoryListMultiEditWrapper.tryListen(
       context: context,
       builder: (context, multiEditState) {
         if (multiEditState == null) return buildStoryTile(context);
@@ -110,7 +117,7 @@ class StoryTile extends StatelessWidget {
 
   Widget buildStoryTile(
     BuildContext context, [
-    StoryListMultiEditWrapperState? multiEditState,
+    SpStoryListMultiEditWrapperState? multiEditState,
   ]) {
     StoryContentDbModel? content = story.draftContent ?? story.latestContent;
 
@@ -205,7 +212,7 @@ class _StoryTileStarredButton extends StatelessWidget {
   final StoryDbModel story;
   final bool viewOnly;
   final BuildContext listContext;
-  final StoryListMultiEditWrapperState? multiEditState;
+  final SpStoryListMultiEditWrapperState? multiEditState;
 
   @override
   Widget build(BuildContext context) {
@@ -224,9 +231,9 @@ class _StoryTileStarredButton extends StatelessWidget {
         transform: Matrix4.identity()..translate(x, y),
         child: _StoryTileFavoriteButton(
           story: story,
-          toggleStarred: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).toggleStarred,
+          toggleStarred: viewOnly ? null : _StoryTileActions(story: story, listContext: listContext).toggleStarred,
           multiEditState: multiEditState,
-          updateStarIcon: viewOnly ? null : StoryTileActions(story: story, listContext: listContext).updateStarIcon,
+          updateStarIcon: viewOnly ? null : _StoryTileActions(story: story, listContext: listContext).updateStarIcon,
         ),
       ),
     );

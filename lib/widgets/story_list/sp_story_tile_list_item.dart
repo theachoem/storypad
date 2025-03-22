@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/widgets/story_list/story_tile.dart';
+import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
-part 'story_month_header.dart';
+part 'local_widgets/story_month_header.dart';
 
-class StoryTileListItem extends StatelessWidget {
-  const StoryTileListItem({
+class SpStoryTileListItem extends StatelessWidget {
+  const SpStoryTileListItem({
     super.key,
     required this.stories,
     required this.index,
@@ -37,7 +37,7 @@ class StoryTileListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _StoryMonthHeader(index: index, context: context, story: story, showYear: showYear),
-          StoryTile(
+          SpStoryTile(
             story: story,
             showMonogram: showMonogram,
             viewOnly: viewOnly,
@@ -47,7 +47,7 @@ class StoryTileListItem extends StatelessWidget {
         ],
       );
     } else {
-      return StoryTile(
+      return SpStoryTile(
         story: story,
         showMonogram: showMonogram,
         viewOnly: viewOnly,

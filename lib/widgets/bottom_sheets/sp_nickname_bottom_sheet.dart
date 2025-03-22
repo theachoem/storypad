@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
 
-class NicknameBottomSheet extends BaseBottomSheet {
-  const NicknameBottomSheet({
+class SpNicknameBottomSheet extends BaseBottomSheet {
+  const SpNicknameBottomSheet({
     required this.nickname,
   });
 

@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/widgets/custom_embed/sp_image.dart';
+import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 
-class ImageBlockEmbed extends quill.EmbedBuilder {
+class SpImageBlockEmbed extends quill.EmbedBuilder {
   final List<String> Function() fetchAllImages;
 
-  ImageBlockEmbed({
+  SpImageBlockEmbed({
     required this.fetchAllImages,
   });
 

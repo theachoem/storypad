@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:storypad/views/fonts/fonts_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
-class FontsSheet extends BaseBottomSheet {
+class SpFontsSheet extends BaseBottomSheet {
   final String currentFontFamily;
   final FontWeight currentFontWeight;
   final void Function(String fontFamily) onChanged;
 
-  FontsSheet({
+  SpFontsSheet({
     required this.currentFontFamily,
     required this.currentFontWeight,
     required this.onChanged,

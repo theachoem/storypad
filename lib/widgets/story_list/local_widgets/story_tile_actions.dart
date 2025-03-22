@@ -1,19 +1,10 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/views/home/home_view_model.dart';
-import 'package:storypad/widgets/story_list/story_list_with_query.dart';
+part of '../sp_story_tile.dart';
 
-class StoryTileActions {
+class _StoryTileActions {
   final StoryDbModel story;
   final BuildContext listContext;
 
-  StoryTileActions({
+  _StoryTileActions({
     required this.story,
     required this.listContext,
   });
@@ -41,9 +32,9 @@ class StoryTileActions {
         StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
         if (updatedStory == null) return;
 
-        /// In all case, delete button only show inside [StoryListWithQuery],
+        /// In all case, delete button only show inside [SpStoryListWithQuery],
         /// So after undo, we should reload the list.
-        if (listContext.mounted) StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+        if (listContext.mounted) SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
 
         AnalyticsService.instance.logUndoHardDeleteStory(
           story: updatedStory,
@@ -104,7 +95,7 @@ class StoryTileActions {
 
               // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
               if (listContext.mounted) {
-                await StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+                await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
               }
 
               return reloadHome('$runtimeType#moveToBin');
@@ -169,7 +160,7 @@ class StoryTileActions {
         );
 
         if (listContext.mounted) {
-          await StoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+          await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
           await reloadHome('$runtimeType#putBack');
         }
       }

@@ -97,8 +97,8 @@ class _ShowStoryContent extends StatelessWidget {
         enableScribble: false,
         showCursor: false,
         embedBuilders: [
-          ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.draftContent)),
-          DateBlockEmbed(),
+          SpImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(viewModel.draftContent)),
+          SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
       ),
@@ -126,7 +126,7 @@ class _ShowStoryContent extends StatelessWidget {
       IconButton(
         tooltip: tr("page.theme.title"),
         icon: Icon(Icons.color_lens_outlined),
-        onPressed: () => StoryThemeBottomSheet(
+        onPressed: () => SpStoryThemeBottomSheet(
           story: viewModel.story!,
           onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
         ).show(context: context),
@@ -137,7 +137,7 @@ class _ShowStoryContent extends StatelessWidget {
             SpPopMenuItem(
               leadingIconData: Icons.info_outline,
               title: tr("button.info"),
-              onPressed: () => StoryInfoSheet(story: viewModel.story!).show(context),
+              onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
             ),
           ];
         },

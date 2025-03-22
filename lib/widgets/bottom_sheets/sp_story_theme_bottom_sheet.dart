@@ -14,11 +14,11 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
-class StoryThemeBottomSheet extends BaseBottomSheet {
+class SpStoryThemeBottomSheet extends BaseBottomSheet {
   final StoryDbModel story;
   final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
 
-  StoryThemeBottomSheet({
+  SpStoryThemeBottomSheet({
     required this.story,
     required this.onThemeChanged,
   });

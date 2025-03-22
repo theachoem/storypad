@@ -68,8 +68,8 @@ class _Editor extends StatelessWidget {
         enableScribble: true,
         showCursor: true,
         embedBuilders: [
-          ImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(draftContent)),
-          DateBlockEmbed(),
+          SpImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(draftContent)),
+          SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
       ),
@@ -123,7 +123,7 @@ class _Editor extends StatelessWidget {
             QuillToolbarCustomButtonOptions(
               tooltip: FlutterQuillLocalizations.of(context)?.image,
               icon: Icon(Icons.image),
-              onPressed: () => ImagePickerBottomSheet.showPicker(context: context, controller: controller),
+              onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
             ),
         ],
         multiRowsDisplay: false,

@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/widgets/db_assets/db_image.dart';
+import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 
 class SpImage extends StatelessWidget {
@@ -48,7 +48,7 @@ class SpImage extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
-          image: DbImage(assetLink: link, currentUser: GoogleDriveService.instance.googleSignIn.currentUser),
+          image: SpDbImageProvider(assetLink: link, currentUser: GoogleDriveService.instance.googleSignIn.currentUser),
           errorBuilder: (context, error, strackTrace) =>
               errorWidget?.call(context, link, error) ??
               buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),

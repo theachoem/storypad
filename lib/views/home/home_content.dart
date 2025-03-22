@@ -7,7 +7,7 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoryListMultiEditWrapper(
+    return SpStoryListMultiEditWrapper(
       builder: (BuildContext context) {
         return buildScaffold(context);
       },
@@ -29,7 +29,7 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget buildNewStoryButton(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return Visibility(
@@ -45,7 +45,7 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigationBar(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return SpMultiEditBottomNavBar(
@@ -108,13 +108,13 @@ class _HomeContent extends StatelessWidget {
     required BuildContext listContext,
   }) {
     StoryDbModel story = viewModel.stories!.items[index];
-    return StoryListenerBuilder(
+    return SpStoryListenerBuilder(
       key: viewModel.scrollInfo.storyKeys[index],
       story: story,
       onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
       onDeleted: () => viewModel.reload(debugSource: '$runtimeType#onDeleted ${story.id}'),
       builder: (_) {
-        return StoryTileListItem(
+        return SpStoryTileListItem(
           showYear: false,
           index: index,
           stories: viewModel.stories!,

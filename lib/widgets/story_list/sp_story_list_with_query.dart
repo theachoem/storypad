@@ -3,10 +3,10 @@ import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/backups/restore_backup_service.dart';
-import 'package:storypad/widgets/story_list/story_list.dart';
+import 'package:storypad/widgets/story_list/sp_story_list.dart';
 
-class StoryListWithQuery extends StatefulWidget {
-  const StoryListWithQuery({
+class SpStoryListWithQuery extends StatefulWidget {
+  const SpStoryListWithQuery({
     super.key,
     this.query,
     this.viewOnly = false,
@@ -17,21 +17,21 @@ class StoryListWithQuery extends StatefulWidget {
   final String? query;
   final bool viewOnly;
 
-  static StoryListWithQueryState? of(BuildContext context) {
-    return context.findAncestorStateOfType<StoryListWithQueryState>();
+  static SpStoryListWithQueryState? of(BuildContext context) {
+    return context.findAncestorStateOfType<SpStoryListWithQueryState>();
   }
 
   @override
-  State<StoryListWithQuery> createState() => StoryListWithQueryState();
+  State<SpStoryListWithQuery> createState() => SpStoryListWithQueryState();
 }
 
-class StoryListWithQueryState extends State<StoryListWithQuery> {
+class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   CollectionDbModel<StoryDbModel>? stories;
 
   Future<void> load({
     required String debugSource,
   }) async {
-    debugPrint("📂 Load StoryListWithQuery from $debugSource");
+    debugPrint("📂 Load SpStoryListWithQuery from $debugSource");
 
     stories = await StoryDbModel.db.where(
       filters: widget.filter?.toDatabaseFilter(query: widget.query) ?? {'query': widget.query},
@@ -41,7 +41,7 @@ class StoryListWithQueryState extends State<StoryListWithQuery> {
   }
 
   @override
-  void didUpdateWidget(covariant StoryListWithQuery oldWidget) {
+  void didUpdateWidget(covariant SpStoryListWithQuery oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     load(debugSource: '$runtimeType#didUpdateWidget');
@@ -62,7 +62,7 @@ class StoryListWithQueryState extends State<StoryListWithQuery> {
 
   @override
   Widget build(BuildContext context) {
-    return StoryList(
+    return SpStoryList(
       onRefresh: () => load(debugSource: '$runtimeType#onRefresh'),
       stories: stories,
       viewOnly: widget.viewOnly,

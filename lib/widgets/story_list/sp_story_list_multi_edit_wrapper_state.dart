@@ -1,11 +1,6 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/views/home/home_view_model.dart';
+part of 'sp_story_list_multi_edit_wrapper.dart';
 
-class StoryListMultiEditWrapperState extends ChangeNotifier {
+class SpStoryListMultiEditWrapperState extends ChangeNotifier {
   bool editing = false;
   Set<int> selectedStories = {};
 
@@ -112,7 +107,7 @@ class StoryListMultiEditWrapperState extends ChangeNotifier {
     );
 
     if (result == OkCancelResult.ok && context.mounted) {
-      final state = StoryListMultiEditWrapper.of(context);
+      final state = SpStoryListMultiEditWrapper.of(context);
 
       for (int i = 0; i < state.selectedStories.length; i++) {
         int id = state.selectedStories.elementAt(i);
@@ -121,61 +116,5 @@ class StoryListMultiEditWrapperState extends ChangeNotifier {
 
       state.turnOffEditing();
     }
-  }
-}
-
-class StoryListMultiEditWrapper extends StatelessWidget {
-  const StoryListMultiEditWrapper({
-    super.key,
-    required this.builder,
-  });
-
-  final Widget Function(BuildContext context) builder;
-
-  static StoryListMultiEditWrapperState of(BuildContext context) {
-    return context.read<StoryListMultiEditWrapperState>();
-  }
-
-  static tryListen({
-    required BuildContext context,
-    required Widget Function(BuildContext context, StoryListMultiEditWrapperState? state) builder,
-  }) {
-    bool hasProvider = false;
-
-    try {
-      context.read<StoryListMultiEditWrapperState>();
-      hasProvider = true;
-    } catch (e) {
-      hasProvider = false;
-    }
-
-    if (!hasProvider) {
-      return builder(context, null);
-    }
-
-    return Consumer<StoryListMultiEditWrapperState>(
-      builder: (context, state, child) {
-        return builder(context, state);
-      },
-    );
-  }
-
-  static listen({
-    required BuildContext context,
-    required Widget Function(BuildContext context, StoryListMultiEditWrapperState state) builder,
-  }) {
-    return Consumer<StoryListMultiEditWrapperState>(
-      builder: (context, state, child) {
-        return builder(context, state);
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableProvider(
-      create: (context) => StoryListMultiEditWrapperState(),
-      builder: (context, child) => builder(context),
-    );
   }
 }

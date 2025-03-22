@@ -32,7 +32,7 @@ class _HomeScaffold extends StatelessWidget {
             valueListenable: endDrawerOpenedNotifier,
             child: Stack(
               children: [
-                const StoryListTimelineVerticleDivider(),
+                const SpSpStoryListTimelineVerticleDivider(),
                 RefreshIndicator.adaptive(
                   edgeOffset:
                       viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,

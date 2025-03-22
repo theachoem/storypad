@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 
-class StoryListenerBuilder extends StatefulWidget {
-  const StoryListenerBuilder({
+class SpStoryListenerBuilder extends StatefulWidget {
+  const SpStoryListenerBuilder({
     super.key,
     required this.story,
     required this.onChanged,
@@ -16,10 +16,10 @@ class StoryListenerBuilder extends StatefulWidget {
   final Widget Function(BuildContext context) builder;
 
   @override
-  State<StoryListenerBuilder> createState() => _StoryListenerBuilderState();
+  State<SpStoryListenerBuilder> createState() => _SpStoryListenerBuilderState();
 }
 
-class _StoryListenerBuilderState extends State<StoryListenerBuilder> {
+class _SpStoryListenerBuilderState extends State<SpStoryListenerBuilder> {
   late StoryDbModel story = widget.story;
 
   @override

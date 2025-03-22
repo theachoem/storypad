@@ -8,8 +8,8 @@ import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/story_list/story_list.dart';
-import 'package:storypad/widgets/story_list/story_list_multi_edit_wrapper.dart';
+import 'package:storypad/widgets/story_list/sp_story_list.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
 import 'archives_view_model.dart';
 

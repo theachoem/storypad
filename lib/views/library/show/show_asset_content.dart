@@ -9,7 +9,7 @@ class _ShowAssetContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: StoryList.withQuery(
+      body: SpStoryList.withQuery(
         viewOnly: viewModel.params.storyViewOnly,
         filter: SearchFilterObject(
           assetId: viewModel.params.assetId,

@@ -4,11 +4,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
-class DaysCountBottomSheet extends BaseBottomSheet {
+class SpDaysCountBottomSheet extends BaseBottomSheet {
   final StoryDbModel story;
   final Future<void> Function()? onToggleShowDayCount;
 
-  DaysCountBottomSheet({
+  SpDaysCountBottomSheet({
     this.onToggleShowDayCount,
     required this.story,
   });

@@ -1,4 +1,4 @@
-part of 'story_tile.dart';
+part of '../sp_story_tile.dart';
 
 class _StoryTileFavoriteButton extends StatelessWidget {
   const _StoryTileFavoriteButton({
@@ -11,7 +11,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
   final StoryDbModel story;
   final Future<void> Function()? toggleStarred;
   final Future<void> Function(String starIcon)? updateStarIcon;
-  final StoryListMultiEditWrapperState? multiEditState;
+  final SpStoryListMultiEditWrapperState? multiEditState;
 
   @override
   Widget build(BuildContext context) {

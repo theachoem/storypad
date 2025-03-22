@@ -1,4 +1,4 @@
-part of 'story_tile.dart';
+part of '../sp_story_tile.dart';
 
 class _StoryTileMonogram extends StatelessWidget {
   const _StoryTileMonogram({

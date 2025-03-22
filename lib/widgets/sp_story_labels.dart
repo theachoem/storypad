@@ -9,7 +9,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
-import 'package:storypad/widgets/bottom_sheets/days_count_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 
 class SpStoryLabelsDraftActions {
   final Future<void> Function() onContinueEditing;
@@ -127,7 +127,7 @@ class SpStoryLabels extends StatelessWidget {
         buildPin(
           context: context,
           title: "📌 ${plural("plural.day_ago", story.dateDifferentCount.inDays)}",
-          onTap: () => DaysCountBottomSheet(
+          onTap: () => SpDaysCountBottomSheet(
             story: story,
             onToggleShowDayCount: onToggleShowDayCount,
           ).show(context: context),

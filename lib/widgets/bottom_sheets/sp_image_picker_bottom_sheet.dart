@@ -7,24 +7,24 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
-import 'package:storypad/widgets/custom_embed/sp_image.dart';
+import 'package:storypad/widgets/sp_image.dart';
 import 'package:path/path.dart' as path;
 
-class ImagePickerBottomSheet extends BaseBottomSheet {
-  const ImagePickerBottomSheet({
+class SpImagePickerBottomSheet extends BaseBottomSheet {
+  const SpImagePickerBottomSheet({
     required this.assets,
   });
 
   final List<AssetDbModel> assets;
 
-  static Future<void> showPicker<T>({
+  static Future<void> showQuillPicker<T>({
     required BuildContext context,
     required QuillController controller,
   }) async {
     final assets = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return;
 
-    final asset = await ImagePickerBottomSheet(
+    final asset = await SpImagePickerBottomSheet(
       assets: assets,
     ).show(context: context);
 

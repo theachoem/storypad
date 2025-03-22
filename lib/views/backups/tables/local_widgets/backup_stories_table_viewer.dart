@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/widgets/story_list/story_list.dart';
+import 'package:storypad/widgets/story_list/sp_story_list.dart';
 
 class BackupStoriesTableViewer extends StatelessWidget {
   const BackupStoriesTableViewer({
@@ -13,7 +13,7 @@ class BackupStoriesTableViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoryList(
+    return SpStoryList(
       viewOnly: true,
       stories: CollectionDbModel(items: stories),
       onChanged: (_) {},

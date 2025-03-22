@@ -9,26 +9,26 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 
-class DbImage extends ImageProvider<DbImage> {
+class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   final String assetLink;
   final double scale;
   final GoogleSignInAccount? currentUser;
 
   static BaseCacheManager defaultCacheManager = DefaultCacheManager();
 
-  DbImage({
+  SpDbImageProvider({
     required this.assetLink,
     required this.currentUser,
     this.scale = 1,
   });
 
   @override
-  Future<DbImage> obtainKey(ImageConfiguration configuration) {
-    return SynchronousFuture<DbImage>(this);
+  Future<SpDbImageProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<SpDbImageProvider>(this);
   }
 
   @override
-  ImageStreamCompleter loadImage(DbImage key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(SpDbImageProvider key, ImageDecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode: decode),
       scale: key.scale,
@@ -40,7 +40,7 @@ class DbImage extends ImageProvider<DbImage> {
   }
 
   Future<ui.Codec> _loadAsync(
-    DbImage key, {
+    SpDbImageProvider key, {
     required ImageDecoderCallback decode,
   }) async {
     assert(key == this);
@@ -90,7 +90,7 @@ class DbImage extends ImageProvider<DbImage> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is DbImage &&
+    return other is SpDbImageProvider &&
         other.assetLink == assetLink &&
         currentUser?.email == other.currentUser?.email &&
         other.scale == scale;
@@ -100,5 +100,6 @@ class DbImage extends ImageProvider<DbImage> {
   int get hashCode => Object.hash(assetLink, scale);
 
   @override
-  String toString() => '${objectRuntimeType(this, 'DbImage')}("$assetLink", scale: ${scale.toStringAsFixed(1)})';
+  String toString() =>
+      '${objectRuntimeType(this, 'SpDbImageProvider')}("$assetLink", scale: ${scale.toStringAsFixed(1)})';
 }

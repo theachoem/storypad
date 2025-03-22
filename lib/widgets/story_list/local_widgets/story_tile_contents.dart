@@ -1,4 +1,4 @@
-part of 'story_tile.dart';
+part of '../sp_story_tile.dart';
 
 class _StoryTileContents extends StatelessWidget {
   const _StoryTileContents({
@@ -52,19 +52,19 @@ class _StoryTileContents extends StatelessWidget {
           onToggleShowDayCount: viewOnly
               ? null
               : () async {
-                  await StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
+                  await _StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
                   if (context.mounted) Navigator.maybePop(context);
                 },
           onToggleShowTime: viewOnly
               ? null
               : () async {
-                  await StoryTileActions(story: story, listContext: listContext).toggleShowTime();
+                  await _StoryTileActions(story: story, listContext: listContext).toggleShowTime();
                   if (context.mounted) Navigator.maybePop(context);
                 },
           onChangeDate: viewOnly
               ? null
               : (newDateTime) async {
-                  await StoryTileActions(story: story, listContext: listContext).changeDate(newDateTime);
+                  await _StoryTileActions(story: story, listContext: listContext).changeDate(newDateTime);
                   if (context.mounted) Navigator.maybePop(context);
                 },
         ),

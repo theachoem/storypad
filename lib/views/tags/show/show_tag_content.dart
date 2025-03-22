@@ -7,7 +7,7 @@ class _ShowTagContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoryListMultiEditWrapper(
+    return SpStoryListMultiEditWrapper(
       builder: (BuildContext context) {
         return PopScope(
           canPop: false,
@@ -31,7 +31,7 @@ class _ShowTagContent extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: buildBottomNavigationBar(context),
-      body: StoryList.withQuery(
+      body: SpStoryList.withQuery(
         viewOnly: viewModel.params.storyViewOnly,
         filter: viewModel.filter,
       ),
@@ -61,7 +61,7 @@ class _ShowTagContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigationBar(BuildContext context) {
-    return StoryListMultiEditWrapper.listen(
+    return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return SpMultiEditBottomNavBar(

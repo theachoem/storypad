@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
-import 'package:storypad/widgets/feeling_picker/feeling_object_card.dart' show FeelingObjectCard;
 import 'package:storypad/widgets/sp_fade_in.dart';
 
 part 'feeling_group_picker.dart';
 part 'feeling_group_item_picker.dart';
+part 'feeling_object_card.dart';
 
 class SpFeelingPicker extends StatefulWidget {
   const SpFeelingPicker({

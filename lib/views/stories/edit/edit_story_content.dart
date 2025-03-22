@@ -107,7 +107,7 @@ class _EditStoryContent extends StatelessWidget {
       IconButton(
         tooltip: tr("page.theme.title"),
         icon: Icon(Icons.color_lens_outlined),
-        onPressed: () => StoryThemeBottomSheet(
+        onPressed: () => SpStoryThemeBottomSheet(
           story: viewModel.story!,
           onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
         ).show(context: context),

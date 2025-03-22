@@ -62,7 +62,7 @@ class _CommunityContent extends StatelessWidget {
             leading: Icon(Icons.ios_share_rounded),
             title: Text(tr("list_tile.share_app.title")),
             subtitle: Text(tr("list_tile.share_app.subtitle")),
-            onTap: () => ShareAppBottomSheet().show(context: context),
+            onTap: () => SpShareAppBottomSheet().show(context: context),
           ),
         ],
       ),

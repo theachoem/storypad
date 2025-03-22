@@ -1,4 +1,4 @@
-part of 'story_tile_list_item.dart';
+part of '../sp_story_tile_list_item.dart';
 
 class _StoryMonthHeader extends StatelessWidget {
   const _StoryMonthHeader({
@@ -57,7 +57,7 @@ class _MonthChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: StoryTile.monogramSize,
+      width: SpStoryTile.monogramSize,
       alignment: Alignment.center,
       child: CustomPaint(
         painter: _MonthChipBoxPainter(

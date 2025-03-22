@@ -5,7 +5,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
-class ShareAppBottomSheet extends BaseBottomSheet {
+class SpShareAppBottomSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
     String message = '''

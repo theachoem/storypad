@@ -6,19 +6,19 @@ import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
-import 'package:storypad/widgets/story_list/story_list_timeline_verticle_divider.dart';
-import 'package:storypad/widgets/story_list/story_list_with_query.dart';
-import 'package:storypad/widgets/story_list/story_listener_builder.dart';
-import 'package:storypad/widgets/story_list/story_tile_list_item.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
+import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
+import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
 
-class StoryList extends StatelessWidget {
+class SpStoryList extends StatelessWidget {
   final CollectionDbModel<StoryDbModel>? stories;
   final void Function(StoryDbModel) onChanged;
   final void Function() onDeleted;
   final bool viewOnly;
   final Future<void> Function()? onRefresh;
 
-  const StoryList({
+  const SpStoryList({
     super.key,
     this.stories,
     required this.onChanged,
@@ -27,13 +27,13 @@ class StoryList extends StatelessWidget {
     this.viewOnly = false,
   });
 
-  static StoryListWithQuery withQuery({
+  static SpStoryListWithQuery withQuery({
     Key? key,
     SearchFilterObject? filter,
     String? query,
     bool viewOnly = false,
   }) {
-    return StoryListWithQuery(
+    return SpStoryListWithQuery(
       key: key,
       filter: filter,
       query: query,
@@ -52,7 +52,7 @@ class StoryList extends StatelessWidget {
 
     return Stack(
       children: [
-        const StoryListTimelineVerticleDivider(),
+        const SpSpStoryListTimelineVerticleDivider(),
         if (onRefresh != null) ...[
           RefreshIndicator.adaptive(
             onRefresh: onRefresh!,
@@ -74,14 +74,14 @@ class StoryList extends StatelessWidget {
       itemBuilder: (context, index) {
         final story = stories!.items[index];
 
-        return StoryListenerBuilder(
+        return SpStoryListenerBuilder(
           story: story,
           key: ValueKey(story.id),
           onChanged: onChanged,
           // onDeleted only happen when reloaded story is null which not frequently happen. We just reload in this case.
           onDeleted: onDeleted,
           builder: (context) {
-            return StoryTileListItem(
+            return SpStoryTileListItem(
               showYear: true,
               stories: stories!,
               index: index,

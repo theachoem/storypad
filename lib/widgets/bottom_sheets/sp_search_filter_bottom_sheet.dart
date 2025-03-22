@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
-class SearchFilterBottomSheet extends BaseBottomSheet {
+class SpSearchFilterBottomSheet extends BaseBottomSheet {
   final SearchFilterRoute params;
 
-  SearchFilterBottomSheet({
+  SpSearchFilterBottomSheet({
     required this.params,
   });
 
