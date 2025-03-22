@@ -67,6 +67,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
                   onThemeChanged(notifier.value);
                 },
               ),
+              buildBottomPadding(bottomPadding)
             ],
           ),
         );
