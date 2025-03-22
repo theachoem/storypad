@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
+import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_theme_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
@@ -60,6 +61,7 @@ class EditStoryRoute extends BaseRoute {
 
     return {
       'year': initialYear.toString(),
+      'hello_text': WelcomeMessageService.get(),
       'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };
   }
