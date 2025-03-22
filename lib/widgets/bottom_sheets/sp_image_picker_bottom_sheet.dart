@@ -5,10 +5,10 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/helpers/path_helper.dart' as path;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_image.dart';
-import 'package:path/path.dart' as path;
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({

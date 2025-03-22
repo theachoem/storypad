@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:path/path.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 

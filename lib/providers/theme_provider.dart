@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/objects/theme_object.dart';
-import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
-import 'package:storypad/core/storages/theme_storage.dart';
+import 'package:flutter/material.dart'
+    show Brightness, BuildContext, ChangeNotifier, Color, FontWeight, ThemeMode, View;
+import 'package:storypad/core/constants/app_constants.dart' show kDefaultFontWeight;
+import 'package:storypad/core/objects/theme_object.dart' show ThemeObject;
+import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart' show AnalyticsUserProperyService;
+import 'package:storypad/core/storages/theme_storage.dart' show ThemeStorage;
 
 class ThemeProvider extends ChangeNotifier {
   static ThemeStorage get storage => ThemeStorage.instance;

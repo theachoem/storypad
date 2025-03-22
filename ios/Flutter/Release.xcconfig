@@ -1,5 +1,10 @@
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-spooky.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-storypad.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-community.xcconfig"
+
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-spooky.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-storypad.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-community.xcconfig"
 
 #include "Generated.xcconfig"
 #include? "GeneratedDartDefines.xcconfig"

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 
 class BackupAssetsTableViewer extends StatelessWidget {
   const BackupAssetsTableViewer({

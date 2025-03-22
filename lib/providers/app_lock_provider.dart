@@ -1,17 +1,17 @@
-import 'dart:async';
-
-import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'dart:async' show Future;
+import 'package:adaptive_dialog/adaptive_dialog.dart'
+    show AlertDialogAction, showConfirmationDialog, showTextAnswerDialog;
 import 'package:easy_localization/easy_localization.dart' show tr;
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
 import 'package:storypad/core/objects/app_lock_object.dart' show $AppLockObjectCopyWith, AppLockObject;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/core/services/local_auth_service.dart' show LocalAuthService;
 import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorage;
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
-import 'package:storypad/initializers/app_lock_initializer.dart';
-import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
-import 'package:storypad/widgets/sp_pin_unlock.dart';
+import 'package:storypad/initializers/app_lock_initializer.dart' show AppLockInitializer;
+import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart' show SecurityQuestionsRoute;
+import 'package:storypad/widgets/sp_pin_unlock.dart' show SpPinUnlock, SpPinUnlockTitle;
 
 class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {

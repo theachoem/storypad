@@ -1,20 +1,20 @@
-import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/mixins/debounched_callback.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/asset_backup_service.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
-import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
-import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/core/services/queue_delete_backup_service.dart';
-import 'package:storypad/core/services/backups/restore_backup_service.dart';
-import 'package:storypad/views/home/home_view_model.dart';
+import 'dart:async' show Future;
+import 'package:easy_localization/easy_localization.dart' show tr;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart' show FirebaseCrashlytics;
+import 'package:flutter/material.dart' show BuildContext, ChangeNotifier, debugPrint, debugPrintStack;
+import 'package:provider/provider.dart' show ReadContext;
+import 'package:storypad/core/mixins/debounched_callback.dart' show DebounchedCallback;
+import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
+import 'package:storypad/core/objects/backup_object.dart' show BackupObject;
+import 'package:storypad/core/objects/cloud_file_object.dart' show CloudFileObject;
+import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
+import 'package:storypad/core/services/asset_backup_service.dart' show AssetBackupService;
+import 'package:storypad/core/services/backup_sources/base_backup_source.dart' show BaseBackupSource;
+import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart' show GoogleDriveBackupSource;
+import 'package:storypad/core/services/messenger_service.dart' show MessengerService;
+import 'package:storypad/core/services/queue_delete_backup_service.dart' show QueueDeleteBackupService;
+import 'package:storypad/core/services/backups/restore_backup_service.dart' show RestoreBackupService;
+import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   final BaseBackupSource source = GoogleDriveBackupSource();

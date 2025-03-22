@@ -1,12 +1,12 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/core/databases/models/collection_db_model.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/views/tags/edit/edit_tag_view.dart';
-import 'package:storypad/views/tags/show/show_tag_view.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart' show OkCancelResult, showOkCancelAlertDialog;
+import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
+import 'package:storypad/core/databases/models/collection_db_model.dart' show CollectionDbModel;
+import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
+import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
+import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
+import 'package:storypad/core/types/path_type.dart' show PathType;
+import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagRoute;
+import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
 class TagsProvider extends ChangeNotifier {
   TagsProvider() {
