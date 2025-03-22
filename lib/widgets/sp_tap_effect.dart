@@ -33,9 +33,11 @@ class SpTapEffect extends StatefulWidget {
     ],
     this.onLongPressed,
     this.borderOption,
+    this.scaleActive = 0.98,
   });
 
   final Widget child;
+  final double scaleActive;
   final SpTapEffectBorderOption? borderOption;
   final List<SpTapEffectType> effects;
   final void Function()? onTap;
@@ -49,7 +51,6 @@ class SpTapEffect extends StatefulWidget {
 }
 
 class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStateMixin {
-  final double scaleActive = 0.98;
   final double opacityActive = 0.2;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
@@ -59,7 +60,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
   @override
   void initState() {
     controller = AnimationController(vsync: this, duration: widget.duration);
-    scaleAnimation = Tween<double>(begin: 1, end: scaleActive).animate(controller);
+    scaleAnimation = Tween<double>(begin: 1, end: widget.scaleActive).animate(controller);
     opacityAnimation = Tween<double>(begin: 1, end: opacityActive).animate(controller);
     borderAnimation = Tween<double>(begin: 0, end: 1).animate(controller);
     super.initState();

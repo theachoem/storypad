@@ -1,5 +1,5 @@
 name: storypad
-version: 2.8.1+277
+version: 2.8.1+279
 publish_to: none
 environment:
   sdk: ^3.5.4
@@ -26,7 +26,7 @@ dependencies:
   flutter_custom_tabs: ^2.2.0-dev.1
   flutter_markdown: ^0.7.6+2
   flutter_native_splash: ^2.4.5
-  flutter_quill: ^11.1.1
+  flutter_quill: 11.0.0
   flutter_secure_storage: ^10.0.0-beta.4
   flutter_slidable: ^4.0.0
   flutter_staggered_grid_view: ^0.7.0

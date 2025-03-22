@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'feeling_group_picker.dart';
 part 'feeling_group_item_picker.dart';
@@ -43,18 +45,25 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
         borderRadius: BorderRadius.circular(16.0),
         child: Wrap(
           children: [
-            Navigator(
-              onGenerateRoute: (settings) {
-                return MaterialPageRoute(builder: (context) {
-                  return _FeelingGroupPicker(
-                    feeling: widget.feeling,
-                    onPicked: widget.onPicked,
-                    onHeightChanged: (height) async {
-                      setState(() => this.height = height);
-                    },
-                  );
-                });
-              },
+            Theme(
+              data: Theme.of(context).copyWith(
+                pageTransitionsTheme: PageTransitionsTheme(
+                  builders: {TargetPlatform.android: ZoomPageTransitionsBuilder()},
+                ),
+              ),
+              child: Navigator(
+                onGenerateRoute: (settings) {
+                  return MaterialPageRoute(builder: (context) {
+                    return _FeelingGroupPicker(
+                      feeling: widget.feeling,
+                      onPicked: widget.onPicked,
+                      onHeightChanged: (height) async {
+                        setState(() => this.height = height);
+                      },
+                    );
+                  });
+                },
+              ),
             ),
           ],
         ),

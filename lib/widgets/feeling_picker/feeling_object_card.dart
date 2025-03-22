@@ -22,8 +22,16 @@ class _FeelingObjectCard extends StatelessWidget {
       height: 100,
       child: Material(
         color: selected ? ColorScheme.of(context).readOnly.surface1 : Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+        child: SpTapEffect(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
+          scaleActive: 0.95,
+          effects: [
+            SpTapEffectType.scaleDown,
+            SpTapEffectType.touchableOpacity,
+          ],
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Wrap(
