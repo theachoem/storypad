@@ -68,11 +68,10 @@ class AppTheme extends StatelessWidget {
       return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, fontWeight));
     }
 
-    final shareAxisTransition = FadeForwardsPageTransitionsBuilder();
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: shareAxisTransition,
+      TargetPlatform.android: OpenUpwardsPageTransitionsBuilder(),
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
