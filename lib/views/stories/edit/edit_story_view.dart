@@ -61,7 +61,7 @@ class EditStoryRoute extends BaseRoute {
 
     return {
       'year': initialYear.toString(),
-      'hello_text': WelcomeMessageService.get(),
+      'hello_text': WelcomeMessageService.get(null),
       'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };
   }

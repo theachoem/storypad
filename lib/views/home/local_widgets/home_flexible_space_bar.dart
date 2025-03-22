@@ -63,6 +63,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 2.0,
               children: [
                 SpTapEffect(
                   onTap: () => viewModel.changeName(context),
