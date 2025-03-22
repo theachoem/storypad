@@ -7,7 +7,7 @@ class _HomeAppBarMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BackupProvider>(
       child: Text(
-        tr('page.home.app_bar.messages.what_in_ur_mind'),
+        WelcomeMessageService.get(),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextTheme.of(context).bodyLarge,
