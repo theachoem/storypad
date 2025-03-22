@@ -36,6 +36,7 @@ class SearchFilterObject {
     // Search whole database when has query.
     if (query != null && query.trim().isNotEmpty == true) {
       filters['types'] = PathType.values.map((e) => e.name).toList();
+      filters.remove('years');
     }
 
     return filters;

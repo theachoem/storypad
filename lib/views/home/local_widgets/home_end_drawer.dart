@@ -73,7 +73,7 @@ class HomeEndDrawer extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.search),
       title: Text(tr("page.search.title")),
-      onTap: () => SearchRoute().push(context),
+      onTap: () => SearchRoute(initialYear: viewModel.currentYear).push(context),
     );
   }
 

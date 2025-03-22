@@ -13,38 +13,34 @@ class SpStoryInfoSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.edit),
+          title: Text(tr('list_tile.story_date.title')),
+          subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
+        ),
+        if (story.movedToBinAt != null)
           ListTile(
-            leading: const Icon(Icons.edit),
-            title: Text(tr('list_tile.story_date.title')),
-            subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
+            leading: const Icon(Icons.delete),
+            title: Text(tr('list_tile.moved_to_bin_at.title')),
+            subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
           ),
-          if (story.movedToBinAt != null)
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: Text(tr('list_tile.moved_to_bin_at.title')),
-              subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
-            ),
-          ListTile(
-            leading: const Icon(Icons.update),
-            title: Text(tr("list_tile.updated_at.title")),
-            subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
-          ),
-          ListTile(
-            leading: const Icon(Icons.date_range),
-            title: Text(tr("list_tile.created_at.title")),
-            subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
-          ),
-          buildBottomPadding(bottomPadding),
-        ],
-      ),
+        ListTile(
+          leading: const Icon(Icons.update),
+          title: Text(tr("list_tile.updated_at.title")),
+          subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
+        ),
+        ListTile(
+          leading: const Icon(Icons.date_range),
+          title: Text(tr("list_tile.created_at.title")),
+          subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
+        ),
+        buildBottomPadding(bottomPadding),
+      ],
     );
   }
 }

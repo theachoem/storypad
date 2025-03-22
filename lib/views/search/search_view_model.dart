@@ -19,8 +19,8 @@ class SearchViewModel extends BaseViewModel with DebounchedCallback {
 
   ValueNotifier<String> queryNotifier = ValueNotifier('');
 
-  final SearchFilterObject initialFilter = SearchFilterObject(
-    years: {},
+  late final SearchFilterObject initialFilter = SearchFilterObject(
+    years: params.initialYear != null ? {params.initialYear!} : {},
     types: {PathType.docs},
     tagId: null,
     assetId: null,
