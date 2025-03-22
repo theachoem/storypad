@@ -312,12 +312,14 @@ class StoryDbModel extends BaseDbModel {
         updatedAt: DateTime.now(),
         latestContent: viewModel.story?.latestContent ?? content,
         draftContent: content,
+        assets: assets.toList(),
       );
     } else {
       return viewModel.story!.copyWith(
         updatedAt: DateTime.now(),
         latestContent: content,
         draftContent: null,
+        assets: assets.toList(),
       );
     }
   }
