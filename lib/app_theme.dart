@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
-import 'package:storypad/core/helpers/animated_route_helper.dart';
 
 class AppTheme extends StatelessWidget {
   const AppTheme({
@@ -69,8 +68,7 @@ class AppTheme extends StatelessWidget {
       return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, fontWeight));
     }
 
-    final shareAxisTransition = SharedAxisPageTransitionsBuilder(
-        transitionType: SharedAxisTransitionType.horizontal, fillColor: colorScheme.surface);
+    final shareAxisTransition = FadeForwardsPageTransitionsBuilder();
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
