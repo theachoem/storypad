@@ -35,47 +35,44 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
       bottom: 0,
       left: AppTheme.getDirectionValue(context, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0, 0.0),
       right: AppTheme.getDirectionValue(context, 0.0, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0),
-      child: Container(
-        alignment: AppTheme.getDirectionValue(context, Alignment.bottomRight, Alignment.bottomLeft),
-        child: SpMeasureSize(
-          onPerformLayout: (p0) {
-            double actualHeight = p0.height;
-            double caculatedHeight = viewModel.scrollInfo.appBar(context).getContentsHeight();
+      child: SpTapEffect(
+        onTap: () => viewModel.changeName(context),
+        child: Container(
+          alignment: AppTheme.getDirectionValue(context, Alignment.bottomRight, Alignment.bottomLeft),
+          child: SpMeasureSize(
+            onPerformLayout: (p0) {
+              double actualHeight = p0.height;
+              double caculatedHeight = viewModel.scrollInfo.appBar(context).getContentsHeight();
 
-            // for adaptive text to font scaling, we precaculate the contents heights.
-            // sometime when font is bigger, this question text render 2 line of text instead of 1.
-            // our caculation is wrong because we only caculate for 1 line.
-            //
-            // because our render align all element to bottom, so it still responsive but just all text is getting near status bar or below it.
-            // our solution is to just check how much we caculate wrong, add expanded height it a bit more.
-            if (actualHeight > caculatedHeight && actualHeight - caculatedHeight > 1) {
-              Future.microtask(() {
-                viewModel.scrollInfo.setExtraExpandedHeight(actualHeight - caculatedHeight);
-              });
-            } else {
-              Future.microtask(() {
-                viewModel.scrollInfo.setExtraExpandedHeight(0);
-              });
-            }
-          },
-          child: Wrap(children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 2.0,
-              children: [
-                SpTapEffect(
-                  onTap: () => viewModel.changeName(context),
-                  child: _HomeAppBarNickname(nickname: viewModel.nickname),
-                ),
-                SpTapEffect(
-                  onTap: () => viewModel.openEndDrawer(context),
-                  child: const _HomeAppBarMessage(),
-                ),
-              ],
-            ),
-          ]),
+              // for adaptive text to font scaling, we precaculate the contents heights.
+              // sometime when font is bigger, this question text render 2 line of text instead of 1.
+              // our caculation is wrong because we only caculate for 1 line.
+              //
+              // because our render align all element to bottom, so it still responsive but just all text is getting near status bar or below it.
+              // our solution is to just check how much we caculate wrong, add expanded height it a bit more.
+              if (actualHeight > caculatedHeight && actualHeight - caculatedHeight > 1) {
+                Future.microtask(() {
+                  viewModel.scrollInfo.setExtraExpandedHeight(actualHeight - caculatedHeight);
+                });
+              } else {
+                Future.microtask(() {
+                  viewModel.scrollInfo.setExtraExpandedHeight(0);
+                });
+              }
+            },
+            child: Wrap(children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 2.0,
+                children: [
+                  _HomeAppBarNickname(nickname: viewModel.nickname),
+                  const _HomeAppBarMessage(),
+                ],
+              ),
+            ]),
+          ),
         ),
       ),
     );

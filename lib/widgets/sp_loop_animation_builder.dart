@@ -39,12 +39,13 @@ class _SpLoopAnimationBuilderState extends State<SpLoopAnimationBuilder> with Si
 
     controller.forward();
     controller.addStatusListener((status) {
-      if (widget.loopCount != null && loopCount == widget.loopCount) {
+      if (widget.loopCount != null && loopCount > widget.loopCount!) {
         controller.reverse();
         return;
       }
 
       loopCount += 1;
+
       if (status == AnimationStatus.completed) {
         if (widget.reverse) {
           controller.reverse();

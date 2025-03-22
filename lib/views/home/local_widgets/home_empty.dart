@@ -26,10 +26,10 @@ class _HomeEmpty extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16.0),
             child: SpLoopAnimationBuilder(
-              loopCount: 2,
+              loopCount: 1,
               reverse: false,
-              duration: Duration(seconds: 6),
-              reverseDuration: Duration(seconds: 6),
+              duration: Duration(seconds: 8),
+              reverseDuration: Duration(seconds: 8),
               builder: (context, value, child) {
                 IconData iconData;
 
@@ -56,12 +56,18 @@ class _HomeEmpty extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Icon(
-                    iconData,
+                  child: SpLoopAnimationBuilder(
                     key: ValueKey(iconData),
-                    size: 32.0,
-                    color: Color.lerp(ColorScheme.of(context).bootstrap.info.color,
-                        ColorScheme.of(context).bootstrap.danger.color, value),
+                    duration: Duration(seconds: 2),
+                    reverseDuration: Duration(seconds: 2),
+                    builder: (context, value, child) {
+                      return Icon(
+                        iconData,
+                        size: 32.0,
+                        color: Color.lerp(ColorScheme.of(context).bootstrap.info.color,
+                            ColorScheme.of(context).bootstrap.danger.color, value),
+                      );
+                    },
                   ),
                 );
               },

@@ -23,6 +23,7 @@ class _HomeScaffold extends StatelessWidget {
       initialValue: false,
       builder: (context, endDrawerOpenedNotifier) {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
           endDrawerEnableOpenDragGesture: true,
           endDrawer: endDrawer,
           floatingActionButton: floatingActionButton,

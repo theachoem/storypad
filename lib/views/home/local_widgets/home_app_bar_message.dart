@@ -6,7 +6,7 @@ class _HomeAppBarMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<BackupProvider>(
-      child: _Typewriter(
+      child: Text(
         WelcomeMessageService.get(context),
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
@@ -59,67 +59,6 @@ class _HomeAppBarMessage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Typewriter extends StatefulWidget {
-  const _Typewriter(
-    this.text, {
-    this.maxLines,
-    this.overflow = TextOverflow.ellipsis,
-    this.style,
-  });
-
-  final String text;
-  final int? maxLines;
-  final TextOverflow overflow;
-  final TextStyle? style;
-
-  @override
-  State<_Typewriter> createState() => _TypewriterState();
-}
-
-class _TypewriterState extends State<_Typewriter> {
-  String currentText = '';
-
-  @override
-  void didUpdateWidget(covariant _Typewriter oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.text != widget.text) {
-      currentText = '';
-      start();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    start();
-  }
-
-  Future<void> start() async {
-    while (widget.text != currentText) {
-      currentText += widget.text[currentText.length];
-      setState(() {});
-      await Future.delayed(Duration(milliseconds: 150));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String displayText = currentText;
-
-    if (currentText != widget.text) {
-      displayText = "$displayText ▌";
-    }
-
-    return Text(
-      displayText,
-      maxLines: widget.maxLines,
-      overflow: widget.overflow,
-      style: widget.style,
     );
   }
 }

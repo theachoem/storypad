@@ -39,7 +39,7 @@ class SpStoryInfoSheet extends BaseBottomSheet {
           title: Text(tr("list_tile.created_at.title")),
           subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
         ),
-        buildBottomPadding(bottomPadding),
+        SizedBox(height: MediaQuery.of(context).padding.bottom),
       ],
     );
   }
