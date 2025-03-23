@@ -45,25 +45,18 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
         borderRadius: BorderRadius.circular(16.0),
         child: Wrap(
           children: [
-            Theme(
-              data: Theme.of(context).copyWith(
-                pageTransitionsTheme: PageTransitionsTheme(
-                  builders: {TargetPlatform.android: ZoomPageTransitionsBuilder()},
-                ),
-              ),
-              child: Navigator(
-                onGenerateRoute: (settings) {
-                  return MaterialPageRoute(builder: (context) {
-                    return _FeelingGroupPicker(
-                      feeling: widget.feeling,
-                      onPicked: widget.onPicked,
-                      onHeightChanged: (height) async {
-                        setState(() => this.height = height);
-                      },
-                    );
-                  });
-                },
-              ),
+            Navigator(
+              onGenerateRoute: (settings) {
+                return MaterialPageRoute(builder: (context) {
+                  return _FeelingGroupPicker(
+                    feeling: widget.feeling,
+                    onPicked: widget.onPicked,
+                    onHeightChanged: (height) async {
+                      setState(() => this.height = height);
+                    },
+                  );
+                });
+              },
             ),
           ],
         ),
