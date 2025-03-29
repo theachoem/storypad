@@ -90,23 +90,28 @@ class SpStoryLabels extends StatelessWidget {
       context: context,
       initialTime: TimeOfDay.fromDateTime(story.displayPathDate),
       builder: (context, child) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            child!,
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
-              icon: Icon(story.preferredShowTime ? MdiIcons.pinOff : MdiIcons.pin,
-                  color: ColorScheme.of(context).primary),
-              label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
-              onPressed: onToggleShowTime == null
-                  ? null
-                  : () async {
-                      onToggleShowTime!();
-                      if (context.mounted) Navigator.maybePop(context);
-                    },
+        return GestureDetector(
+          onTap: () => Navigator.maybePop(context),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                child!,
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
+                  icon: Icon(story.preferredShowTime ? MdiIcons.pinOff : MdiIcons.pin,
+                      color: ColorScheme.of(context).primary),
+                  label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
+                  onPressed: onToggleShowTime == null
+                      ? null
+                      : () async {
+                          onToggleShowTime!();
+                          if (context.mounted) Navigator.maybePop(context);
+                        },
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

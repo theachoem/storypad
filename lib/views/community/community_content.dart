@@ -13,6 +13,10 @@ class _CommunityContent extends StatelessWidget {
         title: Text(tr('page.community.title')),
       ),
       body: ListView(
+        padding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left,
+          right: MediaQuery.of(context).padding.right,
+        ),
         children: [
           SizedBox(height: 8.0),
           CommunityCard(),

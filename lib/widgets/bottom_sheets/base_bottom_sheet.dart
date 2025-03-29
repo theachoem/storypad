@@ -30,9 +30,15 @@ abstract class BaseBottomSheet {
             scaffoldBackgroundColor: Colors.transparent,
             appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
           ),
-          child: build(
-            context,
-            MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+          // No need left or right default padding for sheet.
+          child: MediaQuery.removePadding(
+            context: context,
+            removeLeft: true,
+            removeRight: true,
+            child: build(
+              context,
+              MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+            ),
           ),
         );
       },

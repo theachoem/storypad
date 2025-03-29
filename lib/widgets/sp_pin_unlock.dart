@@ -74,7 +74,7 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> push(BuildContext context) async {
-    dynamic confirmed = await Navigator.of(context).push(
+    dynamic confirmed = await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => this,
@@ -85,7 +85,7 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> pushReplacement(BuildContext context) async {
-    dynamic confirmed = await Navigator.of(context).pushReplacement(
+    dynamic confirmed = await Navigator.of(context, rootNavigator: true).pushReplacement(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => this,

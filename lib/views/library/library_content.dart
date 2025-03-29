@@ -67,7 +67,12 @@ class _LibraryContent extends StatelessWidget {
     }
 
     return MasonryGridView.builder(
-      padding: EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      padding: EdgeInsets.only(
+        top: 16.0,
+        bottom: MediaQuery.of(context).padding.bottom + 16.0,
+        left: MediaQuery.of(context).padding.left + 16.0,
+        right: MediaQuery.of(context).padding.right + 16.0,
+      ),
       itemCount: provider.assetBackupState.assets?.items.length ?? 0,
       mainAxisSpacing: 8.0,
       crossAxisSpacing: 8.0,

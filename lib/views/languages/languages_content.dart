@@ -66,7 +66,10 @@ class _FeedbackBanner extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.readOnly.surface2,
       contentTextStyle:
           Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
-      padding: EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0),
+      padding: EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0).add(EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
+      )),
       leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurface),
       content: Text(
         tr('list_tile.ask_for_locale_suggestion.subtitle'),
@@ -81,7 +84,12 @@ class _FeedbackBanner extends StatelessWidget {
 
   Widget buildSuggestButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: 4.0),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom,
+        top: 4.0,
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
+      ),
       child: OutlinedButton.icon(
         icon: Icon(Icons.fact_check_outlined),
         label: Text(

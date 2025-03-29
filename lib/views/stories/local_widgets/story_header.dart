@@ -36,46 +36,49 @@ class StoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: paddingTop),
-        Container(
-          padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: _DateSelector(
-                  story: story,
-                  readOnly: readOnly,
-                  onChangeDate: onChangeDate,
+    return Padding(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).padding.left, right: MediaQuery.of(context).padding.right),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: paddingTop),
+          Container(
+            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _DateSelector(
+                    story: story,
+                    readOnly: readOnly,
+                    onChangeDate: onChangeDate,
+                  ),
                 ),
-              ),
-              SpFeelingButton(
-                feeling: story.feeling,
-                onPicked: setFeeling,
-              ),
-            ],
+                SpFeelingButton(
+                  feeling: story.feeling,
+                  onPicked: setFeeling,
+                ),
+              ],
+            ),
           ),
-        ),
-        SpStoryLabels(
-          story: story,
-          margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          onToggleShowDayCount: onToggleShowDayCount,
-          onToggleShowTime: onToggleShowTime,
-          onChangeDate: onChangeDate,
-          draftActions: draftActions,
-        ),
-        if (draftContent.title?.trim().isNotEmpty == true || !readOnly) ...[
-          _TitleField(
-            titleController: titleController,
-            draftContent: draftContent,
-            readOnly: readOnly,
-          )
-        ] else ...[
-          SizedBox(height: 12.0),
-        ]
-      ],
+          SpStoryLabels(
+            story: story,
+            margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            onToggleShowDayCount: onToggleShowDayCount,
+            onToggleShowTime: onToggleShowTime,
+            onChangeDate: onChangeDate,
+            draftActions: draftActions,
+          ),
+          if (draftContent.title?.trim().isNotEmpty == true || !readOnly) ...[
+            _TitleField(
+              titleController: titleController,
+              draftContent: draftContent,
+              readOnly: readOnly,
+            )
+          ] else ...[
+            SizedBox(height: 12.0),
+          ]
+        ],
+      ),
     );
   }
 }

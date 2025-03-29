@@ -88,9 +88,11 @@ class _ShowStoryContent extends StatelessWidget {
         scrollable: true,
         expands: true,
         placeholder: "...",
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+        padding: EdgeInsets.only(
           top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
         ),
         checkBoxReadOnly: false,
         autoFocus: false,

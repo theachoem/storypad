@@ -83,8 +83,8 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
         double bottom = 0;
 
         // make sure it 8 pixel inside view.
-        left = max(left, widget.margin);
-        right = max(right, widget.margin);
+        left = max(left, widget.margin + MediaQuery.of(context).padding.left);
+        right = max(right, widget.margin + MediaQuery.of(context).padding.right);
 
         if (offset.dx >= constraints.maxWidth / 2) {
           left = null;

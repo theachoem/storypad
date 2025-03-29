@@ -38,7 +38,11 @@ class _TagsContent extends StatelessWidget {
     }
 
     return ReorderableListView.builder(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom,
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
+      ),
       itemCount: provider.tags?.items.length ?? 0,
       onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
       proxyDecorator: (child, index, animation) {

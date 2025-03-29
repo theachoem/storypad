@@ -22,7 +22,10 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0).add(EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
+      )),
       child: SizedBox(
         width: wrapWidth,
         child: Wrap(

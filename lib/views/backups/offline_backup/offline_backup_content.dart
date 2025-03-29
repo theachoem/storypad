@@ -12,7 +12,12 @@ class _OfflineBackupsContent extends StatelessWidget {
         title: Text(tr('page.offline_backup.title')),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0).add(
+          EdgeInsets.only(
+            left: MediaQuery.of(context).padding.left,
+            right: MediaQuery.of(context).padding.right,
+          ),
+        ),
         children: [
           _Card(
             title: tr('list_tile.export_backup.title'),

@@ -22,8 +22,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
           }
         }
 
-        return Container(
-          width: double.infinity,
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

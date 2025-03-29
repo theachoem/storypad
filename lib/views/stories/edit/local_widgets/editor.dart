@@ -41,6 +41,8 @@ class _Editor extends StatelessWidget {
       curve: Curves.ease,
       color: getToolbarBackgroundColor(context),
       padding: EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
         bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: buildToolBar(context),
@@ -60,9 +62,11 @@ class _Editor extends StatelessWidget {
         scrollable: true,
         expands: true,
         placeholder: "...",
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
+        padding: EdgeInsets.only(
           top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,
+          left: MediaQuery.of(context).padding.left + 16,
+          right: MediaQuery.of(context).padding.right + 16,
         ),
         autoFocus: true,
         enableScribble: true,
