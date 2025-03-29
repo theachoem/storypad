@@ -1,12 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/views/community/community_view.dart';
+part of 'home_end_drawer.dart';
 
-class CommunityTile extends StatelessWidget {
-  const CommunityTile({
-    super.key,
-  });
+class _CommunityTile extends StatelessWidget {
+  const _CommunityTile();
 
   @override
   Widget build(BuildContext context) {

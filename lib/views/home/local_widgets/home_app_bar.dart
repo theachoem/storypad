@@ -1,8 +1,7 @@
 part of '../home_view.dart';
 
-class HomeAppBar extends StatelessWidget {
-  const HomeAppBar({
-    super.key,
+class _HomeAppBar extends StatelessWidget {
+  const _HomeAppBar({
     required this.viewModel,
   });
 

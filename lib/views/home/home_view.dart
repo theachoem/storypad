@@ -1,34 +1,34 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/services/welcome_message_service.dart';
-import 'package:storypad/views/home/local_widgets/home_end_drawer.dart';
-import 'package:storypad/views/theme/theme_view.dart';
-import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
-import 'package:storypad/widgets/sp_dot_lottie_builder.dart';
-import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
-import 'package:storypad/widgets/sp_nested_navigation.dart';
-import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
-import 'package:storypad/widgets/sp_single_state_widget.dart';
-import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/providers/in_app_update_provider.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/home/local_widgets/rounded_indicator.dart';
-import 'package:storypad/widgets/sp_cross_fade.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_loop_animation_builder.dart';
-import 'package:storypad/widgets/sp_measure_size.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
-import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart';
-import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
-import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
+import 'package:provider/provider.dart' show Consumer;
+import 'package:storypad/app_theme.dart' show AppTheme;
+import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart' show MdiIcons;
+import 'package:storypad/core/services/welcome_message_service.dart' show WelcomeMessageService;
+import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
+import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
+import 'package:storypad/widgets/sp_animated_icon.dart' show SpAnimatedIcons;
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart' show SpAppLockWrapper;
+import 'package:storypad/widgets/sp_dot_lottie_builder.dart' show SpDotLottieBuilder;
+import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
+import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;
+import 'package:storypad/widgets/sp_onboarding_wrapper.dart' show SpOnboardingWrappper;
+import 'package:storypad/widgets/sp_single_state_widget.dart' show SpSingleStateWidget;
+import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart' show SpStoryListMultiEditWrapper;
+import 'package:storypad/widgets/base_view/view_model_provider.dart' show ViewModelProvider;
+import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
+import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
+import 'package:storypad/core/helpers/date_format_helper.dart' show DateFormatHelper;
+import 'package:storypad/providers/in_app_update_provider.dart' show InAppUpdateProvider;
+import 'package:storypad/providers/backup_provider.dart' show BackupProvider;
+import 'package:storypad/widgets/sp_cross_fade.dart' show SpCrossFade;
+import 'package:storypad/widgets/sp_fade_in.dart' show SpFadeIn;
+import 'package:storypad/widgets/sp_loop_animation_builder.dart' show SpLoopAnimationBuilder;
+import 'package:storypad/widgets/sp_measure_size.dart' show SpMeasureSize;
+import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect, SpTapEffectType;
+import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart' show SpStoryListenerBuilder;
+import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart' show SpStoryTileListItem;
+import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart'
+    show SpSpStoryListTimelineVerticleDivider;
 
 import 'home_view_model.dart';
 
@@ -41,6 +41,7 @@ part 'local_widgets/home_app_bar_nickname.dart';
 part 'local_widgets/home_app_bar_message.dart';
 part 'local_widgets/home_empty.dart';
 part 'local_widgets/app_update_floating_button.dart';
+part 'local_widgets/rounded_indicator.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({

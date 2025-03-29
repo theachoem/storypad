@@ -1,23 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backups/backups_view.dart';
+part of 'home_end_drawer.dart';
 
-class BackupTile extends StatefulWidget {
-  const BackupTile({
-    super.key,
-  });
+class _BackupTile extends StatefulWidget {
+  const _BackupTile();
 
   @override
-  State<BackupTile> createState() => _BackupTileState();
+  State<_BackupTile> createState() => _BackupTileState();
 }
 
-class _BackupTileState extends State<BackupTile> {
+class _BackupTileState extends State<_BackupTile> {
   bool focusing = true;
 
   @override

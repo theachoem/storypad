@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+part of '../home_view.dart';
 
-class RoundedIndicator extends Decoration {
-  const RoundedIndicator({
+class _RoundedIndicator extends Decoration {
+  const _RoundedIndicator({
     this.borderSide = const BorderSide(width: 2.0, color: Colors.white),
     this.insets = EdgeInsets.zero,
   });
 
-  RoundedIndicator.simple({
+  _RoundedIndicator.simple({
     double height = 40,
     Color color = Colors.white,
   })  : borderSide = BorderSide(width: height, color: color),
@@ -17,8 +17,8 @@ class RoundedIndicator extends Decoration {
 
   @override
   Decoration? lerpFrom(Decoration? a, double t) {
-    if (a is RoundedIndicator) {
-      return RoundedIndicator(
+    if (a is _RoundedIndicator) {
+      return _RoundedIndicator(
         borderSide: BorderSide.lerp(a.borderSide, borderSide, t),
         insets: EdgeInsetsGeometry.lerp(a.insets, insets, t)!,
       );
@@ -28,8 +28,8 @@ class RoundedIndicator extends Decoration {
 
   @override
   Decoration? lerpTo(Decoration? b, double t) {
-    if (b is RoundedIndicator) {
-      return RoundedIndicator(
+    if (b is _RoundedIndicator) {
+      return _RoundedIndicator(
         borderSide: BorderSide.lerp(borderSide, b.borderSide, t),
         insets: EdgeInsetsGeometry.lerp(insets, b.insets, t)!,
       );
@@ -64,7 +64,7 @@ class _RoundedPainter extends BoxPainter {
     super.onChanged,
   );
 
-  final RoundedIndicator decoration;
+  final _RoundedIndicator decoration;
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {

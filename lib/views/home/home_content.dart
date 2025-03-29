@@ -20,7 +20,7 @@ class _HomeContent extends StatelessWidget {
       child: _HomeScaffold(
         viewModel: viewModel,
         endDrawer: Drawer(child: SpNestedNavigation(initialScreen: HomeEndDrawer(viewModel))),
-        appBar: HomeAppBar(viewModel: viewModel),
+        appBar: _HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
         floatingActionButton: buildNewStoryButton(context),

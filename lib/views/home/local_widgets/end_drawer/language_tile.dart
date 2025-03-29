@@ -1,18 +1,14 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/locale_constants.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/views/languages/languages_view.dart';
+part of 'home_end_drawer.dart';
 
-class LanguageTile extends StatelessWidget {
-  const LanguageTile({
-    super.key,
-  });
+class _LanguageTile extends StatelessWidget {
+  const _LanguageTile();
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () => LanguagesRoute().push(context),
       leading: const Icon(Icons.language),
+      subtitle: Text(kNativeLanguageNames[context.locale.toLanguageTag()]!),
       title: RichText(
         textScaler: MediaQuery.textScalerOf(context),
         text: TextSpan(
@@ -40,8 +36,6 @@ class LanguageTile extends StatelessWidget {
           ],
         ),
       ),
-      subtitle: Text(kNativeLanguageNames[context.locale.toLanguageTag()]!),
-      onTap: () => LanguagesRoute().push(context),
     );
   }
 }

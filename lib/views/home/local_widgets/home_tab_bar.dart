@@ -25,7 +25,7 @@ class _HomeTabBar extends StatelessWidget {
             top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
             bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
           ),
-          indicator: RoundedIndicator.simple(
+          indicator: _RoundedIndicator.simple(
             height: viewModel.scrollInfo.appBar(context).indicatorHeight,
             color: Theme.of(context).colorScheme.primary,
           ),
