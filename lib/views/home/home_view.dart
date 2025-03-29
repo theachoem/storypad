@@ -26,6 +26,7 @@ import 'package:storypad/widgets/sp_loop_animation_builder.dart' show SpLoopAnim
 import 'package:storypad/widgets/sp_measure_size.dart' show SpMeasureSize;
 import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect, SpTapEffectType;
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart' show SpStoryListenerBuilder;
+import 'package:storypad/widgets/story_list/sp_story_tile.dart' show SpStoryTile;
 import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart' show SpStoryTileListItem;
 import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart'
     show SpSpStoryListTimelineVerticleDivider;
@@ -42,6 +43,7 @@ part 'local_widgets/home_app_bar_message.dart';
 part 'local_widgets/home_empty.dart';
 part 'local_widgets/app_update_floating_button.dart';
 part 'local_widgets/rounded_indicator.dart';
+part 'local_widgets/home_timeline_side_bar.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({
