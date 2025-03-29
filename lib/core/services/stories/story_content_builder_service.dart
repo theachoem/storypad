@@ -24,7 +24,7 @@ class StoryContentBuilderService {
     List<StoryPageDbModel> updatedPages = params['updated_pages'];
 
     final metadata = [
-      draftContent.title,
+      ...updatedPages.map((e) => e.title),
       ...updatedPages.map((e) => e.plainText),
     ].join("\n");
 
@@ -46,13 +46,15 @@ class StoryContentBuilderService {
 
     if (draftContent.richPages != null) {
       for (int pageIndex = 0; pageIndex < draftContent.richPages!.length; pageIndex++) {
-        final document = quillControllers[pageIndex]!.document;
-        final title = titleControllers[pageIndex]?.text.trim();
+        final oldPage = draftContent.richPages?[pageIndex];
+        final document = quillControllers[pageIndex]?.document;
+        final title = titleControllers[pageIndex]?.text.trim() ?? oldPage?.title?.trim();
 
         final page = StoryPageDbModel(
           title: title != null && title.isNotEmpty ? title : null,
-          plainText: QuillRootToPlainTextService.call(document.root),
-          body: document.toDelta().toJson(),
+          plainText: document != null ? QuillRootToPlainTextService.call(document.root) : oldPage?.plainText,
+          body: document?.toDelta().toJson() ?? oldPage?.body,
+          feeling: oldPage?.feeling,
         );
 
         pages.add(page);

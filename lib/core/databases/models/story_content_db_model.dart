@@ -46,7 +46,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
   void addRichPage() {
     richPages ??= [];
-    richPages?.add(StoryPageDbModel(title: null, plainText: null, body: null));
+    richPages?.add(StoryPageDbModel(title: null, plainText: null, body: null, feeling: null));
   }
 
   String? get displayShortBody {

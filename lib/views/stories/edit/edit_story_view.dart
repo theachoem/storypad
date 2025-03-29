@@ -38,6 +38,7 @@ class EditStoryRoute extends BaseRoute {
   final int initialPageIndex;
   final Map<int, QuillController>? quillControllers;
   final StoryDbModel? story;
+  final void Function(int page)? onPageIndexChanged;
 
   EditStoryRoute({
     this.id,
@@ -46,6 +47,7 @@ class EditStoryRoute extends BaseRoute {
     this.quillControllers,
     this.story,
     this.initialTagId,
+    this.onPageIndexChanged,
   }) : assert(initialYear == null || id == null);
 
   @override

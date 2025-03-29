@@ -272,11 +272,13 @@ class StoryDbModel extends BaseDbModel {
 
     if (draft) {
       return viewModel.story!.copyWith(
+        feeling: content.richPages?.firstOrNull?.feeling,
         updatedAt: DateTime.now(),
         draftContent: content,
       );
     } else {
       return viewModel.story!.copyWith(
+        feeling: content.richPages?.firstOrNull?.feeling,
         updatedAt: DateTime.now(),
         latestContent: content,
         draftContent: null,
@@ -312,6 +314,7 @@ class StoryDbModel extends BaseDbModel {
 
     if (draft) {
       return viewModel.story!.copyWith(
+        feeling: content.richPages?.firstOrNull?.feeling,
         updatedAt: DateTime.now(),
         latestContent: viewModel.story?.latestContent ?? content,
         draftContent: content,
@@ -319,6 +322,7 @@ class StoryDbModel extends BaseDbModel {
       );
     } else {
       return viewModel.story!.copyWith(
+        feeling: content.richPages?.firstOrNull?.feeling,
         updatedAt: DateTime.now(),
         latestContent: content,
         draftContent: null,

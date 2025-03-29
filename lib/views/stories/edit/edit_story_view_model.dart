@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
@@ -31,6 +32,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     currentPageNotifier.value = params.initialPageIndex.toDouble();
     pageController.addListener(() {
       currentPageNotifier.value = pageController.page!;
+      params.onPageIndexChanged?.call(currentPage);
     });
   }
 
@@ -112,12 +114,11 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
+    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
     notifyListeners();
 
     if (await hasDataWritten) {
-      await StoryDbModel.db.set(story!);
-      lastSavedAtNotifier.value = story?.updatedAt;
+      _silentlySave();
     }
 
     AnalyticsService.instance.logSetStoryFeeling(

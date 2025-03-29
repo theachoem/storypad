@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
@@ -64,10 +65,10 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
+    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
     notifyListeners();
+    _silentlySave();
 
-    await StoryDbModel.db.set(story!);
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,
     );
@@ -160,14 +161,21 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   Future<void> goToEditPage(BuildContext context) async {
     if (draftContent == null || draftContent?.richPages == null || pageController.page == null) return;
 
+    int? currentPageIndex;
+
     await EditStoryRoute(
       id: story!.id,
       initialPageIndex: currentPage,
       quillControllers: quillControllers,
       story: story,
+      onPageIndexChanged: (page) => currentPageIndex = page,
     ).push(context, rootNavigator: !AppTheme.isIOS(context));
 
     await load(story!.id);
+
+    if (currentPageIndex != null) {
+      pageController.jumpToPage(currentPageIndex!);
+    }
   }
 
   void _silentlySave() {

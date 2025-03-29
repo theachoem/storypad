@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -118,12 +117,12 @@ class StoryPagesManager extends StatelessWidget {
       right: -4,
       child: Container(
         decoration: BoxDecoration(
-          color: ColorScheme.of(context).bootstrap.success.color,
+          color: ColorScheme.of(context).secondary,
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.check,
-          color: ColorScheme.of(context).bootstrap.success.onColor,
+          color: ColorScheme.of(context).onSecondary,
           size: 16.0,
         ),
       ),
