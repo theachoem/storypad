@@ -29,7 +29,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   DateTime get updatedAt => createdAt;
 
-  @Deprecated('use richPages instead')
+  // @Deprecated('use richPages instead')
   // List: Returns JSON-serializable version of quill delta.
   List<List<dynamic>>? pages;
   List<StoryPageDbModel>? richPages;

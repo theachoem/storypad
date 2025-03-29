@@ -7,9 +7,9 @@ class StoryContentPagesToDocumentService {
     return compute(_buildDocuments, richPages);
   }
 
-  // static Future<Document> singlePage(List<dynamic>? document) async {
-  //   return compute(_buildDocument, document);
-  // }
+  static Future<Document> forSinglePage(StoryPageDbModel richPage) async {
+    return compute(_buildDocument, richPage);
+  }
 
   static List<Document> _buildDocuments(List<StoryPageDbModel>? richPages) {
     if (richPages == null || richPages.isEmpty == true) return [];

@@ -1,12 +1,12 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
+import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -16,7 +16,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
-class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
+class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback, StoryPagesManagable {
   final ShowStoryRoute params;
 
   ShowStoryViewModel({
@@ -30,15 +30,6 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     load(params.id, initialStory: params.story);
   }
-
-  late final PageController pageController;
-  final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
-
-  Map<int, TextEditingController> titleControllers = {};
-  Map<int, QuillController> quillControllers = {};
-  Map<int, ScrollController> scrollControllers = {};
-
-  int get currentPage => currentPageNotifier.value.round();
 
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
@@ -56,8 +47,9 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: true);
     quillControllers.forEach((key, controller) {
-      titleControllers[key] = TextEditingController(text: draftContent?.richPages?[key].title);
       scrollControllers[key] = ScrollController();
+      titleControllers[key] = TextEditingController(text: draftContent!.richPages?[key].title)
+        ..addListener(() => _silentlySave());
       controller.addListener(() => _silentlySave());
     });
 
@@ -68,7 +60,6 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
     await StoryDbModel.db.set(story!);
     notifyListeners();
-
     return true;
   }
 
@@ -196,15 +187,5 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       latestContent: story?.draftContent ?? story!.latestContent!,
       draftContent: draftContent!,
     );
-  }
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    currentPageNotifier.dispose();
-    titleControllers.forEach((e, k) => k.dispose());
-    quillControllers.forEach((e, k) => k.dispose());
-    scrollControllers.forEach((e, k) => k.dispose());
-    super.dispose();
   }
 }
