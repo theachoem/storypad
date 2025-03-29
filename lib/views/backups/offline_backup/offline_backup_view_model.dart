@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -18,7 +18,7 @@ import 'package:storypad/providers/backup_provider.dart';
 
 import 'offline_backup_view.dart';
 
-class OfflineBackupsViewModel extends BaseViewModel {
+class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final OfflineBackupsRoute params;
   final String parentName = "backups";
 

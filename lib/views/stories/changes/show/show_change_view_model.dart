@@ -1,9 +1,10 @@
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 
-class ShowChangeViewModel extends BaseViewModel {
+class ShowChangeViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ShowChangeRoute params;
 
   ShowChangeViewModel({

@@ -3,14 +3,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'search_view.dart';
 
-class SearchViewModel extends BaseViewModel with DebounchedCallback {
+class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final SearchRoute params;
 
   SearchViewModel({

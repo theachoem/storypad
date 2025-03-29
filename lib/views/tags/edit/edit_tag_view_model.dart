@@ -1,8 +1,9 @@
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'edit_tag_view.dart';
 
-class EditTagViewModel extends BaseViewModel {
+class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   final EditTagRoute params;
 
   EditTagViewModel({

@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'languages_view.dart';
 
-class LanguagesViewModel extends BaseViewModel {
+class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
   final LanguagesRoute params;
 
   late final List<Locale> supportedLocales;

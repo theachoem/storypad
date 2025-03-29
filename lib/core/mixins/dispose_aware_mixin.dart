@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ChangeNotifier;
 
-class BaseViewModel extends ChangeNotifier {
+mixin DisposeAwareMixin on ChangeNotifier {
   bool _disposed = false;
   bool get disposed => _disposed;
 

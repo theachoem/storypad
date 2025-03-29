@@ -1,14 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'search_filter_view.dart';
 
-class SearchFilterViewModel extends BaseViewModel {
+class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
   final SearchFilterRoute params;
 
   late SearchFilterObject searchFilter;

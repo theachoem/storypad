@@ -1,10 +1,11 @@
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'library_view.dart';
 
-class LibraryViewModel extends BaseViewModel {
+class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   final LibraryRoute params;
 
   LibraryViewModel({

@@ -1,7 +1,8 @@
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'show_asset_view.dart';
 
-class ShowAssetViewModel extends BaseViewModel {
+class ShowAssetViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ShowAssetRoute params;
 
   ShowAssetViewModel({

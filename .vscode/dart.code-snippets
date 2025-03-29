@@ -14,23 +14,25 @@
       "    return const Placeholder();",
       "  }",
       "}",
-      "",
+      ""
     ]
   },
   "BookMe+ View Model": {
     "prefix": "view_model",
-    "body": ["",
-      "import 'package:storypad/widgets/view/base_view_model.dart';",
+    "body": [
+      "",
+      "import 'package:flutter/material.dart';",
+      "import 'package:storypad/core/mixins/dispose_aware_mixin.dart';",
       "import '${TM_FILENAME_BASE/(.*)_view_model/$1/}_view.dart';",
       "",
-      "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends BaseViewModel {",
+      "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends ChangeNotifier with DisposeAwareMixin {",
       "  final ${TM_FILENAME_BASE/(.*)_view_model/${1:/pascalcase}/}Route params;",
       "  ",
       "  ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}({",
       "    required this.params,",
       "  });",
       "}",
-      "",
+      ""
     ]
   },
   "BookMe+ View": {
@@ -50,7 +52,7 @@
       "  @override",
       "  Widget buildPage(BuildContext context) => ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}(params: this);",
       "}",
-      
+
       "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} extends StatelessWidget {",
       "",
       "  const ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}({",
@@ -70,7 +72,7 @@
       "    );",
       "  }",
       "}",
-      "",
+      ""
     ]
-  },
+  }
 }

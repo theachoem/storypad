@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/views/onboarding/steps/onboarding_hello_view.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'onboarding_view.dart';
 
-class OnboardingViewModel extends BaseViewModel {
+class OnboardingViewModel extends ChangeNotifier with DisposeAwareMixin {
   final OnboardingRoute params;
 
   OnboardingViewModel({

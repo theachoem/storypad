@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/storages/recently_selected_fonts_storage.dart';
 import 'fonts_view.dart';
 
@@ -17,7 +17,7 @@ class FontGroup {
   });
 }
 
-class FontsViewModel extends BaseViewModel {
+class FontsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final FontsRoute params;
   final BuildContext context;
 

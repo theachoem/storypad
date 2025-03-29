@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'backups_view.dart';
 
-class BackupsViewModel extends BaseViewModel {
+class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final BackupsRoute params;
 
   BackupsViewModel({

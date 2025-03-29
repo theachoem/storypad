@@ -8,7 +8,7 @@ import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
-import 'package:storypad/widgets/base_view/base_view_model.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -16,7 +16,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
-class ShowStoryViewModel extends BaseViewModel with DebounchedCallback {
+class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final ShowStoryRoute params;
 
   ShowStoryViewModel({
