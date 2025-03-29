@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/theme/theme_view.dart';
