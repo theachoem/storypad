@@ -38,13 +38,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
 
       tags = await TagDbModel.db.where().then((e) => e?.items);
-
-      for (TagDbModel tag in tags ?? []) {
-        tag.storiesCount = await StoryDbModel.db.count(filters: {
-          'tag': tag.id,
-          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
-        });
-      }
+      await _resetTagsCount();
     } else {
       years = await StoryDbModel.db.getStoryCountsByYear(filters: {
         'tag': searchFilter.tagId,
@@ -68,7 +62,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
-  void toggleYear(int year) {
+  Future<void> toggleYear(int year) async {
     if (params.multiSelectYear) {
       var years = {...searchFilter.years};
 
@@ -84,10 +78,12 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     notifyListeners();
-
     if (params.allowSaveSearchFilter) {
       SearchFilterStorage().writeObject(searchFilter);
     }
+
+    await _resetTagsCount();
+    notifyListeners();
   }
 
   void toggleTag(TagDbModel tag) {
@@ -99,13 +95,16 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
-  void reset(BuildContext context) {
+  Future<void> reset(BuildContext context) async {
     searchFilter = params.resetTune;
     notifyListeners();
 
     if (params.allowSaveSearchFilter) {
       SearchFilterStorage().remove();
     }
+
+    await _resetTagsCount();
+    notifyListeners();
   }
 
   Future<void> setSavingSearchFilter(bool enabled) async {
@@ -117,5 +116,15 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     _savingSearchFilterEnabled = await SearchFilterStorage().readObject() != null;
     notifyListeners();
+  }
+
+  Future<void> _resetTagsCount() async {
+    for (TagDbModel tag in tags ?? []) {
+      tag.storiesCount = await StoryDbModel.db.count(filters: {
+        'tag': tag.id,
+        'years': searchFilter.years.toList(),
+        if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+      });
+    }
   }
 }
