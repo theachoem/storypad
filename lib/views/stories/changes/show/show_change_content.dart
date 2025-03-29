@@ -15,31 +15,31 @@ class _ShowChangeContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     if (viewModel.quillControllers == null) return const Center(child: CircularProgressIndicator.adaptive());
-    return NestedScrollView(
-      headerSliverBuilder: (context, _) {
-        return [
-          SliverToBoxAdapter(
-            child: TextFormField(
-              initialValue: viewModel.params.content.title,
-              readOnly: true,
-              style: Theme.of(context).textTheme.titleLarge,
-              maxLines: null,
-              maxLength: null,
-              autofocus: false,
-              decoration: InputDecoration(
-                hintText: tr("input.title.hint"),
-                border: InputBorder.none,
-                isCollapsed: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    return PageView.builder(
+      itemCount: viewModel.quillControllers?.length ?? 0,
+      itemBuilder: (context, index) {
+        return NestedScrollView(
+          headerSliverBuilder: (context, _) {
+            return [
+              SliverToBoxAdapter(
+                child: TextFormField(
+                  initialValue: viewModel.params.content.richPages?[index].title,
+                  readOnly: true,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  maxLines: null,
+                  maxLength: null,
+                  autofocus: false,
+                  decoration: InputDecoration(
+                    hintText: tr("input.title.hint"),
+                    border: InputBorder.none,
+                    isCollapsed: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ];
-      },
-      body: PageView.builder(
-        itemCount: viewModel.quillControllers?.length ?? 0,
-        itemBuilder: (context, index) {
-          return QuillEditor.basic(
+            ];
+          },
+          body: QuillEditor.basic(
             controller: viewModel.quillControllers!.values.elementAt(index),
             config: QuillEditorConfig(
               padding: const EdgeInsets.all(16.0),
@@ -54,9 +54,9 @@ class _ShowChangeContent extends StatelessWidget {
               ],
               unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

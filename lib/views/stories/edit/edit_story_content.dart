@@ -53,7 +53,7 @@ class _EditStoryContent extends StatelessWidget {
                         onToggleShowTime: viewModel.toggleShowTime,
                         draftContent: viewModel.draftContent!,
                         readOnly: false,
-                        titleController: viewModel.titleController,
+                        titleController: viewModel.titleControllers[index],
                         onChangeDate: viewModel.changeDate,
                         draftActions: null,
                       ),
@@ -78,7 +78,7 @@ class _EditStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
+      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
         buildPageIndicator(),
         const SizedBox(width: 16.0),
       ],
@@ -123,7 +123,7 @@ class _EditStoryContent extends StatelessWidget {
       child: ValueListenableBuilder<double>(
         valueListenable: viewModel.currentPageNotifier,
         builder: (context, currentPage, child) {
-          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.pages?.length}');
+          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.richPages?.length}');
         },
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
@@ -5,6 +6,7 @@ import 'package:storypad/core/services/stories/story_content_builder_service.dar
 
 class StoryHasChangedService {
   static Future<bool> call({
+    required Map<int, TextEditingController> titleControllers,
     required Map<int, QuillController> quillControllers,
     required StoryContentDbModel latestContent,
     required StoryContentDbModel draftContent,
@@ -13,6 +15,7 @@ class StoryHasChangedService {
     final content = await StoryContentBuilderService.call(
       draftContent: draftContent,
       quillControllers: quillControllers,
+      titleControllers: titleControllers,
     );
 
     if (!ignoredEmpty && !StoryHasDataWrittenService.callByContent(content)) return false;

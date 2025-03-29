@@ -4,9 +4,10 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 class StoryExtractImageFromContentService {
   static List<String> call(StoryContentDbModel? content) {
     List<String> images = [];
+    final pages = content?.richPages?.map((e) => e.body ?? []) ?? [];
 
     try {
-      for (dynamic e in content?.pages?.expand((e) => e) ?? []) {
+      for (dynamic e in pages.expand((e) => e)) {
         final insert = e['insert'];
         if (insert is Map) {
           for (MapEntry<dynamic, dynamic> e in insert.entries) {

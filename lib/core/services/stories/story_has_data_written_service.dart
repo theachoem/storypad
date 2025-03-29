@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/services/stories/story_content_builder_service.dart';
@@ -6,17 +7,19 @@ class StoryHasDataWrittenService {
   static Future<bool> callByController({
     required StoryContentDbModel draftContent,
     required Map<int, QuillController> quillControllers,
+    required Map<int, TextEditingController> titleControllers,
   }) async {
     final content = await StoryContentBuilderService.call(
       draftContent: draftContent,
       quillControllers: quillControllers,
+      titleControllers: titleControllers,
     );
 
     return callByContent(content);
   }
 
   static bool callByContent(StoryContentDbModel content) {
-    List<List<dynamic>> pagesClone = content.pages ?? [];
+    List<List<dynamic>> pagesClone = content.richPages?.map((e) => e.body ?? []).toList() ?? [];
     List<List<dynamic>> pages = [...pagesClone];
 
     pages.removeWhere((items) {
@@ -32,9 +35,11 @@ class StoryHasDataWrittenService {
     });
 
     bool emptyPages = pages.isEmpty;
-    String title = content.title ?? "";
 
-    bool hasNoDataWritten = emptyPages && title.trim().isEmpty;
+    bool mainTitleEmpty = (content.title ?? '').trim().isEmpty;
+    bool pagesTitleEmpty = (content.richPages ?? []).every((page) => (page.title ?? '').trim().isEmpty) == true;
+
+    bool hasNoDataWritten = emptyPages && mainTitleEmpty && pagesTitleEmpty;
     return !hasNoDataWritten;
   }
 }

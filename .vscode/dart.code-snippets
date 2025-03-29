@@ -1,5 +1,5 @@
 {
-  "BookMe+ View Content": {
+  "StoryPad View Content": {
     "prefix": "view_content",
     "body": [
       "part of '${TM_FILENAME_BASE/(.*)_content/$1/}_view.dart';",
@@ -17,7 +17,7 @@
       ""
     ]
   },
-  "BookMe+ View Model": {
+  "StoryPad View Model": {
     "prefix": "view_model",
     "body": [
       "",
@@ -35,12 +35,12 @@
       ""
     ]
   },
-  "BookMe+ View": {
+  "StoryPad View": {
     "prefix": "view",
     "body": [
-      "import 'package:storypad/widgets/view/view_model_provider.dart';",
+      "import 'package:storypad/widgets/base_view/view_model_provider.dart';",
       "import 'package:flutter/material.dart';",
-      "import 'package:storypad/widgets/view/base_route.dart';",
+      "import 'package:storypad/widgets/base_view/base_route.dart';",
       "",
       "import '${TM_FILENAME_BASE/_view/_view_model/}.dart';",
       "",

@@ -17,6 +17,8 @@ abstract class _$StoryContentDbModelCWProxy {
 
   StoryContentDbModel pages(List<List<dynamic>>? pages);
 
+  StoryContentDbModel richPages(List<StoryPageDbModel>? richPages);
+
   StoryContentDbModel metadata(String? metadata);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -31,6 +33,7 @@ abstract class _$StoryContentDbModelCWProxy {
     String? plainText,
     DateTime createdAt,
     List<List<dynamic>>? pages,
+    List<StoryPageDbModel>? richPages,
     String? metadata,
   });
 }
@@ -59,6 +62,10 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
   StoryContentDbModel pages(List<List<dynamic>>? pages) => this(pages: pages);
 
   @override
+  StoryContentDbModel richPages(List<StoryPageDbModel>? richPages) =>
+      this(richPages: richPages);
+
+  @override
   StoryContentDbModel metadata(String? metadata) => this(metadata: metadata);
 
   @override
@@ -75,6 +82,7 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
     Object? plainText = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? pages = const $CopyWithPlaceholder(),
+    Object? richPages = const $CopyWithPlaceholder(),
     Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return StoryContentDbModel(
@@ -98,6 +106,10 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
           ? _value.pages
           // ignore: cast_nullable_to_non_nullable
           : pages as List<List<dynamic>>?,
+      richPages: richPages == const $CopyWithPlaceholder()
+          ? _value.richPages
+          // ignore: cast_nullable_to_non_nullable
+          : richPages as List<StoryPageDbModel>?,
       metadata: metadata == const $CopyWithPlaceholder()
           ? _value.metadata
           // ignore: cast_nullable_to_non_nullable
@@ -126,6 +138,9 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
       pages: (json['pages'] as List<dynamic>?)
           ?.map((e) => e as List<dynamic>)
           .toList(),
+      richPages: (json['rich_pages'] as List<dynamic>?)
+          ?.map((e) => StoryPageDbModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       metadata: json['metadata'] as String?,
     );
 
@@ -138,4 +153,5 @@ Map<String, dynamic> _$StoryContentDbModelToJson(
       'created_at': instance.createdAt.toIso8601String(),
       'metadata': instance.metadata,
       'pages': instance.pages,
+      'rich_pages': instance.richPages?.map((e) => e.toJson()).toList(),
     };

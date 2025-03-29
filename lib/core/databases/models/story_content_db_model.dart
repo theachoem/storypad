@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/mixins/comparable.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 
 part 'story_content_db_model.g.dart';
@@ -28,8 +29,10 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   DateTime get updatedAt => createdAt;
 
+  @Deprecated('use richPages instead')
   // List: Returns JSON-serializable version of quill delta.
   List<List<dynamic>>? pages;
+  List<StoryPageDbModel>? richPages;
 
   StoryContentDbModel({
     required this.id,
@@ -37,15 +40,13 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.plainText,
     required this.createdAt,
     required this.pages,
+    required this.richPages,
     required this.metadata,
   });
 
-  void addPage() {
-    if (pages != null) {
-      pages?.add([]);
-    } else {
-      pages = [[]];
-    }
+  void addRichPage() {
+    richPages ??= [];
+    richPages?.add(StoryPageDbModel(title: null, plainText: null, body: null));
   }
 
   String? get displayShortBody {
@@ -69,6 +70,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       plainText: null,
       createdAt: createdAt ?? DateTime.now(),
       pages: null,
+      richPages: null,
       metadata: null,
     );
   }
@@ -76,30 +78,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   Map<String, dynamic> toJson() => _$StoryContentDbModelToJson(this);
   factory StoryContentDbModel.fromJson(Map<String, dynamic> json) => _$StoryContentDbModelFromJson(json);
-
-  // avoid save without add anythings
-  bool hasDataWritten(StoryContentDbModel content) {
-    List<List<dynamic>> pagesClone = content.pages ?? [];
-    List<List<dynamic>> pages = [...pagesClone];
-
-    pages.removeWhere((items) {
-      bool empty = items.isEmpty;
-      if (items.length == 1) {
-        dynamic first = items.first;
-        if (first is Map) {
-          dynamic insert = items.first['insert'];
-          if (insert is String) return insert.trim().isEmpty;
-        }
-      }
-      return empty;
-    });
-
-    bool emptyPages = pages.isEmpty;
-    String title = content.title ?? "";
-
-    bool hasNoDataWritten = emptyPages && title.trim().isEmpty;
-    return !hasNoDataWritten;
-  }
 
   @override
   List<String> get excludeCompareKeys {

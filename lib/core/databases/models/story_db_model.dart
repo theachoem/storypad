@@ -7,6 +7,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_content_builder_service.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -266,6 +267,7 @@ class StoryDbModel extends BaseDbModel {
     StoryContentDbModel content = await StoryContentBuilderService.call(
       draftContent: viewModel.draftContent!,
       quillControllers: viewModel.quillControllers,
+      titleControllers: viewModel.titleControllers,
     );
 
     if (draft) {
@@ -289,11 +291,12 @@ class StoryDbModel extends BaseDbModel {
     StoryContentDbModel content = await StoryContentBuilderService.call(
       draftContent: viewModel.draftContent!,
       quillControllers: viewModel.quillControllers,
+      titleControllers: viewModel.titleControllers,
     );
 
     Set<int> assets = {};
-    for (var page in content.pages ?? []) {
-      for (var node in page) {
+    for (StoryPageDbModel page in content.richPages ?? []) {
+      for (var node in page.body ?? []) {
         if (node is Map &&
             node['insert'] is Map &&
             node['insert']['image'] is String &&

@@ -42,6 +42,7 @@ class _ShowStoryContent extends StatelessWidget {
                   if (viewModel.story != null && viewModel.draftContent != null)
                     SliverToBoxAdapter(
                       child: StoryHeader(
+                        titleController: viewModel.titleControllers[index],
                         paddingTop: MediaQuery.of(context).padding.top + 8.0,
                         story: viewModel.story!,
                         setFeeling: viewModel.setFeeling,
@@ -109,7 +110,7 @@ class _ShowStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
+      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
         buildPageIndicator(),
         const SizedBox(width: 12.0),
       ],
@@ -161,7 +162,7 @@ class _ShowStoryContent extends StatelessWidget {
       child: ValueListenableBuilder<double>(
         valueListenable: viewModel.currentPageNotifier,
         builder: (context, currentPage, child) {
-          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.pages?.length}');
+          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.richPages?.length}');
         },
       ),
     );

@@ -33,6 +33,8 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   late final PageController pageController;
   final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
+
+  Map<int, TextEditingController> titleControllers = {};
   Map<int, QuillController> quillControllers = {};
   Map<int, ScrollController> scrollControllers = {};
 
@@ -49,11 +51,12 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     story = initialStory ?? await StoryDbModel.db.find(id);
     draftContent = story!.generateDraftContent();
 
-    bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent!..addPage();
+    bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;
+    if (!alreadyHasPage) draftContent = draftContent!..addRichPage();
 
     quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: true);
     quillControllers.forEach((key, controller) {
+      titleControllers[key] = TextEditingController(text: draftContent?.richPages?[key].title);
       scrollControllers[key] = ScrollController();
       controller.addListener(() => _silentlySave());
     });
@@ -164,7 +167,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> goToEditPage(BuildContext context) async {
-    if (draftContent == null || draftContent?.pages == null || pageController.page == null) return;
+    if (draftContent == null || draftContent?.richPages == null || pageController.page == null) return;
 
     await EditStoryRoute(
       id: story!.id,
@@ -188,6 +191,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   Future<bool> _getHasChange() async {
     return StoryHasChangedService.call(
+      titleControllers: titleControllers,
       quillControllers: quillControllers,
       latestContent: story?.draftContent ?? story!.latestContent!,
       draftContent: draftContent!,
@@ -198,6 +202,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   void dispose() {
     pageController.dispose();
     currentPageNotifier.dispose();
+    titleControllers.forEach((e, k) => k.dispose());
     quillControllers.forEach((e, k) => k.dispose());
     scrollControllers.forEach((e, k) => k.dispose());
     super.dispose();
