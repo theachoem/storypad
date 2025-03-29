@@ -16,13 +16,16 @@ class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
   final LanguagesRoute params;
 
   late final List<Locale> supportedLocales;
+  List<GlobalKey> supportedLocaleKeys = [];
 
   LanguagesViewModel({
     required this.params,
     required BuildContext context,
   }) {
-    supportedLocales = getSupportedLocales(context);
-    load();
+    supportedLocales = _getSupportedLocales(context);
+    supportedLocaleKeys = List.generate(supportedLocales.length, (_) => GlobalKey());
+
+    loadLocales();
   }
 
   bool isSystemLocale(Locale locale) => _deviceLocale != null && locale.supports(_deviceLocale!);
@@ -32,7 +35,7 @@ class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
   Locale? _deviceLocale;
   Locale? _savedLocale;
 
-  Future<void> load() async {
+  Future<void> loadLocales() async {
     await _loadDeviceLocale();
     await _loadSavedLocale();
     notifyListeners();
@@ -52,9 +55,11 @@ class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> useDeviceLocale(BuildContext context) async {
     if (_deviceLocale != null) context.setLocale(_deviceLocale!);
+    _scollToLocale(_deviceLocale!);
+
     final preferences = await SharedPreferences.getInstance();
     await preferences.remove('locale');
-    await load();
+    await loadLocales();
   }
 
   void setLocale(Locale locale, BuildContext context) {
@@ -62,13 +67,22 @@ class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
       useDeviceLocale(context);
     } else {
       context.setLocale(locale);
-      load();
+      loadLocales();
     }
 
     AnalyticsUserProperyService.instance.logSetLocale(newLocale: locale);
   }
 
-  List<Locale> getSupportedLocales(BuildContext context) {
+  void _scollToLocale(Locale locale) {
+    int index = supportedLocales.indexOf(locale);
+    Scrollable.ensureVisible(
+      supportedLocaleKeys[index].currentContext!,
+      duration: Durations.long1,
+      curve: Curves.ease,
+    );
+  }
+
+  List<Locale> _getSupportedLocales(BuildContext context) {
     List<Locale> supportedLocales =
         context.findAncestorWidgetOfExactType<MaterialApp>()?.supportedLocales.toList() ?? [];
 

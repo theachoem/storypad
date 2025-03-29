@@ -39,6 +39,7 @@ class _LanguagesContent extends StatelessWidget {
     bool selected = context.locale.toLanguageTag() == locale.toLanguageTag();
 
     return ListTile(
+      key: viewModel.supportedLocaleKeys[index],
       title: Text(kNativeLanguageNames[locale.toLanguageTag()]!),
       trailing: Visibility(
         visible: selected,
