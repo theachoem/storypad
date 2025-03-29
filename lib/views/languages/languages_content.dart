@@ -8,7 +8,16 @@ class _LanguagesContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          if (viewModel.canSetToDeviceLocale)
+            IconButton(
+              tooltip: tr("button.reset"),
+              icon: Icon(Icons.restart_alt_outlined),
+              onPressed: () => viewModel.useDeviceLocale(context),
+            ),
+        ],
+      ),
       bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
       floatingActionButton: viewModel.params.showThemeFAB
           ? FloatingActionButton(
@@ -37,12 +46,8 @@ class _LanguagesContent extends StatelessWidget {
           child: const Icon(Icons.check),
         ),
       ),
-      onTap: () {
-        context.setLocale(viewModel.supportedLocales.elementAt(index));
-        AnalyticsUserProperyService.instance.logSetLocale(
-          newLocale: viewModel.supportedLocales.elementAt(index),
-        );
-      },
+      subtitle: viewModel.isSystemLocale(locale) ? Text(tr('general.default')) : null,
+      onTap: () => viewModel.setLocale(locale, context),
     );
   }
 }

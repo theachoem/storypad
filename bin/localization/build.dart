@@ -60,8 +60,28 @@ void main() async {
     );
   }
 
+  await setLocalesConfigXml(locales);
   await setBundleLocalizationToInfoPlist(locales);
   await addLangageNameToAppConstant(locales, languageNames, nativeLanguageNames);
+}
+
+Future<void> setLocalesConfigXml(List<String> locales) async {
+  final localesConfigFile = File('android/app/src/main/res/xml/locales_config.xml');
+  final document = XmlDocument.parse(await localesConfigFile.readAsString());
+
+  final localConfigELement = document.childElements.elementAt(0);
+  while (localConfigELement.children.isNotEmpty) {
+    localConfigELement.children.lastOrNull?.remove();
+  }
+
+  for (var locale in locales) {
+    final localeElement = XmlElement(XmlName('locale'));
+    localeElement.setAttribute("android:name", locale);
+    localConfigELement.children.add(localeElement);
+  }
+
+  final newDocumentContent = document.toXmlString(pretty: true, indent: '    ').replaceAll("\"/>", "\" />");
+  await localesConfigFile.writeAsString(newDocumentContent);
 }
 
 Future<void> setBundleLocalizationToInfoPlist(List<String> locales) async {
@@ -80,12 +100,12 @@ Future<void> setBundleLocalizationToInfoPlist(List<String> locales) async {
     }
   }
 
-  final newDocument = document
+  final newDocumentContent = document
       .toXmlString(pretty: true, indent: '    ')
       .replaceAll("<true/>", "<true />")
       .replaceAll("<false/>", "<false />");
 
-  await plistFile.writeAsString(newDocument);
+  await plistFile.writeAsString(newDocumentContent);
 }
 
 Future<void> addLangageNameToAppConstant(
