@@ -82,21 +82,32 @@ class _TagsContent extends StatelessWidget {
                 ),
               ],
             ),
-            child: ListTile(
-              tileColor: Colors.transparent,
-              contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
-              leading: Icon(Icons.drag_indicator),
-              title: Text(tag.title),
-              subtitle: Text(plural("plural.story", storyCount)),
-              onTap: () => provider.viewTag(
-                context: context,
-                tag: tag,
-                storyViewOnly: viewModel.params.storyViewOnly,
-              ),
-            ),
+            child: buildTile(tag, storyCount, provider, context),
           ),
         );
       },
+    );
+  }
+
+  Widget buildTile(TagDbModel tag, int storyCount, TagsProvider provider, BuildContext context) {
+    return ListTile(
+      tileColor: Colors.transparent,
+      contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
+      leading: Icon(Icons.drag_indicator),
+      title: Text(tag.title),
+      subtitle: Text(plural("plural.story", storyCount)),
+      onTap: () => provider.viewTag(
+        context: context,
+        tag: tag,
+        storyViewOnly: viewModel.params.storyViewOnly,
+      ),
+      trailing: !viewModel.checkable
+          ? null
+          : Checkbox.adaptive(
+              tristate: false,
+              value: viewModel.selectedTags.contains(tag.id),
+              onChanged: (value) => viewModel.onToggle(tag, value!),
+            ),
     );
   }
 

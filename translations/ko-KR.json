@@ -51,6 +51,8 @@
   "button.view": "보다",
   "button.view_previous": "이전 보기",
   "dialog.are_you_sure_to_archive_these_stories.title": "이 스토리를 보관처리하시겠습니까?",
+  "dialog.are_you_sure_to_delete_tag.message": "이 작업은 취소할 수 없지만 메모와 스토리는 삭제되지 않습니다.",
+  "dialog.are_you_sure_to_delete_tag.title": "이 태그를 삭제하시겠습니까?",
   "dialog.are_you_sure_to_delete_these_stories.message": "이 작업은 실행취소할 수 없습니다.",
   "dialog.are_you_sure_to_delete_these_stories.title": "이 스토리를 삭제하시겠습니까?",
   "dialog.are_you_sure_to_delete_this_backup.message": "이 작업은 실행취소할 수 없습니다.",

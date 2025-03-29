@@ -51,6 +51,8 @@
   "button.view": "ดู",
   "button.view_previous": "ดูก่อนหน้า",
   "dialog.are_you_sure_to_archive_these_stories.title": "คุณแน่ใจหรือว่าจะเก็บเรื่องราวเหล่านี้ไว้?",
+  "dialog.are_you_sure_to_delete_tag.message": "การดำเนินการนี้ไม่สามารถยกเลิกได้ แต่บันทึกและเรื่องราวของคุณจะไม่ถูกลบ",
+  "dialog.are_you_sure_to_delete_tag.title": "คุณแน่ใจหรือไม่ว่าต้องการลบแท็กนี้",
   "dialog.are_you_sure_to_delete_these_stories.message": "คุณไม่สามารถยกเลิกการกระทำนี้ได้",
   "dialog.are_you_sure_to_delete_these_stories.title": "คุณแน่ใจหรือว่าจะลบเรื่องราวเหล่านี้?",
   "dialog.are_you_sure_to_delete_this_backup.message": "คุณไม่สามารถยกเลิกการกระทำนี้ได้",
