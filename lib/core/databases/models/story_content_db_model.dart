@@ -17,7 +17,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   final DateTime createdAt;
 
   @override
-  List<String>? get includeCompareKeys => ['title', 'pages'];
+  List<String>? get includeCompareKeys => ['title', 'rich_pages'];
 
   // metadata should be title + plain text
   // better if with all pages.
@@ -31,8 +31,8 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
   // @Deprecated('use richPages instead')
   // List: Returns JSON-serializable version of quill delta.
-  List<List<dynamic>>? pages;
-  List<StoryPageDbModel>? richPages;
+  final List<List<dynamic>>? pages;
+  final List<StoryPageDbModel>? richPages;
 
   StoryContentDbModel({
     required this.id,
@@ -44,9 +44,21 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.metadata,
   });
 
-  void addRichPage() {
-    richPages ??= [];
-    richPages?.add(StoryPageDbModel(title: null, plainText: null, body: null, feeling: null));
+  StoryContentDbModel addRichPage() {
+    return copyWith(
+      richPages: [
+        ...richPages ?? [],
+        StoryPageDbModel(title: null, plainText: null, body: null, feeling: null),
+      ],
+    );
+  }
+
+  StoryContentDbModel removeRichPageAt(int index) {
+    return copyWith(
+      richPages: [
+        ...richPages ?? [],
+      ]..removeAt(index),
+    );
   }
 
   String? get displayShortBody {

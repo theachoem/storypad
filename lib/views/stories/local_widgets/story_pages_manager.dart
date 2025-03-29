@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ class StoryPagesManager extends StatelessWidget {
               buildPageCard(
                 context: context,
                 child: Icon(Icons.add),
+                onLongPressed: null,
                 onTap: () {
                   HapticFeedback.selectionClick();
                   state.addPage();
@@ -57,6 +59,20 @@ class StoryPagesManager extends StatelessWidget {
                 buildPageCard(
                   context: context,
                   child: Text(controller.document.toPlainText()),
+                  onLongPressed: !state.canEditPages || state.pagesCount <= 1
+                      ? null
+                      : () async {
+                          final result = await showOkCancelAlertDialog(
+                            title: tr("dialog.are_you_sure_to_delete_this_page.title"),
+                            context: context,
+                            okLabel: tr("button.delete"),
+                            isDestructiveAction: true,
+                          );
+
+                          if (result == OkCancelResult.ok) {
+                            state.deletePage(index);
+                          }
+                        },
                   onTap: () {
                     HapticFeedback.selectionClick();
                     state.pageController.jumpToPage(index);
@@ -92,12 +108,14 @@ class StoryPagesManager extends StatelessWidget {
     required BuildContext context,
     required Widget child,
     required void Function() onTap,
+    required void Function()? onLongPressed,
   }) {
     return AspectRatio(
       aspectRatio: 148 / 210,
       child: SpTapEffect(
         effects: [SpTapEffectType.scaleDown],
         onTap: onTap,
+        onLongPressed: onLongPressed,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
           decoration: BoxDecoration(

@@ -58,6 +58,7 @@
   "dialog.are_you_sure_to_delete_these_stories.title": "Czy na pewno chcesz usunąć te historie?",
   "dialog.are_you_sure_to_delete_this_backup.message": "Tej czynności nie można cofnąć",
   "dialog.are_you_sure_to_delete_this_backup.title": "Czy na pewno chcesz usunąć tę kopię zapasową?",
+  "dialog.are_you_sure_to_delete_this_page.title": "Czy na pewno chcesz usunąć tę stronę?",
   "dialog.are_you_sure_to_delete_this_story.message": "Tej czynności nie można cofnąć",
   "dialog.are_you_sure_to_delete_this_story.title": "Czy na pewno chcesz usunąć tę historię?",
   "dialog.are_you_sure_to_discard_these_changes.title": "Czy na pewno chcesz odrzucić te zmiany?",

@@ -28,6 +28,10 @@ mixin StoryPagesManagable on ChangeNotifier {
     throw UnimplementedError();
   }
 
+  Future<void> deletePage(int index) async {
+    throw UnimplementedError();
+  }
+
   @override
   void dispose() {
     pageController.dispose();

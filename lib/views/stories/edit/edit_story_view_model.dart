@@ -85,7 +85,8 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   @override
   Future<void> addPage() async {
-    draftContent = draftContent!..addRichPage();
+    draftContent = draftContent!.addRichPage();
+    _silentlySave();
 
     int index = draftContent!.richPages!.length - 1;
     scrollControllers[index] = ScrollController();
@@ -97,6 +98,28 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: false,
     )..addListener(() => _silentlySave());
+
+    notifyListeners();
+  }
+
+  @override
+  Future<void> deletePage(int index) async {
+    draftContent = draftContent?.removeRichPageAt(index);
+    _silentlySave();
+
+    quillControllers.clear();
+    focusNodes.clear();
+    scrollControllers.clear();
+    titleControllers.clear();
+
+    quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: false);
+    quillControllers.forEach((i, quillController) {
+      focusNodes[i] = FocusNode();
+      scrollControllers[i] = ScrollController();
+      titleControllers[i] = TextEditingController(text: draftContent?.richPages?[i].title)
+        ..addListener(() => _silentlySave());
+      quillController.addListener(() => _silentlySave());
+    });
 
     notifyListeners();
   }

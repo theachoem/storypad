@@ -58,6 +58,7 @@
   "dialog.are_you_sure_to_delete_these_stories.title": "Sei sicuro di eliminare queste storie?",
   "dialog.are_you_sure_to_delete_this_backup.message": "Non puoi annullare questa azione",
   "dialog.are_you_sure_to_delete_this_backup.title": "Sei sicuro di voler eliminare questo backup?",
+  "dialog.are_you_sure_to_delete_this_page.title": "Sei sicuro di eliminare questa pagina?",
   "dialog.are_you_sure_to_delete_this_story.message": "Non puoi annullare questa azione",
   "dialog.are_you_sure_to_delete_this_story.title": "Sei sicuro di eliminare questa storia?",
   "dialog.are_you_sure_to_discard_these_changes.title": "Sei sicuro di ignorare queste modifiche?",

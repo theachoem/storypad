@@ -58,6 +58,7 @@
   "dialog.are_you_sure_to_delete_these_stories.title": "이 스토리를 삭제하시겠습니까?",
   "dialog.are_you_sure_to_delete_this_backup.message": "이 작업은 실행취소할 수 없습니다.",
   "dialog.are_you_sure_to_delete_this_backup.title": "이 백업을 삭제하시겠습니까?",
+  "dialog.are_you_sure_to_delete_this_page.title": "이 페이지를 삭제하시겠습니까?",
   "dialog.are_you_sure_to_delete_this_story.message": "이 작업은 실행취소할 수 없습니다.",
   "dialog.are_you_sure_to_delete_this_story.title": "이 스토리를 삭제하시겠습니까?",
   "dialog.are_you_sure_to_discard_these_changes.title": "이 변경사항을 삭제하시겠습니까?",

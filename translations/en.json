@@ -58,6 +58,7 @@
   "dialog.are_you_sure_to_delete_these_stories.title": "Are you sure to delete these stories?",
   "dialog.are_you_sure_to_delete_this_backup.message": "You can't undo this action",
   "dialog.are_you_sure_to_delete_this_backup.title": "Are you sure to delete this backup?",
+  "dialog.are_you_sure_to_delete_this_page.title": "Are you sure to delete this page?",
   "dialog.are_you_sure_to_delete_this_story.message": "You can't undo this action",
   "dialog.are_you_sure_to_delete_this_story.title": "Are you sure to delete this story?",
   "dialog.are_you_sure_to_discard_these_changes.title": "Are you sure to discard these changes?",
