@@ -51,6 +51,8 @@
   "button.view": "منظر",
   "button.view_previous": "عرض السابق",
   "dialog.are_you_sure_to_archive_these_stories.title": "هل أنت متأكد من أرشفة هذه القصص؟",
+  "dialog.are_you_sure_to_delete_tag.message": "لا يمكن التراجع عن هذا الإجراء، ولكن لن يتم حذف ملاحظاتك وقصصك.",
+  "dialog.are_you_sure_to_delete_tag.title": "هل أنت متأكد أنك تريد حذف هذه العلامة؟",
   "dialog.are_you_sure_to_delete_these_stories.message": "لا يمكنك التراجع عن هذا الإجراء",
   "dialog.are_you_sure_to_delete_these_stories.title": "هل أنت متأكد من حذف هذه القصص؟",
   "dialog.are_you_sure_to_delete_this_backup.message": "لا يمكنك التراجع عن هذا الإجراء",

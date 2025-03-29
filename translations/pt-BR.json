@@ -51,6 +51,8 @@
   "button.view": "Visualizar",
   "button.view_previous": "Ver anterior",
   "dialog.are_you_sure_to_archive_these_stories.title": "Tem certeza de arquivar essas histórias?",
+  "dialog.are_you_sure_to_delete_tag.message": "Esta ação não pode ser desfeita, mas suas notas e histórias não serão excluídas.",
+  "dialog.are_you_sure_to_delete_tag.title": "Tem certeza de que deseja excluir esta tag?",
   "dialog.are_you_sure_to_delete_these_stories.message": "Você não pode desfazer esta ação",
   "dialog.are_you_sure_to_delete_these_stories.title": "Tem certeza de que deseja excluir essas histórias?",
   "dialog.are_you_sure_to_delete_this_backup.message": "Você não pode desfazer esta ação",

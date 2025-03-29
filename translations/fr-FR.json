@@ -51,6 +51,8 @@
   "button.view": "Voir",
   "button.view_previous": "Voir le précédent",
   "dialog.are_you_sure_to_archive_these_stories.title": "Êtes-vous sûr d’archiver ces histoires ?",
+  "dialog.are_you_sure_to_delete_tag.message": "Cette action ne peut pas être annulée, mais vos notes et histoires ne seront pas supprimées.",
+  "dialog.are_you_sure_to_delete_tag.title": "Êtes-vous sûr de vouloir supprimer cette balise ?",
   "dialog.are_you_sure_to_delete_these_stories.message": "Vous ne pouvez pas annuler cette action",
   "dialog.are_you_sure_to_delete_these_stories.title": "Êtes-vous sûr de supprimer ces histoires ?",
   "dialog.are_you_sure_to_delete_this_backup.message": "Vous ne pouvez pas annuler cette action",

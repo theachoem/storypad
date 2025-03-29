@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart' show OkCancelResult, showOkCancelAlertDialog;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
 import 'package:storypad/core/databases/models/collection_db_model.dart' show CollectionDbModel;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
@@ -71,8 +72,9 @@ class TagsProvider extends ChangeNotifier {
   Future<void> deleteTag(BuildContext context, TagDbModel tag) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
-      title: "Are you sure to delete?",
-      message: "You can't undo this action. Related stories will still remain",
+      title: tr('dialog.are_you_sure_to_delete_tag.title'),
+      message: tr('dialog.are_you_sure_to_delete_tag.message'),
+      isDestructiveAction: true,
     );
 
     if (result == OkCancelResult.ok) {

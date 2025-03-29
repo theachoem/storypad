@@ -51,6 +51,8 @@
   "button.view": "Vista",
   "button.view_previous": "Ver Anterior",
   "dialog.are_you_sure_to_archive_these_stories.title": "¿Estás seguro de archivar estas historias?",
+  "dialog.are_you_sure_to_delete_tag.message": "Esta acción no se puede deshacer, pero tus notas e historias no se eliminarán.",
+  "dialog.are_you_sure_to_delete_tag.title": "¿Estás seguro de que deseas eliminar esta etiqueta?",
   "dialog.are_you_sure_to_delete_these_stories.message": "No puedes deshacer esta acción",
   "dialog.are_you_sure_to_delete_these_stories.title": "¿Estás seguro de eliminar estas historias?",
   "dialog.are_you_sure_to_delete_this_backup.message": "No puedes deshacer esta acción",

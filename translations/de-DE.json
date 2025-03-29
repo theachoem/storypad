@@ -51,6 +51,8 @@
   "button.view": "Sicht",
   "button.view_previous": "Vorheriges anzeigen",
   "dialog.are_you_sure_to_archive_these_stories.title": "Sind Sie sicher, diese Geschichten zu archivieren?",
+  "dialog.are_you_sure_to_delete_tag.message": "Diese Aktion kann nicht rückgängig gemacht werden, Ihre Notizen und Geschichten werden jedoch nicht gelöscht.",
+  "dialog.are_you_sure_to_delete_tag.title": "Sind Sie sicher, dass Sie dieses Tag löschen möchten?",
   "dialog.are_you_sure_to_delete_these_stories.message": "Sie können diese Aktion nicht rückgängig machen",
   "dialog.are_you_sure_to_delete_these_stories.title": "Sind Sie sicher, dass Sie diese Geschichten löschen?",
   "dialog.are_you_sure_to_delete_this_backup.message": "Sie können diese Aktion nicht rückgängig machen",

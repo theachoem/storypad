@@ -51,6 +51,8 @@
   "button.view": "看法",
   "button.view_previous": "查看上一个",
   "dialog.are_you_sure_to_archive_these_stories.title": "您确定要存档这些故事吗？",
+  "dialog.are_you_sure_to_delete_tag.message": "此操作无法撤消，但您的笔记和故事不会被删除。",
+  "dialog.are_you_sure_to_delete_tag.title": "您确定要删除此标签吗？",
   "dialog.are_you_sure_to_delete_these_stories.message": "您无法撤消此操作",
   "dialog.are_you_sure_to_delete_these_stories.title": "您确定要删除这些故事吗？",
   "dialog.are_you_sure_to_delete_this_backup.message": "您无法撤消此操作",

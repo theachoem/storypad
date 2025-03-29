@@ -51,6 +51,8 @@
   "button.view": "ビュー",
   "button.view_previous": "前を見る",
   "dialog.are_you_sure_to_archive_these_stories.title": "これらのストーリーをアーカイブしてもよろしいですか?",
+  "dialog.are_you_sure_to_delete_tag.message": "この操作を元に戻すことはできませんが、メモやストーリーは削除されません。",
+  "dialog.are_you_sure_to_delete_tag.title": "このタグを削除してもよろしいですか?",
   "dialog.are_you_sure_to_delete_these_stories.message": "この操作を元に戻すことはできません",
   "dialog.are_you_sure_to_delete_these_stories.title": "これらのストーリーを削除してもよろしいですか?",
   "dialog.are_you_sure_to_delete_this_backup.message": "この操作を元に戻すことはできません",
