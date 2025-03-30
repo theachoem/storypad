@@ -13,26 +13,26 @@ class _CommunityTile extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
           text: "${tr("page.community.title")} ",
           children: [
-            WidgetSpan(
-              child: Material(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  side: BorderSide(
-                    color: ColorScheme.of(context).bootstrap.info.color,
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.textScalerOf(context).scale(6),
-                    vertical: MediaQuery.textScalerOf(context).scale(1),
-                  ),
-                  child: Text(
-                    tr('general.new'),
-                    style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).onSurface),
-                  ),
-                ),
-              ),
-            )
+            // WidgetSpan(
+            //   child: Material(
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(4.0),
+            //       side: BorderSide(
+            //         color: ColorScheme.of(context).bootstrap.info.color,
+            //       ),
+            //     ),
+            //     child: Padding(
+            //       padding: EdgeInsets.symmetric(
+            //         horizontal: MediaQuery.textScalerOf(context).scale(6),
+            //         vertical: MediaQuery.textScalerOf(context).scale(1),
+            //       ),
+            //       child: Text(
+            //         tr('general.new'),
+            //         style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).onSurface),
+            //       ),
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
