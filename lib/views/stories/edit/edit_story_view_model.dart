@@ -23,6 +23,9 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   @override
   bool get canEditPages => true;
 
+  @override
+  bool get initialManagingPage => params.initialManagingPage ?? false;
+
   EditStoryViewModel({
     required this.params,
   }) {

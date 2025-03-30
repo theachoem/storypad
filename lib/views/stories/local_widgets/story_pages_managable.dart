@@ -17,7 +17,9 @@ mixin StoryPagesManagable on ChangeNotifier {
 
   bool get canEditPages => false;
 
-  bool _managingPage = false;
+  bool get initialManagingPage => false;
+
+  late bool _managingPage = initialManagingPage;
   bool get managingPage => _managingPage;
   void toggleManagingPage() {
     _managingPage = !_managingPage;
