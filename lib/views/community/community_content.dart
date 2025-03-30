@@ -31,17 +31,17 @@ class _CommunityContent extends StatelessWidget {
             title: Text(tr("list_tile.privacy_policy.title")),
             onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
           ),
+          ListTile(
+            leading: Icon(Icons.code),
+            title: Text(tr("list_tile.source_code.title")),
+            subtitle: Text(tr("list_tile.source_code.subtitle")),
+            onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get()),
+          ),
           Divider(),
           ListTile(
             leading: Icon(Icons.waving_hand_outlined),
             title: Text(tr('general.onboard_page')),
             onTap: () => SpOnboardingWrappper.open(context),
-          ),
-          ListTile(
-            leading: Icon(Icons.code),
-            title: Text(tr("list_tile.source_code.title")),
-            subtitle: Text(kPackageInfo.version),
-            onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get()),
           ),
           ListTile(
             leading: Icon(MdiIcons.license),

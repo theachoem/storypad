@@ -35,6 +35,7 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
   OverlayEntry? floating;
 
   Future<void> toggle(BuildContext context) async {
+    if (!mounted) return;
     if (animationController.isAnimating) return;
 
     if (animationController.isCompleted) {
@@ -43,6 +44,7 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
     } else {
       floating = createFloating(context: context);
       Overlay.maybeOf(context)?.insert(floating!);
+
       await animationController.forward();
     }
   }

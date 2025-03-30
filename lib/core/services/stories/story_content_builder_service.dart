@@ -1,14 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 
 class StoryContentBuilderService {
   static Future<StoryContentDbModel> call({
     required StoryContentDbModel draftContent,
     required Map<int, QuillController> quillControllers,
+    required Map<int, TextEditingController> titleControllers,
   }) async {
-    final pages = _pagesData(draftContent, quillControllers).values.toList();
+    final pages = _pagesData(draftContent, quillControllers, titleControllers);
 
     return await compute(_buildContent, {
       'draft_content': draftContent,
@@ -18,32 +21,46 @@ class StoryContentBuilderService {
 
   static StoryContentDbModel _buildContent(Map<String, dynamic> params) {
     StoryContentDbModel draftContent = params['draft_content'];
-    List<List<dynamic>> updatedPages = params['updated_pages'];
+    List<StoryPageDbModel> updatedPages = params['updated_pages'];
 
     final metadata = [
-      draftContent.title,
-      ...updatedPages.map((e) => Document.fromJson(e).toPlainText()),
+      ...updatedPages.map((e) => e.title),
+      ...updatedPages.map((e) => e.plainText),
     ].join("\n");
 
     return draftContent.copyWith(
-      plainText: QuillRootToPlainTextService.call(Document.fromJson(updatedPages.first).root),
-      pages: updatedPages,
+      title: updatedPages.firstOrNull?.title,
+      plainText: updatedPages.firstOrNull?.plainText,
+      pages: null,
+      richPages: updatedPages,
       metadata: metadata,
     );
   }
 
-  static Map<int, List<dynamic>> _pagesData(
+  static List<StoryPageDbModel> _pagesData(
     StoryContentDbModel draftContent,
     Map<int, QuillController> quillControllers,
+    Map<int, TextEditingController> titleControllers,
   ) {
-    Map<int, List<dynamic>> documents = {};
-    if (draftContent.pages != null) {
-      for (int pageIndex = 0; pageIndex < draftContent.pages!.length; pageIndex++) {
-        List<dynamic>? quillDocument =
-            quillControllers.containsKey(pageIndex) ? quillControllers[pageIndex]!.document.toDelta().toJson() : null;
-        documents[pageIndex] = quillDocument ?? draftContent.pages![pageIndex];
+    List<StoryPageDbModel> pages = [];
+
+    if (draftContent.richPages != null) {
+      for (int pageIndex = 0; pageIndex < draftContent.richPages!.length; pageIndex++) {
+        final oldPage = draftContent.richPages?[pageIndex];
+        final document = quillControllers[pageIndex]?.document;
+        final title = titleControllers[pageIndex]?.text.trim() ?? oldPage?.title?.trim();
+
+        final page = StoryPageDbModel(
+          title: title != null && title.isNotEmpty ? title : null,
+          plainText: document != null ? QuillRootToPlainTextService.call(document.root) : oldPage?.plainText,
+          body: document?.toDelta().toJson() ?? oldPage?.body,
+          feeling: oldPage?.feeling,
+        );
+
+        pages.add(page);
       }
     }
-    return documents;
+
+    return pages;
   }
 }

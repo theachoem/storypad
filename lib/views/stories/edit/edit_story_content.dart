@@ -33,52 +33,71 @@ class _EditStoryContent extends StatelessWidget {
         child: CircularProgressIndicator.adaptive(),
       );
     } else {
-      return PageView.builder(
-        controller: viewModel.pageController,
-        itemCount: viewModel.quillControllers.length,
-        itemBuilder: (context, index) {
-          return PrimaryScrollController(
-            controller: viewModel.scrollControllers[index]!,
-            child: NestedScrollView(
-              floatHeaderSlivers: true,
-              headerSliverBuilder: (context, _) {
-                return [
-                  if (viewModel.story != null && viewModel.draftContent != null)
-                    SliverToBoxAdapter(
-                      child: StoryHeader(
-                        paddingTop: MediaQuery.of(context).padding.top + 8.0,
-                        story: viewModel.story!,
-                        setFeeling: viewModel.setFeeling,
-                        onToggleShowDayCount: viewModel.toggleShowDayCount,
-                        onToggleShowTime: viewModel.toggleShowTime,
-                        draftContent: viewModel.draftContent!,
-                        readOnly: false,
-                        titleController: viewModel.titleController,
-                        onChangeDate: viewModel.changeDate,
-                        draftActions: null,
-                      ),
-                    ),
-                  SpSliverStickyDivider.sliver(),
-                ];
-              },
-              body: Builder(builder: (context) {
-                return _Editor(
-                  draftContent: viewModel.draftContent,
-                  controller: viewModel.quillControllers[index]!,
-                  focusNode: viewModel.focusNodes[index]!,
-                  scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
-                );
-              }),
-            ),
-          );
-        },
+      return IndexedStack(
+        index: viewModel.managingPage ? 1 : 0,
+        children: [
+          buildPageEditors(),
+          StoryPagesManager(state: viewModel),
+        ],
       );
     }
   }
 
+  Widget buildPageEditors() {
+    return PageView.builder(
+      key: ValueKey(viewModel.quillControllers.length),
+      controller: viewModel.pageController,
+      itemCount: viewModel.quillControllers.length,
+      itemBuilder: (context, index) {
+        return buildPage(index);
+      },
+    );
+  }
+
+  Widget buildPage(int index) {
+    return PrimaryScrollController(
+      controller: viewModel.scrollControllers[index]!,
+      child: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (context, _) {
+          String? feeling = viewModel.draftContent?.richPages?[index].feeling;
+          if (index == 0) feeling ??= viewModel.story?.feeling;
+
+          return [
+            if (viewModel.story != null && viewModel.draftContent != null)
+              SliverToBoxAdapter(
+                child: StoryHeader(
+                  paddingTop: MediaQuery.of(context).padding.top + 8.0,
+                  story: viewModel.story!,
+                  feeling: feeling,
+                  setFeeling: (feeling) => viewModel.setFeeling(feeling),
+                  onToggleShowDayCount: viewModel.toggleShowDayCount,
+                  onToggleShowTime: viewModel.toggleShowTime,
+                  draftContent: viewModel.draftContent!,
+                  readOnly: false,
+                  titleController: viewModel.titleControllers[index],
+                  onChangeDate: viewModel.changeDate,
+                  draftActions: null,
+                ),
+              ),
+            SpSliverStickyDivider.sliver(),
+          ];
+        },
+        body: Builder(builder: (context) {
+          return _Editor(
+            draftContent: viewModel.draftContent,
+            controller: viewModel.quillControllers[index]!,
+            focusNode: viewModel.focusNodes[index]!,
+            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+          );
+        }),
+      ),
+    );
+  }
+
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.pages?.length != null && viewModel.draftContent!.pages!.length > 1) ...[
+      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
         buildPageIndicator(),
         const SizedBox(width: 16.0),
       ],
@@ -112,6 +131,13 @@ class _EditStoryContent extends StatelessWidget {
           onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
         ).show(context: context),
       ),
+      Builder(builder: (context) {
+        return IconButton(
+          tooltip: tr("button.manage_pages"),
+          icon: Icon(MdiIcons.bookOpenOutline),
+          onPressed: () => viewModel.toggleManagingPage(),
+        );
+      }),
       const SizedBox(width: 4.0),
     ];
   }
@@ -123,7 +149,7 @@ class _EditStoryContent extends StatelessWidget {
       child: ValueListenableBuilder<double>(
         valueListenable: viewModel.currentPageNotifier,
         builder: (context, currentPage, child) {
-          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.pages?.length}');
+          return Text('${viewModel.currentPage + 1} / ${viewModel.draftContent?.richPages?.length}');
         },
       ),
     );

@@ -1,9 +1,34 @@
 part of '../stories_box.dart';
 
+// TODO: remove this method when ready.
+// This is a low level method to make sure view get rich pages instead of pages when using.
+StoryContentDbModel _convertPagesToRichPages(StoryContentDbModel content) {
+  // ignore: deprecated_member_use_from_same_package
+  if (content.pages != null) {
+    content = content.copyWith(
+      pages: null,
+      richPages: List.generate(
+        // ignore: deprecated_member_use_from_same_package
+        content.pages?.length ?? 0,
+        (index) => StoryPageDbModel(
+          feeling: null,
+          title: index == 0 ? content.title : null,
+          // ignore: deprecated_member_use_from_same_package
+          body: content.pages![index],
+        ),
+      ),
+    );
+  }
+
+  return content;
+}
+
 StoryContentDbModel _stringToContent(String str) {
   String decoded = HtmlCharacterEntities.decode(str);
   dynamic json = jsonDecode(decoded);
-  return StoryContentDbModel.fromJson(json);
+
+  StoryContentDbModel content = StoryContentDbModel.fromJson(json);
+  return _convertPagesToRichPages(content);
 }
 
 String _contentToString(StoryContentDbModel content) {

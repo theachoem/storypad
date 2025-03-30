@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/core/services/welcome_message_service.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_theme_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
@@ -34,16 +36,20 @@ class EditStoryRoute extends BaseRoute {
   final int? initialYear;
   final int? initialTagId;
   final int initialPageIndex;
+  final bool? initialManagingPage;
   final Map<int, QuillController>? quillControllers;
   final StoryDbModel? story;
+  final void Function(int page)? onPageIndexChanged;
 
   EditStoryRoute({
     this.id,
     this.initialYear,
     this.initialPageIndex = 0,
+    this.initialManagingPage,
     this.quillControllers,
     this.story,
     this.initialTagId,
+    this.onPageIndexChanged,
   }) : assert(initialYear == null || id == null);
 
   @override

@@ -57,7 +57,7 @@ class SpStoryTile extends StatelessWidget {
 
   List<SpPopMenuItem> buildPopUpMenus(BuildContext context) {
     return [
-      if (story.inArchives && story.inBins && onTap != null)
+      if ((story.inArchives || story.inBins) && onTap != null)
         SpPopMenuItem(
           title: tr('button.open'),
           leadingIconData: Icons.library_books,

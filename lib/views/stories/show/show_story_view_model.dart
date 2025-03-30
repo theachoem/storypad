@@ -1,12 +1,13 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
+import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -16,7 +17,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
-class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
+class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback, StoryPagesManagable {
   final ShowStoryRoute params;
 
   ShowStoryViewModel({
@@ -31,13 +32,6 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     load(params.id, initialStory: params.story);
   }
 
-  late final PageController pageController;
-  final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
-  Map<int, QuillController> quillControllers = {};
-  Map<int, ScrollController> scrollControllers = {};
-
-  int get currentPage => currentPageNotifier.value.round();
-
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
   TextSelection? currentTextSelection;
@@ -49,12 +43,14 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     story = initialStory ?? await StoryDbModel.db.find(id);
     draftContent = story!.generateDraftContent();
 
-    bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent!..addPage();
+    bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;
+    if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
     quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: true);
     quillControllers.forEach((key, controller) {
       scrollControllers[key] = ScrollController();
+      titleControllers[key] = TextEditingController(text: draftContent!.richPages?[key].title)
+        ..addListener(() => _silentlySave());
       controller.addListener(() => _silentlySave());
     });
 
@@ -65,15 +61,14 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
     await StoryDbModel.db.set(story!);
     notifyListeners();
-
     return true;
   }
 
   Future<void> setFeeling(String? feeling) async {
-    story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
+    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
     notifyListeners();
+    _silentlySave();
 
-    await StoryDbModel.db.set(story!);
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,
     );
@@ -164,16 +159,24 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> goToEditPage(BuildContext context) async {
-    if (draftContent == null || draftContent?.pages == null || pageController.page == null) return;
+    if (draftContent == null || draftContent?.richPages == null || pageController.page == null) return;
+
+    int? currentPageIndex;
 
     await EditStoryRoute(
       id: story!.id,
       initialPageIndex: currentPage,
       quillControllers: quillControllers,
       story: story,
+      initialManagingPage: managingPage,
+      onPageIndexChanged: (page) => currentPageIndex = page,
     ).push(context, rootNavigator: !AppTheme.isIOS(context));
 
     await load(story!.id);
+
+    if (currentPageIndex != null) {
+      pageController.jumpToPage(currentPageIndex!);
+    }
   }
 
   void _silentlySave() {
@@ -188,18 +191,10 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   Future<bool> _getHasChange() async {
     return StoryHasChangedService.call(
+      titleControllers: titleControllers,
       quillControllers: quillControllers,
       latestContent: story?.draftContent ?? story!.latestContent!,
       draftContent: draftContent!,
     );
-  }
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    currentPageNotifier.dispose();
-    quillControllers.forEach((e, k) => k.dispose());
-    scrollControllers.forEach((e, k) => k.dispose());
-    super.dispose();
   }
 }

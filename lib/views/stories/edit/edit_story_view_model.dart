@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
@@ -14,9 +15,16 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
 
-class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
+class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback, StoryPagesManagable {
   final EditStoryRoute params;
+
+  @override
+  bool get canEditPages => true;
+
+  @override
+  bool get initialManagingPage => params.initialManagingPage ?? false;
 
   EditStoryViewModel({
     required this.params,
@@ -24,23 +32,14 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     init(initialStory: params.story);
 
     pageController = PageController(initialPage: params.initialPageIndex);
+    currentPageNotifier.value = params.initialPageIndex.toDouble();
     pageController.addListener(() {
       currentPageNotifier.value = pageController.page!;
+      params.onPageIndexChanged?.call(currentPage);
     });
   }
 
-  late final PageController pageController;
-  late final ValueNotifier<double> currentPageNotifier = ValueNotifier(params.initialPageIndex.toDouble());
-  TextEditingController? titleController;
-  final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
-
-  Map<int, QuillController> quillControllers = {};
-  Map<int, ScrollController> scrollControllers = {};
-  Map<int, FocusNode> focusNodes = {};
   final DateTime openedOn = DateTime.now();
-
-  int get currentPageIndex => pageController.page!.round().toInt();
-  int get currentPage => currentPageNotifier.value.round();
 
   late final EditingFlowType flowType;
   StoryDbModel? story;
@@ -61,43 +60,72 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear, initialTagId: params.initialTagId);
     draftContent = story!.generateDraftContent();
 
-    titleController = TextEditingController(text: draftContent?.title)
-      ..addListener(() {
-        draftContent = draftContent?.copyWith(title: titleController?.text);
-        _silentlySave();
-      });
+    bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;
+    if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
-    bool alreadyHasPage = draftContent?.pages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent!..addPage();
+    quillControllers = await StoryContentToQuillControllersService.call(
+      draftContent!,
+      readOnly: false,
+      existingControllers: params.quillControllers,
+    );
 
-    if (params.quillControllers != null) {
-      for (int i = 0; i < params.quillControllers!.length; i++) {
-        quillControllers[i] = QuillController(
-          document: params.quillControllers![i]!.document,
-          selection: params.quillControllers![i]!.selection,
-        )..addListener(() => _silentlySave());
-      }
-    } else {
-      quillControllers = await StoryContentToQuillControllersService.call(
-        draftContent!,
-        readOnly: false,
-      );
-
-      quillControllers.forEach((_, controller) {
-        controller.addListener(() => _silentlySave());
-      });
-    }
-
-    for (int i = 0; i < quillControllers.length; i++) {
-      scrollControllers[i] = ScrollController();
+    quillControllers.forEach((i, controller) {
       focusNodes[i] = FocusNode();
-    }
+      scrollControllers[i] = ScrollController();
+      titleControllers[i] = TextEditingController(text: draftContent?.richPages?[i].title)
+        ..addListener(() => _silentlySave());
+      controller.addListener(() => _silentlySave());
+    });
 
     notifyListeners();
   }
 
-  Future<bool> get hasDataWritten =>
-      StoryHasDataWrittenService.callByController(draftContent: draftContent!, quillControllers: quillControllers);
+  Future<bool> get hasDataWritten => StoryHasDataWrittenService.callByController(
+        draftContent: draftContent!,
+        quillControllers: quillControllers,
+        titleControllers: titleControllers,
+      );
+
+  @override
+  Future<void> addPage() async {
+    draftContent = draftContent!.addRichPage();
+    _silentlySave();
+
+    int index = draftContent!.richPages!.length - 1;
+    scrollControllers[index] = ScrollController();
+    focusNodes[index] = FocusNode();
+    titleControllers[index] = TextEditingController()..addListener(() => _silentlySave());
+
+    quillControllers[index] = QuillController(
+      document: Document(),
+      selection: const TextSelection.collapsed(offset: 0),
+      readOnly: false,
+    )..addListener(() => _silentlySave());
+
+    notifyListeners();
+  }
+
+  @override
+  Future<void> deletePage(int index) async {
+    draftContent = draftContent?.removeRichPageAt(index);
+    _silentlySave();
+
+    quillControllers.clear();
+    focusNodes.clear();
+    scrollControllers.clear();
+    titleControllers.clear();
+
+    quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: false);
+    quillControllers.forEach((i, quillController) {
+      focusNodes[i] = FocusNode();
+      scrollControllers[i] = ScrollController();
+      titleControllers[i] = TextEditingController(text: draftContent?.richPages?[i].title)
+        ..addListener(() => _silentlySave());
+      quillController.addListener(() => _silentlySave());
+    });
+
+    notifyListeners();
+  }
 
   Future<bool> setTags(List<int> tags) async {
     story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
@@ -112,12 +140,11 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
+    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
     notifyListeners();
 
     if (await hasDataWritten) {
-      await StoryDbModel.db.set(story!);
-      lastSavedAtNotifier.value = story?.updatedAt;
+      _silentlySave();
     }
 
     AnalyticsService.instance.logSetStoryFeeling(
@@ -223,6 +250,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   Future<bool> _hasChange() async {
     return StoryHasChangedService.call(
+      titleControllers: titleControllers,
       quillControllers: quillControllers,
       latestContent: story?.draftContent ?? story!.latestContent!,
       draftContent: draftContent!,
@@ -284,17 +312,5 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     }
 
     if (shouldPop && context.mounted) Navigator.of(context).pop(result);
-  }
-
-  @override
-  void dispose() async {
-    titleController?.dispose();
-    pageController.dispose();
-    currentPageNotifier.dispose();
-    quillControllers.forEach((e, k) => k.dispose());
-    focusNodes.forEach((e, k) => k.dispose());
-    scrollControllers.forEach((e, k) => k.dispose());
-    lastSavedAtNotifier.dispose();
-    super.dispose();
   }
 }

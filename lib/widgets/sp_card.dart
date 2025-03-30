@@ -17,7 +17,7 @@ class SpCard extends StatelessWidget {
     required String title,
     required String subtitle,
     required ImageProvider logo,
-    double logoSize = 64,
+    double logoSize = 48,
     required void Function()? onTap,
   }) {
     return SpCard(

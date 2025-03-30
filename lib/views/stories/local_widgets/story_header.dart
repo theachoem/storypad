@@ -20,10 +20,12 @@ class StoryHeader extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
     required this.onChangeDate,
+    required this.feeling,
     this.titleController,
   });
 
   final double paddingTop;
+  final String? feeling;
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
   final TextEditingController? titleController;
@@ -54,7 +56,7 @@ class StoryHeader extends StatelessWidget {
                   ),
                 ),
                 SpFeelingButton(
-                  feeling: story.feeling,
+                  feeling: feeling,
                   onPicked: setFeeling,
                 ),
               ],
@@ -68,7 +70,7 @@ class StoryHeader extends StatelessWidget {
             onChangeDate: onChangeDate,
             draftActions: draftActions,
           ),
-          if (draftContent.title?.trim().isNotEmpty == true || !readOnly) ...[
+          if (titleController?.text.trim().isNotEmpty == true || !readOnly) ...[
             _TitleField(
               titleController: titleController,
               draftContent: draftContent,
@@ -137,7 +139,7 @@ class _DateSelector extends StatelessWidget {
 
   Widget buildMonthYear(BuildContext context) {
     return Text(
-      DateFormatHelper.yM(story.displayPathDate, context.locale),
+      DateFormatHelper.yMMMM(story.displayPathDate, context.locale),
       style: TextTheme.of(context).labelMedium,
     );
   }
