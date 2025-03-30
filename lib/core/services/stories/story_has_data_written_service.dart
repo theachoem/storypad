@@ -6,8 +6,8 @@ import 'package:storypad/core/services/stories/story_content_builder_service.dar
 class StoryHasDataWrittenService {
   static Future<bool> callByController({
     required StoryContentDbModel draftContent,
-    required Map<int, QuillController> quillControllers,
-    required Map<int, TextEditingController> titleControllers,
+    required List<QuillController> quillControllers,
+    required List<TextEditingController> titleControllers,
   }) async {
     final content = await StoryContentBuilderService.call(
       draftContent: draftContent,

@@ -13,7 +13,10 @@ class ShowChangeViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
-  Map<int, QuillController>? quillControllers;
+  List<QuillController>? quillControllers;
+
+  final ValueNotifier<int> currentPageNotifier = ValueNotifier(0);
+  int get currentPage => currentPageNotifier.value;
 
   Future<void> load() async {
     quillControllers = await StoryContentToQuillControllersService.call(params.content, readOnly: true);
@@ -22,7 +25,7 @@ class ShowChangeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   @override
   void dispose() {
-    quillControllers?.forEach((e, k) => k.dispose());
+    quillControllers?.forEach((e) => e.dispose());
     super.dispose();
   }
 }

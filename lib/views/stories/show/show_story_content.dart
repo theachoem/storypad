@@ -15,6 +15,11 @@ class _ShowStoryContent extends StatelessWidget {
             )
           : null,
       appBar: AppBar(
+        leading: SpAnimatedIcons.fadeScale(
+          firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
+          secondChild: BackButton(),
+          showFirst: viewModel.managingPage,
+        ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         titleSpacing: 0.0,
         actions: buildAppBarActions(context),
@@ -52,7 +57,7 @@ class _ShowStoryContent extends StatelessWidget {
 
   Widget buildPage(int index) {
     return PrimaryScrollController(
-      controller: viewModel.scrollControllers[index]!,
+      controller: viewModel.scrollControllers[index],
       child: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, _) {
@@ -96,7 +101,7 @@ class _ShowStoryContent extends StatelessWidget {
     required ScrollController scrollController,
   }) {
     return QuillEditor.basic(
-      controller: viewModel.quillControllers[index]!,
+      controller: viewModel.quillControllers[index],
       scrollController: scrollController,
       config: QuillEditorConfig(
         contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
@@ -129,34 +134,39 @@ class _ShowStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
-        buildPageIndicator(),
-        const SizedBox(width: 12.0),
+      if (!viewModel.managingPage) ...[
+        if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
+          buildPageIndicator(),
+          const SizedBox(width: 12.0),
+        ],
+        IconButton(
+          tooltip: tr("button.edit"),
+          onPressed: () => viewModel.goToEditPage(context),
+          icon: const Icon(Icons.edit_outlined),
+        ),
+        Builder(builder: (context) {
+          return IconButton(
+            tooltip: tr("page.tags.title"),
+            icon: const Icon(Icons.sell_outlined),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+          );
+        }),
+        IconButton(
+          tooltip: tr("page.theme.title"),
+          icon: Icon(Icons.color_lens_outlined),
+          onPressed: () => SpStoryThemeBottomSheet(
+            story: viewModel.story!,
+            onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+          ).show(context: context),
+        ),
       ],
-      IconButton(
-        tooltip: tr("button.edit"),
-        onPressed: () => viewModel.goToEditPage(context),
-        icon: const Icon(Icons.edit_outlined),
-      ),
-      Builder(builder: (context) {
-        return IconButton(
-          tooltip: tr("page.tags.title"),
-          icon: const Icon(Icons.sell_outlined),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-      }),
-      IconButton(
-        tooltip: tr("page.theme.title"),
-        icon: Icon(Icons.color_lens_outlined),
-        onPressed: () => SpStoryThemeBottomSheet(
-          story: viewModel.story!,
-          onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-        ).show(context: context),
-      ),
       Builder(builder: (context) {
         return IconButton(
           tooltip: tr("button.manage_pages"),
-          icon: Icon(MdiIcons.bookOpenOutline),
+          icon: Icon(
+            viewModel.managingPage ? MdiIcons.bookOpen : MdiIcons.bookOpenOutline,
+            color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
+          ),
           onPressed: () => viewModel.toggleManagingPage(),
         );
       }),

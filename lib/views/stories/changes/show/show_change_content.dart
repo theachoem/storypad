@@ -8,7 +8,14 @@ class _ShowChangeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          if (viewModel.params.content.richPages?.length != null && viewModel.params.content.richPages!.length > 1) ...[
+            buildPageIndicator(),
+            const SizedBox(width: 12.0),
+          ],
+        ],
+      ),
       body: buildBody(context),
     );
   }
@@ -17,6 +24,7 @@ class _ShowChangeContent extends StatelessWidget {
     if (viewModel.quillControllers == null) return const Center(child: CircularProgressIndicator.adaptive());
     return PageView.builder(
       itemCount: viewModel.quillControllers?.length ?? 0,
+      onPageChanged: (value) => viewModel.currentPageNotifier.value = value,
       itemBuilder: (context, index) {
         return NestedScrollView(
           headerSliverBuilder: (context, _) {
@@ -40,7 +48,7 @@ class _ShowChangeContent extends StatelessWidget {
             ];
           },
           body: QuillEditor.basic(
-            controller: viewModel.quillControllers!.values.elementAt(index),
+            controller: viewModel.quillControllers!.elementAt(index),
             config: QuillEditorConfig(
               padding: const EdgeInsets.all(16.0),
               checkBoxReadOnly: true,
@@ -57,6 +65,19 @@ class _ShowChangeContent extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget buildPageIndicator() {
+    return Container(
+      height: 48.0,
+      alignment: Alignment.center,
+      child: ValueListenableBuilder<int>(
+        valueListenable: viewModel.currentPageNotifier,
+        builder: (context, currentPage, child) {
+          return Text('${viewModel.currentPage + 1} / ${viewModel.params.content.richPages?.length}');
+        },
+      ),
     );
   }
 }

@@ -36,8 +36,7 @@ class EditStoryRoute extends BaseRoute {
   final int? initialYear;
   final int? initialTagId;
   final int initialPageIndex;
-  final bool? initialManagingPage;
-  final Map<int, QuillController>? quillControllers;
+  final List<QuillController>? quillControllers;
   final StoryDbModel? story;
   final void Function(int page)? onPageIndexChanged;
 
@@ -45,7 +44,6 @@ class EditStoryRoute extends BaseRoute {
     this.id,
     this.initialYear,
     this.initialPageIndex = 0,
-    this.initialManagingPage,
     this.quillControllers,
     this.story,
     this.initialTagId,

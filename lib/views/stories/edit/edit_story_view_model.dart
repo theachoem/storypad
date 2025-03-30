@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
@@ -22,9 +23,6 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   @override
   bool get canEditPages => true;
-
-  @override
-  bool get initialManagingPage => params.initialManagingPage ?? false;
 
   EditStoryViewModel({
     required this.params,
@@ -69,15 +67,22 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       existingControllers: params.quillControllers,
     );
 
-    quillControllers.forEach((i, controller) {
-      focusNodes[i] = FocusNode();
-      scrollControllers[i] = ScrollController();
-      titleControllers[i] = TextEditingController(text: draftContent?.richPages?[i].title)
-        ..addListener(() => _silentlySave());
-      controller.addListener(() => _silentlySave());
-    });
-
+    setupControllers();
     notifyListeners();
+  }
+
+  void setupControllers() {
+    focusNodes = [];
+    scrollControllers = [];
+    titleControllers = [];
+
+    for (int i = 0; i < quillControllers.length; i++) {
+      focusNodes.add(FocusNode());
+      scrollControllers.add(ScrollController());
+      titleControllers
+          .add(TextEditingController(text: draftContent?.richPages?[i].title)..addListener(() => _silentlySave()));
+      quillControllers[i].addListener(() => _silentlySave());
+    }
   }
 
   Future<bool> get hasDataWritten => StoryHasDataWrittenService.callByController(
@@ -91,38 +96,46 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     draftContent = draftContent!.addRichPage();
     _silentlySave();
 
-    int index = draftContent!.richPages!.length - 1;
-    scrollControllers[index] = ScrollController();
-    focusNodes[index] = FocusNode();
-    titleControllers[index] = TextEditingController()..addListener(() => _silentlySave());
-
-    quillControllers[index] = QuillController(
+    scrollControllers.add(ScrollController());
+    focusNodes.add(FocusNode());
+    titleControllers.add(TextEditingController()..addListener(() => _silentlySave()));
+    quillControllers.add(QuillController(
       document: Document(),
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: false,
-    )..addListener(() => _silentlySave());
+    )..addListener(() => _silentlySave()));
 
     notifyListeners();
   }
 
   @override
   Future<void> deletePage(int index) async {
+    if (!canDeletePage) return;
+
     draftContent = draftContent?.removeRichPageAt(index);
     _silentlySave();
 
-    quillControllers.clear();
-    focusNodes.clear();
-    scrollControllers.clear();
-    titleControllers.clear();
+    quillControllers = [];
+    focusNodes = [];
+    scrollControllers = [];
+    titleControllers = [];
 
     quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: false);
-    quillControllers.forEach((i, quillController) {
-      focusNodes[i] = FocusNode();
-      scrollControllers[i] = ScrollController();
-      titleControllers[i] = TextEditingController(text: draftContent?.richPages?[i].title)
-        ..addListener(() => _silentlySave());
-      quillController.addListener(() => _silentlySave());
-    });
+    setupControllers();
+
+    notifyListeners();
+  }
+
+  @override
+  void reorderPages({
+    required int oldIndex,
+    required int newIndex,
+  }) {
+    quillControllers = quillControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    focusNodes = focusNodes.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    scrollControllers = scrollControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    titleControllers = titleControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    _silentlySave();
 
     notifyListeners();
   }

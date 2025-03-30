@@ -6,8 +6,8 @@ import 'package:storypad/core/services/stories/story_content_builder_service.dar
 
 class StoryHasChangedService {
   static Future<bool> call({
-    required Map<int, TextEditingController> titleControllers,
-    required Map<int, QuillController> quillControllers,
+    required List<TextEditingController> titleControllers,
+    required List<QuillController> quillControllers,
     required StoryContentDbModel latestContent,
     required StoryContentDbModel draftContent,
     bool ignoredEmpty = true,

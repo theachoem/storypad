@@ -110,7 +110,10 @@ class _TagsContent extends StatelessWidget {
           : Checkbox.adaptive(
               tristate: false,
               value: viewModel.selectedTags.contains(tag.id),
-              onChanged: (value) => viewModel.onToggle(tag, value!),
+              onChanged: (value) async {
+                await viewModel.onToggle(tag, value!);
+                if (context.mounted) context.read<TagsProvider>().reload();
+              },
             ),
     );
   }

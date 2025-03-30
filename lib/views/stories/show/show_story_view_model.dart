@@ -1,9 +1,11 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
@@ -47,12 +49,69 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
     quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: true);
-    quillControllers.forEach((key, controller) {
-      scrollControllers[key] = ScrollController();
-      titleControllers[key] = TextEditingController(text: draftContent!.richPages?[key].title)
-        ..addListener(() => _silentlySave());
-      controller.addListener(() => _silentlySave());
-    });
+    setupControllers();
+    notifyListeners();
+  }
+
+  void setupControllers() {
+    focusNodes = [];
+    scrollControllers = [];
+    titleControllers = [];
+
+    for (int i = 0; i < quillControllers.length; i++) {
+      focusNodes.add(FocusNode());
+      scrollControllers.add(ScrollController());
+      titleControllers
+          .add(TextEditingController(text: draftContent?.richPages?[i].title)..addListener(() => _silentlySave()));
+      quillControllers[i].addListener(() => _silentlySave());
+    }
+  }
+
+  @override
+  Future<void> addPage() async {
+    draftContent = draftContent!.addRichPage();
+    _silentlySave();
+
+    scrollControllers.add(ScrollController());
+    focusNodes.add(FocusNode());
+    titleControllers.add(TextEditingController()..addListener(() => _silentlySave()));
+    quillControllers.add(QuillController(
+      document: Document(),
+      selection: const TextSelection.collapsed(offset: 0),
+      readOnly: false,
+    )..addListener(() => _silentlySave()));
+
+    notifyListeners();
+  }
+
+  @override
+  Future<void> deletePage(int index) async {
+    if (!canDeletePage) return;
+
+    draftContent = draftContent?.removeRichPageAt(index);
+    _silentlySave();
+
+    quillControllers = [];
+    focusNodes = [];
+    scrollControllers = [];
+    titleControllers = [];
+
+    quillControllers = await StoryContentToQuillControllersService.call(draftContent!, readOnly: false);
+    setupControllers();
+
+    notifyListeners();
+  }
+
+  @override
+  void reorderPages({
+    required int oldIndex,
+    required int newIndex,
+  }) {
+    quillControllers = quillControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    focusNodes = focusNodes.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    scrollControllers = scrollControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    titleControllers = titleControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    _silentlySave();
 
     notifyListeners();
   }
@@ -168,7 +227,6 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       initialPageIndex: currentPage,
       quillControllers: quillControllers,
       story: story,
-      initialManagingPage: managingPage,
       onPageIndexChanged: (page) => currentPageIndex = page,
     ).push(context, rootNavigator: !AppTheme.isIOS(context));
 
