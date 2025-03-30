@@ -61,7 +61,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     draftContent = story!.generateDraftContent();
 
     bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent!..addRichPage();
+    if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
     quillControllers = await StoryContentToQuillControllersService.call(
       draftContent!,

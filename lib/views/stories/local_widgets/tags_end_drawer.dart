@@ -15,12 +15,15 @@ class TagsEndDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SpNestedNavigation(
-        initialScreen: TagsView(
-          params: TagsRoute(
-            storyViewOnly: true,
-            initialSelectedTags: initialTags,
-            onToggleTags: onUpdated,
+      child: Theme(
+        data: Theme.of(context).copyWith(scaffoldBackgroundColor: Theme.of(context).colorScheme.surface),
+        child: SpNestedNavigation(
+          initialScreen: TagsView(
+            params: TagsRoute(
+              storyViewOnly: true,
+              initialSelectedTags: initialTags,
+              onToggleTags: onUpdated,
+            ),
           ),
         ),
       ),

@@ -139,7 +139,7 @@ class _DateSelector extends StatelessWidget {
 
   Widget buildMonthYear(BuildContext context) {
     return Text(
-      DateFormatHelper.yM(story.displayPathDate, context.locale),
+      DateFormatHelper.yMMMM(story.displayPathDate, context.locale),
       style: TextTheme.of(context).labelMedium,
     );
   }

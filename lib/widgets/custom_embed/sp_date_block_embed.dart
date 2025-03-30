@@ -31,7 +31,7 @@ class SpDateBlockEmbed extends EmbedBuilder {
               children: [
                 Text(getDayOfMonthSuffix(date.day).toLowerCase(), style: TextTheme.of(context).labelSmall),
                 Text(
-                  DateFormatHelper.yM(date, context.locale),
+                  DateFormatHelper.yMMMM(date, context.locale),
                   style: TextTheme.of(context).labelMedium,
                 ),
               ],
