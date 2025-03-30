@@ -25,10 +25,6 @@ class _StoryPagesBinTarget extends StatelessWidget {
         builder: (context, candidateItems, rejectedItems) {
           return Container(
             decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: candidateItems.isNotEmpty ? ColorScheme.of(context).error : Colors.transparent,
-              ),
               color:
                   candidateItems.isNotEmpty ? ColorScheme.of(context).errorContainer : ColorScheme.of(context).surface,
             ),

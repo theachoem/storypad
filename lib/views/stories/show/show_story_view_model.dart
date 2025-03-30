@@ -78,7 +78,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     quillControllers.add(QuillController(
       document: Document(),
       selection: const TextSelection.collapsed(offset: 0),
-      readOnly: false,
+      readOnly: true,
     )..addListener(() => _silentlySave()));
 
     notifyListeners();
