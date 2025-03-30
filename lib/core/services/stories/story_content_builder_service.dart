@@ -8,8 +8,8 @@ import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.da
 class StoryContentBuilderService {
   static Future<StoryContentDbModel> call({
     required StoryContentDbModel draftContent,
-    required Map<int, QuillController> quillControllers,
-    required Map<int, TextEditingController> titleControllers,
+    required List<QuillController> quillControllers,
+    required List<TextEditingController> titleControllers,
   }) async {
     final pages = _pagesData(draftContent, quillControllers, titleControllers);
 
@@ -39,16 +39,16 @@ class StoryContentBuilderService {
 
   static List<StoryPageDbModel> _pagesData(
     StoryContentDbModel draftContent,
-    Map<int, QuillController> quillControllers,
-    Map<int, TextEditingController> titleControllers,
+    List<QuillController> quillControllers,
+    List<TextEditingController> titleControllers,
   ) {
     List<StoryPageDbModel> pages = [];
 
     if (draftContent.richPages != null) {
       for (int pageIndex = 0; pageIndex < draftContent.richPages!.length; pageIndex++) {
         final oldPage = draftContent.richPages?[pageIndex];
-        final document = quillControllers[pageIndex]?.document;
-        final title = titleControllers[pageIndex]?.text.trim() ?? oldPage?.title?.trim();
+        final document = quillControllers.elementAtOrNull(pageIndex)?.document;
+        final title = titleControllers.elementAtOrNull(pageIndex)?.text.trim() ?? oldPage?.title?.trim();
 
         final page = StoryPageDbModel(
           title: title != null && title.isNotEmpty ? title : null,

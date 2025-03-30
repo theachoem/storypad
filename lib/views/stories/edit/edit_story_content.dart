@@ -18,6 +18,11 @@ class _EditStoryContent extends StatelessWidget {
               )
             : null,
         appBar: AppBar(
+          leading: SpAnimatedIcons.fadeScale(
+            firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
+            secondChild: BackButton(),
+            showFirst: viewModel.managingPage,
+          ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           titleSpacing: 0.0,
           actions: buildAppBarActions(context),
@@ -56,7 +61,7 @@ class _EditStoryContent extends StatelessWidget {
 
   Widget buildPage(int index) {
     return PrimaryScrollController(
-      controller: viewModel.scrollControllers[index]!,
+      controller: viewModel.scrollControllers[index],
       child: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, _) {
@@ -86,8 +91,8 @@ class _EditStoryContent extends StatelessWidget {
         body: Builder(builder: (context) {
           return _Editor(
             draftContent: viewModel.draftContent,
-            controller: viewModel.quillControllers[index]!,
-            focusNode: viewModel.focusNodes[index]!,
+            controller: viewModel.quillControllers[index],
+            focusNode: viewModel.focusNodes[index],
             scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
           );
         }),
@@ -97,10 +102,39 @@ class _EditStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
-        buildPageIndicator(),
-        const SizedBox(width: 16.0),
+      if (!viewModel.managingPage) ...[
+        if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
+          buildPageIndicator(),
+          const SizedBox(width: 16.0),
+        ],
+        SizedBox(width: 8.0),
+        Builder(builder: (context) {
+          return IconButton(
+            tooltip: tr("page.tags.title"),
+            icon: const Icon(Icons.sell_outlined),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+          );
+        }),
+        IconButton(
+          tooltip: tr("page.theme.title"),
+          icon: Icon(Icons.color_lens_outlined),
+          onPressed: () => SpStoryThemeBottomSheet(
+            story: viewModel.story!,
+            onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+          ).show(context: context),
+        ),
       ],
+      Builder(builder: (context) {
+        return IconButton(
+          tooltip: tr("button.manage_pages"),
+          icon: Icon(
+            viewModel.managingPage ? MdiIcons.bookOpen : MdiIcons.bookOpenOutline,
+            color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
+          ),
+          onPressed: () => viewModel.toggleManagingPage(),
+        );
+      }),
+      const SizedBox(width: 8.0),
       ValueListenableBuilder(
         valueListenable: viewModel.lastSavedAtNotifier,
         builder: (context, lastSavedAt, child) {
@@ -115,30 +149,7 @@ class _EditStoryContent extends StatelessWidget {
           );
         },
       ),
-      SizedBox(width: 8.0),
-      Builder(builder: (context) {
-        return IconButton(
-          tooltip: tr("page.tags.title"),
-          icon: const Icon(Icons.sell_outlined),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-      }),
-      IconButton(
-        tooltip: tr("page.theme.title"),
-        icon: Icon(Icons.color_lens_outlined),
-        onPressed: () => SpStoryThemeBottomSheet(
-          story: viewModel.story!,
-          onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-        ).show(context: context),
-      ),
-      Builder(builder: (context) {
-        return IconButton(
-          tooltip: tr("button.manage_pages"),
-          icon: Icon(MdiIcons.bookOpenOutline),
-          onPressed: () => viewModel.toggleManagingPage(),
-        );
-      }),
-      const SizedBox(width: 4.0),
+      const SizedBox(width: 12.0),
     ];
   }
 
