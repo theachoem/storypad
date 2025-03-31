@@ -173,6 +173,7 @@
   "general.security_question.name_of_elementary_school": "Tên trường tiểu học của bạn là gì?",
   "general.security_question.name_of_your_first_pet": "Tên thú cưng đầu tiên của bạn là gì?",
   "general.security_question.name_of_your_first_teacher": "Tên của giáo viên đầu tiên của bạn là gì?",
+  "general.share_app_sample_text": "Tôi đang sử dụng {APP_NAME} để viết những câu chuyện và nhật ký của mình—những ngày tốt đẹp, những ngày tồi tệ và mọi thứ ở giữa.\n\nHãy thử xem 📖✨\n{URL}",
   "general.stories": "Truyện",
   "general.syncing": "Đang đồng bộ hóa...",
   "general.tags": "Thẻ",

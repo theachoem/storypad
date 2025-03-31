@@ -173,6 +173,7 @@
   "general.security_question.name_of_elementary_school": "あなたの小学校の名前は何ですか?",
   "general.security_question.name_of_your_first_pet": "あなたの最初のペットの名前は何ですか?",
   "general.security_question.name_of_your_first_teacher": "最初の先生の名前は何ですか?",
+  "general.share_app_sample_text": "私は {APP_NAME} を使用して、良い日も悪い日も、その中間のすべてのストーリーや日記を書いています。\n\nぜひ試してみてください📖✨\n{URL}",
   "general.stories": "ストーリー",
   "general.syncing": "同期中...",
   "general.tags": "タグ",

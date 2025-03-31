@@ -8,15 +8,14 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 class SpShareAppBottomSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    String message = '''
-I'm using $kAppName to write my stories and diaries—good days, bad days, and everything in between.
-
-Give it a try 📖✨
-https://play.google.com/store/apps/details?id=${kPackageInfo.packageName}
-''';
-
     return SpSingleStateWidget(
-      initialValue: message,
+      initialValue: tr(
+        'general.share_app_sample_text',
+        namedArgs: {
+          'APP_NAME': kAppName,
+          'URL': 'https://play.google.com/store/apps/details?id=${kPackageInfo.packageName}'
+        },
+      ),
       builder: (context, notifier) {
         return SingleChildScrollView(
           padding: EdgeInsets.all(16.0),

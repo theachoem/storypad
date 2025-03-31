@@ -173,6 +173,7 @@
   "general.security_question.name_of_elementary_school": "Apa nama sekolah dasarmu?",
   "general.security_question.name_of_your_first_pet": "Apa nama hewan peliharaan pertamamu?",
   "general.security_question.name_of_your_first_teacher": "Siapa nama guru pertamamu?",
+  "general.share_app_sample_text": "Saya menggunakan {APP_NAME} untuk menulis cerita dan buku harian saya—hari baik, hari buruk, dan segala sesuatu di antaranya.\n\nCobalah 📖✨\n{URL}",
   "general.stories": "Cerita",
   "general.syncing": "Menyinkronkan...",
   "general.tags": "Tag",
