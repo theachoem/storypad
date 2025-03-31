@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+FLAVOR=$1
+
+case "$FLAVOR" in
+--storypad)
+  CMD="xcrun altool --upload-app --type ios -f ../build/ios/ipa/StoryPad.ipa --apiKey AUHT323JJU --apiIssuer ff485aa3-a690-459b-a5b3-370a5997d509"
+  ;;
+*)
+  echo "Invalid option: $FLAVOR"
+  echo "Usage: bin/dev [--storypad | --spooky | --community]"
+  exit 1
+  ;;
+esac
+
+cd ios
+
+echo "Executing: $CMD"
+exec $CMD
