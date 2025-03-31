@@ -57,6 +57,8 @@
         </array>
         <key>GIDClientID</key>
         <string>$(GOOGLE_CLIENT_ID)</string>
+        <key>ITSAppUsesNonExemptEncryption</key>
+        <false />
         <key>LSRequiresIPhoneOS</key>
         <true />
         <key>NSFaceIDUsageDescription</key>
