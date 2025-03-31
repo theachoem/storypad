@@ -630,7 +630,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -761,7 +761,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -858,7 +858,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -950,7 +950,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1048,7 +1048,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1145,7 +1145,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1237,7 +1237,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1388,7 +1388,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1413,7 +1413,7 @@
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky.storyboard;
+				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
