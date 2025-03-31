@@ -173,6 +173,7 @@
   "general.security_question.name_of_elementary_school": "ما هو اسم مدرستك الابتدائية؟",
   "general.security_question.name_of_your_first_pet": "ما هو اسم حيوانك الأليف الأول؟",
   "general.security_question.name_of_your_first_teacher": "ما هو اسم معلمك الأول؟",
+  "general.share_app_sample_text": "أنا أستخدم {APP_NAME} لكتابة قصصي ومذكراتي — الأيام الجيدة والأيام السيئة وكل شيء بينهما.\n\nجربها 📖✨\n{عنوان URL}",
   "general.stories": "قصص",
   "general.syncing": "جارٍ المزامنة...",
   "general.tags": "العلامات",

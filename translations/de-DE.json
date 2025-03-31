@@ -173,6 +173,7 @@
   "general.security_question.name_of_elementary_school": "Wie heißt Ihre Grundschule?",
   "general.security_question.name_of_your_first_pet": "Wie heißt Ihr erstes Haustier?",
   "general.security_question.name_of_your_first_teacher": "Wie heißt Ihr erster Lehrer?",
+  "general.share_app_sample_text": "Ich verwende {APP_NAME}, um meine Geschichten und Tagebücher zu schreiben – gute Tage, schlechte Tage und alles dazwischen.\n\nProbieren Sie es aus 📖✨\n{URL}",
   "general.stories": "Geschichten",
   "general.syncing": "Synchronisierung...",
   "general.tags": "Schlagworte",
