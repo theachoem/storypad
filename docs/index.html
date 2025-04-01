@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Landing Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon_io/favicon-16x16.png">
+  <link rel="manifest" href="/assets/favicon_io/site.webmanifest">
+
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #000;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      flex-grow: 1;
+    }
+
+    h1 {
+      font-weight: 700;
+    }
+
+    p {
+      font-weight: 400;
+    }
+
+    .screenshots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .screenshots img {
+      width: 22%;
+      height: auto;
+      border-radius: 20px;
+      border: 5px solid #000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: border 0.3s ease-in-out;
+    }
+
+    .screenshots img:hover {
+      border: 5px solid #555;
+    }
+
+    .app-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .app-store-button,
+    .play-store-button {
+      height: 50px;
+      object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+
+    .app-store-button:hover,
+    .play-store-button:hover {
+      opacity: 0.8;
+    }
+
+    .play-store-button {
+      transform: scale(0.98) translateY(-1px);
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      background: #f5f5f5;
+      padding: 15px 0;
+      position: relative;
+      width: 100%;
+      bottom: 0;
+    }
+
+    .footer a {
+      color: #000;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>StoryPad</h1>
+    <p>A safe, simple, and minimalist space for your thoughts, memories, and stories. </p>
+
+    <div class="screenshots">
+      <img src="https://github.com/user-attachments/assets/2bd66b95-9234-459e-877c-53ac2422e0b9" alt="Screenshot 1">
+      <img src="https://github.com/user-attachments/assets/05a92e6c-e535-4066-98e2-d3ca6ad961be" alt="Screenshot 2">
+      <img src="https://github.com/user-attachments/assets/e2f3287f-9232-4fa1-85ae-251113692c24" alt="Screenshot 3">
+      <img src="https://github.com/user-attachments/assets/87fb2fab-5c30-419c-a00e-914a73959745" alt="Screenshot 4">
+    </div>
+
+    <div class="app-buttons">
+      <a href="https://apps.apple.com/us/app/storypad-write-your-story/id6744032172" target="_blank">
+        <img class="app-store-button" src="/assets/appstore_preorder_button.png" alt="Pre-Register on App Store">
+      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.tc.writestory" target="_blank">
+        <img class="play-store-button" src="/assets/playstore_button.png" alt="Download on the Google Play Store">
+      </a>
+    </div>
+  </div>
+  <div class="footer">
+    <a href="/privacy-policy/storypad">Privacy Policy</a> | <a href="/faq">FAQ</a>
+  </div>
+</body>
+
+</html>
