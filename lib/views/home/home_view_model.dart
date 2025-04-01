@@ -147,6 +147,11 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     Scaffold.of(context).openEndDrawer();
   }
 
+  Future<void> resetFilter() async {
+    _currentSearchFilter = initialSearchFilter;
+    await reload(debugSource: '$runtimeType#resetFilter');
+  }
+
   void changeName(BuildContext context) async {
     final result = await SpNicknameBottomSheet(nickname: nickname).show(context: context);
     if (result is String) {

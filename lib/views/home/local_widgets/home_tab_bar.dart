@@ -9,6 +9,7 @@ class _HomeTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actionButtons = constructActionButtons(context);
     return Stack(
       children: [
         TabBar(
@@ -21,7 +22,7 @@ class _HomeTabBar extends StatelessWidget {
           unselectedLabelColor: Theme.of(context).colorScheme.primary,
           padding: EdgeInsets.only(
             left: 14.0,
-            right: 14.0 + 36.0,
+            right: 14.0 + actionButtons.length * 44,
             top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
             bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
           ),
@@ -41,7 +42,7 @@ class _HomeTabBar extends StatelessWidget {
             return buildMonthTab(context, month);
           }).toList(),
         ),
-        buildFilterIconButton(context)
+        buildIconsButtonsWrapper(context, actionButtons)
       ],
     );
   }
@@ -54,41 +55,59 @@ class _HomeTabBar extends StatelessWidget {
     );
   }
 
-  Widget buildFilterIconButton(BuildContext context) {
+  List<Widget> constructActionButtons(BuildContext context) {
+    return [
+      if (viewModel.filtered) buildFilterButton(context),
+      buildOpenEndDrawerButton(context),
+    ];
+  }
+
+  Widget buildIconsButtonsWrapper(BuildContext context, List<Widget> actionButtons) {
     return Positioned(
       top: 0,
       right: 0,
       bottom: 1,
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.only(right: 4.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              stops: [0.0, 0.3],
-              colors: [
-                Theme.of(context).appBarTheme.backgroundColor!.withValues(alpha: 0.0),
-                Theme.of(context).appBarTheme.backgroundColor!,
-              ],
-            ),
+      child: Container(
+        padding: EdgeInsets.only(left: 16, right: 4.0),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            stops: [0.0, 0.3],
+            colors: [
+              Theme.of(context).appBarTheme.backgroundColor!.withValues(alpha: 0.0),
+              Theme.of(context).appBarTheme.backgroundColor!,
+            ],
           ),
-          child: SpAnimatedIcons.fadeScale(
-            duration: Durations.long1,
-            firstChild: buildButton(context, true),
-            secondChild: buildButton(context, false),
-            showFirst: viewModel.filtered,
-          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: actionButtons,
         ),
       ),
     );
   }
 
-  Widget buildButton(BuildContext context, bool filtered) {
-    return IconButton(
-      tooltip: tr("page.search_filter.title"),
-      color: filtered ? ColorScheme.of(context).bootstrap.info.color : null,
-      iconSize: 20.0,
-      icon: Icon(MdiIcons.tuneVariant),
-      onPressed: () => viewModel.goToFilter(context),
+  SpFadeIn buildFilterButton(BuildContext context) {
+    return SpFadeIn.bound(
+      child: IconButton(
+        color: ColorScheme.of(context).bootstrap.info.color,
+        tooltip: tr("page.search_filter.title"),
+        iconSize: 20,
+        icon: Icon(MdiIcons.tuneVariant),
+        onPressed: () => viewModel.goToFilter(context),
+      ),
+    );
+  }
+
+  Widget buildOpenEndDrawerButton(BuildContext context) {
+    return Consumer<AppLockProvider>(
+      builder: (context, appLockProvider, child) {
+        return IconButton(
+          tooltip: tr("button.more_options"),
+          icon: Icon(appLockProvider.hasAppLock ? MdiIcons.bookLockOutline : MdiIcons.bookOutline),
+          onPressed: () => viewModel.openEndDrawer(context),
+        );
+      },
     );
   }
 }
