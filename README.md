@@ -1,4 +1,4 @@
-![cover](https://github.com/user-attachments/assets/dedc5e14-5e6f-499f-93a7-ad6ff11f622e)
+![GitHub 4000x2000 = 0 32x 1280x640-min](https://github.com/user-attachments/assets/2df7b424-7227-46b3-900a-790aa212b9ac)
 
 # StoryPad 📝
 
