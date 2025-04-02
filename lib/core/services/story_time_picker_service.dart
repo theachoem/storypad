@@ -29,6 +29,12 @@ class StoryTimePickerService {
     return newTime;
   }
 
+  TimeOfDay _durationToTimeOfDay(Duration duration) {
+    int hours = duration.inHours % 24;
+    int minutes = duration.inMinutes % 60;
+    return TimeOfDay(hour: hours, minute: minutes);
+  }
+
   Future<TimeOfDay?> _showMaterialTimePicker(TimeOfDay? newTime) async {
     return showTimePicker(
       context: context,
@@ -68,12 +74,6 @@ class StoryTimePickerService {
         return SpSingleStateWidget<TimeOfDay?>(
           initialValue: null,
           builder: (context, notifier) {
-            TimeOfDay durationToTimeOfDay(Duration duration) {
-              int hours = duration.inHours % 24;
-              int minutes = duration.inMinutes % 60;
-              return TimeOfDay(hour: hours, minute: minutes);
-            }
-
             return Container(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
               margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -85,47 +85,16 @@ class StoryTimePickerService {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CupertinoButton(
-                          onPressed: () {},
-                          child: Text(tr("button.cancel")),
-                        ),
-                        CupertinoButton(
-                          child: Text(tr("button.done")),
-                          onPressed: () => Navigator.pop(context, notifier.value),
-                        ),
-                      ],
-                    ),
+                    buildCupertinoNavigator(context, notifier),
                     CupertinoTimerPicker(
                       initialTimerDuration: Duration(
                         hours: story.displayPathDate.hour,
                         minutes: story.displayPathDate.minute,
                       ),
                       mode: CupertinoTimerPickerMode.hm,
-                      onTimerDurationChanged: (duration) {
-                        notifier.value = durationToTimeOfDay(duration);
-                      },
+                      onTimerDurationChanged: (duration) => notifier.value = _durationToTimeOfDay(duration),
                     ),
-                    CupertinoButton.tinted(
-                      onPressed: onToggleShowTime == null
-                          ? null
-                          : () async {
-                              onToggleShowTime!();
-                              if (context.mounted) Navigator.maybePop(context);
-                            },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 8.0,
-                        children: [
-                          Icon(story.preferredShowTime ? CupertinoIcons.pin_slash : CupertinoIcons.pin),
-                          Text(
-                            story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home"),
-                          ),
-                        ],
-                      ),
-                    ),
+                    buildCupertinoPinButton(context),
                   ],
                 ),
               ),
@@ -133,6 +102,44 @@ class StoryTimePickerService {
           },
         );
       },
+    );
+  }
+
+  Widget buildCupertinoPinButton(BuildContext context) {
+    return CupertinoButton.tinted(
+      sizeStyle: CupertinoButtonSize.medium,
+      onPressed: onToggleShowTime == null
+          ? null
+          : () async {
+              onToggleShowTime!();
+              if (context.mounted) Navigator.maybePop(context);
+            },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8.0,
+        children: [
+          Icon(story.preferredShowTime ? CupertinoIcons.pin_slash : CupertinoIcons.pin),
+          Text(
+            story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCupertinoNavigator(BuildContext context, CmValueNotifier<TimeOfDay?> notifier) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CupertinoButton(
+          onPressed: () => Navigator.pop(context, null),
+          child: Text(tr("button.cancel")),
+        ),
+        CupertinoButton(
+          child: Text(tr("button.done")),
+          onPressed: () => Navigator.pop(context, notifier.value),
+        ),
+      ],
     );
   }
 }
