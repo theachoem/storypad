@@ -173,7 +173,7 @@
   "general.security_question.name_of_elementary_school": "Quel est le nom de ton école primaire ?",
   "general.security_question.name_of_your_first_pet": "Quel est le nom de votre premier animal de compagnie ?",
   "general.security_question.name_of_your_first_teacher": "Quel est le nom de votre premier professeur ?",
-  "general.share_app_sample_text": "J'utilise {APP_NAME} pour écrire mes histoires et mes journaux : bons jours, mauvais jours et tout le reste.\n\nEssayez-le 📖✨\n{URL}",
+  "general.share_app_sample_text": "J'utilise {APP_NAME} pour écrire mes histoires et mes journaux : bons jours, mauvais jours et tout le reste.\nEssayez-le 📖✨\n{URL}",
   "general.stories": "Histoires",
   "general.syncing": "Synchronisation...",
   "general.tags": "Balises",
