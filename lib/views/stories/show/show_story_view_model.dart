@@ -228,7 +228,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       quillControllers: quillControllers,
       story: story,
       onPageIndexChanged: (page) => currentPageIndex = page,
-    ).push(context, rootNavigator: !AppTheme.isIOS(context));
+    ).push(context, rootNavigator: !AppTheme.isCupertino(context));
 
     await load(story!.id);
 

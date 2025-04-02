@@ -28,7 +28,8 @@ class _HomeScaffold extends StatelessWidget {
           endDrawer: endDrawer,
           floatingActionButton: floatingActionButton,
           bottomNavigationBar: bottomNavigationBar,
-          onEndDrawerChanged: AppTheme.isIOS(context) ? (isOpened) => endDrawerOpenedNotifier.value = isOpened : null,
+          onEndDrawerChanged:
+              AppTheme.isCupertino(context) ? (isOpened) => endDrawerOpenedNotifier.value = isOpened : null,
           body: ValueListenableBuilder(
             valueListenable: endDrawerOpenedNotifier,
             child: Stack(

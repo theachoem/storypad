@@ -20,7 +20,7 @@ class StoryTimePickerService {
   Future<TimeOfDay?> showPicker() async {
     TimeOfDay? newTime;
 
-    if (AppTheme.isIOS(context)) {
+    if (AppTheme.isCupertino(context)) {
       newTime = await _showCupertinoTimePicker(context);
     } else {
       newTime = await _showMaterialTimePicker(newTime);

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:animations/animations.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +20,9 @@ class AppTheme extends StatelessWidget {
   // default text direction
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
   static bool rtl(BuildContext context) => Directionality.of(context) == TextDirection.rtl;
-  static bool isIOS(BuildContext context) => Theme.of(context).platform == TargetPlatform.iOS;
   static bool isDarkMode(BuildContext context) => Theme.of(context).brightness == Brightness.dark;
+  static bool isCupertino(BuildContext context) =>
+      Theme.of(context).platform == TargetPlatform.iOS || Theme.of(context).platform == TargetPlatform.macOS;
 
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
@@ -78,11 +80,17 @@ class AppTheme extends StatelessWidget {
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
 
+    TargetPlatform? platform = defaultTargetPlatform;
+    bool cupertino = platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+
     return baseTheme.copyWith(
-      // platform: TargetPlatform.android,
+      platform: platform,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: cupertino ? CircleBorder() : null,
+      ),
       popupMenuTheme: PopupMenuThemeData(
         color: colorScheme.readOnly.surface5,
       ),
