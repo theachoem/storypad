@@ -84,7 +84,7 @@ class AppTheme extends StatelessWidget {
     bool cupertino = platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
 
     return baseTheme.copyWith(
-      platform: platform,
+      splashFactory: cupertino ? NoSplash.splashFactory : null,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
