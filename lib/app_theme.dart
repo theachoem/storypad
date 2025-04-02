@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:animations/animations.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -90,6 +91,10 @@ class AppTheme extends StatelessWidget {
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         shape: cupertino ? CircleBorder() : null,
+      ),
+      cupertinoOverrideTheme: CupertinoThemeData(
+        brightness: colorScheme.brightness,
+        textTheme: CupertinoTextThemeData(primaryColor: colorScheme.onSurface),
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: colorScheme.readOnly.surface5,
