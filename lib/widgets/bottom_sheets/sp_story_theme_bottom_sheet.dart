@@ -24,6 +24,9 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
   });
 
   @override
+  bool get fullScreen => false;
+
+  @override
   Color? get barrierColor => Colors.black12;
 
   @override

@@ -7,6 +7,9 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class SpShareAppBottomSheet extends BaseBottomSheet {
   @override
+  bool get fullScreen => false;
+
+  @override
   Widget build(BuildContext context, double bottomPadding) {
     return SpSingleStateWidget(
       initialValue: tr(

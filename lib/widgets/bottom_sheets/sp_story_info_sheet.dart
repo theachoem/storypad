@@ -12,6 +12,9 @@ class SpStoryInfoSheet extends BaseBottomSheet {
   });
 
   @override
+  bool get fullScreen => false;
+
+  @override
   Widget build(BuildContext context, double bottomPadding) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

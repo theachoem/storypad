@@ -14,6 +14,9 @@ class SpDaysCountBottomSheet extends BaseBottomSheet {
   });
 
   @override
+  bool get fullScreen => false;
+
+  @override
   Widget build(BuildContext context, double bottomPadding) {
     return Container(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),

@@ -11,10 +11,15 @@ class _SearchFilterContent extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: Text(tr("page.search_filter.title")),
+        backgroundColor: ColorScheme.of(context).surface,
         actions: [
           _RememberSwitcher(viewModel: viewModel),
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => Navigator.of(context, rootNavigator: true).pop())
+            CloseButton(
+                onPressed: () => Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pop())
         ],
       ),
       body: buildBody(context),

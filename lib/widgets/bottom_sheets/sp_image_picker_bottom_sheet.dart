@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path;
@@ -14,6 +15,9 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
     required this.assets,
   });
+
+  @override
+  bool get fullScreen => true;
 
   final List<AssetDbModel> assets;
 
@@ -74,55 +78,60 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return DraggableScrollableSheet(
-      expand: false,
-      builder: (context, scrollController) {
-        return LayoutBuilder(builder: (context, constraints) {
-          return buildScaffold(context, constraints, scrollController);
-        });
-      },
-    );
+    if (AppTheme.isCupertino(context)) {
+      return buildScaffold(context);
+    } else {
+      return DraggableScrollableSheet(
+        expand: false,
+        builder: (context, controller) {
+          return PrimaryScrollController(
+            controller: controller,
+            child: buildScaffold(context),
+          );
+        },
+      );
+    }
   }
 
-  Widget buildScaffold(BuildContext context, BoxConstraints constraints, ScrollController scrollController) {
-    return Scaffold(
-      appBar: AppBar(title: Text("$kAppName Library")),
-      body: buildBody(
-        context: context,
-        constraints: constraints,
-        scrollController: scrollController,
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Divider(height: 1),
-          Container(
-            padding: EdgeInsets.only(
-              left: 8.0,
-              top: 8.0,
-              bottom: MediaQuery.of(context).padding.bottom + 8.0,
-              right: 16.0,
+  Widget buildScaffold(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+        appBar: AppBar(title: Text("$kAppName Library")),
+        body: buildBody(
+          context: context,
+          constraints: constraints,
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Divider(height: 1),
+            Container(
+              padding: EdgeInsets.only(
+                left: 8.0,
+                top: 8.0,
+                bottom: MediaQuery.of(context).padding.bottom + 8.0,
+                right: 16.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    icon: Icon(Icons.add_a_photo),
+                    label: Text("Insert from Device"),
+                    onPressed: () => _insertFromPhotoLibrary(context),
+                  ),
+                ],
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton.icon(
-                  icon: Icon(Icons.add_a_photo),
-                  label: Text("Insert from Device"),
-                  onPressed: () => _insertFromPhotoLibrary(context),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget buildBody({
     required BuildContext context,
     required BoxConstraints constraints,
-    required ScrollController scrollController,
   }) {
     if (assets.isEmpty) {
       return Center(
@@ -135,7 +144,6 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     }
 
     return MasonryGridView.builder(
-      controller: scrollController,
       padding: EdgeInsets.symmetric(horizontal: 16.0)
           .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
       itemCount: assets.length,

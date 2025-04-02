@@ -12,6 +12,9 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
 
   final String? nickname;
 
+  @override
+  bool get fullScreen => false;
+
   Future<void> save(
     BuildContext context,
     TextEditingController controller,
