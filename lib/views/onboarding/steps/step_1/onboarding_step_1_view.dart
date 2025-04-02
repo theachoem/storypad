@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/views/onboarding/local_widgets/click_animation.dart';
 import 'package:storypad/views/onboarding/local_widgets/fade_in_builder.dart';
 import 'package:storypad/views/onboarding/local_widgets/home_screenshot.dart';

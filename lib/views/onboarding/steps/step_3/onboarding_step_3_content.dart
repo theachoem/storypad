@@ -95,9 +95,17 @@ class _OnboardingStep3Content extends StatelessWidget {
   }
 
   Widget buildActionButton(BuildContext context) {
-    return OutlinedButton(
-      child: Text(tr("button.next")),
-      onPressed: () => viewModel.next(context),
-    );
+    if (AppTheme.isCupertino(context)) {
+      return CupertinoButton.filled(
+        sizeStyle: CupertinoButtonSize.small,
+        onPressed: () => viewModel.next(context),
+        child: Text(tr("button.next")),
+      );
+    } else {
+      return OutlinedButton(
+        child: Text(tr("button.next")),
+        onPressed: () => viewModel.next(context),
+      );
+    }
   }
 }

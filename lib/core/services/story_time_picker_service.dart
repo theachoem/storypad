@@ -107,7 +107,7 @@ class StoryTimePickerService {
 
   Widget buildCupertinoPinButton(BuildContext context) {
     return CupertinoButton.tinted(
-      sizeStyle: CupertinoButtonSize.medium,
+      sizeStyle: CupertinoButtonSize.small,
       onPressed: onToggleShowTime == null
           ? null
           : () async {
