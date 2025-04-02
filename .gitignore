@@ -67,3 +67,5 @@ ios/Flutter/GeneratedDartDefines.xcconfig
 
 # Credentials folder / repo.
 credentials/
+
+bin/fastlane/service_accounts
