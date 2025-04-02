@@ -1,23 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ site.lang | default: 'en-US' }}">
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StoryPad - Write Your Story</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
+
+  {% include_cached favicon.html %}
+  {% seo %}
+  {% include head_custom.html %}
+
   <style>
+    :root {
+      --bg-color: #f9f9f9;
+      --text-color: #111;
+      --border-color: #444;
+      --box-shadow-color: rgba(0, 0, 0, 0.15);
+      --footer-bg: #ececec;
+      --link-color: #111;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #181818;
+        --text-color: #e0e0e0;
+        --border-color: #666;
+        --box-shadow-color: rgba(255, 255, 255, 0.1);
+        --footer-bg: #222;
+        --link-color: #e0e0e0;
+      }
+    }
+
     body {
       font-family: 'Quicksand', sans-serif;
       margin: 0;
       padding: 0;
-      background: #fff;
-      color: #000;
+      background: var(--bg-color);
+      color: var(--text-color);
       text-align: center;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
     }
 
     .container {
@@ -51,8 +76,8 @@
       width: auto;
       max-width: 100%;
       border-radius: 10px;
-      border: 4px solid #000;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 4px solid var(--border-color);
+      box-shadow: 0 4px 8px var(--box-shadow-color);
     }
 
     .app-buttons a {
@@ -75,13 +100,14 @@
     .footer {
       margin-top: 40px;
       font-size: 14px;
-      background: #f5f5f5;
+      background: var(--footer-bg);
       padding: 15px 0;
       width: 100%;
+      transition: background 0.3s;
     }
 
     .footer a {
-      color: #000;
+      color: var(--link-color);
       text-decoration: none;
       margin: 0 10px;
     }

@@ -18,9 +18,8 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: StoryPad - Story & Diary
-description: >-
-  A minimalist app that inspires you to write stories and diaries with ease and simplicity.
+title: StoryPad - Write Your Story
+description: 🪴 StoryPad is a minimalist journal and diary designed for effortless writing and reflection. Whether you're capturing moments, writing daily thoughts, or tracking emotions, StoryPad offers a smooth, distraction-free experience—without ads, just you and your stories
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://storypad.juniorise.com" # the base hostname & protocol for your site, e.g. http://example.com
 
