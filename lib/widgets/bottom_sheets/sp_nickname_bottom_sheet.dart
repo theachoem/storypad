@@ -79,6 +79,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
 
           if (AppTheme.isCupertino(context)) {
             return CupertinoButton.filled(
+              disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.small,
               onPressed: unchanged ? null : () => save(context, controller),
               child: nickname == null ? Text(tr("button.save")) : Text(tr("button.update")),

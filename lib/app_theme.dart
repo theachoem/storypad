@@ -94,7 +94,10 @@ class AppTheme extends StatelessWidget {
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: colorScheme.brightness,
-        textTheme: CupertinoTextThemeData(primaryColor: colorScheme.onSurface),
+        scaffoldBackgroundColor: colorScheme.surface,
+        primaryColor: colorScheme.primary,
+        primaryContrastingColor: colorScheme.onPrimary,
+        textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: colorScheme.readOnly.surface5,

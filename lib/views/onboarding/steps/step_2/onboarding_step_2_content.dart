@@ -92,6 +92,7 @@ class _OnboardingStep2Content extends StatelessWidget {
   Widget buildActionButton(BuildContext context) {
     if (AppTheme.isCupertino(context)) {
       return CupertinoButton.filled(
+        disabledColor: Theme.of(context).disabledColor,
         sizeStyle: CupertinoButtonSize.small,
         onPressed: () => viewModel.next(context),
         child: Text(tr("button.next")),

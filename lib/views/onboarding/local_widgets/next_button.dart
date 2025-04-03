@@ -14,6 +14,7 @@ class _NextButton extends StatelessWidget {
       child: Builder(builder: (context) {
         if (AppTheme.isCupertino(context)) {
           return CupertinoButton.filled(
+            disabledColor: Theme.of(context).disabledColor,
             sizeStyle: CupertinoButtonSize.small,
             child: Text(tr("button.next")),
             onPressed: () => viewModel.next(context),
