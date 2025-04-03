@@ -85,7 +85,7 @@ class StoryTimePickerService {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    buildCupertinoNavigator(context, notifier),
+                    _buildCupertinoNavigator(context, notifier),
                     CupertinoTimerPicker(
                       initialTimerDuration: Duration(
                         hours: story.displayPathDate.hour,
@@ -94,7 +94,7 @@ class StoryTimePickerService {
                       mode: CupertinoTimerPickerMode.hm,
                       onTimerDurationChanged: (duration) => notifier.value = _durationToTimeOfDay(duration),
                     ),
-                    buildCupertinoPinButton(context),
+                    _buildCupertinoPinButton(context),
                   ],
                 ),
               ),
@@ -105,7 +105,7 @@ class StoryTimePickerService {
     );
   }
 
-  Widget buildCupertinoPinButton(BuildContext context) {
+  Widget _buildCupertinoPinButton(BuildContext context) {
     return CupertinoButton.tinted(
       sizeStyle: CupertinoButtonSize.medium,
       onPressed: onToggleShowTime == null
@@ -127,7 +127,7 @@ class StoryTimePickerService {
     );
   }
 
-  Widget buildCupertinoNavigator(BuildContext context, CmValueNotifier<TimeOfDay?> notifier) {
+  Widget _buildCupertinoNavigator(BuildContext context, CmValueNotifier<TimeOfDay?> notifier) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

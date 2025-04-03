@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/date_picker_service.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -98,13 +99,7 @@ class _DateSelector extends StatelessWidget {
   final Future<void> Function(DateTime)? onChangeDate;
 
   Future<void> changeDate(BuildContext context) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().add(const Duration(days: 100 * 365)),
-      currentDate: story.displayPathDate,
-    );
-
+    DateTime? date = await DatePickerService(context: context, currentDate: story.displayPathDate).show();
     if (date != null) {
       onChangeDate?.call(date);
     }
