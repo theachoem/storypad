@@ -13,7 +13,7 @@ class _SecurityQuestionsContent extends StatelessWidget {
         viewModel.securityAnswers.isNotEmpty == true;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(leading: CloseButton()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.icon(
         icon: Icon(SpIcons.of(context).save),

@@ -1,9 +1,11 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -75,25 +77,25 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> push(BuildContext context) async {
-    dynamic confirmed = await Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (context) => this,
-      ),
-    );
+    final route = AppTheme.isCupertino(context)
+        ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
+        : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
 
-    return confirmed == true;
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(route).then((confirmed) => confirmed == true);
   }
 
   Future<bool> pushReplacement(BuildContext context) async {
-    dynamic confirmed = await Navigator.of(context, rootNavigator: true).pushReplacement(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (context) => this,
-      ),
-    );
+    final route = AppTheme.isCupertino(context)
+        ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
+        : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
 
-    return confirmed == true;
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushReplacement(route).then((confirmed) => confirmed == true);
   }
 
   @override
@@ -153,8 +155,11 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
       return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(forceMaterialTransparency: true),
-        body: displayInRow ? Row(children: children) : Column(children: children),
+        appBar: AppBar(forceMaterialTransparency: true, leading: CloseButton()),
+        body: Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+          child: displayInRow ? Row(children: children) : Column(children: children),
+        ),
       );
     });
   }
@@ -213,7 +218,9 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
         runSpacing: spacing,
         children: List.generate(12, (index) {
           Widget? child;
-          Color? backgroundColor = ColorScheme.of(context).readOnly.surface1;
+          Color? backgroundColor = ColorScheme.of(context).surface;
+          Color? borderColor = ColorScheme.of(context).onSurface.withValues(alpha: 0.1);
+
           void Function()? onPressed;
 
           if (index < 9) {
@@ -258,6 +265,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               ),
             );
           } else if (index == 11) {
+            borderColor = null;
             onPressed = pin.isEmpty ? () {} : () => removeLastPin();
             backgroundColor = null;
             child = Container(
@@ -269,6 +277,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
           }
 
           if (child == null) {
+            borderColor = null;
             return SizedBox(
               width: itemSize,
             );
@@ -276,7 +285,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
           return Material(
             color: backgroundColor,
-            shape: CircleBorder(),
+            shape: CircleBorder(side: borderColor != null ? BorderSide(color: borderColor) : BorderSide.none),
             child: InkWell(
               customBorder: CircleBorder(),
               onTap: onPressed != null

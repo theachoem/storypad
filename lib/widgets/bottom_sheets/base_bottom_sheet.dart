@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 
 abstract class BaseBottomSheet {
   const BaseBottomSheet();
@@ -25,20 +26,35 @@ abstract class BaseBottomSheet {
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
 
     if (AppTheme.isCupertino(context)) {
-      return openCupertino(context);
+      return openCupertino(
+        backgroundColor: getBackgroundColor(context),
+        context: context,
+        fullScreen: fullScreen,
+        builder: (context, bottomPadding) => build(context, bottomPadding),
+      );
     } else {
-      return openMaterial(context);
+      return openMaterial(
+        context: context,
+        barrierColor: barrierColor,
+        backgroundColor: getBackgroundColor(context),
+        builder: (context, bottomPadding) => build(context, bottomPadding),
+      );
     }
   }
 
-  Future<T?> openMaterial<T>(BuildContext context) {
+  static Future<T?> openMaterial<T>({
+    required BuildContext context,
+    required Widget Function(BuildContext context, double bottomPadding) builder,
+    Color? barrierColor,
+    Color? backgroundColor,
+  }) {
     return showModalBottomSheet<T>(
       useRootNavigator: true,
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       barrierColor: barrierColor,
-      backgroundColor: getBackgroundColor(context),
+      backgroundColor: backgroundColor,
       builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -50,7 +66,7 @@ abstract class BaseBottomSheet {
             context: context,
             removeLeft: true,
             removeRight: true,
-            child: build(
+            child: builder(
               context,
               MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
             ),
@@ -60,29 +76,18 @@ abstract class BaseBottomSheet {
     );
   }
 
-  Future<T?> openCupertino<T>(BuildContext context) {
+  static Future<T?> openCupertino<T>({
+    required BuildContext context,
+    required bool fullScreen,
+    required Widget Function(BuildContext context, double bottomPadding) builder,
+    Color? backgroundColor,
+  }) {
     if (fullScreen) {
       return showCupertinoSheet(
         context: context,
         pageBuilder: (context) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              scaffoldBackgroundColor: ColorScheme.of(context).surface,
-              appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
-            ),
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              removeLeft: true,
-              removeRight: true,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-                child: build(
-                  context,
-                  MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-                ),
-              ),
-            ),
+          return SpCupertinoFullPageSheetConfigurations(
+            child: builder(context, MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom),
           );
         },
       );
@@ -96,10 +101,10 @@ abstract class BaseBottomSheet {
           removeLeft: true,
           removeRight: true,
           child: Material(
-            color: getBackgroundColor(context),
+            color: backgroundColor,
             child: Padding(
               padding: const EdgeInsets.only(top: 16.0),
-              child: build(
+              child: builder(
                 context,
                 MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
               ),
