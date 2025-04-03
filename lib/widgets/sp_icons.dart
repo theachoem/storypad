@@ -40,7 +40,7 @@ class SpIcons {
   IconData get info => cupertino ? CupertinoIcons.info : Icons.info_outline;
   IconData get moreVert => cupertino ? CupertinoIcons.ellipsis_vertical : Icons.more_vert;
   IconData get save => cupertino ? CupertinoIcons.floppy_disk : Icons.save;
-  IconData get addFeeling => Icons.add_reaction_sharp;
+  IconData get addFeeling => Icons.add_reaction_outlined;
   IconData get favoriteFilled => cupertino ? CupertinoIcons.heart_fill : Icons.favorite;
   IconData get favorite => cupertino ? CupertinoIcons.heart : Icons.favorite_outline_outlined;
   IconData get bookmarkFilled => cupertino ? CupertinoIcons.bookmark_fill : Icons.bookmark_rounded;

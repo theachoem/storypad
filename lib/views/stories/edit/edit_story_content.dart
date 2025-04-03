@@ -115,13 +115,17 @@ class _EditStoryContent extends StatelessWidget {
             onPressed: () => Scaffold.of(context).openEndDrawer(),
           );
         }),
-        IconButton(
-          tooltip: tr("page.theme.title"),
-          icon: Icon(SpIcons.of(context).theme),
-          onPressed: () => SpStoryThemeBottomSheet(
-            story: viewModel.story!,
-            onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-          ).show(context: context),
+      ],
+      if (viewModel.managingPage) ...[
+        SpFadeIn.bound(
+          child: IconButton(
+            tooltip: tr("page.theme.title"),
+            icon: Icon(SpIcons.of(context).theme),
+            onPressed: () => SpStoryThemeBottomSheet(
+              story: viewModel.story!,
+              onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+            ).show(context: context),
+          ),
         ),
       ],
       Builder(builder: (context) {

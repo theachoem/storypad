@@ -75,7 +75,7 @@ class StoryTimePickerService {
           initialValue: null,
           builder: (context, notifier) {
             return Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
               margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               color: CupertinoColors.systemBackground.resolveFrom(context),
               child: MediaQuery.removePadding(
