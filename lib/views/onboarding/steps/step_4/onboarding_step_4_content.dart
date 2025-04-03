@@ -21,7 +21,7 @@ class _OnboardingStep4Content extends StatelessWidget {
     if (AppTheme.isCupertino(context)) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
-        sizeStyle: CupertinoButtonSize.small,
+        sizeStyle: CupertinoButtonSize.medium,
         child: Text(tr("button.get_started")),
         onPressed: () => viewModel.getStarted(context),
       );

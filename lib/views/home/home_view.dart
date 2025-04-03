@@ -12,7 +12,6 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
 import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart' show SpOnboardingWrappper;
-import 'package:storypad/widgets/sp_single_state_widget.dart' show SpSingleStateWidget;
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart' show SpStoryListMultiEditWrapper;
 import 'package:storypad/widgets/base_view/view_model_provider.dart' show ViewModelProvider;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;

@@ -79,7 +79,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
     if (AppTheme.isCupertino(context)) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
-        sizeStyle: CupertinoButtonSize.small,
+        sizeStyle: CupertinoButtonSize.medium,
         child: Text(widget.saveButtonLabel ?? tr("button.save")),
         onPressed: () => submit(context),
       );
