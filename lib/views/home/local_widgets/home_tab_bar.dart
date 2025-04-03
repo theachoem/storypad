@@ -74,8 +74,8 @@ class _HomeTabBar extends StatelessWidget {
           gradient: LinearGradient(
             stops: [0.0, 0.3],
             colors: [
-              Theme.of(context).appBarTheme.backgroundColor!.withValues(alpha: 0.0),
-              Theme.of(context).appBarTheme.backgroundColor!,
+              viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
+              viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
             ],
           ),
         ),

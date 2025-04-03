@@ -25,6 +25,10 @@ class AppTheme extends StatelessWidget {
   static bool isCupertino(BuildContext context) =>
       Theme.of(context).platform == TargetPlatform.iOS || Theme.of(context).platform == TargetPlatform.macOS;
 
+  static bool isMonochrome(BuildContext context) =>
+      context.read<ThemeProvider>().theme.colorSeed == Colors.black ||
+      context.read<ThemeProvider>().theme.colorSeed == Colors.white;
+
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
       return rtlValue;
