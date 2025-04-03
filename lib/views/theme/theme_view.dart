@@ -8,6 +8,7 @@ import 'package:storypad/views/theme/local_widgets/color_seed_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/views/theme/local_widgets/theme_mode_tile.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'theme_view_model.dart';

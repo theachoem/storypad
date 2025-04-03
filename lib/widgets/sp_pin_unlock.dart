@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 enum SpPinUnlockTitle {
   enter_your_pin,
@@ -239,7 +240,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
                 constraints: BoxConstraints(minHeight: itemSize),
                 alignment: Alignment.center,
                 child: Icon(
-                  Icons.fingerprint,
+                  SpIcons.of(context).fingerprint,
                   size: itemSize / 2 - 4.0,
                 ),
               );
@@ -263,7 +264,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               width: itemSize,
               constraints: BoxConstraints(minHeight: itemSize),
               alignment: Alignment.center,
-              child: Icon(Icons.backspace, size: itemSize / 2 - 8.0),
+              child: Icon(SpIcons.of(context).backspace, size: itemSize / 2 - 8.0),
             );
           }
 

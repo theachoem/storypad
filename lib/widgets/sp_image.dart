@@ -9,6 +9,7 @@ import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpImage extends StatelessWidget {
   const SpImage({
@@ -115,7 +116,7 @@ class SpImage extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             runSpacing: 8.0,
             children: [
-              const Icon(Icons.image_not_supported_outlined),
+              Icon(SpIcons.of(context).imageNotSupported),
               if (message != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),

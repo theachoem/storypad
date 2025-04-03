@@ -36,12 +36,6 @@ class SpDateBlockEmbed extends EmbedBuilder {
                 ),
               ],
             ),
-            // const SizedBox(height: 4.0),
-            // SpAnimatedIcons(
-            //   showFirst: !readOnly,
-            //   secondChild: const SizedBox.shrink(),
-            //   firstChild: const Icon(Icons.arrow_drop_down),
-            // ),
           ],
         ),
       ],

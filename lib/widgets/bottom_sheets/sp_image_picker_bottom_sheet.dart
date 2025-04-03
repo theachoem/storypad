@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
@@ -116,7 +117,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
-                    icon: Icon(Icons.add_a_photo),
+                    icon: Icon(SpIcons.of(context).addPhoto),
                     label: Text("Insert from Device"),
                     onPressed: () => _insertFromPhotoLibrary(context),
                   ),

@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart' show IconData, Icons;
+import 'package:flutter/material.dart' show BuildContext, IconData;
+import 'package:storypad/widgets/sp_icons.dart';
 
 /// Default showing favorite icon in story tile, but users can change it based on their preferences.
 /// The selected icon is stored in `story.preferences`.
 class StoryIconObject {
-  final IconData filledIcon;
-  final IconData outlineIcon;
+  final IconData Function(BuildContext context) filledIcon;
+  final IconData Function(BuildContext context) outlineIcon;
   final double scale;
 
   const StoryIconObject({
@@ -14,20 +15,20 @@ class StoryIconObject {
   });
 
   static StoryIconObject get fallbackIcon => icons.values.first;
-  static const Map<String, StoryIconObject> icons = {
+  static Map<String, StoryIconObject> icons = {
     "favorite": StoryIconObject(
-      filledIcon: Icons.favorite,
-      outlineIcon: Icons.favorite_border,
+      filledIcon: (context) => SpIcons.of(context).favoriteFilled,
+      outlineIcon: (context) => SpIcons.of(context).favorite,
       scale: 1.0,
     ),
     "bookmark": StoryIconObject(
-      filledIcon: Icons.bookmark_rounded,
-      outlineIcon: Icons.bookmark_outline_rounded,
+      filledIcon: (context) => SpIcons.of(context).bookmarkFilled,
+      outlineIcon: (context) => SpIcons.of(context).bookmark,
       scale: 1.05,
     ),
     "star": StoryIconObject(
-      filledIcon: Icons.star,
-      outlineIcon: Icons.star_border,
+      filledIcon: (context) => SpIcons.of(context).starFilled,
+      outlineIcon: (context) => SpIcons.of(context).star,
       scale: 1.2,
     ),
   };

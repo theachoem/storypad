@@ -11,7 +11,6 @@ class _SearchFilterContent extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: Text(tr("page.search_filter.title")),
-        backgroundColor: ColorScheme.of(context).surface,
         actions: [
           _RememberSwitcher(viewModel: viewModel),
           if (CupertinoSheetRoute.hasParentSheet(context))

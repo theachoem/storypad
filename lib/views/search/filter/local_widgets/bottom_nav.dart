@@ -28,12 +28,12 @@ class _BottomNav extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FilledButton.tonalIcon(
-                  icon: Icon(Icons.clear),
+                  icon: Icon(SpIcons.of(context).clear),
                   label: Text(tr("button.clear")),
                   onPressed: viewModel.filtered ? () => viewModel.reset(context) : null,
                 ),
                 FilledButton.icon(
-                  icon: Icon(Icons.search),
+                  icon: Icon(SpIcons.of(context).search),
                   label: Text(tr("button.search")),
                   onPressed: () => viewModel.search(context),
                 ),

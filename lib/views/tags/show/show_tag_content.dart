@@ -25,7 +25,7 @@ class _ShowTagContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: tr("page.search_filter.title"),
-            icon: Icon(Icons.tune),
+            icon: Icon(SpIcons.of(context).tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),
         ],
@@ -49,7 +49,7 @@ class _ShowTagContent extends StatelessWidget {
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: Icon(
-                Icons.edit_outlined,
+                SpIcons.of(context).edit,
                 size: 20.0,
                 color: ColorScheme.of(context).primary,
               ),

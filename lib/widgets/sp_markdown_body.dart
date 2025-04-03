@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpMarkdownBody extends StatelessWidget {
   const SpMarkdownBody({
@@ -31,7 +32,7 @@ class SpMarkdownBody extends StatelessWidget {
         return Transform.translate(
           offset: const Offset(-3.5, 2.5),
           child: Icon(
-            checked ? Icons.check_box : Icons.check_box_outline_blank,
+            checked ? SpIcons.of(context).checkbox : SpIcons.of(context).checkboxBlank,
             size: 16.0,
           ),
         );

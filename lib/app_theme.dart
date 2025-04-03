@@ -82,9 +82,16 @@ class AppTheme extends StatelessWidget {
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
 
     TargetPlatform? platform = defaultTargetPlatform;
+
+    // TODO: Remove this
+    // TODO: Remove this
+    // TODO: Remove this
+    // platform = TargetPlatform.android;
+
     bool cupertino = platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
 
     return baseTheme.copyWith(
+      platform: platform,
       splashFactory: cupertino ? NoSplash.splashFactory : null,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,

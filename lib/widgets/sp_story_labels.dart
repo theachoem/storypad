@@ -10,6 +10,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpStoryLabelsDraftActions {
   final Future<void> Function() onContinueEditing;
@@ -49,18 +50,18 @@ class SpStoryLabels extends StatelessWidget {
       actions: [
         SheetAction(
           label: tr("button.continue_editing"),
-          icon: Icons.edit,
+          icon: SpIcons.of(context).edit,
           key: "continue_editing",
           isDefaultAction: true,
         ),
         SheetAction(
           label: tr("button.view_previous"),
-          icon: Icons.compare,
+          icon: SpIcons.of(context).compare,
           key: "view_previous",
         ),
         SheetAction(
           label: tr("button.discard_draft"),
-          icon: Icons.clear,
+          icon: SpIcons.of(context).clear,
           key: "discard_draft",
           isDestructiveAction: true,
         ),
@@ -120,7 +121,7 @@ class SpStoryLabels extends StatelessWidget {
     if (showDraft) {
       children.add(
         buildPin(
-          leadingIconData: Icons.edit_note,
+          leadingIconData: SpIcons.of(context).draftEdit,
           context: context,
           title: tr("general.draft"),
           onTap: draftActions != null ? () => showDraftActionSheet(context) : null,

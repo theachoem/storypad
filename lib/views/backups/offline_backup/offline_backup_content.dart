@@ -23,7 +23,7 @@ class _OfflineBackupsContent extends StatelessWidget {
             title: tr('list_tile.export_backup.title'),
             subtitle: tr('list_tile.export_backup.subtitle'),
             action: FilledButton.tonalIcon(
-              icon: Icon(Icons.download),
+              icon: Icon(SpIcons.of(context).exportOffline),
               label: Text(tr('button.export')),
               onPressed:
                   context.read<BackupProvider>().lastDbUpdatedAt == null ? null : () => viewModel.export(context),
@@ -34,7 +34,7 @@ class _OfflineBackupsContent extends StatelessWidget {
             title: tr('list_tile.import_backup.title'),
             subtitle: tr('list_tile.import_backup.subtitle', namedArgs: {'APP_NAME': kAppName}),
             action: FilledButton.tonalIcon(
-              icon: Icon(Icons.folder_open),
+              icon: Icon(SpIcons.of(context).importOffline),
               label: Text(tr('button.import')),
               onPressed: () => viewModel.import(context),
             ),

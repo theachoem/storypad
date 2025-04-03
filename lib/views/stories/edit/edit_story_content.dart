@@ -111,13 +111,13 @@ class _EditStoryContent extends StatelessWidget {
         Builder(builder: (context) {
           return IconButton(
             tooltip: tr("page.tags.title"),
-            icon: const Icon(Icons.sell_outlined),
+            icon: Icon(SpIcons.of(context).tag),
             onPressed: () => Scaffold.of(context).openEndDrawer(),
           );
         }),
         IconButton(
           tooltip: tr("page.theme.title"),
-          icon: Icon(Icons.color_lens_outlined),
+          icon: Icon(SpIcons.of(context).theme),
           onPressed: () => SpStoryThemeBottomSheet(
             story: viewModel.story!,
             onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
@@ -128,7 +128,7 @@ class _EditStoryContent extends StatelessWidget {
         return IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
-            viewModel.managingPage ? MdiIcons.bookOpen : MdiIcons.bookOpenOutline,
+            viewModel.managingPage ? SpIcons.of(context).managingPage : SpIcons.of(context).managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
@@ -140,8 +140,8 @@ class _EditStoryContent extends StatelessWidget {
         builder: (context, lastSavedAt, child) {
           return OutlinedButton.icon(
             icon: SpAnimatedIcons(
-              firstChild: Icon(Icons.save),
-              secondChild: Icon(Icons.done),
+              firstChild: Icon(SpIcons.of(context).save),
+              secondChild: Icon(SpIcons.of(context).check),
               showFirst: lastSavedAt == null,
             ),
             label: Text(tr("button.done")),

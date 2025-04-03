@@ -16,13 +16,13 @@ import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/backups_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 part 'home_end_drawer_header.dart';
 part 'community_tile.dart';
@@ -62,7 +62,7 @@ class HomeEndDrawer extends StatelessWidget {
           buildArchiveBinTile(context),
           if (kStoryPad)
             ListTile(
-              leading: const Icon(Icons.photo_album_outlined),
+              leading: Icon(SpIcons.of(context).photo),
               title: Text(tr("page.library.title")),
               onTap: () => LibraryRoute().push(context),
             ),
@@ -83,7 +83,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildSearchTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.search),
+      leading: Icon(SpIcons.of(context).search),
       title: Text(tr("page.search.title")),
       onTap: () => SearchRoute(initialYear: viewModel.currentYear).push(context),
     );
@@ -91,7 +91,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildTagsTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.sell_outlined),
+      leading: Icon(SpIcons.of(context).tag),
       title: Text(tr("page.tags.title")),
       onTap: () => TagsRoute().push(context),
     );
@@ -99,7 +99,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildArchiveBinTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.archive_outlined),
+      leading: Icon(SpIcons.of(context).archive),
       title: Text(tr("page.archive_or_bin.title")),
       onTap: () => ArchivesRoute().push(context),
     );
@@ -107,7 +107,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildThemeTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.color_lens_outlined),
+      leading: Icon(SpIcons.of(context).theme),
       title: Text(tr("page.theme.title")),
       onTap: () => ThemeRoute().push(context),
     );
@@ -115,7 +115,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildAppLockTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.lock_outline),
+      leading: Icon(SpIcons.of(context).lock),
       title: Text(tr("page.app_lock.title")),
       onTap: () => AppLocksRoute().push(context),
     );

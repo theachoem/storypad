@@ -51,7 +51,7 @@ class _StoryTileImages extends StatelessWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(color: ColorScheme.of(context).readOnly.surface3),
-                child: const Icon(Icons.image_not_supported_outlined),
+                child: Icon(SpIcons.of(context).imageNotSupported),
               );
             },
           ),

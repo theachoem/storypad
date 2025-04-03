@@ -15,7 +15,7 @@ class _ThemeContent extends StatelessWidget {
             items: (context) {
               return [
                 SpPopMenuItem(
-                  leadingIconData: Icons.restart_alt_outlined,
+                  leadingIconData: SpIcons.of(context).refresh,
                   title: tr("button.reset"),
                   onPressed: () {
                     context.read<ThemeProvider>().reset();
@@ -26,7 +26,7 @@ class _ThemeContent extends StatelessWidget {
             builder: (callback) {
               return IconButton(
                 tooltip: tr("button.more_options"),
-                icon: Icon(Icons.more_vert),
+                icon: Icon(SpIcons.of(context).moreVert),
                 onPressed: callback,
               );
             },

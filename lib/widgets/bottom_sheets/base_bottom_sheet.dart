@@ -65,16 +65,22 @@ abstract class BaseBottomSheet {
       return showCupertinoSheet(
         context: context,
         pageBuilder: (context) {
-          return MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            removeLeft: true,
-            removeRight: true,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-              child: build(
-                context,
-                MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+          return Theme(
+            data: Theme.of(context).copyWith(
+              scaffoldBackgroundColor: ColorScheme.of(context).surface,
+              appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
+            ),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              removeLeft: true,
+              removeRight: true,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+                child: build(
+                  context,
+                  MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+                ),
               ),
             ),
           );

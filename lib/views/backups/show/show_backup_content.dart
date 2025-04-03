@@ -32,7 +32,7 @@ class _ShowBackupContent extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.icon(
-        icon: const Icon(Icons.restore),
+        icon: Icon(SpIcons.of(context).restore),
         label: Text(tr("button.restore")),
         onPressed: () => viewModel.restore(context),
       ),
@@ -49,23 +49,23 @@ class _ShowBackupContent extends StatelessWidget {
 
           switch (table.key) {
             case 'stories':
-              leadingIconData = Icons.library_books;
+              leadingIconData = SpIcons.of(context).book;
               translateTabledName = tr("general.stories");
               break;
             case 'tags':
-              leadingIconData = Icons.sell;
+              leadingIconData = SpIcons.of(context).tag;
               translateTabledName = tr("general.tags");
               break;
             case 'preferences':
-              leadingIconData = MdiIcons.table;
+              leadingIconData = SpIcons.of(context).table;
               translateTabledName = tr("general.preferences");
               break;
             case 'assets':
-              leadingIconData = MdiIcons.table;
+              leadingIconData = SpIcons.of(context).table;
               translateTabledName = tr("general.assets");
               break;
             default:
-              leadingIconData = MdiIcons.table;
+              leadingIconData = SpIcons.of(context).table;
               translateTabledName = table.key;
               break;
           }

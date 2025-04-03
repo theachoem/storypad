@@ -20,7 +20,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.calendar_today_outlined,
+            SpIcons.of(context).calendar,
             size: 24.0,
           ),
         ),
@@ -33,7 +33,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.emoji_emotions_outlined,
+            SpIcons.of(context).addFeeling,
             size: 24.0,
           ),
         ),
@@ -45,17 +45,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.search),
-        ),
-        Container(
-          width: iconSize,
-          height: iconSize,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            color: Theme.of(context).colorScheme.surface,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.home_outlined),
+          child: Icon(SpIcons.of(context).search),
         ),
       ],
     );

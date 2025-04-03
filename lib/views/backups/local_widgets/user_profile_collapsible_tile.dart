@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/views/backups/backups_view_model.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class UserProfileCollapsibleTile extends StatelessWidget {
@@ -45,7 +45,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.bottomLeft,
                 children: [
-                  buildPhoto(avatarSize, isCollapsed),
+                  buildPhoto(avatarSize, isCollapsed, context),
                   buildProfileInfoTile(isCollapsed, context),
                 ],
               ),
@@ -96,7 +96,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
                   : null,
               contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
               trailing: Icon(
-                Icons.more_vert,
+                SpIcons.of(context).moreVert,
                 color: ColorScheme.of(context).onPrimary,
               ),
             );
@@ -112,7 +112,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
                 style: TextStyle(color: ColorScheme.of(context).onPrimary),
               ),
               trailing: Icon(
-                MdiIcons.googleDrive,
+                SpIcons.of(context).googleDrive,
                 color: ColorScheme.of(context).onPrimary,
               ),
             );
@@ -122,7 +122,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
     );
   }
 
-  Widget buildPhoto(double avatarSize, bool isCollapsed) {
+  Widget buildPhoto(double avatarSize, bool isCollapsed, BuildContext context) {
     bool hasPhoto = source.smallImageUrl != null && source.bigImageUrl != null;
 
     return AnimatedContainer(
@@ -142,8 +142,8 @@ class UserProfileCollapsibleTile extends StatelessWidget {
             : null,
       ),
       child: !hasPhoto
-          ? const Icon(
-              Icons.person,
+          ? Icon(
+              SpIcons.of(context).profile,
               size: 36,
             )
           : null,

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpMultiEditBottomNavBar extends StatelessWidget {
   const SpMultiEditBottomNavBar({
@@ -50,7 +51,7 @@ class SpMultiEditBottomNavBar extends StatelessWidget {
                   child: Center(
                     child: IconButton.filledTonal(
                       tooltip: tr("button.cancel"),
-                      icon: Icon(Icons.clear),
+                      icon: Icon(SpIcons.of(context).clear),
                       onPressed: () => onCancel(),
                     ),
                   ),

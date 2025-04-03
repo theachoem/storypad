@@ -67,7 +67,7 @@ class _FeelingObjectCard extends StatelessWidget {
               WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
                 child: Icon(
-                  Icons.expand_more_outlined,
+                  SpIcons.of(context).expandMore,
                   size: 16.0,
                   color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
                 ),

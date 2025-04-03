@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 import 'search_filter_view_model.dart';
 

@@ -15,7 +15,7 @@ class _OnboardingContent extends StatelessWidget {
           actions: [
             IconButton(
               tooltip: tr("page.language.title"),
-              icon: Icon(Icons.language_outlined),
+              icon: Icon(SpIcons.of(context).globe),
               onPressed: () => LanguagesRoute(
                 showBetaBanner: false,
                 showThemeFAB: true,

@@ -21,7 +21,7 @@ class _AppUpdateFloatingButton extends StatelessWidget {
                   ),
                   icon: provider.displayStatus?.loading == true
                       ? const SizedBox.square(dimension: 16.0, child: CircularProgressIndicator.adaptive())
-                      : const Icon(Icons.system_update),
+                      : Icon(SpIcons.of(context).update),
                   label: Text(provider.displayStatus?.label ?? ''),
                   onPressed: provider.displayStatus?.loading == true ? null : () => provider.update(),
                 );
