@@ -1,15 +1,16 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpStoryLabelsDraftActions {
   final Future<void> Function() onContinueEditing;
@@ -49,18 +50,18 @@ class SpStoryLabels extends StatelessWidget {
       actions: [
         SheetAction(
           label: tr("button.continue_editing"),
-          icon: Icons.edit,
+          icon: SpIcons.of(context).edit,
           key: "continue_editing",
           isDefaultAction: true,
         ),
         SheetAction(
           label: tr("button.view_previous"),
-          icon: Icons.compare,
+          icon: SpIcons.of(context).compare,
           key: "view_previous",
         ),
         SheetAction(
           label: tr("button.discard_draft"),
-          icon: Icons.clear,
+          icon: SpIcons.of(context).clear,
           key: "discard_draft",
           isDestructiveAction: true,
         ),
@@ -82,42 +83,6 @@ class SpStoryLabels extends StatelessWidget {
         break;
       default:
         break;
-    }
-  }
-
-  Future<void> showTimePickerDialog(BuildContext context) async {
-    final newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(story.displayPathDate),
-      builder: (context, child) {
-        return GestureDetector(
-          onTap: () => Navigator.maybePop(context),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                child!,
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
-                  icon: Icon(story.preferredShowTime ? MdiIcons.pinOff : MdiIcons.pin,
-                      color: ColorScheme.of(context).primary),
-                  label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
-                  onPressed: onToggleShowTime == null
-                      ? null
-                      : () async {
-                          onToggleShowTime!();
-                          if (context.mounted) Navigator.maybePop(context);
-                        },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (newTime != null) {
-      await onChangeDate?.call(story.copyWith(hour: newTime.hour, minute: newTime.minute).displayPathDate);
     }
   }
 
@@ -146,7 +111,7 @@ class SpStoryLabels extends StatelessWidget {
         buildPin(
           context: context,
           title: DateFormatHelper.jm(story.displayPathDate, context.locale),
-          onTap: () => showTimePickerDialog(context),
+          onTap: () => showTimePicker(context),
         ),
       );
     }
@@ -156,7 +121,7 @@ class SpStoryLabels extends StatelessWidget {
     if (showDraft) {
       children.add(
         buildPin(
-          leadingIconData: Icons.edit_note,
+          leadingIconData: SpIcons.of(context).draftEdit,
           context: context,
           title: tr("general.draft"),
           onTap: draftActions != null ? () => showDraftActionSheet(context) : null,
@@ -173,6 +138,18 @@ class SpStoryLabels extends StatelessWidget {
         children: children,
       ),
     );
+  }
+
+  Future<void> showTimePicker(BuildContext context) async {
+    final newTime = await StoryTimePickerService(
+      context: context,
+      story: story,
+      onToggleShowTime: onToggleShowTime,
+    ).showPicker();
+
+    if (newTime != null) {
+      await onChangeDate?.call(story.copyWith(hour: newTime.hour, minute: newTime.minute).displayPathDate);
+    }
   }
 
   List<Widget> buildTags(TagsProvider tagProvider, BuildContext context) {

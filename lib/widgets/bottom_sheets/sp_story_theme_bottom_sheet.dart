@@ -11,6 +11,7 @@ import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -22,6 +23,9 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
     required this.story,
     required this.onThemeChanged,
   });
+
+  @override
+  bool get fullScreen => false;
 
   @override
   Color? get barrierColor => Colors.black12;
@@ -95,7 +99,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
             onThemeChanged(notifier.value);
           },
           selected: notifier.value.colorSeedValue == null,
-          child: Icon(Icons.hide_source),
+          child: Icon(SpIcons.of(context).hideSource),
         ),
         ...kMaterialColors.map<Widget>(
           (color) {
@@ -151,7 +155,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
           child: selected
               ? SpFadeIn.fromBottom(
                   child: Icon(
-                  Icons.check,
+                  SpIcons.of(context).check,
                   color: foregroundColor,
                 ))
               : child,

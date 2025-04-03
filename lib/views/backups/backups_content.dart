@@ -18,7 +18,7 @@ class _BackupsContent extends StatelessWidget {
           actions: [
             IconButton(
               tooltip: tr('page.offline_backup.title'),
-              icon: Icon(Icons.folder_open),
+              icon: Icon(SpIcons.of(context).folderOpen),
               onPressed: () {
                 OfflineBackupsRoute().push(context);
               },
@@ -162,12 +162,12 @@ class _BackupsContent extends StatelessWidget {
     return [
       SpPopMenuItem(
         title: tr("button.view"),
-        leadingIconData: Icons.info,
+        leadingIconData: SpIcons.of(context).info,
         onPressed: () => viewModel.openCloudFile(context, file),
       ),
       SpPopMenuItem(
         title: tr("button.delete"),
-        leadingIconData: Icons.delete,
+        leadingIconData: SpIcons.of(context).delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         onPressed: () async {
           OkCancelResult userResponse = await showOkCancelAlertDialog(

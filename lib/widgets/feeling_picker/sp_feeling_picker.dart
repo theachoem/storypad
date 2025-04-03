@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'feeling_group_picker.dart';

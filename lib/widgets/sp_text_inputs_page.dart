@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/app_theme.dart';
 
 @immutable
 class SpTextInputField {
@@ -65,10 +67,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
             children: [
               for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
               const SizedBox(height: 16.0),
-              FilledButton.icon(
-                label: Text(widget.saveButtonLabel ?? tr("button.save")),
-                onPressed: () => submit(context),
-              )
+              buildSaveButton(context)
             ],
           ),
         );
@@ -76,11 +75,52 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
     );
   }
 
+  Widget buildSaveButton(BuildContext context) {
+    if (AppTheme.isCupertino(context)) {
+      return CupertinoButton.filled(
+        disabledColor: Theme.of(context).disabledColor,
+        sizeStyle: CupertinoButtonSize.medium,
+        child: Text(widget.saveButtonLabel ?? tr("button.save")),
+        onPressed: () => submit(context),
+      );
+    } else {
+      return FilledButton.icon(
+        label: Text(widget.saveButtonLabel ?? tr("button.save")),
+        onPressed: () => submit(context),
+      );
+    }
+  }
+
   Widget buildTextField(int index, BuildContext context) {
     bool lastIndex = index == controllers.length - 1;
-    return Container(
-      margin: lastIndex ? null : const EdgeInsets.only(bottom: 16.0),
-      child: TextFormField(
+    Widget? textField;
+
+    if (AppTheme.isCupertino(context)) {
+      textField = FormField(
+        validator: widget.fields[index].validator,
+        builder: (state) {
+          return Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 4.0, children: [
+            CupertinoTextField(
+              textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
+              controller: controllers[index],
+              keyboardType: widget.fields[index].keyboardType,
+              placeholder: widget.fields[index].hintText,
+              onSubmitted: (text) => submit(context),
+              onChanged: (value) => state.didChange(value),
+            ),
+            if (state.errorText != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Text(
+                  state.errorText!,
+                  style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).error),
+                ),
+              ),
+          ]);
+        },
+      );
+    } else {
+      textField = TextFormField(
         textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
         controller: controllers[index],
         keyboardType: widget.fields[index].keyboardType,
@@ -90,7 +130,12 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
         ),
         validator: widget.fields[index].validator,
         onFieldSubmitted: (text) => submit(context),
-      ),
+      );
+    }
+
+    return Container(
+      margin: lastIndex ? null : const EdgeInsets.only(bottom: 16.0),
+      child: textField,
     );
   }
 

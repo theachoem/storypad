@@ -15,7 +15,7 @@ class _TagsContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: tr("page.new_tag.title"),
-            icon: const Icon(Icons.add),
+            icon: Icon(SpIcons.of(context).add),
             onPressed: () => provider.addTag(context),
           ),
         ],
@@ -74,14 +74,14 @@ class _TagsContent extends StatelessWidget {
                   onPressed: (context) => provider.deleteTag(context, tag),
                   backgroundColor: ColorScheme.of(context).error,
                   foregroundColor: ColorScheme.of(context).onError,
-                  icon: Icons.delete,
+                  icon: SpIcons.of(context).delete,
                   label: tr("button.delete"),
                 ),
                 SlidableAction(
                   onPressed: (context) => provider.editTag(context, tag),
                   backgroundColor: ColorScheme.of(context).secondary,
                   foregroundColor: ColorScheme.of(context).onSecondary,
-                  icon: Icons.edit,
+                  icon: SpIcons.of(context).edit,
                   label: tr("button.edit"),
                 ),
               ],
@@ -97,7 +97,7 @@ class _TagsContent extends StatelessWidget {
     return ListTile(
       tileColor: Colors.transparent,
       contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
-      leading: Icon(Icons.drag_indicator),
+      leading: Icon(SpIcons.of(context).dragIndicator),
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
       onTap: () => provider.viewTag(

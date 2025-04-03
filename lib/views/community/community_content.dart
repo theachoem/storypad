@@ -22,29 +22,29 @@ class _CommunityContent extends StatelessWidget {
           CommunityCard(),
           SizedBox(height: 12.0),
           ListTile(
-            leading: Icon(Icons.question_mark_outlined),
+            leading: Icon(SpIcons.of(context).question),
             title: Text(tr("list_tile.faq.title")),
             onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.faqUrl.get()),
           ),
           ListTile(
-            leading: Icon(Icons.policy_outlined),
+            leading: Icon(SpIcons.of(context).policy),
             title: Text(tr("list_tile.privacy_policy.title")),
             onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
           ),
           ListTile(
-            leading: Icon(Icons.code),
+            leading: Icon(SpIcons.of(context).code),
             title: Text(tr("list_tile.source_code.title")),
             subtitle: Text(tr("list_tile.source_code.subtitle")),
             onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get()),
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.waving_hand_outlined),
+            leading: Icon(SpIcons.of(context).onboarding),
             title: Text(tr('general.onboard_page')),
             onTap: () => SpOnboardingWrappper.open(context),
           ),
           ListTile(
-            leading: Icon(MdiIcons.license),
+            leading: Icon(SpIcons.of(context).license),
             title: Text(tr("list_tile.licenses.title")),
             onTap: () {
               AnalyticsService.instance.logLicenseView();
@@ -58,12 +58,12 @@ class _CommunityContent extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.star_border),
+            leading: Icon(SpIcons.of(context).star),
             title: Text(tr("list_tile.rate.title")),
             onTap: () => AppStoreOpenerService.call(),
           ),
           ListTile(
-            leading: Icon(Icons.ios_share_rounded),
+            leading: Icon(SpIcons.of(context).share),
             title: Text(tr("list_tile.share_app.title")),
             subtitle: Text(tr("list_tile.share_app.subtitle")),
             onTap: () => SpShareAppBottomSheet().show(context: context),

@@ -45,7 +45,7 @@ class _UnsignInTile extends StatelessWidget {
       children: [
         ListTile(
           onTap: () => BackupsRoute().push(context),
-          leading: Icon(Icons.backup_outlined),
+          leading: Icon(SpIcons.of(context).cloudUpload),
           title: Text(tr('list_tile.backup.title')),
           subtitle: Text(tr('list_tile.backup.unsignin_subtitle')),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -54,7 +54,7 @@ class _UnsignInTile extends StatelessWidget {
           margin: const EdgeInsets.only(left: 52.0),
           transform: Matrix4.identity()..translate(0.0, -8.0),
           child: FilledButton.icon(
-            icon: Icon(MdiIcons.googleDrive),
+            icon: Icon(SpIcons.of(context).googleDrive),
             label: Text(tr("button.sign_in")),
             onPressed: () => signIn(context, provider),
           ),
@@ -97,7 +97,7 @@ class _SignedInTile extends StatelessWidget {
       subtitle = Text(tr("general.syncing"));
     } else if (provider.synced) {
       leading = Icon(
-        Icons.cloud_done,
+        SpIcons.of(context).cloudDone,
         color: ColorScheme.of(context).bootstrap.success.color,
       );
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
@@ -113,12 +113,12 @@ class _SignedInTile extends StatelessWidget {
         fallbackMessage = provider.source.email!;
       }
 
-      leading = const Icon(Icons.cloud_upload_outlined);
+      leading = Icon(SpIcons.of(context).cloudUpload);
       subtitle = provider.canBackup() ? Text(tr("list_tile.backup.some_data_has_not_sync_subtitle")) : null;
 
       if (subtitle == null && fallbackMessage.isNotEmpty) subtitle = Text(fallbackMessage);
     } else {
-      leading = const Icon(Icons.cloud_upload_outlined);
+      leading = Icon(SpIcons.of(context).cloudUpload);
       subtitle = Text(provider.source.email ?? tr("general.na"));
     }
 
@@ -159,7 +159,7 @@ class _SignedInTile extends StatelessWidget {
                       WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
                         child: Icon(
-                          Icons.cloud_done,
+                          SpIcons.of(context).cloudDone,
                           color: ColorScheme.of(context).bootstrap.success.color,
                           size: 16.0,
                         ),

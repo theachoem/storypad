@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/views/fonts/fonts_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class FontFamilyTile extends StatelessWidget {
   const FontFamilyTile({
@@ -35,7 +36,7 @@ class FontFamilyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.font_download_outlined),
+      leading: Icon(SpIcons.of(context).font),
       title: Text(tr("list_tile.font_family.title")),
       subtitle: Text(currentFontFamily),
       onTap: () {

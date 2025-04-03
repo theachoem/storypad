@@ -142,18 +142,18 @@ class _ShowStoryContent extends StatelessWidget {
         IconButton(
           tooltip: tr("button.edit"),
           onPressed: () => viewModel.goToEditPage(context),
-          icon: const Icon(Icons.edit_outlined),
+          icon: Icon(SpIcons.of(context).edit),
         ),
         Builder(builder: (context) {
           return IconButton(
             tooltip: tr("page.tags.title"),
-            icon: const Icon(Icons.sell_outlined),
+            icon: Icon(SpIcons.of(context).tag),
             onPressed: () => Scaffold.of(context).openEndDrawer(),
           );
         }),
         IconButton(
           tooltip: tr("page.theme.title"),
-          icon: Icon(Icons.color_lens_outlined),
+          icon: Icon(SpIcons.of(context).theme),
           onPressed: () => SpStoryThemeBottomSheet(
             story: viewModel.story!,
             onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
@@ -164,7 +164,7 @@ class _ShowStoryContent extends StatelessWidget {
         return IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
-            viewModel.managingPage ? MdiIcons.bookOpen : MdiIcons.bookOpenOutline,
+            viewModel.managingPage ? SpIcons.of(context).managingPage : SpIcons.of(context).managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
@@ -174,7 +174,7 @@ class _ShowStoryContent extends StatelessWidget {
         items: (context) {
           return [
             SpPopMenuItem(
-              leadingIconData: Icons.info_outline,
+              leadingIconData: SpIcons.of(context).info,
               title: tr("button.info"),
               onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
             ),
@@ -183,7 +183,7 @@ class _ShowStoryContent extends StatelessWidget {
         builder: (callback) {
           return IconButton(
             tooltip: tr("button.more_options"),
-            icon: Icon(Icons.more_vert),
+            icon: Icon(SpIcons.of(context).moreVert),
             onPressed: callback,
           );
         },

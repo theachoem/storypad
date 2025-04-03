@@ -29,14 +29,6 @@ class _HomeAppBarMessage extends StatelessWidget {
             ),
           );
         } else {
-          // title = "${tr("page.home.app_bar.messages.ready_to_syn_data")} ";
-          // trailing = Container(
-          //   margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          //   child: const Icon(
-          //     Icons.cloud_off,
-          //     size: 16.0,
-          //   ),
-          // );
           showWelcomeMessage = true;
           title = null;
           trailing = null;

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/library/show/show_asset_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';

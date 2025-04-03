@@ -1,5 +1,5 @@
 name: storypad
-version: 2.9.4+289
+version: 2.9.4+290
 publish_to: none
 environment:
   sdk: ^3.5.4
@@ -14,6 +14,7 @@ dependencies:
   animated_clipper: ^0.2.0+2
   cached_network_image: ^3.4.1
   copy_with_extension: ^6.0.0
+  cupertino_icons: ^1.0.8
   device_info_plus: ^11.2.0
   dismissible_page: ^1.0.2
   dynamic_color: ^1.7.0

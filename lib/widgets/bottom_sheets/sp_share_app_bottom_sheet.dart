@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class SpShareAppBottomSheet extends BaseBottomSheet {
+  @override
+  bool get fullScreen => false;
+
   @override
   Widget build(BuildContext context, double bottomPadding) {
     return SpSingleStateWidget(
@@ -32,7 +36,7 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
               ),
               SizedBox(height: 16.0),
               FilledButton.icon(
-                icon: Icon(Icons.share_outlined),
+                icon: Icon(SpIcons.of(context).share),
                 label: Text(tr("button.share")),
                 onPressed: () => Share.share(notifier.value.trim()),
               ),

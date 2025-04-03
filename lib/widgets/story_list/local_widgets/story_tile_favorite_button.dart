@@ -103,12 +103,12 @@ class _StoryTileFavoriteButton extends StatelessWidget {
 
           if (entry.key == story.preferredStarIcon || defaultIcon) {
             child = IconButton.filledTonal(
-              icon: Icon(entry.value.outlineIcon),
+              icon: Icon(entry.value.outlineIcon(context)),
               onPressed: () => updateStarIcon?.call(entry.key),
             );
           } else {
             child = IconButton(
-              icon: Icon(entry.value.outlineIcon),
+              icon: Icon(entry.value.outlineIcon(context)),
               onPressed: () => updateStarIcon?.call(entry.key),
             );
           }
@@ -149,12 +149,14 @@ class _StoryTileFavoriteButton extends StatelessWidget {
               duration: animationDuration,
               showFirst: starred,
               firstChild: Icon(
-                StoryIconObject.icons[story.preferredStarIcon]?.filledIcon ?? StoryIconObject.fallbackIcon.filledIcon,
+                StoryIconObject.icons[story.preferredStarIcon]?.filledIcon(context) ??
+                    StoryIconObject.fallbackIcon.filledIcon(context),
                 color: ColorScheme.of(context).error,
                 applyTextScaling: true,
               ),
               secondChild: Icon(
-                StoryIconObject.icons[story.preferredStarIcon]?.outlineIcon ?? StoryIconObject.fallbackIcon.outlineIcon,
+                StoryIconObject.icons[story.preferredStarIcon]?.outlineIcon(context) ??
+                    StoryIconObject.fallbackIcon.outlineIcon(context),
                 color: Theme.of(context).dividerColor,
                 applyTextScaling: true,
               ),

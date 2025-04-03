@@ -40,4 +40,5 @@ class _HomeScrollAppBarInfo {
   double getHelloTextHeight() => scaler.scale(helloTextBaseHeight);
   double getQuestionTextHeight() => scaler.scale(questionTextBaseHeight);
   double getContentsHeight() => getHelloTextHeight() + getQuestionTextHeight();
+  Color getBackgroundColor(BuildContext context) => Theme.of(context).appBarTheme.backgroundColor!;
 }

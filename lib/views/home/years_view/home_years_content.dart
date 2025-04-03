@@ -12,7 +12,7 @@ class _HomeYearsContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: tr("page.add_year.title"),
-            icon: const Icon(Icons.add),
+            icon: Icon(SpIcons.of(context).add),
             onPressed: () async => viewModel.addYear(context),
           ),
         ],
@@ -46,7 +46,7 @@ class _HomeYearsContent extends StatelessWidget {
                 selected: selected,
                 title: Text(entry.key.toString()),
                 subtitle: Text(plural("plural.story", entry.value)),
-                trailing: Visibility(visible: selected, child: const Icon(Icons.check)),
+                trailing: Visibility(visible: selected, child: Icon(SpIcons.of(context).check)),
               ),
               AnimatedContainer(
                 duration: Durations.long4,

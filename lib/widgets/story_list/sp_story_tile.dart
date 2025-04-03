@@ -11,6 +11,7 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
@@ -60,45 +61,45 @@ class SpStoryTile extends StatelessWidget {
       if ((story.inArchives || story.inBins) && onTap != null)
         SpPopMenuItem(
           title: tr('button.open'),
-          leadingIconData: Icons.library_books,
+          leadingIconData: SpIcons.of(context).book,
           onPressed: onTap,
         ),
       if (story.putBackAble)
         SpPopMenuItem(
           title: tr('button.put_back'),
-          leadingIconData: Icons.settings_backup_restore,
+          leadingIconData: SpIcons.of(context).putBack,
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).putBack(context),
         ),
       if (story.archivable)
         SpPopMenuItem(
           title: tr('button.archive'),
-          leadingIconData: Icons.archive,
+          leadingIconData: SpIcons.of(context).archive,
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
           title: tr('button.move_to_bin'),
-          leadingIconData: Icons.delete,
+          leadingIconData: SpIcons.of(context).delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
           title: tr('button.permanent_delete'),
-          leadingIconData: Icons.delete_forever,
+          leadingIconData: SpIcons.of(context).deleteForever,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
           title: tr('button.import'),
-          leadingIconData: Icons.restore_outlined,
+          leadingIconData: SpIcons.of(context).import,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
         ),
       SpPopMenuItem(
         title: tr('button.info'),
-        leadingIconData: Icons.info,
+        leadingIconData: SpIcons.of(context).info,
         onPressed: () => SpStoryInfoSheet(story: story).show(context: context),
       )
     ];

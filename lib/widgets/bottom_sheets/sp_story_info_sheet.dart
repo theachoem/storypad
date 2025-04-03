@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpStoryInfoSheet extends BaseBottomSheet {
   final StoryDbModel story;
@@ -12,6 +13,9 @@ class SpStoryInfoSheet extends BaseBottomSheet {
   });
 
   @override
+  bool get fullScreen => false;
+
+  @override
   Widget build(BuildContext context, double bottomPadding) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,23 +23,23 @@ class SpStoryInfoSheet extends BaseBottomSheet {
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: const Icon(Icons.edit),
+          leading: Icon(SpIcons.of(context).edit),
           title: Text(tr('list_tile.story_date.title')),
           subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
         ),
         if (story.movedToBinAt != null)
           ListTile(
-            leading: const Icon(Icons.delete),
+            leading: Icon(SpIcons.of(context).delete),
             title: Text(tr('list_tile.moved_to_bin_at.title')),
             subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
           ),
         ListTile(
-          leading: const Icon(Icons.update),
+          leading: Icon(SpIcons.of(context).calendar),
           title: Text(tr("list_tile.updated_at.title")),
           subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
         ),
         ListTile(
-          leading: const Icon(Icons.date_range),
+          leading: Icon(SpIcons.of(context).info),
           title: Text(tr("list_tile.created_at.title")),
           subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
         ),

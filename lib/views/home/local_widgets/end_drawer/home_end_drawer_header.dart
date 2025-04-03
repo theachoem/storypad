@@ -22,11 +22,11 @@ class _HomeEndDrawerHeader extends StatelessWidget {
             RichText(
               textScaler: MediaQuery.textScalerOf(context),
               text: TextSpan(
-                text: tr("button.switch"),
+                text: "${tr("button.switch")} ",
                 style: TextTheme.of(context).labelLarge,
-                children: const [
+                children: [
                   WidgetSpan(
-                    child: Icon(Icons.keyboard_arrow_down_outlined, size: 16.0),
+                    child: Icon(SpIcons.of(context).keyboardDown, size: 16.0),
                     alignment: PlaceholderAlignment.middle,
                   ),
                 ],

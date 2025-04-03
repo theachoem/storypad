@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class ThemeModeTile extends StatelessWidget {
@@ -51,8 +52,8 @@ class ThemeModeTile extends StatelessWidget {
         return ListTile(
           leading: SpAnimatedIcons(
             duration: Durations.medium4,
-            firstChild: const Icon(Icons.dark_mode),
-            secondChild: const Icon(Icons.light_mode),
+            firstChild: Icon(SpIcons.of(context).darkMode),
+            secondChild: Icon(SpIcons.of(context).lightMode),
             showFirst: isDarkMode(context),
           ),
           title: Text(tr('list_tile.theme_mode.title')),

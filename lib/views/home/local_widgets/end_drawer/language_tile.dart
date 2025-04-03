@@ -7,7 +7,7 @@ class _LanguageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => LanguagesRoute().push(context),
-      leading: const Icon(Icons.language),
+      leading: Icon(SpIcons.of(context).globe),
       subtitle: Text(kNativeLanguageNames[context.locale.toLanguageTag()]!),
       title: RichText(
         textScaler: MediaQuery.textScalerOf(context),

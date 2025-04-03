@@ -24,21 +24,4 @@ enum FeelingGroup {
         return tr("general.feeling_group.other");
     }
   }
-
-  IconData get iconData {
-    switch (this) {
-      case FeelingGroup.joy:
-        return MdiIcons.emoticonOutline;
-      case FeelingGroup.sadness:
-        return MdiIcons.emoticonSadOutline;
-      case FeelingGroup.fear:
-        return MdiIcons.emoticonFrownOutline;
-      case FeelingGroup.anger:
-        return MdiIcons.emoticonAngryOutline;
-      case FeelingGroup.neutral:
-        return MdiIcons.emoticonNeutralOutline;
-      case FeelingGroup.other:
-        return Icons.emoji_symbols;
-    }
-  }
 }

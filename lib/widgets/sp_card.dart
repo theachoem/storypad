@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpCard extends StatelessWidget {
@@ -63,7 +64,10 @@ class SpCard extends StatelessWidget {
             Positioned(
               top: 16.0,
               right: 16.0,
-              child: Icon(Icons.keyboard_arrow_right, color: ColorScheme.of(context).bootstrap.warning.color),
+              child: Icon(
+                SpIcons.of(context).keyboardRight,
+                color: ColorScheme.of(context).bootstrap.warning.color,
+              ),
             ),
           ],
         );

@@ -19,55 +19,37 @@ class _HomeScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpSingleStateWidget(
-      initialValue: false,
-      builder: (context, endDrawerOpenedNotifier) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          endDrawerEnableOpenDragGesture: true,
-          endDrawer: endDrawer,
-          floatingActionButton: floatingActionButton,
-          bottomNavigationBar: bottomNavigationBar,
-          onEndDrawerChanged: AppTheme.isIOS(context) ? (isOpened) => endDrawerOpenedNotifier.value = isOpened : null,
-          body: ValueListenableBuilder(
-            valueListenable: endDrawerOpenedNotifier,
-            child: Stack(
-              children: [
-                const SpSpStoryListTimelineVerticleDivider(),
-                RefreshIndicator.adaptive(
-                  edgeOffset:
-                      viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
-                  onRefresh: () => viewModel.refresh(context),
-                  child: CustomScrollView(
-                    controller: viewModel.scrollInfo.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      appBar,
-                      body,
-                    ],
-                  ),
-                ),
-                // TODO: add something to home side bar
-                // buildTimelineSideBar(context),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: MediaQuery.of(context).padding.bottom + 12.0,
-                  child: _AppUpdateFloatingButton(),
-                ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      endDrawerEnableOpenDragGesture: true,
+      endDrawer: endDrawer,
+      floatingActionButton: floatingActionButton,
+      bottomNavigationBar: bottomNavigationBar,
+      body: Stack(
+        children: [
+          const SpSpStoryListTimelineVerticleDivider(),
+          RefreshIndicator.adaptive(
+            edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
+            onRefresh: () => viewModel.refresh(context),
+            child: CustomScrollView(
+              controller: viewModel.scrollInfo.scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                appBar,
+                body,
               ],
             ),
-            builder: (context, endDrawerOpened, child) {
-              return AnimatedContainer(
-                transform: Matrix4.identity()..translate(endDrawerOpened ? -304.0 / 2 : 0.0, 0.0),
-                duration: Durations.long1,
-                curve: Curves.ease,
-                child: child,
-              );
-            },
           ),
-        );
-      },
+          // TODO: add something to home side bar
+          // buildTimelineSideBar(context),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).padding.bottom + 12.0,
+            child: _AppUpdateFloatingButton(),
+          ),
+        ],
+      ),
     );
   }
 

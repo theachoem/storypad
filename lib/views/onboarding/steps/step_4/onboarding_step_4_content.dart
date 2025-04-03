@@ -18,9 +18,18 @@ class _OnboardingStep4Content extends StatelessWidget {
   }
 
   Widget buildActionButton(BuildContext context) {
-    return FilledButton(
-      child: Text(tr("button.get_started")),
-      onPressed: () => viewModel.getStarted(context),
-    );
+    if (AppTheme.isCupertino(context)) {
+      return CupertinoButton.filled(
+        disabledColor: Theme.of(context).disabledColor,
+        sizeStyle: CupertinoButtonSize.medium,
+        child: Text(tr("button.get_started")),
+        onPressed: () => viewModel.getStarted(context),
+      );
+    } else {
+      return OutlinedButton(
+        child: Text(tr("button.get_started")),
+        onPressed: () => viewModel.getStarted(context),
+      );
+    }
   }
 }

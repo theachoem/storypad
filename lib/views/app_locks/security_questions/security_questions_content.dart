@@ -13,10 +13,10 @@ class _SecurityQuestionsContent extends StatelessWidget {
         viewModel.securityAnswers.isNotEmpty == true;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(leading: CloseButton()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.icon(
-        icon: Icon(Icons.save_outlined),
+        icon: Icon(SpIcons.of(context).save),
         label: Text(tr('button.done')),
         onPressed: saveable ? () => viewModel.save(context) : null,
       ),
@@ -27,8 +27,8 @@ class _SecurityQuestionsContent extends StatelessWidget {
             title: Text(question.translatedQuestion),
             subtitle: answer != null ? Text(List.generate(answer.length, (e) => "*").join("")) : null,
             trailing: answer != null
-                ? Icon(Icons.check, color: ColorScheme.of(context).primary)
-                : const Icon(Icons.keyboard_arrow_right),
+                ? Icon(SpIcons.of(context).checkCircle, color: ColorScheme.of(context).primary)
+                : Icon(SpIcons.of(context).keyboardRight),
             onTap: () => viewModel.goToEnterAnswerFor(question, context),
           );
         }).toList(),

@@ -1,8 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:easy_localization/easy_localization.dart' show tr;
-import 'package:flutter/material.dart' show BuildContext, IconData, Icons;
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter/material.dart' show BuildContext;
 import 'package:storypad/gen/assets.gen.dart' show AssetGenImage, Assets;
 
 part '../types/feeling_group.dart';

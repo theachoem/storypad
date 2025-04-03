@@ -74,8 +74,8 @@ class _HomeTabBar extends StatelessWidget {
           gradient: LinearGradient(
             stops: [0.0, 0.3],
             colors: [
-              Theme.of(context).appBarTheme.backgroundColor!.withValues(alpha: 0.0),
-              Theme.of(context).appBarTheme.backgroundColor!,
+              viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
+              viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
             ],
           ),
         ),
@@ -92,8 +92,8 @@ class _HomeTabBar extends StatelessWidget {
       child: IconButton(
         color: ColorScheme.of(context).bootstrap.info.color,
         tooltip: tr("page.search_filter.title"),
-        iconSize: 20,
-        icon: Icon(MdiIcons.tuneVariant),
+        iconSize: SpIcons.of(context).cupertino ? 22.0 : 20.0,
+        icon: Icon(SpIcons.of(context).tune),
         onPressed: () => viewModel.goToFilter(context),
       ),
     );
@@ -103,9 +103,11 @@ class _HomeTabBar extends StatelessWidget {
     return Consumer<AppLockProvider>(
       builder: (context, appLockProvider, child) {
         return IconButton(
-          tooltip: tr("button.more_options"),
-          icon: Icon(appLockProvider.hasAppLock ? MdiIcons.bookLockOutline : MdiIcons.bookOutline),
           onPressed: () => viewModel.openEndDrawer(context),
+          tooltip: tr("button.more_options"),
+          icon: Icon(
+            appLockProvider.hasAppLock ? SpIcons.of(context).bookLock : SpIcons.of(context).book,
+          ),
         );
       },
     );

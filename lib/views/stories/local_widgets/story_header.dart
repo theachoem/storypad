@@ -6,6 +6,7 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 
 class StoryHeader extends StatelessWidget {
@@ -129,7 +130,7 @@ class _DateSelector extends StatelessWidget {
             ),
             if (!readOnly) ...[
               const SizedBox(width: 4.0),
-              const Icon(Icons.arrow_drop_down),
+              Icon(SpIcons.of(context).dropDown),
             ]
           ],
         ),

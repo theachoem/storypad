@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class FontWeightTile extends StatelessWidget {
@@ -51,7 +52,7 @@ class FontWeightTile extends StatelessWidget {
       }).toList(),
       builder: (open) {
         return ListTile(
-          leading: const Icon(Icons.format_size_outlined),
+          leading: Icon(SpIcons.of(context).fontWeight),
           title: Text(tr("list_tile.font_weight.title")),
           subtitle: Text(currentFontWeight.value.toString()),
           onTap: () => open(),

@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpAppLockWrapper extends StatelessWidget {
   const SpAppLockWrapper({
@@ -139,7 +140,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
             spacing: 4.0,
             children: [
               FilledButton.icon(
-                icon: Icon(Icons.lock_outline),
+                icon: Icon(SpIcons.of(context).lock),
                 onPressed: () => authenticate(),
                 label: Text(tr('button.unlock')),
               ),

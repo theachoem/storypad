@@ -26,7 +26,7 @@ class _HomeEmpty extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16.0),
             child: SpLoopAnimationBuilder(
-              loopCount: 1,
+              loopCount: 10,
               reverse: false,
               duration: Duration(seconds: 8),
               reverseDuration: Duration(seconds: 8),
@@ -34,13 +34,13 @@ class _HomeEmpty extends StatelessWidget {
                 IconData iconData;
 
                 if (value <= 0.25) {
-                  iconData = Icons.color_lens_outlined;
+                  iconData = SpIcons.of(context).theme;
                 } else if (value <= 0.5) {
-                  iconData = Icons.dark_mode_outlined;
+                  iconData = SpIcons.of(context).darkMode;
                 } else if (value <= 0.75) {
-                  iconData = Icons.light_mode_outlined;
+                  iconData = SpIcons.of(context).lightMode;
                 } else {
-                  iconData = MdiIcons.formatFont;
+                  iconData = SpIcons.of(context).font;
                 }
 
                 return AnimatedSwitcher(
@@ -84,8 +84,8 @@ class _HomeEmpty extends StatelessWidget {
               style: TextTheme.of(context).bodyLarge,
               children: [
                 TextSpan(text: message.split("{EDIT_BUTTON}").first),
-                const WidgetSpan(
-                  child: Icon(Icons.edit, size: 16.0),
+                WidgetSpan(
+                  child: Icon(SpIcons.of(context).newStory, size: 16.0),
                   alignment: PlaceholderAlignment.middle,
                 ),
                 TextSpan(text: message.split("{EDIT_BUTTON}").last),

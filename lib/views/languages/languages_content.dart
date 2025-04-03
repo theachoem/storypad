@@ -13,7 +13,7 @@ class _LanguagesContent extends StatelessWidget {
           if (viewModel.canSetToDeviceLocale)
             IconButton(
               tooltip: tr("button.reset"),
-              icon: Icon(Icons.restart_alt_outlined),
+              icon: Icon(SpIcons.of(context).refresh),
               onPressed: () => viewModel.useDeviceLocale(context),
             ),
         ],
@@ -21,7 +21,7 @@ class _LanguagesContent extends StatelessWidget {
       bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
       floatingActionButton: viewModel.params.showThemeFAB
           ? FloatingActionButton(
-              child: Icon(Icons.color_lens_outlined),
+              child: Icon(SpIcons.of(context).theme),
               onPressed: () => ThemeRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context))
           : null,
       body: ListView.builder(
@@ -44,7 +44,7 @@ class _LanguagesContent extends StatelessWidget {
       trailing: Visibility(
         visible: selected,
         child: SpFadeIn.fromBottom(
-          child: const Icon(Icons.check),
+          child: Icon(SpIcons.of(context).check),
         ),
       ),
       subtitle: viewModel.isSystemLocale(locale) ? Text(tr('general.default')) : null,
@@ -70,7 +70,7 @@ class _FeedbackBanner extends StatelessWidget {
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
       )),
-      leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurface),
+      leading: Icon(SpIcons.of(context).info, color: Theme.of(context).colorScheme.onSurface),
       content: Text(
         tr('list_tile.ask_for_locale_suggestion.subtitle'),
         style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
@@ -91,7 +91,7 @@ class _FeedbackBanner extends StatelessWidget {
         right: MediaQuery.of(context).padding.right,
       ),
       child: OutlinedButton.icon(
-        icon: Icon(Icons.fact_check_outlined),
+        icon: Icon(SpIcons.of(context).factCheck),
         label: Text(
           tr('button.suggest'),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),

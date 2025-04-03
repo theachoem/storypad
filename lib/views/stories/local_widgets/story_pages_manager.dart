@@ -7,6 +7,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_reorderable_item.dart';
 
 part 'story_pages_bin_target.dart';
@@ -70,7 +71,7 @@ class StoryPagesManager extends StatelessWidget {
       children: [
         buildPageCard(
           context: context,
-          child: Icon(Icons.add),
+          child: Icon(SpIcons.of(context).add),
           onTap: () {
             HapticFeedback.selectionClick();
             state.addPage();

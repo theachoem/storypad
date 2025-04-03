@@ -15,7 +15,7 @@ class _OnboardingContent extends StatelessWidget {
           actions: [
             IconButton(
               tooltip: tr("page.language.title"),
-              icon: Icon(Icons.language_outlined),
+              icon: Icon(SpIcons.of(context).globe),
               onPressed: () => LanguagesRoute(
                 showBetaBanner: false,
                 showThemeFAB: true,
@@ -83,70 +83,6 @@ class _OnboardingContent extends StatelessWidget {
           child: entry.value,
         );
       }).toList(),
-    );
-  }
-}
-
-class _NicknameField extends StatelessWidget {
-  const _NicknameField({
-    required this.viewModel,
-  });
-
-  final OnboardingViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return FormField<String>(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) return '';
-        return null;
-      },
-      builder: (state) {
-        InputBorder border = OutlineInputBorder(
-          borderSide: state.hasError
-              ? BorderSide(color: Theme.of(context).colorScheme.error, width: 2.0)
-              : BorderSide(color: Theme.of(context).dividerColor),
-          borderRadius: BorderRadius.circular(12.0),
-        );
-
-        return TextFormField(
-          onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-          onFieldSubmitted: (value) => viewModel.next(context),
-          controller: viewModel.controller,
-          textAlign: TextAlign.center,
-          onChanged: (value) => state.didChange(value),
-          decoration: InputDecoration(
-            border: border,
-            enabledBorder: border,
-            focusedBorder: border,
-            hintText: tr("input.nickname.hint"),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _NextButton extends StatelessWidget {
-  const _NextButton({
-    required this.viewModel,
-  });
-
-  final OnboardingViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48.0,
-      child: Builder(builder: (context) {
-        return FilledButton(
-          style: FilledButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-          child: Text(tr("button.next")),
-          onPressed: () => viewModel.next(context),
-        );
-      }),
     );
   }
 }

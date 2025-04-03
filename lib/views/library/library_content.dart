@@ -39,7 +39,7 @@ class _LibraryContent extends StatelessWidget {
                     valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
                     builder: (context, loadingAssetId, child) {
                       return FilledButton.icon(
-                        icon: Icon(MdiIcons.googleDrive),
+                        icon: Icon(SpIcons.of(context).googleDrive),
                         label: Text(tr("button.upload_to_google_drive")),
                         onPressed: loadingAssetId != null ? null : () => provider.assetBackupState.uploadAssets(),
                       );
@@ -88,12 +88,12 @@ class _LibraryContent extends StatelessWidget {
                 buildDeleteButton(context, provider, asset)
               else
                 SpPopMenuItem(
-                  leadingIconData: Icons.library_books,
+                  leadingIconData: SpIcons.of(context).book,
                   title: tr("general.stories"),
                   onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
                 ),
               SpPopMenuItem(
-                leadingIconData: Icons.image,
+                leadingIconData: SpIcons.of(context).photo,
                 title: tr("button.view"),
                 onPressed: () {
                   final assetLinks = provider.assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
@@ -143,14 +143,14 @@ class _LibraryContent extends StatelessWidget {
   SpPopMenuItem buildDeleteButton(BuildContext context, BackupProvider provider, AssetDbModel asset) {
     if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
       return SpPopMenuItem(
-        leadingIconData: Icons.delete,
+        leadingIconData: SpIcons.of(context).delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete_from_google_drive"),
         onPressed: () => provider.assetBackupState.deleteAsset(asset),
       );
     } else {
       return SpPopMenuItem(
-        leadingIconData: Icons.delete,
+        leadingIconData: SpIcons.of(context).delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete"),
         onPressed: () => provider.assetBackupState.deleteAsset(asset),
@@ -177,7 +177,7 @@ class _LibraryContent extends StatelessWidget {
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
         foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
         child: Icon(
-          Icons.cloud_off,
+          SpIcons.of(context).cloudOff,
           size: 20.0,
         ),
       );
@@ -189,7 +189,7 @@ class _LibraryContent extends StatelessWidget {
           backgroundColor: ColorScheme.of(context).bootstrap.success.color,
           foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
           child: Icon(
-            Icons.cloud_done_outlined,
+            SpIcons.of(context).cloudDone,
             size: 20.0,
           ),
         ),
@@ -200,7 +200,7 @@ class _LibraryContent extends StatelessWidget {
         backgroundColor: ColorScheme.of(context).bootstrap.info.color,
         foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
         child: Icon(
-          Icons.error,
+          SpIcons.of(context).warning,
           size: 20.0,
         ),
       );

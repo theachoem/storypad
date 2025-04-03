@@ -80,9 +80,12 @@ class _StoryTileContents extends StatelessWidget {
               textScaler: MediaQuery.textScalerOf(context),
               text: TextSpan(
                 style: TextTheme.of(context).labelMedium,
-                children: const [
-                  WidgetSpan(child: Icon(Icons.archive_outlined, size: 16.0), alignment: PlaceholderAlignment.middle),
-                  TextSpan(text: ' Archived'),
+                children: [
+                  WidgetSpan(
+                    child: Icon(SpIcons.of(context).archive, size: 16.0),
+                    alignment: PlaceholderAlignment.middle,
+                  ),
+                  TextSpan(text: " ${tr('snack_bar.archive_success')}"),
                 ],
               ),
             ),
