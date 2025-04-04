@@ -5,14 +5,12 @@ FLAVOR=$1
 case "$FLAVOR" in
 --storypad)
   PACKAGE_NAME="com.tc.writestory"
-  RELEASE_STATUS="completed"
   TRACK="internal"
   JSON_KEY="service_accounts/storypad.json"
   AAB_PATH="../../build/app/outputs/bundle/storypadRelease/app-storypad-release.aab"
   ;;
 --spooky)
   PACKAGE_NAME="com.juniorise.spooky"
-  RELEASE_STATUS="completed"
   TRACK="internal"
   JSON_KEY="service_accounts/spooky.json"
   AAB_PATH="../../build/app/outputs/bundle/spookyRelease/app-spooky-release.aab"
@@ -26,7 +24,9 @@ esac
 
 CMD="bundle exec fastlane upload_to_play_store \
   --package_name $PACKAGE_NAME \
-  --release_status $RELEASE_STATUS \
+  --release_status "completed" \
+  --track_promote_to "beta"
+  --track_promote_release_status "completed"
   --track $TRACK \
   --json_key $JSON_KEY \
   --aab $AAB_PATH"
