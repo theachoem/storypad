@@ -82,12 +82,7 @@ class AppTheme extends StatelessWidget {
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
-
-    // follow dart-define.
-    TargetPlatform platform = defaultTargetPlatform;
-    if (kIsCupertino && platform != TargetPlatform.macOS && platform != TargetPlatform.iOS) {
-      platform = TargetPlatform.iOS;
-    }
+    TargetPlatform platform = getPlatformByDartDefine();
 
     return baseTheme.copyWith(
       platform: platform,
@@ -146,6 +141,25 @@ class AppTheme extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// follow dart-define [kIsCupertino].
+  static TargetPlatform getPlatformByDartDefine() {
+    TargetPlatform platform = defaultTargetPlatform;
+    bool isCupertioByPlatform = platform == TargetPlatform.macOS || platform == TargetPlatform.iOS;
+    bool isMaterialByPlatform = platform == TargetPlatform.android ||
+        platform == TargetPlatform.fuchsia ||
+        platform == TargetPlatform.linux ||
+        platform == TargetPlatform.windows;
+
+    if (kIsCupertino && !isCupertioByPlatform) {
+      platform = TargetPlatform.iOS;
+    }
+
+    if (!kIsCupertino && !isMaterialByPlatform) {
+      platform = TargetPlatform.android;
+    }
+    return platform;
   }
 
   Widget buildColorScheme({
