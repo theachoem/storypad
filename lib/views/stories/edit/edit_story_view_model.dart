@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/stories/story_has_changed_service.dart';
@@ -153,7 +152,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
+    draftContent = draftContent?.copyWithNewFeeling(currentPage, feeling);
     notifyListeners();
 
     if (await hasDataWritten) {

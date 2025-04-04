@@ -91,7 +91,7 @@ class SpStoryList extends StatelessWidget {
                 if (viewOnly) {
                   ShowChangeRoute(content: story.latestContent!).push(context);
                 } else {
-                  ShowStoryRoute(id: story.id, story: story).push(context);
+                  ShowStoryRoute(id: story.id, story: story).push(context, rootNavigator: true);
                 }
               },
             );

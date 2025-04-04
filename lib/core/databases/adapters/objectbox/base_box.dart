@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
@@ -43,6 +44,8 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
 
   @override
   Future<T?> find(int id, {bool returnDeleted = false}) async {
+    debugPrint("Triggering $tableName#find $id 🍎");
+
     B? object = box.get(id);
     if (object?.permanentlyDeletedAt != null && !returnDeleted) return null;
 
@@ -66,6 +69,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<int> count({
     Map<String, dynamic>? filters,
   }) async {
+    debugPrint("Triggering $tableName#count 🍎");
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters);
     Query<B>? query = queryBuilder.build();
     return query.count();
@@ -76,6 +80,8 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
   }) async {
+    debugPrint("Triggering $tableName#where 🍎");
+
     List<B> objects;
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters);
 
@@ -91,6 +97,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#touch 🍎🍎");
     B constructed = await modelToObject(record);
 
     constructed.touch();
@@ -105,6 +112,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#set 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -119,6 +127,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     List<T> records, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#setAll 🍎");
     List<B> objects = await modelsToObjects(records.whereType<T>().toList());
 
     for (B obj in objects) {
@@ -134,6 +143,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#update 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -148,6 +158,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#create 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -162,6 +173,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     int id, {
     bool runCallbacks = true,
   }) async {
+    debugPrint("Triggering $tableName#delete 🍎");
     B? object = box.get(id);
 
     if (object != null) {

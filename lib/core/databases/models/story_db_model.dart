@@ -281,7 +281,8 @@ class StoryDbModel extends BaseDbModel {
         feeling: content.richPages?.firstOrNull?.feeling,
         updatedAt: DateTime.now(),
         latestContent: content,
-        draftContent: null,
+        // keep old draft in case it is exist.
+        draftContent: viewModel.story?.draftContent,
       );
     }
   }

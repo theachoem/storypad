@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -16,6 +18,8 @@ class SpStoryListWithQuery extends StatefulWidget {
   final SearchFilterObject? filter;
   final String? query;
   final bool viewOnly;
+
+  String get uniqueness => jsonEncode(filter?.toDatabaseFilter(query: query)) + viewOnly.toString();
 
   static SpStoryListWithQueryState? of(BuildContext context) {
     return context.findAncestorStateOfType<SpStoryListWithQueryState>();
@@ -44,7 +48,9 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   void didUpdateWidget(covariant SpStoryListWithQuery oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    load(debugSource: '$runtimeType#didUpdateWidget');
+    if (widget.uniqueness != oldWidget.uniqueness) {
+      load(debugSource: '$runtimeType#didUpdateWidget');
+    }
   }
 
   @override

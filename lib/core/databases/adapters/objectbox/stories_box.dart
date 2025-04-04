@@ -43,6 +43,8 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
   @override
   Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
+    debugPrint("Triggering $tableName#getLastUpdatedAt 🍎");
+
     Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
 
     if (fromThisDeviceOnly == true) {
@@ -59,6 +61,8 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Future<Map<int, int>> getStoryCountsByYear({
     Map<String, dynamic>? filters,
   }) async {
+    debugPrint("Triggering $tableName#getStoryCountsByYear 🍎");
+
     List<StoryObjectBox>? stories = await buildQuery(filters: filters).build().findAsync();
 
     Map<int, int>? storyCountsByYear = stories.fold<Map<int, int>>({}, (counts, story) {
@@ -73,6 +77,8 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Future<Map<PathType, int>> getStoryCountsByType({
     Map<String, dynamic>? filters,
   }) async {
+    debugPrint("Triggering $tableName#getStoryCountsByType 🍎");
+
     Map<PathType, int> storyCountsByType = {};
 
     for (PathType type in PathType.values) {

@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/stories/story_content_to_quill_controllers_service.dart';
@@ -123,9 +122,9 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    draftContent!.richPages![currentPage] = draftContent!.richPages![currentPage].copyWith(feeling: feeling);
+    draftContent = draftContent?.copyWithNewFeeling(currentPage, feeling);
     notifyListeners();
-    _silentlySave();
+    _silentlySave(draft: false);
 
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,
@@ -227,7 +226,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       quillControllers: quillControllers,
       story: story,
       onPageIndexChanged: (page) => currentPageIndex = page,
-    ).push(context, rootNavigator: true);
+    ).push(context);
 
     await load(story!.id);
 
@@ -236,10 +235,12 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     }
   }
 
-  void _silentlySave() {
+  void _silentlySave({
+    bool draft = true,
+  }) {
     debouncedCallback(() async {
       if (await _getHasChange()) {
-        story = await StoryDbModel.fromShowPage(this, draft: true);
+        story = await StoryDbModel.fromShowPage(this, draft: draft);
         await StoryDbModel.db.set(story!);
         notifyListeners();
       }
