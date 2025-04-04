@@ -6,7 +6,7 @@ class _CommunityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).forum),
+      leading: const Icon(SpIcons.forum),
       title: RichText(
         textScaler: MediaQuery.textScalerOf(context),
         text: TextSpan(

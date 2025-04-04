@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
 
 const String kAppName = String.fromEnvironment('APP_NAME');
+const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 
 const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;

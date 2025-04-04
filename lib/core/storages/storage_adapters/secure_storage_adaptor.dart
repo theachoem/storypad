@@ -2,7 +2,7 @@ import 'package:storypad/core/storages/storage_adapters/base_storage_adapter.dar
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorageAdaptor<T> extends BaseStorageAdapter<T> {
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   @override
   Future<String?> readStr({

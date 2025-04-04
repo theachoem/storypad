@@ -16,7 +16,7 @@ class _NicknameField extends StatelessWidget {
         return null;
       },
       builder: (state) {
-        if (AppTheme.isCupertino(context)) {
+        if (kIsCupertino) {
           return buildCupertinoField(state, context);
         } else {
           return buildMaterialField(state, context);
@@ -59,18 +59,18 @@ class _NicknameField extends StatelessWidget {
     } else {
       // base on [_kDefaultRoundedBorderDecoration]
       decoration = BoxDecoration(
-        color: CupertinoDynamicColor.withBrightness(
+        color: const CupertinoDynamicColor.withBrightness(
           color: CupertinoColors.white,
           darkColor: CupertinoColors.black,
         ),
         border: Border.all(
           width: 0.0,
-          color: CupertinoDynamicColor.withBrightness(
+          color: const CupertinoDynamicColor.withBrightness(
             color: Color(0x33000000),
             darkColor: Color(0x33FFFFFF),
           ),
         ),
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(5.0),
         ),
       );

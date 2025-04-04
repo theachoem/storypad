@@ -50,18 +50,18 @@ class SpStoryLabels extends StatelessWidget {
       actions: [
         SheetAction(
           label: tr("button.continue_editing"),
-          icon: SpIcons.of(context).edit,
+          icon: SpIcons.edit,
           key: "continue_editing",
           isDefaultAction: true,
         ),
         SheetAction(
           label: tr("button.view_previous"),
-          icon: SpIcons.of(context).compare,
+          icon: SpIcons.compare,
           key: "view_previous",
         ),
         SheetAction(
           label: tr("button.discard_draft"),
-          icon: SpIcons.of(context).clear,
+          icon: SpIcons.clear,
           key: "discard_draft",
           isDestructiveAction: true,
         ),
@@ -121,7 +121,7 @@ class SpStoryLabels extends StatelessWidget {
     if (showDraft) {
       children.add(
         buildPin(
-          leadingIconData: SpIcons.of(context).draftEdit,
+          leadingIconData: SpIcons.draftEdit,
           context: context,
           title: tr("general.draft"),
           onTap: draftActions != null ? () => showDraftActionSheet(context) : null,
@@ -129,7 +129,7 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (children.isEmpty) return SizedBox.shrink();
+    if (children.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: margin,
       child: Wrap(

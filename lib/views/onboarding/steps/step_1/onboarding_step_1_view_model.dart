@@ -14,8 +14,8 @@ class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
     startAnimations();
   }
 
-  final Duration clickDuration = Duration(milliseconds: 500);
-  final Duration storyDetailsAnimationDuration = Duration(milliseconds: 1000);
+  final Duration clickDuration = const Duration(milliseconds: 500);
+  final Duration storyDetailsAnimationDuration = const Duration(milliseconds: 1000);
 
   final ValueNotifier<bool> showHomePageNotifier = ValueNotifier(true);
   final ValueNotifier<bool> showStoryClickedNotifier = ValueNotifier(false);
@@ -42,7 +42,7 @@ class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
   void startAnimations() async {
     if (disposed) return;
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     await showClickAnimation();
     await showStoryDetailsPageAnimation();
   }
@@ -55,7 +55,7 @@ class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
         showStoryClickedNotifier.value = true;
 
         await Future.delayed(clickDuration);
-        await Future.delayed(Duration(milliseconds: 350));
+        await Future.delayed(const Duration(milliseconds: 350));
       }
     });
   }
@@ -77,7 +77,7 @@ class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
       if (disposed) return;
       if (showHomePageNotifier.value == true) {
         showHomePageNotifier.value = false;
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
       }
     });
   }

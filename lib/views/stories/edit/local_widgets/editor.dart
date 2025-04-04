@@ -126,7 +126,7 @@ class _Editor extends StatelessWidget {
           if (kStoryPad)
             QuillToolbarCustomButtonOptions(
               tooltip: FlutterQuillLocalizations.of(context)?.image,
-              icon: Icon(SpIcons.of(context).photo),
+              icon: const Icon(SpIcons.photo),
               onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
             ),
         ],

@@ -13,8 +13,8 @@ class OnboardingStep3ViewModel extends ChangeNotifier with DisposeAwareMixin {
     startAnimations();
   }
 
-  final endDrawerFadeInDuration = Duration(milliseconds: 1000);
-  final clickDuration = Duration(milliseconds: 500);
+  final endDrawerFadeInDuration = const Duration(milliseconds: 1000);
+  final clickDuration = const Duration(milliseconds: 500);
 
   final endDrawerOpenedNotifier = ValueNotifier(false);
   final endDrawerStateNotifier = ValueNotifier(EndDrawerScreenshotState.noSignedIn);
@@ -31,7 +31,7 @@ class OnboardingStep3ViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> startAnimations() async {
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     await openEndDrawer();
     await scrollToBackupSection();
@@ -70,21 +70,21 @@ class OnboardingStep3ViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (disposed) return;
 
     showSignInClickedNotifier.value = true;
-    await Future.delayed(clickDuration + Duration(milliseconds: 500));
+    await Future.delayed(clickDuration + const Duration(milliseconds: 500));
   }
 
   Future<void> showSyncClickAnimation() async {
     if (disposed) return;
 
     showSyncClickedNotifier.value = true;
-    await Future.delayed(clickDuration + Duration(milliseconds: 500));
+    await Future.delayed(clickDuration + const Duration(milliseconds: 500));
   }
 
   Future<void> changeStateTo(EndDrawerScreenshotState state) async {
     if (disposed) return;
 
     endDrawerStateNotifier.value = state;
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
   }
 
   @override

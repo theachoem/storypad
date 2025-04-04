@@ -61,45 +61,45 @@ class SpStoryTile extends StatelessWidget {
       if ((story.inArchives || story.inBins) && onTap != null)
         SpPopMenuItem(
           title: tr('button.open'),
-          leadingIconData: SpIcons.of(context).book,
+          leadingIconData: SpIcons.book,
           onPressed: onTap,
         ),
       if (story.putBackAble)
         SpPopMenuItem(
           title: tr('button.put_back'),
-          leadingIconData: SpIcons.of(context).putBack,
+          leadingIconData: SpIcons.putBack,
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).putBack(context),
         ),
       if (story.archivable)
         SpPopMenuItem(
           title: tr('button.archive'),
-          leadingIconData: SpIcons.of(context).archive,
+          leadingIconData: SpIcons.archive,
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
           title: tr('button.move_to_bin'),
-          leadingIconData: SpIcons.of(context).delete,
+          leadingIconData: SpIcons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
           title: tr('button.permanent_delete'),
-          leadingIconData: SpIcons.of(context).deleteForever,
+          leadingIconData: SpIcons.deleteForever,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
           title: tr('button.import'),
-          leadingIconData: SpIcons.of(context).import,
+          leadingIconData: SpIcons.import,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
           onPressed: () => _StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
         ),
       SpPopMenuItem(
         title: tr('button.info'),
-        leadingIconData: SpIcons.of(context).info,
+        leadingIconData: SpIcons.info,
         onPressed: () => SpStoryInfoSheet(story: story).show(context: context),
       )
     ];

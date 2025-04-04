@@ -32,7 +32,7 @@ class SpMarkdownBody extends StatelessWidget {
         return Transform.translate(
           offset: const Offset(-3.5, 2.5),
           child: Icon(
-            checked ? SpIcons.of(context).checkbox : SpIcons.of(context).checkboxBlank,
+            checked ? SpIcons.checkbox : SpIcons.checkboxBlank,
             size: 16.0,
           ),
         );

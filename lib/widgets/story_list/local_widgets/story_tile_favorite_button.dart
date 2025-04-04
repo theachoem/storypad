@@ -22,7 +22,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
       firstChild: buildFavoriteButton(),
       secondChild: Container(
         alignment: Alignment.center,
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           minWidth: 50.0,
           minHeight: 50.0,
         ),
@@ -38,7 +38,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
     return SpSingleStateWidget(
       initialValue: story.starred == true,
       builder: (context, notifier) {
-        final animationDuration = Durations.medium1;
+        const animationDuration = Durations.medium1;
 
         int rowCount = (StoryIconObject.icons.length / 4).ceilToDouble().toInt();
 

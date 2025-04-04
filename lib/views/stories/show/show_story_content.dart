@@ -17,7 +17,7 @@ class _ShowStoryContent extends StatelessWidget {
       appBar: AppBar(
         leading: SpAnimatedIcons.fadeScale(
           firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-          secondChild: BackButton(),
+          secondChild: const BackButton(),
           showFirst: viewModel.managingPage,
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -142,12 +142,12 @@ class _ShowStoryContent extends StatelessWidget {
         IconButton(
           tooltip: tr("button.edit"),
           onPressed: () => viewModel.goToEditPage(context),
-          icon: Icon(SpIcons.of(context).edit),
+          icon: const Icon(SpIcons.edit),
         ),
         Builder(builder: (context) {
           return IconButton(
             tooltip: tr("page.tags.title"),
-            icon: Icon(SpIcons.of(context).tag),
+            icon: const Icon(SpIcons.tag),
             onPressed: () => Scaffold.of(context).openEndDrawer(),
           );
         }),
@@ -156,7 +156,7 @@ class _ShowStoryContent extends StatelessWidget {
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr("page.theme.title"),
-            icon: Icon(SpIcons.of(context).theme),
+            icon: const Icon(SpIcons.theme),
             onPressed: () => SpStoryThemeBottomSheet(
               story: viewModel.story!,
               onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
@@ -168,7 +168,7 @@ class _ShowStoryContent extends StatelessWidget {
         return IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
-            viewModel.managingPage ? SpIcons.of(context).managingPage : SpIcons.of(context).managingPageOff,
+            viewModel.managingPage ? SpIcons.managingPage : SpIcons.managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
@@ -178,7 +178,7 @@ class _ShowStoryContent extends StatelessWidget {
         items: (context) {
           return [
             SpPopMenuItem(
-              leadingIconData: SpIcons.of(context).info,
+              leadingIconData: SpIcons.info,
               title: tr("button.info"),
               onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
             ),
@@ -187,7 +187,7 @@ class _ShowStoryContent extends StatelessWidget {
         builder: (callback) {
           return IconButton(
             tooltip: tr("button.more_options"),
-            icon: Icon(SpIcons.of(context).moreVert),
+            icon: const Icon(SpIcons.moreVert),
             onPressed: callback,
           );
         },

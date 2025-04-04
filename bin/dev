@@ -6,6 +6,9 @@
 # bin/dev --community
 # bin/dev --storypad
 # bin/dev --spooky
+# bin/dev --community-ios
+# bin/dev --storypad-ios
+# bin/dev --spooky-ios
 
 FLAVOR=$1
 
@@ -18,6 +21,15 @@ case "$FLAVOR" in
   ;;
 --community | "")
   CMD="flutter run --flavor community --dart-define-from-file=env/community.json --target=lib/main_community.dart"
+  ;;
+--storypad-ios)
+  CMD="flutter run --flavor storypad --dart-define=CUPERTINO=yes --dart-define-from-file=env/storypad.json --target=lib/main_storypad.dart"
+  ;;
+--spooky-ios)
+  CMD="flutter run --flavor spooky --dart-define=CUPERTINO=yes --dart-define-from-file=env/spooky.json --target=lib/main_spooky.dart"
+  ;;
+--community-ios | "")
+  CMD="flutter run --flavor community --dart-define=CUPERTINO=yes --dart-define-from-file=env/community.json --target=lib/main_community.dart"
   ;;
 *)
   echo "Invalid option: $FLAVOR"

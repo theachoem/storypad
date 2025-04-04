@@ -6,7 +6,7 @@ class SpSliverStickyDivider extends SliverPersistentHeaderDelegate {
   SpSliverStickyDivider._();
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Divider(height: 1);
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => const Divider(height: 1);
 
   @override
   double get maxExtent => 1;

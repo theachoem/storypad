@@ -37,7 +37,7 @@ class _HomeContent extends StatelessWidget {
           child: FloatingActionButton(
             tooltip: tr("button.new_story"),
             onPressed: () => viewModel.goToNewPage(context),
-            child: Icon(SpIcons.of(context).newStory),
+            child: const Icon(SpIcons.newStory),
           ),
         );
       },

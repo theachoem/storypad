@@ -31,18 +31,18 @@ class _SearchFilterContent extends StatelessWidget {
       if (viewModel.years?.isNotEmpty == true) ...[
         _Title(title: tr("general.years")),
         buildYears(context),
-        SizedBox(height: 12.0),
+        const SizedBox(height: 12.0),
       ],
       if (viewModel.params.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
         _Title(title: tr("general.tags")),
         buildTags(context),
-        SizedBox(height: 12.0),
+        const SizedBox(height: 12.0),
       ],
-      Divider(),
+      const Divider(),
       CheckboxListTile.adaptive(
         tristate: true,
         value: viewModel.searchFilter.starred,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
         title: Text(tr("button.star")),
         onChanged: (value) => viewModel.setStarred(value),
       ),

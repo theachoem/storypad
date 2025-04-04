@@ -68,7 +68,7 @@ class _HomeAppBarNicknameState extends State<_HomeAppBarNickname> with SingleTic
                   ..scale(5.0)
                   ..translate(-24.0, 0.0),
                 transformAlignment: Alignment.center,
-                child: SpDotLottieBuilder(
+                child: const SpDotLottieBuilder(
                   asset: 'assets/lotties/sparkle.lottie',
                 ),
               ),

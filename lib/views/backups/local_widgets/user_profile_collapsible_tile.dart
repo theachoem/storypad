@@ -96,7 +96,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
                   : null,
               contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
               trailing: Icon(
-                SpIcons.of(context).moreVert,
+                SpIcons.moreVert,
                 color: ColorScheme.of(context).onPrimary,
               ),
             );
@@ -112,7 +112,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
                 style: TextStyle(color: ColorScheme.of(context).onPrimary),
               ),
               trailing: Icon(
-                SpIcons.of(context).googleDrive,
+                SpIcons.googleDrive,
                 color: ColorScheme.of(context).onPrimary,
               ),
             );
@@ -142,8 +142,8 @@ class UserProfileCollapsibleTile extends StatelessWidget {
             : null,
       ),
       child: !hasPhoto
-          ? Icon(
-              SpIcons.of(context).profile,
+          ? const Icon(
+              SpIcons.profile,
               size: 36,
             )
           : null,

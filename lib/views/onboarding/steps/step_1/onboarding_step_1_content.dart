@@ -19,8 +19,8 @@ class _OnboardingStep1Content extends StatelessWidget {
             notifier: viewModel.showHomePageNotifier,
             child: FadeInBuilder(
               transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
-              duration: Duration(milliseconds: 1000),
-              child: HomeScreenshot(),
+              duration: const Duration(milliseconds: 1000),
+              child: const HomeScreenshot(),
             ),
           ),
           VisibleWhenNotified(
@@ -28,12 +28,12 @@ class _OnboardingStep1Content extends StatelessWidget {
             child: FadeInBuilder(
               duration: viewModel.storyDetailsAnimationDuration,
               transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(360.0, 0.0, a.value)!),
-              child: StoryDetailsScreenshot(),
+              child: const StoryDetailsScreenshot(),
             ),
           ),
           VisibleWhenNotified(
             notifier: viewModel.showStoryClickedNotifier,
-            child: ClickAnimation(
+            child: const ClickAnimation(
               left: 0,
               right: 0,
               top: 188,
@@ -45,7 +45,7 @@ class _OnboardingStep1Content extends StatelessWidget {
   }
 
   Widget buildActionButton(BuildContext context) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
         sizeStyle: CupertinoButtonSize.medium,

@@ -13,7 +13,7 @@ class _LanguagesContent extends StatelessWidget {
           if (viewModel.canSetToDeviceLocale)
             IconButton(
               tooltip: tr("button.reset"),
-              icon: Icon(SpIcons.of(context).refresh),
+              icon: const Icon(SpIcons.refresh),
               onPressed: () => viewModel.useDeviceLocale(context),
             ),
         ],
@@ -21,11 +21,11 @@ class _LanguagesContent extends StatelessWidget {
       bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
       floatingActionButton: viewModel.params.showThemeFAB
           ? FloatingActionButton(
-              child: Icon(SpIcons.of(context).theme),
+              child: const Icon(SpIcons.theme),
               onPressed: () => ThemeRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context))
           : null,
       body: ListView.builder(
-        padding: EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.only(bottom: 16.0),
         itemCount: viewModel.supportedLocales.length,
         itemBuilder: (context, index) {
           return buildLocaleTile(index, context);
@@ -44,7 +44,7 @@ class _LanguagesContent extends StatelessWidget {
       trailing: Visibility(
         visible: selected,
         child: SpFadeIn.fromBottom(
-          child: Icon(SpIcons.of(context).check),
+          child: const Icon(SpIcons.check),
         ),
       ),
       subtitle: viewModel.isSystemLocale(locale) ? Text(tr('general.default')) : null,
@@ -66,11 +66,11 @@ class _FeedbackBanner extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.readOnly.surface2,
       contentTextStyle:
           Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
-      padding: EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0).add(EdgeInsets.only(
+      padding: const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0).add(EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
       )),
-      leading: Icon(SpIcons.of(context).info, color: Theme.of(context).colorScheme.onSurface),
+      leading: Icon(SpIcons.info, color: Theme.of(context).colorScheme.onSurface),
       content: Text(
         tr('list_tile.ask_for_locale_suggestion.subtitle'),
         style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
@@ -91,7 +91,7 @@ class _FeedbackBanner extends StatelessWidget {
         right: MediaQuery.of(context).padding.right,
       ),
       child: OutlinedButton.icon(
-        icon: Icon(SpIcons.of(context).factCheck),
+        icon: const Icon(SpIcons.factCheck),
         label: Text(
           tr('button.suggest'),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),

@@ -23,23 +23,23 @@ class SpStoryInfoSheet extends BaseBottomSheet {
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: Icon(SpIcons.of(context).edit),
+          leading: const Icon(SpIcons.edit),
           title: Text(tr('list_tile.story_date.title')),
           subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
         ),
         if (story.movedToBinAt != null)
           ListTile(
-            leading: Icon(SpIcons.of(context).delete),
+            leading: const Icon(SpIcons.delete),
             title: Text(tr('list_tile.moved_to_bin_at.title')),
             subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
           ),
         ListTile(
-          leading: Icon(SpIcons.of(context).calendar),
+          leading: const Icon(SpIcons.calendar),
           title: Text(tr("list_tile.updated_at.title")),
           subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
         ),
         ListTile(
-          leading: Icon(SpIcons.of(context).info),
+          leading: const Icon(SpIcons.info),
           title: Text(tr("list_tile.created_at.title")),
           subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
         ),

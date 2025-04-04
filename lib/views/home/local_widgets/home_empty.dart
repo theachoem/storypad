@@ -28,19 +28,19 @@ class _HomeEmpty extends StatelessWidget {
             child: SpLoopAnimationBuilder(
               loopCount: 10,
               reverse: false,
-              duration: Duration(seconds: 8),
-              reverseDuration: Duration(seconds: 8),
+              duration: const Duration(seconds: 8),
+              reverseDuration: const Duration(seconds: 8),
               builder: (context, value, child) {
                 IconData iconData;
 
                 if (value <= 0.25) {
-                  iconData = SpIcons.of(context).theme;
+                  iconData = SpIcons.theme;
                 } else if (value <= 0.5) {
-                  iconData = SpIcons.of(context).darkMode;
+                  iconData = SpIcons.darkMode;
                 } else if (value <= 0.75) {
-                  iconData = SpIcons.of(context).lightMode;
+                  iconData = SpIcons.lightMode;
                 } else {
-                  iconData = SpIcons.of(context).font;
+                  iconData = SpIcons.font;
                 }
 
                 return AnimatedSwitcher(
@@ -58,8 +58,8 @@ class _HomeEmpty extends StatelessWidget {
                   },
                   child: SpLoopAnimationBuilder(
                     key: ValueKey(iconData),
-                    duration: Duration(seconds: 2),
-                    reverseDuration: Duration(seconds: 2),
+                    duration: const Duration(seconds: 2),
+                    reverseDuration: const Duration(seconds: 2),
                     builder: (context, value, child) {
                       return Icon(
                         iconData,
@@ -84,8 +84,8 @@ class _HomeEmpty extends StatelessWidget {
               style: TextTheme.of(context).bodyLarge,
               children: [
                 TextSpan(text: message.split("{EDIT_BUTTON}").first),
-                WidgetSpan(
-                  child: Icon(SpIcons.of(context).newStory, size: 16.0),
+                const WidgetSpan(
+                  child: Icon(SpIcons.newStory, size: 16.0),
                   alignment: PlaceholderAlignment.middle,
                 ),
                 TextSpan(text: message.split("{EDIT_BUTTON}").last),

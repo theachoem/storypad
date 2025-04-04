@@ -5,8 +5,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double iconSize = SpStoryTile.monogramSize + 4;
-
+    const double iconSize = SpStoryTile.monogramSize + 4;
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: 8.0,
@@ -19,8 +18,8 @@ class _HomeTimelineSideBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            SpIcons.of(context).calendar,
+          child: const Icon(
+            SpIcons.calendar,
             size: 24.0,
           ),
         ),
@@ -32,8 +31,8 @@ class _HomeTimelineSideBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            SpIcons.of(context).addFeeling,
+          child: const Icon(
+            SpIcons.addFeeling,
             size: 24.0,
           ),
         ),
@@ -45,7 +44,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
           ),
-          child: Icon(SpIcons.of(context).search),
+          child: const Icon(SpIcons.search),
         ),
       ],
     );

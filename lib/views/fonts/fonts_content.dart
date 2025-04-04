@@ -14,7 +14,7 @@ class _FontsContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: "https://fonts.google.com",
-            icon: Icon(SpIcons.of(context).exploreBrowser),
+            icon: const Icon(SpIcons.exploreBrowser),
             onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
           ),
         ],
@@ -31,8 +31,8 @@ class _FontsContent extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SearchAnchor.bar(
           isFullScreen: false,
-          barLeading: Icon(SpIcons.of(context).search),
-          viewLeading: CloseButton(),
+          barLeading: const Icon(SpIcons.search),
+          viewLeading: const CloseButton(),
           suggestionsBuilder: (context, controller) {
             final fuzzy = Fuzzy<String>(viewModel.fonts, options: FuzzyOptions(isCaseSensitive: false));
             List<Result<String>> result = fuzzy.search(controller.text.trim());
@@ -116,7 +116,7 @@ class _FontsContent extends StatelessWidget {
             title: tr("list_tile.use_this_font.title"),
             subtitle: tr("list_tile.use_this_font.loreum_ipsum"),
             subtitleStyle: GoogleFonts.getFont(fontFamily),
-            trailingIconData: SpIcons.of(context).keyboardRight,
+            trailingIconData: SpIcons.keyboardRight,
             onPressed: () => viewModel.changeFont(fontFamily),
           )
         ];
@@ -131,7 +131,7 @@ class _FontsContent extends StatelessWidget {
             visible: selected,
             child: SpFadeIn.fromBottom(
               child: Icon(
-                SpIcons.of(context).checkCircle,
+                SpIcons.checkCircle,
                 color: ColorScheme.of(context).primary,
               ),
             ),

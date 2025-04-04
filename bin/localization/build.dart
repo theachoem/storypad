@@ -25,7 +25,7 @@ const String publicCsvUrl =
 
 void main() async {
   final csvString = await _fetchCsvRaw();
-  final csvData = CsvToListConverter().convert(csvString);
+  final csvData = const CsvToListConverter().convert(csvString);
   final transposedCsvData = _transposeCsv(csvData);
 
   if (await Directory('translations').exists()) {
@@ -56,7 +56,7 @@ void main() async {
     }
 
     await file.writeAsString(
-      "${JsonEncoder.withIndent('  ').convert(map)}\n",
+      "${const JsonEncoder.withIndent('  ').convert(map)}\n",
     );
   }
 
@@ -134,9 +134,9 @@ const kSupportedLocales = [
 ${supportedLocales.join(",\n")}
 ];
 
-const kLanguageNames = ${JsonEncoder.withIndent('  ').convert(languageNames)};
+const kLanguageNames = ${const JsonEncoder.withIndent('  ').convert(languageNames)};
 
-const kNativeLanguageNames = ${JsonEncoder.withIndent('  ').convert(nativeLanguageNames)};
+const kNativeLanguageNames = ${const JsonEncoder.withIndent('  ').convert(nativeLanguageNames)};
 ''';
 
   file.writeAsString(contents);

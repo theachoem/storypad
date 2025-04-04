@@ -22,8 +22,6 @@ class AppTheme extends StatelessWidget {
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
   static bool rtl(BuildContext context) => Directionality.of(context) == TextDirection.rtl;
   static bool isDarkMode(BuildContext context) => Theme.of(context).brightness == Brightness.dark;
-  static bool isCupertino(BuildContext context) =>
-      Theme.of(context).platform == TargetPlatform.iOS || Theme.of(context).platform == TargetPlatform.macOS;
 
   static bool isMonochrome(BuildContext context) =>
       context.read<ThemeProvider>().theme.colorSeed == Colors.black ||
@@ -77,31 +75,28 @@ class AppTheme extends StatelessWidget {
     }
 
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-      TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
+      TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.android: SharedAxisPageTransitionsBuilder(
           transitionType: SharedAxisTransitionType.horizontal, fillColor: colorScheme.surface)
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
 
-    TargetPlatform? platform = defaultTargetPlatform;
-
-    // TODO: Remove this
-    // TODO: Remove this
-    // TODO: Remove this
-    // platform = TargetPlatform.android;
-
-    bool cupertino = platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+    // follow dart-define.
+    TargetPlatform platform = defaultTargetPlatform;
+    if (kIsCupertino && platform != TargetPlatform.macOS && platform != TargetPlatform.iOS) {
+      platform = TargetPlatform.iOS;
+    }
 
     return baseTheme.copyWith(
       platform: platform,
-      splashFactory: cupertino ? NoSplash.splashFactory : null,
+      splashFactory: kIsCupertino ? NoSplash.splashFactory : null,
       scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        shape: cupertino ? CircleBorder() : null,
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        shape: kIsCupertino ? CircleBorder() : null,
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: colorScheme.brightness,

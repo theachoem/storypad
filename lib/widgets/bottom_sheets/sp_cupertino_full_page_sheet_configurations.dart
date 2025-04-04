@@ -13,7 +13,7 @@ class SpCupertinoFullPageSheetConfigurations extends StatelessWidget {
     return Theme(
       data: Theme.of(context).copyWith(
         scaffoldBackgroundColor: ColorScheme.of(context).surface,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
       ),
       child: MediaQuery.removePadding(
         context: context,

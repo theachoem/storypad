@@ -110,7 +110,7 @@ class _FeelingGroupItemPickerState extends State<_FeelingGroupItemPicker> {
     return Container(
       margin: EdgeInsets.zero,
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
-      child: BackButton(),
+      child: const BackButton(),
     );
   }
 

@@ -46,7 +46,7 @@ class _ArchivesContent extends StatelessWidget {
           child: SpFadeIn.fromRight(
             child: IconButton(
               tooltip: tr("button.edit"),
-              icon: Icon(SpIcons.of(context).edit),
+              icon: const Icon(SpIcons.edit),
               onPressed: () => state.turnOnEditing(),
             ),
           ),
@@ -83,7 +83,7 @@ class _ArchivesContent extends StatelessWidget {
             secondChild: buildType(type: PathType.archives),
           ),
           Icon(
-            SpIcons.of(context).swapHoriz,
+            SpIcons.swapHoriz,
             size: 24.0,
             color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
           )
@@ -129,20 +129,20 @@ class _ArchivesContent extends StatelessWidget {
                 return [
                   SpPopMenuItem(
                     title: tr("button.put_back_all"),
-                    leadingIconData: SpIcons.of(context).putBack,
+                    leadingIconData: SpIcons.putBack,
                     onPressed: () => state.putBackAll(context),
                   ),
                   if (viewModel.type.isArchives)
                     SpPopMenuItem(
                       title: tr("button.move_to_bin_all"),
-                      leadingIconData: SpIcons.of(context).delete,
+                      leadingIconData: SpIcons.delete,
                       onPressed: () => state.moveToBinAll(context),
                     ),
                   // for bin, "delete all" already show in bottom nav.
                   if (viewModel.type.isArchives)
                     SpPopMenuItem(
                       title: tr("button.permanent_delete_all"),
-                      leadingIconData: SpIcons.of(context).deleteForever,
+                      leadingIconData: SpIcons.deleteForever,
                       titleStyle: TextStyle(color: ColorScheme.of(context).error),
                       onPressed: () => state.permanantDeleteAll(context),
                     ),
@@ -151,7 +151,7 @@ class _ArchivesContent extends StatelessWidget {
               builder: (callback) {
                 return IconButton(
                   tooltip: tr("button.more_options"),
-                  icon: Icon(SpIcons.of(context).moreVert),
+                  icon: const Icon(SpIcons.moreVert),
                   onPressed: callback,
                 );
               },

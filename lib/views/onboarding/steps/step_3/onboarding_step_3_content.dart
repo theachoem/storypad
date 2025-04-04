@@ -15,7 +15,7 @@ class _OnboardingStep3Content extends StatelessWidget {
       actionButton: buildActionButton(context),
       demo: FadeInBuilder(
         transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
-        duration: Duration(milliseconds: 1000),
+        duration: const Duration(milliseconds: 1000),
         child: HomeScreenshot(
           child: Stack(
             children: [
@@ -54,13 +54,13 @@ class _OnboardingStep3Content extends StatelessWidget {
       child: VisibleWhenNotified(
         notifier: viewModel.endDrawerOpenedNotifier,
         child: ClipRRect(
-          borderRadius: BorderRadius.only(topRight: Radius.circular(12.0)),
+          borderRadius: const BorderRadius.only(topRight: Radius.circular(12.0)),
           child: FadeInBuilder(
             curve: Curves.ease,
             duration: viewModel.endDrawerFadeInDuration,
             transformBuilder: (a) => Matrix4.identity()..translate(lerpDouble(221.0, 0.0, a.value)!, 0.0),
             child: SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               controller: viewModel.endDrawerScrollController,
               child: ValueListenableBuilder(
                 valueListenable: viewModel.endDrawerStateNotifier,
@@ -81,11 +81,11 @@ class _OnboardingStep3Content extends StatelessWidget {
       child: SpFadeIn(
         curve: Curves.fastEaseInToSlowEaseOut,
         testCurves: false,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         child: Container(
           width: 300,
           height: 360,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.black54,
             borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
           ),
@@ -95,7 +95,7 @@ class _OnboardingStep3Content extends StatelessWidget {
   }
 
   Widget buildActionButton(BuildContext context) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
         sizeStyle: CupertinoButtonSize.medium,

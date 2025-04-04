@@ -32,7 +32,7 @@ class SpDaysCountBottomSheet extends BaseBottomSheet {
             plural("dialog.lookings_back.subtitle", story.dateDifferentCount.inDays),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(color: ColorScheme.of(context).primary),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           OutlinedButton.icon(
             icon: Icon(story.preferredShowDayCount ? MdiIcons.pinOff : MdiIcons.pin,
                 color: ColorScheme.of(context).primary),

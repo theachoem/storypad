@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -77,7 +77,7 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> push(BuildContext context) async {
-    final route = AppTheme.isCupertino(context)
+    final route = kIsCupertino
         ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
         : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
 
@@ -88,7 +88,7 @@ class SpPinUnlock extends StatefulWidget {
   }
 
   Future<bool> pushReplacement(BuildContext context) async {
-    final route = AppTheme.isCupertino(context)
+    final route = kIsCupertino
         ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
         : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
 
@@ -155,7 +155,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
       return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(forceMaterialTransparency: true, leading: CloseButton()),
+        appBar: AppBar(forceMaterialTransparency: true, leading: const CloseButton()),
         body: Padding(
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
           child: displayInRow ? Row(children: children) : Column(children: children),
@@ -169,7 +169,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         (pin.length >= 4) && !widget.validator(pin)
             ? Text(
                 widget.invalidPinTitle,
@@ -181,7 +181,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
                 style: TextTheme.of(context).titleLarge,
                 textAlign: TextAlign.center,
               ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         SizedBox(
           height: pinSize,
           child: Row(
@@ -247,7 +247,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
                 constraints: BoxConstraints(minHeight: itemSize),
                 alignment: Alignment.center,
                 child: Icon(
-                  SpIcons.of(context).fingerprint,
+                  SpIcons.fingerprint,
                   size: itemSize / 2 - 4.0,
                 ),
               );
@@ -272,7 +272,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               width: itemSize,
               constraints: BoxConstraints(minHeight: itemSize),
               alignment: Alignment.center,
-              child: Icon(SpIcons.of(context).backspace, size: itemSize / 2 - 8.0),
+              child: Icon(SpIcons.backspace, size: itemSize / 2 - 8.0),
             );
           }
 
@@ -287,7 +287,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             color: backgroundColor,
             shape: CircleBorder(side: borderColor != null ? BorderSide(color: borderColor) : BorderSide.none),
             child: InkWell(
-              customBorder: CircleBorder(),
+              customBorder: const CircleBorder(),
               onTap: onPressed != null
                   ? () {
                       HapticFeedback.selectionClick();

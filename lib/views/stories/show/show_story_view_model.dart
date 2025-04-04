@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
@@ -228,7 +227,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       quillControllers: quillControllers,
       story: story,
       onPageIndexChanged: (page) => currentPageIndex = page,
-    ).push(context, rootNavigator: !AppTheme.isCupertino(context));
+    ).push(context, rootNavigator: true);
 
     await load(story!.id);
 

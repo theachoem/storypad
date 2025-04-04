@@ -36,7 +36,7 @@ class _SearchContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: tr("page.search_filter.title"),
-            icon: Icon(SpIcons.of(context).tune),
+            icon: Icon(SpIcons.tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),
         ],

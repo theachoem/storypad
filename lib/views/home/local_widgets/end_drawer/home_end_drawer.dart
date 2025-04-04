@@ -48,7 +48,7 @@ class HomeEndDrawer extends StatelessWidget {
       ),
       body: ListView(
         controller: PrimaryScrollController.maybeOf(context),
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top,
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
@@ -62,7 +62,7 @@ class HomeEndDrawer extends StatelessWidget {
           buildArchiveBinTile(context),
           if (kStoryPad)
             ListTile(
-              leading: Icon(SpIcons.of(context).photo),
+              leading: const Icon(SpIcons.photo),
               title: Text(tr("page.library.title")),
               onTap: () => LibraryRoute().push(context),
             ),
@@ -70,11 +70,11 @@ class HomeEndDrawer extends StatelessWidget {
           const _BackupTile(),
           const Divider(),
           buildThemeTile(context),
-          _LanguageTile(),
+          const _LanguageTile(),
           buildAppLockTile(context),
           if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
             const Divider(),
-            _CommunityTile(),
+            const _CommunityTile(),
           ],
         ],
       ),
@@ -83,7 +83,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildSearchTile(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).search),
+      leading: const Icon(SpIcons.search),
       title: Text(tr("page.search.title")),
       onTap: () => SearchRoute(initialYear: viewModel.currentYear).push(context),
     );
@@ -91,7 +91,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildTagsTile(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).tag),
+      leading: const Icon(SpIcons.tag),
       title: Text(tr("page.tags.title")),
       onTap: () => TagsRoute().push(context),
     );
@@ -99,7 +99,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildArchiveBinTile(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).archive),
+      leading: const Icon(SpIcons.archive),
       title: Text(tr("page.archive_or_bin.title")),
       onTap: () => ArchivesRoute().push(context),
     );
@@ -107,7 +107,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildThemeTile(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).theme),
+      leading: const Icon(SpIcons.theme),
       title: Text(tr("page.theme.title")),
       onTap: () => ThemeRoute().push(context),
     );
@@ -115,7 +115,7 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildAppLockTile(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).lock),
+      leading: const Icon(SpIcons.lock),
       title: Text(tr("page.app_lock.title")),
       onTap: () => AppLocksRoute().push(context),
     );

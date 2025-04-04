@@ -15,7 +15,7 @@ class _OnboardingContent extends StatelessWidget {
           actions: [
             IconButton(
               tooltip: tr("page.language.title"),
-              icon: Icon(SpIcons.of(context).globe),
+              icon: const Icon(SpIcons.globe),
               onPressed: () => LanguagesRoute(
                 showBetaBanner: false,
                 showThemeFAB: true,
@@ -29,7 +29,7 @@ class _OnboardingContent extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Center(
             child: Container(
-              constraints: BoxConstraints(maxWidth: 400),
+              constraints: const BoxConstraints(maxWidth: 400),
               child: buildContents(context),
             ),
           ),
@@ -45,7 +45,7 @@ class _OnboardingContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 36),
+          margin: const EdgeInsets.only(top: 36),
           width: double.infinity,
           child: Assets.images.storypadLogo512x512.image(
             width: 120,
@@ -53,7 +53,7 @@ class _OnboardingContent extends StatelessWidget {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 16),
+          margin: const EdgeInsets.only(top: 16),
           child: Text(
             tr("dialog.what_should_i_call_you.title"),
             style: TextTheme.of(context).titleLarge,
@@ -61,7 +61,7 @@ class _OnboardingContent extends StatelessWidget {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 8),
+          margin: const EdgeInsets.only(top: 8),
           child: Text(
             tr("dialog.what_should_i_call_you.message"),
             style: TextTheme.of(context).bodyLarge,
@@ -69,11 +69,11 @@ class _OnboardingContent extends StatelessWidget {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 32),
+          margin: const EdgeInsets.only(top: 32),
           child: _NicknameField(viewModel: viewModel),
         ),
         Container(
-          margin: EdgeInsets.only(top: 16),
+          margin: const EdgeInsets.only(top: 16),
           child: _NextButton(viewModel: viewModel),
         ),
       ].asMap().entries.map((entry) {

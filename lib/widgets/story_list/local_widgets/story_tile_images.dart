@@ -16,7 +16,7 @@ class _StoryTileImages extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: min(4, images.length),
-          separatorBuilder: (context, index) => SizedBox(width: 8.0),
+          separatorBuilder: (context, index) => const SizedBox(width: 8.0),
           itemBuilder: (context, index) {
             return buildImageBlock(
               context: context,
@@ -51,7 +51,7 @@ class _StoryTileImages extends StatelessWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(color: ColorScheme.of(context).readOnly.surface3),
-                child: Icon(SpIcons.of(context).imageNotSupported),
+                child: const Icon(SpIcons.imageNotSupported),
               );
             },
           ),
@@ -64,7 +64,7 @@ class _StoryTileImages extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               onLongPress: () => view(index, context),
               onTap: () => view(index, context),
-              child: displayMoreButton ? Center(child: Text("1+")) : null,
+              child: displayMoreButton ? const Center(child: Text("1+")) : null,
             ),
           ),
         ),

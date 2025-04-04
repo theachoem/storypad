@@ -68,7 +68,7 @@ class _HomeTabBar extends StatelessWidget {
       right: 0,
       bottom: 1,
       child: Container(
-        padding: EdgeInsets.only(left: 16, right: 4.0),
+        padding: const EdgeInsets.only(left: 16, right: 4.0),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -92,8 +92,8 @@ class _HomeTabBar extends StatelessWidget {
       child: IconButton(
         color: ColorScheme.of(context).bootstrap.info.color,
         tooltip: tr("page.search_filter.title"),
-        iconSize: SpIcons.of(context).cupertino ? 22.0 : 20.0,
-        icon: Icon(SpIcons.of(context).tune),
+        iconSize: kIsCupertino ? 22.0 : 20.0,
+        icon: Icon(SpIcons.tune),
         onPressed: () => viewModel.goToFilter(context),
       ),
     );
@@ -106,7 +106,7 @@ class _HomeTabBar extends StatelessWidget {
           onPressed: () => viewModel.openEndDrawer(context),
           tooltip: tr("button.more_options"),
           icon: Icon(
-            appLockProvider.hasAppLock ? SpIcons.of(context).bookLock : SpIcons.of(context).book,
+            appLockProvider.hasAppLock ? SpIcons.bookLock : SpIcons.book,
           ),
         );
       },

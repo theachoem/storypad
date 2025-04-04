@@ -24,9 +24,9 @@ class _HomeEndDrawerHeader extends StatelessWidget {
               text: TextSpan(
                 text: "${tr("button.switch")} ",
                 style: TextTheme.of(context).labelLarge,
-                children: [
+                children: const [
                   WidgetSpan(
-                    child: Icon(SpIcons.of(context).keyboardDown, size: 16.0),
+                    child: Icon(SpIcons.keyboardDown, size: 16.0),
                     alignment: PlaceholderAlignment.middle,
                   ),
                 ],

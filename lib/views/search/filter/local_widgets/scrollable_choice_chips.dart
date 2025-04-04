@@ -22,7 +22,7 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16.0).add(EdgeInsets.only(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0).add(EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
       )),
@@ -45,7 +45,7 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
                       WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
                           decoration: BoxDecoration(
                             color: ColorScheme.of(context).readOnly.surface5,
                             borderRadius: BorderRadius.circular(48.0),
@@ -53,7 +53,7 @@ class _ScrollableChoiceChips<T> extends StatelessWidget {
                           child: Text(
                             storyCount.toString(),
                             style: TextTheme.of(context).labelSmall,
-                            textHeightBehavior: TextHeightBehavior(
+                            textHeightBehavior: const TextHeightBehavior(
                               applyHeightToFirstAscent: false,
                               applyHeightToLastDescent: false,
                             ),

@@ -17,9 +17,9 @@ class _AppLocksContent extends StatelessWidget {
             title: Text(tr("page.app_lock.title")),
           ),
           SliverList.list(children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             SwitchListTile.adaptive(
-              secondary: Icon(SpIcons.of(context).lock),
+              secondary: const Icon(SpIcons.lock),
               title: Text(tr('general.pin')),
               subtitle: provider.appLock.pin != null
                   ? Text(List.generate(provider.appLock.pin!.length, (e) => "*").join())
@@ -28,13 +28,13 @@ class _AppLocksContent extends StatelessWidget {
               onChanged: (value) => provider.togglePIN(context),
             ),
             if (biometricTile != null) biometricTile,
-            Divider(),
+            const Divider(),
             ListTile(
               enabled: provider.appLock.pin != null,
               title: Text(tr("page.security_questions.title")),
               subtitle: Text(tr("page.security_questions.info")),
-              leading: Icon(SpIcons.of(context).lockQuestion),
-              trailing: Icon(SpIcons.of(context).keyboardRight),
+              leading: Icon(SpIcons.lockQuestion),
+              trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => SecurityQuestionsRoute().push(context),
             ),
           ])
@@ -49,28 +49,28 @@ class _AppLocksContent extends StatelessWidget {
   }) {
     if (provider.localAuth.enrolledBothFingerprintAndFace) {
       return SwitchListTile.adaptive(
-        secondary: Icon(SpIcons.of(context).biometrics),
+        secondary: const Icon(SpIcons.biometrics),
         title: Text(tr("general.biometrics_lock")),
         value: provider.appLock.enabledBiometric == true,
         onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledFace) {
       return SwitchListTile.adaptive(
-        secondary: Icon(SpIcons.of(context).faceUnlock),
+        secondary: const Icon(SpIcons.faceUnlock),
         title: Text(tr("general.face_unlock")),
         value: provider.appLock.enabledBiometric == true,
         onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledFingerprint) {
       return SwitchListTile.adaptive(
-        secondary: Icon(SpIcons.of(context).fingerprint),
+        secondary: const Icon(SpIcons.fingerprint),
         title: Text(tr("general.fingerprint")),
         value: provider.appLock.enabledBiometric == true,
         onChanged: (value) => provider.toggleBiometrics(context),
       );
     } else if (provider.localAuth.enrolledOtherBiometrics) {
       return SwitchListTile.adaptive(
-        secondary: Icon(SpIcons.of(context).fingerprint),
+        secondary: const Icon(SpIcons.fingerprint),
         title: Text(tr("general.biometrics_lock")),
         value: provider.appLock.enabledBiometric == true,
         onChanged: (value) => provider.toggleBiometrics(context),

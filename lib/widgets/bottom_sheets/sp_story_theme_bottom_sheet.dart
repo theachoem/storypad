@@ -86,7 +86,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
   }) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(spacing: 4.0, children: [
         buildButton(
           tooltip: tr("button.reset"),
@@ -99,7 +99,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
             onThemeChanged(notifier.value);
           },
           selected: notifier.value.colorSeedValue == null,
-          child: Icon(SpIcons.of(context).hideSource),
+          child: const Icon(SpIcons.hideSource),
         ),
         ...kMaterialColors.map<Widget>(
           (color) {
@@ -155,7 +155,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
           child: selected
               ? SpFadeIn.fromBottom(
                   child: Icon(
-                  SpIcons.of(context).check,
+                  SpIcons.check,
                   color: foregroundColor,
                 ))
               : child,

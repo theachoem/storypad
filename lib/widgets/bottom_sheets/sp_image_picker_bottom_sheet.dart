@@ -3,7 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path;
@@ -79,7 +78,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return buildScaffold(context);
     } else {
       return DraggableScrollableSheet(
@@ -97,7 +96,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   Widget buildScaffold(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
-        appBar: AppBar(title: Text("$kAppName Library")),
+        appBar: AppBar(title: const Text("$kAppName Library")),
         body: buildBody(
           context: context,
           constraints: constraints,
@@ -117,8 +116,8 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
-                    icon: Icon(SpIcons.of(context).addPhoto),
-                    label: Text("Insert from Device"),
+                    icon: const Icon(SpIcons.addPhoto),
+                    label: const Text("Insert from Device"),
                     onPressed: () => _insertFromPhotoLibrary(context),
                   ),
                 ],
@@ -145,7 +144,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     }
 
     return MasonryGridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.0)
+      padding: const EdgeInsets.symmetric(horizontal: 16.0)
           .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
       itemCount: assets.length,
       mainAxisSpacing: 8.0,

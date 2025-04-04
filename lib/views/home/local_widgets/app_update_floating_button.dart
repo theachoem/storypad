@@ -11,8 +11,8 @@ class _AppUpdateFloatingButton extends StatelessWidget {
         child: SpFadeIn.fromBottom(
           child: Center(
             child: SpLoopAnimationBuilder(
-              duration: Duration(seconds: 2),
-              reverseDuration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
+              reverseDuration: const Duration(seconds: 2),
               builder: (context, value, child) {
                 return FilledButton.icon(
                   style: FilledButton.styleFrom(
@@ -21,7 +21,7 @@ class _AppUpdateFloatingButton extends StatelessWidget {
                   ),
                   icon: provider.displayStatus?.loading == true
                       ? const SizedBox.square(dimension: 16.0, child: CircularProgressIndicator.adaptive())
-                      : Icon(SpIcons.of(context).update),
+                      : const Icon(SpIcons.update),
                   label: Text(provider.displayStatus?.label ?? ''),
                   onPressed: provider.displayStatus?.loading == true ? null : () => provider.update(),
                 );

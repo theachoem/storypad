@@ -40,7 +40,7 @@ class SpCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               margin: EdgeInsets.only(right: logoSize + 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +57,7 @@ class SpCard extends StatelessWidget {
                         .bodyMedium
                         ?.copyWith(color: ColorScheme.of(context).bootstrap.warning.color),
                   ),
-                  SizedBox(height: 12.0),
+                  const SizedBox(height: 12.0),
                 ],
               ),
             ),
@@ -65,7 +65,7 @@ class SpCard extends StatelessWidget {
               top: 16.0,
               right: 16.0,
               child: Icon(
-                SpIcons.of(context).keyboardRight,
+                SpIcons.keyboardRight,
                 color: ColorScheme.of(context).bootstrap.warning.color,
               ),
             ),
@@ -78,11 +78,11 @@ class SpCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpTapEffect(
-      effects: [SpTapEffectType.scaleDown],
+      effects: const [SpTapEffectType.scaleDown],
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        margin: EdgeInsets.symmetric(horizontal: 16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16.0),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),

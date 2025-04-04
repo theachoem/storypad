@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 @immutable
 class SpTextInputField {
@@ -76,7 +76,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
   }
 
   Widget buildSaveButton(BuildContext context) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
         sizeStyle: CupertinoButtonSize.medium,
@@ -95,7 +95,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
     bool lastIndex = index == controllers.length - 1;
     Widget? textField;
 
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       textField = FormField(
         validator: widget.fields[index].validator,
         builder: (state) {

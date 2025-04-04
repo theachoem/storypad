@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
@@ -20,7 +20,7 @@ class StoryTimePickerService {
   Future<TimeOfDay?> showPicker() async {
     TimeOfDay? newTime;
 
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       newTime = await _showCupertinoTimePicker(context);
     } else {
       newTime = await _showMaterialTimePicker(newTime);
@@ -49,7 +49,7 @@ class StoryTimePickerService {
                 child!,
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
-                  icon: Icon(story.preferredShowTime ? SpIcons.of(context).pinSlash : SpIcons.of(context).pin,
+                  icon: Icon(story.preferredShowTime ? SpIcons.pinSlash : SpIcons.pin,
                       color: ColorScheme.of(context).primary),
                   label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
                   onPressed: onToggleShowTime == null
@@ -118,7 +118,7 @@ class StoryTimePickerService {
         mainAxisSize: MainAxisSize.min,
         spacing: 8.0,
         children: [
-          Icon(story.preferredShowTime ? SpIcons.of(context).pinSlash : SpIcons.of(context).pin),
+          Icon(story.preferredShowTime ? SpIcons.pinSlash : SpIcons.pin),
           Text(
             story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home"),
           ),

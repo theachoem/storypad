@@ -17,7 +17,7 @@ class _OnboardingStep2Content extends StatelessWidget {
       actionButton: buildActionButton(context),
       demo: Stack(
         children: [
-          StoryDetailsScreenshot(),
+          const StoryDetailsScreenshot(),
           buildFeelingButton(),
           buildFeelingClickAnimation(),
           buildToolbar(isDarkMode),
@@ -90,7 +90,7 @@ class _OnboardingStep2Content extends StatelessWidget {
   }
 
   Widget buildActionButton(BuildContext context) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return CupertinoButton.filled(
         disabledColor: Theme.of(context).disabledColor,
         sizeStyle: CupertinoButtonSize.medium,

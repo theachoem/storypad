@@ -39,7 +39,7 @@ class _LibraryContent extends StatelessWidget {
                     valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
                     builder: (context, loadingAssetId, child) {
                       return FilledButton.icon(
-                        icon: Icon(SpIcons.of(context).googleDrive),
+                        icon: Icon(SpIcons.googleDrive),
                         label: Text(tr("button.upload_to_google_drive")),
                         onPressed: loadingAssetId != null ? null : () => provider.assetBackupState.uploadAssets(),
                       );
@@ -76,7 +76,7 @@ class _LibraryContent extends StatelessWidget {
       itemCount: provider.assetBackupState.assets?.items.length ?? 0,
       mainAxisSpacing: 8.0,
       crossAxisSpacing: 8.0,
-      gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemBuilder: (context, index) {
         final asset = provider.assetBackupState.assets!.items[index];
 
@@ -88,12 +88,12 @@ class _LibraryContent extends StatelessWidget {
                 buildDeleteButton(context, provider, asset)
               else
                 SpPopMenuItem(
-                  leadingIconData: SpIcons.of(context).book,
+                  leadingIconData: SpIcons.book,
                   title: tr("general.stories"),
                   onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
                 ),
               SpPopMenuItem(
-                leadingIconData: SpIcons.of(context).photo,
+                leadingIconData: SpIcons.photo,
                 title: tr("button.view"),
                 onPressed: () {
                   final assetLinks = provider.assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
@@ -143,14 +143,14 @@ class _LibraryContent extends StatelessWidget {
   SpPopMenuItem buildDeleteButton(BuildContext context, BackupProvider provider, AssetDbModel asset) {
     if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
       return SpPopMenuItem(
-        leadingIconData: SpIcons.of(context).delete,
+        leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete_from_google_drive"),
         onPressed: () => provider.assetBackupState.deleteAsset(asset),
       );
     } else {
       return SpPopMenuItem(
-        leadingIconData: SpIcons.of(context).delete,
+        leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete"),
         onPressed: () => provider.assetBackupState.deleteAsset(asset),
@@ -177,7 +177,7 @@ class _LibraryContent extends StatelessWidget {
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
         foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
         child: Icon(
-          SpIcons.of(context).cloudOff,
+          SpIcons.cloudOff,
           size: 20.0,
         ),
       );
@@ -188,8 +188,8 @@ class _LibraryContent extends StatelessWidget {
           radius: 16.0,
           backgroundColor: ColorScheme.of(context).bootstrap.success.color,
           foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
-          child: Icon(
-            SpIcons.of(context).cloudDone,
+          child: const Icon(
+            SpIcons.cloudDone,
             size: 20.0,
           ),
         ),
@@ -199,8 +199,8 @@ class _LibraryContent extends StatelessWidget {
         radius: 16.0,
         backgroundColor: ColorScheme.of(context).bootstrap.info.color,
         foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
-        child: Icon(
-          SpIcons.of(context).warning,
+        child: const Icon(
+          SpIcons.warning,
           size: 20.0,
         ),
       );
@@ -227,12 +227,12 @@ class _LibraryContent extends StatelessWidget {
   Widget buildEmptyBody(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
           height: constraints.maxHeight,
           width: double.infinity,
           alignment: Alignment.center,
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Text(
             tr("page.library.empty_message"),
             textAlign: TextAlign.center,

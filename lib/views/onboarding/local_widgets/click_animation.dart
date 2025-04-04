@@ -81,8 +81,8 @@ class _ClickAnimationState extends State<ClickAnimation> {
       curve: Curves.fastLinearToSlowEaseIn,
       testCurves: false,
       delay: Durations.short2,
-      duration: Duration(seconds: 1),
-      child: SizedBox.shrink(),
+      duration: const Duration(seconds: 1),
+      child: const SizedBox.shrink(),
       builder: (context, animation, child) {
         return AnimatedBuilder(
           animation: animation,
@@ -111,8 +111,8 @@ class _ClickAnimationState extends State<ClickAnimation> {
       curve: Curves.fastLinearToSlowEaseIn,
       testCurves: false,
       delay: Durations.short1,
-      duration: Duration(seconds: 1),
-      child: SizedBox.shrink(),
+      duration: const Duration(seconds: 1),
+      child: const SizedBox.shrink(),
       builder: (context, animation, child) {
         return AnimatedBuilder(
           animation: animation,

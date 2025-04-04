@@ -116,7 +116,7 @@ class SpImage extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             runSpacing: 8.0,
             children: [
-              Icon(SpIcons.of(context).imageNotSupported),
+              const Icon(SpIcons.imageNotSupported),
               if (message != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),

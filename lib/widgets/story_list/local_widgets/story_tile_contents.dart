@@ -81,8 +81,8 @@ class _StoryTileContents extends StatelessWidget {
               text: TextSpan(
                 style: TextTheme.of(context).labelMedium,
                 children: [
-                  WidgetSpan(
-                    child: Icon(SpIcons.of(context).archive, size: 16.0),
+                  const WidgetSpan(
+                    child: Icon(SpIcons.archive, size: 16.0),
                     alignment: PlaceholderAlignment.middle,
                   ),
                   TextSpan(text: " ${tr('snack_bar.archive_success')}"),

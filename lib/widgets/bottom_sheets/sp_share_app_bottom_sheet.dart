@@ -22,21 +22,21 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
       ),
       builder: (context, notifier) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
                 maxLength: null,
                 maxLines: null,
-                decoration: InputDecoration(hintText: "..."),
+                decoration: const InputDecoration(hintText: "..."),
                 initialValue: notifier.value,
                 onChanged: (value) => notifier.value = value,
                 onFieldSubmitted: (value) => Share.share(notifier.value.trim()),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               FilledButton.icon(
-                icon: Icon(SpIcons.of(context).share),
+                icon: const Icon(SpIcons.share),
                 label: Text(tr("button.share")),
                 onPressed: () => Share.share(notifier.value.trim()),
               ),

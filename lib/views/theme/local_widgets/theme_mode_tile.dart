@@ -52,8 +52,8 @@ class ThemeModeTile extends StatelessWidget {
         return ListTile(
           leading: SpAnimatedIcons(
             duration: Durations.medium4,
-            firstChild: Icon(SpIcons.of(context).darkMode),
-            secondChild: Icon(SpIcons.of(context).lightMode),
+            firstChild: const Icon(SpIcons.darkMode),
+            secondChild: const Icon(SpIcons.lightMode),
             showFirst: isDarkMode(context),
           ),
           title: Text(tr('list_tile.theme_mode.title')),

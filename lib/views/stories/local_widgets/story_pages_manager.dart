@@ -26,7 +26,7 @@ class StoryPagesManager extends StatelessWidget {
     return Stack(
       children: [
         AlignedGridView.extent(
-          padding: EdgeInsetsDirectional.all(16.0).add(EdgeInsets.only(
+          padding: const EdgeInsetsDirectional.all(16.0).add(EdgeInsets.only(
             left: MediaQuery.of(context).padding.left,
             right: MediaQuery.of(context).padding.right,
             bottom: MediaQuery.of(context).padding.bottom,
@@ -71,7 +71,7 @@ class StoryPagesManager extends StatelessWidget {
       children: [
         buildPageCard(
           context: context,
-          child: Icon(SpIcons.of(context).add),
+          child: const Icon(SpIcons.add),
           onTap: () {
             HapticFeedback.selectionClick();
             state.addPage();
@@ -99,10 +99,10 @@ class StoryPagesManager extends StatelessWidget {
                 state.toggleManagingPage();
               },
             ),
-            if (state.currentPage == index) _CheckedIcon()
+            if (state.currentPage == index) const _CheckedIcon()
           ],
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         Text(
           state.titleControllers[index].text.trim().isNotEmpty == true
               ? state.titleControllers[index].text
@@ -133,7 +133,7 @@ class StoryPagesManager extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4.0),
             color: ColorScheme.of(context).surface,

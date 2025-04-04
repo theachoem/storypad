@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/views/fonts/fonts_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
@@ -19,7 +19,7 @@ class SpFontsSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return buildView();
     } else {
       return DraggableScrollableSheet(

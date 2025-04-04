@@ -32,7 +32,7 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 1, milliseconds: 500)).then((e) {
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500)).then((e) {
       final context = this.context;
       if (!context.mounted) return;
 
@@ -69,7 +69,7 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
               textAlign: TextAlign.center,
             ),
             Container(
-              margin: EdgeInsets.only(top: 8.0),
+              margin: const EdgeInsets.only(top: 8.0),
               child: Text(
                 tr("page.onboarding_hello.description"),
                 style: TextTheme.of(context).bodyLarge,

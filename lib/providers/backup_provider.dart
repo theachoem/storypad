@@ -60,7 +60,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       database.addGlobalListener(_databaseListener);
     }
 
-    Future.delayed(Duration(seconds: 1)).then((_) {
+    Future.delayed(const Duration(seconds: 1)).then((_) {
       load();
     });
   }

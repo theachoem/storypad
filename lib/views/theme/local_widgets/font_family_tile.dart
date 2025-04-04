@@ -36,7 +36,7 @@ class FontFamilyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.of(context).font),
+      leading: const Icon(SpIcons.font),
       title: Text(tr("list_tile.font_family.title")),
       subtitle: Text(currentFontFamily),
       onTap: () {

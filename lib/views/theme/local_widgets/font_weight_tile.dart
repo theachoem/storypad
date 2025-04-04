@@ -52,7 +52,7 @@ class FontWeightTile extends StatelessWidget {
       }).toList(),
       builder: (open) {
         return ListTile(
-          leading: Icon(SpIcons.of(context).fontWeight),
+          leading: const Icon(SpIcons.fontWeight),
           title: Text(tr("list_tile.font_weight.title")),
           subtitle: Text(currentFontWeight.value.toString()),
           onTap: () => open(),

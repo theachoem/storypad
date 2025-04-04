@@ -46,8 +46,9 @@ class OnboardingTemplate extends StatelessWidget {
       appBar: AppBar(
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
-        leading:
-            ModalRoute.of(context)?.canPop == true ? Hero(tag: 'onboarding-back-button', child: BackButton()) : null,
+        leading: ModalRoute.of(context)?.canPop == true
+            ? const Hero(tag: 'onboarding-back-button', child: BackButton())
+            : null,
       ),
       body: SingleChildScrollView(
         reverse: true,
@@ -61,7 +62,7 @@ class OnboardingTemplate extends StatelessWidget {
               height: demoHeight,
               alignment: Alignment.bottomCenter,
               clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(),
+              decoration: const BoxDecoration(),
               child: GestureDetector(
                 onTap: () => HapticFeedback.selectionClick(),
                 child: demo,
@@ -72,7 +73,7 @@ class OnboardingTemplate extends StatelessWidget {
             Container(
               width: double.infinity,
               height: max(200, contentHeight),
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,7 +82,7 @@ class OnboardingTemplate extends StatelessWidget {
                   buildFooter(context),
                 ].asMap().entries.map((entry) {
                   return SpFadeIn.fromTop(
-                    delay: Duration(milliseconds: 500) + Durations.medium1 * entry.key,
+                    delay: const Duration(milliseconds: 500) + Durations.medium1 * entry.key,
                     duration: Durations.medium4,
                     child: entry.value,
                   );
@@ -106,7 +107,7 @@ class OnboardingTemplate extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          constraints: BoxConstraints(maxWidth: 250),
+          constraints: const BoxConstraints(maxWidth: 250),
           child: Text(
             description,
             style: TextTheme.of(context).bodyLarge,

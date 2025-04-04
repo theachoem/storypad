@@ -12,7 +12,7 @@ class _OfflineBackupsContent extends StatelessWidget {
         title: Text(tr('page.offline_backup.title')),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0).add(
+        padding: const EdgeInsets.all(16.0).add(
           EdgeInsets.only(
             left: MediaQuery.of(context).padding.left,
             right: MediaQuery.of(context).padding.right,
@@ -23,18 +23,18 @@ class _OfflineBackupsContent extends StatelessWidget {
             title: tr('list_tile.export_backup.title'),
             subtitle: tr('list_tile.export_backup.subtitle'),
             action: FilledButton.tonalIcon(
-              icon: Icon(SpIcons.of(context).exportOffline),
+              icon: const Icon(SpIcons.exportOffline),
               label: Text(tr('button.export')),
               onPressed:
                   context.read<BackupProvider>().lastDbUpdatedAt == null ? null : () => viewModel.export(context),
             ),
           ),
-          SizedBox(height: 12.0),
+          const SizedBox(height: 12.0),
           _Card(
             title: tr('list_tile.import_backup.title'),
             subtitle: tr('list_tile.import_backup.subtitle', namedArgs: {'APP_NAME': kAppName}),
             action: FilledButton.tonalIcon(
-              icon: Icon(SpIcons.of(context).importOffline),
+              icon: const Icon(SpIcons.importOffline),
               label: Text(tr('button.import')),
               onPressed: () => viewModel.import(context),
             ),
@@ -73,7 +73,7 @@ class _Card extends StatelessWidget {
               subtitle,
               style: TextTheme.of(context).bodyMedium,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             action,
           ],
         ),

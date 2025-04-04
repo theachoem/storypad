@@ -41,7 +41,7 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
       child: GridView.count(
         padding: EdgeInsets.zero,
         crossAxisCount: crossAxisCount,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: List.generate(FeelingGroup.values.length, (index) {
           final Widget feelingGroup = buildFeelingGroup(
             group: FeelingGroup.values[index],

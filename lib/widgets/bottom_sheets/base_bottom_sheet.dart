@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 
@@ -25,7 +24,7 @@ abstract class BaseBottomSheet {
   }) {
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
 
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return openCupertino(
         backgroundColor: getBackgroundColor(context),
         context: context,
@@ -59,7 +58,7 @@ abstract class BaseBottomSheet {
         return Theme(
           data: Theme.of(context).copyWith(
             scaffoldBackgroundColor: Colors.transparent,
-            appBarTheme: AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent),
           ),
           // No need left or right default padding for sheet.
           child: MediaQuery.removePadding(

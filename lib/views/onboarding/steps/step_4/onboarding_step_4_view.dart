@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';

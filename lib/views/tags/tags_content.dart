@@ -15,7 +15,7 @@ class _TagsContent extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: tr("page.new_tag.title"),
-            icon: Icon(SpIcons.of(context).add),
+            icon: const Icon(SpIcons.add),
             onPressed: () => provider.addTag(context),
           ),
         ],
@@ -74,14 +74,14 @@ class _TagsContent extends StatelessWidget {
                   onPressed: (context) => provider.deleteTag(context, tag),
                   backgroundColor: ColorScheme.of(context).error,
                   foregroundColor: ColorScheme.of(context).onError,
-                  icon: SpIcons.of(context).delete,
+                  icon: SpIcons.delete,
                   label: tr("button.delete"),
                 ),
                 SlidableAction(
                   onPressed: (context) => provider.editTag(context, tag),
                   backgroundColor: ColorScheme.of(context).secondary,
                   foregroundColor: ColorScheme.of(context).onSecondary,
-                  icon: SpIcons.of(context).edit,
+                  icon: SpIcons.edit,
                   label: tr("button.edit"),
                 ),
               ],
@@ -96,8 +96,8 @@ class _TagsContent extends StatelessWidget {
   Widget buildTile(TagDbModel tag, int storyCount, TagsProvider provider, BuildContext context) {
     return ListTile(
       tileColor: Colors.transparent,
-      contentPadding: EdgeInsets.only(left: 16.0, right: 4.0),
-      leading: Icon(SpIcons.of(context).dragIndicator),
+      contentPadding: const EdgeInsets.only(left: 16.0, right: 4.0),
+      leading: const Icon(SpIcons.dragIndicator),
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
       onTap: () => provider.viewTag(
@@ -121,12 +121,12 @@ class _TagsContent extends StatelessWidget {
   Widget buildEmptyBody(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
           height: constraints.maxHeight,
           width: double.infinity,
           alignment: Alignment.center,
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Text(
             tr("page.tags.empty_message"),
             textAlign: TextAlign.center,

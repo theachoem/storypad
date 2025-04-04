@@ -51,7 +51,7 @@ class SpMultiEditBottomNavBar extends StatelessWidget {
                   child: Center(
                     child: IconButton.filledTonal(
                       tooltip: tr("button.cancel"),
-                      icon: Icon(SpIcons.of(context).clear),
+                      icon: const Icon(SpIcons.clear),
                       onPressed: () => onCancel(),
                     ),
                   ),

@@ -66,7 +66,7 @@ class StoryHeader extends StatelessWidget {
           ),
           SpStoryLabels(
             story: story,
-            margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             onToggleShowDayCount: onToggleShowDayCount,
             onToggleShowTime: onToggleShowTime,
             onChangeDate: onChangeDate,
@@ -79,7 +79,7 @@ class StoryHeader extends StatelessWidget {
               readOnly: readOnly,
             )
           ] else ...[
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
           ]
         ],
       ),
@@ -125,7 +125,7 @@ class _DateSelector extends StatelessWidget {
             ),
             if (!readOnly) ...[
               const SizedBox(width: 4.0),
-              Icon(SpIcons.of(context).dropDown),
+              const Icon(SpIcons.dropDown),
             ]
           ],
         ),

@@ -12,8 +12,8 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
     startAnimations();
   }
 
-  final Duration feelingClickDuration = Duration(milliseconds: 500);
-  final Duration toolbarFadeInDuration = Duration(milliseconds: 750);
+  final Duration feelingClickDuration = const Duration(milliseconds: 500);
+  final Duration toolbarFadeInDuration = const Duration(milliseconds: 750);
 
   final ValueNotifier<bool> feelingClickedNotifier = ValueNotifier(false);
   final ValueNotifier<String?> selectedFeelingNotifier = ValueNotifier(null);
@@ -27,7 +27,7 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> startAnimations() async {
-    await Future.delayed(Duration(seconds: 1, milliseconds: 250));
+    await Future.delayed(const Duration(seconds: 1, milliseconds: 250));
 
     await showFeelingClickAnimation();
     await selectedFeeling();
@@ -47,13 +47,13 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     feelingClickedNotifier.value = true;
     await Future.delayed(feelingClickDuration);
-    await Future.delayed(Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 250));
   }
 
   Future<void> selectedFeeling() async {
     if (disposed) return;
     selectedFeelingNotifier.value = "positive_feelings";
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   Future<void> showToolbar() async {
@@ -69,7 +69,7 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     toolbarScrollController.animateTo(
       toolbarScrollController.position.maxScrollExtent,
-      duration: Duration(seconds: 40),
+      duration: const Duration(seconds: 40),
       curve: Curves.linear,
     );
   }

@@ -17,18 +17,18 @@ class StoryIconObject {
   static StoryIconObject get fallbackIcon => icons.values.first;
   static Map<String, StoryIconObject> icons = {
     "favorite": StoryIconObject(
-      filledIcon: (context) => SpIcons.of(context).favoriteFilled,
-      outlineIcon: (context) => SpIcons.of(context).favorite,
+      filledIcon: (context) => SpIcons.favoriteFilled,
+      outlineIcon: (context) => SpIcons.favorite,
       scale: 1.0,
     ),
     "bookmark": StoryIconObject(
-      filledIcon: (context) => SpIcons.of(context).bookmarkFilled,
-      outlineIcon: (context) => SpIcons.of(context).bookmark,
+      filledIcon: (context) => SpIcons.bookmarkFilled,
+      outlineIcon: (context) => SpIcons.bookmark,
       scale: 1.05,
     ),
     "star": StoryIconObject(
-      filledIcon: (context) => SpIcons.of(context).starFilled,
-      outlineIcon: (context) => SpIcons.of(context).star,
+      filledIcon: (context) => SpIcons.starFilled,
+      outlineIcon: (context) => SpIcons.star,
       scale: 1.2,
     ),
   };

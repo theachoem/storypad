@@ -56,7 +56,7 @@ class MessengerService {
 
     // When we our own custom ScaffoldMessager on end drawer instead of using Scaffold. SnackBar is not auto closed.
     // Manually close in this case.
-    Future.delayed(duration + Duration(milliseconds: 100)).then((_) {
+    Future.delayed(duration + const Duration(milliseconds: 100)).then((_) {
       if (context.mounted) clearSnackBars();
     });
 

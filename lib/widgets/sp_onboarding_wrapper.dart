@@ -30,7 +30,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
   AnimationController? onboardingAnimationController;
   AnimationController? homeAnimationController;
 
-  final transitionDuration = Duration(milliseconds: 750);
+  final transitionDuration = const Duration(milliseconds: 750);
 
   bool onboarding = false;
   bool onboarded = OnboardingInitializer.onboarded ?? !OnboardingInitializer.isNewUser;

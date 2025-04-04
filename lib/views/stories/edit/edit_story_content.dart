@@ -20,7 +20,7 @@ class _EditStoryContent extends StatelessWidget {
         appBar: AppBar(
           leading: SpAnimatedIcons.fadeScale(
             firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-            secondChild: BackButton(),
+            secondChild: const BackButton(),
             showFirst: viewModel.managingPage,
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -107,11 +107,11 @@ class _EditStoryContent extends StatelessWidget {
           buildPageIndicator(),
           const SizedBox(width: 16.0),
         ],
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Builder(builder: (context) {
           return IconButton(
             tooltip: tr("page.tags.title"),
-            icon: Icon(SpIcons.of(context).tag),
+            icon: const Icon(SpIcons.tag),
             onPressed: () => Scaffold.of(context).openEndDrawer(),
           );
         }),
@@ -120,7 +120,7 @@ class _EditStoryContent extends StatelessWidget {
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr("page.theme.title"),
-            icon: Icon(SpIcons.of(context).theme),
+            icon: const Icon(SpIcons.theme),
             onPressed: () => SpStoryThemeBottomSheet(
               story: viewModel.story!,
               onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
@@ -132,7 +132,7 @@ class _EditStoryContent extends StatelessWidget {
         return IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
-            viewModel.managingPage ? SpIcons.of(context).managingPage : SpIcons.of(context).managingPageOff,
+            viewModel.managingPage ? SpIcons.managingPage : SpIcons.managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
@@ -144,8 +144,8 @@ class _EditStoryContent extends StatelessWidget {
         builder: (context, lastSavedAt, child) {
           return OutlinedButton.icon(
             icon: SpAnimatedIcons(
-              firstChild: Icon(SpIcons.of(context).save),
-              secondChild: Icon(SpIcons.of(context).check),
+              firstChild: const Icon(SpIcons.save),
+              secondChild: const Icon(SpIcons.check),
               showFirst: lastSavedAt == null,
             ),
             label: Text(tr("button.done")),

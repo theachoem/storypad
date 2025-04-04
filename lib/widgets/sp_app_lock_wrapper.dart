@@ -23,7 +23,7 @@ class SpAppLockWrapper extends StatelessWidget {
             child!,
             Visibility(
               visible: provider.hasAppLock,
-              child: _LockedBarrier(),
+              child: const _LockedBarrier(),
             )
           ],
         );
@@ -140,7 +140,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
             spacing: 4.0,
             children: [
               FilledButton.icon(
-                icon: Icon(SpIcons.of(context).lock),
+                icon: const Icon(SpIcons.lock),
                 onPressed: () => authenticate(),
                 label: Text(tr('button.unlock')),
               ),

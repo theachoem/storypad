@@ -62,7 +62,7 @@ class SpFeelingButton extends StatelessWidget {
                     },
                     child: FeelingObject.feelingsByKey[feeling]?.image64
                             .image(width: 24, key: ValueKey('feeling-$feeling')) ??
-                        Icon(SpIcons.of(context).addFeeling, key: ValueKey('feeling-none')),
+                        const Icon(SpIcons.addFeeling, key: ValueKey('feeling-none')),
                   ),
                 ),
               ),

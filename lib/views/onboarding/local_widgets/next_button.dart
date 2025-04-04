@@ -12,7 +12,7 @@ class _NextButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Builder(builder: (context) {
-        if (AppTheme.isCupertino(context)) {
+        if (kIsCupertino) {
           return CupertinoButton.filled(
             disabledColor: Theme.of(context).disabledColor,
             sizeStyle: CupertinoButtonSize.medium,

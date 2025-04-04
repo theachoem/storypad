@@ -28,7 +28,7 @@ class _FeelingObjectCard extends StatelessWidget {
             onTap();
           },
           scaleActive: 0.95,
-          effects: [
+          effects: const [
             SpTapEffectType.scaleDown,
             SpTapEffectType.touchableOpacity,
           ],
@@ -67,7 +67,7 @@ class _FeelingObjectCard extends StatelessWidget {
               WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
                 child: Icon(
-                  SpIcons.of(context).expandMore,
+                  SpIcons.expandMore,
                   size: 16.0,
                   color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
                 ),

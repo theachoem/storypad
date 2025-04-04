@@ -14,7 +14,7 @@ class _CheckedIcon extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(
-          SpIcons.of(context).check,
+          SpIcons.check,
           color: ColorScheme.of(context).onSecondary,
           size: 16.0,
         ),

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
 
@@ -62,7 +62,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
   }
 
   Widget buildNicknameField(BuildContext context, TextEditingController controller) {
-    if (AppTheme.isCupertino(context)) {
+    if (kIsCupertino) {
       return buildCupertinoField(context, controller);
     } else {
       return buildMaterialField(context, controller);
@@ -77,7 +77,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
         builder: (context, value, child) {
           bool unchanged = value.text.trim().isEmpty || value.text.trim() == nickname;
 
-          if (AppTheme.isCupertino(context)) {
+          if (kIsCupertino) {
             return CupertinoButton.filled(
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
