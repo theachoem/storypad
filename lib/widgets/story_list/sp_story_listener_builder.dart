@@ -28,9 +28,7 @@ class _SpStoryListenerBuilderState extends State<SpStoryListenerBuilder> {
     super.initState();
   }
 
-  void listener() async {
-    final reloadedStory = await StoryDbModel.db.find(story.id);
-
+  void listener(StoryDbModel? reloadedStory) async {
     if (reloadedStory != null) {
       story = reloadedStory;
       if (mounted) setState(() {});

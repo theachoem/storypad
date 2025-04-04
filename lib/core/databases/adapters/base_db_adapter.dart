@@ -4,7 +4,7 @@ import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 
 abstract class BaseDbAdapter<T extends BaseDbModel> {
-  final Map<int, List<FutureOr<void> Function()>> _listeners = {};
+  final Map<int, List<FutureOr<void> Function(T?)>> _listeners = {};
   final List<FutureOr<void> Function()> _globalListeners = [];
 
   String get tableName;
@@ -52,15 +52,15 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   T modelFromJson(Map<String, dynamic> json);
 
-  Future<void> afterCommit([int? id]) async {
-    debugPrint("BaseDbAdapter#afterCommit $id");
+  Future<void> afterCommit([T? model]) async {
+    debugPrint("BaseDbAdapter#afterCommit ${model?.id}");
 
     for (FutureOr<void> Function() globalCallback in _globalListeners) {
       await globalCallback();
     }
 
-    for (FutureOr<void> Function() callback in _listeners[id] ?? []) {
-      await callback();
+    for (FutureOr<void> Function(T?) callback in _listeners[model?.id] ?? []) {
+      await callback(model);
     }
   }
 
@@ -78,7 +78,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   void addListener({
     required int recordId,
-    required void Function() callback,
+    required void Function(T?) callback,
   }) {
     _listeners[recordId] ??= [];
     _listeners[recordId]?.add(callback);
@@ -86,7 +86,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   void removeListener({
     required int recordId,
-    required void Function() callback,
+    required void Function(T?) callback,
   }) {
     _listeners[recordId] ??= [];
     _listeners[recordId]?.remove(callback);
