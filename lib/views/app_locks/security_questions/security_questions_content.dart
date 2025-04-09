@@ -7,13 +7,16 @@ class _SecurityQuestionsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AppLockProvider>(context);
-
-    final bool saveable = provider.appLock.securityAnswers.toString() != viewModel.securityAnswers.toString() &&
-        viewModel.securityAnswers.isNotEmpty == true;
+    final bool saveable = viewModel.securityAnswers.isNotEmpty == true;
 
     return Scaffold(
-      appBar: AppBar(leading: const CloseButton()),
+      appBar: AppBar(
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.icon(
         icon: const Icon(SpIcons.save),
@@ -21,6 +24,7 @@ class _SecurityQuestionsContent extends StatelessWidget {
         onPressed: saveable ? () => viewModel.save(context) : null,
       ),
       body: ListView(
+        controller: PrimaryScrollController.maybeOf(context),
         children: AppLockQuestion.values.map((question) {
           final answer = viewModel.securityAnswers[question];
           return ListTile(

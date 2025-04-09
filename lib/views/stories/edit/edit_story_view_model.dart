@@ -289,6 +289,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
+    if (managingPage) return toggleManagingPage();
     if (didPop) return;
 
     Future<OkCancelResult> showConfirmDialog(BuildContext context) async {

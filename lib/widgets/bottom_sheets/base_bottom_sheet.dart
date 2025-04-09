@@ -75,6 +75,22 @@ abstract class BaseBottomSheet {
     );
   }
 
+  /// In each cupertio sheet page, make sure to:
+  /// 1. Use PrimaryScrollController.maybeOf(context) if the content is scrollable,
+  ///    so the user can drag to close the sheet.
+  ///
+  /// 2. Show the close button on the right instead of the default left.
+  ///
+  /// Example AppBar setup:
+  /// ```
+  /// AppBar(
+  ///   automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+  ///   actions: [
+  ///     if (CupertinoSheetRoute.hasParentSheet(context))
+  ///       CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
+  ///   ],
+  /// )
+  /// ```
   static Future<T?> openCupertino<T>({
     required BuildContext context,
     required bool fullScreen,
@@ -86,7 +102,9 @@ abstract class BaseBottomSheet {
         context: context,
         pageBuilder: (context) {
           return SpCupertinoFullPageSheetConfigurations(
-            child: builder(context, MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom),
+            child: Builder(builder: (context) {
+              return builder(context, MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom);
+            }),
           );
         },
       );

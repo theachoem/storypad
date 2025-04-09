@@ -43,7 +43,7 @@ class HomeEndDrawer extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => Navigator.of(context, rootNavigator: true).pop())
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
         ],
       ),
       body: ListView(

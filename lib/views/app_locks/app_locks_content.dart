@@ -11,33 +11,31 @@ class _AppLocksContent extends StatelessWidget {
     final biometricTile = buildBiometricTile(context: context, provider: provider);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.medium(
-            title: Text(tr("page.app_lock.title")),
+      appBar: AppBar(
+        title: Text(tr("page.app_lock.title")),
+      ),
+      body: ListView(
+        children: [
+          const SizedBox(height: 8.0),
+          SwitchListTile.adaptive(
+            secondary: const Icon(SpIcons.lock),
+            title: Text(tr('general.pin')),
+            subtitle: provider.appLock.pin != null
+                ? Text(List.generate(provider.appLock.pin!.length, (e) => "*").join())
+                : null,
+            value: provider.appLock.pin != null,
+            onChanged: (value) => provider.togglePIN(context),
           ),
-          SliverList.list(children: [
-            const SizedBox(height: 8.0),
-            SwitchListTile.adaptive(
-              secondary: const Icon(SpIcons.lock),
-              title: Text(tr('general.pin')),
-              subtitle: provider.appLock.pin != null
-                  ? Text(List.generate(provider.appLock.pin!.length, (e) => "*").join())
-                  : null,
-              value: provider.appLock.pin != null,
-              onChanged: (value) => provider.togglePIN(context),
-            ),
-            if (biometricTile != null) biometricTile,
-            const Divider(),
-            ListTile(
-              enabled: provider.appLock.pin != null,
-              title: Text(tr("page.security_questions.title")),
-              subtitle: Text(tr("page.security_questions.info")),
-              leading: Icon(SpIcons.lockQuestion),
-              trailing: const Icon(SpIcons.keyboardRight),
-              onTap: () => SecurityQuestionsRoute().push(context),
-            ),
-          ])
+          if (biometricTile != null) biometricTile,
+          const Divider(),
+          ListTile(
+            enabled: provider.appLock.pin != null,
+            title: Text(tr("page.security_questions.title")),
+            subtitle: Text(tr("page.security_questions.info")),
+            leading: Icon(SpIcons.lockQuestion),
+            trailing: const Icon(SpIcons.keyboardRight),
+            onTap: () => SecurityQuestionsRoute().push(context),
+          ),
         ],
       ),
     );

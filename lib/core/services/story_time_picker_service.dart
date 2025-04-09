@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_pin_to_home_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class StoryTimePickerService {
@@ -47,17 +47,13 @@ class StoryTimePickerService {
               mainAxisSize: MainAxisSize.min,
               children: [
                 child!,
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(backgroundColor: ColorScheme.of(context).surface),
-                  icon: Icon(story.preferredShowTime ? SpIcons.pinSlash : SpIcons.pin,
-                      color: ColorScheme.of(context).primary),
-                  label: Text(story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
-                  onPressed: onToggleShowTime == null
-                      ? null
-                      : () async {
-                          onToggleShowTime!();
-                          if (context.mounted) Navigator.maybePop(context);
-                        },
+                SpPinToHomeButton(
+                  pinned: story.preferredShowTime,
+                  disabled: onToggleShowTime == null,
+                  onPressed: () async {
+                    onToggleShowTime!();
+                    if (context.mounted) Navigator.maybePop(context);
+                  },
                 ),
               ],
             ),
@@ -94,7 +90,14 @@ class StoryTimePickerService {
                       mode: CupertinoTimerPickerMode.hm,
                       onTimerDurationChanged: (duration) => notifier.value = _durationToTimeOfDay(duration),
                     ),
-                    _buildCupertinoPinButton(context),
+                    SpPinToHomeButton(
+                      pinned: story.preferredShowTime,
+                      disabled: onToggleShowTime == null,
+                      onPressed: () async {
+                        onToggleShowTime!();
+                        if (context.mounted) Navigator.maybePop(context);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -102,28 +105,6 @@ class StoryTimePickerService {
           },
         );
       },
-    );
-  }
-
-  Widget _buildCupertinoPinButton(BuildContext context) {
-    return CupertinoButton.tinted(
-      sizeStyle: CupertinoButtonSize.medium,
-      onPressed: onToggleShowTime == null
-          ? null
-          : () async {
-              onToggleShowTime!();
-              if (context.mounted) Navigator.maybePop(context);
-            },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 8.0,
-        children: [
-          Icon(story.preferredShowTime ? SpIcons.pinSlash : SpIcons.pin),
-          Text(
-            story.preferredShowTime ? tr("button.unpin_from_home") : tr("button.pin_to_home"),
-          ),
-        ],
-      ),
     );
   }
 

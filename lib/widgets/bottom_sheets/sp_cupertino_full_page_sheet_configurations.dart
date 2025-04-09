@@ -10,6 +10,9 @@ class SpCupertinoFullPageSheetConfigurations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 0.08 is base on _kBottomUpTween [ref: package:flutter/src/cupertino/sheet.dart]
+    double bottomHeight = MediaQuery.of(context).size.height * 0.08;
+
     return Theme(
       data: Theme.of(context).copyWith(
         scaffoldBackgroundColor: ColorScheme.of(context).surface,
@@ -21,7 +24,7 @@ class SpCupertinoFullPageSheetConfigurations extends StatelessWidget {
         removeLeft: true,
         removeRight: true,
         child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+          padding: EdgeInsets.only(bottom: bottomHeight),
           child: child,
         ),
       ),

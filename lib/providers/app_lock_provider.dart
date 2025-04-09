@@ -1,4 +1,5 @@
 import 'dart:async' show Future;
+
 import 'package:adaptive_dialog/adaptive_dialog.dart'
     show AlertDialogAction, showConfirmationDialog, showTextAnswerDialog;
 import 'package:easy_localization/easy_localization.dart' show tr;
@@ -11,7 +12,7 @@ import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorag
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
 import 'package:storypad/initializers/app_lock_initializer.dart' show AppLockInitializer;
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart' show SecurityQuestionsRoute;
-import 'package:storypad/widgets/sp_pin_unlock.dart' show SpPinUnlock, SpPinUnlockTitle;
+import 'package:storypad/widgets/sp_pin_unlock.dart' show SpPinUnlockRoute, SpPinUnlockTitle;
 
 class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {
@@ -50,7 +51,7 @@ class AppLockProvider extends ChangeNotifier {
     return avoidDublciated.run(() async {
       if (!hasAppLock) return true;
       if (appLock.pin != null) {
-        return SpPinUnlock.confirmation(
+        return SpPinUnlockRoute.confirmation(
           context: context,
           title: SpPinUnlockTitle.enter_your_pin,
           invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
@@ -58,7 +59,7 @@ class AppLockProvider extends ChangeNotifier {
           onConfirmWithBiometrics: appLock.enabledBiometric == true && localAuth.canCheckBiometrics == true
               ? () => localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'))
               : null,
-        ).push(context);
+        ).push(context, rootNavigator: true).then((confirmed) => confirmed == true);
       } else {
         return localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
       }
@@ -74,12 +75,12 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   Future<void> clearPIN(BuildContext context) async {
-    bool authenticated = await SpPinUnlock.confirmation(
+    bool authenticated = await SpPinUnlockRoute.confirmation(
       context: context,
       correctPin: appLock.pin!,
       title: SpPinUnlockTitle.confirm_your_pin,
       invalidPinTitle: SpPinUnlockTitle.incorrect_pin,
-    ).push(context);
+    ).push(context, rootNavigator: true).then((authenticated) => authenticated == true);
 
     if (context.mounted && authenticated) {
       AnalyticsService.instance.logClearPIN();
@@ -89,11 +90,11 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   Future<void> setPIN(BuildContext context) async {
-    SpPinUnlock.askForPin(
+    await SpPinUnlockRoute.askForPin(
       context: context,
       title: SpPinUnlockTitle.enter_your_pin,
       invalidPinTitle: SpPinUnlockTitle.must_be_4_or_6_digits,
-      onValidated: (context, pin) => SpPinUnlock.confirmation(
+      onValidated: (context, pin) => SpPinUnlockRoute.confirmation(
         title: SpPinUnlockTitle.confirm_your_pin,
         context: context,
         correctPin: pin!,
@@ -106,7 +107,7 @@ class AppLockProvider extends ChangeNotifier {
           }
         },
       ).pushReplacement(context),
-    ).push(context);
+    ).push(context, rootNavigator: true);
   }
 
   Future<void> setSecurityAnswer(Map<AppLockQuestion, String> securityAnswers) async {

@@ -9,6 +9,7 @@ class _FontsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: Text(tr("page.fonts.title")),
         bottom: buildSearchBar(context),
         actions: [
@@ -17,6 +18,8 @@ class _FontsContent extends StatelessWidget {
             icon: const Icon(SpIcons.exploreBrowser),
             onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
           ),
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
         ],
       ),
       body: buildBody(context),
@@ -50,6 +53,7 @@ class _FontsContent extends StatelessWidget {
   Widget buildBody(BuildContext context) {
     if (viewModel.fontGroups == null) return const Center(child: CircularProgressIndicator.adaptive());
     return Scrollbar(
+      controller: PrimaryScrollController.maybeOf(context),
       thumbVisibility: true,
       interactive: true,
       child: buildListView(context),
@@ -58,6 +62,7 @@ class _FontsContent extends StatelessWidget {
 
   Widget buildListView(BuildContext context) {
     return ListView.builder(
+      controller: PrimaryScrollController.maybeOf(context),
       padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(bottom: MediaQuery.of(context).padding.bottom),
       itemCount: viewModel.fonts.length + viewModel.fontGroups!.length,
       itemBuilder: (context, index) {

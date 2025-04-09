@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -96,7 +97,14 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   Widget buildScaffold(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
-        appBar: AppBar(title: const Text("$kAppName Library")),
+        appBar: AppBar(
+          title: const Text("$kAppName Library"),
+          automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+          actions: [
+            if (CupertinoSheetRoute.hasParentSheet(context))
+              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+          ],
+        ),
         body: buildBody(
           context: context,
           constraints: constraints,
@@ -144,6 +152,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     }
 
     return MasonryGridView.builder(
+      controller: PrimaryScrollController.maybeOf(context),
       padding: const EdgeInsets.symmetric(horizontal: 16.0)
           .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
       itemCount: assets.length,

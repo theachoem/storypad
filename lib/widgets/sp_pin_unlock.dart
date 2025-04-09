@@ -4,8 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
-import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -29,9 +28,8 @@ enum SpPinUnlockTitle {
   }
 }
 
-class SpPinUnlock extends StatefulWidget {
-  const SpPinUnlock({
-    super.key,
+class SpPinUnlockRoute extends BaseRoute {
+  const SpPinUnlockRoute({
     required this.title,
     required this.invalidPinTitle,
     required this.validator,
@@ -45,7 +43,10 @@ class SpPinUnlock extends StatefulWidget {
   final void Function(BuildContext context, String? pin) onValidated;
   final Future<bool> Function()? onConfirmWithBiometrics;
 
-  factory SpPinUnlock.confirmation({
+  @override
+  bool get fullscreenDialog => true;
+
+  factory SpPinUnlockRoute.confirmation({
     required BuildContext context,
     required String correctPin,
     SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
@@ -53,7 +54,7 @@ class SpPinUnlock extends StatefulWidget {
     Future<bool> Function()? onConfirmWithBiometrics,
     void Function(BuildContext context, String? pin)? onValidated,
   }) {
-    return SpPinUnlock(
+    return SpPinUnlockRoute(
       title: title.translatedTitle,
       invalidPinTitle: invalidPinTitle.translatedTitle,
       validator: (pin) => correctPin == pin,
@@ -62,13 +63,13 @@ class SpPinUnlock extends StatefulWidget {
     );
   }
 
-  factory SpPinUnlock.askForPin({
+  factory SpPinUnlockRoute.askForPin({
     required BuildContext context,
     SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
     SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.must_be_4_or_6_digits,
     void Function(BuildContext context, String? pin)? onValidated,
   }) {
-    return SpPinUnlock(
+    return SpPinUnlockRoute(
       title: title.translatedTitle,
       invalidPinTitle: invalidPinTitle.translatedTitle,
       validator: (pin) => pin.length == 4 || pin.length == 4,
@@ -76,27 +77,17 @@ class SpPinUnlock extends StatefulWidget {
     );
   }
 
-  Future<bool> push(BuildContext context) async {
-    final route = kIsCupertino
-        ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
-        : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
+  @override
+  Widget buildPage(BuildContext context) => SpPinUnlock(params: this);
+}
 
-    return Navigator.of(
-      context,
-      rootNavigator: true,
-    ).push(route).then((confirmed) => confirmed == true);
-  }
+class SpPinUnlock extends StatefulWidget {
+  const SpPinUnlock({
+    super.key,
+    required this.params,
+  });
 
-  Future<bool> pushReplacement(BuildContext context) async {
-    final route = kIsCupertino
-        ? CupertinoSheetRoute(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: this))
-        : MaterialPageRoute(fullscreenDialog: true, builder: (context) => this);
-
-    return Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushReplacement(route).then((confirmed) => confirmed == true);
-  }
+  final SpPinUnlockRoute params;
 
   @override
   State<SpPinUnlock> createState() => _SpPinUnlockState();
@@ -111,8 +102,8 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
     pin += pinItem.toString();
     setState(() {});
 
-    if (widget.validator(pin)) {
-      widget.onValidated(context, pin);
+    if (widget.params.validator(pin)) {
+      widget.params.onValidated(context, pin);
     }
   }
 
@@ -122,16 +113,16 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
   }
 
   Future<void> confirmWithBiometrics() async {
-    final authenticated = await widget.onConfirmWithBiometrics!.call();
+    final authenticated = await widget.params.onConfirmWithBiometrics!.call();
     final context = this.context;
-    if (context.mounted && authenticated) widget.onValidated(context, null);
+    if (context.mounted && authenticated) widget.params.onValidated(context, null);
   }
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.onConfirmWithBiometrics != null) {
+    if (widget.params.onConfirmWithBiometrics != null) {
       Future.microtask(() {
         confirmWithBiometrics();
       });
@@ -155,7 +146,14 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
       return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(forceMaterialTransparency: true, leading: const CloseButton()),
+        appBar: AppBar(
+          forceMaterialTransparency: true,
+          automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+          actions: [
+            if (CupertinoSheetRoute.hasParentSheet(context))
+              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+          ],
+        ),
         body: Padding(
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
           child: displayInRow ? Row(children: children) : Column(children: children),
@@ -170,14 +168,14 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 24),
-        (pin.length >= 4) && !widget.validator(pin)
+        (pin.length >= 4) && !widget.params.validator(pin)
             ? Text(
-                widget.invalidPinTitle,
+                widget.params.invalidPinTitle,
                 style: TextTheme.of(context).titleLarge,
                 textAlign: TextAlign.center,
               )
             : Text(
-                widget.title,
+                widget.params.title,
                 style: TextTheme.of(context).titleLarge,
                 textAlign: TextAlign.center,
               ),
@@ -189,7 +187,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: pinSize,
             children: List.generate(pin.length, (index) {
-              final bool invalid = pin.length >= 4 && !widget.validator(pin);
+              final bool invalid = pin.length >= 4 && !widget.params.validator(pin);
               return Visibility(
                 visible: pin.length > index,
                 child: SpFadeIn.bound(
@@ -238,7 +236,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               ),
             );
           } else if (index == 9) {
-            if (widget.onConfirmWithBiometrics != null) {
+            if (widget.params.onConfirmWithBiometrics != null) {
               onPressed = () => confirmWithBiometrics();
               backgroundColor = null;
 

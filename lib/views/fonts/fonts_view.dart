@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +18,7 @@ import 'fonts_view_model.dart';
 part 'fonts_content.dart';
 
 class FontsRoute extends BaseRoute {
-  FontsRoute({
+  const FontsRoute({
     required this.currentFontFamily,
     required this.currentFontWeight,
     required this.onChanged,

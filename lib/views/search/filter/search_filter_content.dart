@@ -14,11 +14,7 @@ class _SearchFilterContent extends StatelessWidget {
         actions: [
           _RememberSwitcher(viewModel: viewModel),
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(
-                onPressed: () => Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pop())
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
         ],
       ),
       body: buildBody(context),
@@ -51,6 +47,7 @@ class _SearchFilterContent extends StatelessWidget {
     if (children.isEmpty) return const Center(child: CircularProgressIndicator.adaptive());
 
     return ListView(
+      controller: PrimaryScrollController.maybeOf(context),
       padding: EdgeInsets.only(top: 12.0, bottom: MediaQuery.of(context).padding.bottom),
       children: children,
     );
