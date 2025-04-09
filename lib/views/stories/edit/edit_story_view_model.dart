@@ -105,6 +105,10 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     )..addListener(() => _silentlySave()));
 
     notifyListeners();
+
+    AnalyticsService.instance.logAddStoryPage(
+      story: story!,
+    );
   }
 
   @override
@@ -123,6 +127,10 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     setupControllers();
 
     notifyListeners();
+
+    AnalyticsService.instance.logDeleteStoryPage(
+      story: story!,
+    );
   }
 
   @override
@@ -137,6 +145,10 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     _silentlySave();
 
     notifyListeners();
+
+    AnalyticsService.instance.logReorderStoryPages(
+      story: story!,
+    );
   }
 
   Future<bool> setTags(List<int> tags) async {
@@ -147,6 +159,10 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
+
+    AnalyticsService.instance.logSetTagsToStory(
+      story: story!,
+    );
 
     return true;
   }

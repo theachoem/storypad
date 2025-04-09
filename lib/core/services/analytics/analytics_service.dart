@@ -302,6 +302,42 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logReorderStoryPages({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logReorderStoryPages', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('reorder_story_pages'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logAddStoryPage({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logAddStoryPage', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('add_story_page'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logDeleteStoryPage({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logDeleteStoryPage', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('delete_story_page'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logUpdateStarIcon({
     required StoryDbModel story,
   }) {
@@ -358,6 +394,18 @@ class AnalyticsService extends BaseAnalyticsService {
 
     return FirebaseAnalytics.instance.logEvent(
       name: sanitizeEventName('put_story_back'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logSetTagsToStory({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logSetTagsToStory', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('set_tags_to_story'),
       parameters: parameters,
     );
   }
@@ -503,6 +551,7 @@ class AnalyticsService extends BaseAnalyticsService {
       'month': story.month.toString(),
       'day': story.day.toString(),
       'feeling': story.feeling,
+      'tags_count': story.tags?.length.toString(),
       'pages_count':
           (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length.toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
