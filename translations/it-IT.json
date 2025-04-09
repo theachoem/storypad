@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "Caricato su {URL}",
   "general.years": "Anni",
   "input.message.already_exist": "Esistono già!",
+  "input.message.incorrect": "Errato",
   "input.message.invalid": "Non valido",
   "input.message.required": "Necessario",
   "input.nickname.hint": "Soprannome...",

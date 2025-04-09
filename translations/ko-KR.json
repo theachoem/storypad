@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "{URL}에 업로드되었어요",
   "general.years": "연도",
   "input.message.already_exist": "이미 있어요!",
+  "input.message.incorrect": "잘못된",
   "input.message.invalid": "유효하지 않아요",
   "input.message.required": "필수 항목이에요",
   "input.nickname.hint": "별명 입력...",

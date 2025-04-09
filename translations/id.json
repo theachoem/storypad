@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "Diunggah ke {URL}",
   "general.years": "Bertahun-tahun",
   "input.message.already_exist": "Sudah ada!",
+  "input.message.incorrect": "Salah",
   "input.message.invalid": "Tidak sah",
   "input.message.required": "Diperlukan",
   "input.nickname.hint": "Nama panggilan...",

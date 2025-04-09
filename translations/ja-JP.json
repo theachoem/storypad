@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "{URL} にアップロードされました",
   "general.years": "年",
   "input.message.already_exist": "すでに存在しています！",
+  "input.message.incorrect": "正しくない",
   "input.message.invalid": "無効です",
   "input.message.required": "必須項目です",
   "input.nickname.hint": "ニックネームを入力...",

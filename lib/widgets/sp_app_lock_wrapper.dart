@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -108,7 +110,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     return Stack(
       children: [
         if (showBarrier) buildBlurFilter(),
-        if (showBarrier) buildUnlockButton(context),
+        if (showBarrier) buildActionButtons(context),
       ],
     );
   }
@@ -127,7 +129,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     );
   }
 
-  Widget buildUnlockButton(BuildContext context) {
+  Widget buildActionButtons(BuildContext context) {
     return Positioned(
       left: 0,
       right: 0,
@@ -137,22 +139,52 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
           opacity: animationController,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            spacing: 4.0,
+            spacing: kIsCupertino ? 8.0 : 4.0,
             children: [
-              FilledButton.icon(
-                icon: const Icon(SpIcons.lock),
-                onPressed: () => authenticate(),
-                label: Text(tr('button.unlock')),
-              ),
-              if (context.read<AppLockProvider>().appLock.pin != null)
-                OutlinedButton.icon(
-                  onPressed: () => context.read<AppLockProvider>().forgotPin(context),
-                  label: Text(tr('button.forgot_pin')),
-                ),
+              buildUnlockButtons(),
+              if (context.read<AppLockProvider>().appLock.pin != null) buildForgotPinButton(context),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget buildForgotPinButton(BuildContext context) {
+    if (kIsCupertino) {
+      return CupertinoButton.tinted(
+        sizeStyle: CupertinoButtonSize.medium,
+        onPressed: () => context.read<AppLockProvider>().forgotPin(context),
+        child: Text(tr('button.forgot_pin')),
+      );
+    } else {
+      return OutlinedButton.icon(
+        onPressed: () => context.read<AppLockProvider>().forgotPin(context),
+        label: Text(tr('button.forgot_pin')),
+      );
+    }
+  }
+
+  Widget buildUnlockButtons() {
+    if (kIsCupertino) {
+      return CupertinoButton.filled(
+        sizeStyle: CupertinoButtonSize.medium,
+        onPressed: () => authenticate(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8.0,
+          children: [
+            const Icon(SpIcons.lock),
+            Text(tr('button.unlock')),
+          ],
+        ),
+      );
+    } else {
+      return FilledButton.icon(
+        icon: const Icon(SpIcons.lock),
+        onPressed: () => authenticate(),
+        label: Text(tr('button.unlock')),
+      );
+    }
   }
 }

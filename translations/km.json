@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "បង្ហោះទៅ {URL}",
   "general.years": "ឆ្នាំ",
   "input.message.already_exist": "មានហើយ!",
+  "input.message.incorrect": "មិនត្រឹមត្រូវ",
   "input.message.invalid": "មិនត្រឹមត្រូវ",
   "input.message.required": "ទាមទារ",
   "input.nickname.hint": "ឈ្មោះហៅក្រៅ...",

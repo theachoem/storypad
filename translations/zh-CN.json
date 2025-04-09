@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "已上传至 {URL}",
   "general.years": "年",
   "input.message.already_exist": "已经存在了！",
+  "input.message.incorrect": "不正确",
   "input.message.invalid": "无效的",
   "input.message.required": "必需的",
   "input.nickname.hint": "昵称...",

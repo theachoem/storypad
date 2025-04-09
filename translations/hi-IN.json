@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "{URL} पर अपलोड किया गया",
   "general.years": "साल",
   "input.message.already_exist": "पहले से मौजूद है!",
+  "input.message.incorrect": "ग़लत",
   "input.message.invalid": "अमान्य",
   "input.message.required": "आवश्यक",
   "input.nickname.hint": "उपनाम...",

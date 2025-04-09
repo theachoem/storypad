@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "อัปโหลดไปยัง {URL}",
   "general.years": "ปี",
   "input.message.already_exist": "มีอยู่แล้ว!",
+  "input.message.incorrect": "ไม่ถูกต้อง",
   "input.message.invalid": "ไม่ถูกต้อง",
   "input.message.required": "ที่จำเป็น",
   "input.nickname.hint": "ชื่อเล่น...",

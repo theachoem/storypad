@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "Téléversé sur {URL}",
   "general.years": "Années",
   "input.message.already_exist": "Existe déjà !",
+  "input.message.incorrect": "Incorrect",
   "input.message.invalid": "Invalide",
   "input.message.required": "Requis",
   "input.nickname.hint": "Surnom...",

@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "Đã tải lên {URL}",
   "general.years": "Năm",
   "input.message.already_exist": "Đã tồn tại!",
+  "input.message.incorrect": "Không đúng",
   "input.message.invalid": "Không hợp lệ",
   "input.message.required": "Yêu cầu",
   "input.nickname.hint": "Biệt danh...",

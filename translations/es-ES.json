@@ -184,6 +184,7 @@
   "general.uploaded_to_args": "Subido a {URL}",
   "general.years": "Años",
   "input.message.already_exist": "¡Ya existen!",
+  "input.message.incorrect": "Incorrecto",
   "input.message.invalid": "Inválido",
   "input.message.required": "Requerido",
   "input.nickname.hint": "Apodo...",

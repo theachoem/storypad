@@ -129,7 +129,7 @@ class AppLockProvider extends ChangeNotifier {
 
     final selectedQuestion = await showConfirmationDialog(
       context: context,
-      title: '',
+      title: tr("page.security_questions.title"),
       toggleable: false,
       actions: questions.map((question) {
         return AlertDialogAction(key: question, label: question.translatedQuestion);
@@ -143,6 +143,7 @@ class AppLockProvider extends ChangeNotifier {
         title: selectedQuestion.translatedQuestion,
         isCaseSensitive: false,
         keyword: answer!,
+        retryTitle: tr("input.message.incorrect"),
       );
 
       if (context.mounted && corrected == true) {
