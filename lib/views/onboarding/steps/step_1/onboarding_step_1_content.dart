@@ -13,6 +13,7 @@ class _OnboardingStep1Content extends StatelessWidget {
       currentStep: 1,
       maxStep: 4,
       actionButton: buildActionButton(context),
+      onSkip: () => viewModel.skip(context),
       demo: Stack(
         children: [
           VisibleWhenNotified(

@@ -13,6 +13,7 @@ class _OnboardingStep4Content extends StatelessWidget {
       currentStep: 4,
       maxStep: 4,
       actionButton: buildActionButton(context),
+      onSkip: null,
       demo: null,
     );
   }

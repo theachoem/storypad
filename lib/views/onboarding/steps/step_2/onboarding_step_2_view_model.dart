@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/views/onboarding/steps/step_3/onboarding_step_3_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/views/onboarding/steps/step_4/onboarding_step_4_view.dart';
 import 'onboarding_step_2_view.dart';
 
 class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -19,6 +20,13 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ValueNotifier<String?> selectedFeelingNotifier = ValueNotifier(null);
   final ValueNotifier<bool> showToolbarNotifier = ValueNotifier(false);
   final ScrollController toolbarScrollController = ScrollController();
+
+  void skip(BuildContext context) async {
+    await OnboardingStep4Route().push(context);
+
+    resetAnimations();
+    startAnimations();
+  }
 
   void next(BuildContext context) async {
     await OnboardingStep3Route().push(context);

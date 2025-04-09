@@ -8,7 +8,6 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'privacy_policy_text.dart';
-part 'onboarding_step_indicator.dart';
 
 class OnboardingTemplate extends StatelessWidget {
   const OnboardingTemplate({
@@ -19,6 +18,7 @@ class OnboardingTemplate extends StatelessWidget {
     required this.demo,
     required this.currentStep,
     required this.maxStep,
+    required this.onSkip,
   });
 
   final String title;
@@ -27,6 +27,7 @@ class OnboardingTemplate extends StatelessWidget {
   final Widget actionButton;
   final int currentStep;
   final int maxStep;
+  final void Function()? onSkip;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,16 @@ class OnboardingTemplate extends StatelessWidget {
         leading: ModalRoute.of(context)?.canPop == true
             ? const Hero(tag: 'onboarding-back-button', child: BackButton())
             : null,
+        actions: [
+          if (onSkip != null)
+            Hero(
+              tag: 'onboarding-skip-button',
+              child: TextButton(
+                onPressed: onSkip,
+                child: Text(tr("button.skip")),
+              ),
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         reverse: true,
@@ -124,7 +135,7 @@ class OnboardingTemplate extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (currentStep != maxStep) ...[
-          _OnboardingStepIndicator(currentStep: currentStep, maxStep: maxStep),
+          Text("$currentStep / $maxStep"),
           const SizedBox(height: 24.0),
         ],
         if (currentStep == maxStep) ...[

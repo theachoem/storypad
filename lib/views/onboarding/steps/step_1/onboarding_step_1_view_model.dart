@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/views/onboarding/steps/step_2/onboarding_step_2_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/views/onboarding/steps/step_4/onboarding_step_4_view.dart';
 import 'onboarding_step_1_view.dart';
 
 class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -22,6 +23,13 @@ class OnboardingStep1ViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ValueNotifier<bool> showStoryDetailsPageNotifier = ValueNotifier(false);
 
   bool _navigating = false;
+
+  void skip(BuildContext context) async {
+    await OnboardingStep4Route().push(context);
+
+    resetAnimations();
+    startAnimations();
+  }
 
   Future<void> next(BuildContext context) async {
     if (_navigating) return;

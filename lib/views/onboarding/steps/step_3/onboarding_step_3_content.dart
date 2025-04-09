@@ -13,6 +13,7 @@ class _OnboardingStep3Content extends StatelessWidget {
       currentStep: 3,
       maxStep: 4,
       actionButton: buildActionButton(context),
+      onSkip: () => viewModel.skip(context),
       demo: FadeInBuilder(
         transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
         duration: const Duration(milliseconds: 1000),

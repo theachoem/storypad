@@ -23,6 +23,13 @@ class OnboardingStep3ViewModel extends ChangeNotifier with DisposeAwareMixin {
   final showSignInClickedNotifier = ValueNotifier(false);
   final showSyncClickedNotifier = ValueNotifier(false);
 
+  void skip(BuildContext context) async {
+    await OnboardingStep4Route().push(context);
+
+    resetAnimations();
+    startAnimations();
+  }
+
   void next(BuildContext context) async {
     await OnboardingStep4Route().push(context);
 

@@ -15,6 +15,7 @@ class _OnboardingStep2Content extends StatelessWidget {
       currentStep: 2,
       maxStep: 4,
       actionButton: buildActionButton(context),
+      onSkip: () => viewModel.skip(context),
       demo: Stack(
         children: [
           const StoryDetailsScreenshot(),
