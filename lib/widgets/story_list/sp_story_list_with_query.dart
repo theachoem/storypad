@@ -1,11 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
 class SpStoryListWithQuery extends StatefulWidget {
   const SpStoryListWithQuery({
@@ -13,11 +13,13 @@ class SpStoryListWithQuery extends StatefulWidget {
     this.query,
     this.viewOnly = false,
     this.filter,
+    this.disableMultiEdit = false,
   });
 
   final SearchFilterObject? filter;
   final String? query;
   final bool viewOnly;
+  final bool disableMultiEdit;
 
   String get uniqueness => jsonEncode(filter?.toDatabaseFilter(query: query)) + viewOnly.toString();
 
@@ -68,6 +70,18 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.disableMultiEdit) {
+      return SpStoryListMultiEditWrapper(
+        builder: (context) {
+          return buildList();
+        },
+      );
+    } else {
+      return buildList();
+    }
+  }
+
+  SpStoryList buildList() {
     return SpStoryList(
       onRefresh: () => load(debugSource: '$runtimeType#onRefresh'),
       stories: stories,

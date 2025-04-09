@@ -11,6 +11,7 @@ class _ShowAssetContent extends StatelessWidget {
       appBar: AppBar(),
       body: SpStoryList.withQuery(
         viewOnly: viewModel.params.storyViewOnly,
+        disableMultiEdit: true,
         filter: SearchFilterObject(
           assetId: viewModel.params.assetId,
           years: {},

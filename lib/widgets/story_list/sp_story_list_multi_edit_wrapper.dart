@@ -11,8 +11,10 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
   const SpStoryListMultiEditWrapper({
     super.key,
     required this.builder,
+    this.disabled = false,
   });
 
+  final bool disabled;
   final Widget Function(BuildContext context) builder;
 
   static SpStoryListMultiEditWrapperState of(BuildContext context) {
@@ -23,16 +25,16 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
     required BuildContext context,
     required Widget Function(BuildContext context, SpStoryListMultiEditWrapperState? state) builder,
   }) {
-    bool hasProvider = false;
+    bool shouldListen;
 
     try {
-      context.read<SpStoryListMultiEditWrapperState>();
-      hasProvider = true;
+      final state = context.read<SpStoryListMultiEditWrapperState>();
+      shouldListen = !state.disabled;
     } catch (e) {
-      hasProvider = false;
+      shouldListen = false;
     }
 
-    if (!hasProvider) {
+    if (!shouldListen) {
       return builder(context, null);
     }
 
@@ -57,7 +59,7 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableProvider(
-      create: (context) => SpStoryListMultiEditWrapperState(),
+      create: (context) => SpStoryListMultiEditWrapperState(disabled: disabled),
       builder: (context, child) => builder(context),
     );
   }

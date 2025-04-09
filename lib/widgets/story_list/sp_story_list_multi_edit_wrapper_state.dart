@@ -1,6 +1,12 @@
 part of 'sp_story_list_multi_edit_wrapper.dart';
 
 class SpStoryListMultiEditWrapperState extends ChangeNotifier {
+  final bool disabled;
+
+  SpStoryListMultiEditWrapperState({
+    required this.disabled,
+  });
+
   bool editing = false;
   Set<int> selectedStories = {};
 
