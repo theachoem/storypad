@@ -30,7 +30,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> putBackAll(BuildContext context) async {
+  Future<bool> putBackAll(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr("dialog.are_you_sure_to_put_back_these_stories.title"),
@@ -45,14 +45,14 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
+      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      return true;
     }
 
-    if (context.mounted) {
-      await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
-    }
+    return false;
   }
 
-  Future<void> moveToBinAll(BuildContext context) async {
+  Future<bool> moveToBinAll(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr("dialog.are_you_sure_to_move_to_bin_these_stories.title"),
@@ -68,14 +68,14 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
+      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      return true;
     }
 
-    if (context.mounted) {
-      await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
-    }
+    return false;
   }
 
-  Future<void> archiveAll(BuildContext context) async {
+  Future<bool> archiveAll(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr("dialog.are_you_sure_to_archive_these_stories.title"),
@@ -90,14 +90,14 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
+      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      return true;
     }
 
-    if (context.mounted) {
-      await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
-    }
+    return false;
   }
 
-  Future<void> permanantDeleteAll(BuildContext context) async {
+  Future<bool> permanantDeleteAll(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr("dialog.are_you_sure_to_delete_these_stories.title"),
@@ -114,7 +114,11 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
       }
 
-      state.turnOffEditing();
+      turnOffEditing();
+      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      return true;
     }
+
+    return false;
   }
 }

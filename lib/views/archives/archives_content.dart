@@ -104,12 +104,18 @@ class _ArchivesContent extends StatelessWidget {
               FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
                 child: Text("${tr("button.permanent_delete")} (${state.selectedStories.length})"),
-                onPressed: () => state.permanantDeleteAll(context),
+                onPressed: () async {
+                  bool deleted = await state.permanantDeleteAll(context);
+                  if (deleted) viewModel.refreshList();
+                },
               ),
             if (viewModel.type.isArchives)
               FilledButton(
                 child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
-                onPressed: () => state.moveToBinAll(context),
+                onPressed: () async {
+                  bool moved = await state.moveToBinAll(context);
+                  if (moved) viewModel.refreshList();
+                },
               ),
           ],
         );
