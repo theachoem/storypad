@@ -1,133 +1,9 @@
-// ignore_for_file: constant_identifier_names
+part of 'pin_unlock_view.dart';
 
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_icons.dart';
+class _PinUnlockContent extends StatelessWidget {
+  const _PinUnlockContent(this.viewModel);
 
-enum SpPinUnlockTitle {
-  enter_your_pin,
-  confirm_your_pin,
-  must_be_4_or_6_digits,
-  incorrect_pin;
-
-  String get translatedTitle {
-    switch (this) {
-      case enter_your_pin:
-        return tr('general.pin_unlock_title.enter_your_pin');
-      case confirm_your_pin:
-        return tr('general.pin_unlock_title.confirm_your_pin');
-      case must_be_4_or_6_digits:
-        return tr('general.pin_unlock_title.must_be_4_or_6_digits');
-      case incorrect_pin:
-        return tr('general.pin_unlock_title.incorrect_pin');
-    }
-  }
-}
-
-class SpPinUnlockRoute extends BaseRoute {
-  const SpPinUnlockRoute({
-    required this.title,
-    required this.invalidPinTitle,
-    required this.validator,
-    required this.onValidated,
-    this.onConfirmWithBiometrics,
-  });
-
-  final String title;
-  final String invalidPinTitle;
-  final bool Function(String pin) validator;
-  final void Function(BuildContext context, String? pin) onValidated;
-  final Future<bool> Function()? onConfirmWithBiometrics;
-
-  @override
-  bool get fullscreenDialog => true;
-
-  factory SpPinUnlockRoute.confirmation({
-    required BuildContext context,
-    required String correctPin,
-    SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
-    SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.incorrect_pin,
-    Future<bool> Function()? onConfirmWithBiometrics,
-    void Function(BuildContext context, String? pin)? onValidated,
-  }) {
-    return SpPinUnlockRoute(
-      title: title.translatedTitle,
-      invalidPinTitle: invalidPinTitle.translatedTitle,
-      validator: (pin) => correctPin == pin,
-      onValidated: onValidated ?? (context, _) => Navigator.maybePop(context, true),
-      onConfirmWithBiometrics: onConfirmWithBiometrics,
-    );
-  }
-
-  factory SpPinUnlockRoute.askForPin({
-    required BuildContext context,
-    SpPinUnlockTitle title = SpPinUnlockTitle.enter_your_pin,
-    SpPinUnlockTitle invalidPinTitle = SpPinUnlockTitle.must_be_4_or_6_digits,
-    void Function(BuildContext context, String? pin)? onValidated,
-  }) {
-    return SpPinUnlockRoute(
-      title: title.translatedTitle,
-      invalidPinTitle: invalidPinTitle.translatedTitle,
-      validator: (pin) => pin.length == 4 || pin.length == 4,
-      onValidated: onValidated ?? (context, pin) => Navigator.maybePop(context, pin),
-    );
-  }
-
-  @override
-  Widget buildPage(BuildContext context) => SpPinUnlock(params: this);
-}
-
-class SpPinUnlock extends StatefulWidget {
-  const SpPinUnlock({
-    super.key,
-    required this.params,
-  });
-
-  final SpPinUnlockRoute params;
-
-  @override
-  State<SpPinUnlock> createState() => _SpPinUnlockState();
-}
-
-class _SpPinUnlockState extends State<SpPinUnlock> {
-  String pin = "";
-
-  void addPin(int pinItem) async {
-    if (pin.length >= 6) return;
-
-    pin += pinItem.toString();
-    setState(() {});
-
-    if (widget.params.validator(pin)) {
-      widget.params.onValidated(context, pin);
-    }
-  }
-
-  void removeLastPin() {
-    pin = pin.substring(0, pin.length - 1);
-    setState(() {});
-  }
-
-  Future<void> confirmWithBiometrics() async {
-    final authenticated = await widget.params.onConfirmWithBiometrics!.call();
-    final context = this.context;
-    if (context.mounted && authenticated) widget.params.onValidated(context, null);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.params.onConfirmWithBiometrics != null) {
-      Future.microtask(() {
-        confirmWithBiometrics();
-      });
-    }
-  }
+  final PinUnlockViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -168,14 +44,14 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 24),
-        (pin.length >= 4) && !widget.params.validator(pin)
+        (viewModel.pin.length >= 4) && !viewModel.params.validator(viewModel.pin)
             ? Text(
-                widget.params.invalidPinTitle,
+                viewModel.params.invalidPinTitle,
                 style: TextTheme.of(context).titleLarge,
                 textAlign: TextAlign.center,
               )
             : Text(
-                widget.params.title,
+                viewModel.params.title,
                 style: TextTheme.of(context).titleLarge,
                 textAlign: TextAlign.center,
               ),
@@ -186,10 +62,10 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: pinSize,
-            children: List.generate(pin.length, (index) {
-              final bool invalid = pin.length >= 4 && !widget.params.validator(pin);
+            children: List.generate(viewModel.pin.length, (index) {
+              final bool invalid = viewModel.pin.length >= 4 && !viewModel.params.validator(viewModel.pin);
               return Visibility(
-                visible: pin.length > index,
+                visible: viewModel.pin.length > index,
                 child: SpFadeIn.bound(
                   child: Container(
                     width: pinSize,
@@ -223,7 +99,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
 
           if (index < 9) {
             int pin = index + 1;
-            onPressed = () => addPin(pin);
+            onPressed = () => viewModel.addPin(context, pin);
 
             child = Container(
               width: itemSize,
@@ -236,8 +112,8 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               ),
             );
           } else if (index == 9) {
-            if (widget.params.onConfirmWithBiometrics != null) {
-              onPressed = () => confirmWithBiometrics();
+            if (viewModel.params.onConfirmWithBiometrics != null) {
+              onPressed = () => viewModel.confirmWithBiometrics(context);
               backgroundColor = null;
 
               child = Container(
@@ -251,7 +127,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
               );
             }
           } else if (index == 10) {
-            onPressed = () => addPin(0);
+            onPressed = () => viewModel.addPin(context, 0);
             child = Container(
               width: itemSize,
               constraints: BoxConstraints(minHeight: itemSize),
@@ -264,7 +140,7 @@ class _SpPinUnlockState extends State<SpPinUnlock> {
             );
           } else if (index == 11) {
             borderColor = null;
-            onPressed = pin.isEmpty ? () {} : () => removeLastPin();
+            onPressed = viewModel.pin.isEmpty ? () {} : () => viewModel.removeLastPin();
             backgroundColor = null;
             child = Container(
               width: itemSize,

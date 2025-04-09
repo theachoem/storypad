@@ -47,7 +47,7 @@
       "part '${TM_FILENAME_BASE/_view/_content/}.dart';",
       "",
       "class ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Route extends BaseRoute {",
-      "  ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Route();",
+      "  const ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Route();",
       "",
       "  @override",
       "  Widget buildPage(BuildContext context) => ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}(params: this);",
