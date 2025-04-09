@@ -52,8 +52,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     return Theme(
       data: AppTheme.getTheme(
         colorScheme: colorScheme,
-        fontFamily: preferences?.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
-        fontWeight: preferences?.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
+        fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
+        fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
       ).copyWith(scaffoldBackgroundColor: preferences?.colorSeed != null ? colorScheme.readOnly.surface3 : null),
       child: child,
     );

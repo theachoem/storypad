@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 
 part 'story_preferences_db_model.g.dart';
@@ -19,7 +18,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final ThemeMode? themeMode;
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
-  FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
+  FontWeight? get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : null;
 
   StoryPreferencesDbModel({
     required this.showDayCount,

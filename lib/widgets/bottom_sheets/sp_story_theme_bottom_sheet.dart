@@ -4,9 +4,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -56,7 +58,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
               //   },
               // ),
               FontWeightTile(
-                currentFontWeight: theme.fontWeight,
+                currentFontWeight: theme.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
                 onChanged: (value) {
                   notifier.value = notifier.value.copyWith(fontWeightIndex: value.index);
                   onThemeChanged(notifier.value);
@@ -64,7 +66,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
               ),
               FontFamilyTile(
                 showSheet: true,
-                currentFontWeight: theme.fontWeight,
+                currentFontWeight: theme.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
                 currentFontFamily: theme.fontFamily ?? kDefaultFontFamily,
                 onChanged: (fontFamily) {
                   notifier.value = notifier.value.copyWith(fontFamily: fontFamily);
