@@ -72,6 +72,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   Widget build(BuildContext context) {
     if (widget.disableMultiEdit) {
       return SpStoryListMultiEditWrapper(
+        disabled: true,
         builder: (context) {
           return buildList();
         },

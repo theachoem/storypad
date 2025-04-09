@@ -13,6 +13,7 @@ import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 import 'library_view_model.dart';
 

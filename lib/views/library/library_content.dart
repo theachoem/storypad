@@ -106,33 +106,37 @@ class _LibraryContent extends StatelessWidget {
             ];
           },
           builder: (callback) {
-            return GestureDetector(
-              onTap: callback,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 4.0,
-                children: [
-                  Stack(
-                    children: [
-                      buildImage(context, asset),
-                      ValueListenableBuilder<int?>(
-                        valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
-                        builder: (context, loadingAssetId, child) {
-                          return buildImageStatus(
-                            context: context,
-                            asset: asset,
-                            provider: provider,
-                            loadingAssetId: loadingAssetId,
-                          );
-                        },
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4.0,
+              children: [
+                Stack(
+                  children: [
+                    buildImage(context, asset),
+                    Positioned(
+                      top: 8.0,
+                      right: 8.0,
+                      child: GestureDetector(
+                        onTap: callback,
+                        child: ValueListenableBuilder<int?>(
+                          valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
+                          builder: (context, loadingAssetId, child) {
+                            return buildImageStatus(
+                              context: context,
+                              asset: asset,
+                              provider: provider,
+                              loadingAssetId: loadingAssetId,
+                            );
+                          },
+                        ),
                       ),
-                    ],
-                  ),
-                  Text(
-                    plural("plural.story", viewModel.storiesCount[asset.id] ?? 0),
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                Text(
+                  plural("plural.story", viewModel.storiesCount[asset.id] ?? 0),
+                ),
+              ],
             );
           },
         );
@@ -206,20 +210,26 @@ class _LibraryContent extends StatelessWidget {
       );
     }
 
-    return Positioned(
-      top: 8.0,
-      right: 8.0,
-      child: child,
-    );
+    return child;
   }
 
   Widget buildImage(BuildContext context, AssetDbModel asset) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
-      child: SpImage(
-        link: asset.link,
-        width: 200,
-        height: 200,
+      child: SpTapEffect(
+        onTap: () {
+          final assetLinks =
+              context.read<BackupProvider>().assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
+          SpImagesViewer.fromString(
+            images: assetLinks,
+            initialIndex: assetLinks.indexOf(asset.link),
+          ).show(context);
+        },
+        child: SpImage(
+          link: asset.link,
+          width: 200,
+          height: 200,
+        ),
       ),
     );
   }
