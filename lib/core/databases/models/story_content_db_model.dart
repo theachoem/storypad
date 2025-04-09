@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/databases/models/mixins/comparable.dart';
+import 'package:storypad/core/mixins/comparable.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 
