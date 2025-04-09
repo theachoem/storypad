@@ -60,12 +60,12 @@ lib/firebase_options/storypad.dart
 lib/main_spooky.dart
 lib/main_storypad.dart
 
-env/spooky.json
-env/storypad.json
-
 ios/Flutter/GeneratedDartDefines.xcconfig
 
 # Credentials folder / repo.
-credentials/
+/credentials/
+
+configs/spooky.json
+configs/storypad.json
 
 bin/fastlane/service_accounts

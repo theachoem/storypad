@@ -20,7 +20,7 @@ If you're using asdf, refer to this [guide](contributions/setup_asdf.md). Otherw
 For easy setup and running, the GoogleService-Info.plist, google-services.json, and Dart defines are provided directly in this repo. Simply run the project with:
 
 ```s
-flutter run --flavor community --dart-define-from-file=env/community.json --target=lib/main_community.dart
+flutter run --flavor community --dart-define-from-file=configs/community.json --target=lib/main_community.dart
 ```
 
 ## Overview

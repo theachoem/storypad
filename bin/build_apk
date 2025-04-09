@@ -9,13 +9,13 @@ FLAVOR=$1
 
 case "$FLAVOR" in
 --storypad)
-  CMD="flutter build apk --release --flavor storypad --dart-define-from-file=env/storypad.json --target=lib/main_storypad.dart"
+  CMD="flutter build apk --release --flavor storypad --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart"
   ;;
 --spooky)
-  CMD="flutter build apk --release --flavor spooky --dart-define-from-file=env/spooky.json --target=lib/main_spooky.dart"
+  CMD="flutter build apk --release --flavor spooky --dart-define-from-file=configs/spooky.json --target=lib/main_spooky.dart"
   ;;
 --community | "")
-  CMD="flutter build apk --release --flavor community --dart-define-from-file=env/community.json --target=lib/main_community.dart"
+  CMD="flutter build apk --release --flavor community --dart-define-from-file=configs/community.json --target=lib/main_community.dart"
   ;;
 *)
   echo "Invalid option: $FLAVOR"
