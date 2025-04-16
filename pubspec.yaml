@@ -13,44 +13,44 @@ dependencies:
   adaptive_dialog: ^2.4.1
   animated_clipper: ^0.2.0+2
   cached_network_image: ^3.4.1
-  copy_with_extension: ^6.0.0
+  copy_with_extension: ^6.0.1
   cupertino_icons: ^1.0.8
-  device_info_plus: ^11.2.0
+  device_info_plus: ^11.3.3
   dismissible_page: ^1.0.2
   dynamic_color: ^1.7.0
   easy_localization: ^3.0.7+1
-  file_picker: ^9.0.0
-  firebase_analytics: ^11.4.2
-  firebase_core: ^3.12.1
-  firebase_crashlytics: ^4.3.4
-  firebase_remote_config: ^5.4.2
-  flutter_custom_tabs: ^2.2.0-dev.1
-  flutter_markdown: ^0.7.6+2
-  flutter_native_splash: ^2.4.5
+  file_picker: ^10.1.2
+  firebase_analytics: ^11.4.5
+  firebase_core: ^3.13.0
+  firebase_crashlytics: ^4.3.5
+  firebase_remote_config: ^5.4.3
+  flutter_custom_tabs: ^2.3.0
+  flutter_markdown: ^0.7.7
+  flutter_native_splash: ^2.4.6
   flutter_quill: 11.0.0
   flutter_secure_storage: ^10.0.0-beta.4
   flutter_slidable: ^4.0.0
   flutter_staggered_grid_view: ^0.7.0
   fuzzy: ^0.5.1
   google_fonts: ^6.2.1
-  google_sign_in: ^6.2.2
+  google_sign_in: ^6.3.0
   googleapis: ^14.0.0
   html_character_entities: ^1.0.0+1
   in_app_review: ^2.0.10
   in_app_update: ^4.2.3
   json_annotation: ^4.9.0
-  json_serializable: ^6.9.0
+  json_serializable: 6.9.0
   local_auth: ^2.3.0
-  lottie: ^3.3.0
+  lottie: ^3.3.1
   material_design_icons_flutter: ^7.0.7296
-  objectbox: ^4.1.0
+  objectbox: ^4.2.0
   objectbox_flutter_libs: any
-  package_info_plus: ^8.1.3
+  package_info_plus: ^8.3.0
   photo_view: ^0.15.0
-  provider: ^6.1.2
+  provider: ^6.1.4
   share_plus: ^10.1.4
-  shared_preferences: ^2.3.4
-  sqflite: ^2.4.1
+  shared_preferences: ^2.5.3
+  sqflite: ^2.4.2
   animations: ^2.0.11
 
 dev_dependencies:
