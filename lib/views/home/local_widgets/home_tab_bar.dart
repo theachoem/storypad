@@ -57,7 +57,6 @@ class _HomeTabBar extends StatelessWidget {
 
   List<Widget> constructActionButtons(BuildContext context) {
     return [
-      if (viewModel.filtered) buildFilterButton(context),
       buildOpenEndDrawerButton(context),
     ];
   }
@@ -83,18 +82,6 @@ class _HomeTabBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: actionButtons,
         ),
-      ),
-    );
-  }
-
-  SpFadeIn buildFilterButton(BuildContext context) {
-    return SpFadeIn.bound(
-      child: IconButton(
-        color: ColorScheme.of(context).bootstrap.info.color,
-        tooltip: tr("page.search_filter.title"),
-        iconSize: kIsCupertino ? 22.0 : 20.0,
-        icon: Icon(SpIcons.tune),
-        onPressed: () => viewModel.goToFilter(context),
       ),
     );
   }
