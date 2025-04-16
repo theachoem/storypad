@@ -20,7 +20,7 @@ class _EditStoryContent extends StatelessWidget {
         appBar: AppBar(
           leading: SpAnimatedIcons.fadeScale(
             firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-            secondChild: const BackButton(),
+            secondChild: const Hero(tag: 'back-button', child: BackButton()),
             showFirst: viewModel.managingPage,
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -102,19 +102,39 @@ class _EditStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
+      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
+        buildPageIndicator(),
+        const SizedBox(width: 16.0),
+      ],
+      SpFadeIn.bound(
+        delay: Durations.short1,
+        child: ValueListenableBuilder(
+          valueListenable: viewModel.lastSavedAtNotifier,
+          builder: (context, lastSavedAt, child) {
+            return OutlinedButton.icon(
+              icon: SpAnimatedIcons(
+                firstChild: const Icon(SpIcons.save),
+                secondChild: const Icon(SpIcons.check),
+                showFirst: lastSavedAt == null,
+              ),
+              label: Text(tr("button.done")),
+              onPressed: lastSavedAt == null ? null : () => viewModel.done(context),
+            );
+          },
+        ),
+      ),
+      const SizedBox(width: 8.0),
       if (!viewModel.managingPage) ...[
-        if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
-          buildPageIndicator(),
-          const SizedBox(width: 16.0),
-        ],
-        const SizedBox(width: 8.0),
-        Builder(builder: (context) {
-          return IconButton(
-            tooltip: tr("page.tags.title"),
-            icon: const Icon(SpIcons.tag),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-          );
-        }),
+        Hero(
+          tag: "page.tags.title",
+          child: Builder(builder: (context) {
+            return IconButton(
+              tooltip: tr("page.tags.title"),
+              icon: const Icon(SpIcons.tag),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+            );
+          }),
+        ),
       ],
       if (viewModel.managingPage) ...[
         SpFadeIn.bound(
@@ -128,32 +148,18 @@ class _EditStoryContent extends StatelessWidget {
           ),
         ),
       ],
-      Builder(builder: (context) {
-        return IconButton(
+      Hero(
+        tag: "button.manage_pages",
+        child: IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
             viewModel.managingPage ? SpIcons.managingPage : SpIcons.managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
-        );
-      }),
-      const SizedBox(width: 8.0),
-      ValueListenableBuilder(
-        valueListenable: viewModel.lastSavedAtNotifier,
-        builder: (context, lastSavedAt, child) {
-          return OutlinedButton.icon(
-            icon: SpAnimatedIcons(
-              firstChild: const Icon(SpIcons.save),
-              secondChild: const Icon(SpIcons.check),
-              showFirst: lastSavedAt == null,
-            ),
-            label: Text(tr("button.done")),
-            onPressed: lastSavedAt == null ? null : () => viewModel.done(context),
-          );
-        },
+        ),
       ),
-      const SizedBox(width: 12.0),
+      const SizedBox(width: 8.0),
     ];
   }
 

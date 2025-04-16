@@ -54,7 +54,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         colorScheme: colorScheme,
         fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
         fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
-      ).copyWith(scaffoldBackgroundColor: preferences?.colorSeed != null ? colorScheme.readOnly.surface3 : null),
+        scaffoldBackgroundColor: preferences?.colorSeed != null ? colorScheme.readOnly.surface3 : null,
+      ),
       child: child,
     );
   }

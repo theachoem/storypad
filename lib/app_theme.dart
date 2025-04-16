@@ -63,7 +63,10 @@ class AppTheme extends StatelessWidget {
     required ColorScheme colorScheme,
     required String fontFamily,
     required FontWeight fontWeight,
+    Color? scaffoldBackgroundColor,
   }) {
+    scaffoldBackgroundColor ??= colorScheme.surface;
+
     bool blackout = colorScheme.onSurface == Colors.white;
     bool darkMode = colorScheme.brightness == Brightness.dark;
     bool lightMode = !darkMode;
@@ -78,7 +81,7 @@ class AppTheme extends StatelessWidget {
       TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.android: SharedAxisPageTransitionsBuilder(
-          transitionType: SharedAxisTransitionType.horizontal, fillColor: colorScheme.surface)
+          transitionType: SharedAxisTransitionType.horizontal, fillColor: scaffoldBackgroundColor)
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
@@ -87,7 +90,7 @@ class AppTheme extends StatelessWidget {
     return baseTheme.copyWith(
       platform: platform,
       splashFactory: kIsCupertino ? NoSplash.splashFactory : null,
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: scaffoldBackgroundColor,
       colorScheme: colorScheme,
       pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -95,7 +98,7 @@ class AppTheme extends StatelessWidget {
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: colorScheme.brightness,
-        scaffoldBackgroundColor: colorScheme.surface,
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
         primaryColor: colorScheme.primary,
         primaryContrastingColor: colorScheme.onPrimary,
         textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),

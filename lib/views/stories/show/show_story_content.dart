@@ -17,7 +17,7 @@ class _ShowStoryContent extends StatelessWidget {
       appBar: AppBar(
         leading: SpAnimatedIcons.fadeScale(
           firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-          secondChild: const BackButton(),
+          secondChild: const Hero(tag: 'back-button', child: BackButton()),
           showFirst: viewModel.managingPage,
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -144,15 +144,26 @@ class _ShowStoryContent extends StatelessWidget {
           onPressed: () => viewModel.goToEditPage(context),
           icon: const Icon(SpIcons.edit),
         ),
-        Builder(builder: (context) {
-          return IconButton(
-            tooltip: tr("page.tags.title"),
-            icon: const Icon(SpIcons.tag),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-          );
-        }),
+        Hero(
+          tag: "page.tags.title",
+          child: Builder(builder: (context) {
+            return IconButton(
+              tooltip: tr("page.tags.title"),
+              icon: const Icon(SpIcons.tag),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+            );
+          }),
+        ),
       ],
       if (viewModel.managingPage) ...[
+        SpFadeIn.bound(
+          delay: Durations.short1,
+          child: IconButton(
+            tooltip: tr("page.theme.title"),
+            icon: const Icon(SpIcons.info),
+            onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
+          ),
+        ),
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr("page.theme.title"),
@@ -164,34 +175,18 @@ class _ShowStoryContent extends StatelessWidget {
           ),
         ),
       ],
-      Builder(builder: (context) {
-        return IconButton(
+      Hero(
+        tag: "button.manage_pages",
+        child: IconButton(
           tooltip: tr("button.manage_pages"),
           icon: Icon(
             viewModel.managingPage ? SpIcons.managingPage : SpIcons.managingPageOff,
             color: viewModel.managingPage ? ColorScheme.of(context).tertiary : null,
           ),
           onPressed: () => viewModel.toggleManagingPage(),
-        );
-      }),
-      SpPopupMenuButton(
-        items: (context) {
-          return [
-            SpPopMenuItem(
-              leadingIconData: SpIcons.info,
-              title: tr("button.info"),
-              onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
-            ),
-          ];
-        },
-        builder: (callback) {
-          return IconButton(
-            tooltip: tr("button.more_options"),
-            icon: const Icon(SpIcons.moreVert),
-            onPressed: callback,
-          );
-        },
+        ),
       ),
+      const SizedBox(width: 8.0),
     ];
   }
 
