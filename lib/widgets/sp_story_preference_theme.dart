@@ -21,30 +21,14 @@ class SpStoryPreferenceTheme extends StatelessWidget {
 
     Color? seedColor = preferences?.colorSeed ?? themeProvider.theme.colorSeed;
     bool monochrome = seedColor == Colors.black || seedColor == Colors.white;
-    Brightness brightness;
-
-    switch (preferences?.themeMode) {
-      case ThemeMode.system:
-      case null:
-        brightness = ColorScheme.of(context).brightness;
-        break;
-      case ThemeMode.dark:
-        brightness = Brightness.dark;
-        break;
-      case ThemeMode.light:
-        brightness = Brightness.light;
-        break;
-    }
-
     ColorScheme colorScheme;
 
     if (seedColor == null) {
-      // TODO: this does not custom theme yet.
       colorScheme = Theme.of(context).colorScheme;
     } else {
       colorScheme = ColorScheme.fromSeed(
         seedColor: seedColor,
-        brightness: brightness,
+        brightness: Theme.of(context).brightness,
         dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
       );
     }

@@ -15,7 +15,6 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final int? colorSeedValue;
   final String? fontFamily;
   final int? fontWeightIndex;
-  final ThemeMode? themeMode;
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight? get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : null;
@@ -27,7 +26,6 @@ class StoryPreferencesDbModel extends BaseDbModel {
     required this.colorSeedValue,
     required this.fontFamily,
     required this.fontWeightIndex,
-    required this.themeMode,
   });
 
   @override
@@ -44,7 +42,6 @@ class StoryPreferencesDbModel extends BaseDbModel {
       colorSeedValue: null,
       fontFamily: null,
       fontWeightIndex: null,
-      themeMode: null,
     );
   }
 

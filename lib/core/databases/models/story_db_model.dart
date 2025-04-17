@@ -106,7 +106,6 @@ class StoryDbModel extends BaseDbModel {
 
   String? get preferredFontFamily => preferences.fontFamily;
   int? get preferredFontWeightIndex => preferences.fontWeightIndex;
-  ThemeMode? get preferredThemeMode => preferences.themeMode;
 
   bool get viewOnly => unarchivable || inBins;
 

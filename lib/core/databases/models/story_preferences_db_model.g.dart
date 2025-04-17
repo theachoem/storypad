@@ -19,8 +19,6 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex);
 
-  StoryPreferencesDbModel themeMode(ThemeMode? themeMode);
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -34,7 +32,6 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     int? colorSeedValue,
     String? fontFamily,
     int? fontWeightIndex,
-    ThemeMode? themeMode,
   });
 }
 
@@ -69,10 +66,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(fontWeightIndex: fontWeightIndex);
 
   @override
-  StoryPreferencesDbModel themeMode(ThemeMode? themeMode) =>
-      this(themeMode: themeMode);
-
-  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -87,7 +80,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
-    Object? themeMode = const $CopyWithPlaceholder(),
   }) {
     return StoryPreferencesDbModel(
       showDayCount: showDayCount == const $CopyWithPlaceholder()
@@ -114,10 +106,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.fontWeightIndex
           // ignore: cast_nullable_to_non_nullable
           : fontWeightIndex as int?,
-      themeMode: themeMode == const $CopyWithPlaceholder()
-          ? _value.themeMode
-          // ignore: cast_nullable_to_non_nullable
-          : themeMode as ThemeMode?,
     );
   }
 }
@@ -142,7 +130,6 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
       fontFamily: json['font_family'] as String?,
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
-      themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
     );
 
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
@@ -154,11 +141,4 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'color_seed_value': instance.colorSeedValue,
       'font_family': instance.fontFamily,
       'font_weight_index': instance.fontWeightIndex,
-      'theme_mode': _$ThemeModeEnumMap[instance.themeMode],
     };
-
-const _$ThemeModeEnumMap = {
-  ThemeMode.system: 'system',
-  ThemeMode.light: 'light',
-  ThemeMode.dark: 'dark',
-};

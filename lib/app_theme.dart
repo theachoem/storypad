@@ -40,15 +40,15 @@ class AppTheme extends StatelessWidget {
     return Consumer<ThemeProvider>(builder: (context, provider, child) {
       return buildColorScheme(
         provider: provider,
-        builder: (ColorScheme lightDynamic, ColorScheme darkDynamic) {
+        builder: (ColorScheme lightScheme, ColorScheme darkScheme) {
           final theme = getTheme(
-            colorScheme: lightDynamic,
+            colorScheme: lightScheme,
             fontFamily: provider.theme.fontFamily,
             fontWeight: provider.theme.fontWeight,
           );
 
           final darkTheme = getTheme(
-            colorScheme: darkDynamic,
+            colorScheme: darkScheme,
             fontFamily: provider.theme.fontFamily,
             fontWeight: provider.theme.fontWeight,
           );
@@ -122,6 +122,11 @@ class AppTheme extends StatelessWidget {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: dividerColor),
+        ),
+      ),
       bottomSheetTheme: BottomSheetThemeData(backgroundColor: blackout ? colorScheme.readOnly.surface2 : null),
       textTheme: GoogleFonts.getTextTheme(
         fontFamily,
@@ -167,7 +172,7 @@ class AppTheme extends StatelessWidget {
 
   Widget buildColorScheme({
     required ThemeProvider provider,
-    required Widget Function(ColorScheme lightDynamic, ColorScheme darkDynamic) builder,
+    required Widget Function(ColorScheme lightScheme, ColorScheme darkScheme) builder,
   }) {
     return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;

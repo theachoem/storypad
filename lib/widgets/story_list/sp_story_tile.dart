@@ -127,77 +127,68 @@ class SpStoryTile extends StatelessWidget {
 
     List<SpPopMenuItem> menus = buildPopUpMenus(context);
 
-    return Theme(
-      // Remove theme wrapper here when this is fixed:
-      // https://github.com/letsar/flutter_slidable/issues/512
-      data: Theme.of(context).copyWith(
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: ButtonStyle(iconColor: WidgetStatePropertyAll(ColorScheme.of(context).onPrimary)),
-        ),
-      ),
-      child: SpPopupMenuButton(
-        smartDx: true,
-        dyGetter: (double dy) => dy + kToolbarHeight,
-        items: (BuildContext context) => menus,
-        builder: (openPopUpMenu) {
-          void Function()? onTap;
-          void Function()? onLongPress;
+    return SpPopupMenuButton(
+      smartDx: true,
+      dyGetter: (double dy) => dy + kToolbarHeight,
+      items: (BuildContext context) => menus,
+      builder: (openPopUpMenu) {
+        void Function()? onTap;
+        void Function()? onLongPress;
 
-          if (multiEditState != null) {
-            if (multiEditState.editing) {
-              onTap = () => multiEditState.toggleSelection(story);
-              onLongPress = null;
-            } else if (story.inArchives || story.inBins) {
-              onTap = () => openPopUpMenu.call();
-              onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
-            } else {
-              onTap = this.onTap;
-              onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
-            }
+        if (multiEditState != null) {
+          if (multiEditState.editing) {
+            onTap = () => multiEditState.toggleSelection(story);
+            onLongPress = null;
+          } else if (story.inArchives || story.inBins) {
+            onTap = () => openPopUpMenu.call();
+            onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
           } else {
             onTap = this.onTap;
-            onLongPress = () => openPopUpMenu.call();
+            onLongPress = () => multiEditState.turnOnEditing(initialId: story.id);
           }
+        } else {
+          onTap = this.onTap;
+          onLongPress = () => openPopUpMenu.call();
+        }
 
-          return InkWell(
-            onTap: onTap,
-            onLongPress: onLongPress,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 16.0,
-                    children: [
-                      _StoryTileMonogram(
-                        showMonogram: showMonogram,
-                        monogramSize: monogramSize,
-                        story: story,
-                      ),
-                      _StoryTileContents(
-                        story: story,
-                        viewOnly: viewOnly,
-                        listContext: listContext,
-                        hasTitle: hasTitle,
-                        content: content,
-                        hasBody: hasBody,
-                      ),
-                    ],
-                  ),
-                  _StoryTileStarredButton(
-                    story: story,
-                    viewOnly: viewOnly,
-                    listContext: listContext,
-                    multiEditState: multiEditState,
-                  )
-                ],
-              ),
+        return InkWell(
+          onTap: onTap,
+          onLongPress: onLongPress,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 16.0,
+                  children: [
+                    _StoryTileMonogram(
+                      showMonogram: showMonogram,
+                      monogramSize: monogramSize,
+                      story: story,
+                    ),
+                    _StoryTileContents(
+                      story: story,
+                      viewOnly: viewOnly,
+                      listContext: listContext,
+                      hasTitle: hasTitle,
+                      content: content,
+                      hasBody: hasBody,
+                    ),
+                  ],
+                ),
+                _StoryTileStarredButton(
+                  story: story,
+                  viewOnly: viewOnly,
+                  listContext: listContext,
+                  multiEditState: multiEditState,
+                )
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

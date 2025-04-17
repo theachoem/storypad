@@ -99,61 +99,52 @@ class _BackupsContent extends StatelessWidget {
     final fileInfo = file.getFileInfo();
     final menus = getGroupMenus(context, file);
 
-    return Theme(
-      // Remove theme wrapper here when this is fixed:
-      // https://github.com/letsar/flutter_slidable/issues/512
-      data: Theme.of(context).copyWith(
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: ButtonStyle(iconColor: WidgetStatePropertyAll(ColorScheme.of(context).onPrimary)),
-        ),
+    return Slidable(
+      closeOnScroll: true,
+      key: ValueKey(file.id),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: List.generate(menus.length, (index) {
+          final menu = menus[index];
+          return SlidableAction(
+            icon: menu.leadingIconData,
+            backgroundColor: menu.titleStyle?.color ?? ColorFromDayService(context: context).get(index + 1)!,
+            foregroundColor: ColorScheme.of(context).onPrimary,
+            onPressed: (context) => menu.onPressed?.call(),
+          );
+        }),
       ),
-      child: Slidable(
-        closeOnScroll: true,
-        key: ValueKey(file.id),
-        endActionPane: ActionPane(
-          motion: const DrawerMotion(),
-          children: List.generate(menus.length, (index) {
-            final menu = menus[index];
-            return SlidableAction(
-              icon: menu.leadingIconData,
-              backgroundColor: menu.titleStyle?.color ?? ColorFromDayService(context: context).get(index + 1)!,
-              foregroundColor: ColorScheme.of(context).onPrimary,
-              onPressed: (context) => menu.onPressed?.call(),
-            );
-          }),
-        ),
-        child: SpPopupMenuButton(
-          smartDx: true,
-          dyGetter: (dy) => dy + 36,
-          items: (BuildContext context) => menus,
-          builder: (callback) {
-            return InkWell(
-              onTap: callback,
-              onLongPress: callback,
-              child: Container(
-                padding: EdgeInsets.only(
-                  right: AppTheme.getDirectionValue(context, (avatarSize + 12) / 2 - 32 / 2.0, 0.0)!,
-                  left: AppTheme.getDirectionValue(context, 0.0, (avatarSize + 12) / 2 - 32 / 2.0)!,
-                ),
-                child: Row(
-                  spacing: 16.0,
-                  children: [
-                    _BackupTileMonogram(context: context, fileInfo: fileInfo, previousFileInfo: previousFileInfo),
-                    Expanded(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
-                        title: Text(fileInfo?.device.model ?? tr("general.unknown")),
-                        subtitle: Text(
-                          DateFormatHelper.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na"),
-                        ),
+      child: SpPopupMenuButton(
+        smartDx: true,
+        dyGetter: (dy) => dy + 36,
+        items: (BuildContext context) => menus,
+        builder: (callback) {
+          return InkWell(
+            onTap: callback,
+            onLongPress: callback,
+            child: Container(
+              padding: EdgeInsets.only(
+                right: AppTheme.getDirectionValue(context, (avatarSize + 12) / 2 - 32 / 2.0, 0.0)!,
+                left: AppTheme.getDirectionValue(context, 0.0, (avatarSize + 12) / 2 - 32 / 2.0)!,
+              ),
+              child: Row(
+                spacing: 16.0,
+                children: [
+                  _BackupTileMonogram(context: context, fileInfo: fileInfo, previousFileInfo: previousFileInfo),
+                  Expanded(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero.copyWith(right: 16.0),
+                      title: Text(fileInfo?.device.model ?? tr("general.unknown")),
+                      subtitle: Text(
+                        DateFormatHelper.yMEd_jmNullable(fileInfo?.createdAt, context.locale) ?? tr("general.na"),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

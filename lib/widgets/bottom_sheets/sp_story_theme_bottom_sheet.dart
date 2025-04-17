@@ -97,7 +97,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           onTap: () {
             HapticFeedback.selectionClick();
-            notifier.value = notifier.value.copyWith(colorSeedValue: null, themeMode: null);
+            notifier.value = notifier.value.copyWith(colorSeedValue: null);
             onThemeChanged(notifier.value);
           },
           selected: notifier.value.colorSeedValue == null,

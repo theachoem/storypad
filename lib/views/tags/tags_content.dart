@@ -55,39 +55,29 @@ class _TagsContent extends StatelessWidget {
         final tag = provider.tags!.items[index];
         final storyCount = provider.getStoriesCount(tag);
 
-        return Theme(
+        return Slidable(
+          closeOnScroll: true,
           key: ValueKey(tag.id),
-          // Remove theme wrapper here when this is fixed:
-          // https://github.com/letsar/flutter_slidable/issues/512
-          data: Theme.of(context).copyWith(
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: ButtonStyle(iconColor: WidgetStatePropertyAll(ColorScheme.of(context).onError)),
-            ),
+          endActionPane: ActionPane(
+            motion: const DrawerMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (context) => provider.deleteTag(context, tag),
+                backgroundColor: ColorScheme.of(context).error,
+                foregroundColor: ColorScheme.of(context).onError,
+                icon: SpIcons.delete,
+                label: tr("button.delete"),
+              ),
+              SlidableAction(
+                onPressed: (context) => provider.editTag(context, tag),
+                backgroundColor: ColorScheme.of(context).secondary,
+                foregroundColor: ColorScheme.of(context).onSecondary,
+                icon: SpIcons.edit,
+                label: tr("button.edit"),
+              ),
+            ],
           ),
-          child: Slidable(
-            closeOnScroll: true,
-            key: ValueKey(tag.id),
-            endActionPane: ActionPane(
-              motion: const DrawerMotion(),
-              children: [
-                SlidableAction(
-                  onPressed: (context) => provider.deleteTag(context, tag),
-                  backgroundColor: ColorScheme.of(context).error,
-                  foregroundColor: ColorScheme.of(context).onError,
-                  icon: SpIcons.delete,
-                  label: tr("button.delete"),
-                ),
-                SlidableAction(
-                  onPressed: (context) => provider.editTag(context, tag),
-                  backgroundColor: ColorScheme.of(context).secondary,
-                  foregroundColor: ColorScheme.of(context).onSecondary,
-                  icon: SpIcons.edit,
-                  label: tr("button.edit"),
-                ),
-              ],
-            ),
-            child: buildTile(tag, storyCount, provider, context),
-          ),
+          child: buildTile(tag, storyCount, provider, context),
         );
       },
     );
