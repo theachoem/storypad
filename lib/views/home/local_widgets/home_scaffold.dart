@@ -20,6 +20,8 @@ class _HomeScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          kIsCupertino && AppTheme.isDarkMode(context) && AppTheme.isMonochrome(context) ? Colors.black : null,
       resizeToAvoidBottomInset: false,
       endDrawerEnableOpenDragGesture: true,
       endDrawer: endDrawer,
