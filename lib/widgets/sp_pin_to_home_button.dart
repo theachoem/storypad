@@ -26,17 +26,17 @@ class SpPinToHomeButton extends StatelessWidget {
   }
 
   Widget _buildMaterialPinButton(BuildContext context) {
-    return OutlinedButton.icon(
-      icon: Icon(pinned ? SpIcons.pinSlash : SpIcons.pin, color: ColorScheme.of(context).primary),
+    return FilledButton.icon(
+      icon: Icon(pinned ? SpIcons.pinSlash : SpIcons.pin),
       label: Text(pinned ? tr("button.unpin_from_home") : tr("button.pin_to_home")),
-      onPressed: pinned ? null : onPressed,
+      onPressed: onPressed,
     );
   }
 
   Widget _buildCupertinoPinButton(BuildContext context) {
-    return CupertinoButton.tinted(
+    return CupertinoButton.filled(
       sizeStyle: CupertinoButtonSize.medium,
-      onPressed: pinned ? null : onPressed,
+      onPressed: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 8.0,
