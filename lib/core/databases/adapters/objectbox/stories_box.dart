@@ -123,7 +123,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
-    if (starred == true) conditions = conditions.and(StoryObjectBox_.starred.equals(true));
+    if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));
     if (types != null) conditions = conditions.and(StoryObjectBox_.type.oneOf(types));
     if (year != null) conditions = conditions.and(StoryObjectBox_.year.equals(year));
