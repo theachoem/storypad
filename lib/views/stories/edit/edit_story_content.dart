@@ -102,29 +102,28 @@ class _EditStoryContent extends StatelessWidget {
 
   List<Widget> buildAppBarActions(BuildContext context) {
     return [
-      if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
-        buildPageIndicator(),
-        const SizedBox(width: 16.0),
-      ],
-      SpFadeIn.bound(
-        delay: Durations.short1,
-        child: ValueListenableBuilder(
-          valueListenable: viewModel.lastSavedAtNotifier,
-          builder: (context, lastSavedAt, child) {
-            return OutlinedButton.icon(
-              icon: SpAnimatedIcons(
-                firstChild: const Icon(SpIcons.save),
-                secondChild: const Icon(SpIcons.check),
-                showFirst: lastSavedAt == null,
-              ),
-              label: Text(tr("button.done")),
-              onPressed: lastSavedAt == null ? null : () => viewModel.done(context),
-            );
-          },
-        ),
-      ),
-      const SizedBox(width: 8.0),
       if (!viewModel.managingPage) ...[
+        if (viewModel.draftContent?.richPages?.length != null && viewModel.draftContent!.richPages!.length > 1) ...[
+          buildPageIndicator(),
+          const SizedBox(width: 16.0),
+        ],
+        SpFadeIn.bound(
+          child: ValueListenableBuilder(
+            valueListenable: viewModel.lastSavedAtNotifier,
+            builder: (context, lastSavedAt, child) {
+              return OutlinedButton.icon(
+                icon: SpAnimatedIcons(
+                  firstChild: const Icon(SpIcons.save),
+                  secondChild: const Icon(SpIcons.check),
+                  showFirst: lastSavedAt == null,
+                ),
+                label: Text(tr("button.done")),
+                onPressed: lastSavedAt == null ? null : () => viewModel.done(context),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 8.0),
         Hero(
           tag: "page.tags.title",
           child: Builder(builder: (context) {
@@ -135,9 +134,8 @@ class _EditStoryContent extends StatelessWidget {
             );
           }),
         ),
-      ],
-      if (viewModel.managingPage) ...[
-        SpFadeIn.bound(
+        Hero(
+          tag: "page.theme.title",
           child: IconButton(
             tooltip: tr("page.theme.title"),
             icon: const Icon(SpIcons.theme),

@@ -154,17 +154,8 @@ class _ShowStoryContent extends StatelessWidget {
             );
           }),
         ),
-      ],
-      if (viewModel.managingPage) ...[
-        SpFadeIn.bound(
-          delay: Durations.short1,
-          child: IconButton(
-            tooltip: tr("page.theme.title"),
-            icon: const Icon(SpIcons.info),
-            onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
-          ),
-        ),
-        SpFadeIn.bound(
+        Hero(
+          tag: "page.theme.title",
           child: IconButton(
             tooltip: tr("page.theme.title"),
             icon: const Icon(SpIcons.theme),
@@ -172,6 +163,16 @@ class _ShowStoryContent extends StatelessWidget {
               story: viewModel.story!,
               onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
             ).show(context: context),
+          ),
+        ),
+      ],
+      if (viewModel.managingPage) ...[
+        SpFadeIn.bound(
+          delay: Durations.short1,
+          child: IconButton(
+            tooltip: tr("button.info"),
+            icon: const Icon(SpIcons.info),
+            onPressed: () => SpStoryInfoSheet(story: viewModel.story!).show(context: context),
           ),
         ),
       ],
