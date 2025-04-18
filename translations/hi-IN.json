@@ -301,5 +301,19 @@
   "snack_bar.force_restore_success": "बैकअप बहाल हो गया है!",
   "snack_bar.move_to_bin_success": "बिन में ले जाया गया!",
   "snack_bar.put_back_success": "घर वापस!",
-  "snack_bar.restore_individual_success": "कहानी पुनर्स्थापित!"
+  "snack_bar.restore_individual_success": "कहानी पुनर्स्थापित!",
+  "sounds.category.animal": "जानवर",
+  "sounds.category.forest": "जंगल",
+  "sounds.category.rainy": "बरसाती",
+  "sounds.category.water": "पानी",
+  "sounds.droplets": "बूंदों",
+  "sounds.forest_birds": "वन पक्षी",
+  "sounds.frogs": "मेंढक",
+  "sounds.heavy_rain": "भारी वर्षा",
+  "sounds.light_rain": "हलकी बारिश",
+  "sounds.night_crickets": "रात्रि झींगुर",
+  "sounds.ocean_waves": "सागर की लहरें",
+  "sounds.rain_on_window": "खिड़की पर बारिश",
+  "sounds.river_stream": "नदी की धारा",
+  "sounds.thunder": "गड़गड़ाहट"
 }

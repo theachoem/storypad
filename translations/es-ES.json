@@ -301,5 +301,19 @@
   "snack_bar.force_restore_success": "¡La copia de seguridad está restaurada!",
   "snack_bar.move_to_bin_success": "¡Movido a la papelera!",
   "snack_bar.put_back_success": "¡De vuelta a casa!",
-  "snack_bar.restore_individual_success": "¡Historia restaurada!"
+  "snack_bar.restore_individual_success": "¡Historia restaurada!",
+  "sounds.category.animal": "Animal",
+  "sounds.category.forest": "Bosque",
+  "sounds.category.rainy": "Lluvioso",
+  "sounds.category.water": "Agua",
+  "sounds.droplets": "Gotas",
+  "sounds.forest_birds": "Aves del bosque",
+  "sounds.frogs": "ranas",
+  "sounds.heavy_rain": "Lluvia Pesada",
+  "sounds.light_rain": "Lluvia ligera",
+  "sounds.night_crickets": "grillos nocturnos",
+  "sounds.ocean_waves": "olas del mar",
+  "sounds.rain_on_window": "Lluvia en la ventana",
+  "sounds.river_stream": "corriente del río",
+  "sounds.thunder": "Trueno"
 }
