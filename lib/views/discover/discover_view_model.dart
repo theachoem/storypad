@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
@@ -24,19 +25,19 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
     return [
       _Page(
         id: DiscoverSegmentId.search,
-        tooltip: "Search",
+        tooltip: tr("page.search.title"),
         icon: Icons.search_outlined,
         page: const DiscoverSearchContent(),
       ),
       _Page(
         id: DiscoverSegmentId.calendar,
-        tooltip: "Calendar",
+        tooltip: tr("page.calendar.title"),
         icon: Icons.calendar_month_outlined,
         page: const DiscoverCalendarContent(),
       ),
       _Page(
         id: DiscoverSegmentId.relaxSounds,
-        tooltip: "Relax Sounds",
+        tooltip: tr("page.relax_sounds.title"),
         icon: Icons.music_note_outlined,
         page: const DiscoverRelaxSoundsContent(),
       ),

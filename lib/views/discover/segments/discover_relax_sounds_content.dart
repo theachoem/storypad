@@ -5,8 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
+import 'package:storypad/widgets/sp_cache_file_downloader_builder.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
+import 'package:storypad/widgets/sp_loop_animation_builder.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
+
+part 'local_widgets/volume_slider.dart';
+part 'local_widgets/sound_icon_card.dart';
 
 class DiscoverRelaxSoundsContent extends StatelessWidget {
   const DiscoverRelaxSoundsContent({
@@ -24,7 +30,7 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
       body: Builder(builder: (context) {
         return AlignedGridView.count(
           padding: EdgeInsets.only(
-            top: 4.0,
+            top: 12.0,
             left: 16.0,
             right: 16.0,
             bottom: MediaQuery.of(context).padding.bottom + 16.0,
@@ -34,43 +40,11 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 16.0,
           itemBuilder: (context, index) {
-            final relaxSound = relaxSounds[index];
-            bool selected = provider.isSoundSelected(index);
-
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                SpTapEffect(
-                  effects: [SpTapEffectType.touchableOpacity],
-                  onTap: () => provider.toggleSound(index),
-                  child: Column(
-                    spacing: 8.0,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      buildSoundIconCard(context, relaxSound, selected),
-                      Text(
-                        relaxSound.label,
-                        style: TextTheme.of(context).bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                if (selected)
-                  Positioned(
-                    top: 2.0,
-                    left: 16.0,
-                    right: 16.0,
-                    child: Slider(
-                      divisions: 5,
-                      allowedInteraction: SliderInteraction.tapAndSlide,
-                      thumbColor: Theme.of(context).colorScheme.surface,
-                      value: provider.getVolumn(index),
-                      padding: EdgeInsets.zero,
-                      onChanged: (value) => provider.setVolumn(index, value),
-                    ),
-                  )
-              ],
+            return buildSoundItem(
+              context: context,
+              relaxSounds: relaxSounds,
+              index: index,
+              provider: provider,
             );
           },
         );
@@ -78,32 +52,60 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
     );
   }
 
-  Widget buildSoundIconCard(
-    BuildContext context,
+  Widget buildSoundItem({
+    required BuildContext context,
+    required List<RelaxSoundObject> relaxSounds,
+    required int index,
+    required RelaxSoundsProvider provider,
+  }) {
+    final relaxSound = relaxSounds[index];
+    bool selected = provider.isSoundSelected(relaxSound);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        buildSoundCardContents(provider, relaxSound, selected),
+        if (selected && provider.getVolume(relaxSound) != null) _VolumeSlider(relaxSound: relaxSound)
+      ],
+    );
+  }
+
+  Widget buildSoundCardContents(
+    RelaxSoundsProvider provider,
     RelaxSoundObject relaxSound,
     bool selected,
   ) {
-    return AnimatedContainer(
-      curve: Curves.ease,
-      duration: Durations.short2,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: selected ? ColorScheme.of(context).readOnly.surface2 : null,
-        border: Border.all(
-          color: selected ? ColorScheme.of(context).primary : Theme.of(context).dividerColor,
-        ),
-      ),
-      child: SvgPicture.asset(
-        "docs${relaxSound.svgIconPath}",
-        semanticsLabel: relaxSound.label,
-        height: 48,
-        colorFilter: ColorFilter.mode(
-          selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
-          BlendMode.srcIn,
-        ),
-      ),
+    return SpSingleStateWidget.listen(
+      initialValue: false,
+      builder: (context, downloading, notifier) {
+        return SpTapEffect(
+          effects: [SpTapEffectType.touchableOpacity],
+          onTap: () async {
+            // We want to show loading only when it is not yet downloaded.
+            bool downloaded = await provider.audioPlayersService.downloaded(relaxSound.soundUrl);
+            if (!downloaded) notifier.value = true;
+            await provider.toggleSound(relaxSound);
+
+            notifier.value = false;
+          },
+          child: Column(
+            spacing: 8.0,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _SoundIconCard(
+                relaxSound: relaxSound,
+                selected: selected,
+                downloading: downloading,
+              ),
+              Text(
+                relaxSound.label,
+                style: TextTheme.of(context).bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -82,8 +82,10 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     if (kIsCupertino) {
       return buildScaffold(context);
     } else {
+      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
       return DraggableScrollableSheet(
         expand: false,
+        maxChildSize: maxChildSize,
         builder: (context, controller) {
           return PrimaryScrollController(
             controller: controller,
