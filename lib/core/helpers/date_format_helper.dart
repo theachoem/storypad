@@ -38,6 +38,10 @@ class DateFormatHelper {
     return DateFormat.jm(locale.toLanguageTag()).format(date);
   }
 
+  static String Hms(DateTime date, Locale locale) {
+    return DateFormat.Hms(locale.toLanguageTag()).format(date);
+  }
+
   static String jms(DateTime date, Locale locale) {
     return DateFormat.jms(locale.toLanguageTag()).format(date);
   }

@@ -11,6 +11,7 @@ import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
 import 'package:storypad/widgets/bottom_sheets/sp_discover_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart' show SpAppLockWrapper;
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart' show SpDotLottieBuilder;
+import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
 import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;

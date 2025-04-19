@@ -20,7 +20,7 @@ class SpDiscoverSheet extends BaseBottomSheet {
     } else {
       return DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.8,
+        initialChildSize: 0.9,
         builder: (context, controller) {
           return PrimaryScrollController(
             controller: controller,

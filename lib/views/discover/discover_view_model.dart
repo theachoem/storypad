@@ -7,18 +7,10 @@ import 'package:storypad/views/discover/segments/discover_relax_sounds_content.d
 import 'package:storypad/views/discover/segments/discover_search_content.dart';
 import 'discover_view.dart';
 
-class _Page {
-  final String id;
-  final String tooltip;
-  final IconData icon;
-  final Widget page;
-
-  _Page({
-    required this.id,
-    required this.tooltip,
-    required this.icon,
-    required this.page,
-  });
+enum DiscoverSegmentId {
+  search,
+  calendar,
+  relaxSounds,
 }
 
 class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -31,19 +23,19 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
   List<_Page> pages() {
     return [
       _Page(
-        id: "search",
+        id: DiscoverSegmentId.search,
         tooltip: "Search",
         icon: Icons.search_outlined,
         page: const DiscoverSearchContent(),
       ),
       _Page(
-        id: "calendar",
+        id: DiscoverSegmentId.calendar,
         tooltip: "Calendar",
         icon: Icons.calendar_month_outlined,
         page: const DiscoverCalendarContent(),
       ),
       _Page(
-        id: "relax_sounds",
+        id: DiscoverSegmentId.relaxSounds,
         tooltip: "Relax Sounds",
         icon: Icons.music_note_outlined,
         page: const DiscoverRelaxSoundsContent(),
@@ -51,12 +43,30 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
     ];
   }
 
-  String _selectedPage = "search";
-  String get selectedPage => _selectedPage;
+  Set<DiscoverSegmentId> useToSelectedPages = {};
+  bool shouldMaintainState(DiscoverSegmentId id) => useToSelectedPages.contains(id);
+
+  DiscoverSegmentId _selectedPage = DiscoverSegmentId.relaxSounds;
+  DiscoverSegmentId get selectedPage => _selectedPage;
   int get selectedIndex => pages().indexWhere((page) => page.id == _selectedPage);
 
-  void switchSelectedPage(String value) {
+  void switchSelectedPage(DiscoverSegmentId value) {
     _selectedPage = value;
+    useToSelectedPages.add(value);
     notifyListeners();
   }
+}
+
+class _Page {
+  final DiscoverSegmentId id;
+  final String tooltip;
+  final IconData icon;
+  final Widget page;
+
+  _Page({
+    required this.id,
+    required this.tooltip,
+    required this.icon,
+    required this.page,
+  });
 }

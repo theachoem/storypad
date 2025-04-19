@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "海の波",
   "sounds.rain_on_window": "窓に雨が降る",
   "sounds.river_stream": "川の流れ",
-  "sounds.thunder": "雷"
+  "sounds.thunder": "雷",
+  "general.stop_in_args": "{TIMER}で停止"
 }

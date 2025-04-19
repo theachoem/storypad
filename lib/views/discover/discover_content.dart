@@ -20,7 +20,7 @@ class _DiscoverContent extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 12.0),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             width: double.infinity,
-            child: SegmentedButton<String>(
+            child: SegmentedButton<DiscoverSegmentId>(
               selected: {viewModel.selectedPage},
               multiSelectionEnabled: false,
               onSelectionChanged: (value) => viewModel.switchSelectedPage(value.first),
@@ -38,16 +38,18 @@ class _DiscoverContent extends StatelessWidget {
       ),
       body: IndexedStack(
         index: viewModel.selectedIndex,
-        children: viewModel.pages().map((e) {
-          return AnimatedContainer(
-            curve: Curves.ease,
-            transformAlignment: Alignment.center,
-            transform: Matrix4.identity()..translate(0.0, e.id == viewModel.selectedPage ? 0.0 : 12.0),
-            duration: Durations.long1,
-            child: AnimatedOpacity(
-              opacity: e.id == viewModel.selectedPage ? 1.0 : 0.0,
-              duration: Durations.long2,
-              child: e.page,
+        children: viewModel.pages().map((page) {
+          bool selected = page.id == viewModel.selectedPage;
+
+          return Visibility(
+            visible: selected,
+            maintainState: viewModel.shouldMaintainState(page.id),
+            child: AnimatedContainer(
+              curve: Curves.fastLinearToSlowEaseIn,
+              transformAlignment: Alignment.center,
+              transform: Matrix4.identity()..translate(selected ? 0.0 : 12.0, 0.0),
+              duration: Durations.long1,
+              child: page.page,
             ),
           );
         }).toList(),

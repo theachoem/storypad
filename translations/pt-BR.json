@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Ondas do oceano",
   "sounds.rain_on_window": "Chuva na janela",
   "sounds.river_stream": "Córrego do rio",
-  "sounds.thunder": "Trovão"
+  "sounds.thunder": "Trovão",
+  "general.stop_in_args": "Pare em {TIMER}"
 }

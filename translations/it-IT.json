@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Onde dell'oceano",
   "sounds.rain_on_window": "Pioggia sulla finestra",
   "sounds.river_stream": "Flusso del fiume",
-  "sounds.thunder": "Tuono"
+  "sounds.thunder": "Tuono",
+  "general.stop_in_args": "Interrompi tra {TIMER}"
 }

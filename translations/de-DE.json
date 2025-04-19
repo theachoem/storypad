@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Meereswellen",
   "sounds.rain_on_window": "Regen am Fenster",
   "sounds.river_stream": "Flussbach",
-  "sounds.thunder": "Donner"
+  "sounds.thunder": "Donner",
+  "general.stop_in_args": "Stoppen Sie in {TIMER}"
 }

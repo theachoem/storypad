@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Ocean waves",
   "sounds.rain_on_window": "Rain on window",
   "sounds.river_stream": "River stream",
-  "sounds.thunder": "Thunder"
+  "sounds.thunder": "Thunder",
+  "general.stop_in_args": "Stop in {TIMER}"
 }

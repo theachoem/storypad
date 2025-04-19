@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Gelombang laut",
   "sounds.rain_on_window": "Hujan di jendela",
   "sounds.river_stream": "Aliran sungai",
-  "sounds.thunder": "Guruh"
+  "sounds.thunder": "Guruh",
+  "general.stop_in_args": "Berhenti pukul {TIMER}"
 }

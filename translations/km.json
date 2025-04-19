@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "រលកសមុទ្រ",
   "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
   "sounds.river_stream": "ស្ទ្រីមទន្លេ",
-  "sounds.thunder": "ផ្គរលាន់"
+  "sounds.thunder": "ផ្គរលាន់",
+  "general.stop_in_args": "ឈប់នៅម៉ោង {TIMER}"
 }

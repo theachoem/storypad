@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "海浪",
   "sounds.rain_on_window": "雨打在窗户上",
   "sounds.river_stream": "河流溪流",
-  "sounds.thunder": "雷"
+  "sounds.thunder": "雷",
+  "general.stop_in_args": "停在{TIMER}"
 }

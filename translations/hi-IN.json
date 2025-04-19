@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "सागर की लहरें",
   "sounds.rain_on_window": "खिड़की पर बारिश",
   "sounds.river_stream": "नदी की धारा",
-  "sounds.thunder": "गड़गड़ाहट"
+  "sounds.thunder": "गड़गड़ाहट",
+  "general.stop_in_args": "{TIMER} में रुकें"
 }

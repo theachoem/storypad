@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "أمواج المحيط",
   "sounds.rain_on_window": "المطر على النافذة",
   "sounds.river_stream": "تيار النهر",
-  "sounds.thunder": "رعد"
+  "sounds.thunder": "رعد",
+  "general.stop_in_args": "توقف عند {TIMER}"
 }

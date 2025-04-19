@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "Fale oceanu",
   "sounds.rain_on_window": "Deszcz na oknie",
   "sounds.river_stream": "Strumień rzeki",
-  "sounds.thunder": "Grzmot"
+  "sounds.thunder": "Grzmot",
+  "general.stop_in_args": "Zatrzymaj się za {TIMER}"
 }

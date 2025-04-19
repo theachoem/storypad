@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "olas del mar",
   "sounds.rain_on_window": "Lluvia en la ventana",
   "sounds.river_stream": "corriente del río",
-  "sounds.thunder": "Trueno"
+  "sounds.thunder": "Trueno",
+  "general.stop_in_args": "Deténgase en {TIMER}"
 }

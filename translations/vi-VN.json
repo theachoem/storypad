@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "sóng biển",
   "sounds.rain_on_window": "Mưa trên cửa sổ",
   "sounds.river_stream": "Dòng sông",
-  "sounds.thunder": "Sấm sét"
+  "sounds.thunder": "Sấm sét",
+  "general.stop_in_args": "Dừng lại sau {TIMER}"
 }

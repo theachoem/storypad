@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "คลื่นทะเล",
   "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
   "sounds.river_stream": "ลำธารแม่น้ำ",
-  "sounds.thunder": "ฟ้าร้อง"
+  "sounds.thunder": "ฟ้าร้อง",
+  "general.stop_in_args": "หยุดใน {TIMER}"
 }

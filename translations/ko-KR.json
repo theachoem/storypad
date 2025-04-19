@@ -315,5 +315,6 @@
   "sounds.ocean_waves": "바다의 파도",
   "sounds.rain_on_window": "창문에 비",
   "sounds.river_stream": "강물",
-  "sounds.thunder": "우뢰"
+  "sounds.thunder": "우뢰",
+  "general.stop_in_args": "{TIMER} 후에 중지"
 }
