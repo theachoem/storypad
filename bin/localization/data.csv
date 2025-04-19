@@ -222,6 +222,7 @@ Hãy thử xem 📖✨
 
 尝试一下吧📖✨
 {网址}"
+general.stop_in_args,Stop in {TIMER},توقف عند {TIMER},Stoppen Sie in {TIMER},Deténgase en {TIMER},Deténgase en {TIMER},Arrêtez-vous dans {TIMER},{TIMER} में रुकें,Berhenti pukul {TIMER},Interrompi tra {TIMER},{TIMER}で停止,ឈប់នៅម៉ោង {TIMER},{TIMER} 후에 중지,Zatrzymaj się za {TIMER},Pare em {TIMER},หยุดใน {TIMER},Dừng lại sau {TIMER},停在{TIMER}
 general.stories,Stories,قصص,Geschichten,Historias,Historias,Histoires,कहानियां,Cerita,Storie,ストーリー,រឿង,스토리,Historie,Histórias,เรื่องราว,Truyện,故事
 general.syncing,Syncing...,جارٍ المزامنة...,Synchronisierung...,Sincronizando...,Sincronizando...,Synchronisation...,सिंक हो रहा है...,Menyinkronkan...,Sincronizzazione...,同期中...,កំពុង​ធ្វើ​សមកាលកម្ម...,동기화 중...,Synchronizowanie...,Sincronizando...,กำลังซิงค์...,Đang đồng bộ hóa...,正在同步...
 general.tags,Tags,العلامات,Schlagworte,Etiquetas,Etiquetas,Balises,टैग,Tag,Tag,タグ,ស្លាក,태그,Tagi,Etiquetas,แท็ก,Thẻ,标签
@@ -367,4 +368,3 @@ sounds.ocean_waves,Ocean waves,أمواج المحيط,Meereswellen,olas del mar
 sounds.rain_on_window,Rain on window,المطر على النافذة,Regen am Fenster,Lluvia en la ventana,Lluvia en la ventana,Pluie sur la fenêtre,खिड़की पर बारिश,Hujan di jendela,Pioggia sulla finestra,窓に雨が降る,ភ្លៀងនៅលើបង្អួច,창문에 비,Deszcz na oknie,Chuva na janela,ฝนตกที่หน้าต่าง,Mưa trên cửa sổ,雨打在窗户上
 sounds.river_stream,River stream,تيار النهر,Flussbach,corriente del río,corriente del río,Ruisseau de rivière,नदी की धारा,Aliran sungai,Flusso del fiume,川の流れ,ស្ទ្រីមទន្លេ,강물,Strumień rzeki,Córrego do rio,ลำธารแม่น้ำ,Dòng sông,河流溪流
 sounds.thunder,Thunder,رعد,Donner,Trueno,Trueno,Tonnerre,गड़गड़ाहट,Guruh,Tuono,雷,ផ្គរលាន់,우뢰,Grzmot,Trovão,ฟ้าร้อง,Sấm sét,雷
-general.stop_in_args,Stop in {TIMER},توقف عند {TIMER},Stoppen Sie in {TIMER},Deténgase en {TIMER},Deténgase en {TIMER},Arrêtez-vous dans {TIMER},{TIMER} में रुकें,Berhenti pukul {TIMER},Interrompi tra {TIMER},{TIMER}で停止,ឈប់នៅម៉ោង {TIMER},{TIMER} 후에 중지,Zatrzymaj się za {TIMER},Pare em {TIMER},หยุดใน {TIMER},Dừng lại sau {TIMER},停在{TIMER}

@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "あなたの最初のペットの名前は何ですか?",
   "general.security_question.name_of_your_first_teacher": "最初の先生の名前は何ですか?",
   "general.share_app_sample_text": "私は {APP_NAME} を使用して、良い日も悪い日も、その中間のすべてのストーリーや日記を書いています。 ぜひ試してみてください📖✨ {URL}",
+  "general.stop_in_args": "{TIMER}で停止",
   "general.stories": "ストーリー",
   "general.syncing": "同期中...",
   "general.tags": "タグ",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "海の波",
   "sounds.rain_on_window": "窓に雨が降る",
   "sounds.river_stream": "川の流れ",
-  "sounds.thunder": "雷",
-  "general.stop_in_args": "{TIMER}で停止"
+  "sounds.thunder": "雷"
 }

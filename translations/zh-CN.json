@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "你的第一只宠物叫什么名字？",
   "general.security_question.name_of_your_first_teacher": "你的第一位老师叫什么名字？",
   "general.share_app_sample_text": "我正在使用 {APP_NAME} 来写我的故事和日记 - 美好的日子、糟糕的日子以及介于两者之间的一切。\n\n尝试一下吧📖✨\n{网址}",
+  "general.stop_in_args": "停在{TIMER}",
   "general.stories": "故事",
   "general.syncing": "正在同步...",
   "general.tags": "标签",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "海浪",
   "sounds.rain_on_window": "雨打在窗户上",
   "sounds.river_stream": "河流溪流",
-  "sounds.thunder": "雷",
-  "general.stop_in_args": "停在{TIMER}"
+  "sounds.thunder": "雷"
 }

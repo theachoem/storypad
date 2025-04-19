@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "Jak ma na imię Twoje pierwsze zwierzątko?",
   "general.security_question.name_of_your_first_teacher": "Jak ma na imię Twój pierwszy nauczyciel?",
   "general.share_app_sample_text": "Używam aplikacji {APP_NAME} do pisania historii i pamiętników – dobrych i złych dni i wszystkiego pomiędzy.\n\nSpróbuj 📖✨\n{URL}",
+  "general.stop_in_args": "Zatrzymaj się za {TIMER}",
   "general.stories": "Historie",
   "general.syncing": "Synchronizowanie...",
   "general.tags": "Tagi",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "Fale oceanu",
   "sounds.rain_on_window": "Deszcz na oknie",
   "sounds.river_stream": "Strumień rzeki",
-  "sounds.thunder": "Grzmot",
-  "general.stop_in_args": "Zatrzymaj się za {TIMER}"
+  "sounds.thunder": "Grzmot"
 }

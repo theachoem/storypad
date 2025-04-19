@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "Quel est le nom de votre premier animal de compagnie ?",
   "general.security_question.name_of_your_first_teacher": "Quel est le nom de votre premier professeur ?",
   "general.share_app_sample_text": "J'utilise {APP_NAME} pour écrire mes histoires et mes journaux : bons jours, mauvais jours et tout le reste.\nEssayez-le 📖✨\n{URL}",
+  "general.stop_in_args": "Arrêtez-vous dans {TIMER}",
   "general.stories": "Histoires",
   "general.syncing": "Synchronisation...",
   "general.tags": "Balises",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "Vagues de l'océan",
   "sounds.rain_on_window": "Pluie sur la fenêtre",
   "sounds.river_stream": "Ruisseau de rivière",
-  "sounds.thunder": "Tonnerre",
-  "general.stop_in_args": "Arrêtez-vous dans {TIMER}"
+  "sounds.thunder": "Tonnerre"
 }

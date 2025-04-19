@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "តើសត្វចិញ្ចឹមដំបូងរបស់អ្នកមានឈ្មោះអ្វី?",
   "general.security_question.name_of_your_first_teacher": "តើគ្រូដំបូងរបស់អ្នកឈ្មោះអ្វី?",
   "general.share_app_sample_text": "ខ្ញុំកំពុងប្រើ {APP_NAME} ដើម្បីសរសេររឿង និងកំណត់ហេតុប្រចាំថ្ងៃរបស់ខ្ញុំ—ថ្ងៃល្អ ថ្ងៃអាក្រក់ និងអ្វីៗដែលនៅចន្លោះនោះ។\n\nសាកល្បងប្រើ 📖✨\n{URL}",
+  "general.stop_in_args": "ឈប់នៅម៉ោង {TIMER}",
   "general.stories": "រឿង",
   "general.syncing": "កំពុង​ធ្វើ​សមកាលកម្ម...",
   "general.tags": "ស្លាក",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "រលកសមុទ្រ",
   "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
   "sounds.river_stream": "ស្ទ្រីមទន្លេ",
-  "sounds.thunder": "ផ្គរលាន់",
-  "general.stop_in_args": "ឈប់នៅម៉ោង {TIMER}"
+  "sounds.thunder": "ផ្គរលាន់"
 }

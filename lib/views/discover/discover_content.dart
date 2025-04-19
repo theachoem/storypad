@@ -9,15 +9,19 @@ class _DiscoverContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        automaticallyImplyLeading: false,
+        toolbarHeight: kToolbarHeight,
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size(double.infinity, 48.0 + 12.0),
+        bottom: CupertinoSheetRoute.hasParentSheet(context)
+            ? const PreferredSize(preferredSize: Size.fromHeight(48), child: SizedBox())
+            : null,
+        flexibleSpace: Align(
+          alignment: Alignment.bottomCenter,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 12.0),
+            margin: const EdgeInsets.only(bottom: 4.0),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             width: double.infinity,
             child: SegmentedButton<DiscoverSegmentId>(

@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "สัตว์เลี้ยงตัวแรกของคุณชื่ออะไร?",
   "general.security_question.name_of_your_first_teacher": "ครูคนแรกของคุณชื่ออะไร?",
   "general.share_app_sample_text": "ฉันใช้ {APP_NAME} เพื่อเขียนเรื่องราวและไดอารี่ ไม่ว่าจะเป็นวันดีๆ วันที่แย่ และอื่นๆ อีกมากมาย\n\nลองดูสิ 📖✨\n{URL}",
+  "general.stop_in_args": "หยุดใน {TIMER}",
   "general.stories": "เรื่องราว",
   "general.syncing": "กำลังซิงค์...",
   "general.tags": "แท็ก",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "คลื่นทะเล",
   "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
   "sounds.river_stream": "ลำธารแม่น้ำ",
-  "sounds.thunder": "ฟ้าร้อง",
-  "general.stop_in_args": "หยุดใน {TIMER}"
+  "sounds.thunder": "ฟ้าร้อง"
 }

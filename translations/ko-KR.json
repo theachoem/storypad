@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "첫 반려동물 이름은 무엇인가요?",
   "general.security_question.name_of_your_first_teacher": "첫 선생님 이름은 무엇인가요?",
   "general.share_app_sample_text": "좋은 날도, 힘든 날도, 그리고 그 사이의 모든 순간도\n저는 {APP_NAME}으로 이야기를 기록하고 있어요.\n\n당신도 한 번 써보세요 📖✨\n{URL}",
+  "general.stop_in_args": "{TIMER} 후에 중지",
   "general.stories": "스토리",
   "general.syncing": "동기화 중...",
   "general.tags": "태그",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "바다의 파도",
   "sounds.rain_on_window": "창문에 비",
   "sounds.river_stream": "강물",
-  "sounds.thunder": "우뢰",
-  "general.stop_in_args": "{TIMER} 후에 중지"
+  "sounds.thunder": "우뢰"
 }

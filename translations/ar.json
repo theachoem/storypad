@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "ما هو اسم حيوانك الأليف الأول؟",
   "general.security_question.name_of_your_first_teacher": "ما هو اسم معلمك الأول؟",
   "general.share_app_sample_text": "أنا أستخدم {APP_NAME} لكتابة قصصي ومذكراتي — الأيام الجيدة والأيام السيئة وكل شيء بينهما.\n\nجربها 📖✨\n{عنوان URL}",
+  "general.stop_in_args": "توقف عند {TIMER}",
   "general.stories": "قصص",
   "general.syncing": "جارٍ المزامنة...",
   "general.tags": "العلامات",
@@ -315,6 +316,5 @@
   "sounds.ocean_waves": "أمواج المحيط",
   "sounds.rain_on_window": "المطر على النافذة",
   "sounds.river_stream": "تيار النهر",
-  "sounds.thunder": "رعد",
-  "general.stop_in_args": "توقف عند {TIMER}"
+  "sounds.thunder": "رعد"
 }
