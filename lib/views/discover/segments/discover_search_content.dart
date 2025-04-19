@@ -93,7 +93,7 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
   }
 
   Widget buildBody() {
-    if (!loaded) return const CircularProgressIndicator.adaptive();
+    if (!loaded) return const Center(child: CircularProgressIndicator.adaptive());
 
     return SpStoryList.withQuery(
       filter: searchFilter,
@@ -106,6 +106,7 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        const SizedBox(height: 4.0),
         if (years?.isNotEmpty == true) ...[
           SpSectionTitle(title: tr("general.years")),
           buildYears(context),

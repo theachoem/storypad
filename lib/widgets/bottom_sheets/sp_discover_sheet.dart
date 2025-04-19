@@ -18,9 +18,11 @@ class SpDiscoverSheet extends BaseBottomSheet {
     if (kIsCupertino) {
       return DiscoverView(params: params);
     } else {
+      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
       return DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.9,
+        maxChildSize: maxChildSize,
+        initialChildSize: maxChildSize,
         builder: (context, controller) {
           return PrimaryScrollController(
             controller: controller,

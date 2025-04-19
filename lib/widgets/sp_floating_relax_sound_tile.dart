@@ -28,9 +28,8 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
-    if (provider.lastSelectedSound == null) return const SizedBox.shrink();
-
-    Color backgroundColor = ColorFromDayService(context: context).get(provider.lastSelectedSound!.dayColor)!;
+    if (provider.selectedRelaxSounds.lastOrNull == null) return const SizedBox.shrink();
+    Color backgroundColor = ColorFromDayService(context: context).get(provider.selectedRelaxSounds.last.dayColor)!;
 
     return SpFadeIn.fromBottom(
       child: buildCardWithBackgrounds(
@@ -72,7 +71,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           );
         },
         child: Material(
-          key: ValueKey(provider.lastSelectedSound?.translationKey),
+          key: ValueKey(provider.selectedRelaxSounds.lastOrNull?.translationKey),
           elevation: 8.0,
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(radius),
@@ -143,7 +142,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (provider.stopIn != null)
+                if (provider.timerService.stopIn != null)
                   SpRefreshStateInDuration(
                     duration: const Duration(seconds: 1),
                     builder: (context) {
@@ -151,9 +150,9 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
                         2020,
                         1,
                         1,
-                        provider.stopIn!.inHours % 60,
-                        provider.stopIn!.inMinutes % 60,
-                        provider.stopIn!.inSeconds % 60,
+                        provider.timerService.stopIn!.inHours % 60,
+                        provider.timerService.stopIn!.inMinutes % 60,
+                        provider.timerService.stopIn!.inSeconds % 60,
                       );
 
                       return Text(
@@ -188,8 +187,8 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
 
   Future<void> showTimerPicker(RelaxSoundsProvider provider, BuildContext context) async {
     Duration initialStopTimer() {
-      if (provider.stopIn == null || provider.stopInEnded) return const Duration(minutes: 30);
-      return provider.stopIn!;
+      if (provider.timerService.stopIn == null || provider.timerService.ended) return const Duration(minutes: 30);
+      return provider.timerService.stopIn!;
     }
 
     final duration = await TimePickerService(

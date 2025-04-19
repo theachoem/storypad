@@ -48,13 +48,7 @@ class _DiscoverContent extends StatelessWidget {
           return Visibility(
             visible: selected,
             maintainState: viewModel.shouldMaintainState(page.id),
-            child: AnimatedContainer(
-              curve: Curves.fastLinearToSlowEaseIn,
-              transformAlignment: Alignment.center,
-              transform: Matrix4.identity()..translate(selected ? 0.0 : 12.0, 0.0),
-              duration: Durations.long1,
-              child: page.page,
-            ),
+            child: page.page,
           );
         }).toList(),
       ),
