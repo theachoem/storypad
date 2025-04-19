@@ -1,11 +1,7 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/storages/search_filter_storage.dart';
-import 'package:storypad/views/search/filter/search_filter_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_search_filter_bottom_sheet.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -31,24 +27,16 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }) {
     nickname = PreferenceDbModel.db.nickname.get();
 
-    loadSearchFilter().then((e) {
-      AnalyticsService.instance.logViewHome(year: currentSearchFilter.years.first);
-      reload(debugSource: 'HomeViewModel#_constructor');
+    AnalyticsService.instance.logViewHome(year: year);
+    reload(debugSource: 'HomeViewModel#_constructor');
 
-      RestoreBackupService.instance.addListener(() async {
-        reload(debugSource: '$runtimeType#_listenToRestoreService');
-      });
+    RestoreBackupService.instance.addListener(() async {
+      reload(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }
 
   String? nickname;
-
-  int get currentYear => DateTime.now().year;
-  int get year => currentSearchFilter.years.firstOrNull ?? currentYear;
-  int? get filteredTagId => currentSearchFilter.tagId;
-
-  bool get filtered =>
-      jsonEncode(currentSearchFilter.toDatabaseFilter()) != jsonEncode(initialSearchFilter.toDatabaseFilter());
+  int year = DateTime.now().year;
 
   CollectionDbModel<StoryDbModel>? _stories;
   CollectionDbModel<StoryDbModel>? get stories => _stories;
@@ -63,35 +51,23 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     return months;
   }
 
-  SearchFilterObject get initialSearchFilter => SearchFilterObject(
-        years: {currentYear},
-        types: {PathType.docs},
-        tagId: null,
-        assetId: null,
-      );
-
-  SearchFilterObject? _currentSearchFilter;
-  SearchFilterObject get currentSearchFilter => _currentSearchFilter ?? initialSearchFilter;
-
   Future<void> reload({
     required String debugSource,
   }) async {
     debugPrint('🚧 Reload home from $debugSource 🏠');
 
     nickname = PreferenceDbModel.db.nickname.get();
-    final stories = await StoryDbModel.db.where(filters: currentSearchFilter.toDatabaseFilter());
+    final stories = await StoryDbModel.db.where(
+      filters: SearchFilterObject(
+        years: {year},
+        types: {PathType.docs},
+        tagId: null,
+        assetId: null,
+      ).toDatabaseFilter(),
+    );
 
     setStories(stories);
     notifyListeners();
-  }
-
-  Future<void> loadSearchFilter() async {
-    _currentSearchFilter = await SearchFilterStorage().readObject() ?? initialSearchFilter;
-    _currentSearchFilter = _currentSearchFilter!.copyWith(types: {PathType.docs});
-
-    if (_currentSearchFilter?.years.isEmpty == true) {
-      _currentSearchFilter = _currentSearchFilter!.copyWith(years: {currentYear});
-    }
   }
 
   Future<void> refresh(BuildContext context) async {
@@ -102,37 +78,22 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> changeYear(int newYear) async {
     if (year == newYear) return;
 
-    _currentSearchFilter = currentSearchFilter.copyWith(years: {newYear});
+    year = newYear;
     await reload(debugSource: '$runtimeType#changeYear $newYear');
-    AnalyticsService.instance.logViewHome(year: year);
+
+    AnalyticsService.instance.logViewHome(
+      year: year,
+    );
   }
 
   Future<void> goToViewPage(BuildContext context, StoryDbModel story) async {
     await ShowStoryRoute(id: story.id, story: story).push(context);
   }
 
-  Future<void> goToFilter(BuildContext context, {bool save = false}) async {
-    final result = await SpSearchFilterBottomSheet(
-      params: SearchFilterRoute(
-        initialTune: currentSearchFilter,
-        resetTune: initialSearchFilter,
-        multiSelectYear: false,
-        filterTagModifiable: true,
-        allowSaveSearchFilter: false,
-      ),
-    ).show(context: context);
-
-    if (result is SearchFilterObject) {
-      _currentSearchFilter = result;
-      await reload(debugSource: '$runtimeType#goToFilter');
-    }
-  }
-
   Future<void> goToNewPage(BuildContext context) async {
     await EditStoryRoute(
       id: null,
       initialYear: year,
-      initialTagId: filteredTagId,
     ).push(context);
     await reload(debugSource: '$runtimeType#goToNewPage');
 
@@ -145,11 +106,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> openEndDrawer(BuildContext context) async {
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
-  }
-
-  Future<void> resetFilter() async {
-    _currentSearchFilter = initialSearchFilter;
-    await reload(debugSource: '$runtimeType#resetFilter');
   }
 
   void changeName(BuildContext context) async {
