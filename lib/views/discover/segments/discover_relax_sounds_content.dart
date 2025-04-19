@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
+import 'package:storypad/widgets/sp_cache_file_downloader_builder.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
+import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class DiscoverRelaxSoundsContent extends StatelessWidget {
@@ -95,14 +97,39 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
           color: selected ? ColorScheme.of(context).primary : Theme.of(context).dividerColor,
         ),
       ),
-      child: SvgPicture.asset(
-        "docs${relaxSound.svgIconPath}",
-        semanticsLabel: relaxSound.label,
-        height: 48,
-        colorFilter: ColorFilter.mode(
-          selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
-          BlendMode.srcIn,
-        ),
+      child: SpCacheFileDownloaderBuilder(
+        fileUrl: relaxSound.svgIconUrl,
+        builder: (context, file, failed) {
+          if (file == null) {
+            return SpLoopAnimationBuilder(
+              duration: const Duration(seconds: 1),
+              reverseDuration: const Duration(seconds: 1),
+              builder: (context, value, child) {
+                return SizedBox(
+                  height: 48,
+                  child: Icon(
+                    Icons.music_note_outlined,
+                    color: Color.lerp(
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.1),
+                      ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
+                      value,
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+
+          return SvgPicture.file(
+            file,
+            semanticsLabel: relaxSound.label,
+            height: 48,
+            colorFilter: ColorFilter.mode(
+              selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
+              BlendMode.srcIn,
+            ),
+          );
+        },
       ),
     );
   }
