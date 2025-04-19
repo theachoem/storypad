@@ -1,7 +1,8 @@
-part of '../search_filter_view.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 
-class _ScrollableChoiceChips<T> extends StatelessWidget {
-  const _ScrollableChoiceChips({
+class SpScrollableChoiceChips<T> extends StatelessWidget {
+  const SpScrollableChoiceChips({
     super.key,
     required this.choices,
     required this.storiesCount,

@@ -301,5 +301,20 @@
   "snack_bar.force_restore_success": "ข้อมูลสำรองถูกกู้คืนแล้ว!",
   "snack_bar.move_to_bin_success": "ย้ายไปถังขยะ!",
   "snack_bar.put_back_success": "กลับบ้าน!",
-  "snack_bar.restore_individual_success": "ฟื้นเรื่องราวแล้ว!"
+  "snack_bar.restore_individual_success": "ฟื้นเรื่องราวแล้ว!",
+  "sounds.category.animal": "สัตว์",
+  "sounds.category.forest": "ป่า",
+  "sounds.category.rainy": "ฝนตก",
+  "sounds.category.water": "น้ำ",
+  "sounds.droplets": "ละอองฝอย",
+  "sounds.forest_birds": "นกป่า",
+  "sounds.frogs": "กบ",
+  "sounds.heavy_rain": "ฝนตกหนัก",
+  "sounds.light_rain": "ฝนตกปรอยๆ",
+  "sounds.night_crickets": "จิ้งหรีดกลางคืน",
+  "sounds.ocean_waves": "คลื่นทะเล",
+  "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
+  "sounds.river_stream": "ลำธารแม่น้ำ",
+  "sounds.thunder": "ฟ้าร้อง",
+  "general.stop_in_args": "หยุดใน {TIMER}"
 }

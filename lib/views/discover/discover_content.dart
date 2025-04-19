@@ -1,0 +1,59 @@
+part of 'discover_view.dart';
+
+class _DiscoverContent extends StatelessWidget {
+  const _DiscoverContent(this.viewModel);
+
+  final DiscoverViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size(double.infinity, 48.0 + 12.0),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            width: double.infinity,
+            child: SegmentedButton<DiscoverSegmentId>(
+              selected: {viewModel.selectedPage},
+              multiSelectionEnabled: false,
+              onSelectionChanged: (value) => viewModel.switchSelectedPage(value.first),
+              showSelectedIcon: false,
+              segments: viewModel.pages().map((e) {
+                return ButtonSegment(
+                  value: e.id,
+                  tooltip: e.tooltip,
+                  icon: Icon(e.icon),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+      body: IndexedStack(
+        index: viewModel.selectedIndex,
+        children: viewModel.pages().map((page) {
+          bool selected = page.id == viewModel.selectedPage;
+
+          return Visibility(
+            visible: selected,
+            maintainState: viewModel.shouldMaintainState(page.id),
+            child: AnimatedContainer(
+              curve: Curves.fastLinearToSlowEaseIn,
+              transformAlignment: Alignment.center,
+              transform: Matrix4.identity()..translate(selected ? 0.0 : 12.0, 0.0),
+              duration: Durations.long1,
+              child: page.page,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}

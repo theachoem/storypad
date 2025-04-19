@@ -301,5 +301,20 @@
   "snack_bar.force_restore_success": "Bản sao lưu đã được khôi phục!",
   "snack_bar.move_to_bin_success": "Đã chuyển vào thùng rác!",
   "snack_bar.put_back_success": "Trở về nhà!",
-  "snack_bar.restore_individual_success": "Truyện được khôi phục!"
+  "snack_bar.restore_individual_success": "Truyện được khôi phục!",
+  "sounds.category.animal": "Động vật",
+  "sounds.category.forest": "Rừng",
+  "sounds.category.rainy": "Có mưa",
+  "sounds.category.water": "Nước",
+  "sounds.droplets": "Giọt bắn",
+  "sounds.forest_birds": "Chim rừng",
+  "sounds.frogs": "ếch",
+  "sounds.heavy_rain": "mưa lớn",
+  "sounds.light_rain": "Mưa nhẹ",
+  "sounds.night_crickets": "dế đêm",
+  "sounds.ocean_waves": "sóng biển",
+  "sounds.rain_on_window": "Mưa trên cửa sổ",
+  "sounds.river_stream": "Dòng sông",
+  "sounds.thunder": "Sấm sét",
+  "general.stop_in_args": "Dừng lại sau {TIMER}"
 }

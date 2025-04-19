@@ -301,5 +301,20 @@
   "snack_bar.force_restore_success": "Il backup è stato ripristinato!",
   "snack_bar.move_to_bin_success": "Spostato nel cestino!",
   "snack_bar.put_back_success": "Di nuovo a casa!",
-  "snack_bar.restore_individual_success": "Storia ripristinata!"
+  "snack_bar.restore_individual_success": "Storia ripristinata!",
+  "sounds.category.animal": "Animale",
+  "sounds.category.forest": "Foresta",
+  "sounds.category.rainy": "Piovoso",
+  "sounds.category.water": "Acqua",
+  "sounds.droplets": "Goccioline",
+  "sounds.forest_birds": "Uccelli della foresta",
+  "sounds.frogs": "Rane",
+  "sounds.heavy_rain": "Pioggia forte",
+  "sounds.light_rain": "Pioggia leggera",
+  "sounds.night_crickets": "Grilli notturni",
+  "sounds.ocean_waves": "Onde dell'oceano",
+  "sounds.rain_on_window": "Pioggia sulla finestra",
+  "sounds.river_stream": "Flusso del fiume",
+  "sounds.thunder": "Tuono",
+  "general.stop_in_args": "Interrompi tra {TIMER}"
 }

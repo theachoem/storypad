@@ -301,5 +301,20 @@
   "snack_bar.force_restore_success": "Backup ist wiederhergestellt!",
   "snack_bar.move_to_bin_success": "In den Papierkorb verschoben!",
   "snack_bar.put_back_success": "Zurück zu Hause!",
-  "snack_bar.restore_individual_success": "Geschichte wiederhergestellt!"
+  "snack_bar.restore_individual_success": "Geschichte wiederhergestellt!",
+  "sounds.category.animal": "Tier",
+  "sounds.category.forest": "Wald",
+  "sounds.category.rainy": "Regnerisch",
+  "sounds.category.water": "Wasser",
+  "sounds.droplets": "Tröpfchen",
+  "sounds.forest_birds": "Waldvögel",
+  "sounds.frogs": "Frösche",
+  "sounds.heavy_rain": "Starker Regen",
+  "sounds.light_rain": "Leichter Regen",
+  "sounds.night_crickets": "Nachtgrillen",
+  "sounds.ocean_waves": "Meereswellen",
+  "sounds.rain_on_window": "Regen am Fenster",
+  "sounds.river_stream": "Flussbach",
+  "sounds.thunder": "Donner",
+  "general.stop_in_args": "Stoppen Sie in {TIMER}"
 }

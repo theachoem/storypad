@@ -48,8 +48,9 @@ class _HomeContent extends StatelessWidget {
     return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
+        if (!state.editing) return const SpFloatingRelaxSoundsTile(fromHome: true);
         return SpMultiEditBottomNavBar(
-          editing: state.editing,
+          editing: true,
           onCancel: () => state.turnOffEditing(),
           buttons: [
             OutlinedButton(

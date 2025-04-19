@@ -301,5 +301,20 @@
   "snack_bar.force_restore_success": "ការបម្រុងទុកត្រូវបានស្ដារឡើងវិញ!",
   "snack_bar.move_to_bin_success": "ផ្លាស់ទីទៅធុង!",
   "snack_bar.put_back_success": "ចូលផ្ទះវិញហើយ!",
-  "snack_bar.restore_individual_success": "រឿង​បាន​ស្ដារ​ឡើង​វិញ!"
+  "snack_bar.restore_individual_success": "រឿង​បាន​ស្ដារ​ឡើង​វិញ!",
+  "sounds.category.animal": "សត្វ",
+  "sounds.category.forest": "ព្រៃ",
+  "sounds.category.rainy": "ភ្លៀង",
+  "sounds.category.water": "ទឹក។",
+  "sounds.droplets": "ដំណក់ទឹក",
+  "sounds.forest_birds": "បក្សីព្រៃ",
+  "sounds.frogs": "កង្កែប",
+  "sounds.heavy_rain": "ភ្លៀងធ្លាក់ខ្លាំង",
+  "sounds.light_rain": "ភ្លៀងស្រាល",
+  "sounds.night_crickets": "ចង្រិតពេលយប់",
+  "sounds.ocean_waves": "រលកសមុទ្រ",
+  "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
+  "sounds.river_stream": "ស្ទ្រីមទន្លេ",
+  "sounds.thunder": "ផ្គរលាន់",
+  "general.stop_in_args": "ឈប់នៅម៉ោង {TIMER}"
 }

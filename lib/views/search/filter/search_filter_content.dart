@@ -55,7 +55,7 @@ class _SearchFilterContent extends StatelessWidget {
   }
 
   Widget buildYears(BuildContext context) {
-    return _ScrollableChoiceChips<int>(
+    return SpScrollableChoiceChips<int>(
       wrapWidth: 800,
       choices: viewModel.years?.keys.toList() ?? [],
       storiesCount: (int year) => viewModel.years?[year],
@@ -66,7 +66,7 @@ class _SearchFilterContent extends StatelessWidget {
   }
 
   Widget buildTags(BuildContext context) {
-    return _ScrollableChoiceChips<TagDbModel>(
+    return SpScrollableChoiceChips<TagDbModel>(
       wrapWidth: 800,
       choices: viewModel.tags ?? [],
       storiesCount: (TagDbModel tag) => tag.storiesCount,

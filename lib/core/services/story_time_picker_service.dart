@@ -68,7 +68,7 @@ class StoryTimePickerService {
       context: context,
       builder: (BuildContext context) {
         return SpSingleStateWidget<TimeOfDay?>(
-          initialValue: null,
+          initialValue: TimeOfDay.fromDateTime(story.displayPathDate),
           builder: (context, notifier) {
             return Container(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
