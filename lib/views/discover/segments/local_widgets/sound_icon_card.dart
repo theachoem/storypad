@@ -4,12 +4,12 @@ class _SoundIconCard extends StatelessWidget {
   const _SoundIconCard({
     required this.relaxSound,
     required this.selected,
-    required this.downloading,
+    required this.settingUp,
   });
 
   final RelaxSoundObject relaxSound;
   final bool selected;
-  final bool downloading;
+  final bool settingUp;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _SoundIconCard extends StatelessWidget {
       child: SpCacheFileDownloaderBuilder(
         fileUrl: relaxSound.svgIconUrl,
         builder: (context, file, failed) {
-          if (downloading) {
+          if (settingUp) {
             return Container(
               height: 48,
               alignment: Alignment.center,

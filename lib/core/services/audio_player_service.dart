@@ -40,7 +40,9 @@ class AudioPlayerService {
 
   Future<void> play() async {
     await setup();
-    await _player.play();
+
+    // no need to wait for play.
+    _player.play();
   }
 
   Future<void> pause() async {

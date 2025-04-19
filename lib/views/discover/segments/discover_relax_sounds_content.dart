@@ -77,15 +77,12 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
   ) {
     return SpSingleStateWidget.listen(
       initialValue: false,
-      builder: (context, downloading, notifier) {
+      builder: (context, settingUp, notifier) {
         return SpTapEffect(
           effects: [SpTapEffectType.touchableOpacity],
           onTap: () async {
-            // We want to show loading only when it is not yet downloaded.
-            bool downloaded = await provider.audioPlayersService.downloaded(relaxSound.soundUrl);
-            if (!downloaded) notifier.value = true;
+            notifier.value = true;
             await provider.toggleSound(relaxSound);
-
             notifier.value = false;
           },
           child: Column(
@@ -95,7 +92,7 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
               _SoundIconCard(
                 relaxSound: relaxSound,
                 selected: selected,
-                downloading: downloading,
+                settingUp: settingUp,
               ),
               Text(
                 relaxSound.label,

@@ -49,6 +49,7 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
       await audioPlayersService.removeAnAudio(sound.soundUrl);
     } else {
       await audioPlayersService.playAnAudio(sound.soundUrl);
+      audioPlayersService.playAll();
     }
 
     notifyListeners();

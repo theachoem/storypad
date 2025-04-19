@@ -32,8 +32,7 @@ class MultiAudioPlayersService {
     _playingStates[url] ??= false;
     _players[url] ??= _constructAudioService(url, file);
 
-    // no need to wait for play.
-    _players[url]!.play();
+    await _players[url]!.play();
   }
 
   Future<void> removeAnAudio(String url) async {
@@ -55,9 +54,6 @@ class MultiAudioPlayersService {
       player.pause();
     }
   }
-
-  Future<bool> downloaded(String url) async =>
-      CachedNetworkImageProvider.defaultCacheManager.getFileFromCache(url).then((e) => e?.file != null);
 
   final TaskQueueService _queue = TaskQueueService();
   Future<File?> getSingleFile(String url) async {
