@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' show basename;
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/services/task_queue_service.dart';
 
 part 'google_auth_client.dart';
 
@@ -234,21 +235,28 @@ class GoogleDriveService {
     });
   }
 
+  final TaskQueueService _queueService = TaskQueueService();
   Future<T?> _execHandler<T>(Future<T?> Function() request) async {
-    requestCount++;
+    T? result;
 
-    return request().onError((e, stackTrace) async {
-      debugPrintStack(stackTrace: stackTrace);
+    await _queueService.addTask(() async {
+      requestCount++;
 
-      if (e is drive.DetailedApiRequestError) {
-        if (e.status == 401) {
-          await googleSignIn.signInSilently(reAuthenticate: true);
-          requestCount++;
-          return request();
+      result = await request().onError((e, stackTrace) async {
+        debugPrintStack(stackTrace: stackTrace);
+
+        if (e is drive.DetailedApiRequestError) {
+          if (e.status == 401) {
+            await googleSignIn.signInSilently(reAuthenticate: true);
+            requestCount++;
+            return request();
+          }
         }
-      }
 
-      return null;
+        return null;
+      });
     });
+
+    return result;
   }
 }

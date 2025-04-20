@@ -17,7 +17,7 @@ import 'package:storypad/core/services/backups/restore_backup_service.dart' show
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
-  final BaseBackupSource source = GoogleDriveBackupSource();
+  final GoogleDriveBackupSource source = GoogleDriveBackupSource();
 
   late final AssetBackupService assetBackupState = AssetBackupService(
     notifyListeners: notifyListeners,
