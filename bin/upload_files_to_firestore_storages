@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+export GOOGLE_APPLICATION_CREDENTIALS="service_account.json"
+
+cd bin/firebase_admin && node upload_files_to_firestore_storages.js

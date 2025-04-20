@@ -1,0 +1,15 @@
+{
+  "name": "firebase_admin",
+  "version": "1.0.0",
+  "main": "exec.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Manage Firestore",
+  "dependencies": {
+    "firebase-admin": "^13.2.0"
+  }
+}

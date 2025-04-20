@@ -27,6 +27,7 @@ class _HomeScaffold extends StatelessWidget {
       endDrawer: endDrawer,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
+      extendBody: true,
       body: Stack(
         children: [
           const SpSpStoryListTimelineVerticleDivider(),

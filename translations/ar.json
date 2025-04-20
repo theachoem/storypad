@@ -175,6 +175,7 @@
   "general.security_question.name_of_your_first_pet": "ما هو اسم حيوانك الأليف الأول؟",
   "general.security_question.name_of_your_first_teacher": "ما هو اسم معلمك الأول؟",
   "general.share_app_sample_text": "أنا أستخدم {APP_NAME} لكتابة قصصي ومذكراتي — الأيام الجيدة والأيام السيئة وكل شيء بينهما.\n\nجربها 📖✨\n{عنوان URL}",
+  "general.stop_in_args": "توقف عند {TIMER}",
   "general.stories": "قصص",
   "general.syncing": "جارٍ المزامنة...",
   "general.tags": "العلامات",
@@ -228,6 +229,7 @@
   "page.app_lock.title": "قفل التطبيق",
   "page.archive_or_bin.title": "المحفوظات / صناديق",
   "page.backups.title": "النسخ الاحتياطية",
+  "page.calendar.title": "تقويم",
   "page.community.title": "مجتمع",
   "page.edit_tag.title": "تحرير العلامة",
   "page.fonts.title": "الخطوط",
@@ -280,6 +282,7 @@
   "page.onboarding_step3.title": "حفظ إلى جوجل درايف",
   "page.onboarding_step4.description": "بياناتك ملكك وحدك. نحن لا نخزنها أو نشاركها.",
   "page.onboarding_step4.title": "قصصك، خصوصيتك",
+  "page.relax_sounds.title": "أصوات الاسترخاء",
   "page.search_filter.title": "فلتر",
   "page.search.title": "يبحث",
   "page.security_questions.info": "يُستخدم لإعادة ضبط رقم التعريف الشخصي (PIN) الخاص بك في حالة نسيانه.",
@@ -301,5 +304,19 @@
   "snack_bar.force_restore_success": "تمت استعادة النسخة الاحتياطية!",
   "snack_bar.move_to_bin_success": "تم النقل إلى سلة المهملات!",
   "snack_bar.put_back_success": "العودة إلى المنزل!",
-  "snack_bar.restore_individual_success": "تمت استعادة القصة!"
+  "snack_bar.restore_individual_success": "تمت استعادة القصة!",
+  "sounds.category.animal": "حيوان",
+  "sounds.category.forest": "غابة",
+  "sounds.category.rainy": "ممطر",
+  "sounds.category.water": "ماء",
+  "sounds.droplets": "قطرات الرذاذ",
+  "sounds.forest_birds": "طيور الغابة",
+  "sounds.frogs": "الضفادع",
+  "sounds.heavy_rain": "أمطار غزيرة",
+  "sounds.light_rain": "مطر خفيف",
+  "sounds.night_crickets": "الصراصير الليلية",
+  "sounds.ocean_waves": "أمواج المحيط",
+  "sounds.rain_on_window": "المطر على النافذة",
+  "sounds.river_stream": "تيار النهر",
+  "sounds.thunder": "رعد"
 }

@@ -27,6 +27,10 @@ class AppTheme extends StatelessWidget {
       context.read<ThemeProvider>().theme.colorSeed == Colors.black ||
       context.read<ThemeProvider>().theme.colorSeed == Colors.white;
 
+  static FontWeight getThemeFontWeight(BuildContext context, FontWeight fontWeight) {
+    return calculateFontWeight(fontWeight, context.read<ThemeProvider>().theme.fontWeight);
+  }
+
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
       return rtlValue;

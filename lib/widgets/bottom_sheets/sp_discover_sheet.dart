@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/views/search/filter/search_filter_view.dart';
+import 'package:storypad/views/discover/discover_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
-class SpSearchFilterBottomSheet extends BaseBottomSheet {
-  final SearchFilterRoute params;
+class SpDiscoverSheet extends BaseBottomSheet {
+  final DiscoverRoute params;
 
-  SpSearchFilterBottomSheet({
+  SpDiscoverSheet({
     required this.params,
   });
 
@@ -16,15 +16,17 @@ class SpSearchFilterBottomSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
     if (kIsCupertino) {
-      return SearchFilterView(params: params);
+      return DiscoverView(params: params);
     } else {
+      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
       return DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.8,
+        maxChildSize: maxChildSize,
+        initialChildSize: maxChildSize,
         builder: (context, controller) {
           return PrimaryScrollController(
             controller: controller,
-            child: SearchFilterView(params: params),
+            child: DiscoverView(params: params),
           );
         },
       );
