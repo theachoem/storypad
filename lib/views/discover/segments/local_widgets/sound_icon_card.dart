@@ -25,20 +25,9 @@ class _SoundIconCard extends StatelessWidget {
           color: selected ? ColorScheme.of(context).primary : Theme.of(context).dividerColor,
         ),
       ),
-      child: SpCacheFileDownloaderBuilder(
-        fileUrl: relaxSound.svgIconUrl,
+      child: SpFirestoreStorageDownloaderBuilder(
+        filePath: relaxSound.svgIconUrlPath,
         builder: (context, file, failed) {
-          if (settingUp) {
-            return Container(
-              height: 48,
-              alignment: Alignment.center,
-              child: const SizedBox.square(
-                dimension: 16.0,
-                child: CircularProgressIndicator.adaptive(),
-              ),
-            );
-          }
-
           if (file == null) {
             return SpLoopAnimationBuilder(
               duration: const Duration(seconds: 1),
@@ -59,13 +48,25 @@ class _SoundIconCard extends StatelessWidget {
             );
           }
 
-          return SvgPicture.file(
-            file,
-            semanticsLabel: relaxSound.label,
-            height: 48,
-            colorFilter: ColorFilter.mode(
-              selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
-              BlendMode.srcIn,
+          return SpAnimatedIcons.fadeScale(
+            showFirst: !settingUp,
+            duration: Durations.medium1,
+            secondChild: Container(
+              height: 48,
+              alignment: Alignment.center,
+              child: const SizedBox.square(
+                dimension: 16.0,
+                child: CircularProgressIndicator.adaptive(),
+              ),
+            ),
+            firstChild: SvgPicture.file(
+              file,
+              semanticsLabel: relaxSound.label,
+              height: 48,
+              colorFilter: ColorFilter.mode(
+                selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
+                BlendMode.srcIn,
+              ),
             ),
           );
         },

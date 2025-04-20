@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/services/audio_player_service.dart';
-import 'package:storypad/core/services/task_queue_service.dart';
+import 'package:storypad/core/services/firestore_storage_service.dart';
 
 class MultiAudioPlayersService {
   final void Function(bool playing) onStateChanged;
@@ -15,7 +14,7 @@ class MultiAudioPlayersService {
   final Map<String, AudioPlayerService> _players = {};
   final Map<String, bool> _playingStates = {};
 
-  List<String> get audioUrls => _players.keys.toList();
+  List<String> get audioUrlPaths => _players.keys.toList();
 
   bool exist(String url) => _players.keys.contains(url);
   double? getVolume(String soundUrl) => _players[soundUrl]?.getVolume();
@@ -25,8 +24,9 @@ class MultiAudioPlayersService {
     onStateChanged(_playingStates.values.every((playing) => playing));
   }
 
+  // make sure to download file from UI before playing.
   Future<void> playAnAudio(String url) async {
-    final file = await getSingleFile(url);
+    final file = await getCachedFile(url);
     if (file == null) return;
 
     _playingStates[url] ??= false;
@@ -55,18 +55,8 @@ class MultiAudioPlayersService {
     }
   }
 
-  final TaskQueueService _queue = TaskQueueService();
-  Future<File?> getSingleFile(String url) async {
-    await _queue.addTask(() async {
-      try {
-        await CachedNetworkImageProvider.defaultCacheManager.getSingleFile(url);
-      } catch (e) {
-        debugPrint("$runtimeType#getSingleFile failed");
-      }
-    });
-
-    return CachedNetworkImageProvider.defaultCacheManager.getFileFromCache(url).then((e) => e?.file);
-  }
+  Future<File?> getCachedFile(String path) => FirestoreStorageService.instance.getCachedFile(path);
+  Future<FirestoreStorageResponse> downloadFile(String path) => FirestoreStorageService.instance.downloadFile(path);
 
   AudioPlayerService _constructAudioService(String url, File file) {
     return AudioPlayerService(

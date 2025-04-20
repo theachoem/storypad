@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
@@ -28,7 +29,10 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
+
+    if (!kHasRelaxSoundsFeature) return const SizedBox.shrink();
     if (provider.selectedRelaxSounds.lastOrNull == null) return const SizedBox.shrink();
+
     Color backgroundColor = ColorFromDayService(context: context).get(provider.selectedRelaxSounds.last.dayColor)!;
 
     return SpFadeIn.fromBottom(

@@ -2,6 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
 import 'package:storypad/views/discover/segments/discover_relax_sounds_content.dart';
@@ -35,12 +36,13 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
         icon: Icons.calendar_month_outlined,
         page: const DiscoverCalendarContent(),
       ),
-      _Page(
-        id: DiscoverSegmentId.relaxSounds,
-        tooltip: tr("page.relax_sounds.title"),
-        icon: Icons.music_note_outlined,
-        page: const DiscoverRelaxSoundsContent(),
-      ),
+      if (kHasRelaxSoundsFeature)
+        _Page(
+          id: DiscoverSegmentId.relaxSounds,
+          tooltip: tr("page.relax_sounds.title"),
+          icon: Icons.music_note_outlined,
+          page: const DiscoverRelaxSoundsContent(),
+        ),
     ];
   }
 

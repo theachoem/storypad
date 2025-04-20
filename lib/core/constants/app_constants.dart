@@ -18,6 +18,8 @@ final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
 
+final bool kHasRelaxSoundsFeature = kStoryPad;
+
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;
 late final DeviceInfoObject kDeviceInfo;

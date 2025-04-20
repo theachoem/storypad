@@ -12,7 +12,7 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   List<RelaxSoundObject> get selectedRelaxSounds {
     return relaxSounds.where((e) {
-      return audioPlayersService.audioUrls.contains(e.soundUrl);
+      return audioPlayersService.audioUrlPaths.contains(e.soundUrlPath);
     }).toList();
   }
 
@@ -32,10 +32,10 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool _playing = false;
   bool get playing => _playing;
 
-  bool isSoundSelected(RelaxSoundObject sound) => audioPlayersService.exist(sound.soundUrl);
-  double? getVolume(RelaxSoundObject sound) => audioPlayersService.getVolume(sound.soundUrl);
+  bool isSoundSelected(RelaxSoundObject sound) => audioPlayersService.exist(sound.soundUrlPath);
+  double? getVolume(RelaxSoundObject sound) => audioPlayersService.getVolume(sound.soundUrlPath);
   void setVolumn(RelaxSoundObject sound, double volumn) {
-    audioPlayersService.setVolume(sound.soundUrl, volumn);
+    audioPlayersService.setVolume(sound.soundUrlPath, volumn);
     notifyListeners();
   }
 
@@ -45,10 +45,10 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> toggleSound(RelaxSoundObject sound) async {
-    if (audioPlayersService.exist(sound.soundUrl)) {
-      await audioPlayersService.removeAnAudio(sound.soundUrl);
+    if (isSoundSelected(sound)) {
+      await audioPlayersService.removeAnAudio(sound.soundUrlPath);
     } else {
-      await audioPlayersService.playAnAudio(sound.soundUrl);
+      await audioPlayersService.playAnAudio(sound.soundUrlPath);
       audioPlayersService.playAll();
     }
 

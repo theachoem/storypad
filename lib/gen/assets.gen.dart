@@ -458,9 +458,13 @@ class Assets {
   const Assets._();
 
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
+  static const String firestoreStorageMap = 'assets/firestore_storage_map.json';
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $TranslationsGen translations = $TranslationsGen();
+
+  /// List of all assets
+  static List<String> get values => [firestoreStorageMap];
 }
 
 class AssetGenImage {

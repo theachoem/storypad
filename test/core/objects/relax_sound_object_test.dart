@@ -9,11 +9,11 @@ void main() async {
     test('it make sure every translation, svg & music path is valid', () async {
       for (final sounds in RelaxSoundObject.defaultSounds().values) {
         for (final sound in sounds) {
-          bool soundFileExist = File("docs/${sound.svgIconPath}").existsSync();
-          bool iconFileExist = File("docs/${sound.svgIconPath}").existsSync();
+          bool soundFileExist = File("firestore_storages/${sound.svgIconUrlPath}").existsSync();
+          bool iconFileExist = File("firestore_storages/${sound.svgIconUrlPath}").existsSync();
           bool translationExist = trExists(sound.translationKey);
 
-          debugPrint('${sound.soundPath} | ${sound.svgIconPath}');
+          debugPrint('${sound.soundUrlPath} | ${sound.svgIconUrlPath}');
 
           expect(soundFileExist, true);
           expect(iconFileExist, true);

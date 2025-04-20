@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
+import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
-import 'package:storypad/widgets/sp_cache_file_downloader_builder.dart';
+import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
@@ -21,6 +25,8 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!kHasRelaxSoundsFeature) return const SizedBox.shrink();
+
     final provider = Provider.of<RelaxSoundsProvider>(context);
     List<RelaxSoundObject> relaxSounds = provider.relaxSounds;
 
@@ -81,7 +87,17 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
         return SpTapEffect(
           effects: [SpTapEffectType.touchableOpacity],
           onTap: () async {
-            notifier.value = true;
+            if (!selected) notifier.value = true;
+            if (await provider.audioPlayersService.getCachedFile(relaxSound.soundUrlPath) == null) {
+              FirestoreStorageResponse result =
+                  await provider.audioPlayersService.downloadFile(relaxSound.soundUrlPath);
+
+              if (result.unauthorized && context.mounted) {
+                MessengerService.of(context).showSnackBar('Authorized');
+                return;
+              }
+            }
+
             await provider.toggleSound(relaxSound);
             notifier.value = false;
           },
