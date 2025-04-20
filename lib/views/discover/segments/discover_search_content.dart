@@ -94,6 +94,7 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
 
   Widget buildBody() {
     if (!loaded) return const Center(child: CircularProgressIndicator.adaptive());
+    if (years?.values.every((e) => e == 0) == true) return const SizedBox.shrink();
 
     return SpStoryList.withQuery(
       filter: searchFilter,

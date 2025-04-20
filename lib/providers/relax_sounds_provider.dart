@@ -16,11 +16,17 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
     }).toList();
   }
 
-  late MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(onStateChanged: (playing) {
-    playing ? timerService.startIfNot() : timerService.pauseIfNot();
-    _playing = playing;
-
+  late MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(onStateChanged: (bool? playing) {
     debugPrint("🎸 MultiAudioPlayersService#onStateChanged playing: $playing");
+
+    if (playing != null) {
+      playing ? timerService.startIfNot() : timerService.pauseIfNot();
+      _playing = playing;
+    } else {
+      timerService.setStopIn(null);
+      timerService.pauseIfNot();
+    }
+
     notifyListeners();
   });
 

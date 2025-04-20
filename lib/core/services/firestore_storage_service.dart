@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -32,25 +31,33 @@ class FirestoreStorageService {
   static FirestoreStorageService instance = FirestoreStorageService();
   final TaskQueueService _queueDownload = TaskQueueService();
 
-  // input: /relax_sounds/animal/forest_birds.svg"
-  // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
-  Future<String> getHashPath(String originalFilePath) async {
-    final String jsonString = await rootBundle.loadString('assets/firestore_storage_map.json');
-    final Map<String, dynamic> jsonData = json.decode(jsonString);
-    return jsonData[originalFilePath];
+  Map<String, dynamic>? _hash;
+  FirestoreStorageService() {
+    rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
+      _hash = json.decode(jsonString);
+    });
   }
 
-  Future<File?> getCachedFile(String path) async {
-    String downloadPath = constructDownloadPath(path);
+  // input: /relax_sounds/animal/forest_birds.svg"
+  // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
+  Future<String> getHashPath(String originalUrlPath) async {
+    return _hash?[originalUrlPath];
+  }
+
+  Future<File?> getCachedFile(String urlPath) async {
+    final String hashPath = await getHashPath(urlPath);
+    final String downloadPath = constructDeviceDownloadPath(hashPath);
+
     if (File(downloadPath).existsSync()) return File(downloadPath);
+
     return null;
   }
 
-  Future<FirestoreStorageResponse> queueDownloadFile(String path) async {
+  Future<FirestoreStorageResponse> queueDownloadFile(String urlPath) async {
     FirestoreStorageResponse? response;
 
     await _queueDownload.addTask(() async {
-      response = await downloadFile(path);
+      response = await downloadFile(urlPath);
     });
 
     return response ?? FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
@@ -58,13 +65,15 @@ class FirestoreStorageService {
 
   // max download is 10mb, we will validate during uploading in:
   // bin/firebase_admin/upload_files_to_firestore_storages.js
-  Future<FirestoreStorageResponse> downloadFile(String path) async {
-    assert(path.startsWith("/"));
+  Future<FirestoreStorageResponse> downloadFile(String urlPath) async {
+    assert(urlPath.startsWith("/"));
 
     final storageRef = FirebaseStorage.instance.ref();
-    final childRef = storageRef.child(await getHashPath(path));
+    final String hashPath = await getHashPath(urlPath);
+    final String downloadPath = constructDeviceDownloadPath(hashPath);
 
-    String downloadPath = constructDownloadPath(path);
+    final childRef = storageRef.child(hashPath);
+
     if (File(downloadPath).existsSync()) return FirestoreStorageResponse(file: File(downloadPath));
     if (!File(downloadPath).parent.existsSync()) File(downloadPath).parent.createSync(recursive: true);
 
@@ -90,7 +99,7 @@ class FirestoreStorageService {
     return FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
   }
 
-  String constructDownloadPath(String path) {
+  String constructDeviceDownloadPath(String path) {
     return '${kSupportDirectory.path}/downloaded_from_firestore$path';
   }
 }

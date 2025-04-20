@@ -13,8 +13,8 @@ class RelaxSoundsTimerService {
   Duration? _stopIn;
   Duration? get stopIn => _stopIn;
 
-  void setStopIn(Duration duration) {
-    if (duration <= Duration.zero) {
+  void setStopIn(Duration? duration) {
+    if (duration == null || duration <= Duration.zero) {
       _stopIn = null;
       return;
     }

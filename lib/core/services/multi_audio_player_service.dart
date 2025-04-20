@@ -5,7 +5,7 @@ import 'package:storypad/core/services/audio_player_service.dart';
 import 'package:storypad/core/services/firestore_storage_service.dart';
 
 class MultiAudioPlayersService {
-  final void Function(bool playing) onStateChanged;
+  final void Function(bool? playing) onStateChanged;
 
   MultiAudioPlayersService({
     required this.onStateChanged,
@@ -16,29 +16,29 @@ class MultiAudioPlayersService {
 
   List<String> get audioUrlPaths => _players.keys.toList();
 
-  bool exist(String url) => _players.keys.contains(url);
+  bool exist(String urlPath) => _players.keys.contains(urlPath);
   double? getVolume(String soundUrl) => _players[soundUrl]?.getVolume();
   void setVolume(String soundUrl, double volume) => _players[soundUrl]?.setVolume(volume);
 
   void _notifyListeners() {
-    onStateChanged(_playingStates.values.every((playing) => playing));
+    onStateChanged(_playingStates.isEmpty ? null : _playingStates.values.every((playing) => playing));
   }
 
   // make sure to download file from UI before playing.
-  Future<void> playAnAudio(String url) async {
-    final file = await getCachedFile(url);
+  Future<void> playAnAudio(String urlPath) async {
+    final file = await getCachedFile(urlPath);
     if (file == null) return;
 
-    _playingStates[url] ??= false;
-    _players[url] ??= _constructAudioService(url, file);
+    _playingStates[urlPath] ??= false;
+    _players[urlPath] ??= _constructAudioService(urlPath, file);
 
-    await _players[url]!.play();
+    await _players[urlPath]!.play();
   }
 
-  Future<void> removeAnAudio(String url) async {
-    _players[url]?.dispose();
-    _players.remove(url);
-    _playingStates.remove(url);
+  Future<void> removeAnAudio(String urlPath) async {
+    _players[urlPath]?.dispose();
+    _players.remove(urlPath);
+    _playingStates.remove(urlPath);
 
     _notifyListeners();
   }
@@ -55,15 +55,16 @@ class MultiAudioPlayersService {
     }
   }
 
-  Future<File?> getCachedFile(String path) => FirestoreStorageService.instance.getCachedFile(path);
-  Future<FirestoreStorageResponse> downloadFile(String path) => FirestoreStorageService.instance.downloadFile(path);
+  Future<File?> getCachedFile(String urlPath) => FirestoreStorageService.instance.getCachedFile(urlPath);
+  Future<FirestoreStorageResponse> downloadFile(String urlPath) =>
+      FirestoreStorageService.instance.downloadFile(urlPath);
 
-  AudioPlayerService _constructAudioService(String url, File file) {
+  AudioPlayerService _constructAudioService(String urlPath, File file) {
     return AudioPlayerService(
       file: file,
       onStateChanged: (PlayerState state) {
         debugPrint('🎸 AudioPlayerService#onStateChanged state:$state');
-        _playingStates[url] = state.playing;
+        _playingStates[urlPath] = state.playing;
         _notifyListeners();
       },
     );

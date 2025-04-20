@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
+// import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
 import 'package:storypad/views/discover/segments/discover_relax_sounds_content.dart';
 import 'package:storypad/views/discover/segments/discover_search_content.dart';
 import 'discover_view.dart';
@@ -30,12 +30,12 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
         icon: Icons.search_outlined,
         page: const DiscoverSearchContent(),
       ),
-      _Page(
-        id: DiscoverSegmentId.calendar,
-        tooltip: tr("page.calendar.title"),
-        icon: Icons.calendar_month_outlined,
-        page: const DiscoverCalendarContent(),
-      ),
+      // _Page(
+      //   id: DiscoverSegmentId.calendar,
+      //   tooltip: tr("page.calendar.title"),
+      //   icon: Icons.calendar_month_outlined,
+      //   page: const DiscoverCalendarContent(),
+      // ),
       if (kHasRelaxSoundsFeature)
         _Page(
           id: DiscoverSegmentId.relaxSounds,
@@ -49,7 +49,7 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
   Set<DiscoverSegmentId> useToSelectedPages = {};
   bool shouldMaintainState(DiscoverSegmentId id) => useToSelectedPages.contains(id);
 
-  DiscoverSegmentId _selectedPage = DiscoverSegmentId.relaxSounds;
+  late DiscoverSegmentId _selectedPage = params.initialPage ?? DiscoverSegmentId.search;
   DiscoverSegmentId get selectedPage => _selectedPage;
   int get selectedIndex => pages().indexWhere((page) => page.id == _selectedPage);
 
