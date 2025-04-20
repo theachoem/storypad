@@ -47,26 +47,26 @@ class RelaxSoundObject {
     return [
       RelaxSoundObject(
         translationKey: 'sounds.light_rain',
-        svgIconPath: '/assets/relax_sounds/rainy/light_rain.svg',
-        soundPath: '/assets/relax_sounds/rainy/light_rain.wav',
+        svgIconPath: '/relax_sounds/rainy/light_rain.svg',
+        soundPath: '/relax_sounds/rainy/light_rain.wav',
         dayColor: 3,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.rain_on_window',
-        svgIconPath: '/assets/relax_sounds/rainy/rain_on_window.svg',
-        soundPath: '/assets/relax_sounds/rainy/rain_on_window.wav',
+        svgIconPath: '/relax_sounds/rainy/rain_on_window.svg',
+        soundPath: '/relax_sounds/rainy/rain_on_window.wav',
         dayColor: 4,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.heavy_rain',
-        svgIconPath: '/assets/relax_sounds/rainy/heavy_rain.svg',
-        soundPath: '/assets/relax_sounds/rainy/heavy_rain.wav',
+        svgIconPath: '/relax_sounds/rainy/heavy_rain.svg',
+        soundPath: '/relax_sounds/rainy/heavy_rain.wav',
         dayColor: 6,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.thunder',
-        svgIconPath: '/assets/relax_sounds/rainy/thunder.svg',
-        soundPath: '/assets/relax_sounds/rainy/thunder.wav',
+        svgIconPath: '/relax_sounds/rainy/thunder.svg',
+        soundPath: '/relax_sounds/rainy/thunder.wav',
         dayColor: 6,
       ),
     ];
@@ -76,20 +76,20 @@ class RelaxSoundObject {
     return [
       RelaxSoundObject(
         translationKey: 'sounds.ocean_waves',
-        svgIconPath: '/assets/relax_sounds/water/ocean_waves.svg',
-        soundPath: '/assets/relax_sounds/water/ocean_waves.wav',
+        svgIconPath: '/relax_sounds/water/ocean_waves.svg',
+        soundPath: '/relax_sounds/water/ocean_waves.wav',
         dayColor: 5,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.river_stream',
-        svgIconPath: '/assets/relax_sounds/water/river_stream.svg',
-        soundPath: '/assets/relax_sounds/water/river_stream.wav',
+        svgIconPath: '/relax_sounds/water/river_stream.svg',
+        soundPath: '/relax_sounds/water/river_stream.wav',
         dayColor: 5,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.droplets',
-        svgIconPath: '/assets/relax_sounds/water/droplets.svg',
-        soundPath: '/assets/relax_sounds/water/droplets.wav',
+        svgIconPath: '/relax_sounds/water/droplets.svg',
+        soundPath: '/relax_sounds/water/droplets.wav',
         dayColor: 5,
       ),
     ];
@@ -99,20 +99,20 @@ class RelaxSoundObject {
     return [
       RelaxSoundObject(
         translationKey: 'sounds.night_crickets',
-        svgIconPath: '/assets/relax_sounds/animal/night_crickets.svg',
-        soundPath: '/assets/relax_sounds/animal/night_crickets.wav',
+        svgIconPath: '/relax_sounds/animal/night_crickets.svg',
+        soundPath: '/relax_sounds/animal/night_crickets.wav',
         dayColor: 2,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.frogs',
-        svgIconPath: '/assets/relax_sounds/animal/frogs.svg',
-        soundPath: '/assets/relax_sounds/animal/frogs.wav',
+        svgIconPath: '/relax_sounds/animal/frogs.svg',
+        soundPath: '/relax_sounds/animal/frogs.wav',
         dayColor: 1,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.forest_birds',
-        svgIconPath: '/assets/relax_sounds/animal/forest_birds.svg',
-        soundPath: '/assets/relax_sounds/animal/forest_birds.wav',
+        svgIconPath: '/relax_sounds/animal/forest_birds.svg',
+        soundPath: '/relax_sounds/animal/forest_birds.wav',
         dayColor: 3,
       ),
     ];
