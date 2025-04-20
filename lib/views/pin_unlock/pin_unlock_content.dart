@@ -17,7 +17,14 @@ class _PinUnlockContent extends StatelessWidget {
 
       final children = [
         Flexible(child: buildPinPreview(context, pinSize)),
-        Flexible(child: FittedBox(child: buildPins(itemSize, spacing, context))),
+        Flexible(
+          child: FittedBox(
+            child: Padding(
+              padding: EdgeInsets.only(top: displayInRow ? 24.0 : 0.0, bottom: displayInRow ? 4.0 : 0.0),
+              child: buildPins(itemSize, spacing, context),
+            ),
+          ),
+        ),
       ];
 
       return Scaffold(
