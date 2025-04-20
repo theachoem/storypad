@@ -71,7 +71,11 @@ class StoryTimePickerService {
           initialValue: TimeOfDay.fromDateTime(story.displayPathDate),
           builder: (context, notifier) {
             return Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 16.0,
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+              ),
               margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               color: CupertinoColors.systemBackground.resolveFrom(context),
               child: MediaQuery.removePadding(

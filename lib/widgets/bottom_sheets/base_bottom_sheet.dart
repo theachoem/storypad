@@ -120,7 +120,11 @@ abstract class BaseBottomSheet {
           child: Material(
             color: backgroundColor,
             child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: EdgeInsets.only(
+                top: 16.0,
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+              ),
               child: builder(
                 context,
                 MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,

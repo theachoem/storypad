@@ -21,8 +21,6 @@ class SpCupertinoFullPageSheetConfigurations extends StatelessWidget {
       child: MediaQuery.removePadding(
         context: context,
         removeTop: true,
-        removeLeft: true,
-        removeRight: true,
         child: Padding(
           padding: EdgeInsets.only(bottom: bottomHeight),
           child: child,

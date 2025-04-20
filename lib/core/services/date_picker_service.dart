@@ -46,7 +46,11 @@ class DatePickerService {
           initialValue: currentDate,
           builder: (context, notifier) {
             return Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+              ),
               margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               color: CupertinoColors.systemBackground.resolveFrom(context),
               child: MediaQuery.removePadding(

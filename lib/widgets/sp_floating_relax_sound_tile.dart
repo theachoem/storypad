@@ -64,7 +64,11 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   }) {
     double radius = 12;
     return Container(
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0, left: 16.0, right: 16.0),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom + 16.0,
+        left: MediaQuery.of(context).padding.left + 16.0,
+        right: MediaQuery.of(context).padding.right + 16.0,
+      ),
       child: AnimatedSwitcher(
         switchInCurve: Curves.easeInOutQuad,
         switchOutCurve: Curves.easeInOutQuad,

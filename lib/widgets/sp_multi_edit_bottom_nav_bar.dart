@@ -22,6 +22,10 @@ class SpMultiEditBottomNavBar extends StatelessWidget {
       child: SpFadeIn.fromBottom(
         child: Container(
           color: Theme.of(context).colorScheme.surface,
+          padding: EdgeInsets.only(
+            left: MediaQuery.of(context).padding.left,
+            right: MediaQuery.of(context).padding.right,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

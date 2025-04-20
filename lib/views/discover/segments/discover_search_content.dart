@@ -118,7 +118,8 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
           buildTags(context),
           const SizedBox(height: 12.0),
         ],
-        const Divider(),
+        const SizedBox(height: 4.0),
+        const Divider(height: 1),
       ],
     );
   }

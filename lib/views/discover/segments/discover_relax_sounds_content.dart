@@ -38,8 +38,8 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
         return AlignedGridView.count(
           padding: EdgeInsets.only(
             top: 12.0,
-            left: 16.0,
-            right: 16.0,
+            left: MediaQuery.of(context).padding.left + 16.0,
+            right: MediaQuery.of(context).padding.right + 16.0,
             bottom: MediaQuery.of(context).padding.bottom + 16.0,
           ),
           crossAxisCount: MediaQuery.of(context).size.width ~/ 115,

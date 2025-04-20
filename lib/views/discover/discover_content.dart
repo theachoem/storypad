@@ -21,7 +21,11 @@ class _DiscoverContent extends StatelessWidget {
         flexibleSpace: Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 4.0),
+            margin: EdgeInsets.only(
+              bottom: 4.0,
+              left: MediaQuery.of(context).padding.left,
+              right: MediaQuery.of(context).padding.right,
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             width: double.infinity,
             child: SegmentedButton<DiscoverSegmentId>(
@@ -40,17 +44,20 @@ class _DiscoverContent extends StatelessWidget {
           ),
         ),
       ),
-      body: IndexedStack(
-        index: viewModel.selectedIndex,
-        children: viewModel.pages().map((page) {
-          bool selected = page.id == viewModel.selectedPage;
+      body: MediaQuery.removePadding(
+        context: context,
+        child: IndexedStack(
+          index: viewModel.selectedIndex,
+          children: viewModel.pages().map((page) {
+            bool selected = page.id == viewModel.selectedPage;
 
-          return Visibility(
-            visible: selected,
-            maintainState: viewModel.shouldMaintainState(page.id),
-            child: page.page,
-          );
-        }).toList(),
+            return Visibility(
+              visible: selected,
+              maintainState: viewModel.shouldMaintainState(page.id),
+              child: page.page,
+            );
+          }).toList(),
+        ),
       ),
     );
   }
