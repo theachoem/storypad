@@ -14,6 +14,7 @@ import 'package:storypad/views/discover/discover_view_model.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_discover_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_refresh_state_in_duration.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -125,8 +126,8 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           color: foregroundColor,
           icon: SpAnimatedIcons.fadeScale(
             duration: Durations.long1,
-            firstChild: const Icon(Icons.pause_circle),
-            secondChild: const Icon(Icons.play_circle),
+            firstChild: const Icon(SpIcons.pauseCircle),
+            secondChild: const Icon(SpIcons.playCircle),
             showFirst: provider.playing,
           ),
           iconSize: 32.0,
@@ -173,7 +174,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Icon(
-              Icons.keyboard_arrow_up,
+              SpIcons.keyboardUp,
               color: foregroundColor,
             ),
           ),
@@ -181,7 +182,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Icon(
-              Icons.timer_outlined,
+              SpIcons.timer,
               color: foregroundColor,
             ),
           ),

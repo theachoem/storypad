@@ -74,6 +74,7 @@ class SpIcons {
   static const IconData exportOffline = kIsCupertino ? CupertinoIcons.arrow_down_doc : Icons.download;
   static const IconData importOffline = kIsCupertino ? CupertinoIcons.arrow_up_doc : Icons.folder_open;
   static const IconData update = kIsCupertino ? CupertinoIcons.arrow_down : Icons.system_update;
+  static const IconData keyboardUp = kIsCupertino ? CupertinoIcons.chevron_up : Icons.keyboard_arrow_up_outlined;
   static const IconData keyboardDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.keyboard_arrow_down_outlined;
   static const IconData dropDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.arrow_drop_down;
   static const IconData globe = kIsCupertino ? CupertinoIcons.globe : Icons.language;
@@ -84,4 +85,8 @@ class SpIcons {
       kIsCupertino ? CupertinoIcons.flag_slash : Icons.image_not_supported_outlined;
   static const IconData addPhoto = kIsCupertino ? CupertinoIcons.add : Icons.add_a_photo;
   static const IconData hideSource = kIsCupertino ? CupertinoIcons.circle : Icons.hide_source;
+  static const IconData playCircle = kIsCupertino ? CupertinoIcons.play_circle_fill : Icons.play_circle;
+  static const IconData pauseCircle = kIsCupertino ? CupertinoIcons.pause_circle_fill : Icons.pause_circle;
+  static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
+  static const IconData timer = kIsCupertino ? CupertinoIcons.timer : Icons.timer_outlined;
 }

@@ -36,7 +36,7 @@ class _SoundIconCard extends StatelessWidget {
                 return SizedBox(
                   height: 48,
                   child: Icon(
-                    Icons.music_note_outlined,
+                    SpIcons.musicNote,
                     color: Color.lerp(
                       ColorScheme.of(context).onSurface.withValues(alpha: 0.1),
                       ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
