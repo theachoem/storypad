@@ -36,7 +36,7 @@ class MultiAudioPlayersService {
   }
 
   Future<void> removeAnAudio(String urlPath) async {
-    _players[urlPath]?.dispose();
+    await _players[urlPath]?.dispose();
     _players.remove(urlPath);
     _playingStates.remove(urlPath);
 

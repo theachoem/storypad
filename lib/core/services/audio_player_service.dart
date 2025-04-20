@@ -51,6 +51,9 @@ class AudioPlayerService {
   }
 
   Future<void> dispose() async {
+    // If not stop before dispose, it will raise:
+    // Bad state: Cannot add new events after calling close
+    await _player.stop();
     await _player.dispose();
   }
 }
