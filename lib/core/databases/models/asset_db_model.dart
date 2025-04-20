@@ -54,7 +54,7 @@ class AssetDbModel extends BaseDbModel {
 
   String get downloadFilePath {
     final fileName = basename(originalSource);
-    return "${kApplicationDirectory.path}/images/$fileName";
+    return "${kSupportDirectory.path}/images/$fileName";
   }
 
   factory AssetDbModel.fromLocalPath({

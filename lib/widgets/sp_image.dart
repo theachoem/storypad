@@ -54,10 +54,14 @@ class SpImage extends StatelessWidget {
               errorWidget?.call(context, link, error) ??
               buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
           loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return SpGradientLoading(
-              height: height ?? defaultSize,
-              width: width ?? defaultSize,
+            return Stack(
+              children: [
+                SpGradientLoading(
+                  height: height ?? defaultSize,
+                  width: width ?? defaultSize,
+                ),
+                child
+              ],
             );
           },
         );

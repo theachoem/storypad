@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:ui' as ui;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:storypad/core/services/task_queue_service.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   final String assetLink;
   final double scale;
   final GoogleSignInAccount? currentUser;
 
-  static BaseCacheManager defaultCacheManager = DefaultCacheManager();
+  static final TaskQueueService _downloadDueueService = TaskQueueService();
 
   SpDbImageProvider({
     required this.assetLink,
@@ -59,14 +59,18 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
       final downloadedFile = File(asset.downloadFilePath);
       if (!downloadedFile.existsSync()) {
         try {
-          final response = await http.get(
-            Uri.parse(imageUrl),
-            headers: await currentUser?.authHeaders ?? {},
-          );
+          http.Response? response;
+
+          await _downloadDueueService.addTask(() async {
+            response = await http.get(
+              Uri.parse(imageUrl),
+              headers: await currentUser?.authHeaders ?? {},
+            );
+          });
 
           final downloadedFile = File(asset.downloadFilePath);
           await downloadedFile.create(recursive: true);
-          await downloadedFile.writeAsBytes(response.bodyBytes);
+          await downloadedFile.writeAsBytes(response!.bodyBytes);
 
           localFile = downloadedFile;
         } catch (e) {
