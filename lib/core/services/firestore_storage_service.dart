@@ -32,16 +32,15 @@ class FirestoreStorageService {
   final TaskQueueService _queueDownload = TaskQueueService();
 
   Map<String, dynamic>? _hash;
-  FirestoreStorageService() {
-    rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
-      _hash = json.decode(jsonString);
-    });
-  }
+  Future<Map<String, dynamic>?> get hash async =>
+      _hash ??= await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
+        return json.decode(jsonString);
+      });
 
   // input: /relax_sounds/animal/forest_birds.svg"
   // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
   Future<String> getHashPath(String originalUrlPath) async {
-    return _hash?[originalUrlPath];
+    return (await hash)?[originalUrlPath];
   }
 
   Future<File?> getCachedFile(String urlPath) async {

@@ -60,6 +60,9 @@ PODS:
   - Firebase/RemoteConfig (11.10.0):
     - Firebase/CoreOnly
     - FirebaseRemoteConfig (~> 11.10.0)
+  - Firebase/Storage (11.10.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 11.10.0)
   - firebase_analytics (11.4.5):
     - Firebase/Analytics (= 11.10.0)
     - firebase_core
@@ -73,6 +76,10 @@ PODS:
     - Flutter
   - firebase_remote_config (5.4.3):
     - Firebase/RemoteConfig (= 11.10.0)
+    - firebase_core
+    - Flutter
+  - firebase_storage (12.4.5):
+    - Firebase/Storage (= 11.10.0)
     - firebase_core
     - Flutter
   - FirebaseABTesting (11.10.0):
@@ -95,6 +102,8 @@ PODS:
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
+  - FirebaseAppCheckInterop (11.11.0)
+  - FirebaseAuthInterop (11.11.0)
   - FirebaseCore (11.10.0):
     - FirebaseCoreInternal (~> 11.10.0)
     - GoogleUtilities/Environment (~> 8.0)
@@ -136,6 +145,13 @@ PODS:
     - nanopb (~> 3.30910.0)
     - PromisesSwift (~> 2.1)
   - FirebaseSharedSwift (11.11.0)
+  - FirebaseStorage (11.10.0):
+    - FirebaseAppCheckInterop (~> 11.0)
+    - FirebaseAuthInterop (~> 11.0)
+    - FirebaseCore (~> 11.10.0)
+    - FirebaseCoreExtension (~> 11.10.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GTMSessionFetcher/Core (< 5.0, >= 3.4)
   - Flutter (1.0.0)
   - flutter_custom_tabs_ios (2.3.1):
     - Flutter
@@ -265,6 +281,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - firebase_remote_config (from `.symlinks/plugins/firebase_remote_config/ios`)
+  - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_custom_tabs_ios (from `.symlinks/plugins/flutter_custom_tabs_ios/ios`)
   - flutter_keyboard_visibility_temp_fork (from `.symlinks/plugins/flutter_keyboard_visibility_temp_fork/ios`)
@@ -292,6 +309,8 @@ SPEC REPOS:
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
+    - FirebaseAppCheckInterop
+    - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
@@ -301,6 +320,7 @@ SPEC REPOS:
     - FirebaseRemoteConfigInterop
     - FirebaseSessions
     - FirebaseSharedSwift
+    - FirebaseStorage
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleSignIn
@@ -329,6 +349,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
   firebase_remote_config:
     :path: ".symlinks/plugins/firebase_remote_config/ios"
+  firebase_storage:
+    :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
   flutter_custom_tabs_ios:
@@ -377,8 +399,11 @@ SPEC CHECKSUMS:
   firebase_core: 2d4534e7b489907dcede540c835b48981d890943
   firebase_crashlytics: 961a0812ba79ed8f89a8d5d1e3763daa6267a87a
   firebase_remote_config: c20b15c34b138104c1a971d83ea36bc3dd626ab8
+  firebase_storage: ce9dee18f1cc73129457d861ae3322656ec41a99
   FirebaseABTesting: dfc10eb6cc08fe3b391ac9e5aa40396d43ea6675
   FirebaseAnalytics: 4e42333f02cf78ed93703a5c36f36dd518aebdef
+  FirebaseAppCheckInterop: f23709c9ce92d810aa53ff4ce12ad3e666a3c7be
+  FirebaseAuthInterop: ac22ed402c2f4e3a8c63ebd3278af9a06073c1be
   FirebaseCore: 8344daef5e2661eb004b177488d6f9f0f24251b7
   FirebaseCoreExtension: 6f357679327f3614e995dc7cf3f2d600bdc774ac
   FirebaseCoreInternal: ef4505d2afb1d0ebbc33162cb3795382904b5679
@@ -388,6 +413,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfigInterop: 85bdce8babed7814816496bb6f082bc05b0a45e1
   FirebaseSessions: 9b3b30947b97a15370e0902ee7a90f50ef60ead6
   FirebaseSharedSwift: b1d32c3b29a911dc174bcf363f2f70bda9509d2f
+  FirebaseStorage: e83d1b9c8a5318d46ccfb2955f0d98095e0bf598
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_custom_tabs_ios: a07c92050609e5297cbf1ddb6335d83a5893f080
   flutter_keyboard_visibility_temp_fork: 95b2d534bacf6ac62e7fcbe5c2a9e2c2a17ce06f
