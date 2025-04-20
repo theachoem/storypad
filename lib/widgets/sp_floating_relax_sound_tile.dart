@@ -69,46 +69,51 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
         left: MediaQuery.of(context).padding.left + 16.0,
         right: MediaQuery.of(context).padding.right + 16.0,
       ),
-      child: AnimatedSwitcher(
-        switchInCurve: Curves.easeInOutQuad,
-        switchOutCurve: Curves.easeInOutQuad,
-        duration: Durations.long1,
-        transitionBuilder: (child, animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        child: Material(
-          key: ValueKey(provider.selectedRelaxSounds.lastOrNull?.translationKey),
-          elevation: 8.0,
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(radius),
-          child: SpTapEffect(
-            effects: [SpTapEffectType.scaleDown],
-            onTap: onTap,
-            child: SpLoopAnimationBuilder(
-              curve: Curves.linear,
-              duration: const Duration(seconds: 3),
-              reverseDuration: const Duration(seconds: 3),
+      child: Dismissible(
+        key: ValueKey(provider.selectedRelaxSounds.lastOrNull?.translationKey),
+        direction: DismissDirection.horizontal,
+        onDismissed: (direction) => provider.dismiss(),
+        child: AnimatedSwitcher(
+          switchInCurve: Curves.easeInOutQuad,
+          switchOutCurve: Curves.easeInOutQuad,
+          duration: Durations.long1,
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
               child: child,
-              builder: (context, value, child) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(radius),
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color.lerp(backgroundColor, backgroundColor.darken(0.2), value)!,
-                        Color.lerp(backgroundColor.darken(0.2), backgroundColor, value)!,
-                      ],
+            );
+          },
+          child: Material(
+            key: ValueKey(provider.selectedRelaxSounds.lastOrNull?.translationKey),
+            elevation: 8.0,
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(radius),
+            child: SpTapEffect(
+              effects: [SpTapEffectType.scaleDown],
+              onTap: onTap,
+              child: SpLoopAnimationBuilder(
+                curve: Curves.linear,
+                duration: const Duration(seconds: 3),
+                reverseDuration: const Duration(seconds: 3),
+                child: child,
+                builder: (context, value, child) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(radius),
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color.lerp(backgroundColor, backgroundColor.darken(0.2), value)!,
+                          Color.lerp(backgroundColor.darken(0.2), backgroundColor, value)!,
+                        ],
+                      ),
                     ),
-                  ),
-                  child: child,
-                );
-              },
+                    child: child,
+                  );
+                },
+              ),
             ),
           ),
         ),

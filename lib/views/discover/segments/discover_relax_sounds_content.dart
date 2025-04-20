@@ -29,7 +29,7 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
     if (!kHasRelaxSoundsFeature) return const SizedBox.shrink();
 
     final provider = Provider.of<RelaxSoundsProvider>(context);
-    List<RelaxSoundObject> relaxSounds = provider.relaxSounds;
+    Iterable<RelaxSoundObject> relaxSounds = provider.relaxSounds.values;
 
     return Scaffold(
       extendBody: true,
@@ -61,11 +61,11 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
 
   Widget buildSoundItem({
     required BuildContext context,
-    required List<RelaxSoundObject> relaxSounds,
+    required Iterable<RelaxSoundObject> relaxSounds,
     required int index,
     required RelaxSoundsProvider provider,
   }) {
-    final relaxSound = relaxSounds[index];
+    final relaxSound = relaxSounds.elementAt(index);
     bool selected = provider.isSoundSelected(relaxSound);
 
     return Stack(

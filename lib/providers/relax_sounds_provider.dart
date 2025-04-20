@@ -8,11 +8,10 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
-  List<RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
-
+  Map<String, RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
   List<RelaxSoundObject> get selectedRelaxSounds {
-    return relaxSounds.where((e) {
-      return audioPlayersService.audioUrlPaths.contains(e.soundUrlPath);
+    return audioPlayersService.audioUrlPaths.map((urlPath) {
+      return relaxSounds[urlPath]!;
     }).toList();
   }
 
@@ -67,6 +66,10 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
     } else {
       audioPlayersService.playAll();
     }
+  }
+
+  void dismiss() {
+    audioPlayersService.removeAllAudios();
   }
 
   @override

@@ -26,9 +26,18 @@ class RelaxSoundObject {
 
   String get label => tr(translationKey);
 
-  static List<RelaxSoundObject>? _defaultSoundsList;
-  static List<RelaxSoundObject> defaultSoundsList() {
-    return _defaultSoundsList ??= defaultSounds().values.expand((e) => e).toList();
+  static Map<String, RelaxSoundObject>? _defaultSoundsList;
+  static Map<String, RelaxSoundObject> defaultSoundsList() {
+    if (_defaultSoundsList != null) return _defaultSoundsList!;
+
+    defaultSounds().values.forEach((soundList) {
+      for (var sound in soundList) {
+        _defaultSoundsList ??= {};
+        _defaultSoundsList?[sound.soundUrlPath] = sound;
+      }
+    });
+
+    return _defaultSoundsList!;
   }
 
   static Map<RelaxSoundCategory, List<RelaxSoundObject>> defaultSounds() {

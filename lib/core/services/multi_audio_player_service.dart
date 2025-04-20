@@ -43,6 +43,15 @@ class MultiAudioPlayersService {
     _notifyListeners();
   }
 
+  void removeAllAudios() {
+    for (var service in _players.values) {
+      service.dispose();
+    }
+    _players.clear();
+    _playingStates.clear();
+    _notifyListeners();
+  }
+
   void playAll() {
     for (var p in _players.values) {
       p.play();
