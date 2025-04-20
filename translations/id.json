@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "Dipindahkan ke tempat sampah!",
   "snack_bar.put_back_success": "Kembali ke rumah!",
   "snack_bar.restore_individual_success": "Cerita dipulihkan!",
-  "sounds.category.animal": "Hewan",
-  "sounds.category.forest": "Hutan",
-  "sounds.category.rainy": "Hujan",
-  "sounds.category.water": "Air",
+  "sounds.campfire": "api unggun",
   "sounds.droplets": "Droplet",
   "sounds.forest_birds": "Burung hutan",
   "sounds.frogs": "Katak",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "Gelombang laut",
   "sounds.rain_on_window": "Hujan di jendela",
   "sounds.river_stream": "Aliran sungai",
-  "sounds.thunder": "Guruh"
+  "sounds.seagulls": "burung camar",
+  "sounds.thunder": "Guruh",
+  "sounds.wind_chime": "Lonceng angin"
 }

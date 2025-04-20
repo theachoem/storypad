@@ -356,10 +356,7 @@ snack_bar.force_restore_success,Backup is restored!,تمت استعادة الن
 snack_bar.move_to_bin_success,Moved to bin!,تم النقل إلى سلة المهملات!,In den Papierkorb verschoben!,¡Movido a la papelera!,¡Movido a la papelera!,Déplacé vers la poubelle !,बिन में ले जाया गया!,Dipindahkan ke tempat sampah!,Spostato nel cestino!,ゴミ箱に移動しました！,ផ្លាស់ទីទៅធុង!,휴지통으로 옮겼어요!,Przeniesiono do kosza!,Movido para o lixo!,ย้ายไปถังขยะ!,Đã chuyển vào thùng rác!,搬到垃圾箱了！
 snack_bar.put_back_success,Back in home!,العودة إلى المنزل!,Zurück zu Hause!,¡De vuelta a casa!,¡De vuelta a casa!,De retour à la maison !,घर वापस!,Kembali ke rumah!,Di nuovo a casa!,ホームに戻りました！,ចូលផ្ទះវិញហើយ!,홈으로 돌아왔어요!,Z powrotem w domu!,De volta a casa!,กลับบ้าน!,Trở về nhà!,回家啦！
 snack_bar.restore_individual_success,Story restored!,تمت استعادة القصة!,Geschichte wiederhergestellt!,¡Historia restaurada!,¡Historia restaurada!,Histoire restaurée !,कहानी पुनर्स्थापित!,Cerita dipulihkan!,Storia ripristinata!,ストーリーが復元されました！,រឿង​បាន​ស្ដារ​ឡើង​វិញ!,스토리를 복원했어요!,Historia przywrócona!,História restaurada!,ฟื้นเรื่องราวแล้ว!,Truyện được khôi phục!,故事还原！
-sounds.category.animal,Animal,حيوان,Tier,Animal,Animal,Animal,जानवर,Hewan,Animale,動物,សត្វ,동물,Zwierzę,Animal,สัตว์,Động vật,动物
-sounds.category.forest,Forest,غابة,Wald,Bosque,Bosque,Forêt,जंगल,Hutan,Foresta,森,ព្រៃ,숲,Las,Floresta,ป่า,Rừng,森林
-sounds.category.rainy,Rainy,ممطر,Regnerisch,Lluvioso,Lluvioso,Pluvieux,बरसाती,Hujan,Piovoso,雨が降る,ភ្លៀង,비오는 날,Deszczowy,Chuvoso,ฝนตก,Có mưa,雨天
-sounds.category.water,Water,ماء,Wasser,Agua,Agua,Eau,पानी,Air,Acqua,水,ទឹក។,물,Woda,Água,น้ำ,Nước,水
+sounds.campfire,Campfire,نار التخييم,Campingfeuer,fuego de campamento,fuego de campamento,feu de camping,डेरा डाले हुए आग,api unggun,fuoco da campeggio,キャンプファイヤー,ភ្លើងបោះជំរុំ,캠핑 파이어,ognisko kempingowe,fogueira de acampamento,แคมป์ไฟ,lửa trại,野营火
 sounds.droplets,Droplets,قطرات الرذاذ,Tröpfchen,Gotas,Gotas,Gouttelettes,बूंदों,Droplet,Goccioline,水滴,ដំណក់ទឹក,비말,Kropelki,Gotas,ละอองฝอย,Giọt bắn,飞沫
 sounds.forest_birds,Forest birds,طيور الغابة,Waldvögel,Aves del bosque,Aves del bosque,Oiseaux forestiers,वन पक्षी,Burung hutan,Uccelli della foresta,森の鳥,បក្សីព្រៃ,숲속의 새들,Ptaki leśne,Aves da floresta,นกป่า,Chim rừng,森林鸟类
 sounds.frogs,Frogs,الضفادع,Frösche,ranas,ranas,Grenouilles,मेंढक,Katak,Rane,カエル,កង្កែប,개구리,Żaby,Sapos,กบ,ếch,青蛙
@@ -369,4 +366,6 @@ sounds.night_crickets,Night crickets,الصراصير الليلية,Nachtgrille
 sounds.ocean_waves,Ocean waves,أمواج المحيط,Meereswellen,olas del mar,olas del mar,Vagues de l'océan,सागर की लहरें,Gelombang laut,Onde dell'oceano,海の波,រលកសមុទ្រ,바다의 파도,Fale oceanu,Ondas do oceano,คลื่นทะเล,sóng biển,海浪
 sounds.rain_on_window,Rain on window,المطر على النافذة,Regen am Fenster,Lluvia en la ventana,Lluvia en la ventana,Pluie sur la fenêtre,खिड़की पर बारिश,Hujan di jendela,Pioggia sulla finestra,窓に雨が降る,ភ្លៀងនៅលើបង្អួច,창문에 비,Deszcz na oknie,Chuva na janela,ฝนตกที่หน้าต่าง,Mưa trên cửa sổ,雨打在窗户上
 sounds.river_stream,River stream,تيار النهر,Flussbach,corriente del río,corriente del río,Ruisseau de rivière,नदी की धारा,Aliran sungai,Flusso del fiume,川の流れ,ស្ទ្រីមទន្លេ,강물,Strumień rzeki,Córrego do rio,ลำธารแม่น้ำ,Dòng sông,河流溪流
+sounds.seagulls,Seagulls,طيور النورس,Möwen,gaviotas,gaviotas,Mouettes,सीगल,burung camar,Gabbiani,カモメ,សត្វសមុទ្រ,갈매기,Mewy,Gaivotas,นกนางนวล,hải âu,海鸥
 sounds.thunder,Thunder,رعد,Donner,Trueno,Trueno,Tonnerre,गड़गड़ाहट,Guruh,Tuono,雷,ផ្គរលាន់,우뢰,Grzmot,Trovão,ฟ้าร้อง,Sấm sét,雷
+sounds.wind_chime,Wind chime,رنين الرياح,Windspiel,carillón de viento,carillón de viento,Carillon éolien,पवन झंकार,Lonceng angin,Carillon di vento,風鈴,កណ្តឹងខ្យល់,풍경,Dzwonek wietrzny,Carrilhão de vento,กระดิ่งลม,Chuông gió,风铃

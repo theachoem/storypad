@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "ย้ายไปถังขยะ!",
   "snack_bar.put_back_success": "กลับบ้าน!",
   "snack_bar.restore_individual_success": "ฟื้นเรื่องราวแล้ว!",
-  "sounds.category.animal": "สัตว์",
-  "sounds.category.forest": "ป่า",
-  "sounds.category.rainy": "ฝนตก",
-  "sounds.category.water": "น้ำ",
+  "sounds.campfire": "แคมป์ไฟ",
   "sounds.droplets": "ละอองฝอย",
   "sounds.forest_birds": "นกป่า",
   "sounds.frogs": "กบ",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "คลื่นทะเล",
   "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
   "sounds.river_stream": "ลำธารแม่น้ำ",
-  "sounds.thunder": "ฟ้าร้อง"
+  "sounds.seagulls": "นกนางนวล",
+  "sounds.thunder": "ฟ้าร้อง",
+  "sounds.wind_chime": "กระดิ่งลม"
 }

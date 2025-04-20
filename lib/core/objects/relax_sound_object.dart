@@ -1,7 +1,6 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:storypad/core/types/relax_sound_category.dart';
 
 part 'relax_sound_object.g.dart';
 
@@ -30,22 +29,22 @@ class RelaxSoundObject {
   static Map<String, RelaxSoundObject> defaultSoundsList() {
     if (_defaultSoundsList != null) return _defaultSoundsList!;
 
-    defaultSounds().values.forEach((soundList) {
-      for (var sound in soundList) {
-        _defaultSoundsList ??= {};
-        _defaultSoundsList?[sound.soundUrlPath] = sound;
-      }
-    });
+    for (var sound in defaultSounds()) {
+      _defaultSoundsList ??= {};
+      _defaultSoundsList?[sound.soundUrlPath] = sound;
+    }
 
     return _defaultSoundsList!;
   }
 
-  static Map<RelaxSoundCategory, List<RelaxSoundObject>> defaultSounds() {
-    return {
-      RelaxSoundCategory.rainy: rainySounds(),
-      RelaxSoundCategory.water: waterSounds(),
-      RelaxSoundCategory.animal: animalSounds(),
-    };
+  static List<RelaxSoundObject> defaultSounds() {
+    return [
+      ...rainySounds(),
+      ...waterSounds(),
+      ...animalSounds(),
+      ...melodySounds(),
+      ...fireSounds(),
+    ];
   }
 
   static List<RelaxSoundObject> rainySounds() {
@@ -119,6 +118,34 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/animal/forest_birds.svg',
         soundUrlPath: '/relax_sounds/animal/forest_birds.m4a',
         dayColor: 3,
+      ),
+      RelaxSoundObject(
+        translationKey: 'sounds.seagulls',
+        svgIconUrlPath: '/relax_sounds/animal/seagulls.svg',
+        soundUrlPath: '/relax_sounds/animal/seagulls.m4a',
+        dayColor: 5,
+      ),
+    ];
+  }
+
+  static List<RelaxSoundObject> melodySounds() {
+    return [
+      RelaxSoundObject(
+        translationKey: 'sounds.wind_chime',
+        svgIconUrlPath: '/relax_sounds/melody/wind_chime.svg',
+        soundUrlPath: '/relax_sounds/melody/wind_chime.m4a',
+        dayColor: 5,
+      ),
+    ];
+  }
+
+  static List<RelaxSoundObject> fireSounds() {
+    return [
+      RelaxSoundObject(
+        translationKey: 'sounds.campfire',
+        svgIconUrlPath: '/relax_sounds/fire/campfire.svg',
+        soundUrlPath: '/relax_sounds/fire/campfire.m4a',
+        dayColor: 1,
       ),
     ];
   }

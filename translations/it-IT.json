@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "Spostato nel cestino!",
   "snack_bar.put_back_success": "Di nuovo a casa!",
   "snack_bar.restore_individual_success": "Storia ripristinata!",
-  "sounds.category.animal": "Animale",
-  "sounds.category.forest": "Foresta",
-  "sounds.category.rainy": "Piovoso",
-  "sounds.category.water": "Acqua",
+  "sounds.campfire": "fuoco da campeggio",
   "sounds.droplets": "Goccioline",
   "sounds.forest_birds": "Uccelli della foresta",
   "sounds.frogs": "Rane",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "Onde dell'oceano",
   "sounds.rain_on_window": "Pioggia sulla finestra",
   "sounds.river_stream": "Flusso del fiume",
-  "sounds.thunder": "Tuono"
+  "sounds.seagulls": "Gabbiani",
+  "sounds.thunder": "Tuono",
+  "sounds.wind_chime": "Carillon di vento"
 }

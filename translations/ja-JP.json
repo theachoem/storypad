@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "ゴミ箱に移動しました！",
   "snack_bar.put_back_success": "ホームに戻りました！",
   "snack_bar.restore_individual_success": "ストーリーが復元されました！",
-  "sounds.category.animal": "動物",
-  "sounds.category.forest": "森",
-  "sounds.category.rainy": "雨が降る",
-  "sounds.category.water": "水",
+  "sounds.campfire": "キャンプファイヤー",
   "sounds.droplets": "水滴",
   "sounds.forest_birds": "森の鳥",
   "sounds.frogs": "カエル",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "海の波",
   "sounds.rain_on_window": "窓に雨が降る",
   "sounds.river_stream": "川の流れ",
-  "sounds.thunder": "雷"
+  "sounds.seagulls": "カモメ",
+  "sounds.thunder": "雷",
+  "sounds.wind_chime": "風鈴"
 }

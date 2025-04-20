@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "Przeniesiono do kosza!",
   "snack_bar.put_back_success": "Z powrotem w domu!",
   "snack_bar.restore_individual_success": "Historia przywrócona!",
-  "sounds.category.animal": "Zwierzę",
-  "sounds.category.forest": "Las",
-  "sounds.category.rainy": "Deszczowy",
-  "sounds.category.water": "Woda",
+  "sounds.campfire": "ognisko kempingowe",
   "sounds.droplets": "Kropelki",
   "sounds.forest_birds": "Ptaki leśne",
   "sounds.frogs": "Żaby",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "Fale oceanu",
   "sounds.rain_on_window": "Deszcz na oknie",
   "sounds.river_stream": "Strumień rzeki",
-  "sounds.thunder": "Grzmot"
+  "sounds.seagulls": "Mewy",
+  "sounds.thunder": "Grzmot",
+  "sounds.wind_chime": "Dzwonek wietrzny"
 }

@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "搬到垃圾箱了！",
   "snack_bar.put_back_success": "回家啦！",
   "snack_bar.restore_individual_success": "故事还原！",
-  "sounds.category.animal": "动物",
-  "sounds.category.forest": "森林",
-  "sounds.category.rainy": "雨天",
-  "sounds.category.water": "水",
+  "sounds.campfire": "野营火",
   "sounds.droplets": "飞沫",
   "sounds.forest_birds": "森林鸟类",
   "sounds.frogs": "青蛙",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "海浪",
   "sounds.rain_on_window": "雨打在窗户上",
   "sounds.river_stream": "河流溪流",
-  "sounds.thunder": "雷"
+  "sounds.seagulls": "海鸥",
+  "sounds.thunder": "雷",
+  "sounds.wind_chime": "风铃"
 }

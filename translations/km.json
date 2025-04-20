@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "ផ្លាស់ទីទៅធុង!",
   "snack_bar.put_back_success": "ចូលផ្ទះវិញហើយ!",
   "snack_bar.restore_individual_success": "រឿង​បាន​ស្ដារ​ឡើង​វិញ!",
-  "sounds.category.animal": "សត្វ",
-  "sounds.category.forest": "ព្រៃ",
-  "sounds.category.rainy": "ភ្លៀង",
-  "sounds.category.water": "ទឹក។",
+  "sounds.campfire": "ភ្លើងបោះជំរុំ",
   "sounds.droplets": "ដំណក់ទឹក",
   "sounds.forest_birds": "បក្សីព្រៃ",
   "sounds.frogs": "កង្កែប",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "រលកសមុទ្រ",
   "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
   "sounds.river_stream": "ស្ទ្រីមទន្លេ",
-  "sounds.thunder": "ផ្គរលាន់"
+  "sounds.seagulls": "សត្វសមុទ្រ",
+  "sounds.thunder": "ផ្គរលាន់",
+  "sounds.wind_chime": "កណ្តឹងខ្យល់"
 }

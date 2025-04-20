@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "تم النقل إلى سلة المهملات!",
   "snack_bar.put_back_success": "العودة إلى المنزل!",
   "snack_bar.restore_individual_success": "تمت استعادة القصة!",
-  "sounds.category.animal": "حيوان",
-  "sounds.category.forest": "غابة",
-  "sounds.category.rainy": "ممطر",
-  "sounds.category.water": "ماء",
+  "sounds.campfire": "نار التخييم",
   "sounds.droplets": "قطرات الرذاذ",
   "sounds.forest_birds": "طيور الغابة",
   "sounds.frogs": "الضفادع",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "أمواج المحيط",
   "sounds.rain_on_window": "المطر على النافذة",
   "sounds.river_stream": "تيار النهر",
-  "sounds.thunder": "رعد"
+  "sounds.seagulls": "طيور النورس",
+  "sounds.thunder": "رعد",
+  "sounds.wind_chime": "رنين الرياح"
 }

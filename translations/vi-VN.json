@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "Đã chuyển vào thùng rác!",
   "snack_bar.put_back_success": "Trở về nhà!",
   "snack_bar.restore_individual_success": "Truyện được khôi phục!",
-  "sounds.category.animal": "Động vật",
-  "sounds.category.forest": "Rừng",
-  "sounds.category.rainy": "Có mưa",
-  "sounds.category.water": "Nước",
+  "sounds.campfire": "lửa trại",
   "sounds.droplets": "Giọt bắn",
   "sounds.forest_birds": "Chim rừng",
   "sounds.frogs": "ếch",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "sóng biển",
   "sounds.rain_on_window": "Mưa trên cửa sổ",
   "sounds.river_stream": "Dòng sông",
-  "sounds.thunder": "Sấm sét"
+  "sounds.seagulls": "hải âu",
+  "sounds.thunder": "Sấm sét",
+  "sounds.wind_chime": "Chuông gió"
 }

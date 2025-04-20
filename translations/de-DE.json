@@ -305,10 +305,7 @@
   "snack_bar.move_to_bin_success": "In den Papierkorb verschoben!",
   "snack_bar.put_back_success": "Zurück zu Hause!",
   "snack_bar.restore_individual_success": "Geschichte wiederhergestellt!",
-  "sounds.category.animal": "Tier",
-  "sounds.category.forest": "Wald",
-  "sounds.category.rainy": "Regnerisch",
-  "sounds.category.water": "Wasser",
+  "sounds.campfire": "Campingfeuer",
   "sounds.droplets": "Tröpfchen",
   "sounds.forest_birds": "Waldvögel",
   "sounds.frogs": "Frösche",
@@ -318,5 +315,7 @@
   "sounds.ocean_waves": "Meereswellen",
   "sounds.rain_on_window": "Regen am Fenster",
   "sounds.river_stream": "Flussbach",
-  "sounds.thunder": "Donner"
+  "sounds.seagulls": "Möwen",
+  "sounds.thunder": "Donner",
+  "sounds.wind_chime": "Windspiel"
 }

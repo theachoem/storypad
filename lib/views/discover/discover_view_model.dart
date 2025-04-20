@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
+// import 'package:storypad/views/discover/segments/discover_calendar_content.dart';
 import 'package:storypad/views/discover/segments/discover_relax_sounds_content.dart';
 import 'package:storypad/views/discover/segments/discover_search_content.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -31,12 +31,12 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
         icon: SpIcons.search,
         page: const DiscoverSearchContent(),
       ),
-      _Page(
-        id: DiscoverSegmentId.calendar,
-        tooltip: tr("page.calendar.title"),
-        icon: SpIcons.calendar,
-        page: const DiscoverCalendarContent(),
-      ),
+      // _Page(
+      //   id: DiscoverSegmentId.calendar,
+      //   tooltip: tr("page.calendar.title"),
+      //   icon: SpIcons.calendar,
+      //   page: const DiscoverCalendarContent(),
+      // ),
       if (kHasRelaxSoundsFeature)
         _Page(
           id: DiscoverSegmentId.relaxSounds,
