@@ -4,7 +4,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/services/task_queue_service.dart';
 
 enum FirestoreStorageState {
   success,
@@ -29,7 +28,6 @@ class FirestoreStorageResponse {
 
 class FirestoreStorageService {
   static FirestoreStorageService instance = FirestoreStorageService();
-  final TaskQueueService _queueDownload = TaskQueueService();
 
   Map<String, dynamic>? _hash;
   Future<Map<String, dynamic>?> get hash async =>
@@ -50,16 +48,6 @@ class FirestoreStorageService {
     if (File(downloadPath).existsSync()) return File(downloadPath);
 
     return null;
-  }
-
-  Future<FirestoreStorageResponse> queueDownloadFile(String urlPath) async {
-    FirestoreStorageResponse? response;
-
-    await _queueDownload.addTask(() async {
-      response = await downloadFile(urlPath);
-    });
-
-    return response ?? FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
   }
 
   // max download is 10mb, we will validate during uploading in:

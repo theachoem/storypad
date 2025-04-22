@@ -34,7 +34,7 @@ class _SpFirestoreStorageDownloaderBuilderState extends State<SpFirestoreStorage
         return;
       }
 
-      file = await FirestoreStorageService.instance.queueDownloadFile(widget.filePath).then((e) => e.file);
+      file = await FirestoreStorageService.instance.downloadFile(widget.filePath).then((e) => e.file);
       setState(() {});
     } catch (e) {
       failed = true;
