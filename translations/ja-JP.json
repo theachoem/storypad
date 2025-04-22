@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "ゴミ箱に移動しました！",
   "snack_bar.put_back_success": "ホームに戻りました！",
   "snack_bar.restore_individual_success": "ストーリーが復元されました！",
+  "sounds.bubbles": "バブル",
   "sounds.campfire": "キャンプファイヤー",
+  "sounds.cicada": "蝉",
   "sounds.droplets": "水滴",
   "sounds.forest_birds": "森の鳥",
   "sounds.frogs": "カエル",
+  "sounds.heartbeat": "ハートビート",
   "sounds.heavy_rain": "大雨",
   "sounds.light_rain": "小雨",
   "sounds.night_crickets": "夜のコオロギ",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "窓に雨が降る",
   "sounds.river_stream": "川の流れ",
   "sounds.seagulls": "カモメ",
+  "sounds.singing_bowl": "シンギングボウル",
   "sounds.thunder": "雷",
   "sounds.wind_chime": "風鈴"
 }

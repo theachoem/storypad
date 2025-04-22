@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "¡Movido a la papelera!",
   "snack_bar.put_back_success": "¡De vuelta a casa!",
   "snack_bar.restore_individual_success": "¡Historia restaurada!",
+  "sounds.bubbles": "Burbuja",
   "sounds.campfire": "fuego de campamento",
+  "sounds.cicada": "Cigarra",
   "sounds.droplets": "Gotas",
   "sounds.forest_birds": "Aves del bosque",
   "sounds.frogs": "ranas",
+  "sounds.heartbeat": "Latido del corazón",
   "sounds.heavy_rain": "Lluvia Pesada",
   "sounds.light_rain": "Lluvia ligera",
   "sounds.night_crickets": "grillos nocturnos",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "Lluvia en la ventana",
   "sounds.river_stream": "corriente del río",
   "sounds.seagulls": "gaviotas",
+  "sounds.singing_bowl": "Cuenco tibetano",
   "sounds.thunder": "Trueno",
   "sounds.wind_chime": "carillón de viento"
 }

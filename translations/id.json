@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "Dipindahkan ke tempat sampah!",
   "snack_bar.put_back_success": "Kembali ke rumah!",
   "snack_bar.restore_individual_success": "Cerita dipulihkan!",
+  "sounds.bubbles": "Gelembung",
   "sounds.campfire": "api unggun",
+  "sounds.cicada": "Jangkrik",
   "sounds.droplets": "Droplet",
   "sounds.forest_birds": "Burung hutan",
   "sounds.frogs": "Katak",
+  "sounds.heartbeat": "Denyut jantung",
   "sounds.heavy_rain": "Hujan lebat",
   "sounds.light_rain": "Hujan ringan",
   "sounds.night_crickets": "Jangkrik malam",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "Hujan di jendela",
   "sounds.river_stream": "Aliran sungai",
   "sounds.seagulls": "burung camar",
+  "sounds.singing_bowl": "Mangkuk Bernyanyi",
   "sounds.thunder": "Guruh",
   "sounds.wind_chime": "Lonceng angin"
 }

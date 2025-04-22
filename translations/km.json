@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "ផ្លាស់ទីទៅធុង!",
   "snack_bar.put_back_success": "ចូលផ្ទះវិញហើយ!",
   "snack_bar.restore_individual_success": "រឿង​បាន​ស្ដារ​ឡើង​វិញ!",
+  "sounds.bubbles": "ពពុះ",
   "sounds.campfire": "ភ្លើងបោះជំរុំ",
+  "sounds.cicada": "ស៊ីកាដា",
   "sounds.droplets": "ដំណក់ទឹក",
   "sounds.forest_birds": "បក្សីព្រៃ",
   "sounds.frogs": "កង្កែប",
+  "sounds.heartbeat": "ចង្វាក់បេះដូង",
   "sounds.heavy_rain": "ភ្លៀងធ្លាក់ខ្លាំង",
   "sounds.light_rain": "ភ្លៀងស្រាល",
   "sounds.night_crickets": "ចង្រិតពេលយប់",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
   "sounds.river_stream": "ស្ទ្រីមទន្លេ",
   "sounds.seagulls": "សត្វសមុទ្រ",
+  "sounds.singing_bowl": "ចានច្រៀង",
   "sounds.thunder": "ផ្គរលាន់",
   "sounds.wind_chime": "កណ្តឹងខ្យល់"
 }

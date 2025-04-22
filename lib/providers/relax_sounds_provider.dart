@@ -16,8 +16,6 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   late MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(onStateChanged: (bool? playing) {
-    debugPrint("🎸 MultiAudioPlayersService#onStateChanged playing: $playing");
-
     if (playing != null) {
       playing ? timerService.startIfNot() : timerService.pauseIfNot();
       _playing = playing;

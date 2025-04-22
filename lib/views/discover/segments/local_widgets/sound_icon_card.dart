@@ -59,18 +59,41 @@ class _SoundIconCard extends StatelessWidget {
                 child: CircularProgressIndicator.adaptive(),
               ),
             ),
-            firstChild: SvgPicture.file(
-              file,
-              semanticsLabel: relaxSound.label,
-              height: 48,
-              colorFilter: ColorFilter.mode(
-                selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
-                BlendMode.srcIn,
-              ),
-            ),
+            firstChild: buildSvgIcon(file, context),
           );
         },
       ),
     );
+  }
+
+  Widget buildSvgIcon(
+    File file,
+    BuildContext context,
+  ) {
+    Widget child = SvgPicture.file(
+      file,
+      semanticsLabel: relaxSound.label,
+      height: 48,
+      colorFilter: ColorFilter.mode(
+        selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
+        BlendMode.srcIn,
+      ),
+    );
+
+    if (selected && relaxSound.translationKey.contains('heartbeat')) {
+      child = SpLoopAnimationBuilder(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease,
+        child: child,
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: lerpDouble(1, 0.9, value),
+            child: child!,
+          );
+        },
+      );
+    }
+
+    return child;
   }
 }

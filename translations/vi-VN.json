@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "Đã chuyển vào thùng rác!",
   "snack_bar.put_back_success": "Trở về nhà!",
   "snack_bar.restore_individual_success": "Truyện được khôi phục!",
+  "sounds.bubbles": "bong bóng",
   "sounds.campfire": "lửa trại",
+  "sounds.cicada": "ve sầu",
   "sounds.droplets": "Giọt bắn",
   "sounds.forest_birds": "Chim rừng",
   "sounds.frogs": "ếch",
+  "sounds.heartbeat": "Nhịp tim",
   "sounds.heavy_rain": "mưa lớn",
   "sounds.light_rain": "Mưa nhẹ",
   "sounds.night_crickets": "dế đêm",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "Mưa trên cửa sổ",
   "sounds.river_stream": "Dòng sông",
   "sounds.seagulls": "hải âu",
+  "sounds.singing_bowl": "Bát hát",
   "sounds.thunder": "Sấm sét",
   "sounds.wind_chime": "Chuông gió"
 }

@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "Moved to bin!",
   "snack_bar.put_back_success": "Back in home!",
   "snack_bar.restore_individual_success": "Story restored!",
+  "sounds.bubbles": "Bubble",
   "sounds.campfire": "Campfire",
+  "sounds.cicada": "Cicada",
   "sounds.droplets": "Droplets",
   "sounds.forest_birds": "Forest birds",
   "sounds.frogs": "Frogs",
+  "sounds.heartbeat": "Heartbeat",
   "sounds.heavy_rain": "Heavy rain",
   "sounds.light_rain": "Light rain",
   "sounds.night_crickets": "Night crickets",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "Rain on window",
   "sounds.river_stream": "River stream",
   "sounds.seagulls": "Seagulls",
+  "sounds.singing_bowl": "Singing Bowl",
   "sounds.thunder": "Thunder",
   "sounds.wind_chime": "Wind chime"
 }

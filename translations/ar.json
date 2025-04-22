@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "تم النقل إلى سلة المهملات!",
   "snack_bar.put_back_success": "العودة إلى المنزل!",
   "snack_bar.restore_individual_success": "تمت استعادة القصة!",
+  "sounds.bubbles": "فقاعة",
   "sounds.campfire": "نار التخييم",
+  "sounds.cicada": "الزيز",
   "sounds.droplets": "قطرات الرذاذ",
   "sounds.forest_birds": "طيور الغابة",
   "sounds.frogs": "الضفادع",
+  "sounds.heartbeat": "نبض القلب",
   "sounds.heavy_rain": "أمطار غزيرة",
   "sounds.light_rain": "مطر خفيف",
   "sounds.night_crickets": "الصراصير الليلية",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "المطر على النافذة",
   "sounds.river_stream": "تيار النهر",
   "sounds.seagulls": "طيور النورس",
+  "sounds.singing_bowl": "وعاء الغناء",
   "sounds.thunder": "رعد",
   "sounds.wind_chime": "رنين الرياح"
 }

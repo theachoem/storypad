@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "ย้ายไปถังขยะ!",
   "snack_bar.put_back_success": "กลับบ้าน!",
   "snack_bar.restore_individual_success": "ฟื้นเรื่องราวแล้ว!",
+  "sounds.bubbles": "ฟอง",
   "sounds.campfire": "แคมป์ไฟ",
+  "sounds.cicada": "จักจั่น",
   "sounds.droplets": "ละอองฝอย",
   "sounds.forest_birds": "นกป่า",
   "sounds.frogs": "กบ",
+  "sounds.heartbeat": "การเต้นของหัวใจ",
   "sounds.heavy_rain": "ฝนตกหนัก",
   "sounds.light_rain": "ฝนตกปรอยๆ",
   "sounds.night_crickets": "จิ้งหรีดกลางคืน",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
   "sounds.river_stream": "ลำธารแม่น้ำ",
   "sounds.seagulls": "นกนางนวล",
+  "sounds.singing_bowl": "ชามร้องเพลง",
   "sounds.thunder": "ฟ้าร้อง",
   "sounds.wind_chime": "กระดิ่งลม"
 }

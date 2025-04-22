@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,28 +36,26 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: const SpFloatingRelaxSoundsTile(),
-      body: Builder(builder: (context) {
-        return AlignedGridView.count(
-          padding: EdgeInsets.only(
-            top: 12.0,
-            left: MediaQuery.of(context).padding.left + 16.0,
-            right: MediaQuery.of(context).padding.right + 16.0,
-            bottom: MediaQuery.of(context).padding.bottom + 16.0,
-          ),
-          crossAxisCount: MediaQuery.of(context).size.width ~/ 115,
-          itemCount: relaxSounds.length,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 16.0,
-          itemBuilder: (context, index) {
-            return buildSoundItem(
-              context: context,
-              relaxSounds: relaxSounds,
-              index: index,
-              provider: provider,
-            );
-          },
-        );
-      }),
+      body: AlignedGridView.count(
+        padding: EdgeInsets.only(
+          top: 12.0,
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+          bottom: MediaQuery.of(context).padding.bottom + 120.0,
+        ),
+        crossAxisCount: MediaQuery.of(context).size.width ~/ 115,
+        itemCount: relaxSounds.length,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 16.0,
+        itemBuilder: (context, index) {
+          return buildSoundItem(
+            context: context,
+            relaxSounds: relaxSounds,
+            index: index,
+            provider: provider,
+          );
+        },
+      ),
     );
   }
 

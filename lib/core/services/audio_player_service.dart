@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 
 class AudioPlayerService {
   final AudioPlayer _player = AudioPlayer();
@@ -14,6 +16,7 @@ class AudioPlayerService {
     required this.onStateChanged,
   }) {
     _player.playerStateStream.listen((state) {
+      debugPrint('🎻 AudioPlayerService#onStateChanged ${basename(file.path)}: $state');
       onStateChanged(state);
     });
   }

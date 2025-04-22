@@ -305,10 +305,13 @@
   "snack_bar.move_to_bin_success": "휴지통으로 옮겼어요!",
   "snack_bar.put_back_success": "홈으로 돌아왔어요!",
   "snack_bar.restore_individual_success": "스토리를 복원했어요!",
+  "sounds.bubbles": "거품",
   "sounds.campfire": "캠핑 파이어",
+  "sounds.cicada": "매미",
   "sounds.droplets": "비말",
   "sounds.forest_birds": "숲속의 새들",
   "sounds.frogs": "개구리",
+  "sounds.heartbeat": "하트비트",
   "sounds.heavy_rain": "폭우",
   "sounds.light_rain": "가벼운 비",
   "sounds.night_crickets": "밤 귀뚜라미",
@@ -316,6 +319,7 @@
   "sounds.rain_on_window": "창문에 비",
   "sounds.river_stream": "강물",
   "sounds.seagulls": "갈매기",
+  "sounds.singing_bowl": "노래하는 그릇",
   "sounds.thunder": "우뢰",
   "sounds.wind_chime": "풍경"
 }

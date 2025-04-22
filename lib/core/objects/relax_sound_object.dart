@@ -44,6 +44,7 @@ class RelaxSoundObject {
       ...animalSounds(),
       ...melodySounds(),
       ...fireSounds(),
+      ...bodySounds(),
     ];
   }
 
@@ -96,16 +97,28 @@ class RelaxSoundObject {
         soundUrlPath: '/relax_sounds/water/droplets.m4a',
         dayColor: 5,
       ),
+      RelaxSoundObject(
+        translationKey: 'sounds.bubbles',
+        svgIconUrlPath: '/relax_sounds/water/bubbles.svg',
+        soundUrlPath: '/relax_sounds/water/bubbles.m4a',
+        dayColor: 5,
+      ),
     ];
   }
 
   static List<RelaxSoundObject> animalSounds() {
     return [
+      // RelaxSoundObject(
+      //   translationKey: 'sounds.night_crickets',
+      //   svgIconUrlPath: '/relax_sounds/animal/night_crickets.svg',
+      //   soundUrlPath: '/relax_sounds/animal/night_crickets.m4a',
+      //   dayColor: 2,
+      // ),
       RelaxSoundObject(
-        translationKey: 'sounds.night_crickets',
-        svgIconUrlPath: '/relax_sounds/animal/night_crickets.svg',
-        soundUrlPath: '/relax_sounds/animal/night_crickets.m4a',
-        dayColor: 2,
+        translationKey: 'sounds.cicada',
+        svgIconUrlPath: '/relax_sounds/animal/cicada.svg',
+        soundUrlPath: '/relax_sounds/animal/cicada.m4a',
+        dayColor: 4,
       ),
       RelaxSoundObject(
         translationKey: 'sounds.frogs',
@@ -136,6 +149,12 @@ class RelaxSoundObject {
         soundUrlPath: '/relax_sounds/melody/wind_chime.m4a',
         dayColor: 5,
       ),
+      RelaxSoundObject(
+        translationKey: 'sounds.singing_bowl',
+        svgIconUrlPath: '/relax_sounds/melody/singing_bowl.svg',
+        soundUrlPath: '/relax_sounds/melody/singing_bowl.m4a',
+        dayColor: 1,
+      ),
     ];
   }
 
@@ -146,6 +165,17 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/fire/campfire.svg',
         soundUrlPath: '/relax_sounds/fire/campfire.m4a',
         dayColor: 1,
+      ),
+    ];
+  }
+
+  static List<RelaxSoundObject> bodySounds() {
+    return [
+      RelaxSoundObject(
+        translationKey: 'sounds.heartbeat',
+        svgIconUrlPath: '/relax_sounds/body/heartbeat.svg',
+        soundUrlPath: '/relax_sounds/body/heartbeat.m4a',
+        dayColor: 7,
       ),
     ];
   }

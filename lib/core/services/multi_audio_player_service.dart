@@ -21,6 +21,7 @@ class MultiAudioPlayersService {
   void setVolume(String soundUrl, double volume) => _players[soundUrl]?.setVolume(volume);
 
   void _notifyListeners() {
+    debugPrint('🎸 MultiAudioPlayersService#_notifyListeners $_playingStates');
     onStateChanged(_playingStates.isEmpty ? null : _playingStates.values.every((playing) => playing));
   }
 
@@ -72,7 +73,9 @@ class MultiAudioPlayersService {
     return AudioPlayerService(
       file: file,
       onStateChanged: (PlayerState state) {
-        debugPrint('🎸 AudioPlayerService#onStateChanged state:$state');
+        // stop listen if key is removed.
+        if (_players[urlPath] == null) return;
+
         _playingStates[urlPath] = state.playing;
         _notifyListeners();
       },
