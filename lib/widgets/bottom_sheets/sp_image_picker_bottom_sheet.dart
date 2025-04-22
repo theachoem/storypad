@@ -54,7 +54,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       String extension = path.extension(pickedFile.path);
 
       // We need to store picked file to somewhere we can manage.
-      File newFile = File("${kApplicationDirectory.path}/images/${now.millisecondsSinceEpoch}$extension");
+      File newFile = File("${kSupportDirectory.path}/images/${now.millisecondsSinceEpoch}$extension");
       await newFile.parent.create(recursive: true);
 
       if (Platform.isAndroid) {
