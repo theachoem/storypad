@@ -315,6 +315,7 @@
   "sounds.heartbeat": "ハートビート",
   "sounds.heavy_rain": "大雨",
   "sounds.light_rain": "小雨",
+  "sounds.music_box": "オルゴール",
   "sounds.night_crickets": "夜のコオロギ",
   "sounds.ocean_waves": "海の波",
   "sounds.rain_on_window": "窓に雨が降る",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "カモメ",
   "sounds.singing_bowl": "シンギングボウル",
   "sounds.thunder": "雷",
+  "sounds.ticking_clock": "カチカチ時計",
+  "sounds.typing": "タイピング",
   "sounds.wind_chime": "風鈴"
 }

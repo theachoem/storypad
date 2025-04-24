@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Bicie serca",
   "sounds.heavy_rain": "Ulewa",
   "sounds.light_rain": "Lekki deszcz",
+  "sounds.music_box": "Pozytywka",
   "sounds.night_crickets": "Nocne świerszcze",
   "sounds.ocean_waves": "Fale oceanu",
   "sounds.rain_on_window": "Deszcz na oknie",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "Mewy",
   "sounds.singing_bowl": "Śpiewająca Miska",
   "sounds.thunder": "Grzmot",
+  "sounds.ticking_clock": "Tykający zegar",
+  "sounds.typing": "Pisanie na maszynie",
   "sounds.wind_chime": "Dzwonek wietrzny"
 }

@@ -315,6 +315,7 @@
   "sounds.heartbeat": "दिल की धड़कन",
   "sounds.heavy_rain": "भारी वर्षा",
   "sounds.light_rain": "हलकी बारिश",
+  "sounds.music_box": "संगीत बक्सा",
   "sounds.night_crickets": "रात्रि झींगुर",
   "sounds.ocean_waves": "सागर की लहरें",
   "sounds.rain_on_window": "खिड़की पर बारिश",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "सीगल",
   "sounds.singing_bowl": "गायन का कटोरा",
   "sounds.thunder": "गड़गड़ाहट",
+  "sounds.ticking_clock": "टिक-टिक करती घड़ी",
+  "sounds.typing": "टाइपिंग",
   "sounds.wind_chime": "पवन झंकार"
 }

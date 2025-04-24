@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Nhịp tim",
   "sounds.heavy_rain": "mưa lớn",
   "sounds.light_rain": "Mưa nhẹ",
+  "sounds.music_box": "Hộp nhạc",
   "sounds.night_crickets": "dế đêm",
   "sounds.ocean_waves": "sóng biển",
   "sounds.rain_on_window": "Mưa trên cửa sổ",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "hải âu",
   "sounds.singing_bowl": "Bát hát",
   "sounds.thunder": "Sấm sét",
+  "sounds.ticking_clock": "Đồng hồ tích tắc",
+  "sounds.typing": "đánh máy",
   "sounds.wind_chime": "Chuông gió"
 }

@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Herzschlag",
   "sounds.heavy_rain": "Starker Regen",
   "sounds.light_rain": "Leichter Regen",
+  "sounds.music_box": "Spieluhr",
   "sounds.night_crickets": "Nachtgrillen",
   "sounds.ocean_waves": "Meereswellen",
   "sounds.rain_on_window": "Regen am Fenster",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "Möwen",
   "sounds.singing_bowl": "Klangschale",
   "sounds.thunder": "Donner",
+  "sounds.ticking_clock": "Tickende Uhr",
+  "sounds.typing": "Tippen",
   "sounds.wind_chime": "Windspiel"
 }

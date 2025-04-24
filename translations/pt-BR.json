@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Batimento cardíaco",
   "sounds.heavy_rain": "Chuva forte",
   "sounds.light_rain": "Chuva fraca",
+  "sounds.music_box": "Caixa de música",
   "sounds.night_crickets": "Grilos noturnos",
   "sounds.ocean_waves": "Ondas do oceano",
   "sounds.rain_on_window": "Chuva na janela",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "Gaivotas",
   "sounds.singing_bowl": "Tigela Cantante",
   "sounds.thunder": "Trovão",
+  "sounds.ticking_clock": "Relógio correndo",
+  "sounds.typing": "Digitando",
   "sounds.wind_chime": "Carrilhão de vento"
 }

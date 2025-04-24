@@ -45,6 +45,7 @@ class RelaxSoundObject {
       ...melodySounds(),
       ...fireSounds(),
       ...bodySounds(),
+      ...activitySounds(),
     ];
   }
 
@@ -161,6 +162,18 @@ class RelaxSoundObject {
         soundUrlPath: '/relax_sounds/melody/singing_bowl.wav',
         dayColor: 1,
       ),
+      RelaxSoundObject(
+        translationKey: 'sounds.music_box',
+        svgIconUrlPath: '/relax_sounds/melody/music_box.svg',
+        soundUrlPath: '/relax_sounds/melody/music_box.wav',
+        dayColor: 1,
+      ),
+      RelaxSoundObject(
+        translationKey: 'sounds.ticking_clock',
+        svgIconUrlPath: '/relax_sounds/melody/ticking_clock.svg',
+        soundUrlPath: '/relax_sounds/melody/ticking_clock.wav',
+        dayColor: 5,
+      ),
     ];
   }
 
@@ -187,6 +200,17 @@ class RelaxSoundObject {
         translationKey: 'sounds.heartbeat',
         svgIconUrlPath: '/relax_sounds/body/heartbeat.svg',
         soundUrlPath: '/relax_sounds/body/heartbeat.wav',
+        dayColor: 7,
+      ),
+    ];
+  }
+
+  static List<RelaxSoundObject> activitySounds() {
+    return [
+      RelaxSoundObject(
+        translationKey: 'sounds.typing',
+        svgIconUrlPath: '/relax_sounds/activity/typing.svg',
+        soundUrlPath: '/relax_sounds/activity/typing.wav',
         dayColor: 7,
       ),
     ];

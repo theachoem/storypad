@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Battito del cuore",
   "sounds.heavy_rain": "Pioggia forte",
   "sounds.light_rain": "Pioggia leggera",
+  "sounds.music_box": "Carillon",
   "sounds.night_crickets": "Grilli notturni",
   "sounds.ocean_waves": "Onde dell'oceano",
   "sounds.rain_on_window": "Pioggia sulla finestra",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "Gabbiani",
   "sounds.singing_bowl": "Ciotola tibetana",
   "sounds.thunder": "Tuono",
+  "sounds.ticking_clock": "Orologio che ticchetta",
+  "sounds.typing": "Digitando",
   "sounds.wind_chime": "Carillon di vento"
 }

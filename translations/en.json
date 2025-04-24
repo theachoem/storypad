@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Heartbeat",
   "sounds.heavy_rain": "Heavy rain",
   "sounds.light_rain": "Light rain",
+  "sounds.music_box": "Music box",
   "sounds.night_crickets": "Night crickets",
   "sounds.ocean_waves": "Ocean waves",
   "sounds.rain_on_window": "Rain on window",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "Seagulls",
   "sounds.singing_bowl": "Singing Bowl",
   "sounds.thunder": "Thunder",
+  "sounds.ticking_clock": "Ticking clock",
+  "sounds.typing": "Typing",
   "sounds.wind_chime": "Wind chime"
 }

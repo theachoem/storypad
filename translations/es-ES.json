@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Latido del corazón",
   "sounds.heavy_rain": "Lluvia Pesada",
   "sounds.light_rain": "Lluvia ligera",
+  "sounds.music_box": "Caja de música",
   "sounds.night_crickets": "grillos nocturnos",
   "sounds.ocean_waves": "olas del mar",
   "sounds.rain_on_window": "Lluvia en la ventana",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "gaviotas",
   "sounds.singing_bowl": "Cuenco tibetano",
   "sounds.thunder": "Trueno",
+  "sounds.ticking_clock": "El reloj hace tictac",
+  "sounds.typing": "Mecanografía",
   "sounds.wind_chime": "carillón de viento"
 }

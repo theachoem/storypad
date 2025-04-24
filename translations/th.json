@@ -315,6 +315,7 @@
   "sounds.heartbeat": "การเต้นของหัวใจ",
   "sounds.heavy_rain": "ฝนตกหนัก",
   "sounds.light_rain": "ฝนตกปรอยๆ",
+  "sounds.music_box": "กล่องดนตรี",
   "sounds.night_crickets": "จิ้งหรีดกลางคืน",
   "sounds.ocean_waves": "คลื่นทะเล",
   "sounds.rain_on_window": "ฝนตกที่หน้าต่าง",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "นกนางนวล",
   "sounds.singing_bowl": "ชามร้องเพลง",
   "sounds.thunder": "ฟ้าร้อง",
+  "sounds.ticking_clock": "ฟ้องนาฬิกา",
+  "sounds.typing": "กำลังพิมพ์",
   "sounds.wind_chime": "กระดิ่งลม"
 }

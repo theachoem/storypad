@@ -315,6 +315,7 @@
   "sounds.heartbeat": "하트비트",
   "sounds.heavy_rain": "폭우",
   "sounds.light_rain": "가벼운 비",
+  "sounds.music_box": "오르골",
   "sounds.night_crickets": "밤 귀뚜라미",
   "sounds.ocean_waves": "바다의 파도",
   "sounds.rain_on_window": "창문에 비",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "갈매기",
   "sounds.singing_bowl": "노래하는 그릇",
   "sounds.thunder": "우뢰",
+  "sounds.ticking_clock": "똑딱거리는 시계",
+  "sounds.typing": "타자",
   "sounds.wind_chime": "풍경"
 }

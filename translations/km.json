@@ -315,6 +315,7 @@
   "sounds.heartbeat": "ចង្វាក់បេះដូង",
   "sounds.heavy_rain": "ភ្លៀងធ្លាក់ខ្លាំង",
   "sounds.light_rain": "ភ្លៀងស្រាល",
+  "sounds.music_box": "ប្រអប់តន្ត្រី",
   "sounds.night_crickets": "ចង្រិតពេលយប់",
   "sounds.ocean_waves": "រលកសមុទ្រ",
   "sounds.rain_on_window": "ភ្លៀងនៅលើបង្អួច",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "សត្វសមុទ្រ",
   "sounds.singing_bowl": "ចានច្រៀង",
   "sounds.thunder": "ផ្គរលាន់",
+  "sounds.ticking_clock": "នាឡិកាគូស",
+  "sounds.typing": "វាយអក្សរ",
   "sounds.wind_chime": "កណ្តឹងខ្យល់"
 }

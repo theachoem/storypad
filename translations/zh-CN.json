@@ -315,6 +315,7 @@
   "sounds.heartbeat": "心跳",
   "sounds.heavy_rain": "大雨",
   "sounds.light_rain": "小雨",
+  "sounds.music_box": "音乐盒",
   "sounds.night_crickets": "夜蟋蟀",
   "sounds.ocean_waves": "海浪",
   "sounds.rain_on_window": "雨打在窗户上",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "海鸥",
   "sounds.singing_bowl": "颂钵",
   "sounds.thunder": "雷",
+  "sounds.ticking_clock": "滴答作响的时钟",
+  "sounds.typing": "打字",
   "sounds.wind_chime": "风铃"
 }

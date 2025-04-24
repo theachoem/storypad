@@ -315,6 +315,7 @@
   "sounds.heartbeat": "Denyut jantung",
   "sounds.heavy_rain": "Hujan lebat",
   "sounds.light_rain": "Hujan ringan",
+  "sounds.music_box": "Kotak musik",
   "sounds.night_crickets": "Jangkrik malam",
   "sounds.ocean_waves": "Gelombang laut",
   "sounds.rain_on_window": "Hujan di jendela",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "burung camar",
   "sounds.singing_bowl": "Mangkuk Bernyanyi",
   "sounds.thunder": "Guruh",
+  "sounds.ticking_clock": "Jam berdetak",
+  "sounds.typing": "Mengetik",
   "sounds.wind_chime": "Lonceng angin"
 }

@@ -315,6 +315,7 @@
   "sounds.heartbeat": "نبض القلب",
   "sounds.heavy_rain": "أمطار غزيرة",
   "sounds.light_rain": "مطر خفيف",
+  "sounds.music_box": "صندوق الموسيقى",
   "sounds.night_crickets": "الصراصير الليلية",
   "sounds.ocean_waves": "أمواج المحيط",
   "sounds.rain_on_window": "المطر على النافذة",
@@ -323,5 +324,7 @@
   "sounds.seagulls": "طيور النورس",
   "sounds.singing_bowl": "وعاء الغناء",
   "sounds.thunder": "رعد",
+  "sounds.ticking_clock": "ساعة موقوتة",
+  "sounds.typing": "الكتابة",
   "sounds.wind_chime": "رنين الرياح"
 }
