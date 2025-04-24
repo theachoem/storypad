@@ -1,29 +1,30 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
+import 'package:storypad/core/services/firestore_storage_service.dart';
 
 class AudioPlayerService {
   final AudioPlayer _player = AudioPlayer();
-  final File file;
+  final String urlPath;
   final void Function(PlayerState state) onStateChanged;
 
   late double _volumn = _player.volume;
 
   AudioPlayerService({
-    required this.file,
+    required this.urlPath,
     required this.onStateChanged,
   }) {
     _player.playerStateStream.listen((state) {
-      debugPrint('🎻 AudioPlayerService#onStateChanged ${basename(file.path)}: $state');
+      debugPrint('🎻 AudioPlayerService#onStateChanged ${basename(urlPath)}: $state');
       onStateChanged(state);
     });
   }
 
   bool? _setLoop;
   bool? _setAudioSource;
-  Completer? _setupCompleter;
+  Completer<bool>? _setupCompleter;
+  String? _downloadUrl;
 
   double getVolume() => _volumn;
   void setVolume(double volume) {
@@ -31,26 +32,34 @@ class AudioPlayerService {
     _player.setVolume(volume);
   }
 
-  Future<void> setup() async {
-    if (_setupCompleter != null) return _setupCompleter?.future;
+  Future<bool> _setup() async {
+    if (_setupCompleter != null) return _setupCompleter!.future;
 
     _setupCompleter = Completer();
     _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
-    _setAudioSource ??= await _player.setAudioSource(AudioSource.file(file.path)).then((e) => true);
+    _downloadUrl ??= await FirestoreStorageService.instance.getDownloadURL(urlPath);
 
-    _setupCompleter?.complete(true);
+    if (_downloadUrl == null) {
+      _setupCompleter?.complete(false);
+      return false;
+    } else {
+      _setAudioSource ??=
+          await _player.setAudioSource(ProgressiveAudioSource(Uri.parse(_downloadUrl!))).then((e) => true);
+      _setupCompleter?.complete(true);
+      return true;
+    }
   }
 
   Future<void> play() async {
-    await setup();
+    bool success = await _setup();
 
     // no need to wait for play.
-    _player.play();
+    if (success) _player.play();
   }
 
   Future<void> pause() async {
-    await setup();
-    await _player.pause();
+    bool success = await _setup();
+    if (success) await _player.pause();
   }
 
   Future<void> dispose() async {

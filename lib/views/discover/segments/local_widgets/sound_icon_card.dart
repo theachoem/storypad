@@ -4,15 +4,18 @@ class _SoundIconCard extends StatelessWidget {
   const _SoundIconCard({
     required this.relaxSound,
     required this.selected,
-    required this.settingUp,
   });
 
   final RelaxSoundObject relaxSound;
   final bool selected;
-  final bool settingUp;
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<RelaxSoundsProvider>(context);
+    final state = provider.playerStateFor(relaxSound.soundUrlPath);
+
+    bool settingUp = selected && (state == null || state.processingState != ProcessingState.ready);
+
     return AnimatedContainer(
       curve: Curves.ease,
       duration: Durations.short2,
@@ -79,6 +82,25 @@ class _SoundIconCard extends StatelessWidget {
         BlendMode.srcIn,
       ),
     );
+
+    if (selected && relaxSound.translationKey.contains('light_rain')) {
+      return SpLoopAnimationBuilder(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease,
+        child: child,
+        builder: (context, value, child) {
+          return SvgPicture.file(
+            file,
+            semanticsLabel: relaxSound.label,
+            height: 48,
+            colorFilter: ColorFilter.mode(
+              selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSurface,
+              BlendMode.srcIn,
+            ),
+          );
+        },
+      );
+    }
 
     if (selected && relaxSound.translationKey.contains('heartbeat')) {
       child = SpLoopAnimationBuilder(

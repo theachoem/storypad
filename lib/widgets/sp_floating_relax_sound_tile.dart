@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -31,8 +32,12 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
 
+    bool shouldShow = provider.audioPlayersService.playingStates.keys.isEmpty ||
+        provider.audioPlayersService.playingStates.values
+            .every((p) => p.processingState == ProcessingState.idle || p.processingState == ProcessingState.loading);
+
     if (!kHasRelaxSoundsFeature) return const SizedBox.shrink();
-    if (provider.selectedRelaxSounds.lastOrNull == null) return const SizedBox.shrink();
+    if (shouldShow) return const SizedBox.shrink();
 
     Color backgroundColor = ColorFromDayService(context: context).get(provider.selectedRelaxSounds.last.dayColor)!;
 

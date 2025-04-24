@@ -3,19 +3,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
-import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'local_widgets/volume_slider.dart';
@@ -71,7 +69,7 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        buildSoundCardContents(provider, relaxSound, selected),
+        buildSoundCardContents(provider, relaxSound, selected, context),
         if (selected && provider.getVolume(relaxSound) != null) _VolumeSlider(relaxSound: relaxSound)
       ],
     );
@@ -81,45 +79,28 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
     RelaxSoundsProvider provider,
     RelaxSoundObject relaxSound,
     bool selected,
+    BuildContext context,
   ) {
-    return SpSingleStateWidget.listen(
-      initialValue: false,
-      builder: (context, settingUp, notifier) {
-        return SpTapEffect(
-          effects: [SpTapEffectType.touchableOpacity],
-          onTap: () async {
-            if (!selected) notifier.value = true;
-            if (await provider.audioPlayersService.getCachedFile(relaxSound.soundUrlPath) == null) {
-              FirestoreStorageResponse result =
-                  await provider.audioPlayersService.downloadFile(relaxSound.soundUrlPath);
-
-              if (result.unauthorized && context.mounted) {
-                MessengerService.of(context).showSnackBar('Authorized');
-                return;
-              }
-            }
-
-            await provider.toggleSound(relaxSound);
-            notifier.value = false;
-          },
-          child: Column(
-            spacing: 8.0,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _SoundIconCard(
-                relaxSound: relaxSound,
-                selected: selected,
-                settingUp: settingUp,
-              ),
-              Text(
-                relaxSound.label,
-                style: TextTheme.of(context).bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+    return SpTapEffect(
+      effects: [SpTapEffectType.touchableOpacity],
+      onTap: () async {
+        await provider.toggleSound(relaxSound);
       },
+      child: Column(
+        spacing: 8.0,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _SoundIconCard(
+            relaxSound: relaxSound,
+            selected: selected,
+          ),
+          Text(
+            relaxSound.label,
+            style: TextTheme.of(context).bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

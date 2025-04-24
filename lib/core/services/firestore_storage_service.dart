@@ -50,6 +50,13 @@ class FirestoreStorageService {
     return null;
   }
 
+  Future<String> getDownloadURL(String urlPath) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    final String hashPath = await getHashPath(urlPath);
+    final childRef = storageRef.child(hashPath);
+    return childRef.getDownloadURL();
+  }
+
   // max download is 10mb, we will validate during uploading in:
   // bin/firebase_admin/upload_files_to_firestore_storages.js
   Future<FirestoreStorageResponse> downloadFile(String urlPath) async {

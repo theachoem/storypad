@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/multi_audio_player_service.dart';
 import 'package:storypad/core/services/relax_sound_timer_service.dart';
@@ -15,6 +16,7 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
     }).toList();
   }
 
+  PlayerState? playerStateFor(String urlPath) => audioPlayersService.playingStates[urlPath];
   late MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(onStateChanged: (bool? playing) {
     if (playing != null) {
       playing ? timerService.startIfNot() : timerService.pauseIfNot();
@@ -32,8 +34,8 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
     audioPlayersService.pauseAll();
   });
 
-  bool _playing = false;
-  bool get playing => _playing;
+  bool? _playing;
+  bool get playing => _playing ?? false;
 
   bool isSoundSelected(RelaxSoundObject sound) => audioPlayersService.exist(sound.soundUrlPath);
   double? getVolume(RelaxSoundObject sound) => audioPlayersService.getVolume(sound.soundUrlPath);
@@ -59,6 +61,7 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void togglePlayPause() {
+    if (_playing == null) return;
     if (playing) {
       audioPlayersService.pauseAll();
     } else {
@@ -73,6 +76,7 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    if (_playing == null) return;
 
     switch (state) {
       case AppLifecycleState.detached:

@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/services/audio_player_service.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
 
 class MultiAudioPlayersService {
   final void Function(bool? playing) onStateChanged;
@@ -12,7 +10,8 @@ class MultiAudioPlayersService {
   });
 
   final Map<String, AudioPlayerService> _players = {};
-  final Map<String, bool> _playingStates = {};
+  final Map<String, PlayerState> _playingStates = {};
+  Map<String, PlayerState> get playingStates => _playingStates;
 
   List<String> get audioUrlPaths => _players.keys.toList();
 
@@ -22,16 +21,13 @@ class MultiAudioPlayersService {
 
   void _notifyListeners() {
     debugPrint('🎸 MultiAudioPlayersService#_notifyListeners $_playingStates');
-    onStateChanged(_playingStates.isEmpty ? null : _playingStates.values.every((playing) => playing));
+    onStateChanged(playingStates.values.any((e) => e.playing));
   }
 
   // make sure to download file from UI before playing.
   Future<void> playAnAudio(String urlPath) async {
-    final file = await getCachedFile(urlPath);
-    if (file == null) return;
-
-    _playingStates[urlPath] ??= false;
-    _players[urlPath] ??= _constructAudioService(urlPath, file);
+    _playingStates[urlPath] ??= PlayerState(false, ProcessingState.idle);
+    _players[urlPath] ??= _constructAudioService(urlPath);
 
     await _players[urlPath]!.play();
   }
@@ -65,18 +61,14 @@ class MultiAudioPlayersService {
     }
   }
 
-  Future<File?> getCachedFile(String urlPath) => FirestoreStorageService.instance.getCachedFile(urlPath);
-  Future<FirestoreStorageResponse> downloadFile(String urlPath) =>
-      FirestoreStorageService.instance.downloadFile(urlPath);
-
-  AudioPlayerService _constructAudioService(String urlPath, File file) {
+  AudioPlayerService _constructAudioService(String urlPath) {
     return AudioPlayerService(
-      file: file,
+      urlPath: urlPath,
       onStateChanged: (PlayerState state) {
         // stop listen if key is removed.
         if (_players[urlPath] == null) return;
 
-        _playingStates[urlPath] = state.playing;
+        _playingStates[urlPath] = state;
         _notifyListeners();
       },
     );
