@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# brew install ffmpeg
+
+# Move back to root to use.
+# m4a add about 0.062 on original wav file.
+# so this script convert those m4a file to wav file while remove those padding 0.062/2 from start and end.
+
+# List of .m4a files
+files=(
+  "firestore_storages/relax_sounds/rainy/light_rain.m4a"
+  "firestore_storages/relax_sounds/rainy/rain_on_window.m4a"
+  "firestore_storages/relax_sounds/rainy/heavy_rain.m4a"
+  "firestore_storages/relax_sounds/rainy/thunder.m4a"
+  "firestore_storages/relax_sounds/water/ocean_waves.m4a"
+  "firestore_storages/relax_sounds/water/river_stream.m4a"
+  "firestore_storages/relax_sounds/water/droplets.m4a"
+  "firestore_storages/relax_sounds/water/bubbles.m4a"
+  "firestore_storages/relax_sounds/animal/cicada.m4a"
+  "firestore_storages/relax_sounds/animal/frogs.m4a"
+  "firestore_storages/relax_sounds/animal/forest_birds.m4a"
+  "firestore_storages/relax_sounds/animal/seagulls.m4a"
+  "firestore_storages/relax_sounds/melody/wind_chime.m4a"
+  "firestore_storages/relax_sounds/melody/singing_bowl.m4a"
+  "firestore_storages/relax_sounds/fire/campfire.m4a"
+  "firestore_storages/relax_sounds/body/heartbeat.m4a"
+)
+
+# Delete above files
+# for file in "${files[@]}"; do
+#   wav="${file%.m4a}.wav"
+
+#   if [[ -f "$wav" ]]; then
+#     echo "Deleting: $file"
+#     rm "$file"
+#   else
+#     echo "Skipping: $file (no matching .wav found)"
+#   fi
+# done
+
+for file in "${files[@]}"; do
+  dir=$(dirname "$file")
+  base=$(basename "$file" .m4a)
+  output="$dir/${base}.wav"
+
+  # Get duration in seconds using ffprobe
+  duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$file")
+
+  # Calculate new duration
+  new_duration=$(echo "$duration - 0.031 - 0.031" | bc)
+
+  echo "Processing: $file (trim 0.031s from start and end)"
+  ffmpeg -y -ss 0.031 -t "$new_duration" -i "$file" "$output"
+done
