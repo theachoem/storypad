@@ -25,11 +25,12 @@ class DatabaseInitializer {
     if (Directory("${kApplicationDirectory.path}/images").existsSync()) {
       for (final image in Directory("${kApplicationDirectory.path}/images").listSync()) {
         final destinationFile = File(image.path.replaceAll(kApplicationDirectory.path, kSupportDirectory.path));
+        if (!await destinationFile.parent.exists()) await destinationFile.create(recursive: true);
         await destinationFile.writeAsBytes(await File(image.path).readAsBytes());
-        await image.delete();
+        await image.delete(recursive: true);
       }
 
-      await Directory("${kApplicationDirectory.path}/images").delete();
+      await Directory("${kApplicationDirectory.path}/images").delete(recursive: true);
       final items = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);
 
       for (final asset in items) {
