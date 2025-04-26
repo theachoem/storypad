@@ -19,8 +19,7 @@ class _CalendarMonth extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 16.0),
-        const Divider(height: 1),
+        const SizedBox(height: 8.0),
         Padding(
           padding: EdgeInsets.only(
             left: MediaQuery.of(context).padding.left,

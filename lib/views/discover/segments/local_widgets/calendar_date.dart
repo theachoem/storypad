@@ -56,7 +56,7 @@ class _CalendarDate extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            constraints: const BoxConstraints(minHeight: 48),
+            constraints: const BoxConstraints(minHeight: 56),
             child: AnimatedSwitcher(
               duration: Durations.medium1,
               switchInCurve: Curves.ease,
@@ -89,6 +89,7 @@ class _CalendarDate extends StatelessWidget {
 
     Color? backgroundColor = selected ? ColorScheme.of(context).primary : null;
     Color foregroundColor = selected ? ColorScheme.of(context).onPrimary : ColorScheme.of(context).onSurface;
+    if (!currentMonth) foregroundColor = foregroundColor.withValues(alpha: 0.5);
 
     if (hasFeeling) {
       return AnimatedContainer(

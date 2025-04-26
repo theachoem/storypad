@@ -34,8 +34,8 @@ class CalendarDaysGenerator {
       int yearForThisMonth = month - 1 == 0 ? year - 1 : year;
       int previousMonth = month - 1 == 0 ? 12 : month - 1;
 
-      int dayCount = DaysCountInMonthService.get(year: yearForThisMonth, month: previousMonth);
-      int day = dayCount - dayCount + (index + 1);
+      int dayCountForMonth = DaysCountInMonthService.get(year: yearForThisMonth, month: previousMonth);
+      int day = dayCountForMonth - dayCount + (index + 1);
 
       return DateTime(yearForThisMonth, previousMonth, day);
     });

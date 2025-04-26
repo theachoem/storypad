@@ -92,7 +92,7 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
                 feelingMapByDay: feelingMapByDay,
                 onChanged: (year, month, selectedDay) {
                   setState(() {
-                    this.selectedDay = selectedDay;
+                    this.selectedDay = year != this.year || month != this.month ? 1 : selectedDay;
                     this.year = year;
                     this.month = month;
 
