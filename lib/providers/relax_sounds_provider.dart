@@ -25,14 +25,7 @@ class RelaxSoundsProvider extends ChangeNotifier {
         timerService.pauseIfNot();
       }
 
-      _notificationService.notifyUser(
-        playingStates: audioPlayersService.playingStates,
-        stopIn: timerService.stopIn,
-        title: selectedSoundsLabel,
-        backgroundUrlPath: selectedRelaxSounds.lastOrNull?.background.urlPath,
-        artist: selectedRelaxSounds.map((e) => e.artist).join(", "),
-      );
-
+      refreshAppNotification();
       notifyListeners();
     },
   );
@@ -61,6 +54,17 @@ class RelaxSoundsProvider extends ChangeNotifier {
   void setStopIn(Duration duration) {
     timerService.setStopIn(duration);
     notifyListeners();
+    refreshAppNotification();
+  }
+
+  void refreshAppNotification() {
+    return _notificationService.notifyUser(
+      playingStates: audioPlayersService.playingStates,
+      stopIn: timerService.stopIn,
+      title: selectedSoundsLabel,
+      backgroundUrlPath: selectedRelaxSounds.lastOrNull?.background.urlPath,
+      artist: selectedRelaxSounds.map((e) => e.artist).join(", "),
+    );
   }
 
   Future<void> toggleSound(RelaxSoundObject sound) async {
