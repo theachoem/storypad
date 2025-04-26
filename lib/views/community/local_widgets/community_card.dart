@@ -21,9 +21,9 @@ class CommunityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpCard.withLogo(
-      title: tr('list_tile.join_reddit.title'),
-      subtitle: tr('list_tile.join_reddit.message'),
-      logo: Assets.images.redditLogo500x500.provider(),
+      title: tr('list_tile.join_x.title'),
+      subtitle: tr('list_tile.join_x.message'),
+      logo: Assets.images.xLogo500x500.provider(),
       onTap: () => openCustomTab(context),
     );
   }

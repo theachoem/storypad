@@ -34,7 +34,7 @@ class RemoteConfigService {
   static const communityUrl = _RemoteConfigObject<String>(
     'COMMUNITY_URL',
     _RemoteConfigValueType.string,
-    'https://www.reddit.com/r/StoryPad',
+    'https://x.com/i/communities/1914397037266919766',
   );
 
   static const faqUrl = _RemoteConfigObject<String>(

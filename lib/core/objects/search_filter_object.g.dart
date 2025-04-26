@@ -15,6 +15,10 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject assetId(int? assetId);
 
+  SearchFilterObject month(int? month);
+
+  SearchFilterObject day(int? day);
+
   SearchFilterObject starred(bool? starred);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SearchFilterObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -28,6 +32,8 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<PathType> types,
     int? tagId,
     int? assetId,
+    int? month,
+    int? day,
     bool? starred,
   });
 }
@@ -51,6 +57,12 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject assetId(int? assetId) => this(assetId: assetId);
 
   @override
+  SearchFilterObject month(int? month) => this(month: month);
+
+  @override
+  SearchFilterObject day(int? day) => this(day: day);
+
+  @override
   SearchFilterObject starred(bool? starred) => this(starred: starred);
 
   @override
@@ -66,6 +78,8 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? types = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
+    Object? month = const $CopyWithPlaceholder(),
+    Object? day = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
   }) {
     return SearchFilterObject(
@@ -85,6 +99,14 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
           : assetId as int?,
+      month: month == const $CopyWithPlaceholder()
+          ? _value.month
+          // ignore: cast_nullable_to_non_nullable
+          : month as int?,
+      day: day == const $CopyWithPlaceholder()
+          ? _value.day
+          // ignore: cast_nullable_to_non_nullable
+          : day as int?,
       starred: starred == const $CopyWithPlaceholder()
           ? _value.starred
           // ignore: cast_nullable_to_non_nullable
@@ -114,12 +136,16 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
           .toSet(),
       tagId: (json['tag_id'] as num?)?.toInt(),
       assetId: (json['asset_id'] as num?)?.toInt(),
+      month: (json['month'] as num?)?.toInt(),
+      day: (json['day'] as num?)?.toInt(),
       starred: json['starred'] as bool?,
     );
 
 Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
     <String, dynamic>{
       'years': instance.years.toList(),
+      'month': instance.month,
+      'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
       'tag_id': instance.tagId,
       'asset_id': instance.assetId,

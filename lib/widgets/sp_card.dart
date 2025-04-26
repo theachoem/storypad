@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -49,13 +48,11 @@ class SpCard extends StatelessWidget {
                     title,
                     style: TextTheme.of(context)
                         .titleMedium
-                        ?.copyWith(color: ColorScheme.of(context).bootstrap.warning.color, fontWeight: FontWeight.bold),
+                        ?.copyWith(color: ColorScheme.of(context).secondary, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     subtitle,
-                    style: TextTheme.of(context)
-                        .bodyMedium
-                        ?.copyWith(color: ColorScheme.of(context).bootstrap.warning.color),
+                    style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).secondary),
                   ),
                   const SizedBox(height: 12.0),
                 ],
@@ -66,7 +63,7 @@ class SpCard extends StatelessWidget {
               right: 16.0,
               child: Icon(
                 SpIcons.keyboardRight,
-                color: ColorScheme.of(context).bootstrap.warning.color,
+                color: ColorScheme.of(context).secondary,
               ),
             ),
           ],
@@ -86,7 +83,7 @@ class SpCard extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
-          color: ColorScheme.of(context).bootstrap.warning.container,
+          color: ColorScheme.of(context).secondaryContainer,
         ),
         child: child,
       ),

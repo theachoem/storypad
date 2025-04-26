@@ -354,16 +354,16 @@ class $AssetsImagesGen {
   $AssetsImagesOnboardingGen get onboarding =>
       const $AssetsImagesOnboardingGen();
 
-  /// File path: assets/images/reddit_logo_500x500.png
-  AssetGenImage get redditLogo500x500 =>
-      const AssetGenImage('assets/images/reddit_logo_500x500.png');
-
   /// File path: assets/images/storypad_logo_512x512.png
   AssetGenImage get storypadLogo512x512 =>
       const AssetGenImage('assets/images/storypad_logo_512x512.png');
 
+  /// File path: assets/images/x_logo_500x500.png
+  AssetGenImage get xLogo500x500 =>
+      const AssetGenImage('assets/images/x_logo_500x500.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [redditLogo500x500, storypadLogo512x512];
+  List<AssetGenImage> get values => [storypadLogo512x512, xLogo500x500];
 }
 
 class $AssetsLottiesGen {
