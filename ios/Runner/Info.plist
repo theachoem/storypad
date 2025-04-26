@@ -67,6 +67,10 @@
         <string>This app needs to access to the Photos library to add photo to your stories.</string>
         <key>UIApplicationSupportsIndirectInputEvents</key>
         <true />
+        <key>UIBackgroundModes</key>
+        <array>
+            <string>audio</string>
+        </array>
         <key>UILaunchStoryboardName</key>
         <string>$(LAUNCH_SCREEN_STORYBOARD)</string>
         <key>UIMainStoryboardFile</key>

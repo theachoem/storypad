@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
+import 'package:storypad/core/extensions/color_extension.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
@@ -50,8 +51,8 @@ class UrlOpenerService {
     String url, {
     bool prefersDeepLink = false,
   }) async {
-    Color? toolbarColor = Theme.of(context).appBarTheme.backgroundColor;
-    Color? foregroundColor = Theme.of(context).appBarTheme.foregroundColor;
+    Color toolbarColor = Theme.of(context).appBarTheme.backgroundColor ?? Colors.white;
+    Color foregroundColor = Theme.of(context).appBarTheme.foregroundColor ?? toolbarColor.darken(0.5);
 
     AnalyticsService.instance.logOpenLinkInCustomTab(
       url: url,
@@ -61,9 +62,7 @@ class UrlOpenerService {
       Uri.parse(url),
       prefersDeepLink: prefersDeepLink,
       customTabsOptions: custom_tab.CustomTabsOptions(
-        colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(
-          toolbarColor: toolbarColor,
-        ),
+        colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(),
       ),
       safariVCOptions: custom_tab.SafariViewControllerOptions(
         preferredBarTintColor: toolbarColor,
@@ -71,5 +70,15 @@ class UrlOpenerService {
         dismissButtonStyle: custom_tab.SafariViewControllerDismissButtonStyle.close,
       ),
     );
+  }
+
+  static void openForMarkdown({
+    required BuildContext context,
+    required String text,
+    required String? href,
+    required String title,
+  }) {
+    if (href == null) return;
+    openInCustomTab(context, href);
   }
 }

@@ -19,9 +19,10 @@ class MultiAudioPlayersService {
   double? getVolume(String soundUrl) => _players[soundUrl]?.getVolume();
   void setVolume(String soundUrl, double volume) => _players[soundUrl]?.setVolume(volume);
 
-  void _notifyListeners() {
-    debugPrint('🎸 MultiAudioPlayersService#_notifyListeners $_playingStates');
-    onStateChanged(playingStates.values.any((e) => e.playing));
+  void _notifyListeners(String debugSource) {
+    debugPrint('🎸 MultiAudioPlayersService#_notifyListeners $_playingStates from $debugSource');
+    bool? playing = playingStates.values.isEmpty ? null : playingStates.values.any((e) => e.playing);
+    onStateChanged(playing);
   }
 
   // make sure to download file from UI before playing.
@@ -33,20 +34,23 @@ class MultiAudioPlayersService {
   }
 
   Future<void> removeAnAudio(String urlPath) async {
-    await _players[urlPath]?.dispose();
-    _players.remove(urlPath);
     _playingStates.remove(urlPath);
+    final service = _players.remove(urlPath);
+    await service?.dispose();
 
-    _notifyListeners();
+    _notifyListeners('$runtimeType#removeAnAudio');
   }
 
   void removeAllAudios() {
-    for (var service in _players.values) {
-      service.dispose();
-    }
+    final services = [..._players.values];
+
     _players.clear();
     _playingStates.clear();
-    _notifyListeners();
+    _notifyListeners('$runtimeType#removeAllAudios');
+
+    for (var service in services) {
+      service.dispose();
+    }
   }
 
   void playAll() {
@@ -69,7 +73,7 @@ class MultiAudioPlayersService {
         if (_players[urlPath] == null) return;
 
         _playingStates[urlPath] = state;
-        _notifyListeners();
+        _notifyListeners('$runtimeType#_constructAudioService');
       },
     );
   }

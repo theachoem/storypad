@@ -41,6 +41,7 @@ button.sign_in,Sign In,تسجيل الدخول,Anmelden,Iniciar sesión,Iniciar 
 button.sign_out,Sign Out,تسجيل الخروج,Abmelden,Desconectar,Desconectar,Se déconnecter,साइन आउट,Keluar,Disconnessione,ログアウト,ចេញ,로그아웃,Wyloguj się,Sair,ออกจากระบบ,Đăng xuất,登出
 button.skip,Skip,يتخطى,Überspringen,Saltar,Saltar,Sauter,छोडना,Melewati,Saltare,スキップ,រំលង,건너뛰다,Pominąć,Pular,ข้าม,Nhảy,跳过
 button.star,Star,نجم,Stern,Estrella,Estrella,Étoile,तारा,Bintang,Stella,お気に入り,តារា,즐겨찾기,Gwiazda,Estrela,ดาว,Ngôi sao,星星
+button.stop,Stop,قف,Stoppen,Detener,Detener,Arrêt,रुकना,Berhenti,Fermare,停止,ឈប់,멈추다,Zatrzymywać się,Parar,หยุด,Dừng lại,停止
 button.suggest,Suggest,يقترح,Vorschlagen,Sugerir,Sugerir,Suggérer,सुझाव देना,Menyarankan,Suggerire,提案,ណែនាំ,제안,Sugerować,Sugerir,แนะนำ,Gợi ý,建议
 button.switch,Switch,يُحوّل,Schalten,Cambiar,Cambiar,Changer,बदलना,Mengalihkan,Interruttore,切り替え,ប្តូរ,전환,Przełącznik,Trocar,สวิตช์,Công tắc,转变
 button.sync,Sync,مزامنة,Synchronisieren,Sincronizar,Sincronizar,Synchroniser,साथ-साथ करना,Sinkronisasi,Sincronizzazione,同期,ធ្វើសមកាលកម្ម,동기화,Synchronizuj,Sincronizar,ซิงค์,Đồng bộ hóa,同步
@@ -360,6 +361,41 @@ sounds.bamboo_windchime,Bamboo windchime,ريح الخيزران,Windspiel aus B
 sounds.bubbles,Bubble,فقاعة,Blase,Burbuja,Burbuja,Bulle,बुलबुला,Gelembung,Bolla,バブル,ពពុះ,거품,Bańka,Bolha,ฟอง,bong bóng,气泡
 sounds.campfire,Campfire,نار التخييم,Campingfeuer,fuego de campamento,fuego de campamento,feu de camping,डेरा डाले हुए आग,api unggun,fuoco da campeggio,キャンプファイヤー,ភ្លើងបោះជំរុំ,캠핑 파이어,ognisko kempingowe,fogueira de acampamento,แคมป์ไฟ,lửa trại,野营火
 sounds.cicada,Cicada,الزيز,Zikade,Cigarra,Cigarra,Cigale,सिकाडा,Jangkrik,Cicala,蝉,ស៊ីកាដា,매미,Cykada,Cigarra,จักจั่น,ve sầu,蝉
+sounds.credits,"- Album backgrounds by {ALBUM_BACKGROUND_LINK}
+- Original sounds from {ORIGINAL_SOUND_LINK}
+- Sounds modified and enhanced by {APP_NAME}.","- خلفيات الألبوم بواسطة {ALBUM_BACKGROUND_LINK}
+- الأصوات الأصلية من {ORIGINAL_SOUND_LINK}
+- تم تعديل الأصوات وتحسينها بواسطة {APP_NAME}.","- Albumhintergründe von {ALBUM_BACKGROUND_LINK}
+- Originaltöne von {ORIGINAL_SOUND_LINK}
+- Klänge wurden von {APP_NAME} geändert und verbessert.","- Fondos del álbum de {ALBUM_BACKGROUND_LINK}
+- Sonidos originales de {ORIGINAL_SOUND_LINK}
+- Sonidos modificados y mejorados por {APP_NAME}.","- Fondos del álbum de {ALBUM_BACKGROUND_LINK}
+- Sonidos originales de {ORIGINAL_SOUND_LINK}
+- Sonidos modificados y mejorados por {APP_NAME}.","- Arrière-plans d'album par {ALBUM_BACKGROUND_LINK}
+- Sons originaux de {ORIGINAL_SOUND_LINK}
+- Sons modifiés et améliorés par {APP_NAME}.","- एल्बम पृष्ठभूमि {ALBUM_BACKGROUND_LINK} द्वारा
+- {ORIGINAL_SOUND_LINK} से मूल ध्वनियाँ
+- ध्वनियाँ {APP_NAME} द्वारा संशोधित और संवर्धित की गईं।","- Latar belakang album oleh {ALBUM_BACKGROUND_LINK}
+- Suara asli dari {ORIGINAL_SOUND_LINK}
+- Suara dimodifikasi dan disempurnakan oleh {APP_NAME}.","- Sfondi dell'album di {ALBUM_BACKGROUND_LINK}
+- Suoni originali da {ORIGINAL_SOUND_LINK}
+- Suoni modificati e migliorati da {APP_NAME}.","- {ALBUM_BACKGROUND_LINK} によるアルバムの背景
+- {ORIGINAL_SOUND_LINK} のオリジナル サウンド
+- サウンドは {APP_NAME} によって変更および強化されています。","- ផ្ទៃខាងក្រោយអាល់ប៊ុមដោយ {ALBUM_BACKGROUND_LINK}
+- សំឡេងដើមពី {ORIGINAL_SOUND_LINK}
+- សំឡេងដែលបានកែប្រែ និងកែលម្អដោយ {APP_NAME} ។","- {ALBUM_BACKGROUND_LINK}의 앨범 배경
+- {ORIGINAL_SOUND_LINK}의 원본 사운드
+- {APP_NAME}에 의해 사운드가 수정되고 향상되었습니다.","- Tła albumu autorstwa {ALBUM_BACKGROUND_LINK}
+- Oryginalne dźwięki z {ORIGINAL_SOUND_LINK}
+- Dźwięki zmodyfikowane i ulepszone przez {APP_NAME}.","- Planos de fundo do álbum de {ALBUM_BACKGROUND_LINK}
+- Sons originais de {ORIGINAL_SOUND_LINK}
+- Sons modificados e aprimorados por {APP_NAME}.","- พื้นหลังอัลบั้มโดย {ALBUM_BACKGROUND_LINK}
+- เสียงต้นฉบับจาก {ORIGINAL_SOUND_LINK}
+- เสียงที่แก้ไขและปรับปรุงโดย {APP_NAME}","- Hình nền album của {ALBUM_BACKGROUND_LINK}
+- Âm thanh gốc từ {ORIGINAL_SOUND_LINK}
+- Âm thanh được sửa đổi và nâng cao bởi {APP_NAME}.","- 专辑背景由{ALBUM_BACKGROUND_LINK}制作
+- 来自{ORIGINAL_SOUND_LINK}的原始声音
+- 声音由{APP_NAME}修改和增强。"
 sounds.droplets,Droplets,قطرات الرذاذ,Tröpfchen,Gotas,Gotas,Gouttelettes,बूंदों,Droplet,Goccioline,水滴,ដំណក់ទឹក,비말,Kropelki,Gotas,ละอองฝอย,Giọt bắn,飞沫
 sounds.forest_birds,Forest birds,طيور الغابة,Waldvögel,Aves del bosque,Aves del bosque,Oiseaux forestiers,वन पक्षी,Burung hutan,Uccelli della foresta,森の鳥,បក្សីព្រៃ,숲속의 새들,Ptaki leśne,Aves da floresta,นกป่า,Chim rừng,森林鸟类
 sounds.frogs,Frogs,الضفادع,Frösche,ranas,ranas,Grenouilles,मेंढक,Katak,Rane,カエル,កង្កែប,개구리,Żaby,Sapos,กบ,ếch,青蛙
