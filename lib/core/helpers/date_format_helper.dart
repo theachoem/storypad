@@ -12,6 +12,14 @@ class DateFormatHelper {
     return DateFormat.MMM(locale.toLanguageTag()).format(date);
   }
 
+  static String Md(DateTime date, Locale locale) {
+    return DateFormat.Md(locale.toLanguageTag()).format(date);
+  }
+
+  static String d(DateTime date, Locale locale) {
+    return DateFormat.d(locale.toLanguageTag()).format(date);
+  }
+
   static String yMEd_jm(DateTime date, Locale locale) {
     return DateFormat.yMEd(locale.toLanguageTag())
         .addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}")
