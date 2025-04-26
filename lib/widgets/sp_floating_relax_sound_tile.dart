@@ -156,7 +156,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  provider.selectedRelaxSounds.map((e) => e.label).join(", "),
+                  provider.selectedSoundsLabel,
                   style: TextTheme.of(context).titleMedium?.copyWith(color: foregroundColor),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

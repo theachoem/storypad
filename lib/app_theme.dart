@@ -171,6 +171,7 @@ class AppTheme extends StatelessWidget {
     if (!kIsCupertino && !isMaterialByPlatform) {
       platform = TargetPlatform.android;
     }
+
     return platform;
   }
 

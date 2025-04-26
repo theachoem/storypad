@@ -7,9 +7,13 @@ part of 'relax_sound_object.dart';
 // **************************************************************************
 
 abstract class _$RelaxSoundObjectCWProxy {
+  RelaxSoundObject artist(String artist);
+
   RelaxSoundObject translationKey(String translationKey);
 
   RelaxSoundObject svgIconUrlPath(String svgIconUrlPath);
+
+  RelaxSoundObject background(FirestoreStorageBackground background);
 
   RelaxSoundObject soundUrlPath(String soundUrlPath);
 
@@ -22,8 +26,10 @@ abstract class _$RelaxSoundObjectCWProxy {
   /// RelaxSoundObject(...).copyWith(id: 12, name: "My name")
   /// ````
   RelaxSoundObject call({
+    String artist,
     String translationKey,
     String svgIconUrlPath,
+    FirestoreStorageBackground background,
     String soundUrlPath,
     int dayColor,
   });
@@ -36,12 +42,19 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   final RelaxSoundObject _value;
 
   @override
+  RelaxSoundObject artist(String artist) => this(artist: artist);
+
+  @override
   RelaxSoundObject translationKey(String translationKey) =>
       this(translationKey: translationKey);
 
   @override
   RelaxSoundObject svgIconUrlPath(String svgIconUrlPath) =>
       this(svgIconUrlPath: svgIconUrlPath);
+
+  @override
+  RelaxSoundObject background(FirestoreStorageBackground background) =>
+      this(background: background);
 
   @override
   RelaxSoundObject soundUrlPath(String soundUrlPath) =>
@@ -59,12 +72,18 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   /// RelaxSoundObject(...).copyWith(id: 12, name: "My name")
   /// ````
   RelaxSoundObject call({
+    Object? artist = const $CopyWithPlaceholder(),
     Object? translationKey = const $CopyWithPlaceholder(),
     Object? svgIconUrlPath = const $CopyWithPlaceholder(),
+    Object? background = const $CopyWithPlaceholder(),
     Object? soundUrlPath = const $CopyWithPlaceholder(),
     Object? dayColor = const $CopyWithPlaceholder(),
   }) {
     return RelaxSoundObject(
+      artist: artist == const $CopyWithPlaceholder()
+          ? _value.artist
+          // ignore: cast_nullable_to_non_nullable
+          : artist as String,
       translationKey: translationKey == const $CopyWithPlaceholder()
           ? _value.translationKey
           // ignore: cast_nullable_to_non_nullable
@@ -73,6 +92,10 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
           ? _value.svgIconUrlPath
           // ignore: cast_nullable_to_non_nullable
           : svgIconUrlPath as String,
+      background: background == const $CopyWithPlaceholder()
+          ? _value.background
+          // ignore: cast_nullable_to_non_nullable
+          : background as FirestoreStorageBackground,
       soundUrlPath: soundUrlPath == const $CopyWithPlaceholder()
           ? _value.soundUrlPath
           // ignore: cast_nullable_to_non_nullable
@@ -97,8 +120,11 @@ extension $RelaxSoundObjectCopyWith on RelaxSoundObject {
 
 RelaxSoundObject _$RelaxSoundObjectFromJson(Map<String, dynamic> json) =>
     RelaxSoundObject(
+      artist: json['artist'] as String,
       translationKey: json['translation_key'] as String,
       svgIconUrlPath: json['svg_icon_url_path'] as String,
+      background:
+          $enumDecode(_$FirestoreStorageBackgroundEnumMap, json['background']),
       soundUrlPath: json['sound_url_path'] as String,
       dayColor: (json['day_color'] as num?)?.toInt() ?? 3,
     );
@@ -106,7 +132,30 @@ RelaxSoundObject _$RelaxSoundObjectFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$RelaxSoundObjectToJson(RelaxSoundObject instance) =>
     <String, dynamic>{
       'translation_key': instance.translationKey,
+      'artist': instance.artist,
       'svg_icon_url_path': instance.svgIconUrlPath,
+      'background': _$FirestoreStorageBackgroundEnumMap[instance.background]!,
       'sound_url_path': instance.soundUrlPath,
       'day_color': instance.dayColor,
     };
+
+const _$FirestoreStorageBackgroundEnumMap = {
+  FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background:
+      'abstract_water_drops_on_turquoise_glass_background',
+  FirestoreStorageBackground.color_beautiful_sky_vintage_forest:
+      'color_beautiful_sky_vintage_forest',
+  FirestoreStorageBackground.cups_and_pot_near_fire: 'cups_and_pot_near_fire',
+  FirestoreStorageBackground.designer_at_work_in_office:
+      'designer_at_work_in_office',
+  FirestoreStorageBackground.fall_leaves_hanging_on_blurry_surface:
+      'fall_leaves_hanging_on_blurry_surface',
+  FirestoreStorageBackground.forest_full_of_high_rise_trees:
+      'forest_full_of_high_rise_trees',
+  FirestoreStorageBackground.music_notes_on_heart_shaped_paper:
+      'music_notes_on_heart_shaped_paper',
+  FirestoreStorageBackground
+          .textured_green_and_black_liquefy_abstract_background:
+      'textured_green_and_black_liquefy_abstract_background',
+  FirestoreStorageBackground.two_cloudy_tags_on_color_background:
+      'two_cloudy_tags_on_color_background',
+};

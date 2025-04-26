@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
+import 'package:storypad/core/services/multi_audio_notification_service.dart';
 import 'package:storypad/core/services/multi_audio_player_service.dart';
 import 'package:storypad/core/services/relax_sound_timer_service.dart';
 
-class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
-  RelaxSoundsProvider() {
-    WidgetsBinding.instance.addObserver(this);
-  }
-
+class RelaxSoundsProvider extends ChangeNotifier {
   Map<String, RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
+  String get selectedSoundsLabel => selectedRelaxSounds.map((e) => e.label).join(", ");
   List<RelaxSoundObject> get selectedRelaxSounds {
     return audioPlayersService.audioUrlPaths.map((urlPath) {
       return relaxSounds[urlPath]!;
@@ -17,19 +15,35 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   PlayerState? playerStateFor(String urlPath) => audioPlayersService.playingStates[urlPath];
-  late MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(onStateChanged: (bool? playing) {
-    if (playing != null) {
-      playing ? timerService.startIfNot() : timerService.pauseIfNot();
-      _playing = playing;
-    } else {
-      timerService.setStopIn(null);
-      timerService.pauseIfNot();
-    }
+  late final MultiAudioPlayersService audioPlayersService = MultiAudioPlayersService(
+    onStateChanged: (bool? playing) async {
+      if (playing != null) {
+        playing ? timerService.startIfNot() : timerService.pauseIfNot();
+        _playing = playing;
+      } else {
+        timerService.setStopIn(null);
+        timerService.pauseIfNot();
+      }
 
-    notifyListeners();
-  });
+      _notificationService.notifyUser(
+        playingStates: audioPlayersService.playingStates,
+        stopIn: timerService.stopIn,
+        title: selectedSoundsLabel,
+        backgroundUrlPath: selectedRelaxSounds.lastOrNull?.background.urlPath,
+        artist: selectedRelaxSounds.map((e) => e.artist).join(", "),
+      );
 
-  late RelaxSoundsTimerService timerService = RelaxSoundsTimerService(onEnded: () {
+      notifyListeners();
+    },
+  );
+
+  late final _notificationService = MultiAudioNotificationService(
+    onPlayed: () async => audioPlayersService.playAll(),
+    onPaused: () async => audioPlayersService.pauseAll(),
+    onClosed: () async => audioPlayersService.removeAllAudios(),
+  );
+
+  late final RelaxSoundsTimerService timerService = RelaxSoundsTimerService(onEnded: () {
     debugPrint("🎸 RelaxSoundsTimerService#onEnded");
     audioPlayersService.pauseAll();
   });
@@ -71,25 +85,6 @@ class RelaxSoundsProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   void dismiss() {
     audioPlayersService.removeAllAudios();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (_playing == null) return;
-
-    switch (state) {
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        if (playing) audioPlayersService.pauseAll();
-        break;
-      case AppLifecycleState.resumed:
-        if (!playing) audioPlayersService.playAll();
-        break;
-    }
   }
 
   @override

@@ -16,6 +16,8 @@ class AudioPlayerService {
     required this.onStateChanged,
   }) {
     _player.playerStateStream.listen((state) {
+      if (_disposed) return;
+
       debugPrint('🎻 AudioPlayerService#onStateChanged ${basename(urlPath)}: $state');
       onStateChanged(state);
     });
@@ -62,7 +64,11 @@ class AudioPlayerService {
     if (success) await _player.pause();
   }
 
+  bool _disposed = false;
   Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
+
     // If not stop before dispose, it will raise:
     // Bad state: Cannot add new events after calling close
     await _player.stop();
