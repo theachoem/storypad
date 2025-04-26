@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart' show Consumer;
+import 'package:provider/provider.dart' show Consumer, ReadContext;
 import 'package:storypad/app_theme.dart' show AppTheme;
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:storypad/core/constants/app_constants.dart';
@@ -53,11 +53,19 @@ class HomeView extends StatelessWidget {
     super.key,
   });
 
+  static BuildContext? _reloadContext;
+  static Future<void> reload({
+    required String debugSource,
+  }) async {
+    return _reloadContext?.read<HomeViewModel>().reload(debugSource: debugSource);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(
       create: (context) => HomeViewModel(context: context),
       builder: (context, viewModel, child) {
+        _reloadContext = context;
         return SpAppLockWrapper(
           child: SpOnboardingWrappper(
             child: _HomeContent(viewModel),

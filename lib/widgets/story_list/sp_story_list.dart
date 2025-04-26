@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart';
@@ -45,7 +44,7 @@ class SpStoryList extends StatelessWidget {
 
   Future<void> putBack(StoryDbModel story, BuildContext context) async {
     await story.putBack();
-    if (context.mounted) context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBack');
+    HomeView.reload(debugSource: '$runtimeType#putBack');
   }
 
   @override

@@ -1,7 +1,8 @@
 import 'package:storypad/core/services/days_count_in_month_service.dart';
 
 class CalendarDaysGenerator {
-  static const int totalCells = 7 * 6;
+  static const int totalCells = DateTime.daysPerWeek * totalRows;
+  static const int totalRows = 6;
 
   // This class generates 42 visible days for a calendar grid (7 columns × 6 rows).
   // - The current month's days (28–31 days) are placed based on the given year and month.
