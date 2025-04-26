@@ -2,7 +2,6 @@ import 'dart:async' show Future;
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart' show FirebaseCrashlytics;
 import 'package:flutter/material.dart' show BuildContext, ChangeNotifier, debugPrint, debugPrintStack;
-import 'package:provider/provider.dart' show ReadContext;
 import 'package:storypad/core/mixins/debounched_callback.dart' show DebounchedCallback;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/objects/backup_object.dart' show BackupObject;
@@ -14,7 +13,7 @@ import 'package:storypad/core/services/backup_sources/google_drive_backup_source
 import 'package:storypad/core/services/messenger_service.dart' show MessengerService;
 import 'package:storypad/core/services/queue_delete_backup_service.dart' show QueueDeleteBackupService;
 import 'package:storypad/core/services/backups/restore_backup_service.dart' show RestoreBackupService;
-import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
+import 'package:storypad/views/home/home_view.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   final GoogleDriveBackupSource source = GoogleDriveBackupSource();
@@ -232,7 +231,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
     if (!context.mounted) return;
     AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: backup.fileInfo);
-    await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#forceRestore');
+    await HomeView.reload(debugSource: '$runtimeType#forceRestore');
 
     if (!context.mounted) return;
     MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));

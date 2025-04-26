@@ -54,7 +54,14 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
 
-    story ??= StoryDbModel.fromDate(openedOn, initialYear: params.initialYear, initialTagId: params.initialTagId);
+    story ??= StoryDbModel.fromDate(
+      openedOn,
+      initialYear: params.initialYear,
+      initialMonth: params.initialMonth,
+      initialDay: params.initialDay,
+      initialTagId: params.initialTagId,
+    );
+
     draftContent = story!.generateDraftContent();
 
     bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;

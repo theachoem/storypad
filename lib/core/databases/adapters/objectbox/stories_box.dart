@@ -91,6 +91,30 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return storyCountsByType;
   }
 
+  Map<int, String?> getStoryFeelingByMonth({
+    required int month,
+    required int year,
+  }) {
+    debugPrint("Triggering $tableName#getStoryFeelingByMonth 🍎");
+
+    Map<int, String?> storyFeelingByMonth = {};
+    final result = buildQuery(filters: {
+      'year': year,
+      'month': month,
+      'type': PathType.docs.name,
+    }).build().find();
+
+    for (final story in result) {
+      if (story.feeling != null) {
+        storyFeelingByMonth[story.day] = story.feeling;
+      } else if (story.feeling == null && storyFeelingByMonth[story.day] == null) {
+        storyFeelingByMonth[story.day] = 'exist_but_not_set';
+      }
+    }
+
+    return storyFeelingByMonth;
+  }
+
   @override
   Future<StoryDbModel?> set(
     StoryDbModel record, {

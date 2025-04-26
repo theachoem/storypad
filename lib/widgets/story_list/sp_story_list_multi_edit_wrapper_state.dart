@@ -51,7 +51,8 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
-      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
+
       return true;
     }
 
@@ -74,7 +75,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
-      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 
@@ -96,7 +97,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
-      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 
@@ -121,7 +122,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
       }
 
       turnOffEditing();
-      if (context.mounted) await context.read<HomeViewModel>().reload(debugSource: '$runtimeType#putBackAll');
+      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 

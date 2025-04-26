@@ -34,6 +34,8 @@ part 'local_widgets/focus_node_builder.dart';
 class EditStoryRoute extends BaseRoute {
   final int? id;
   final int? initialYear;
+  final int? initialMonth;
+  final int? initialDay;
   final int? initialTagId;
   final int initialPageIndex;
   final List<QuillController>? quillControllers;
@@ -42,7 +44,9 @@ class EditStoryRoute extends BaseRoute {
 
   EditStoryRoute({
     this.id,
+    this.initialMonth,
     this.initialYear,
+    this.initialDay,
     this.initialPageIndex = 0,
     this.quillControllers,
     this.story,
@@ -65,6 +69,8 @@ class EditStoryRoute extends BaseRoute {
 
     return {
       'year': initialYear.toString(),
+      'month': initialMonth.toString(),
+      'day': initialDay.toString(),
       'hello_text': WelcomeMessageService.get(null),
       'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };

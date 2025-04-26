@@ -233,13 +233,15 @@ class StoryDbModel extends BaseDbModel {
   factory StoryDbModel.fromDate(
     DateTime date, {
     int? initialYear,
+    int? initialMonth,
+    int? initialDay,
     int? initialTagId,
   }) {
     final now = DateTime.now();
     return StoryDbModel(
       year: initialYear ?? date.year,
-      month: date.month,
-      day: date.day,
+      month: initialMonth ?? date.month,
+      day: initialDay ?? date.day,
       hour: date.hour,
       minute: date.minute,
       second: date.second,

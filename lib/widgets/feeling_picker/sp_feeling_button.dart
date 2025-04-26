@@ -17,6 +17,9 @@ class SpFeelingButton extends StatelessWidget {
   final String? feeling;
   final Future<void> Function(String? feeling) onPicked;
 
+  static Color backgroundColor(BuildContext context) =>
+      (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.05);
+
   @override
   Widget build(BuildContext context) {
     return SpFloatingPopUpButton(
@@ -39,7 +42,7 @@ class SpFeelingButton extends StatelessWidget {
           margin: const EdgeInsets.all(4.0),
           child: Material(
             type: MaterialType.circle,
-            color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.05),
+            color: backgroundColor(context),
             child: Tooltip(
               message: FeelingObject.feelingsByKey[feeling]?.translation(context) ?? tr("button.set_feeling"),
               child: InkWell(
