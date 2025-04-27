@@ -96,7 +96,9 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
                     this.year = year;
                     this.month = month;
 
-                    feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+                    if (year != this.year || month != this.month) {
+                      feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+                    }
                   });
                 },
               ),
