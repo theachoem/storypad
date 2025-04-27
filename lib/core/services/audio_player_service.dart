@@ -45,9 +45,10 @@ class AudioPlayerService {
       _setupCompleter?.complete(false);
       return false;
     } else {
-      _setAudioSource ??=
-          await _player.setAudioSource(ProgressiveAudioSource(Uri.parse(_downloadUrl!))).then((e) => true);
+      final audioSource = LockCachingAudioSource(Uri.parse(_downloadUrl!));
+      _setAudioSource ??= await _player.setAudioSource(await audioSource.resolve()).then((e) => true);
       _setupCompleter?.complete(true);
+
       return true;
     }
   }
