@@ -58,6 +58,10 @@ StoryPad is designed with simplicity in mind, both in its UI and codebase. We ai
 
 Feel free to clone the StoryPad repository and explore the code. It’s a great resource for learning how to build efficient, maintainable mobile apps with Flutter. You can also contribute improvements or new features, helping enhance the project for everyone.
 
+A big thank you to the maintainers of the packages StoryPad relies on — without their work, StoryPad wouldn’t be possible. You can view all the dependencies in the [pubspec.yaml](pubspec.yaml) file.
+
 ## License
 
 StoryPad is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+
+We chose the GPL license to ensure that StoryPad’s source code remains free and open. Anyone can use, study, modify, and distribute it — but any modifications must also remain open-source under the same license.
