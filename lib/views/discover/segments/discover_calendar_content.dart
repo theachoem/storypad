@@ -53,6 +53,9 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
   // story query list already know how to refresh their own list, so we don't have to refresh for them.
   Future<void> reloadFeeling() async {
     feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+
+    print(feelingMapByDay);
+
     setState(() {});
   }
 
@@ -92,13 +95,13 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
                 feelingMapByDay: feelingMapByDay,
                 onChanged: (year, month, selectedDay) {
                   setState(() {
-                    this.selectedDay = year != this.year || month != this.month ? 1 : selectedDay;
-                    this.year = year;
-                    this.month = month;
-
                     if (year != this.year || month != this.month) {
                       feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
                     }
+
+                    this.selectedDay = year != this.year || month != this.month ? 1 : selectedDay;
+                    this.year = year;
+                    this.month = month;
                   });
                 },
               ),
