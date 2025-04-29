@@ -3,14 +3,73 @@ part of '../home_view.dart';
 class _HomeTimelineSideBar extends StatelessWidget {
   const _HomeTimelineSideBar();
 
+  static const double iconSize = SpStoryTile.monogramSize + 8;
+
   @override
   Widget build(BuildContext context) {
-    const double iconSize = SpStoryTile.monogramSize + 4;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      spacing: 8.0,
-      children: [
-        Container(
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    double baseHorizontalPadding = 6.0;
+
+    return Container(
+      padding: EdgeInsets.only(
+        left: AppTheme.getDirectionValue(context, 0.0, MediaQuery.of(context).padding.left + baseHorizontalPadding)!,
+        right: AppTheme.getDirectionValue(context, MediaQuery.of(context).padding.right + baseHorizontalPadding, 0.0)!,
+        top: MediaQuery.of(context).padding.bottom + 24.0,
+        bottom: MediaQuery.of(context).padding.bottom + 24.0,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          end: Alignment.topCenter,
+          begin: Alignment.bottomCenter,
+          colors: [
+            backgroundColor.withValues(alpha: 0.0),
+            backgroundColor.withValues(alpha: 0.8),
+            backgroundColor,
+            backgroundColor.withValues(alpha: 0.8),
+            backgroundColor.withValues(alpha: 0.0)
+          ],
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 0.0,
+        children: [
+          // buildButton(
+          //   context: context,
+          //   child: const Icon(SpIcons.addFeeling, size: 24.0),
+          //   onTap: () {},
+          // ),
+          // buildButton(
+          //   context: context,
+          //   child: const Icon(SpIcons.search, size: 24.0),
+          //   onTap: () {},
+          // ),
+          buildButton(
+            context: context,
+            child: const Icon(SpIcons.calendar, size: 24.0),
+            onTap: () {
+              SpDiscoverSheet(
+                params: const DiscoverRoute(),
+              ).show(context: context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildButton({
+    required BuildContext context,
+    required Widget child,
+    required void Function()? onTap,
+  }) {
+    return SpTapEffect(
+      scaleActive: 0.9,
+      effects: [SpTapEffectType.scaleDown],
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Container(
           width: iconSize,
           height: iconSize,
           decoration: BoxDecoration(
@@ -18,35 +77,9 @@ class _HomeTimelineSideBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
-            SpIcons.calendar,
-            size: 24.0,
-          ),
+          child: child,
         ),
-        Container(
-          width: iconSize,
-          height: iconSize,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            color: Theme.of(context).colorScheme.surface,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            SpIcons.addFeeling,
-            size: 24.0,
-          ),
-        ),
-        Container(
-          width: iconSize,
-          height: iconSize,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            color: Theme.of(context).colorScheme.surface,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(SpIcons.search),
-        ),
-      ],
+      ),
     );
   }
 }

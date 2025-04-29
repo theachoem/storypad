@@ -21,6 +21,7 @@ import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
@@ -150,9 +151,10 @@ class SpStoryTile extends StatelessWidget {
           onLongPress = () => openPopUpMenu.call();
         }
 
-        return InkWell(
+        return SpTapEffect(
+          effects: [SpTapEffectType.touchableOpacity],
           onTap: onTap,
-          onLongPress: onLongPress,
+          onLongPressed: onLongPress,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             child: Stack(
