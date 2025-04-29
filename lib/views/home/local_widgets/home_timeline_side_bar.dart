@@ -26,10 +26,10 @@ class _HomeTimelineSideBar extends StatelessWidget {
           end: Alignment.topCenter,
           begin: Alignment.bottomCenter,
           colors: [
-            backgroundColor.withValues(alpha: 0.0),
-            backgroundColor.withValues(alpha: 0.8),
             backgroundColor,
-            backgroundColor.withValues(alpha: 0.8),
+            backgroundColor,
+            backgroundColor,
+            backgroundColor.withValues(alpha: 0.9),
             backgroundColor.withValues(alpha: 0.0)
           ],
         ),
