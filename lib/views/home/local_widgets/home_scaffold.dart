@@ -24,8 +24,7 @@ class _HomeScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          kIsCupertino && AppTheme.isDarkMode(context) && AppTheme.isMonochrome(context) ? Colors.black : null,
+      backgroundColor: getBackgroundColor(context),
       resizeToAvoidBottomInset: false,
       endDrawerEnableOpenDragGesture: true,
       endDrawer: endDrawer,
@@ -67,7 +66,10 @@ class _HomeScaffold extends StatelessWidget {
         builder: (context, state) {
           return Visibility(
             visible: !state.editing,
-            child: const _HomeTimelineSideBar(),
+            child: _HomeTimelineSideBar(
+              screenPadding: MediaQuery.of(viewContext).padding,
+              backgroundColor: getBackgroundColor(context) ?? ColorScheme.of(context).surface,
+            ),
           );
         },
       ),

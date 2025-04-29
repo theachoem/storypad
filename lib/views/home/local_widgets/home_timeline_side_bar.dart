@@ -1,21 +1,25 @@
 part of '../home_view.dart';
 
 class _HomeTimelineSideBar extends StatelessWidget {
-  const _HomeTimelineSideBar();
+  const _HomeTimelineSideBar({
+    required this.screenPadding,
+    required this.backgroundColor,
+  });
 
+  final EdgeInsets screenPadding;
+  final Color backgroundColor;
   static const double iconSize = SpStoryTile.monogramSize + 8;
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     double baseHorizontalPadding = 6.0;
 
     return Container(
       padding: EdgeInsets.only(
-        left: AppTheme.getDirectionValue(context, 0.0, MediaQuery.of(context).padding.left + baseHorizontalPadding)!,
-        right: AppTheme.getDirectionValue(context, MediaQuery.of(context).padding.right + baseHorizontalPadding, 0.0)!,
-        top: MediaQuery.of(context).padding.bottom + 24.0,
-        bottom: MediaQuery.of(context).padding.bottom + 24.0,
+        left: AppTheme.getDirectionValue(context, 0.0, screenPadding.left + baseHorizontalPadding)!,
+        right: AppTheme.getDirectionValue(context, screenPadding.right + baseHorizontalPadding, 0.0)!,
+        top: screenPadding.bottom + 24.0,
+        bottom: screenPadding.bottom + 24.0,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
