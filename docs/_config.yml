@@ -19,12 +19,23 @@
 # in the templates via {{ site.myvariable }}.
 
 title: StoryPad - Write Your Story
-description: 🪴 StoryPad is a minimalist journal and diary designed for effortless writing and reflection. Whether you're capturing moments, writing daily thoughts, or tracking emotions, StoryPad offers a smooth, distraction-free experience—without ads, just you and your stories
+tagline: StoryPad - Make Every Day a Story
+description: Write your story, diary, notes, and memories to stay organized and reflective.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://storypad.juniorise.com" # the base hostname & protocol for your site, e.g. http://example.com
-
+author:
+  url: https://thea.juniorise.com
+  twitter: theachoem
+  picture: "https://avatars.githubusercontent.com/u/29684683"
+twitter:
+  username: theachoem
+  card: summary
 logo: assets/logo.png
-
+social:
+  name: StoryPad
+  links:
+    - https://x.com/i/communities/1914397037266919766
+    - https://github.com/theachoem/storypad
 aux_links:
   "Source Code":
     - "https://github.com/theachoem/storypad"
