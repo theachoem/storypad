@@ -79,11 +79,13 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
   void setupControllers() {
     focusNodes = [];
+    titleFocusNodes = [];
     scrollControllers = [];
     titleControllers = [];
 
     for (int i = 0; i < quillControllers.length; i++) {
       focusNodes.add(FocusNode());
+      titleFocusNodes.add(FocusNode());
       scrollControllers.add(ScrollController());
       titleControllers
           .add(TextEditingController(text: draftContent?.richPages?[i].title)..addListener(() => _silentlySave()));
@@ -104,6 +106,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     scrollControllers.add(ScrollController());
     focusNodes.add(FocusNode());
+    titleFocusNodes.add(FocusNode());
     titleControllers.add(TextEditingController()..addListener(() => _silentlySave()));
     quillControllers.add(QuillController(
       document: Document(),
@@ -127,6 +130,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     quillControllers = [];
     focusNodes = [];
+    titleFocusNodes = [];
     scrollControllers = [];
     titleControllers = [];
 
@@ -147,6 +151,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }) {
     quillControllers = quillControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
     focusNodes = focusNodes.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    titleFocusNodes = titleFocusNodes.reorder(oldIndex: oldIndex, newIndex: newIndex);
     scrollControllers = scrollControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
     titleControllers = titleControllers.reorder(oldIndex: oldIndex, newIndex: newIndex);
     _silentlySave();

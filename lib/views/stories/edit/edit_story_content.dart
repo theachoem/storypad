@@ -81,6 +81,7 @@ class _EditStoryContent extends StatelessWidget {
                   draftContent: viewModel.draftContent!,
                   readOnly: false,
                   titleController: viewModel.titleControllers[index],
+                  focusNode: viewModel.titleFocusNodes[index],
                   onChangeDate: viewModel.changeDate,
                   draftActions: null,
                 ),
@@ -92,6 +93,7 @@ class _EditStoryContent extends StatelessWidget {
           return _Editor(
             draftContent: viewModel.draftContent,
             controller: viewModel.quillControllers[index],
+            titleFocusNode: viewModel.titleFocusNodes[index],
             focusNode: viewModel.focusNodes[index],
             scrollController: PrimaryScrollController.of(context), // get controller from set above.
           );

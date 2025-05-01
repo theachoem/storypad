@@ -2,12 +2,14 @@ part of '../edit_story_view.dart';
 
 class _Editor extends StatelessWidget {
   final QuillController controller;
+  final FocusNode titleFocusNode;
   final FocusNode focusNode;
   final ScrollController scrollController;
   final StoryContentDbModel? draftContent;
 
   const _Editor({
     required this.controller,
+    required this.titleFocusNode,
     required this.focusNode,
     required this.scrollController,
     required this.draftContent,
@@ -19,12 +21,12 @@ class _Editor extends StatelessWidget {
       children: [
         Expanded(child: buildPagesEditor(context)),
         _FocusNodeBuilder(
-          focusNode: focusNode,
+          focusNode: titleFocusNode,
           child: buildBottomToolbar(context),
-          builder: (context, focused, child) {
+          builder: (context, titleFocused, child) {
             return Visibility(
               maintainState: true,
-              visible: focused,
+              visible: !titleFocused,
               child: SpFadeIn.fromBottom(
                 child: child!,
               ),

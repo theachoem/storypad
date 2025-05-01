@@ -6,6 +6,7 @@ mixin StoryPagesManagable on ChangeNotifier {
   List<QuillController> quillControllers = [];
   List<ScrollController> scrollControllers = [];
   List<FocusNode> focusNodes = [];
+  List<FocusNode> titleFocusNodes = [];
 
   late final PageController pageController;
   final ValueNotifier<double> currentPageNotifier = ValueNotifier(0);
@@ -49,6 +50,10 @@ mixin StoryPagesManagable on ChangeNotifier {
     lastSavedAtNotifier.dispose();
 
     for (var e in focusNodes) {
+      e.dispose();
+    }
+
+    for (var e in titleFocusNodes) {
       e.dispose();
     }
 
