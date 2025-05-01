@@ -35,7 +35,10 @@ class ShowStoryRoute extends BaseRoute {
   });
 
   @override
-  PageRoute<T> buildMaterialRoute<T>({required BuildContext context, required bool fullscreenDialog}) {
+  PageRoute<T> buildMaterialRoute<T>({
+    required BuildContext context,
+    required bool fullscreenDialog,
+  }) {
     final backgroundColor = SpStoryPreferenceTheme.getRouteBackgroundColor(story?.preferences, context);
     return PageRouteBuilder(
       fullscreenDialog: fullscreenDialog,

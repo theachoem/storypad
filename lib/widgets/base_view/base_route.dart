@@ -51,8 +51,8 @@ abstract class BaseRoute {
           : buildMaterialRoute(context: context, fullscreenDialog: true);
     } else {
       return CupertinoSheetRoute.hasParentSheet(context)
-          ? buildCupertinoRoute(context: context, fullscreenDialog: true)
-          : buildMaterialRoute(context: context, fullscreenDialog: true);
+          ? buildCupertinoRoute(context: context, fullscreenDialog: false)
+          : buildMaterialRoute(context: context, fullscreenDialog: false);
     }
   }
 
