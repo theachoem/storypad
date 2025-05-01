@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
@@ -39,6 +40,8 @@ class ShowStoryRoute extends BaseRoute {
     required BuildContext context,
     required bool fullscreenDialog,
   }) {
+    if (kIsCupertino) return super.buildMaterialRoute(context: context, fullscreenDialog: fullscreenDialog);
+
     final backgroundColor = SpStoryPreferenceTheme.getRouteBackgroundColor(story?.preferences, context);
     return PageRouteBuilder(
       fullscreenDialog: fullscreenDialog,

@@ -141,7 +141,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   Future<void> setFeeling(String? feeling) async {
     story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
     notifyListeners();
-    _silentlySave(draft: false);
+    await StoryDbModel.db.set(story!);
 
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,

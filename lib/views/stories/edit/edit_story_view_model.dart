@@ -184,7 +184,8 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     notifyListeners();
 
     if (await hasDataWritten) {
-      _silentlySave();
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
     }
 
     AnalyticsService.instance.logSetStoryFeeling(

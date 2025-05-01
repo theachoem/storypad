@@ -82,6 +82,7 @@ class EditStoryRoute extends BaseRoute {
     required BuildContext context,
     required bool fullscreenDialog,
   }) {
+    if (kIsCupertino) return super.buildMaterialRoute(context: context, fullscreenDialog: fullscreenDialog);
     final backgroundColor = SpStoryPreferenceTheme.getRouteBackgroundColor(story?.preferences, context);
 
     return PageRouteBuilder(
