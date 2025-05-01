@@ -9,8 +9,6 @@ part of 'story_page_db_model.dart';
 abstract class _$StoryPageDbModelCWProxy {
   StoryPageDbModel title(String? title);
 
-  StoryPageDbModel feeling(String? feeling);
-
   StoryPageDbModel body(List<dynamic>? body);
 
   StoryPageDbModel plainText(String? plainText);
@@ -23,7 +21,6 @@ abstract class _$StoryPageDbModelCWProxy {
   /// ````
   StoryPageDbModel call({
     String? title,
-    String? feeling,
     List<dynamic>? body,
     String? plainText,
   });
@@ -37,9 +34,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
 
   @override
   StoryPageDbModel title(String? title) => this(title: title);
-
-  @override
-  StoryPageDbModel feeling(String? feeling) => this(feeling: feeling);
 
   @override
   StoryPageDbModel body(List<dynamic>? body) => this(body: body);
@@ -57,7 +51,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
   /// ````
   StoryPageDbModel call({
     Object? title = const $CopyWithPlaceholder(),
-    Object? feeling = const $CopyWithPlaceholder(),
     Object? body = const $CopyWithPlaceholder(),
     Object? plainText = const $CopyWithPlaceholder(),
   }) {
@@ -66,10 +59,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
           ? _value.title
           // ignore: cast_nullable_to_non_nullable
           : title as String?,
-      feeling: feeling == const $CopyWithPlaceholder()
-          ? _value.feeling
-          // ignore: cast_nullable_to_non_nullable
-          : feeling as String?,
       body: body == const $CopyWithPlaceholder()
           ? _value.body
           // ignore: cast_nullable_to_non_nullable
@@ -95,13 +84,11 @@ extension $StoryPageDbModelCopyWith on StoryPageDbModel {
 StoryPageDbModel _$StoryPageDbModelFromJson(Map<String, dynamic> json) =>
     StoryPageDbModel(
       title: json['title'] as String?,
-      feeling: json['feeling'] as String?,
       body: json['body'] as List<dynamic>?,
     );
 
 Map<String, dynamic> _$StoryPageDbModelToJson(StoryPageDbModel instance) =>
     <String, dynamic>{
       'title': instance.title,
-      'feeling': instance.feeling,
       'body': instance.body,
     };

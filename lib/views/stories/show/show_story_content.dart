@@ -64,9 +64,6 @@ class _ShowStoryContent extends StatelessWidget {
       child: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, _) {
-          String? feeling = viewModel.draftContent?.richPages?[index].feeling;
-          if (index == 0) feeling ??= viewModel.story?.feeling;
-
           return [
             if (viewModel.story != null && viewModel.draftContent != null)
               SliverToBoxAdapter(
@@ -74,7 +71,7 @@ class _ShowStoryContent extends StatelessWidget {
                   titleController: viewModel.titleControllers[index],
                   paddingTop: MediaQuery.of(context).padding.top + 8.0,
                   story: viewModel.story!,
-                  feeling: feeling,
+                  feeling: viewModel.story?.feeling,
                   setFeeling: (feeling) => viewModel.setFeeling(feeling),
                   onToggleShowDayCount: viewModel.toggleShowDayCount,
                   onToggleShowTime: viewModel.toggleShowTime,

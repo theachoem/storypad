@@ -87,7 +87,6 @@ class StorypadLegacyDatabase {
           richPages: [
             StoryPageDbModel(
               title: storypadStory.title,
-              feeling: storypadStory.feeling,
               body: document?.toDelta().toJson(),
             )
           ],

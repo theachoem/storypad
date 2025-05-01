@@ -180,7 +180,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    draftContent = draftContent?.copyWithNewFeeling(currentPage, feeling);
+    story = story?.copyWith(updatedAt: DateTime.now(), feeling: feeling);
     notifyListeners();
 
     if (await hasDataWritten) {

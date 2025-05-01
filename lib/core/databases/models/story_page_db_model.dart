@@ -7,7 +7,6 @@ part 'story_page_db_model.g.dart';
 @JsonSerializable()
 class StoryPageDbModel {
   final String? title;
-  final String? feeling;
 
   // only use when passing data.
   // we don't store plainText here. Instead we story in story content.
@@ -19,7 +18,6 @@ class StoryPageDbModel {
 
   StoryPageDbModel({
     required this.title,
-    required this.feeling,
     required this.body,
     this.plainText,
   });

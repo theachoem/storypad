@@ -48,15 +48,9 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     return copyWith(
       richPages: [
         ...richPages ?? [],
-        StoryPageDbModel(title: null, plainText: null, body: null, feeling: null),
+        StoryPageDbModel(title: null, plainText: null, body: null),
       ],
     );
-  }
-
-  StoryContentDbModel copyWithNewFeeling(int pageIndex, String? feeling) {
-    List<StoryPageDbModel> cloneRichPages = [...richPages!];
-    cloneRichPages[pageIndex] = cloneRichPages[pageIndex].copyWith(feeling: feeling);
-    return copyWith(richPages: cloneRichPages);
   }
 
   StoryContentDbModel removeRichPageAt(int index) {
