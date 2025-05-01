@@ -61,7 +61,11 @@ class _HomeTimelineSideBar extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: bottomPadding),
+          padding: EdgeInsets.only(
+            bottom: bottomPadding,
+            left: AppTheme.getDirectionValue(context, 0, screenPadding.left)!,
+            right: AppTheme.getDirectionValue(context, screenPadding.right, 0)!,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             spacing: 0.0,

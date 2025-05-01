@@ -15,7 +15,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         margin: EdgeInsets.only(
           left: 16.0 + MediaQuery.of(context).padding.left,
-          right: 16.0 + MediaQuery.of(context).padding.left,
+          right: 16.0 + MediaQuery.of(context).padding.right,
           bottom: viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
               viewModel.scrollInfo.appBar(context).contentsMarginBottom,
         ),
