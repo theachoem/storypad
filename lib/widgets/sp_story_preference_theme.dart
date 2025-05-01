@@ -16,7 +16,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   final StoryPreferencesDbModel? preferences;
 
   static final Map<Color, ColorScheme> _cacheDarkColorSchemes = {};
-  static Map<Color, ColorScheme> _cacheLightColorSchemes = {};
+  static final Map<Color, ColorScheme> _cacheLightColorSchemes = {};
 
   @override
   Widget build(BuildContext context) {
