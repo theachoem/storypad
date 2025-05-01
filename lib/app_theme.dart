@@ -63,6 +63,15 @@ class AppTheme extends StatelessWidget {
     });
   }
 
+  static SharedAxisPageTransitionsBuilder getAndroidTransitionBuilder({
+    Color? fillColor,
+  }) {
+    return SharedAxisPageTransitionsBuilder(
+      transitionType: SharedAxisTransitionType.horizontal,
+      fillColor: fillColor,
+    );
+  }
+
   static ThemeData getTheme({
     required ColorScheme colorScheme,
     required String fontFamily,
@@ -84,10 +93,7 @@ class AppTheme extends StatelessWidget {
     Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
       TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: SharedAxisPageTransitionsBuilder(
-        transitionType: SharedAxisTransitionType.horizontal,
-        fillColor: scaffoldBackgroundColor,
-      )
+      TargetPlatform.android: getAndroidTransitionBuilder(fillColor: scaffoldBackgroundColor),
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);

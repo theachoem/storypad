@@ -47,12 +47,31 @@ abstract class BaseRoute {
   PageRoute<T> buildRoute<T>(BuildContext context) {
     if (fullscreenDialog) {
       return kIsCupertino
-          ? CupertinoSheetRoute<T>(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: buildPage(context)))
-          : MaterialPageRoute<T>(builder: (context) => buildPage(context), fullscreenDialog: true);
+          ? buildCupertinoRoute(context: context, fullscreenDialog: true)
+          : buildMaterialRoute(context: context, fullscreenDialog: true);
     } else {
       return CupertinoSheetRoute.hasParentSheet(context)
-          ? CupertinoSheetRoute<T>(builder: (_) => SpCupertinoFullPageSheetConfigurations(child: buildPage(context)))
-          : MaterialPageRoute<T>(builder: (context) => buildPage(context));
+          ? buildCupertinoRoute(context: context, fullscreenDialog: true)
+          : buildMaterialRoute(context: context, fullscreenDialog: true);
     }
+  }
+
+  PageRoute<T> buildCupertinoRoute<T>({
+    required BuildContext context,
+    required bool fullscreenDialog,
+  }) {
+    return CupertinoSheetRoute<T>(
+      builder: (_) => SpCupertinoFullPageSheetConfigurations(child: buildPage(context)),
+    );
+  }
+
+  PageRoute<T> buildMaterialRoute<T>({
+    required BuildContext context,
+    required bool fullscreenDialog,
+  }) {
+    return MaterialPageRoute<T>(
+      fullscreenDialog: fullscreenDialog,
+      builder: (context) => buildPage(context),
+    );
   }
 }
