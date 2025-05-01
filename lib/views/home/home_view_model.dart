@@ -73,6 +73,11 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  void onboard() {
+    nickname = PreferenceDbModel.db.nickname.get();
+    notifyListeners();
+  }
+
   Future<void> refresh(BuildContext context) async {
     await reload(debugSource: '$runtimeType#refresh');
     if (context.mounted) await context.read<BackupProvider>().recheck();

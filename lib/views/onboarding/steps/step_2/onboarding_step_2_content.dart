@@ -18,7 +18,14 @@ class _OnboardingStep2Content extends StatelessWidget {
       onSkip: () => viewModel.skip(context),
       demo: Stack(
         children: [
-          const StoryDetailsScreenshot(),
+          VisibleWhenNotified(
+            notifier: viewModel.showStoryDetailsPageNotifier,
+            child: FadeInBuilder(
+              duration: viewModel.storyDetailsAnimationDuration,
+              transformBuilder: (a) => Matrix4.identity()..translate(0.0, lerpDouble(64.0, 0.0, a.value)!),
+              child: const StoryDetailsScreenshot(),
+            ),
+          ),
           buildFeelingButton(),
           buildFeelingClickAnimation(),
           buildToolbar(isDarkMode),
@@ -69,21 +76,23 @@ class _OnboardingStep2Content extends StatelessWidget {
     return Positioned(
       top: 57,
       right: 0,
-      child: SpFadeIn(
-        delay: Durations.medium1,
-        duration: Durations.long4,
-        child: Transform(
-          transform: Matrix4.identity()
-            ..scale(0.74)
-            ..translate(9.0, 0.0),
-          child: ValueListenableBuilder(
-            valueListenable: viewModel.selectedFeelingNotifier,
-            builder: (context, feeling, child) {
-              return SpFeelingButton(
-                feeling: feeling,
-                onPicked: (feeling) async => viewModel.selectedFeelingNotifier.value = feeling,
-              );
-            },
+      child: VisibleWhenNotified(
+        notifier: viewModel.showFeelingButtonNotifier,
+        child: SpFadeIn(
+          duration: viewModel.feelingButtonFadeInDuration,
+          child: Transform(
+            transform: Matrix4.identity()
+              ..scale(0.74)
+              ..translate(9.0, 0.0),
+            child: ValueListenableBuilder(
+              valueListenable: viewModel.selectedFeelingNotifier,
+              builder: (context, feeling, child) {
+                return SpFeelingButton(
+                  feeling: feeling,
+                  onPicked: (feeling) async => viewModel.selectedFeelingNotifier.value = feeling,
+                );
+              },
+            ),
           ),
         ),
       ),

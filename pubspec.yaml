@@ -46,7 +46,6 @@ dependencies:
   json_serializable: 6.9.0
   just_audio: ^0.10.0
   local_auth: ^2.3.0
-  lottie: ^3.3.1
   material_design_icons_flutter: ^7.0.7296
   objectbox: ^4.2.0
   objectbox_flutter_libs: any
@@ -75,5 +74,4 @@ flutter:
     - translations/
     - assets/images/
     - assets/images/onboarding/
-    - assets/lotties/
     - assets/emoji-64/

@@ -12,7 +12,7 @@ class SpOnboardingWrappper extends StatefulWidget {
   });
 
   final Widget child;
-  final Future<void> Function() onOnboarded;
+  final void Function() onOnboarded;
 
   static void close(BuildContext context) {
     context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.close();
@@ -34,6 +34,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
 
   bool onboarding = false;
   bool onboarded = OnboardingInitializer.onboarded ?? !OnboardingInitializer.isNewUser;
+  GlobalKey<NavigatorState>? onboardingKey;
 
   @override
   void initState() {
@@ -42,30 +43,32 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
     if (!onboarded) {
       onboardingAnimationController = AnimationController(vsync: this, duration: transitionDuration, value: 1.0);
       homeAnimationController = AnimationController(vsync: this, duration: transitionDuration, value: 0.0);
+      onboardingKey = GlobalKey();
     }
   }
 
   Future<void> open() async {
     onboarded = false;
-    setState(() {});
+    onboardingKey ??= GlobalKey();
 
     onboardingAnimationController ??= AnimationController(vsync: this, duration: transitionDuration, value: 1.0);
     homeAnimationController ??= AnimationController(vsync: this, duration: transitionDuration, value: 0.0);
+
+    setState(() {});
   }
 
   Future<void> close() async {
-    await widget.onOnboarded();
+    widget.onOnboarded();
 
-    onboardingAnimationController?.reverse().then((_) {
+    await onboardingAnimationController?.reverse().then((_) {
       onboarding = true;
       setState(() {});
     });
 
-    await Future.delayed(transitionDuration * 0.8);
-    await homeAnimationController?.forward().then((_) {
-      onboarded = true;
-      setState(() {});
+    await homeAnimationController?.forward();
 
+    Future.microtask(() {
+      onboarded = true;
       clean();
     });
   }
@@ -73,7 +76,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
   void clean() {
     onboardingAnimationController = null;
     homeAnimationController = null;
-
+    onboardingKey = null;
     setState(() {});
   }
 
@@ -81,6 +84,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
   void dispose() {
     onboardingAnimationController?.dispose();
     homeAnimationController?.dispose();
+    onboardingKey = null;
     super.dispose();
   }
 
@@ -92,6 +96,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, result) => onboardingKey?.currentState?.maybePop(result),
       child: Material(
         color: ColorScheme.of(context).surface,
         child: Stack(
@@ -99,6 +104,7 @@ class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with Ticker
             buildHomeAnimation(child: widget.child),
             buildOnboardingAnimation(
               child: SpNestedNavigation(
+                navigatorKey: onboardingKey,
                 initialScreen: OnboardingView(params: OnboardingRoute()),
               ),
             ),

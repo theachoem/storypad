@@ -85,7 +85,9 @@ class AppTheme extends StatelessWidget {
       TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
       TargetPlatform.android: SharedAxisPageTransitionsBuilder(
-          transitionType: SharedAxisTransitionType.horizontal, fillColor: scaffoldBackgroundColor)
+        transitionType: SharedAxisTransitionType.horizontal,
+        fillColor: scaffoldBackgroundColor,
+      )
     };
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
