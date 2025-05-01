@@ -9,6 +9,7 @@ class _HomeYearsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(tr('general.years')),
         actions: [
           IconButton(
             tooltip: tr("page.add_year.title"),
