@@ -117,10 +117,7 @@ class AppTheme extends StatelessWidget {
       tabBarTheme: TabBarTheme(
         dividerColor: dividerColor,
       ),
-      drawerTheme: const DrawerThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        endShape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      ),
+      drawerTheme: const DrawerThemeData(),
       dividerColor: dividerColor,
       dividerTheme: DividerThemeData(color: dividerColor),
       inputDecorationTheme: InputDecorationTheme(
