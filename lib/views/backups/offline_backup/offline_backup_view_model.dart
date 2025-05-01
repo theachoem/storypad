@@ -30,15 +30,13 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     AnalyticsService.instance.logImportOfflineBackup();
 
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      initialDirectory: kApplicationDirectory.parent.path,
-      allowedExtensions: ['json'],
+      type: FileType.any,
     );
 
     if (!context.mounted) return;
 
     final file = result?.files.firstOrNull;
-    if (file == null) return;
+    if (file == null || file.path == null || !file.path!.endsWith(".json")) return;
 
     final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#import',
