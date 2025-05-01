@@ -4,10 +4,12 @@ class _HomeTimelineSideBar extends StatelessWidget {
   const _HomeTimelineSideBar({
     required this.screenPadding,
     required this.backgroundColor,
+    required this.viewModel,
   });
 
   final EdgeInsets screenPadding;
   final Color backgroundColor;
+  final HomeViewModel viewModel;
 
   static const double iconSize = SpStoryTile.monogramSize + 6;
   static const double baseIconVerticlePadding = 6.0;
@@ -77,9 +79,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
               buildButton(
                 context: context,
                 child: const Icon(SpIcons.calendar, size: 24.0),
-                onTap: () {
-                  SpDiscoverSheet(params: const DiscoverRoute()).show(context: context);
-                },
+                onTap: () => viewModel.openDiscoverView(context),
               ),
             ],
           ),

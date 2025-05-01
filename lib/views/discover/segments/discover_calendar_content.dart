@@ -21,15 +21,20 @@ part 'local_widgets/calendar_date.dart';
 class DiscoverCalendarContent extends StatefulWidget {
   const DiscoverCalendarContent({
     super.key,
+    required this.initialMonth,
+    required this.initialYear,
   });
+
+  final int? initialMonth;
+  final int? initialYear;
 
   @override
   State<DiscoverCalendarContent> createState() => _DiscoverCalendarContentState();
 }
 
 class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
-  int month = DateTime.now().month;
-  int year = DateTime.now().year;
+  late int month = widget.initialMonth ?? DateTime.now().month;
+  late int year = widget.initialYear ?? DateTime.now().year;
   int selectedDay = DateTime.now().day;
 
   Map<int, String?> feelingMapByDay = {};

@@ -5,10 +5,8 @@ import 'package:easy_localization/easy_localization.dart' show tr, BuildContextE
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/welcome_message_service.dart' show WelcomeMessageService;
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
-import 'package:storypad/views/discover/discover_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
-import 'package:storypad/widgets/bottom_sheets/sp_discover_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart' show SpAppLockWrapper;
 import 'package:storypad/widgets/sp_dot_lottie_builder.dart' show SpDotLottieBuilder;
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
