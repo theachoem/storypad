@@ -88,7 +88,7 @@ class _ShowStoryContent extends StatelessWidget {
           return buildEditor(
             index: index,
             context: context,
-            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+            scrollController: PrimaryScrollController.of(context), // get controller from set above.
           );
         }),
       ),
@@ -109,7 +109,7 @@ class _ShowStoryContent extends StatelessWidget {
           editable: false,
           onEdit: () => viewModel.goToEditPage(context),
         ),
-        scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+        scrollBottomInset: MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,
         expands: true,
         placeholder: "...",

@@ -93,7 +93,7 @@ class _EditStoryContent extends StatelessWidget {
             draftContent: viewModel.draftContent,
             controller: viewModel.quillControllers[index],
             focusNode: viewModel.focusNodes[index],
-            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+            scrollController: PrimaryScrollController.of(context), // get controller from set above.
           );
         }),
       ),
