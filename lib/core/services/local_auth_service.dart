@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:local_auth/local_auth.dart';
 
 class LocalAuthService {
@@ -23,11 +24,11 @@ class LocalAuthService {
     required String title,
   }) async {
     await auth.stopAuthentication();
-    return auth.authenticate(
-      localizedReason: title,
-      options: const AuthenticationOptions(
-        stickyAuth: true,
-      ),
+    return auth.authenticate(localizedReason: title, options: const AuthenticationOptions(stickyAuth: true)).catchError(
+      (e) {
+        debugPrint('$runtimeType#authenticate failed: ${e.toString()}');
+        return false;
+      },
     );
   }
 }

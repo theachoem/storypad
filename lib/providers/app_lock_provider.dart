@@ -47,7 +47,10 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   final avoidDublciated = AvoidDublicatedCallService<bool>();
-  Future<bool> authenticateIfHas(BuildContext context) async {
+  Future<bool> authenticateIfHas({
+    required BuildContext context,
+    required String debugSource,
+  }) async {
     return avoidDublciated.run(() async {
       if (!hasAppLock) return true;
       if (appLock.pin != null) {
@@ -61,6 +64,7 @@ class AppLockProvider extends ChangeNotifier {
               : null,
         ).push(context, rootNavigator: true).then((confirmed) => confirmed == true);
       } else {
+        print('CALLING $debugSource');
         return localAuth.authenticate(title: tr('dialog.unlock_to_open_the_app.title'));
       }
     });
