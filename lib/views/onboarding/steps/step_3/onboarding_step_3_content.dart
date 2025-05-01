@@ -88,7 +88,7 @@ class _OnboardingStep3Content extends StatelessWidget {
           height: 360,
           decoration: const BoxDecoration(
             color: Colors.black54,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(11.0)),
           ),
         ),
       ),

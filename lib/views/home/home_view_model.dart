@@ -12,6 +12,9 @@ import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/discover/discover_view.dart';
+import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_discover_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
@@ -70,6 +73,11 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  void onboard() {
+    nickname = PreferenceDbModel.db.nickname.get();
+    notifyListeners();
+  }
+
   Future<void> refresh(BuildContext context) async {
     await reload(debugSource: '$runtimeType#refresh');
     if (context.mounted) await context.read<BackupProvider>().recheck();
@@ -87,14 +95,24 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> goToViewPage(BuildContext context, StoryDbModel story) async {
-    await ShowStoryRoute(id: story.id, story: story).push(context);
+    final editedStory = await ShowStoryRoute(id: story.id, story: story).push(context);
+
+    if (editedStory is StoryDbModel && editedStory.updatedAt != story.updatedAt) {
+      year = editedStory.year;
+      await reload(debugSource: '$runtimeType#goToNewPage');
+    }
   }
 
   Future<void> goToNewPage(BuildContext context) async {
-    await EditStoryRoute(
+    final addedStory = await EditStoryRoute(
       id: null,
       initialYear: year,
     ).push(context);
+
+    if (addedStory is StoryDbModel) {
+      year = addedStory.year;
+    }
+
     await reload(debugSource: '$runtimeType#goToNewPage');
 
     // https://developer.android.com/guide/playcore/in-app-review#when-to-request
@@ -103,9 +121,25 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (newCount % 10 == 0) InAppReviewService.request();
   }
 
-  Future<void> openEndDrawer(BuildContext context) async {
+  HomeEndDrawerState endDrawerState = HomeEndDrawerState.showSettings;
+  Future<void> openSettings(BuildContext context) async {
+    endDrawerState = HomeEndDrawerState.showSettings;
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
+  }
+
+  Future<void> openYearsView(BuildContext context) async {
+    endDrawerState = HomeEndDrawerState.showYearsView;
+    AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
+    Scaffold.of(context).openEndDrawer();
+  }
+
+  void openDiscoverView(BuildContext context) {
+    SpDiscoverSheet(
+      params: DiscoverRoute(
+        initialYear: year,
+      ),
+    ).show(context: context);
   }
 
   void changeName(BuildContext context) async {

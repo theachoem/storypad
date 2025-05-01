@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 class SpNestedNavigation extends StatefulWidget {
   const SpNestedNavigation({
     super.key,
+    this.navigatorKey,
     required this.initialScreen,
   });
 
+  final Key? navigatorKey;
   final Widget initialScreen;
 
   static SpNestedNavigationState? maybeOf(BuildContext context) {
@@ -24,6 +26,7 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
       controller: MaterialApp.createMaterialHeroController(),
       child: ScaffoldMessenger(
         child: Navigator(
+          key: widget.navigatorKey,
           clipBehavior: Clip.hardEdge,
           onGenerateRoute: (setting) {
             return MaterialPageRoute(

@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -74,6 +75,28 @@ class EditStoryRoute extends BaseRoute {
       'hello_text': WelcomeMessageService.get(null),
       'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };
+  }
+
+  @override
+  PageRoute<T> buildMaterialRoute<T>({
+    required BuildContext context,
+    required bool fullscreenDialog,
+  }) {
+    final backgroundColor = SpStoryPreferenceTheme.getRouteBackgroundColor(story?.preferences, context);
+
+    return PageRouteBuilder(
+      fullscreenDialog: fullscreenDialog,
+      pageBuilder: (context, animation, secondaryAnimation) => buildPage(context),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          transitionType: SharedAxisTransitionType.horizontal,
+          fillColor: backgroundColor,
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          child: child,
+        );
+      },
+    );
   }
 
   @override

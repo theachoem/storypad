@@ -366,16 +366,6 @@ class $AssetsImagesGen {
   List<AssetGenImage> get values => [storypadLogo512x512, xLogo500x500];
 }
 
-class $AssetsLottiesGen {
-  const $AssetsLottiesGen();
-
-  /// File path: assets/lotties/sparkle.lottie
-  String get sparkle => 'assets/lotties/sparkle.lottie';
-
-  /// List of all assets
-  List<String> get values => [sparkle];
-}
-
 class $AssetsImagesOnboardingGen {
   const $AssetsImagesOnboardingGen();
 
@@ -460,7 +450,6 @@ class Assets {
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const String firestoreStorageMap = 'assets/firestore_storage_map.json';
   static const $AssetsImagesGen images = $AssetsImagesGen();
-  static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $TranslationsGen translations = $TranslationsGen();
 
   /// List of all assets

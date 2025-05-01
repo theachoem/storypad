@@ -13,9 +13,13 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
     startAnimations();
   }
 
+  final Duration storyDetailsAnimationDuration = const Duration(milliseconds: 1000);
+  final Duration feelingButtonFadeInDuration = const Duration(milliseconds: 1000);
   final Duration feelingClickDuration = const Duration(milliseconds: 500);
   final Duration toolbarFadeInDuration = const Duration(milliseconds: 750);
 
+  final ValueNotifier<bool> showStoryDetailsPageNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> showFeelingButtonNotifier = ValueNotifier(false);
   final ValueNotifier<bool> feelingClickedNotifier = ValueNotifier(false);
   final ValueNotifier<String?> selectedFeelingNotifier = ValueNotifier(null);
   final ValueNotifier<bool> showToolbarNotifier = ValueNotifier(false);
@@ -30,13 +34,14 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void next(BuildContext context) async {
     await OnboardingStep3Route().push(context);
+
     resetAnimations();
     startAnimations();
   }
 
   Future<void> startAnimations() async {
-    await Future.delayed(const Duration(seconds: 1, milliseconds: 250));
-
+    await showStoryDetailsPageAnimation();
+    await showFeelingButton();
     await showFeelingClickAnimation();
     await selectedFeeling();
     await showToolbar();
@@ -45,9 +50,19 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void resetAnimations() {
+    showStoryDetailsPageNotifier.value = false;
+    showFeelingButtonNotifier.value = false;
     feelingClickedNotifier.value = false;
     selectedFeelingNotifier.value = null;
     showToolbarNotifier.value = false;
+  }
+
+  Future<void> showStoryDetailsPageAnimation() async {
+    if (disposed) return;
+    if (showStoryDetailsPageNotifier.value == false) {
+      showStoryDetailsPageNotifier.value = true;
+      await Future.delayed(storyDetailsAnimationDuration);
+    }
   }
 
   Future<void> showFeelingClickAnimation() async {
@@ -62,6 +77,13 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (disposed) return;
     selectedFeelingNotifier.value = "positive_feelings";
     await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  Future<void> showFeelingButton() async {
+    if (disposed) return;
+
+    showFeelingButtonNotifier.value = true;
+    await Future.delayed(feelingButtonFadeInDuration);
   }
 
   Future<void> showToolbar() async {
@@ -84,6 +106,8 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   @override
   void dispose() {
+    showStoryDetailsPageNotifier.dispose();
+    showFeelingButtonNotifier.dispose();
     feelingClickedNotifier.dispose();
     selectedFeelingNotifier.dispose();
     showToolbarNotifier.dispose();

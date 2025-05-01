@@ -11,9 +11,13 @@ part 'discover_content.dart';
 class DiscoverRoute extends BaseRoute {
   const DiscoverRoute({
     this.initialPage,
+    this.initialMonth,
+    this.initialYear,
   });
 
   final DiscoverSegmentId? initialPage;
+  final int? initialMonth;
+  final int? initialYear;
 
   @override
   Widget buildPage(BuildContext context) => DiscoverView(params: this);

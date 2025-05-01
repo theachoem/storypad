@@ -48,11 +48,10 @@ class _QuillImageRenderer extends StatelessWidget {
       double height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
 
       return Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           SpTapEffect(
             effects: [SpTapEffectType.scaleDown],
-            onTap: () => viewImage(context, link),
+            onTap: readOnly ? () => viewImage(context, link) : null,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: SpImage(

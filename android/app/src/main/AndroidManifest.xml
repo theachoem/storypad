@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         android:localeConfig="@xml/locales_config">
         <activity
-            android:name="com.ryanheise.audioservice.AudioServiceActivity"
+            android:name="com.ryanheise.audioservice.AudioServiceFragmentActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""

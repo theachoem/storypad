@@ -100,10 +100,10 @@ class _CalendarDate extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: backgroundColor?.withValues(alpha: 0.2),
+          color: backgroundColor?.withValues(alpha: 0.1),
         ),
         alignment: Alignment.center,
-        child: FeelingObject.feelingsByKey[feeling]?.image64.image(width: 30),
+        child: FeelingObject.feelingsByKey[feeling]?.image64.image(width: 26),
       );
     } else if (hasStoriesButNoFeeling) {
       return AnimatedContainer(

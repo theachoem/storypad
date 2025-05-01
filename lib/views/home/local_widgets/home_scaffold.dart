@@ -67,6 +67,7 @@ class _HomeScaffold extends StatelessWidget {
           return Visibility(
             visible: !state.editing,
             child: _HomeTimelineSideBar(
+              viewModel: viewModel,
               screenPadding: MediaQuery.of(viewContext).padding,
               backgroundColor: getBackgroundColor(context) ?? ColorScheme.of(context).surface,
             ),

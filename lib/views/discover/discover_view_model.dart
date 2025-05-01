@@ -35,7 +35,7 @@ class DiscoverViewModel extends ChangeNotifier with DisposeAwareMixin {
         id: DiscoverSegmentId.calendar,
         tooltip: tr("page.calendar.title"),
         icon: SpIcons.calendar,
-        page: const DiscoverCalendarContent(),
+        page: DiscoverCalendarContent(initialMonth: params.initialMonth, initialYear: params.initialYear),
       ),
       if (kHasRelaxSoundsFeature)
         _Page(

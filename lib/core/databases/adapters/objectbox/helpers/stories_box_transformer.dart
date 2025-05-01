@@ -11,7 +11,6 @@ StoryContentDbModel _convertPagesToRichPages(StoryContentDbModel content) {
         // ignore: deprecated_member_use_from_same_package
         content.pages?.length ?? 0,
         (index) => StoryPageDbModel(
-          feeling: null,
           title: index == 0 ? content.title : null,
           // ignore: deprecated_member_use_from_same_package
           body: content.pages![index],

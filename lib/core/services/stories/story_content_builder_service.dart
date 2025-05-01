@@ -54,7 +54,6 @@ class StoryContentBuilderService {
           title: title != null && title.isNotEmpty ? title : null,
           plainText: document != null ? QuillRootToPlainTextService.call(document.root) : oldPage?.plainText,
           body: document?.toDelta().toJson() ?? oldPage?.body,
-          feeling: oldPage?.feeling,
         );
 
         pages.add(page);

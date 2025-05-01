@@ -1,0 +1,4 @@
+enum HomeEndDrawerState {
+  showYearsView,
+  showSettings,
+}

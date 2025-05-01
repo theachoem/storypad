@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'privacy_policy_text.dart';
@@ -91,13 +90,7 @@ class OnboardingTemplate extends StatelessWidget {
                 children: [
                   buildTextPresentation(context),
                   buildFooter(context),
-                ].asMap().entries.map((entry) {
-                  return SpFadeIn.fromTop(
-                    delay: const Duration(milliseconds: 500) + Durations.medium1 * entry.key,
-                    duration: Durations.medium4,
-                    child: entry.value,
-                  );
-                }).toList(),
+                ],
               ),
             ),
           ],

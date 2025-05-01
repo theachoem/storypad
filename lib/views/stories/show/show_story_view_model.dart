@@ -139,7 +139,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
   }
 
   Future<void> setFeeling(String? feeling) async {
-    draftContent = draftContent?.copyWithNewFeeling(currentPage, feeling);
+    story = story!.copyWith(updatedAt: DateTime.now(), feeling: feeling);
     notifyListeners();
     _silentlySave(draft: false);
 

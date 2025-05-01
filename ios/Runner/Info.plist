@@ -72,10 +72,11 @@
         </dict>
         <key>UIApplicationSupportsIndirectInputEvents</key>
         <true />
-        <key>UIBackgroundModes</key>
+        <!-- Enable when turn on relaxing sound feature. -->
+        <!-- <key>UIBackgroundModes</key>
         <array>
             <string>audio</string>
-        </array>
+        </array> -->
         <key>UILaunchStoryboardName</key>
         <string>$(LAUNCH_SCREEN_STORYBOARD)</string>
         <key>UIMainStoryboardFile</key>

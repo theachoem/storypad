@@ -16,9 +16,12 @@ class _ShowStoryContent extends StatelessWidget {
           : null,
       appBar: AppBar(
         leading: SpAnimatedIcons.fadeScale(
-          firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-          secondChild: const Hero(tag: 'back-button', child: BackButton()),
           showFirst: viewModel.managingPage,
+          firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
+          secondChild: Hero(
+            tag: 'back-button',
+            child: BackButton(onPressed: () => Navigator.maybePop(context, viewModel.story)),
+          ),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         titleSpacing: 0.0,
@@ -61,9 +64,6 @@ class _ShowStoryContent extends StatelessWidget {
       child: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, _) {
-          String? feeling = viewModel.draftContent?.richPages?[index].feeling;
-          if (index == 0) feeling ??= viewModel.story?.feeling;
-
           return [
             if (viewModel.story != null && viewModel.draftContent != null)
               SliverToBoxAdapter(
@@ -71,7 +71,7 @@ class _ShowStoryContent extends StatelessWidget {
                   titleController: viewModel.titleControllers[index],
                   paddingTop: MediaQuery.of(context).padding.top + 8.0,
                   story: viewModel.story!,
-                  feeling: feeling,
+                  feeling: viewModel.story?.feeling,
                   setFeeling: (feeling) => viewModel.setFeeling(feeling),
                   onToggleShowDayCount: viewModel.toggleShowDayCount,
                   onToggleShowTime: viewModel.toggleShowTime,
@@ -88,7 +88,7 @@ class _ShowStoryContent extends StatelessWidget {
           return buildEditor(
             index: index,
             context: context,
-            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+            scrollController: PrimaryScrollController.of(context), // get controller from set above.
           );
         }),
       ),
@@ -109,10 +109,11 @@ class _ShowStoryContent extends StatelessWidget {
           editable: false,
           onEdit: () => viewModel.goToEditPage(context),
         ),
-        scrollBottomInset: 88 + MediaQuery.of(context).viewPadding.bottom,
+        scrollBottomInset: MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,
         expands: true,
         placeholder: "...",
+        quillMagnifierBuilder: defaultQuillMagnifierBuilder,
         padding: EdgeInsets.only(
           top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,

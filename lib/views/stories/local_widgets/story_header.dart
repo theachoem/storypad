@@ -24,6 +24,7 @@ class StoryHeader extends StatelessWidget {
     required this.onChangeDate,
     required this.feeling,
     this.titleController,
+    this.focusNode,
   });
 
   final double paddingTop;
@@ -31,6 +32,7 @@ class StoryHeader extends StatelessWidget {
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
   final TextEditingController? titleController;
+  final FocusNode? focusNode;
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
@@ -74,6 +76,7 @@ class StoryHeader extends StatelessWidget {
           ),
           if (titleController?.text.trim().isNotEmpty == true || !readOnly) ...[
             _TitleField(
+              focusNode: focusNode,
               titleController: titleController,
               draftContent: draftContent,
               readOnly: readOnly,
@@ -165,11 +168,13 @@ class _DateSelector extends StatelessWidget {
 
 class _TitleField extends StatelessWidget {
   const _TitleField({
+    required this.focusNode,
     required this.titleController,
     required this.draftContent,
     required this.readOnly,
   });
 
+  final FocusNode? focusNode;
   final TextEditingController? titleController;
   final StoryContentDbModel draftContent;
   final bool readOnly;
@@ -177,6 +182,7 @@ class _TitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: focusNode,
       initialValue: titleController == null ? draftContent.title : null,
       key: titleController == null ? ValueKey(draftContent.title) : null,
       controller: titleController,

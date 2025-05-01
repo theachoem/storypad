@@ -7,7 +7,8 @@ import 'package:storypad/core/services/remote_config/remote_config_service.dart'
 import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
-import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute;
+import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
+import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/languages/languages_view.dart' show LanguagesRoute;
 import 'package:storypad/views/library/library_view.dart' show LibraryRoute;
 import 'package:storypad/views/search/search_view.dart' show SearchRoute;
@@ -36,6 +37,12 @@ class HomeEndDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
+      return HomeYearsView(
+        params: HomeYearsRoute(viewModel: viewModel),
+      );
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

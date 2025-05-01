@@ -47,7 +47,10 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   final avoidDublciated = AvoidDublicatedCallService<bool>();
-  Future<bool> authenticateIfHas(BuildContext context) async {
+  Future<bool> authenticateIfHas({
+    required BuildContext context,
+    required String debugSource,
+  }) async {
     return avoidDublciated.run(() async {
       if (!hasAppLock) return true;
       if (appLock.pin != null) {

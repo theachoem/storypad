@@ -15,7 +15,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         margin: EdgeInsets.only(
           left: 16.0 + MediaQuery.of(context).padding.left,
-          right: 16.0 + MediaQuery.of(context).padding.left,
+          right: 16.0 + MediaQuery.of(context).padding.right,
           bottom: viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
               viewModel.scrollInfo.appBar(context).contentsMarginBottom,
         ),
@@ -91,7 +91,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         margin: viewModel.scrollInfo.extraExpandedHeight > 0 ? const EdgeInsets.only(bottom: 8.0) : null,
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],
-          onTap: () => viewModel.openEndDrawer(context),
+          onTap: () => viewModel.openYearsView(context),
           child: FittedBox(
             child: Text(
               viewModel.year.toString(),

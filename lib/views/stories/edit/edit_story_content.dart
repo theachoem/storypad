@@ -19,9 +19,12 @@ class _EditStoryContent extends StatelessWidget {
             : null,
         appBar: AppBar(
           leading: SpAnimatedIcons.fadeScale(
-            firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-            secondChild: const Hero(tag: 'back-button', child: BackButton()),
             showFirst: viewModel.managingPage,
+            firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
+            secondChild: Hero(
+              tag: 'back-button',
+              child: BackButton(onPressed: () => Navigator.maybePop(context, viewModel.story)),
+            ),
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           titleSpacing: 0.0,
@@ -65,22 +68,20 @@ class _EditStoryContent extends StatelessWidget {
       child: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, _) {
-          String? feeling = viewModel.draftContent?.richPages?[index].feeling;
-          if (index == 0) feeling ??= viewModel.story?.feeling;
-
           return [
             if (viewModel.story != null && viewModel.draftContent != null)
               SliverToBoxAdapter(
                 child: StoryHeader(
                   paddingTop: MediaQuery.of(context).padding.top + 8.0,
                   story: viewModel.story!,
-                  feeling: feeling,
+                  feeling: viewModel.story?.feeling,
                   setFeeling: (feeling) => viewModel.setFeeling(feeling),
                   onToggleShowDayCount: viewModel.toggleShowDayCount,
                   onToggleShowTime: viewModel.toggleShowTime,
                   draftContent: viewModel.draftContent!,
                   readOnly: false,
                   titleController: viewModel.titleControllers[index],
+                  focusNode: viewModel.titleFocusNodes[index],
                   onChangeDate: viewModel.changeDate,
                   draftActions: null,
                 ),
@@ -92,8 +93,9 @@ class _EditStoryContent extends StatelessWidget {
           return _Editor(
             draftContent: viewModel.draftContent,
             controller: viewModel.quillControllers[index],
+            titleFocusNode: viewModel.titleFocusNodes[index],
             focusNode: viewModel.focusNodes[index],
-            scrollController: PrimaryScrollController.maybeOf(context) ?? ScrollController(),
+            scrollController: PrimaryScrollController.of(context), // get controller from set above.
           );
         }),
       ),
