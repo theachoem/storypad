@@ -21,8 +21,8 @@ class _HomeTabBar extends StatelessWidget {
           labelColor: Theme.of(context).colorScheme.onPrimary,
           unselectedLabelColor: Theme.of(context).colorScheme.primary,
           padding: EdgeInsets.only(
-            left: 14.0,
-            right: 14.0 + actionButtons.length * 44,
+            left: AppTheme.getDirectionValue(context, 14.0 + actionButtons.length * 44.0, 14.0)!,
+            right: AppTheme.getDirectionValue(context, 14.0, 14.0 + actionButtons.length * 44.0)!,
             top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
             bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
           ),
@@ -64,13 +64,19 @@ class _HomeTabBar extends StatelessWidget {
   Widget buildIconsButtonsWrapper(BuildContext context, List<Widget> actionButtons) {
     return Positioned(
       top: 0,
-      right: 0,
+      right: AppTheme.getDirectionValue(context, null, 0),
+      left: AppTheme.getDirectionValue(context, 0, null),
       bottom: 1,
       child: Container(
-        padding: const EdgeInsets.only(left: 16, right: 4.0),
+        padding: EdgeInsets.only(
+          left: AppTheme.getDirectionValue(context, 4.0, 16.0)!,
+          right: AppTheme.getDirectionValue(context, 16.0, 4.0)!,
+        ),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            begin: AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft)!,
+            end: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight)!,
             stops: [0.0, 0.3],
             colors: [
               viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
