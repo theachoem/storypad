@@ -90,7 +90,7 @@ class _HomeTabBar extends StatelessWidget {
     return Consumer<AppLockProvider>(
       builder: (context, appLockProvider, child) {
         return IconButton(
-          onPressed: () => viewModel.openEndDrawer(context),
+          onPressed: () => viewModel.openSettings(context),
           tooltip: tr("button.more_options"),
           icon: const Icon(SpIcons.moreVert),
         );

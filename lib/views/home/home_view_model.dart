@@ -12,6 +12,7 @@ import 'package:storypad/core/services/backups/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
@@ -103,7 +104,15 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (newCount % 10 == 0) InAppReviewService.request();
   }
 
-  Future<void> openEndDrawer(BuildContext context) async {
+  HomeEndDrawerState endDrawerState = HomeEndDrawerState.showSettings;
+  Future<void> openSettings(BuildContext context) async {
+    endDrawerState = HomeEndDrawerState.showSettings;
+    AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
+    Scaffold.of(context).openEndDrawer();
+  }
+
+  Future<void> openYearsView(BuildContext context) async {
+    endDrawerState = HomeEndDrawerState.showYearsView;
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
   }
