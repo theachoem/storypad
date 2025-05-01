@@ -82,7 +82,7 @@ class _CalendarMonth extends StatelessWidget {
         final date = visibleDays.elementAt(index);
 
         return _CalendarDate(
-          feeling: feelingMapByDay[date.day],
+          feeling: date.month == month ? feelingMapByDay[date.day] : null,
           onChanged: onChanged,
           date: date,
           selectedYear: year,
