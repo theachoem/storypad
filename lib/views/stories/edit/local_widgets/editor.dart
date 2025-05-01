@@ -64,6 +64,7 @@ class _Editor extends StatelessWidget {
         scrollable: true,
         expands: true,
         placeholder: "...",
+        quillMagnifierBuilder: defaultQuillMagnifierBuilder,
         padding: EdgeInsets.only(
           top: 16.0,
           bottom: 88 + MediaQuery.of(context).viewPadding.bottom,

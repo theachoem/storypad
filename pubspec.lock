@@ -796,10 +796,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: "3765d057bb63e6e5b7d5aba7c8fb048ec1b38c8a3428ded8c22e57cf2682a580"
+      sha256: de019f6160023d36ad3e89343da6d740ab66ae7839875c89871fbeabcb9e8f9b
       url: "https://pub.dev"
     source: hosted
-    version: "11.0.0"
+    version: "11.4.0"
   flutter_quill_delta_from_html:
     dependency: transitive
     description:
