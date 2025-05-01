@@ -90,14 +90,24 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> goToViewPage(BuildContext context, StoryDbModel story) async {
-    await ShowStoryRoute(id: story.id, story: story).push(context);
+    final editedStory = await ShowStoryRoute(id: story.id, story: story).push(context);
+
+    if (editedStory is StoryDbModel && editedStory.updatedAt != story.updatedAt) {
+      year = editedStory.year;
+      await reload(debugSource: '$runtimeType#goToNewPage');
+    }
   }
 
   Future<void> goToNewPage(BuildContext context) async {
-    await EditStoryRoute(
+    final addedStory = await EditStoryRoute(
       id: null,
       initialYear: year,
     ).push(context);
+
+    if (addedStory is StoryDbModel) {
+      year = addedStory.year;
+    }
+
     await reload(debugSource: '$runtimeType#goToNewPage');
 
     // https://developer.android.com/guide/playcore/in-app-review#when-to-request

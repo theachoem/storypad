@@ -62,12 +62,18 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
   }
 
   Future<void> goToNewPage(BuildContext context) async {
-    await EditStoryRoute(
+    final addedStory = await EditStoryRoute(
       id: null,
       initialYear: year,
       initialMonth: month,
       initialDay: selectedDay,
     ).push(context);
+
+    if (addedStory is StoryDbModel) {
+      month = addedStory.month;
+      year = addedStory.year;
+      selectedDay = addedStory.day;
+    }
 
     editedKey += 1;
     setState(() {});

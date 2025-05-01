@@ -16,9 +16,12 @@ class _ShowStoryContent extends StatelessWidget {
           : null,
       appBar: AppBar(
         leading: SpAnimatedIcons.fadeScale(
-          firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
-          secondChild: const Hero(tag: 'back-button', child: BackButton()),
           showFirst: viewModel.managingPage,
+          firstChild: CloseButton(onPressed: () => viewModel.toggleManagingPage()),
+          secondChild: Hero(
+            tag: 'back-button',
+            child: BackButton(onPressed: () => Navigator.maybePop(context, viewModel.story)),
+          ),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         titleSpacing: 0.0,
