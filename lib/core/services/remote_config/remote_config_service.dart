@@ -40,19 +40,19 @@ class RemoteConfigService {
   static const faqUrl = _RemoteConfigObject<String>(
     'FAQ_URL',
     _RemoteConfigValueType.string,
-    'https://storypad.juniorise.com',
+    'https://storypad.me',
   );
 
   static const localizationSupportUrl = _RemoteConfigObject<String>(
     'LOCALIZATION_SUPPORT_URL',
     _RemoteConfigValueType.string,
-    'https://storypad.juniorise.com/contributions/localization',
+    'https://storypad.me/contributions/localization',
   );
 
   static const policyPrivacyUrl = _RemoteConfigObject<String>(
     'POLICY_PRIVACY_URL',
     _RemoteConfigValueType.string,
-    'https://storypad.juniorise.com/privacy-policy/storypad',
+    'https://storypad.me/privacy-policy/storypad',
   );
 
   static const sourceCodeUrl = _RemoteConfigObject<String>(

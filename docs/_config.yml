@@ -22,7 +22,7 @@ title: StoryPad - Write Your Story
 tagline: StoryPad - Make Every Day a Story
 description: Write your story, diary, notes, and memories to stay organized and reflective.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://storypad.juniorise.com" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://storypad.me" # the base hostname & protocol for your site, e.g. http://example.com
 author:
   url: https://thea.juniorise.com
   twitter: theachoem
