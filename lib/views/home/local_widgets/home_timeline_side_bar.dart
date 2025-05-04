@@ -23,6 +23,31 @@ class _HomeTimelineSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> buttons = [
+      // buildButton(
+      //   context: context,
+      //   child: const Icon(SpIcons.addFeeling, size: 24.0),
+      //   onTap: () {},
+      // ),
+      // buildButton(
+      //   context: context,
+      //   child: const Icon(SpIcons.tag, size: 24.0),
+      //   onTap: () {
+      //     TagsRoute().push(context);
+      //   },
+      // ),
+      buildButton(
+        context: context,
+        child: const Icon(SpIcons.calendar, size: 24.0),
+        onTap: () => viewModel.openDiscoverView(context),
+      ),
+    ];
+
+    double blockColorHeight = screenPadding.bottom + 12 + baseIconHorizontalPadding / 2;
+    blockColorHeight += (buttons.length - 1) * iconSize; // block background for all buttons except last one
+    blockColorHeight += iconSize / 2; // block half of last button
+    blockColorHeight += buttons.length * baseIconVerticlePadding; // block spacing between all buttons
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -33,13 +58,13 @@ class _HomeTimelineSideBar extends StatelessWidget {
           child: Center(
             child: Container(
               width: iconSize,
-              height: bottomPadding + iconSize / 2 + baseIconVerticlePadding,
-              color: showClickableAria ? Colors.red : backgroundColor,
+              height: blockColorHeight,
+              color: showClickableAria ? Colors.red : backgroundColor.withValues(alpha: 0.9),
             ),
           ),
         ),
         Positioned(
-          bottom: bottomPadding + iconSize / 2 + baseIconVerticlePadding,
+          bottom: blockColorHeight,
           top: -16,
           left: AppTheme.getDirectionValue(context, null, screenPadding.left + baseIconHorizontalPadding),
           right: AppTheme.getDirectionValue(context, screenPadding.right + baseIconHorizontalPadding, null),
@@ -53,7 +78,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
                   colors: [
                     (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.0),
                     (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.6),
-                    (showClickableAria ? Colors.green : backgroundColor),
+                    (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.9),
                   ],
                 ),
               ),
@@ -69,23 +94,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             spacing: 0.0,
-            children: [
-              // buildButton(
-              //   context: context,
-              //   child: const Icon(SpIcons.addFeeling, size: 24.0),
-              //   onTap: () {},
-              // ),
-              // buildButton(
-              //   context: context,
-              //   child: const Icon(SpIcons.search, size: 24.0),
-              //   onTap: () {},
-              // ),
-              buildButton(
-                context: context,
-                child: const Icon(SpIcons.calendar, size: 24.0),
-                onTap: () => viewModel.openDiscoverView(context),
-              ),
-            ],
+            children: buttons,
           ),
         ),
       ],
