@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
@@ -64,6 +65,11 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
     setState(() {});
   }
 
+  void setStarred(bool? value) {
+    searchFilter = searchFilter.copyWith(starred: value);
+    setState(() {});
+  }
+
   Future<void> _resetTagsCount() async {
     for (TagDbModel tag in tags ?? []) {
       tag.storiesCount = await StoryDbModel.db.count(filters: {
@@ -118,7 +124,14 @@ class _DiscoverSearchContentState extends State<DiscoverSearchContent> {
           buildTags(context),
           const SizedBox(height: 12.0),
         ],
-        const SizedBox(height: 4.0),
+        CheckboxListTile.adaptive(
+          tristate: true,
+          value: searchFilter.starred,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          secondary: const Icon(SpIcons.favorite),
+          title: Text(tr("button.star")),
+          onChanged: (value) => setStarred(value),
+        ),
         const Divider(height: 1),
       ],
     );

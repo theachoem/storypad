@@ -80,7 +80,9 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> refresh(BuildContext context) async {
     await reload(debugSource: '$runtimeType#refresh');
-    if (context.mounted) await context.read<BackupProvider>().recheck();
+
+    // no need to wait for network request.
+    if (context.mounted) context.read<BackupProvider>().recheck();
   }
 
   Future<void> changeYear(int newYear) async {
