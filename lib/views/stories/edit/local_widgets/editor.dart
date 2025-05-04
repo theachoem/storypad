@@ -125,13 +125,20 @@ class _Editor extends StatelessWidget {
             );
           }),
         ),
-        customButtons: [
-          if (kStoryPad)
-            QuillToolbarCustomButtonOptions(
+        embedButtons: [
+          (context, embedContext) {
+            return const VerticalDivider(
+              indent: 12,
+              endIndent: 12,
+            );
+          },
+          (context, embedContext) {
+            return IconButton(
               tooltip: FlutterQuillLocalizations.of(context)?.image,
               icon: const Icon(SpIcons.photo),
               onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
-            ),
+            );
+          },
         ],
         multiRowsDisplay: false,
         showDividers: true,
@@ -139,11 +146,11 @@ class _Editor extends StatelessWidget {
         showFontSize: false,
         showBoldButton: true,
         showItalicButton: true,
-        showSmallButton: true,
+        showSmallButton: false,
         showUnderLineButton: true,
         showLineHeightButton: false,
         showStrikeThrough: true,
-        showInlineCode: true,
+        showInlineCode: false,
         showColorButton: true,
         showBackgroundColorButton: true,
         showClearFormat: true,
