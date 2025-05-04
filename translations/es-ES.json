@@ -290,6 +290,7 @@
   "page.security_questions.title": "Preguntas de seguridad",
   "page.tags.empty_message": "Las etiquetas aparecerán aquí",
   "page.tags.title": "Etiquetas",
+  "page.templates.title": "Plantillas",
   "page.theme.title": "Tema",
   "plural.day_ago.one": "Hace 1 día",
   "plural.day_ago.other": "{} días atrás",

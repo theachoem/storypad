@@ -290,6 +290,7 @@
   "page.security_questions.title": "보안 질문",
   "page.tags.empty_message": "여기에 태그가 보여질 거예요",
   "page.tags.title": "태그",
+  "page.templates.title": "템플릿",
   "page.theme.title": "테마",
   "plural.day_ago.one": "1일 전",
   "plural.day_ago.other": "{}일 전",

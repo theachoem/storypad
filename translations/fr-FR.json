@@ -290,6 +290,7 @@
   "page.security_questions.title": "Questions de sécurité",
   "page.tags.empty_message": "Les balises apparaîtront ici",
   "page.tags.title": "Balises",
+  "page.templates.title": "Modèles",
   "page.theme.title": "Thème",
   "plural.day_ago.one": "il y a 1 jour",
   "plural.day_ago.other": "il y a {} jours",

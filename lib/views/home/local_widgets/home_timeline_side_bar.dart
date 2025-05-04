@@ -59,7 +59,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
             child: Container(
               width: iconSize,
               height: blockColorHeight,
-              color: showClickableAria ? Colors.red : backgroundColor.withValues(alpha: 0.9),
+              color: showClickableAria ? Colors.red : backgroundColor,
             ),
           ),
         ),
@@ -78,7 +78,7 @@ class _HomeTimelineSideBar extends StatelessWidget {
                   colors: [
                     (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.0),
                     (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.6),
-                    (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.9),
+                    (showClickableAria ? Colors.green : backgroundColor),
                   ],
                 ),
               ),

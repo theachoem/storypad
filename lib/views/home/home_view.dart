@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' show Consumer, ReadContext;
 import 'package:storypad/app_theme.dart' show AppTheme;
@@ -35,6 +38,7 @@ import 'home_view_model.dart';
 
 part 'home_content.dart';
 part 'local_widgets/home_scaffold.dart';
+part 'local_widgets/home_floating_buttons.dart';
 part 'local_widgets/home_app_bar.dart';
 part 'local_widgets/home_tab_bar.dart';
 part 'local_widgets/home_flexible_space_bar.dart';

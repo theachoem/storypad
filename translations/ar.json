@@ -290,6 +290,7 @@
   "page.security_questions.title": "أسئلة أمنية",
   "page.tags.empty_message": "سوف تظهر العلامات هنا",
   "page.tags.title": "العلامات",
+  "page.templates.title": "قوالب",
   "page.theme.title": "سمة",
   "plural.day_ago.one": "منذ يوم واحد",
   "plural.day_ago.other": "{} منذ أيام",

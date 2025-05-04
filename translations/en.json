@@ -290,6 +290,7 @@
   "page.security_questions.title": "Security Questions",
   "page.tags.empty_message": "Tags will appear here",
   "page.tags.title": "Tags",
+  "page.templates.title": "Templates",
   "page.theme.title": "Theme",
   "plural.day_ago.one": "1 day ago",
   "plural.day_ago.other": "{} days ago",

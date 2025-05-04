@@ -52,8 +52,12 @@ class _QuillImageRenderer extends StatelessWidget {
           SpTapEffect(
             effects: [SpTapEffectType.scaleDown],
             onTap: readOnly ? () => viewImage(context, link) : null,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
+            child: Material(
+              clipBehavior: Clip.hardEdge,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: BorderSide(color: Theme.of(context).dividerColor),
+              ),
               child: SpImage(
                 link: link,
                 width: width,

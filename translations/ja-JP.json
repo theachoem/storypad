@@ -290,6 +290,7 @@
   "page.security_questions.title": "セキュリティ質問",
   "page.tags.empty_message": "ここにタグが表示されます。",
   "page.tags.title": "タグ",
+  "page.templates.title": "テンプレート",
   "page.theme.title": "テーマ",
   "plural.day_ago.one": "1日前",
   "plural.day_ago.other": "{} 日前",

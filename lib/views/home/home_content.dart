@@ -23,22 +23,18 @@ class _HomeContent extends StatelessWidget {
         appBar: _HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
-        floatingActionButton: buildNewStoryButton(context),
+        floatingActionButton: buildFloatingButtons(context),
       ),
     );
   }
 
-  Widget buildNewStoryButton(BuildContext context) {
+  Widget buildFloatingButtons(BuildContext context) {
     return SpStoryListMultiEditWrapper.listen(
       context: context,
       builder: (context, state) {
         return Visibility(
           visible: !state.editing,
-          child: FloatingActionButton(
-            tooltip: tr("button.new_story"),
-            onPressed: () => viewModel.goToNewPage(context),
-            child: const Icon(SpIcons.newStory),
-          ),
+          child: _HomeFloatingButtons(viewModel: viewModel),
         );
       },
     );

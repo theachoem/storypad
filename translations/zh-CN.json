@@ -290,6 +290,7 @@
   "page.security_questions.title": "安全问题",
   "page.tags.empty_message": "标签将出现在这里",
   "page.tags.title": "标签",
+  "page.templates.title": "模板",
   "page.theme.title": "主题",
   "plural.day_ago.one": "1 天前",
   "plural.day_ago.other": "{} 天前",
