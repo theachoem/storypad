@@ -26,7 +26,7 @@ class SpMarkdownBody extends StatelessWidget {
         codeblockDecoration: BoxDecoration(border: Border.all(color: Theme.of(context).dividerColor)),
         listBulletPadding: const EdgeInsets.all(2),
         listIndent: 16,
-        blockSpacing: 0.0,
+        blockSpacing: 4.0,
       ),
       checkboxBuilder: (checked) {
         return Transform.translate(
