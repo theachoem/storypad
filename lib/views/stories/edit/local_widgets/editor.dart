@@ -59,7 +59,6 @@ class _Editor extends StatelessWidget {
       config: QuillEditorConfig(
         keyboardAppearance: Theme.of(context).brightness,
         contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(rawEditorState, editable: true),
-        paintCursorAboveText: false,
         scrollBottomInset: MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,
         expands: true,
@@ -74,6 +73,7 @@ class _Editor extends StatelessWidget {
         autoFocus: true,
         enableScribble: true,
         showCursor: true,
+        paintCursorAboveText: true,
         embedBuilders: [
           SpImageBlockEmbed(fetchAllImages: () => StoryExtractImageFromContentService.call(draftContent)),
           SpDateBlockEmbed(),
