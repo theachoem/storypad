@@ -57,19 +57,22 @@ class SpStoryTitleThemeBottomSheet extends BaseBottomSheet {
                   onThemeChanged(notifier.value);
                 },
               ),
-              const Divider(height: 32),
+              const Divider(height: 1),
+              const SizedBox(height: 12.0),
               OutlinedButton.icon(
                 label: Text(tr('button.reset')),
                 icon: const Icon(SpIcons.refresh),
-                onPressed: () {
-                  notifier.value = notifier.value.copyWith(
-                    titleFontFamily: theme.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
-                    titleFontWeightIndex:
-                        theme.fontWeight?.index ?? context.read<ThemeProvider>().theme.fontWeight.index,
-                  );
-                  onThemeChanged(notifier.value);
-                },
+                onPressed: notifier.value.titleReseted
+                    ? null
+                    : () {
+                        notifier.value = notifier.value.copyWith(
+                          titleFontFamily: null,
+                          titleFontWeightIndex: null,
+                        );
+                        onThemeChanged(notifier.value);
+                      },
               ),
+              const SizedBox(height: 8.0),
               SizedBox(height: MediaQuery.of(context).padding.bottom),
             ],
           ),

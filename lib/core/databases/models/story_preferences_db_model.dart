@@ -40,6 +40,19 @@ class StoryPreferencesDbModel extends BaseDbModel {
   @override
   DateTime? get updatedAt => null;
 
+  bool get allReseted => [
+        colorSeedValue,
+        fontFamily,
+        fontWeightIndex,
+        titleFontFamily,
+        titleFontWeightIndex,
+      ].every((e) => e == null);
+
+  bool get titleReseted => [
+        titleFontFamily,
+        titleFontWeightIndex,
+      ].every((e) => e == null);
+
   StoryPreferencesDbModel resetTheme() {
     return copyWith(
       colorSeedValue: null,
