@@ -19,6 +19,10 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex);
 
+  StoryPreferencesDbModel titleFontFamily(String? titleFontFamily);
+
+  StoryPreferencesDbModel titleFontWeightIndex(int? titleFontWeightIndex);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -32,6 +36,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     int? colorSeedValue,
     String? fontFamily,
     int? fontWeightIndex,
+    String? titleFontFamily,
+    int? titleFontWeightIndex,
   });
 }
 
@@ -66,6 +72,14 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(fontWeightIndex: fontWeightIndex);
 
   @override
+  StoryPreferencesDbModel titleFontFamily(String? titleFontFamily) =>
+      this(titleFontFamily: titleFontFamily);
+
+  @override
+  StoryPreferencesDbModel titleFontWeightIndex(int? titleFontWeightIndex) =>
+      this(titleFontWeightIndex: titleFontWeightIndex);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -80,6 +94,8 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
+    Object? titleFontFamily = const $CopyWithPlaceholder(),
+    Object? titleFontWeightIndex = const $CopyWithPlaceholder(),
   }) {
     return StoryPreferencesDbModel(
       showDayCount: showDayCount == const $CopyWithPlaceholder()
@@ -106,6 +122,14 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.fontWeightIndex
           // ignore: cast_nullable_to_non_nullable
           : fontWeightIndex as int?,
+      titleFontFamily: titleFontFamily == const $CopyWithPlaceholder()
+          ? _value.titleFontFamily
+          // ignore: cast_nullable_to_non_nullable
+          : titleFontFamily as String?,
+      titleFontWeightIndex: titleFontWeightIndex == const $CopyWithPlaceholder()
+          ? _value.titleFontWeightIndex
+          // ignore: cast_nullable_to_non_nullable
+          : titleFontWeightIndex as int?,
     );
   }
 }
@@ -130,6 +154,8 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
       fontFamily: json['font_family'] as String?,
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
+      titleFontFamily: json['title_font_family'] as String?,
+      titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
@@ -141,4 +167,6 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'color_seed_value': instance.colorSeedValue,
       'font_family': instance.fontFamily,
       'font_weight_index': instance.fontWeightIndex,
+      'title_font_family': instance.titleFontFamily,
+      'title_font_weight_index': instance.titleFontWeightIndex,
     };

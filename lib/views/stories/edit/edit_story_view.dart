@@ -8,6 +8,7 @@ import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_theme_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_focus_node_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
 import 'package:storypad/widgets/sp_sliver_sticky_divider.dart';
@@ -30,7 +31,6 @@ import 'edit_story_view_model.dart';
 
 part 'edit_story_content.dart';
 part 'local_widgets/editor.dart';
-part 'local_widgets/focus_node_builder.dart';
 
 class EditStoryRoute extends BaseRoute {
   final int? id;

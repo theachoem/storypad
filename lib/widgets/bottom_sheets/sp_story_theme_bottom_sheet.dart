@@ -39,7 +39,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
       builder: (context, theme, notifier) {
         return SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               buildColorsList(
@@ -67,9 +67,18 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
               FontFamilyTile(
                 showSheet: true,
                 currentFontWeight: theme.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
-                currentFontFamily: theme.fontFamily ?? kDefaultFontFamily,
+                currentFontFamily: theme.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
                 onChanged: (fontFamily) {
                   notifier.value = notifier.value.copyWith(fontFamily: fontFamily);
+                  onThemeChanged(notifier.value);
+                },
+              ),
+              const Divider(height: 32),
+              OutlinedButton.icon(
+                label: Text(tr('button.reset')),
+                icon: const Icon(SpIcons.refresh),
+                onPressed: () {
+                  notifier.value = notifier.value.resetTheme();
                   onThemeChanged(notifier.value);
                 },
               ),

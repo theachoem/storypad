@@ -84,6 +84,7 @@ class _EditStoryContent extends StatelessWidget {
                   focusNode: viewModel.titleFocusNodes[index],
                   onChangeDate: viewModel.changeDate,
                   draftActions: null,
+                  onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
                 ),
               ),
             SpSliverStickyDivider.sliver(),
