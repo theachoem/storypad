@@ -20,7 +20,7 @@ class _Editor extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: buildPagesEditor(context)),
-        _FocusNodeBuilder(
+        SpFocusNodeBuilder(
           focusNode: titleFocusNode,
           child: buildBottomToolbar(context),
           builder: (context, titleFocused, child) {

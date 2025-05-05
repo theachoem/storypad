@@ -1,7 +1,8 @@
-part of '../edit_story_view.dart';
+import 'package:flutter/material.dart';
 
-class _FocusNodeBuilder extends StatefulWidget {
-  const _FocusNodeBuilder({
+class SpFocusNodeBuilder extends StatefulWidget {
+  const SpFocusNodeBuilder({
+    super.key,
     required this.focusNode,
     required this.builder,
     this.child,
@@ -12,10 +13,10 @@ class _FocusNodeBuilder extends StatefulWidget {
   final Widget Function(BuildContext context, bool focused, Widget? child) builder;
 
   @override
-  State<_FocusNodeBuilder> createState() => _FocusNodeBuilderState();
+  State<SpFocusNodeBuilder> createState() => SpFocusNodeBuilderState();
 }
 
-class _FocusNodeBuilderState extends State<_FocusNodeBuilder> {
+class SpFocusNodeBuilderState extends State<SpFocusNodeBuilder> {
   bool focused = false;
 
   @override
