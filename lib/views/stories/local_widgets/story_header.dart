@@ -4,15 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_story_title_theme_bottom_sheet.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_focus_node_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 
@@ -31,7 +27,6 @@ class StoryHeader extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
     required this.onChangeDate,
-    required this.onThemeChanged,
     required this.feeling,
     this.titleController,
     this.focusNode,
@@ -48,7 +43,6 @@ class StoryHeader extends StatelessWidget {
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
   final Future<void> Function(DateTime) onChangeDate;
-  final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
   final bool readOnly;
 
   @override
@@ -86,13 +80,13 @@ class StoryHeader extends StatelessWidget {
             draftActions: draftActions,
           ),
           if (titleController?.text.trim().isNotEmpty == true || !readOnly) ...[
+            const SizedBox(height: 4.0),
             _StoryHeaderTitleField(
               focusNode: focusNode,
               titleController: titleController,
               draftContent: draftContent,
               readOnly: readOnly,
               story: story,
-              onThemeChanged: onThemeChanged,
             )
           ] else ...[
             const SizedBox(height: 12.0),

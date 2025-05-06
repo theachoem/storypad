@@ -79,7 +79,6 @@ class _ShowStoryContent extends StatelessWidget {
                   readOnly: true,
                   onChangeDate: viewModel.changeDate,
                   draftActions: viewModel.getDraftActions(context),
-                  onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
                 ),
               ),
             SpSliverStickyDivider.sliver(),
