@@ -19,6 +19,15 @@ class CollectionDbModel<T extends BaseDbModel> {
     );
   }
 
+  CollectionDbModel<T> addElement(T item, int index) {
+    List<T> newItems = items.toList();
+    newItems.insert(index, item);
+
+    return CollectionDbModel(
+      items: newItems,
+    );
+  }
+
   T? find(int id) => items.where((e) => e.id == id).firstOrNull;
 
   CollectionDbModel<T>? removeElement(T item) {
