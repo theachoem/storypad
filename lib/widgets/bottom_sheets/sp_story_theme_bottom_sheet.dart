@@ -65,7 +65,6 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
                 },
               ),
               FontFamilyTile(
-                showSheet: true,
                 currentFontWeight: theme.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
                 currentFontFamily: theme.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
                 onChanged: (fontFamily) {

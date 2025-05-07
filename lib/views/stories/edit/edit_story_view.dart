@@ -1,11 +1,17 @@
 import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/core/services/welcome_message_service.dart';
+import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
+import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_theme_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_focus_node_builder.dart';
@@ -31,6 +37,8 @@ import 'edit_story_view_model.dart';
 
 part 'edit_story_content.dart';
 part 'local_widgets/editor.dart';
+part 'local_widgets/quill_toolbar.dart';
+part 'local_widgets/title_toolbar.dart';
 
 class EditStoryRoute extends BaseRoute {
   final int? id;

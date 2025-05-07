@@ -3,7 +3,6 @@ part of 'story_header.dart';
 class _StoryHeaderTitleField extends StatelessWidget {
   const _StoryHeaderTitleField({
     required this.focusNode,
-    required this.onThemeChanged,
     required this.titleController,
     required this.draftContent,
     required this.readOnly,
@@ -11,7 +10,6 @@ class _StoryHeaderTitleField extends StatelessWidget {
   });
 
   final FocusNode? focusNode;
-  final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
   final TextEditingController? titleController;
   final StoryContentDbModel draftContent;
   final StoryDbModel story;
@@ -53,32 +51,7 @@ class _StoryHeaderTitleField extends StatelessWidget {
         border: InputBorder.none,
         isCollapsed: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 12.0, bottom: 12.0),
-        suffixIcon: !readOnly && focusNode != null ? buildEditThemeButton(context) : null,
       ),
-    );
-  }
-
-  SpFocusNodeBuilder buildEditThemeButton(BuildContext context) {
-    return SpFocusNodeBuilder(
-      focusNode: focusNode!,
-      child: IconButton(
-        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
-        icon: const Icon(SpIcons.theme),
-        onPressed: () {
-          SpStoryTitleThemeBottomSheet(
-            story: story,
-            onThemeChanged: onThemeChanged,
-          ).show(context: context);
-        },
-      ),
-      builder: (context, focused, child) {
-        return Visibility(
-          visible: focused,
-          child: SpFadeIn.bound(
-            child: child!,
-          ),
-        );
-      },
     );
   }
 }

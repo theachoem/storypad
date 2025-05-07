@@ -6,6 +6,8 @@ class _Editor extends StatelessWidget {
   final FocusNode focusNode;
   final ScrollController scrollController;
   final StoryContentDbModel? draftContent;
+  final StoryDbModel? story;
+  final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
 
   const _Editor({
     required this.controller,
@@ -13,41 +15,74 @@ class _Editor extends StatelessWidget {
     required this.focusNode,
     required this.scrollController,
     required this.draftContent,
+    required this.story,
+    required this.onThemeChanged,
   });
+
+  Color? getToolbarBackgroundColor(BuildContext context) => ColorScheme.of(context).readOnly.surface1;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(child: buildPagesEditor(context)),
-        SpFocusNodeBuilder(
-          focusNode: titleFocusNode,
-          child: buildBottomToolbar(context),
-          builder: (context, titleFocused, child) {
-            return Visibility(
-              maintainState: true,
-              visible: !titleFocused,
-              child: SpFadeIn.fromBottom(
-                child: child!,
-              ),
-            );
-          },
-        ),
+        buildBodyToolbar(context),
+        if (story != null) buildTitleToolbar(context, story!.preferences),
       ],
     );
   }
 
-  Widget buildBottomToolbar(BuildContext context) {
-    return AnimatedContainer(
-      duration: Durations.medium1,
-      curve: Curves.ease,
-      color: getToolbarBackgroundColor(context),
-      padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+  Widget buildBodyToolbar(BuildContext context) {
+    return SpFocusNodeBuilder(
+      focusNode: titleFocusNode,
+      child: AnimatedContainer(
+        duration: Durations.medium1,
+        curve: Curves.ease,
+        color: getToolbarBackgroundColor(context),
+        padding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left,
+          right: MediaQuery.of(context).padding.right,
+          bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: _QuillToolbar(
+            controller: controller, context: context, backgroundColor: getToolbarBackgroundColor(context)),
       ),
-      child: buildToolBar(context),
+      builder: (context, titleFocused, child) {
+        return Visibility(
+          visible: !titleFocused,
+          child: SpFadeIn.fromBottom(
+            child: child!,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildTitleToolbar(BuildContext context, StoryPreferencesDbModel preferences) {
+    return SpFocusNodeBuilder(
+      focusNode: titleFocusNode,
+      builder: (context, titleFocused, _) {
+        return Visibility(
+          visible: titleFocused,
+          child: SpFadeIn.fromBottom(
+            child: AnimatedContainer(
+              duration: Durations.medium1,
+              curve: Curves.ease,
+              color: getToolbarBackgroundColor(context),
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+                bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+              ),
+              width: double.infinity,
+              child: _TitleToolbar(
+                preferences: preferences,
+                onThemeChanged: onThemeChanged,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -79,103 +114,6 @@ class _Editor extends StatelessWidget {
           SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
-      ),
-    );
-  }
-
-  Widget buildToolBar(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        iconButtonTheme: IconButtonThemeData(
-          style: ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0))),
-          ),
-        ),
-      ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Divider(height: 1),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 4.0), child: buildActualToolbar(context)),
-        const Divider(height: 1),
-      ]),
-    );
-  }
-
-  Color? getToolbarBackgroundColor(BuildContext context) => ColorScheme.of(context).readOnly.surface1;
-
-  Widget buildActualToolbar(BuildContext context) {
-    return QuillSimpleToolbar(
-      controller: controller,
-      config: QuillSimpleToolbarConfig(
-        color: getToolbarBackgroundColor(context),
-        buttonOptions: QuillSimpleToolbarButtonOptions(
-          color: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-            extraOptions as QuillToolbarColorButtonExtraOptions;
-            return SpQuillToolbarColorButton(
-              controller: extraOptions.controller,
-              isBackground: false,
-              positionedOnUpper: false,
-            );
-          }),
-          backgroundColor: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-            extraOptions as QuillToolbarColorButtonExtraOptions;
-            return SpQuillToolbarColorButton(
-              controller: extraOptions.controller,
-              isBackground: true,
-              positionedOnUpper: false,
-            );
-          }),
-        ),
-        embedButtons: [
-          (context, embedContext) {
-            return const VerticalDivider(
-              indent: 12,
-              endIndent: 12,
-            );
-          },
-          (context, embedContext) {
-            return IconButton(
-              tooltip: FlutterQuillLocalizations.of(context)?.image,
-              icon: const Icon(SpIcons.photo),
-              onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
-            );
-          },
-        ],
-        multiRowsDisplay: false,
-        showDividers: true,
-        showFontFamily: false,
-        showFontSize: false,
-        showBoldButton: true,
-        showItalicButton: true,
-        showSmallButton: false,
-        showUnderLineButton: true,
-        showLineHeightButton: false,
-        showStrikeThrough: true,
-        showInlineCode: false,
-        showColorButton: true,
-        showBackgroundColorButton: true,
-        showClearFormat: true,
-        showAlignmentButtons: true,
-        showLeftAlignment: true,
-        showCenterAlignment: true,
-        showRightAlignment: true,
-        showJustifyAlignment: true,
-        showHeaderStyle: false,
-        showListNumbers: true,
-        showListBullets: true,
-        showListCheck: true,
-        showCodeBlock: false,
-        showQuote: true,
-        showIndent: true,
-        showLink: true,
-        showUndo: true,
-        showRedo: true,
-        showDirection: false,
-        showSearchButton: false,
-        showSubscript: false,
-        showSuperscript: false,
-        showClipboardCut: false,
-        showClipboardCopy: false,
-        showClipboardPaste: false,
       ),
     );
   }
