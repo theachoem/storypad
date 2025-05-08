@@ -118,6 +118,7 @@ class AssetDbModel extends BaseDbModel {
 
     return copyWith(
       cloudDestinations: newCloudDestinations,
+      updatedAt: DateTime.now(),
     );
   }
 
