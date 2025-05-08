@@ -52,8 +52,6 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     debugPrint('BackupProvider#_databaseListener');
     await _loadLocalData();
     notifyListeners();
-
-    if (!synced) await syncBackupAcrossDevices();
   }
 
   BackupProvider() {
