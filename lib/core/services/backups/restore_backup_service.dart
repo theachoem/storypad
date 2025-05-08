@@ -34,7 +34,7 @@ class RestoreBackupService {
           if (existingRecord != null) {
             if (existingRecord.updatedAt != null && newRecord.updatedAt != null) {
               bool newContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
-              bool unSyncContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
+              bool unSyncContent = existingRecord.updatedAt!.isAfter(newRecord.updatedAt!);
 
               if (newContent) {
                 await db.set(newRecord, runCallbacks: false);

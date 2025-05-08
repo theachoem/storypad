@@ -27,7 +27,7 @@ class TagsProvider extends ChangeNotifier {
         TagDbModel tag = tags!.items[i];
 
         if (tag.index != i) {
-          tag = await TagDbModel.db.set(tag.copyWith(index: i)) ?? tag;
+          tag = await TagDbModel.db.set(tag.copyWith(index: i, updatedAt: DateTime.now())) ?? tag;
           tags = tags!.replaceElement(tag);
         }
       }
@@ -62,7 +62,7 @@ class TagsProvider extends ChangeNotifier {
     for (int i = 0; i < length; i++) {
       final item = tags!.items[i];
       if (item.index != i) {
-        await TagDbModel.db.set(item.copyWith(index: i));
+        await TagDbModel.db.set(item.copyWith(index: i, updatedAt: DateTime.now()));
       }
     }
 
@@ -91,7 +91,7 @@ class TagsProvider extends ChangeNotifier {
     final result = await EditTagRoute(tag: tag, allTags: tags?.items ?? []).push(context);
 
     if (result is List<String> && result.isNotEmpty) {
-      TagDbModel newTag = tag.copyWith(title: result.first);
+      TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
       await TagDbModel.db.set(newTag);
       await reload();
 

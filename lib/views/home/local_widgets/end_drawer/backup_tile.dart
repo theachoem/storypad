@@ -180,7 +180,7 @@ class _SignedInTile extends StatelessWidget {
       transform: Matrix4.identity()..translate(0.0, -8.0),
       child: OutlinedButton.icon(
         label: Text(tr("button.sync")),
-        onPressed: provider.syncing ? null : () => provider.syncBackupAcrossDevices(context),
+        onPressed: provider.syncing ? null : () => provider.syncBackupAcrossDevices(),
       ),
     );
   }

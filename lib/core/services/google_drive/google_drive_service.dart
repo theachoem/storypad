@@ -22,7 +22,7 @@ class GoogleDriveService {
   static final instance = GoogleDriveService._();
 
   final GoogleSignIn googleSignIn = GoogleSignIn.standard(
-    scopes: [drive.DriveApi.driveAppdataScope, drive.DriveApi.driveFileScope],
+    scopes: [drive.DriveApi.driveAppdataScope],
   );
 
   Future<drive.DriveApi?> get googleDriveClient async {
@@ -71,28 +71,6 @@ class GoogleDriveService {
       );
 
       return CloudFileListObject.fromGoogleDrive(fileList);
-    });
-  }
-
-  Future<CloudFileObject?> fetchLegacyStoryPadBackup() async {
-    return _execHandler(() async {
-      drive.DriveApi? client = await googleDriveClient;
-      if (client == null) return null;
-
-      const mimeType = "mimeType = 'application/vnd.google-apps.folder'";
-      drive.FileList? folderList = await client.files.list(q: mimeType);
-
-      String? folderId;
-      folderList.files?.forEach((e) {
-        if (e.name == "Story") folderId = e.id;
-      });
-
-      final folder = await client.files.list(
-        q: "mimeType = 'application/zip' and '$folderId' in parents",
-      );
-
-      drive.File? file = folder.files?.firstOrNull;
-      return file != null ? CloudFileObject.fromLegacyStoryPad(file) : null;
     });
   }
 
@@ -237,14 +215,35 @@ class GoogleDriveService {
   Future<T?> _execHandler<T>(Future<T?> Function() request) async {
     requestCount++;
 
+    Future<T?> retryRequest(String reason) async {
+      requestCount++;
+      return request().catchError((e) {
+        debugPrint('$runtimeType#_execHandler retry after $reason: $e');
+        return null;
+      });
+    }
+
     return request().onError((e, stackTrace) async {
       debugPrintStack(stackTrace: stackTrace);
 
       if (e is drive.DetailedApiRequestError) {
-        if (e.status == 401) {
+        bool is403 = e.status == 403;
+        bool is401 = e.status == 401;
+        bool invalidCredentials = e.message?.contains('Request had invalid authentication credentials') == true;
+
+        // user didn't authorize to access google drive file.
+        if (is403) {
+          await googleSignIn.requestScopes(googleSignIn.scopes);
+          return retryRequest('403');
+        }
+
+        // user login, but may be remove access from google app.
+        if (is401 && invalidCredentials) {
+          await googleSignIn.requestScopes(googleSignIn.scopes);
+          return retryRequest('401 invalid credentials');
+        } else if (is401) {
           await googleSignIn.signInSilently(reAuthenticate: true);
-          requestCount++;
-          return request();
+          return retryRequest('401 re-authenticate');
         }
       }
 

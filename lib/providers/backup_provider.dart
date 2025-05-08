@@ -60,16 +60,17 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     Future.delayed(const Duration(seconds: 1)).then((_) {
-      load();
+      _load();
     });
   }
 
-  Future<void> load() async {
+  Future<void> _load() async {
     await source.authenticate();
     await _loadLocalData();
     await _loadLatestSyncedFile();
-
     notifyListeners();
+
+    if (!synced) await syncBackupAcrossDevices();
   }
 
   Future<void> _loadLocalData() async {
@@ -96,7 +97,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   // 3. Device A opens the app again and retrieves the latest data from 3 PM.
   //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
   //
-  Future<void> syncBackupAcrossDevices(BuildContext context) async {
+  Future<void> syncBackupAcrossDevices() async {
     if (syncing) return;
 
     AnalyticsService.instance.logSyncBackup();
@@ -215,12 +216,14 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     notifyListeners();
   }
 
-  Future<void> recheck() async {
+  Future<void> recheckAndSync() async {
     await _loadLocalData();
     await _loadLatestSyncedFile();
 
     debugPrint('$runtimeType#recheck synced: $synced');
     notifyListeners();
+
+    if (!synced) await syncBackupAcrossDevices();
   }
 
   Future<void> forceRestore(BackupObject backup, BuildContext context) async {
