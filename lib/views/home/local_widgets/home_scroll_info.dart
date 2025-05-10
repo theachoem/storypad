@@ -76,6 +76,12 @@ class _HomeScrollInfo {
       return;
     }
 
+    if (targetStoryIndex == 0) {
+      await scrollController.animateTo(0.0, duration: Durations.long4, curve: Curves.fastLinearToSlowEaseIn);
+      _scrolling = false;
+      return;
+    }
+
     final targetStoryKey = storyKeys.elementAt(targetStoryIndex);
     (bool, int) result = _getScrollInfo(storyKeys, months, stories, targetMonthIndex);
 
@@ -118,10 +124,6 @@ class _HomeScrollInfo {
         duration: Durations.medium3,
         curve: Curves.ease,
       );
-    }
-
-    if (targetStoryIndex == 0) {
-      await scrollController.animateTo(0.0, duration: Durations.medium3, curve: Curves.ease);
     }
 
     _scrolling = false;
