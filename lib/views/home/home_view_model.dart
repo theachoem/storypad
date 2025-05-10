@@ -111,7 +111,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialYear: year,
     ).push(context);
 
-    if (addedStory is StoryDbModel) {
+    if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
         int index = 0;
 
