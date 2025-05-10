@@ -68,12 +68,15 @@ class _HomeScrollInfo {
     required BuildContext context,
   }) async {
     _scrolling = true;
-
     List<StoryDbModel> stories = viewModel().stories?.items ?? [];
 
     int targetStoryIndex = stories.indexWhere((e) => e.month == months[targetMonthIndex]);
-    final targetStoryKey = storyKeys.elementAt(targetStoryIndex);
+    if (targetStoryIndex == -1) {
+      _scrolling = false;
+      return;
+    }
 
+    final targetStoryKey = storyKeys.elementAt(targetStoryIndex);
     (bool, int) result = _getScrollInfo(storyKeys, months, stories, targetMonthIndex);
 
     bool isMovingRight = result.$1;
