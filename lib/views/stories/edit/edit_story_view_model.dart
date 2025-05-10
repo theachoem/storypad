@@ -353,6 +353,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       }
     }
 
-    if (shouldPop && context.mounted) Navigator.of(context).pop(result);
+    // if discard, just pop.
+    if (shouldPop && context.mounted) Navigator.of(context).pop(null);
   }
 }
