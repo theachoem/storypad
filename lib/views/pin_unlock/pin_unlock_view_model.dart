@@ -30,6 +30,8 @@ class PinUnlockViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void removeLastPin() {
+    if (pin.isEmpty) return;
+
     pin = pin.substring(0, pin.length - 1);
     notifyListeners();
   }
