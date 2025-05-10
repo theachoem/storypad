@@ -8,6 +8,7 @@ import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
+import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/languages/languages_view.dart' show LanguagesRoute;
 import 'package:storypad/views/library/library_view.dart' show LibraryRoute;
@@ -61,6 +62,7 @@ class HomeEndDrawer extends StatelessWidget {
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
         children: [
+          SurveyBanner(context: context, viewModel: viewModel),
           _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),

@@ -13,6 +13,7 @@ class RemoteConfigService {
     localizationSupportUrl,
     policyPrivacyUrl,
     sourceCodeUrl,
+    surveyUrl,
   ];
 
   FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
@@ -59,6 +60,12 @@ class RemoteConfigService {
     'SOURCE_CODE_URL',
     _RemoteConfigValueType.string,
     'https://github.com/theachoem/storypad',
+  );
+
+  static const surveyUrl = _RemoteConfigObject<String>(
+    'SURVEY_URL',
+    _RemoteConfigValueType.string,
+    'https://forms.gle/XaZTB9NTMuNWa3R26',
   );
 
   Future<void> initialize() async {
