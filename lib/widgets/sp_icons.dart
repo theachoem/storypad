@@ -19,7 +19,7 @@ class SpIcons {
   static const IconData archive = kIsCupertino ? CupertinoIcons.archivebox : Icons.archive_outlined;
   static const IconData theme = kIsCupertino ? CupertinoIcons.paintbrush : Icons.color_lens_outlined;
   static const IconData lock = kIsCupertino ? CupertinoIcons.lock : Icons.lock_outline;
-  static const IconData photo = kIsCupertino ? CupertinoIcons.photo : Icons.photo_album_outlined;
+  static const IconData photo = kIsCupertino ? CupertinoIcons.photo : Icons.photo_library_outlined;
   static const IconData voice = kIsCupertino ? CupertinoIcons.mic : Icons.mic_rounded;
   static const IconData cloudUpload = kIsCupertino ? CupertinoIcons.cloud_upload : Icons.backup_outlined;
   static final IconData googleDrive = MdiIcons.googleDrive;

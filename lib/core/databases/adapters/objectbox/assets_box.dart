@@ -27,7 +27,11 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   QueryBuilder<AssetObjectBox> buildQuery({Map<String, dynamic>? filters}) {
     Condition<AssetObjectBox> conditions =
         AssetObjectBox_.id.notNull().and(AssetObjectBox_.permanentlyDeletedAt.isNull());
-    return box.query(conditions);
+
+    QueryBuilder<AssetObjectBox> queryBuilder = box.query(conditions);
+    queryBuilder = queryBuilder.order(AssetObjectBox_.id, flags: Order.descending);
+
+    return queryBuilder;
   }
 
   @override

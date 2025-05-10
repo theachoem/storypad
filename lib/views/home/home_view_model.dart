@@ -111,21 +111,20 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialYear: year,
     ).push(context);
 
-    if (addedStory is StoryDbModel) {
+    if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
         int index = 0;
 
-        try {
-          // 1-1-2022 3pm: 0
-          // 1-1-2022 12pm: 1
-          // 2-1-2022 1am: 2
-          // 3-1-2022 1am: 3
-          //
-          // added: 1-1-2022 2pm
-          index = stories!.items.indexWhere((story) => addedStory.displayPathDate.isAfter(story.displayPathDate));
-        } catch (e) {
-          debugPrint('$runtimeType#goToNewPage no index found: $e');
-        }
+        // 1-1-2022 3pm: 0
+        // 1-1-2022 12pm: 1
+        // 2-1-2022 1am: 2
+        // 3-1-2022 1am: 3
+        //
+        // added: 1-1-2022 2pm
+        index = stories!.items.indexWhere((story) => addedStory.displayPathDate.isAfter(story.displayPathDate));
+
+        // index possibly -1
+        index = max(index, 0);
 
         setStories(stories!.addElement(addedStory, index));
       }

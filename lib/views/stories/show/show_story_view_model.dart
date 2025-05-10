@@ -247,7 +247,7 @@ class ShowStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
 
     await load(story!.id);
 
-    if (currentPageIndex != null) {
+    if (currentPageIndex != null && pageController.hasClients) {
       pageController.jumpToPage(currentPageIndex!);
     }
   }

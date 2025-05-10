@@ -303,7 +303,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
     await saveWithoutCheck();
     await revertIfNoChange();
-    if (context.mounted) Navigator.pop(context, story);
+    if (context.mounted) Navigator.maybePop(context, story);
   }
 
   Future<void> revertIfNoChange() async {
@@ -353,6 +353,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       }
     }
 
-    if (shouldPop && context.mounted) Navigator.of(context).pop(result);
+    // if discard, just pop.
+    if (shouldPop && context.mounted) Navigator.of(context).pop(null);
   }
 }
