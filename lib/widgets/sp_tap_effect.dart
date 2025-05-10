@@ -93,7 +93,12 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
     if (widget.onTap != null) {
       return GestureDetector(
         behavior: widget.behavior,
-        onLongPress: widget.onLongPressed,
+        onLongPress: widget.onLongPressed != null
+            ? () {
+                Feedback.forLongPress(context);
+                widget.onLongPressed!();
+              }
+            : null,
         onTapDown: (detail) => onTapDown(),
         onTapUp: (detail) => onTapUp(),
         onTapCancel: () => onTapCancel(),
