@@ -43,8 +43,9 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
       floating?.remove();
     } else {
       floating = createFloating(context: context);
-      Overlay.maybeOf(context)?.insert(floating!);
+      if (floating == null) return;
 
+      Overlay.maybeOf(context)?.insert(floating!);
       await animationController.forward();
     }
   }
@@ -68,12 +69,13 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
     return widget.builder(() => toggle(context));
   }
 
-  OverlayEntry createFloating({
+  OverlayEntry? createFloating({
     required BuildContext context,
   }) {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
-    Offset offset = renderBox.localToGlobal(Offset.zero);
+    final renderBox = context.findRenderObject();
+    if (renderBox is! RenderBox) return null;
 
+    Offset offset = renderBox.localToGlobal(Offset.zero);
     double childWidth = actualFloatingSize?.width ?? widget.estimatedFloatingWidth - 36;
 
     return OverlayEntry(builder: (context) {
