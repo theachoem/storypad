@@ -23,9 +23,13 @@ class InAppUpdateProvider extends ChangeNotifier {
   AppUpdateInfo? _androidInAppUpdateInfo;
 
   Future<void> _load() async {
-    _versionStatus = await NewVersionPlus().getVersionStatus();
-    _androidInAppUpdateInfo = await _getAndroidInAppUpdateInfo();
+    try {
+      _versionStatus = await NewVersionPlus().getVersionStatus();
+    } catch (e) {
+      debugPrint('$runtimeType#_load get version status error: $e');
+    }
 
+    _androidInAppUpdateInfo = await _getAndroidInAppUpdateInfo();
     debugPrint("💫 App Update Status: ${_versionStatus?.canUpdate} ${_versionStatus?.originalStoreVersion}");
 
     if (_versionStatus?.canUpdate == true || _androidInAppUpdateInfo?.canUpdate == true) {
