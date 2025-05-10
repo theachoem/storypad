@@ -112,23 +112,20 @@ class _LibraryContent extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    buildImage(context, asset),
+                    buildImage(context, asset, callback),
                     Positioned(
                       top: 8.0,
                       right: 8.0,
-                      child: GestureDetector(
-                        onTap: callback,
-                        child: ValueListenableBuilder<int?>(
-                          valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
-                          builder: (context, loadingAssetId, child) {
-                            return buildImageStatus(
-                              context: context,
-                              asset: asset,
-                              provider: provider,
-                              loadingAssetId: loadingAssetId,
-                            );
-                          },
-                        ),
+                      child: ValueListenableBuilder<int?>(
+                        valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
+                        builder: (context, loadingAssetId, child) {
+                          return buildImageStatus(
+                            context: context,
+                            asset: asset,
+                            provider: provider,
+                            loadingAssetId: loadingAssetId,
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -213,18 +210,15 @@ class _LibraryContent extends StatelessWidget {
     return child;
   }
 
-  Widget buildImage(BuildContext context, AssetDbModel asset) {
+  Widget buildImage(
+    BuildContext context,
+    AssetDbModel asset,
+    void Function() onTap,
+  ) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
       child: SpTapEffect(
-        onTap: () {
-          final assetLinks =
-              context.read<BackupProvider>().assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
-          SpImagesViewer.fromString(
-            images: assetLinks,
-            initialIndex: assetLinks.indexOf(asset.link),
-          ).show(context);
-        },
+        onTap: onTap,
         child: SpImage(
           link: asset.link,
           width: 200,
