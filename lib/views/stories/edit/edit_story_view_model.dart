@@ -323,7 +323,7 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
     if (managingPage) return toggleManagingPage();
     if (didPop) return;
 
-    Future<OkCancelResult> showConfirmDialog(BuildContext context) async {
+    Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
       return showOkCancelAlertDialog(
         context: context,
         isDestructiveAction: true,
@@ -332,31 +332,24 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
       );
     }
 
-    bool shouldPop = true;
     if (flowType == EditingFlowType.create) {
       if (lastSavedAtNotifier.value != null) {
-        OkCancelResult result = await showConfirmDialog(context);
+        OkCancelResult result = await showDiscardConfirmation(context);
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id);
           story = null;
-          shouldPop = true;
-        } else {
-          shouldPop = false;
+          if (context.mounted) Navigator.of(context).pop(null);
         }
       }
     } else if (flowType == EditingFlowType.update) {
       if (story?.updatedAt != initialStory?.updatedAt) {
-        OkCancelResult result = await showConfirmDialog(context);
+        OkCancelResult result = await showDiscardConfirmation(context);
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.set(initialStory!);
           story = initialStory;
-          shouldPop = true;
-        } else {
-          shouldPop = false;
+          if (context.mounted) Navigator.of(context).pop(null);
         }
       }
     }
-
-    if (shouldPop && context.mounted) Navigator.of(context).pop(story);
   }
 }
