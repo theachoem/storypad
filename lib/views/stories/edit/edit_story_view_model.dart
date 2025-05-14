@@ -338,8 +338,12 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id);
           story = null;
-          if (context.mounted) Navigator.of(context).pop(null);
+          if (context.mounted) return Navigator.of(context).pop(null);
+        } else {
+          return;
         }
+      } else {
+        if (context.mounted) Navigator.of(context).pop(null);
       }
     } else if (flowType == EditingFlowType.update) {
       if (story?.updatedAt != initialStory?.updatedAt) {
@@ -347,8 +351,10 @@ class EditStoryViewModel extends ChangeNotifier with DisposeAwareMixin, Debounch
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.set(initialStory!);
           story = initialStory;
-          if (context.mounted) Navigator.of(context).pop(null);
+          if (context.mounted) return Navigator.of(context).pop(null);
         }
+      } else {
+        if (context.mounted) Navigator.of(context).pop(null);
       }
     }
   }
