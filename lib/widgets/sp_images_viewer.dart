@@ -192,6 +192,33 @@ class _Images extends StatelessWidget {
             heroAttributes: PhotoViewHeroAttributes(tag: image.tag),
             initialScale: PhotoViewComputedScale.contained * image.scale,
             imageProvider: image.provider,
+            errorBuilder: (context, error, stackTrace) {
+              return DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.black),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8.0,
+                    children: [
+                      Icon(
+                        Icons.broken_image,
+                        color: Colors.grey[400],
+                        size: 40.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          error.toString(),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           );
         }
       },

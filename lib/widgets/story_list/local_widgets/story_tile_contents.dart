@@ -67,6 +67,7 @@ class _StoryTileContents extends StatelessWidget {
                   await _StoryTileActions(story: story, listContext: listContext).changeDate(newDateTime);
                   if (context.mounted) Navigator.maybePop(context);
                 },
+          onToggleManagingPage: null,
         ),
         if (images?.isNotEmpty == true) ...[
           SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),

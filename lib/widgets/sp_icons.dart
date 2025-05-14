@@ -31,7 +31,7 @@ class SpIcons {
   static final IconData book = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOutline;
   static final IconData tune = kIsCupertino ? CupertinoIcons.slider_horizontal_3 : MdiIcons.tuneVariant;
   static const IconData forum = kIsCupertino ? CupertinoIcons.bubble_left_bubble_right : Icons.forum_outlined;
-  static final IconData managingPage = kIsCupertino ? CupertinoIcons.book_fill : MdiIcons.bookOpen;
+  static final IconData managingPage = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
   static final IconData managingPageOff = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
   static const IconData info = kIsCupertino ? CupertinoIcons.info : Icons.info_outline;
   static const IconData moreVert = kIsCupertino ? CupertinoIcons.ellipsis_vertical : Icons.more_vert;

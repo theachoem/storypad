@@ -26,7 +26,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
   final DimissedSurveysStorage storage = DimissedSurveysStorage();
   String surveyUrl = RemoteConfigService.surveyUrl.get();
 
-  bool done = false;
+  bool show = false;
 
   @override
   void initState() {
@@ -40,8 +40,13 @@ class _SurveyBannerState extends State<SurveyBanner> {
   Future<void> load() async {
     final result = await DimissedSurveysStorage().readList();
     if (result != null && result.contains(surveyUrl)) {
-      done = true;
-      setState(() {});
+      setState(() {
+        show = false;
+      });
+    } else {
+      setState(() {
+        show = true;
+      });
     }
   }
 
@@ -56,7 +61,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (done) return const SizedBox();
+    if (!show) return const SizedBox();
 
     return SpFadeIn.bound(
       duration: Durations.long4,

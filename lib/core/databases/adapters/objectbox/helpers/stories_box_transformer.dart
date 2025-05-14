@@ -5,12 +5,14 @@ part of '../stories_box.dart';
 StoryContentDbModel _convertPagesToRichPages(StoryContentDbModel content) {
   // ignore: deprecated_member_use_from_same_package
   if (content.pages != null) {
+    final now = DateTime.now().millisecondsSinceEpoch;
     content = content.copyWith(
       pages: null,
       richPages: List.generate(
         // ignore: deprecated_member_use_from_same_package
         content.pages?.length ?? 0,
         (index) => StoryPageDbModel(
+          id: now + index,
           title: index == 0 ? content.title : null,
           // ignore: deprecated_member_use_from_same_package
           body: content.pages![index],

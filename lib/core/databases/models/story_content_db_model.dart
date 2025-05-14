@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
@@ -6,6 +7,26 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 
 part 'story_content_db_model.g.dart';
+
+List<StoryPageDbModel>? _richPagesFromJson(dynamic richPages) {
+  if (richPages == null) return null;
+  if (richPages is List) {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    return List.generate(richPages.length, (index) {
+      Map<String, dynamic> page = richPages[index];
+
+      // generate default ID for previous record if not exist.
+      if (page['id'] == null) {
+        debugPrint('StoryContentDbModel._richPagesFromJson generating page ID 🚧🚧🚧🚧🚧');
+        page['id'] = now + index;
+      }
+
+      return StoryPageDbModel.fromJson(page);
+    });
+  }
+
+  return null;
+}
 
 @CopyWith()
 @JsonSerializable()
@@ -32,6 +53,8 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   // @Deprecated('use richPages instead')
   // List: Returns JSON-serializable version of quill delta.
   final List<List<dynamic>>? pages;
+
+  @JsonKey(fromJson: _richPagesFromJson)
   final List<StoryPageDbModel>? richPages;
 
   StoryContentDbModel({
@@ -44,20 +67,43 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.metadata,
   });
 
-  StoryContentDbModel addRichPage() {
+  StoryContentDbModel addRichPage({
+    int? crossAxisCount,
+    int? mainAxisCount,
+  }) {
     return copyWith(
       richPages: [
         ...richPages ?? [],
-        StoryPageDbModel(title: null, plainText: null, body: null),
+        StoryPageDbModel(
+          id: DateTime.now().millisecondsSinceEpoch,
+          title: null,
+          plainText: null,
+          body: null,
+          crossAxisCount: crossAxisCount,
+          mainAxisCount: mainAxisCount,
+        ),
       ],
     );
   }
 
-  StoryContentDbModel removeRichPageAt(int index) {
+  StoryContentDbModel removeRichPage(int pageId) {
     return copyWith(
-      richPages: [
-        ...richPages ?? [],
-      ]..removeAt(index),
+        title: richPages?.first.title,
+        plainText: richPages?.first.plainText,
+        richPages: [
+          ...richPages ?? [],
+        ]..removeWhere((e) => e.id == pageId));
+  }
+
+  StoryContentDbModel replacePage(StoryPageDbModel newPage) {
+    List<StoryPageDbModel> richPages = [...this.richPages ?? []];
+    int index = richPages.indexWhere((e) => e.id == newPage.id);
+    richPages[index] = newPage;
+
+    return copyWith(
+      title: index == 0 ? newPage.title : title,
+      plainText: index == 0 ? newPage.plainText : plainText,
+      richPages: richPages,
     );
   }
 

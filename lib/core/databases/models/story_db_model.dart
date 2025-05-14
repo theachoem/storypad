@@ -1,18 +1,13 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:flutter/material.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/stories/story_content_builder_service.dart';
 import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
-import 'package:storypad/views/stories/show/show_story_view_model.dart';
 
 part 'story_db_model.g.dart';
 
@@ -259,74 +254,6 @@ class StoryDbModel extends BaseDbModel {
       movedToBinAt: null,
       lastSavedDeviceId: null,
     );
-  }
-
-  static Future<StoryDbModel> fromShowPage(
-    ShowStoryViewModel viewModel, {
-    required bool draft,
-  }) async {
-    StoryContentDbModel content = await StoryContentBuilderService.call(
-      draftContent: viewModel.draftContent!,
-      quillControllers: viewModel.quillControllers,
-      titleControllers: viewModel.titleControllers,
-    );
-
-    if (draft) {
-      return viewModel.story!.copyWith(
-        updatedAt: DateTime.now(),
-        draftContent: content,
-      );
-    } else {
-      return viewModel.story!.copyWith(
-        updatedAt: DateTime.now(),
-        latestContent: content,
-        // keep old draft in case it is exist.
-        draftContent: viewModel.story?.draftContent,
-      );
-    }
-  }
-
-  static Future<StoryDbModel> fromDetailPage(
-    EditStoryViewModel viewModel, {
-    required bool draft,
-  }) async {
-    StoryContentDbModel content = await StoryContentBuilderService.call(
-      draftContent: viewModel.draftContent!,
-      quillControllers: viewModel.quillControllers,
-      titleControllers: viewModel.titleControllers,
-    );
-
-    Set<int> assets = {};
-    for (StoryPageDbModel page in content.richPages ?? []) {
-      for (var node in page.body ?? []) {
-        if (node is Map &&
-            node['insert'] is Map &&
-            node['insert']['image'] is String &&
-            node['insert']['image'].toString().startsWith("storypad://")) {
-          String image = node['insert']['image'];
-          int? assetId = int.tryParse(image.split("storypad://assets/").lastOrNull ?? '');
-          if (assetId != null) assets.add(assetId);
-        }
-      }
-    }
-
-    debugPrint("Found assets: $assets in ${viewModel.story?.id}");
-
-    if (draft) {
-      return viewModel.story!.copyWith(
-        updatedAt: DateTime.now(),
-        latestContent: viewModel.story?.latestContent ?? content,
-        draftContent: content,
-        assets: assets.toList(),
-      );
-    } else {
-      return viewModel.story!.copyWith(
-        updatedAt: DateTime.now(),
-        latestContent: content,
-        draftContent: null,
-        assets: assets.toList(),
-      );
-    }
   }
 
   factory StoryDbModel.startYearStory(int year) {

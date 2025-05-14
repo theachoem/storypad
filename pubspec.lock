@@ -795,11 +795,12 @@ packages:
   flutter_quill:
     dependency: "direct main"
     description:
-      name: flutter_quill
-      sha256: de019f6160023d36ad3e89343da6d740ab66ae7839875c89871fbeabcb9e8f9b
-      url: "https://pub.dev"
-    source: hosted
-    version: "11.4.0"
+      path: "."
+      ref: e504d0af4cbc2132857a4da6aec876ccbda9cbf6
+      resolved-ref: e504d0af4cbc2132857a4da6aec876ccbda9cbf6
+      url: "https://github.com/theachoem/flutter-quill.git"
+    source: git
+    version: "11.4.1"
   flutter_quill_delta_from_html:
     dependency: transitive
     description:
@@ -1959,6 +1960,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  visibility_detector:
+    dependency: "direct main"
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   vm_service:
     dependency: transitive
     description:

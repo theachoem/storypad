@@ -100,7 +100,7 @@ class SpStoryTile extends StatelessWidget {
       SpPopMenuItem(
         title: tr('button.info'),
         leadingIconData: SpIcons.info,
-        onPressed: () => SpStoryInfoSheet(story: story).show(context: context),
+        onPressed: () => SpStoryInfoSheet(story: story, persisted: true).show(context: context),
       )
     ];
   }
