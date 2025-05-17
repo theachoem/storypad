@@ -15,6 +15,7 @@ class _StoryPage extends StatelessWidget {
     required this.onDelete,
     required this.onChanged,
     required this.pageIndex,
+    this.showBorder = true,
     this.readOnly = false,
   });
 
@@ -35,6 +36,7 @@ class _StoryPage extends StatelessWidget {
   final void Function(StoryPageDbModel newRichPage)? onChanged;
 
   final bool readOnly;
+  final bool showBorder;
 
   void onChange() {
     StoryPageDbModel richPage = page.page.copyWith(
@@ -49,15 +51,17 @@ class _StoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
+      decoration: showBorder
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Theme.of(context).dividerColor),
+            )
+          : null,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           buildEditor(context),
-          if (!readOnly) buildMoreVertButton(context),
+          if (!readOnly && preferences?.layoutType == PageLayoutType.list) buildMoreVertButton(context),
         ],
       ),
     );

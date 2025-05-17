@@ -47,7 +47,7 @@ class EditStoryRoute extends BaseRoute {
   final int? initialDay;
   final int? initialTagId;
   final StoryDbModel? story;
-  final int? currentPageId;
+  final int? initialPageIndex;
   final double initialPageScrollOffet;
   final StoryPageObjectsMap? pagesMap;
 
@@ -59,7 +59,7 @@ class EditStoryRoute extends BaseRoute {
     this.story,
     this.pagesMap,
     this.initialTagId,
-    this.currentPageId,
+    this.initialPageIndex,
     this.initialPageScrollOffet = 0,
   }) : assert(initialYear == null || id == null);
 

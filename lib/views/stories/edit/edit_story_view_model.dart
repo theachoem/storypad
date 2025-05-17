@@ -15,7 +15,10 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
   EditStoryViewModel({
     required this.params,
-  }) : super(canEditPages: true, initialPageScrollOffet: params.initialPageScrollOffet) {
+  }) : super(
+          initialPageScrollOffet: params.initialPageScrollOffet,
+          initialPageIndex: params.initialPageIndex,
+        ) {
     init(
       initialStory: params.story,
       initialPagesMap: params.pagesMap,
@@ -106,9 +109,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
         }
       }
 
-      if (!requested && params.currentPageId != null) {
-        pagesManager.pagesMap[params.currentPageId!]?.titleFocusNode.requestFocus();
-        requested = true;
+      if (!requested && params.initialPageIndex != null) {
+        final page = draftContent?.richPages?.elementAtOrNull(params.initialPageIndex ?? -1);
+        if (page != null) {
+          pagesManager.pagesMap[page.id]?.titleFocusNode.requestFocus();
+          requested = true;
+        }
       }
 
       if (!requested) {

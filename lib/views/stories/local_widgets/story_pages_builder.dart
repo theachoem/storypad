@@ -3,6 +3,7 @@ import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -13,9 +14,13 @@ import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_pages_block.dart';
 import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/stories/local_widgets/story_header.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_focus_node_builder2.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -28,25 +33,10 @@ part 'add_page_button.dart';
 part 'more_vert_action_buttons.dart';
 part 'title_field.dart';
 part 'quill_editor.dart';
+part 'story_page_builder_action.dart';
 
-class StoryPageBuilderAction {
-  final void Function(StoryPageDbModel newRichPage) onPageChanged;
-  final void Function() onAddPage;
-  final void Function(int oldIndex, int newIndex) onSwapPages;
-  final void Function(StoryPageObject page) onDelete;
-
-  final void Function(int pageIndex, StoryPageObject page, bool titleFocused, bool bodyFocused) onFocusChange;
-  final bool canDeletePage;
-
-  StoryPageBuilderAction({
-    required this.onPageChanged,
-    required this.onAddPage,
-    required this.onSwapPages,
-    required this.onDelete,
-    required this.onFocusChange,
-    required this.canDeletePage,
-  });
-}
+part 'layouts/pages_layout.dart';
+part 'layouts/grid_layout.dart';
 
 class StoryPagesBuilder extends StatelessWidget {
   const StoryPagesBuilder({
@@ -54,11 +44,19 @@ class StoryPagesBuilder extends StatelessWidget {
     required this.preferences,
     required this.pages,
     required this.storyContent,
+    required this.header,
+    required this.padding,
+    required this.pageScrollController,
+    this.pageController,
     this.onTitleVisibilityChanged,
     this.actions,
   });
 
+  final ScrollController? pageScrollController;
+  final EdgeInsets padding;
+  final StoryHeader? header;
   final StoryPreferencesDbModel? preferences;
+  final PageController? pageController;
   final StoryContentDbModel storyContent;
   final List<StoryPageObject> pages;
   final StoryPageBuilderAction? actions;
@@ -70,63 +68,16 @@ class StoryPagesBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<StoryPagesBlock> blocks = StoryPagesBlock.buildBlocks(pages);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      spacing: spacing,
-      children: List.generate(
-        blocks.length,
-        (index) {
-          // Each block can't have more than 3 pages,
-          // we validate in assertion.
-          //
-          // I prefer explicit checking conditions.
-          // Currently only support following layouts.
-          final block = blocks[index];
-
-          final firstPage = block.pages.elementAt(0);
-          final secondPageOrNull = block.pages.elementAtOrNull(1);
-          final thirdPageOrNull = block.pages.elementAtOrNull(2);
-
-          if (firstPage.matched(1 / 2) &&
-              secondPageOrNull?.matched(1 / 1) == true &&
-              thirdPageOrNull?.matched(1 / 1) == true) {
-            return buildGrid1LayoutBlock(
-              context,
-              firstPage,
-              secondPageOrNull!,
-              thirdPageOrNull!,
-            );
-          }
-
-          if (firstPage.matched(1 / 1) &&
-              secondPageOrNull?.matched(1 / 1) == true &&
-              thirdPageOrNull?.matched(1 / 2) == true) {
-            return buildGrid2LayoutBlock(
-              context,
-              firstPage,
-              secondPageOrNull!,
-              thirdPageOrNull!,
-            );
-          }
-
-          if (firstPage.crossAxisCount == 1 && secondPageOrNull?.crossAxisCount == 1 && thirdPageOrNull == null) {
-            return buildRowLayoutBlock(
-              context,
-              firstPage,
-              secondPageOrNull!,
-            );
-          }
-
-          return buildColumnLayoutBlock(block, context);
-        },
-      )..add(buildAddButton()),
-    );
+    switch (preferences?.layoutType) {
+      case PageLayoutType.list:
+        return _GridLayout(builder: this);
+      case PageLayoutType.pages:
+      default:
+        return _PagesLayout(builder: this);
+    }
   }
 
-  Widget buildColumnLayoutBlock(StoryPagesBlock block, BuildContext context) {
+  Widget _buildColumnLayoutBlock(StoryPagesBlock block, BuildContext context) {
     return Column(
       spacing: spacing,
       mainAxisSize: MainAxisSize.min,
@@ -141,7 +92,7 @@ class StoryPagesBuilder extends StatelessWidget {
     );
   }
 
-  IntrinsicHeight buildRowLayoutBlock(
+  IntrinsicHeight _buildRowLayoutBlock(
     BuildContext context,
     StoryPageObject firstPage,
     StoryPageObject secondPage,
@@ -160,7 +111,7 @@ class StoryPagesBuilder extends StatelessWidget {
     );
   }
 
-  Widget buildGrid1LayoutBlock(
+  Widget _buildGrid1LayoutBlock(
     BuildContext context,
     StoryPageObject firstPage,
     StoryPageObject secondPage,
@@ -191,7 +142,7 @@ class StoryPagesBuilder extends StatelessWidget {
     );
   }
 
-  Widget buildGrid2LayoutBlock(
+  Widget _buildGrid2LayoutBlock(
     BuildContext context,
     StoryPageObject firstPage,
     StoryPageObject secondPage,
@@ -222,7 +173,11 @@ class StoryPagesBuilder extends StatelessWidget {
     );
   }
 
-  Widget buildPage(StoryPageObject page, BuildContext context) {
+  Widget buildPage(
+    StoryPageObject page,
+    BuildContext context, {
+    bool showBorder = true,
+  }) {
     final pageIndex = pages.indexWhere((p) => page.id == p.id);
 
     bool canMoveUp = pageIndex > 0;
@@ -231,6 +186,7 @@ class StoryPagesBuilder extends StatelessWidget {
     return _StoryPage(
       key: page.key,
       preferences: preferences,
+      showBorder: showBorder,
       readOnly: readOnly,
       pageIndex: pageIndex,
       page: page,
@@ -248,7 +204,7 @@ class StoryPagesBuilder extends StatelessWidget {
   }
 
   // both should have same height, so switch between show / edit won't break scroll position.
-  Widget buildAddButton() {
+  Widget _buildAddButton() {
     return readOnly ? const SizedBox(height: 48) : _AddPageButton(onAddPage: () => actions!.onAddPage());
   }
 }

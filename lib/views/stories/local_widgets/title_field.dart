@@ -19,20 +19,12 @@ class _TitleField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle baseStyle = Theme.of(context).textTheme.titleMedium!;
-
-    if (preferences?.titleFontFamily != null) {
-      baseStyle = GoogleFonts.getFont(preferences!.titleFontFamily!).copyWith(
-        color: baseStyle.color,
-        fontSize: baseStyle.fontSize,
-        fontWeight: baseStyle.fontWeight,
-      );
-    }
-
-    baseStyle = baseStyle.copyWith(
-      color: baseStyle.color,
+    TextStyle baseStyle = GoogleFonts.getFont(
+      preferences?.titleFontFamily ?? preferences?.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
+      color: Theme.of(context).textTheme.titleMedium?.color,
+      fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
       fontWeight: AppTheme.calculateFontWeight(
-        baseStyle.fontWeight!,
+        kTitleDefaultFontWeight,
         preferences?.titleFontWeight ?? kTitleDefaultFontWeight,
       ),
     );

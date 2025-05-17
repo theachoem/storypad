@@ -52,36 +52,32 @@ class _EditStoryContent extends StatelessWidget {
   }
 
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
-    return ListView(
-      controller: viewModel.pagesManager.pageScrollController,
+    return StoryPagesBuilder(
+      header: StoryHeader.fromEditStory(viewModel: viewModel, context: context),
+      pageScrollController: viewModel.pagesManager.pageScrollController,
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
         bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
-      children: [
-        StoryHeader.fromEditStory(viewModel: viewModel, context: context),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: StoryPagesBuilder(
-            pages: pages,
-            preferences: viewModel.story!.preferences,
-            storyContent: viewModel.draftContent!,
-            actions: StoryPageBuilderAction(
-              onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
-              onAddPage: () => viewModel.addNewPage(),
-              onSwapPages: (oldIndex, newIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: newIndex),
-              onDelete: (page) => viewModel.deleteAPage(context, page.page),
-              canDeletePage: viewModel.pagesManager.canDeletePage,
-              onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
-                if (titleFocused) {
-                  viewModel.pagesManager.scrollToPage(page.id);
-                }
-              },
-            ),
-          ),
-        ),
-      ],
+      pages: pages,
+      preferences: viewModel.story!.preferences,
+      storyContent: viewModel.draftContent!,
+      pageController: viewModel.pagesManager.pageController,
+      actions: StoryPageBuilderAction(
+        onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
+        onAddPage: () => viewModel.addNewPage(),
+        onSwapPages: (oldIndex, newIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: newIndex),
+        onDelete: (page) => viewModel.deleteAPage(context, page.page),
+        canDeletePage: viewModel.pagesManager.canDeletePage,
+        onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
+          if (titleFocused) {
+            if (viewModel.pagesManager.pageScrollController.hasClients) {
+              viewModel.pagesManager.scrollToPage(page.id);
+            }
+          }
+        },
+      ),
     );
   }
 

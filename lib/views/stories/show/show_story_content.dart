@@ -41,27 +41,21 @@ class _ShowStoryContent extends StatelessWidget {
   }
 
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
-    return ListView(
-      controller: viewModel.pagesManager.pageScrollController,
+    return StoryPagesBuilder(
+      header: StoryHeader.fromShowStory(viewModel: viewModel, context: context),
+      pageScrollController: viewModel.pagesManager.pageScrollController,
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
         bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
-      children: [
-        StoryHeader.fromShowStory(viewModel: viewModel, context: context),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: StoryPagesBuilder(
-            pages: pages,
-            preferences: viewModel.story?.preferences,
-            storyContent: viewModel.draftContent!,
-            onTitleVisibilityChanged: (pageIndex, page, info) =>
-                viewModel.pagesManager.pagesMap.setTitleVisibleFraction(page.id, info.visibleFraction),
-            actions: null,
-          ),
-        ),
-      ],
+      pages: pages,
+      preferences: viewModel.story?.preferences,
+      storyContent: viewModel.draftContent!,
+      onTitleVisibilityChanged: (pageIndex, page, info) =>
+          viewModel.pagesManager.pagesMap.setTitleVisibleFraction(page.id, info.visibleFraction),
+      pageController: viewModel.pagesManager.pageController,
+      actions: null,
     );
   }
 

@@ -221,6 +221,7 @@ class AppTheme extends StatelessWidget {
       7: FontWeight.w800,
       8: FontWeight.w900,
     };
+
     int index = currentWeight.index + changeBy;
     return fontWeights[math.max(math.min(8, index), 0)]!;
   }

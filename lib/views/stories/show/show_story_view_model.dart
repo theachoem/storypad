@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
 import 'show_story_view.dart';
@@ -39,23 +40,35 @@ class ShowStoryViewModel extends BaseStoryViewModel {
   Future<void> goToEditPage(BuildContext context) async {
     if (draftContent == null || draftContent?.richPages == null) return;
 
-    int? nearestPageId;
-    for (int index = 0; index < (draftContent?.richPages?.length ?? 0); index++) {
-      int pageId = draftContent!.richPages![index].id;
-      if (pagesManager.pagesMap[pageId]?.titleVisibleFraction == 1) {
-        nearestPageId = pageId;
-        break;
-      }
-    }
+    int? nearestPageIndex;
+    double? initialPageScrollOffet;
 
-    // if no title visible on page, it most likely an last page.
-    nearestPageId ??= draftContent?.richPages?.last.id;
+    switch (story?.preferences.layoutType) {
+      case PageLayoutType.list:
+        initialPageScrollOffet = pagesManager.pageScrollController.offset;
+
+        for (int index = 0; index < (draftContent?.richPages?.length ?? 0); index++) {
+          int pageId = draftContent!.richPages![index].id;
+          if (pagesManager.pagesMap[pageId]?.titleVisibleFraction == 1) {
+            nearestPageIndex = index;
+            break;
+          }
+        }
+
+        // if no title visible on page, it most likely an last page.
+        nearestPageIndex ??= draftContent!.richPages!.length - 1;
+        break;
+      case PageLayoutType.pages:
+      default:
+        nearestPageIndex = pagesManager.pageController.page?.toInt();
+        break;
+    }
 
     await EditStoryRoute(
       id: story!.id,
       story: story,
-      currentPageId: nearestPageId,
-      initialPageScrollOffet: pagesManager.pageScrollController.offset,
+      initialPageIndex: nearestPageIndex,
+      initialPageScrollOffet: initialPageScrollOffet ?? 0,
       pagesMap: pagesManager.pagesMap,
     ).push(context);
 

@@ -2,8 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
 
 part 'story_preferences_db_model.g.dart';
+
+PageLayoutType _layoutTypeFromJson(dynamic layoutType) {
+  for (var type in PageLayoutType.values) {
+    if (type.name == layoutType.toString()) {
+      return type;
+    }
+  }
+
+  // fallback old app version layout.
+  return PageLayoutType.pages;
+}
 
 @CopyWith()
 @JsonSerializable()
@@ -19,6 +31,9 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final String? titleFontFamily;
   final int? titleFontWeightIndex;
 
+  @JsonKey(fromJson: _layoutTypeFromJson)
+  final PageLayoutType layoutType;
+
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight? get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : null;
   FontWeight? get titleFontWeight => titleFontWeightIndex != null ? FontWeight.values[titleFontWeightIndex!] : null;
@@ -32,6 +47,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     required this.fontWeightIndex,
     required this.titleFontFamily,
     required this.titleFontWeightIndex,
+    required this.layoutType,
   });
 
   @override
@@ -40,13 +56,15 @@ class StoryPreferencesDbModel extends BaseDbModel {
   @override
   DateTime? get updatedAt => null;
 
-  bool get allReseted => [
+  bool get allReseted =>
+      [
         colorSeedValue,
         fontFamily,
         fontWeightIndex,
         titleFontFamily,
         titleFontWeightIndex,
-      ].every((e) => e == null);
+      ].every((e) => e == null) &&
+      layoutType == PageLayoutType.list;
 
   bool get titleReseted => [
         titleFontFamily,
@@ -60,6 +78,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       fontWeightIndex: null,
       titleFontFamily: null,
       titleFontWeightIndex: null,
+      layoutType: PageLayoutType.list,
     );
   }
 
@@ -73,6 +92,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       fontWeightIndex: null,
       titleFontFamily: null,
       titleFontWeightIndex: null,
+      layoutType: PageLayoutType.list,
     );
   }
 

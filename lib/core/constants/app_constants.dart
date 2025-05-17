@@ -15,7 +15,7 @@ const Color kDefaultColorSeed = Colors.black;
 
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
-const FontWeight kTitleDefaultFontWeight = FontWeight.w600;
+const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';

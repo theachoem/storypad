@@ -34,7 +34,7 @@ class StoryPagesManager extends StatelessWidget {
             bottom: MediaQuery.of(context).padding.bottom,
           )),
           maxCrossAxisExtent: 150,
-          itemCount: viewModel.pagesManager.canEditPages ? richPages.length + 1 : richPages.length,
+          itemCount: richPages.length + 1,
           mainAxisSpacing: 24.0,
           crossAxisSpacing: 8.0,
           itemBuilder: (context, index) {
@@ -45,17 +45,13 @@ class StoryPagesManager extends StatelessWidget {
             if (page == null) return const SizedBox.shrink();
 
             Widget child = buildPage(context, page, index);
-            if (viewModel.pagesManager.canEditPages) {
-              return SpReorderableItem(
-                index: index,
-                onAccepted: (int oldIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: index),
-                onDragStarted: () => viewModel.pagesManager.draggingNotifier.value = true,
-                onDragCompleted: () => viewModel.pagesManager.draggingNotifier.value = false,
-                child: child,
-              );
-            }
-
-            return child;
+            return SpReorderableItem(
+              index: index,
+              onAccepted: (int oldIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: index),
+              onDragStarted: () => viewModel.pagesManager.draggingNotifier.value = true,
+              onDragCompleted: () => viewModel.pagesManager.draggingNotifier.value = false,
+              child: child,
+            );
           },
         ),
         Positioned(
@@ -103,9 +99,13 @@ class StoryPagesManager extends StatelessWidget {
               child: Text(page.bodyController.document.toPlainText()),
               onTap: () {
                 HapticFeedback.selectionClick();
-
                 viewModel.pagesManager.toggleManagingPage();
-                viewModel.pagesManager.scrollToPage(page.id);
+
+                if (viewModel.pagesManager.pageScrollController.hasClients) {
+                  viewModel.pagesManager.scrollToPage(page.id);
+                } else if (viewModel.pagesManager.pageController.hasClients) {
+                  viewModel.pagesManager.pageController.jumpToPage(pageIndex);
+                }
               },
             ),
             ValueListenableBuilder(

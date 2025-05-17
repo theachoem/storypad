@@ -27,13 +27,13 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   late final StoryPagesManagerInfo pagesManager;
 
   BaseStoryViewModel({
-    bool canEditPages = false,
+    int? initialPageIndex,
     double initialPageScrollOffet = 0.0,
   }) {
     pagesManager = StoryPagesManagerInfo(
+      initialPageIndex: initialPageIndex,
       initialScrollOffset: initialPageScrollOffet,
       draftContent: () => draftContent,
-      canEditPages: canEditPages,
       notifyListeners: () => notifyListeners(),
     );
   }
@@ -70,6 +70,13 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   }
 
   Future<void> changePreferences(StoryPreferencesDbModel preferences) async {
+    if (preferences.layoutType != story?.preferences.layoutType) {
+      pagesManager.currentPageIndexNotifier.value = null;
+
+      if (pagesManager.pageController.hasClients) pagesManager.pageController.jumpToPage(0);
+      if (pagesManager.pageScrollController.hasClients) pagesManager.pageScrollController.jumpTo(0);
+    }
+
     story = story!.copyWith(updatedAt: DateTime.now(), preferences: preferences);
     notifyListeners();
 
@@ -168,6 +175,16 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     await _saveDraft();
     notifyListeners();
 
+    if (pagesManager.pageScrollController.hasClients) {
+      pagesManager.scrollToPage(draftContent!.richPages!.last.id);
+    } else if (pagesManager.pageController.hasClients) {
+      pagesManager.pageController.animateToPage(
+        draftContent!.richPages!.length - 1,
+        duration: Durations.long4,
+        curve: Curves.fastLinearToSlowEaseIn,
+      );
+    }
+
     AnalyticsService.instance.logAddStoryPage(
       story: story!,
     );
@@ -218,7 +235,9 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
     if (!pagesManager.managingPage) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        pagesManager.scrollToPage(pages[newIndex].id);
+        if (pagesManager.pageScrollController.hasClients) {
+          pagesManager.scrollToPage(pages[newIndex].id);
+        }
       });
     }
   }

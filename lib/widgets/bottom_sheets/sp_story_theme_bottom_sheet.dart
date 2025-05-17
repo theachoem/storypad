@@ -4,6 +4,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/providers/theme_provider.dart';
@@ -12,6 +13,8 @@ import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_color_list_selector.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_layout_type_section.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class SpStoryThemeBottomSheet extends BaseBottomSheet {
@@ -27,7 +30,13 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
   bool get fullScreen => false;
 
   @override
-  Color? get barrierColor => Colors.black12;
+  Color? get barrierColor => Colors.black26;
+
+  @override
+  bool get showMaterialDragHandle => false;
+
+  @override
+  double get cupertinoPaddingTop => 0.0;
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
@@ -39,13 +48,18 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 4.0),
+              buildHeader(notifier),
+              const SizedBox(height: 8.0),
               SpColorListSelector(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 selectedColor: notifier.value.colorSeed,
                 onChanged: (color) {
                   notifier.value = notifier.value.copyWith(colorSeedValue: color?.value);
                   onThemeChanged(notifier.value);
                 },
               ),
+              const SizedBox(height: 8.0),
               // This give more problem on navigation.
               // Let's disable it for now.
               //
@@ -73,15 +87,12 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
               ),
               const Divider(height: 1),
               const SizedBox(height: 12.0),
-              OutlinedButton.icon(
-                label: Text(tr('button.reset')),
-                icon: const Icon(SpIcons.refresh),
-                onPressed: notifier.value.allReseted
-                    ? null
-                    : () {
-                        notifier.value = notifier.value.resetTheme();
-                        onThemeChanged(notifier.value);
-                      },
+              SpLayoutTypeSection(
+                selected: notifier.value.layoutType,
+                onThemeChanged: (layoutType) {
+                  notifier.value = notifier.value.copyWith(layoutType: layoutType);
+                  onThemeChanged(notifier.value);
+                },
               ),
               const SizedBox(height: 8.0),
               SizedBox(height: MediaQuery.of(context).padding.bottom),
@@ -89,6 +100,41 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
           ),
         );
       },
+    );
+  }
+
+  Widget buildHeader(CmValueNotifier<StoryPreferencesDbModel> notifier) {
+    return Row(
+      mainAxisAlignment: kIsCupertino ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
+      children: [
+        SpPopupMenuButton(
+          dyGetter: (dy) => dy + 56,
+          items: (context) {
+            return [
+              SpPopMenuItem(
+                leadingIconData: SpIcons.refresh,
+                title: tr("button.reset"),
+                titleStyle: TextTheme.of(context)
+                    .bodyMedium
+                    ?.copyWith(color: notifier.value.allReseted ? Theme.of(context).dividerColor : null),
+                onPressed: notifier.value.allReseted
+                    ? null
+                    : () {
+                        notifier.value = notifier.value.resetTheme();
+                        onThemeChanged(notifier.value);
+                      },
+              )
+            ];
+          },
+          builder: (callback) {
+            return IconButton(
+              icon: const Icon(SpIcons.moreVert),
+              onPressed: callback,
+            );
+          },
+        ),
+        if (kIsCupertino) const CloseButton(),
+      ],
     );
   }
 }

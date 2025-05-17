@@ -32,7 +32,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
   void initState() {
     super.initState();
 
-    if (surveyUrl.trim().isNotEmpty && (widget.viewModel.stories?.items.length ?? 0) > 10) {
+    if (surveyUrl.trim().isNotEmpty) {
       load();
     }
   }
@@ -45,7 +45,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
       });
     } else {
       setState(() {
-        show = true;
+        show = (widget.viewModel.stories?.items.length ?? 0) > 10;
       });
     }
   }

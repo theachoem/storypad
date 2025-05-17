@@ -6,6 +6,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
@@ -22,6 +23,7 @@ class StoryHeader extends StatelessWidget {
     required this.draftContent,
     required this.readOnly,
     required this.draftActions,
+    required this.currentPageIndexNotifier,
     required this.setFeeling,
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
@@ -33,6 +35,7 @@ class StoryHeader extends StatelessWidget {
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
   final SpStoryLabelsDraftActions? draftActions;
+  final ValueNotifier<int?>? currentPageIndexNotifier;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
@@ -46,6 +49,9 @@ class StoryHeader extends StatelessWidget {
     required BuildContext context,
   }) {
     return StoryHeader(
+      currentPageIndexNotifier: viewModel.story?.preferences.layoutType == PageLayoutType.pages
+          ? viewModel.pagesManager.currentPageIndexNotifier
+          : null,
       onSizeChange: (size) =>
           viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
       story: viewModel.story!,
@@ -65,6 +71,9 @@ class StoryHeader extends StatelessWidget {
     required BuildContext context,
   }) {
     return StoryHeader(
+      currentPageIndexNotifier: viewModel.story?.preferences.layoutType == PageLayoutType.pages
+          ? viewModel.pagesManager.currentPageIndexNotifier
+          : null,
       onSizeChange: (size) =>
           viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
       story: viewModel.story!,

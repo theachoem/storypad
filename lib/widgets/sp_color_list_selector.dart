@@ -14,16 +14,18 @@ class SpColorListSelector extends StatelessWidget {
     super.key,
     required this.selectedColor,
     required this.onChanged,
+    this.padding = const EdgeInsets.all(16.0),
   });
 
   final void Function(Color? color) onChanged;
   final Color? selectedColor;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(16.0),
+      padding: padding,
       child: Row(spacing: 4.0, children: [
         buildButton(
           tooltip: tr("button.reset"),

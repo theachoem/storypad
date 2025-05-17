@@ -3,18 +3,24 @@ part of 'base_story_view_model.dart';
 class StoryPagesManagerInfo {
   final StoryContentDbModel? Function() draftContent;
   final void Function() notifyListeners;
-  final bool canEditPages;
 
   StoryPagesManagerInfo({
+    required int? initialPageIndex,
     required double initialScrollOffset,
-    required this.canEditPages,
     required this.draftContent,
     required this.notifyListeners,
   }) {
     pageScrollController = ScrollController(initialScrollOffset: initialScrollOffset);
+    pageController = PageController(initialPage: initialPageIndex ?? 0);
+
+    currentPageIndexNotifier.value = initialPageIndex;
+    pageController.addListener(() {
+      currentPageIndexNotifier.value = pageController.page?.toInt();
+    });
   }
 
   late final ScrollController pageScrollController;
+  late final PageController pageController;
 
   // only use for pages layout.
   final ValueNotifier<int?> currentPageIndexNotifier = ValueNotifier(null);
@@ -70,6 +76,7 @@ class StoryPagesManagerInfo {
 
   void dispose() {
     pageScrollController.dispose();
+    pageController.dispose();
     draggingNotifier.dispose();
     currentPageIndexNotifier.dispose();
     pagesMap.dispose();

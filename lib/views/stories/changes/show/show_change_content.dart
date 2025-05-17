@@ -7,8 +7,8 @@ class _ShowChangeContent extends StatelessWidget {
 
   List<StoryPageObject> constructPages() {
     if (viewModel.pagesMap == null || viewModel.pagesMap!.keys.isEmpty) return <StoryPageObject>[];
-    return List.generate(viewModel.params.content.richPages?.length ?? 0, (index) {
-      final page = viewModel.params.content.richPages![index];
+    return List.generate(viewModel.content.richPages?.length ?? 0, (index) {
+      final page = viewModel.content.richPages![index];
       return viewModel.pagesMap![page.id]!;
     }).toList();
   }
@@ -25,17 +25,18 @@ class _ShowChangeContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context, List<StoryPageObject> pages) {
     if (pages.isEmpty) return const Center(child: CircularProgressIndicator.adaptive());
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(12.0).add(EdgeInsets.only(
+
+    return StoryPagesBuilder(
+      header: null,
+      preferences: null,
+      pages: pages,
+      storyContent: viewModel.content,
+      padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom,
-      )),
-      child: StoryPagesBuilder(
-        preferences: null,
-        pages: pages,
-        storyContent: viewModel.params.content,
+        bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
+      pageScrollController: null,
     );
   }
 }

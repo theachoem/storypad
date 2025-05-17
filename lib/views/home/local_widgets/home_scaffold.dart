@@ -68,7 +68,11 @@ class _HomeScaffold extends StatelessWidget {
             visible: !state.editing,
             child: _HomeTimelineSideBar(
               viewModel: viewModel,
-              screenPadding: MediaQuery.of(viewContext).padding,
+              // when bottom navigation is visible, we should use context for screen padding.
+              // else if bottom nav is not visible, padding from context is 0, so we use view context for padding instead.
+              screenPadding: MediaQuery.of(context).padding.bottom == 0
+                  ? MediaQuery.of(viewContext).padding
+                  : MediaQuery.of(context).padding,
               backgroundColor: getBackgroundColor(context) ?? ColorScheme.of(context).surface,
             ),
           );
