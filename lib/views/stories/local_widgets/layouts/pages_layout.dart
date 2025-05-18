@@ -7,6 +7,8 @@ class _PagesLayout extends StatelessWidget {
 
   final StoryPagesBuilder builder;
 
+  bool get keyboardOpened => builder.viewInsets.bottom > 100;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +20,7 @@ class _PagesLayout extends StatelessWidget {
             context: context,
             child: buildPageView(),
           ),
-          if (!builder.readOnly) builder._buildAddButton(),
+          if (!builder.readOnly && !keyboardOpened) SpFadeIn.bound(child: builder._buildAddButton()),
         ],
       ),
     );
@@ -30,7 +32,7 @@ class _PagesLayout extends StatelessWidget {
   }) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.all(12.0),
+        margin: const EdgeInsets.all(12.0).copyWith(bottom: keyboardOpened ? 0 : 12.0),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,

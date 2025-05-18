@@ -5,7 +5,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
-import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
+import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'show_story_view.dart';
 
 class ShowStoryViewModel extends BaseStoryViewModel {

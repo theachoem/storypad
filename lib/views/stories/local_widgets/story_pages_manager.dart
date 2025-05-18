@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
+import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_reorderable_item.dart';
@@ -17,9 +18,11 @@ class StoryPagesManager extends StatelessWidget {
   const StoryPagesManager({
     super.key,
     required this.viewModel,
+    required this.mediaQueryPadding,
   });
 
   final BaseStoryViewModel viewModel;
+  final EdgeInsets mediaQueryPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +32,9 @@ class StoryPagesManager extends StatelessWidget {
       children: [
         AlignedGridView.extent(
           padding: const EdgeInsetsDirectional.all(16.0).add(EdgeInsets.only(
-            left: MediaQuery.of(context).padding.left,
-            right: MediaQuery.of(context).padding.right,
-            bottom: MediaQuery.of(context).padding.bottom,
+            left: mediaQueryPadding.left,
+            right: mediaQueryPadding.right,
+            bottom: mediaQueryPadding.bottom,
           )),
           maxCrossAxisExtent: 150,
           itemCount: richPages.length + 1,
@@ -59,6 +62,7 @@ class StoryPagesManager extends StatelessWidget {
           left: 0,
           right: 0,
           child: _StoryPagesBinTarget(
+            mediaQueryPadding: mediaQueryPadding,
             pagesManager: viewModel.pagesManager,
             onDeletePage: (pageIndex) => viewModel.deleteAPage(context, richPages[pageIndex]),
           ),

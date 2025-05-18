@@ -7,7 +7,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
-import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
+import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'edit_story_view.dart';
 
 class EditStoryViewModel extends BaseStoryViewModel {
@@ -112,13 +112,13 @@ class EditStoryViewModel extends BaseStoryViewModel {
       if (!requested && params.initialPageIndex != null) {
         final page = draftContent?.richPages?.elementAtOrNull(params.initialPageIndex ?? -1);
         if (page != null) {
-          pagesManager.pagesMap[page.id]?.titleFocusNode.requestFocus();
+          pagesManager.pagesMap[page.id]?.bodyFocusNode.requestFocus();
           requested = true;
         }
       }
 
       if (!requested) {
-        pagesManager.pagesMap[draftContent!.richPages!.first.id]?.titleFocusNode.requestFocus();
+        pagesManager.pagesMap[draftContent!.richPages!.first.id]?.bodyFocusNode.requestFocus();
         requested = true;
       }
     });

@@ -74,18 +74,22 @@ class _StoryPage extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       spacing: 0.0,
       children: [
-        VisibilityDetector(
-          key: ValueKey('page-title-${page.id}'),
-          onVisibilityChanged: onTitleVisibilityChanged,
-          child: _TitleField(
-            titleFocusNode: page.titleFocusNode,
-            bodyFocusNode: page.bodyFocusNode,
-            titleController: page.titleController,
-            preferences: preferences,
-            readOnly: readOnly,
-            onChanged: (_) => onChange(),
+        if (readOnly && page.titleController.text.trim().isEmpty) ...[
+          const SizedBox(height: 8)
+        ] else ...[
+          VisibilityDetector(
+            key: ValueKey('page-title-${page.id}'),
+            onVisibilityChanged: onTitleVisibilityChanged,
+            child: _TitleField(
+              titleFocusNode: page.titleFocusNode,
+              bodyFocusNode: page.bodyFocusNode,
+              titleController: page.titleController,
+              preferences: preferences,
+              readOnly: readOnly,
+              onChanged: (_) => onChange(),
+            ),
           ),
-        ),
+        ],
         _QuillEditor(
           onChanged: () => onChange(),
           bodyFocusNode: page.bodyFocusNode,

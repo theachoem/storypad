@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
+import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class ManagePagesButton extends StatelessWidget {

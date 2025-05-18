@@ -27,6 +27,7 @@ class _ShowChangeContent extends StatelessWidget {
     if (pages.isEmpty) return const Center(child: CircularProgressIndicator.adaptive());
 
     return StoryPagesBuilder(
+      viewInsets: MediaQuery.viewInsetsOf(context),
       header: null,
       preferences: null,
       pages: pages,
