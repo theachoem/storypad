@@ -1,27 +1,20 @@
 part of 'story_pages_manager.dart';
 
 class _StoryPagesBinTarget extends StatelessWidget {
-  const _StoryPagesBinTarget({
-    required this.state,
-  });
+  final StoryPagesManagerInfo pagesManager;
+  final void Function(int pageIndex) onDeletePage;
 
-  final StoryPagesManagable state;
+  const _StoryPagesBinTarget({
+    required this.pagesManager,
+    required this.onDeletePage,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: state.draggingNotifier,
+      valueListenable: pagesManager.draggingNotifier,
       child: DragTarget<int>(
-        onAcceptWithDetails: (details) async {
-          final result = await showOkCancelAlertDialog(
-            title: tr("dialog.are_you_sure_to_delete_this_page.title"),
-            context: context,
-            okLabel: tr("button.delete"),
-            isDestructiveAction: true,
-          );
-
-          if (result == OkCancelResult.ok) state.deletePage(details.data);
-        },
+        onAcceptWithDetails: (details) => onDeletePage(details.data),
         builder: (context, candidateItems, rejectedItems) {
           return Container(
             decoration: BoxDecoration(
@@ -37,7 +30,7 @@ class _StoryPagesBinTarget extends StatelessWidget {
       ),
       builder: (context, dragging, child) {
         return Visibility(
-          visible: dragging && state.canDeletePage,
+          visible: dragging && pagesManager.canDeletePage,
           child: SpFadeIn.fromBottom(
             child: child!,
           ),

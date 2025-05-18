@@ -45,7 +45,8 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     AssetDbModel? asset = await AssetDbModel.findBy(assetLink: assetLink);
     File? localFile = asset?.localFile;
 
-    if (localFile == null && currentUser == null && asset?.getGoogleDriveForEmails()?.isNotEmpty == true) {
+    var uploadedEmails = asset?.getGoogleDriveForEmails() ?? [];
+    if (localFile == null && uploadedEmails.isNotEmpty == true && !uploadedEmails.contains(currentUser?.email)) {
       throw StateError('Login with ${asset?.getGoogleDriveForEmails()?.join(" or ")} to see the image.');
     }
 

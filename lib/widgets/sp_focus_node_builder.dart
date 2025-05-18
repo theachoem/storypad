@@ -25,6 +25,12 @@ class SpFocusNodeBuilderState extends State<SpFocusNodeBuilder> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(_listener);
+    super.dispose();
+  }
+
   void _listener() {
     focused = widget.focusNode.hasFocus;
     if (mounted) setState(() {});

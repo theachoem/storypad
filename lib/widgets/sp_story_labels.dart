@@ -31,6 +31,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
     required this.onChangeDate,
+    required this.onToggleManagingPage,
     this.draftActions,
     this.margin = EdgeInsets.zero,
     this.fromStoryTile = false,
@@ -43,6 +44,7 @@ class SpStoryLabels extends StatelessWidget {
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function()? onToggleShowTime;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
+  final void Function()? onToggleManagingPage;
 
   Future<void> showDraftActionSheet(BuildContext context) async {
     final action = await showModalActionSheet(
@@ -90,6 +92,18 @@ class SpStoryLabels extends StatelessWidget {
   Widget build(BuildContext context) {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = buildTags(tagProvider, context);
+
+    int pageCount = (story.draftContent ?? story.latestContent)?.richPages?.length ?? 0;
+    if (pageCount > 1) {
+      children.add(
+        buildPin(
+          leadingIconData: SpIcons.managingPage,
+          context: context,
+          title: plural("plural.page", pageCount),
+          onTap: onToggleManagingPage,
+        ),
+      );
+    }
 
     bool shouldShowDayCount = story.preferredShowDayCount || !fromStoryTile;
     if (shouldShowDayCount && story.dateDifferentCount.inDays > 0) {

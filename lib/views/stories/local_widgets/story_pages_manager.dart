@@ -1,11 +1,11 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:storypad/views/stories/local_widgets/story_pages_managable.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/views/stories/helpers/base_story_view_model.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_reorderable_item.dart';
@@ -16,13 +16,15 @@ part 'checked_icon.dart';
 class StoryPagesManager extends StatelessWidget {
   const StoryPagesManager({
     super.key,
-    required this.state,
+    required this.viewModel,
   });
 
-  final StoryPagesManagable state;
+  final BaseStoryViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
+    final richPages = viewModel.draftContent?.richPages ?? <StoryPageDbModel>[];
+
     return Stack(
       children: [
         AlignedGridView.extent(
@@ -32,32 +34,34 @@ class StoryPagesManager extends StatelessWidget {
             bottom: MediaQuery.of(context).padding.bottom,
           )),
           maxCrossAxisExtent: 150,
-          itemCount: state.canEditPages ? state.pagesCount + 1 : state.pagesCount,
+          itemCount: richPages.length + 1,
           mainAxisSpacing: 24.0,
           crossAxisSpacing: 8.0,
           itemBuilder: (context, index) {
-            final controller = state.quillControllers.elementAtOrNull(index);
-            if (controller == null) return buildNewPage(context);
+            final richPage = richPages.elementAtOrNull(index);
+            if (richPage == null) return buildNewPage(context);
 
-            Widget page = buildPage(context, controller, index);
-            if (state.canEditPages) {
-              return SpReorderableItem(
-                index: index,
-                onAccepted: (int oldIndex) => state.reorderPages(oldIndex: oldIndex, newIndex: index),
-                onDragStarted: () => state.draggingNotifier.value = true,
-                onDragCompleted: () => state.draggingNotifier.value = false,
-                child: page,
-              );
-            }
+            final page = viewModel.pagesManager.pagesMap[richPage.id];
+            if (page == null) return const SizedBox.shrink();
 
-            return page;
+            Widget child = buildPage(context, page, index);
+            return SpReorderableItem(
+              index: index,
+              onAccepted: (int oldIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: index),
+              onDragStarted: () => viewModel.pagesManager.draggingNotifier.value = true,
+              onDragCompleted: () => viewModel.pagesManager.draggingNotifier.value = false,
+              child: child,
+            );
           },
         ),
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: _StoryPagesBinTarget(state: state),
+          child: _StoryPagesBinTarget(
+            pagesManager: viewModel.pagesManager,
+            onDeletePage: (pageIndex) => viewModel.deleteAPage(context, richPages[pageIndex]),
+          ),
         )
       ],
     );
@@ -74,14 +78,14 @@ class StoryPagesManager extends StatelessWidget {
           child: const Icon(SpIcons.add),
           onTap: () {
             HapticFeedback.selectionClick();
-            state.addPage();
+            viewModel.addNewPage();
           },
         ),
       ],
     );
   }
 
-  Widget buildPage(BuildContext context, QuillController controller, int index) {
+  Widget buildPage(BuildContext context, StoryPageObject page, int pageIndex) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -92,20 +96,34 @@ class StoryPagesManager extends StatelessWidget {
           children: [
             buildPageCard(
               context: context,
-              child: Text(controller.document.toPlainText()),
+              child: Text(page.bodyController.document.toPlainText()),
               onTap: () {
                 HapticFeedback.selectionClick();
-                state.pageController.jumpToPage(index);
-                state.toggleManagingPage();
+                viewModel.pagesManager.toggleManagingPage();
+
+                if (viewModel.pagesManager.pageScrollController.hasClients) {
+                  viewModel.pagesManager.scrollToPage(page.id);
+                } else if (viewModel.pagesManager.pageController.hasClients) {
+                  viewModel.pagesManager.pageController.jumpToPage(pageIndex);
+                }
               },
             ),
-            if (state.currentPage == index) const _CheckedIcon()
+            ValueListenableBuilder(
+              valueListenable: viewModel.pagesManager.currentPageIndexNotifier,
+              child: const _CheckedIcon(),
+              builder: (context, currentPageIndex, child) {
+                return Visibility(
+                  visible: pageIndex == currentPageIndex,
+                  child: child!,
+                );
+              },
+            )
           ],
         ),
         const SizedBox(height: 8.0),
         Text(
-          state.titleControllers[index].text.trim().isNotEmpty == true
-              ? state.titleControllers[index].text
+          page.titleController.text.trim().isNotEmpty == true
+              ? page.titleController.text.trim()
               : tr('input.title.hint'),
           textAlign: TextAlign.center,
           style: TextTheme.of(context).titleSmall,

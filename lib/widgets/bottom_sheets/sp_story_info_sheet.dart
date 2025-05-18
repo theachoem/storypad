@@ -7,9 +7,11 @@ import 'package:storypad/widgets/sp_icons.dart';
 
 class SpStoryInfoSheet extends BaseBottomSheet {
   final StoryDbModel story;
+  final bool persisted;
 
   SpStoryInfoSheet({
     required this.story,
+    required this.persisted,
   });
 
   @override
@@ -27,22 +29,24 @@ class SpStoryInfoSheet extends BaseBottomSheet {
           title: Text(tr('list_tile.story_date.title')),
           subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
         ),
-        if (story.movedToBinAt != null)
+        if (persisted) ...[
+          if (story.movedToBinAt != null)
+            ListTile(
+              leading: const Icon(SpIcons.delete),
+              title: Text(tr('list_tile.moved_to_bin_at.title')),
+              subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
+            ),
           ListTile(
-            leading: const Icon(SpIcons.delete),
-            title: Text(tr('list_tile.moved_to_bin_at.title')),
-            subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
+            leading: const Icon(SpIcons.calendar),
+            title: Text(tr("list_tile.updated_at.title")),
+            subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
           ),
-        ListTile(
-          leading: const Icon(SpIcons.calendar),
-          title: Text(tr("list_tile.updated_at.title")),
-          subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
-        ),
-        ListTile(
-          leading: const Icon(SpIcons.info),
-          title: Text(tr("list_tile.created_at.title")),
-          subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
-        ),
+          ListTile(
+            leading: const Icon(SpIcons.info),
+            title: Text(tr("list_tile.created_at.title")),
+            subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
+          ),
+        ],
         SizedBox(height: MediaQuery.of(context).padding.bottom),
       ],
     );

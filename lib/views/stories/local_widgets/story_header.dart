@@ -1,98 +1,228 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
+import 'package:storypad/views/stories/changes/show/show_change_view.dart';
+import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
+import 'package:storypad/views/stories/show/show_story_view_model.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_measure_size.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
-
-part 'story_header_title_field.dart';
-part 'story_header_date_selector.dart';
 
 class StoryHeader extends StatelessWidget {
   const StoryHeader({
     super.key,
-    required this.paddingTop,
     required this.story,
     required this.draftContent,
     required this.readOnly,
     required this.draftActions,
+    required this.currentPageIndexNotifier,
     required this.setFeeling,
     required this.onToggleShowDayCount,
     required this.onToggleShowTime,
+    required this.onToggleManagingPage,
     required this.onChangeDate,
-    required this.feeling,
-    this.titleController,
-    this.focusNode,
+    required this.onSizeChange,
   });
 
-  final double paddingTop;
-  final String? feeling;
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
-  final TextEditingController? titleController;
-  final FocusNode? focusNode;
   final SpStoryLabelsDraftActions? draftActions;
+  final ValueNotifier<int?>? currentPageIndexNotifier;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
   final Future<void> Function(DateTime) onChangeDate;
+  final void Function() onToggleManagingPage;
+  final void Function(Size size) onSizeChange;
   final bool readOnly;
+
+  factory StoryHeader.fromEditStory({
+    required EditStoryViewModel viewModel,
+    required BuildContext context,
+  }) {
+    return StoryHeader(
+      currentPageIndexNotifier: viewModel.story?.preferences.layoutType == PageLayoutType.pages
+          ? viewModel.pagesManager.currentPageIndexNotifier
+          : null,
+      onSizeChange: (size) =>
+          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
+      story: viewModel.story!,
+      draftContent: viewModel.draftContent!,
+      setFeeling: viewModel.setFeeling,
+      onToggleShowDayCount: viewModel.toggleShowDayCount,
+      onToggleShowTime: viewModel.toggleShowTime,
+      readOnly: false,
+      onChangeDate: viewModel.changeDate,
+      onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
+      draftActions: null,
+    );
+  }
+
+  factory StoryHeader.fromShowStory({
+    required ShowStoryViewModel viewModel,
+    required BuildContext context,
+  }) {
+    return StoryHeader(
+      currentPageIndexNotifier: viewModel.story?.preferences.layoutType == PageLayoutType.pages
+          ? viewModel.pagesManager.currentPageIndexNotifier
+          : null,
+      onSizeChange: (size) =>
+          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
+      story: viewModel.story!,
+      draftContent: viewModel.draftContent!,
+      setFeeling: viewModel.setFeeling,
+      onToggleShowDayCount: viewModel.toggleShowDayCount,
+      onToggleShowTime: viewModel.toggleShowTime,
+      readOnly: true,
+      onChangeDate: viewModel.changeDate,
+      onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
+      draftActions: SpStoryLabelsDraftActions(
+        onContinueEditing: () => viewModel.goToEditPage(context),
+        onDiscardDraft: () async {
+          OkCancelResult result = await showOkCancelAlertDialog(
+            context: context,
+            isDestructiveAction: true,
+            title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+            okLabel: tr("button.discard"),
+          );
+
+          if (result == OkCancelResult.ok) {
+            await StoryDbModel.db.set(viewModel.story!.copyWith(draftContent: null));
+            await viewModel.load();
+          }
+        },
+        onViewPrevious: () async {
+          await ShowChangeRoute(content: viewModel.story!.latestContent!).push(context);
+          await viewModel.load();
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: MediaQuery.of(context).padding.left, right: MediaQuery.of(context).padding.right),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: paddingTop),
-          Container(
-            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-            child: Row(
+    return SpMeasureSize(
+      onChange: onSizeChange,
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: _StoryHeaderDateSelector(
+                  story: story,
+                  readOnly: readOnly,
+                  onChangeDate: onChangeDate,
+                ),
+              ),
+              SpFeelingButton(
+                feeling: story.feeling,
+                onPicked: setFeeling,
+              ),
+            ],
+          ),
+        ),
+        SpStoryLabels(
+          story: story,
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          onToggleShowDayCount: onToggleShowDayCount,
+          onToggleShowTime: onToggleShowTime,
+          onChangeDate: onChangeDate,
+          onToggleManagingPage: onToggleManagingPage,
+          draftActions: draftActions,
+        ),
+      ],
+    );
+  }
+}
+
+class _StoryHeaderDateSelector extends StatelessWidget {
+  const _StoryHeaderDateSelector({
+    required this.story,
+    required this.readOnly,
+    required this.onChangeDate,
+  });
+
+  final StoryDbModel story;
+  final bool readOnly;
+  final Future<void> Function(DateTime)? onChangeDate;
+
+  Future<void> changeDate(BuildContext context) async {
+    DateTime? date = await DatePickerService(context: context, currentDate: story.displayPathDate).show();
+    if (date != null) {
+      onChangeDate?.call(date);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      InkWell(
+        onTap: readOnly || onChangeDate == null ? null : () => changeDate(context),
+        borderRadius: BorderRadius.circular(4.0),
+        child: Row(
+          children: [
+            buildDay(context),
+            const SizedBox(width: 4.0),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _StoryHeaderDateSelector(
-                    story: story,
-                    readOnly: readOnly,
-                    onChangeDate: onChangeDate,
-                  ),
-                ),
-                SpFeelingButton(
-                  feeling: feeling,
-                  onPicked: setFeeling,
-                ),
+                buildDaySuffix(context),
+                buildMonthYear(context),
               ],
             ),
-          ),
-          SpStoryLabels(
-            story: story,
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-            onToggleShowDayCount: onToggleShowDayCount,
-            onToggleShowTime: onToggleShowTime,
-            onChangeDate: onChangeDate,
-            draftActions: draftActions,
-          ),
-          if (titleController?.text.trim().isNotEmpty == true || !readOnly) ...[
-            const SizedBox(height: 4.0),
-            _StoryHeaderTitleField(
-              focusNode: focusNode,
-              titleController: titleController,
-              draftContent: draftContent,
-              readOnly: readOnly,
-              story: story,
-            )
-          ] else ...[
-            const SizedBox(height: 12.0),
-          ]
-        ],
+            if (!readOnly) ...[
+              const SizedBox(width: 4.0),
+              const Icon(SpIcons.dropDown),
+            ]
+          ],
+        ),
       ),
+    ]);
+  }
+
+  Widget buildMonthYear(BuildContext context) {
+    return Text(
+      DateFormatHelper.yMMMM(story.displayPathDate, context.locale),
+      style: TextTheme.of(context).labelMedium,
+    );
+  }
+
+  Widget buildDaySuffix(BuildContext context) {
+    return Text(
+      SpDateBlockEmbed.getDayOfMonthSuffix(story.day).toLowerCase(),
+      style: TextTheme.of(context).labelSmall,
+    );
+  }
+
+  Widget buildDay(BuildContext context) {
+    Color? color;
+
+    if (story.preferences.colorSeedValue != null) {
+      color = ColorScheme.of(context).primary;
+    } else {
+      color = ColorFromDayService(context: context).get(story.displayPathDate.weekday);
+    }
+
+    return Text(
+      story.day.toString().padLeft(2, '0'),
+      style: TextTheme.of(context).headlineLarge?.copyWith(color: color),
     );
   }
 }

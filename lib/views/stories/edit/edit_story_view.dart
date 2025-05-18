@@ -1,42 +1,42 @@
-import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
-import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/stories/local_widgets/manage_pages_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
+import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
+import 'package:storypad/views/stories/local_widgets/story_end_drawer_button.dart';
+import 'package:storypad/views/stories/local_widgets/story_header.dart';
+import 'package:storypad/views/stories/local_widgets/story_info_button.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
+import 'package:storypad/views/stories/local_widgets/story_theme_button.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_story_theme_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_focus_node_builder.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
-import 'package:storypad/widgets/sp_sliver_sticky_divider.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/views/stories/local_widgets/story_header.dart';
-import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
-import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
-import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_focus_node_builder.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';
 
 import 'edit_story_view_model.dart';
 
 part 'edit_story_content.dart';
-part 'local_widgets/editor.dart';
+
+part 'local_widgets/done_button.dart';
+part 'local_widgets/toolbar.dart';
 part 'local_widgets/quill_toolbar.dart';
 part 'local_widgets/title_toolbar.dart';
 
@@ -46,21 +46,21 @@ class EditStoryRoute extends BaseRoute {
   final int? initialMonth;
   final int? initialDay;
   final int? initialTagId;
-  final int initialPageIndex;
-  final List<QuillController>? quillControllers;
   final StoryDbModel? story;
-  final void Function(int page)? onPageIndexChanged;
+  final int? initialPageIndex;
+  final double initialPageScrollOffet;
+  final StoryPageObjectsMap? pagesMap;
 
   EditStoryRoute({
     this.id,
     this.initialMonth,
     this.initialYear,
     this.initialDay,
-    this.initialPageIndex = 0,
-    this.quillControllers,
     this.story,
+    this.pagesMap,
     this.initialTagId,
-    this.onPageIndexChanged,
+    this.initialPageIndex,
+    this.initialPageScrollOffet = 0,
   }) : assert(initialYear == null || id == null);
 
   @override
@@ -86,29 +86,6 @@ class EditStoryRoute extends BaseRoute {
   }
 
   @override
-  PageRoute<T> buildMaterialRoute<T>({
-    required BuildContext context,
-    required bool fullscreenDialog,
-  }) {
-    if (kIsCupertino) return super.buildMaterialRoute(context: context, fullscreenDialog: fullscreenDialog);
-    final backgroundColor = SpStoryPreferenceTheme.getRouteBackgroundColor(story?.preferences, context);
-
-    return PageRouteBuilder(
-      fullscreenDialog: fullscreenDialog,
-      pageBuilder: (context, animation, secondaryAnimation) => buildPage(context),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SharedAxisTransition(
-          transitionType: SharedAxisTransitionType.horizontal,
-          fillColor: backgroundColor,
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  @override
   Widget buildPage(BuildContext context) => EditStoryView(params: this);
 }
 
@@ -125,9 +102,13 @@ class EditStoryView extends StatelessWidget {
     return ViewModelProvider<EditStoryViewModel>(
       create: (context) => EditStoryViewModel(params: params),
       builder: (context, viewModel, child) {
-        return SpStoryPreferenceTheme(
-          preferences: viewModel.story?.preferences,
-          child: _EditStoryContent(viewModel),
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+          child: SpStoryPreferenceTheme(
+            preferences: viewModel.story?.preferences,
+            child: _EditStoryContent(viewModel),
+          ),
         );
       },
     );

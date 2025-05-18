@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
 
 const String kAppName = String.fromEnvironment('APP_NAME');
+
 const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 
 const Color kSplashColor = Colors.transparent;
@@ -14,6 +15,7 @@ const Color kDefaultColorSeed = Colors.black;
 
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
+const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';

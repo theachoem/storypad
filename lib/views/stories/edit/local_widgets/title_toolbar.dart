@@ -11,8 +11,7 @@ class _TitleToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontWeight =
-        preferences.titleFontWeight ?? preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight;
+    final fontWeight = preferences.titleFontWeight ?? kTitleDefaultFontWeight;
 
     final fontFamily =
         preferences.titleFontFamily ?? preferences.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily;
@@ -60,6 +59,8 @@ class _TitleToolbar extends StatelessWidget {
       label: Text(FontWeightTile.getFontWeightTitle(currentFontWeight)),
       onPressed: () {
         SpFontWeightSheet(
+          showDefaultLabel: false,
+          defaultFontWeight: kTitleDefaultFontWeight,
           fontWeight: currentFontWeight,
           onChanged: (fontWeight) => onThemeChanged(preferences.copyWith(titleFontWeightIndex: fontWeight.index)),
         ).show(context: context);

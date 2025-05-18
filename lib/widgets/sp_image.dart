@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,14 +23,6 @@ class SpImage extends StatelessWidget {
   final double? width;
   final double? height;
   final LoadingErrorWidgetBuilder? errorWidget;
-
-  Future<void> showErrorAlert(BuildContext context, String? message) async {
-    await showOkAlertDialog(
-      context: context,
-      title: "Oop!",
-      message: message ?? link,
-    );
-  }
 
   double get defaultSize => 50;
 
@@ -108,31 +99,28 @@ class SpImage extends StatelessWidget {
     String? message = error is StateError ? error.message : error?.toString();
     return Material(
       color: ColorScheme.of(context).readOnly.surface3,
-      child: InkWell(
-        onTap: () => showErrorAlert(context, message),
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Wrap(
-            spacing: 8.0,
-            runAlignment: WrapAlignment.center,
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            runSpacing: 8.0,
-            children: [
-              const Icon(SpIcons.imageNotSupported),
-              if (message != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Wrap(
+          spacing: 8.0,
+          runAlignment: WrapAlignment.center,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 8.0,
+          children: [
+            const Icon(SpIcons.imageNotSupported),
+            if (message != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );

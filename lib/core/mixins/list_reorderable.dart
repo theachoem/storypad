@@ -1,12 +1,13 @@
 extension ListReoderable<T> on List<T> {
-  List<T> reorder({
+  List<T> swap({
     required int oldIndex,
     required int newIndex,
   }) {
-    List<T> newItems = [...toList()];
-    T oldItem = newItems.removeAt(oldIndex);
+    List<T> newItems = [...this];
+    final temp = newItems[oldIndex];
 
-    newItems.insert(newIndex, oldItem);
+    newItems[oldIndex] = newItems[newIndex];
+    newItems[newIndex] = temp;
 
     return newItems;
   }

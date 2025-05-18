@@ -138,9 +138,7 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
       pages: (json['pages'] as List<dynamic>?)
           ?.map((e) => e as List<dynamic>)
           .toList(),
-      richPages: (json['rich_pages'] as List<dynamic>?)
-          ?.map((e) => StoryPageDbModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      richPages: _richPagesFromJson(json['rich_pages']),
       metadata: json['metadata'] as String?,
     );
 

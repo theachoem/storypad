@@ -63,15 +63,6 @@ class AppTheme extends StatelessWidget {
     });
   }
 
-  static SharedAxisPageTransitionsBuilder getAndroidTransitionBuilder({
-    Color? fillColor,
-  }) {
-    return SharedAxisPageTransitionsBuilder(
-      transitionType: SharedAxisTransitionType.horizontal,
-      fillColor: fillColor,
-    );
-  }
-
   static ThemeData getTheme({
     required ColorScheme colorScheme,
     required String fontFamily,
@@ -80,7 +71,6 @@ class AppTheme extends StatelessWidget {
   }) {
     scaffoldBackgroundColor ??= colorScheme.surface;
 
-    bool blackout = colorScheme.onSurface == Colors.white;
     bool darkMode = colorScheme.brightness == Brightness.dark;
     bool lightMode = !darkMode;
 
@@ -90,12 +80,6 @@ class AppTheme extends StatelessWidget {
       return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, fontWeight));
     }
 
-    Map<TargetPlatform, PageTransitionsBuilder> pageTransitionBuilder = <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: getAndroidTransitionBuilder(fillColor: scaffoldBackgroundColor),
-    };
-
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
     TargetPlatform platform = getPlatformByDartDefine();
 
@@ -104,7 +88,7 @@ class AppTheme extends StatelessWidget {
       splashFactory: kIsCupertino ? NoSplash.splashFactory : null,
       scaffoldBackgroundColor: scaffoldBackgroundColor,
       colorScheme: colorScheme,
-      pageTransitionsTheme: PageTransitionsTheme(builders: pageTransitionBuilder),
+      pageTransitionsTheme: getPageTransitionTheme(fillColor: scaffoldBackgroundColor),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         shape: kIsCupertino ? CircleBorder() : null,
       ),
@@ -136,7 +120,6 @@ class AppTheme extends StatelessWidget {
           side: BorderSide(color: dividerColor),
         ),
       ),
-      bottomSheetTheme: BottomSheetThemeData(backgroundColor: blackout ? colorScheme.readOnly.surface2 : null),
       textTheme: GoogleFonts.getTextTheme(
         fontFamily,
         TextTheme(
@@ -158,6 +141,20 @@ class AppTheme extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static PageTransitionsTheme getPageTransitionTheme({
+    Color? fillColor,
+  }) {
+    final pageTransitionsTheme = PageTransitionsTheme(builders: <TargetPlatform, PageTransitionsBuilder>{
+      TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
+      TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
+      TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+        transitionType: SharedAxisTransitionType.horizontal,
+        fillColor: fillColor,
+      ),
+    });
+    return pageTransitionsTheme;
   }
 
   /// follow dart-define [kIsCupertino].
@@ -224,6 +221,7 @@ class AppTheme extends StatelessWidget {
       7: FontWeight.w800,
       8: FontWeight.w900,
     };
+
     int index = currentWeight.index + changeBy;
     return fontWeights[math.max(math.min(8, index), 0)]!;
   }

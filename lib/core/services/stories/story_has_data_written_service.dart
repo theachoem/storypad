@@ -1,23 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/services/stories/story_content_builder_service.dart';
 
 class StoryHasDataWrittenService {
-  static Future<bool> callByController({
-    required StoryContentDbModel draftContent,
-    required List<QuillController> quillControllers,
-    required List<TextEditingController> titleControllers,
-  }) async {
-    final content = await StoryContentBuilderService.call(
-      draftContent: draftContent,
-      quillControllers: quillControllers,
-      titleControllers: titleControllers,
-    );
-
-    return callByContent(content);
-  }
-
   static bool callByContent(StoryContentDbModel content) {
     List<List<dynamic>> pagesClone = content.richPages?.map((e) => e.body ?? []).toList() ?? [];
     List<List<dynamic>> pages = [...pagesClone];

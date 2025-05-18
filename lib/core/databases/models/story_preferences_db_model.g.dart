@@ -23,6 +23,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel titleFontWeightIndex(int? titleFontWeightIndex);
 
+  StoryPreferencesDbModel layoutType(PageLayoutType layoutType);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -38,6 +40,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     int? fontWeightIndex,
     String? titleFontFamily,
     int? titleFontWeightIndex,
+    PageLayoutType layoutType,
   });
 }
 
@@ -80,6 +83,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(titleFontWeightIndex: titleFontWeightIndex);
 
   @override
+  StoryPreferencesDbModel layoutType(PageLayoutType layoutType) =>
+      this(layoutType: layoutType);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -96,6 +103,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? titleFontFamily = const $CopyWithPlaceholder(),
     Object? titleFontWeightIndex = const $CopyWithPlaceholder(),
+    Object? layoutType = const $CopyWithPlaceholder(),
   }) {
     return StoryPreferencesDbModel(
       showDayCount: showDayCount == const $CopyWithPlaceholder()
@@ -130,6 +138,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.titleFontWeightIndex
           // ignore: cast_nullable_to_non_nullable
           : titleFontWeightIndex as int?,
+      layoutType: layoutType == const $CopyWithPlaceholder()
+          ? _value.layoutType
+          // ignore: cast_nullable_to_non_nullable
+          : layoutType as PageLayoutType,
     );
   }
 }
@@ -156,6 +168,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
       titleFontFamily: json['title_font_family'] as String?,
       titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
+      layoutType: _layoutTypeFromJson(json['layout_type']),
     );
 
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
@@ -169,4 +182,10 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'font_weight_index': instance.fontWeightIndex,
       'title_font_family': instance.titleFontFamily,
       'title_font_weight_index': instance.titleFontWeightIndex,
+      'layout_type': _$PageLayoutTypeEnumMap[instance.layoutType]!,
     };
+
+const _$PageLayoutTypeEnumMap = {
+  PageLayoutType.pages: 'pages',
+  PageLayoutType.list: 'list',
+};

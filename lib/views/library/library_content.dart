@@ -223,6 +223,38 @@ class _LibraryContent extends StatelessWidget {
           link: asset.link,
           width: 200,
           height: 200,
+          errorWidget: (context, url, error) {
+            String message = error is StateError ? error.message : error.toString();
+            return Material(
+              color: ColorScheme.of(context).readOnly.surface3,
+              child: InkWell(
+                onTap: () => onTap(),
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Wrap(
+                    spacing: 8.0,
+                    runAlignment: WrapAlignment.center,
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    runSpacing: 8.0,
+                    children: [
+                      const Icon(SpIcons.imageNotSupported),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
