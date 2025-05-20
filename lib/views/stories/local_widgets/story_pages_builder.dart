@@ -51,6 +51,7 @@ class StoryPagesBuilder extends StatelessWidget {
     required this.viewInsets,
     this.pageController,
     this.onTitleVisibilityChanged,
+    this.onPageChanged,
     this.actions,
   });
 
@@ -62,6 +63,9 @@ class StoryPagesBuilder extends StatelessWidget {
   final PageController? pageController;
   final StoryContentDbModel storyContent;
   final List<StoryPageObject> pages;
+
+  // move out of action because even in read only mode, we should still listen to change.
+  final void Function(StoryPageDbModel newRichPage)? onPageChanged;
   final StoryPageBuilderAction? actions;
   final void Function(int pageIndex, StoryPageObject page, VisibilityInfo info)? onTitleVisibilityChanged;
 
@@ -199,7 +203,7 @@ class StoryPagesBuilder extends StatelessWidget {
       canMoveUp: canMoveUp,
       canMoveDown: canMoveDown,
       canDeletePage: actions?.canDeletePage == true,
-      onChanged: actions?.onPageChanged,
+      onChanged: onPageChanged,
       onFocusChange: actions?.onFocusChange != null ? (a, b) => actions!.onFocusChange(pageIndex, page, a, b) : null,
       onTitleVisibilityChanged:
           onTitleVisibilityChanged != null ? (info) => onTitleVisibilityChanged!(pageIndex, page, info) : null,

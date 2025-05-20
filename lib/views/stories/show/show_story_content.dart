@@ -59,6 +59,7 @@ class _ShowStoryContent extends StatelessWidget {
       onTitleVisibilityChanged: (pageIndex, page, info) =>
           viewModel.pagesManager.pagesMap.setTitleVisibleFraction(page.id, info.visibleFraction),
       pageController: viewModel.pagesManager.pageController,
+      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
       actions: null,
     );
   }

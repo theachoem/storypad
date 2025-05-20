@@ -68,8 +68,8 @@ class _EditStoryContent extends StatelessWidget {
       preferences: viewModel.story!.preferences,
       storyContent: viewModel.draftContent!,
       pageController: viewModel.pagesManager.pageController,
+      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
       actions: StoryPageBuilderAction(
-        onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
         onAddPage: () => viewModel.addNewPage(),
         onSwapPages: (oldIndex, newIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: newIndex),
         onDelete: (page) => viewModel.deleteAPage(context, page.page),

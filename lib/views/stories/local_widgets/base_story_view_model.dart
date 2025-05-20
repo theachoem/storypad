@@ -172,7 +172,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
     draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
     pagesManager.pagesMap.add(richPage: draftContent!.richPages!.last, readOnly: false);
-    await _saveDraft();
+    await saveDraft();
     notifyListeners();
 
     if (pagesManager.pageScrollController.hasClients) {
@@ -203,7 +203,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     if (result == OkCancelResult.ok) {
       draftContent = draftContent!.removeRichPage(richPage.id);
       pagesManager.pagesMap.remove(richPage.id);
-      await _saveDraft();
+      await saveDraft();
       notifyListeners();
 
       AnalyticsService.instance.logDeleteStoryPage(
@@ -226,7 +226,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
       richPages: pages,
     );
 
-    await _saveDraft();
+    await saveDraft();
     notifyListeners();
 
     AnalyticsService.instance.logReorderStoryPages(
@@ -247,11 +247,11 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     pagesManager.pagesMap[richPage.id]?.page = richPage;
 
     return debouncedCallback(() async {
-      await _saveDraft();
+      await saveDraft();
     });
   }
 
-  Future<void> _saveDraft() async {
+  Future<void> saveDraft() async {
     if (hasChange) {
       story = buildStory(draft: true);
       await StoryDbModel.db.set(story!);
