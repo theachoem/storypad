@@ -47,9 +47,13 @@ class ShowStoryView extends StatelessWidget {
     return ViewModelProvider<ShowStoryViewModel>(
       create: (context) => ShowStoryViewModel(params: params),
       builder: (context, viewModel, child) {
-        return SpStoryPreferenceTheme(
-          preferences: viewModel.story?.preferences,
-          child: _ShowStoryContent(viewModel),
+        return PopScope(
+          canPop: !viewModel.pagesManager.managingPage,
+          onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+          child: SpStoryPreferenceTheme(
+            preferences: viewModel.story?.preferences,
+            child: _ShowStoryContent(viewModel),
+          ),
         );
       },
     );

@@ -82,4 +82,8 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     // unlike edit view, we can notify UI on each change.
     notifyListeners();
   }
+
+  Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
+    if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
+  }
 }
