@@ -106,7 +106,7 @@ class AppTheme extends StatelessWidget {
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         backgroundColor: lightMode ? colorScheme.surface : colorScheme.readOnly.surface1,
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
         dividerColor: dividerColor,
       ),
       drawerTheme: const DrawerThemeData(),

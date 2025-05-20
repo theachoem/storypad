@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -93,7 +94,15 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
         bytes: file.readAsBytesSync(),
       );
 
-      await Share.shareXFiles([XFile(file.path)]);
+      await SharePlus.instance.share(
+        ShareParams(
+          title: basename(file.path),
+          files: [
+            XFile(file.path),
+          ],
+        ),
+      );
+
       await file.delete();
     } else if (Platform.isAndroid) {
       await FilePicker.platform.saveFile(
