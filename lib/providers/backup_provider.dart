@@ -1,7 +1,15 @@
 import 'dart:async' show Future;
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart' show FirebaseCrashlytics;
-import 'package:flutter/material.dart' show BuildContext, ChangeNotifier, debugPrint, debugPrintStack;
+import 'package:flutter/material.dart'
+    show
+        AppLifecycleState,
+        BuildContext,
+        ChangeNotifier,
+        WidgetsBinding,
+        WidgetsBindingObserver,
+        debugPrint,
+        debugPrintStack;
 import 'package:storypad/core/mixins/debounched_callback.dart' show DebounchedCallback;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/objects/backup_object.dart' show BackupObject;
@@ -15,7 +23,7 @@ import 'package:storypad/core/services/queue_delete_backup_service.dart' show Qu
 import 'package:storypad/core/services/backups/restore_backup_service.dart' show RestoreBackupService;
 import 'package:storypad/views/home/home_view.dart';
 
-class BackupProvider extends ChangeNotifier with DebounchedCallback {
+class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBindingObserver {
   final GoogleDriveBackupSource source = GoogleDriveBackupSource();
 
   late final AssetBackupService assetBackupState = AssetBackupService(
@@ -55,6 +63,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   }
 
   BackupProvider() {
+    WidgetsBinding.instance.addObserver(this);
+
     for (var database in BaseBackupSource.databases) {
       database.addGlobalListener(_databaseListener);
     }
@@ -98,6 +108,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
   //
   Future<void> syncBackupAcrossDevices() async {
+    if (source.isSignedIn == null || !source.isSignedIn!) return;
     if (syncing) return;
 
     AnalyticsService.instance.logSyncBackup();
@@ -241,8 +252,26 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.resumed:
+        recheckAndSync();
+        break;
+    }
+  }
+
+  @override
   void dispose() {
     assetBackupState.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }

@@ -80,7 +80,9 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> refresh(BuildContext context) async {
     await reload(debugSource: '$runtimeType#refresh');
-    if (context.mounted) await context.read<BackupProvider>().recheckAndSync();
+
+    // no need to wait because home app bar already show loading UI during syning.
+    if (context.mounted) context.read<BackupProvider>().recheckAndSync();
   }
 
   Future<void> changeYear(int newYear) async {
