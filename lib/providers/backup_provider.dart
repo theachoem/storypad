@@ -116,8 +116,10 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
 
     try {
       await assetBackupState.uploadAssets();
-      if (assetBackupState.localAssets != null && assetBackupState.localAssets?.isNotEmpty == true) return;
-      await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
+      bool assetSynced = assetBackupState.localAssets == null || assetBackupState.localAssets!.isEmpty;
+      if (assetSynced) {
+        await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
+      }
     } catch (e) {
       debugPrint("🐛 $runtimeType#_syncBackupAcrossDevices error: $e");
 
