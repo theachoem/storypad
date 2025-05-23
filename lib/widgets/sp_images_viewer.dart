@@ -78,6 +78,7 @@ class SpImagesViewer extends StatefulWidget {
 
     await context.pushTransparentRoute(
       this,
+      rootNavigator: true,
       backgroundColor: Colors.transparent,
     );
   }
