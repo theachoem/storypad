@@ -55,6 +55,9 @@ class StoryDbModel extends BaseDbModel {
   final StoryPreferencesDbModel? _preferences;
   StoryPreferencesDbModel get preferences => _preferences ?? StoryPreferencesDbModel.create();
 
+  @override
+  final DateTime? permanentlyDeletedAt;
+
   DateTime get displayPathDate {
     return DateTime(
       year,
@@ -90,6 +93,7 @@ class StoryDbModel extends BaseDbModel {
     required this.latestContent,
     required this.draftContent,
     required this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
   }) : _preferences = preferences;
 
   bool get draftStory => draftContent != null;

@@ -23,6 +23,8 @@ abstract class _$TagDbModelCWProxy {
 
   TagDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
+  TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
+
   TagDbModel index(int? index);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TagDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -40,6 +42,7 @@ abstract class _$TagDbModelCWProxy {
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
+    DateTime? permanentlyDeletedAt,
     int? index,
   });
 }
@@ -76,6 +79,10 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
       this(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
+  TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
+      this(permanentlyDeletedAt: permanentlyDeletedAt);
+
+  @override
   TagDbModel index(int? index) => this(index: index);
 
   @override
@@ -95,6 +102,7 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
+    Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return TagDbModel(
@@ -130,6 +138,10 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
           : lastSavedDeviceId as String?,
+      permanentlyDeletedAt: permanentlyDeletedAt == const $CopyWithPlaceholder()
+          ? _value.permanentlyDeletedAt
+          // ignore: cast_nullable_to_non_nullable
+          : permanentlyDeletedAt as DateTime?,
       index: index == const $CopyWithPlaceholder()
           ? _value.index
           // ignore: cast_nullable_to_non_nullable
@@ -157,6 +169,9 @@ TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
+      permanentlyDeletedAt: json['permanently_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['permanently_deleted_at'] as String),
       index: (json['index'] as num?)?.toInt(),
     )..storiesCount = (json['stories_count'] as num?)?.toInt();
 
@@ -171,5 +186,7 @@ Map<String, dynamic> _$TagDbModelToJson(TagDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'permanently_deleted_at':
+          instance.permanentlyDeletedAt?.toIso8601String(),
       'stories_count': instance.storiesCount,
     };

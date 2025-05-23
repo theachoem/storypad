@@ -186,6 +186,6 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
     };
 
 const _$PageLayoutTypeEnumMap = {
-  PageLayoutType.pages: 'pages',
   PageLayoutType.list: 'list',
+  PageLayoutType.pages: 'pages',
 };

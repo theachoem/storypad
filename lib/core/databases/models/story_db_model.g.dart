@@ -47,6 +47,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
+  StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -74,6 +76,7 @@ abstract class _$StoryDbModelCWProxy {
     StoryContentDbModel? latestContent,
     StoryContentDbModel? draftContent,
     String? lastSavedDeviceId,
+    DateTime? permanentlyDeletedAt,
   });
 }
 
@@ -149,6 +152,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       this(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
+  StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
+      this(permanentlyDeletedAt: permanentlyDeletedAt);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -177,6 +184,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? latestContent = const $CopyWithPlaceholder(),
     Object? draftContent = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
+    Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
     return StoryDbModel(
       version: version == const $CopyWithPlaceholder()
@@ -259,6 +267,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
           : lastSavedDeviceId as String?,
+      permanentlyDeletedAt: permanentlyDeletedAt == const $CopyWithPlaceholder()
+          ? _value.permanentlyDeletedAt
+          // ignore: cast_nullable_to_non_nullable
+          : permanentlyDeletedAt as DateTime?,
     );
   }
 }
@@ -307,6 +319,9 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
           : StoryContentDbModel.fromJson(
               json['draft_content'] as Map<String, dynamic>),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
+      permanentlyDeletedAt: json['permanently_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['permanently_deleted_at'] as String),
     );
 
 Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
@@ -331,6 +346,8 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
       'preferences': instance.preferences.toJson(),
+      'permanently_deleted_at':
+          instance.permanentlyDeletedAt?.toIso8601String(),
     };
 
 const _$PathTypeEnumMap = {

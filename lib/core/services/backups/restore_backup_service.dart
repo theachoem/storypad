@@ -31,7 +31,17 @@ class RestoreBackupService {
         for (BaseDbModel newRecord in items) {
           BaseDbModel? existingRecord = await db.find(newRecord.id, returnDeleted: true);
 
-          if (existingRecord != null) {
+          if (existingRecord?.permanentlyDeletedAt != null) {
+            if (newRecord.updatedAt != null) {
+              bool hasUpdateAfterDelete = newRecord.updatedAt!.isAfter(existingRecord!.permanentlyDeletedAt!);
+
+              if (hasUpdateAfterDelete) {
+                await db.set(newRecord, runCallbacks: false);
+              } else {
+                await db.delete(existingRecord.id, runCallbacks: false);
+              }
+            }
+          } else if (existingRecord != null) {
             if (existingRecord.updatedAt != null && newRecord.updatedAt != null) {
               bool newContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
               bool unSyncContent = existingRecord.updatedAt!.isAfter(newRecord.updatedAt!);

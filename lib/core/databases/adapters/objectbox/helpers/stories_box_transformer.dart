@@ -65,6 +65,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     draftContent: object.draftContent != null ? _stringToContent(object.draftContent!) : null,
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
+    permanentlyDeletedAt: object.permanentlyDeletedAt,
   );
 }
 
