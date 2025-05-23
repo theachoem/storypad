@@ -212,8 +212,10 @@ class GoogleDriveService {
     });
   }
 
+  int? lastRequestStatusCode;
   Future<T?> _execHandler<T>(Future<T?> Function() request) async {
     requestCount++;
+    lastRequestStatusCode = null;
 
     Future<T?> retryRequest(String reason) async {
       requestCount++;
@@ -227,6 +229,8 @@ class GoogleDriveService {
       debugPrintStack(stackTrace: stackTrace);
 
       if (e is drive.DetailedApiRequestError) {
+        lastRequestStatusCode = e.status;
+
         bool is403 = e.status == 403;
         bool is401 = e.status == 401;
         bool invalidCredentials = e.message?.contains('Request had invalid authentication credentials') == true;

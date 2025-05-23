@@ -2,11 +2,11 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
+import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 
 class AssetBackupService {
   final void Function() notifyListeners;
-  final BaseBackupSource source;
+  final GoogleDriveBackupSource source;
 
   AssetBackupService({
     required this.notifyListeners,
@@ -72,7 +72,7 @@ class AssetBackupService {
       loadingAssetIdNotifier.value = asset.id;
       final deleledFile = await source.deleteCloudFile(fileId);
 
-      if (deleledFile != null) {
+      if (source.lastRequestStatusCode == 404 || deleledFile != null) {
         await asset.delete();
         assets = assets?.removeElement(asset);
       }
