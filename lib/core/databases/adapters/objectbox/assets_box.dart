@@ -73,6 +73,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
+      permanentlyDeletedAt: object.permanentlyDeletedAt,
     );
   }
 
@@ -112,6 +113,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,
         lastSavedDeviceId: object.lastSavedDeviceId,
+        permanentlyDeletedAt: object.permanentlyDeletedAt,
       );
     }).toList();
   }

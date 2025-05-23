@@ -20,6 +20,8 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
+  AssetDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AssetDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -33,6 +35,7 @@ abstract class _$AssetDbModelCWProxy {
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
+    DateTime? permanentlyDeletedAt,
   });
 }
 
@@ -65,6 +68,10 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       this(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
+  AssetDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
+      this(permanentlyDeletedAt: permanentlyDeletedAt);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AssetDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -79,6 +86,7 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
+    Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
       id: id == const $CopyWithPlaceholder()
@@ -105,6 +113,10 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
           : lastSavedDeviceId as String?,
+      permanentlyDeletedAt: permanentlyDeletedAt == const $CopyWithPlaceholder()
+          ? _value.permanentlyDeletedAt
+          // ignore: cast_nullable_to_non_nullable
+          : permanentlyDeletedAt as DateTime?,
     );
   }
 }
@@ -133,6 +145,9 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
+      permanentlyDeletedAt: json['permanently_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['permanently_deleted_at'] as String),
     );
 
 Map<String, dynamic> _$AssetDbModelToJson(AssetDbModel instance) =>
@@ -143,4 +158,6 @@ Map<String, dynamic> _$AssetDbModelToJson(AssetDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'permanently_deleted_at':
+          instance.permanentlyDeletedAt?.toIso8601String(),
     };

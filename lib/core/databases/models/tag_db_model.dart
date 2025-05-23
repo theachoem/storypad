@@ -23,6 +23,9 @@ class TagDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final String? lastSavedDeviceId;
 
+  @override
+  final DateTime? permanentlyDeletedAt;
+
   int? storiesCount;
 
   TagDbModel({
@@ -34,6 +37,7 @@ class TagDbModel extends BaseDbModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
     int? index,
   }) : index = index ?? 0;
 
@@ -44,7 +48,8 @@ class TagDbModel extends BaseDbModel {
         index = 0,
         createdAt = DateTime.now(),
         updatedAt = DateTime.now(),
-        lastSavedDeviceId = null;
+        lastSavedDeviceId = null,
+        permanentlyDeletedAt = null;
 
   factory TagDbModel.fromNow() {
     return TagDbModel(

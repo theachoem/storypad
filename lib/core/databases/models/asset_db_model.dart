@@ -26,6 +26,9 @@ class AssetDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final String? lastSavedDeviceId;
 
+  @override
+  final DateTime? permanentlyDeletedAt;
+
   AssetDbModel({
     required this.id,
     required this.originalSource,
@@ -33,6 +36,7 @@ class AssetDbModel extends BaseDbModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
   });
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;

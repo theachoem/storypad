@@ -38,5 +38,6 @@ TagDbModel _objectToModel(Map<String, dynamic> options) {
     createdAt: object.createdAt,
     updatedAt: object.updatedAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
+    permanentlyDeletedAt: object.permanentlyDeletedAt,
   );
 }

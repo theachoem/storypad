@@ -19,6 +19,8 @@ abstract class _$PreferenceDbModelCWProxy {
 
   PreferenceDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
+  PreferenceDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -32,6 +34,7 @@ abstract class _$PreferenceDbModelCWProxy {
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
+    DateTime? permanentlyDeletedAt,
   });
 }
 
@@ -61,6 +64,10 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
       this(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
+  PreferenceDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
+      this(permanentlyDeletedAt: permanentlyDeletedAt);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -75,6 +82,7 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
+    Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
     return PreferenceDbModel(
       id: id == const $CopyWithPlaceholder()
@@ -101,6 +109,10 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
           : lastSavedDeviceId as String?,
+      permanentlyDeletedAt: permanentlyDeletedAt == const $CopyWithPlaceholder()
+          ? _value.permanentlyDeletedAt
+          // ignore: cast_nullable_to_non_nullable
+          : permanentlyDeletedAt as DateTime?,
     );
   }
 }
@@ -124,6 +136,9 @@ PreferenceDbModel _$PreferenceDbModelFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
+      permanentlyDeletedAt: json['permanently_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['permanently_deleted_at'] as String),
     );
 
 Map<String, dynamic> _$PreferenceDbModelToJson(PreferenceDbModel instance) =>
@@ -134,4 +149,6 @@ Map<String, dynamic> _$PreferenceDbModelToJson(PreferenceDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'permanently_deleted_at':
+          instance.permanentlyDeletedAt?.toIso8601String(),
     };
