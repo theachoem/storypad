@@ -10,6 +10,8 @@ class GoogleDriveBackupSource extends BaseBackupSource {
 
   final GoogleDriveService _service = GoogleDriveService.instance;
 
+  int? get lastRequestStatusCode => _service.lastRequestStatusCode;
+
   @override
   String? get email => _service.googleSignIn.currentUser?.email;
 
