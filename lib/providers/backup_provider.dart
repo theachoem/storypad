@@ -75,7 +75,6 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
   }
 
   Future<void> _load() async {
-    await source.authenticate();
     await _loadLocalData();
     await _loadLatestSyncedFile();
     notifyListeners();
@@ -90,6 +89,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
   }
 
   Future<void> _loadLatestSyncedFile() async {
+    await source.authenticate();
     if (source.isSignedIn == null) return;
     if (source.isSignedIn == true) {
       _syncedFile = await source.getLastestBackupFile();
@@ -108,6 +108,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
   //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
   //
   Future<void> syncBackupAcrossDevices() async {
+    await source.authenticate();
+
     if (source.isSignedIn == null || !source.isSignedIn!) return;
     if (syncing) return;
 
