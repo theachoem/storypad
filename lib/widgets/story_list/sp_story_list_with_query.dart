@@ -44,6 +44,15 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     );
 
     if (mounted) setState(() {});
+
+    if (!widget.disableMultiEdit && mounted) {
+      try {
+        SpStoryListMultiEditWrapper.of(context).stories.clear();
+        SpStoryListMultiEditWrapper.of(context).stories.addAll(stories?.items.map((e) => e.id) ?? {});
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
   }
 
   @override

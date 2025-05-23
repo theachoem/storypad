@@ -128,24 +128,33 @@ class _ArchivesContent extends StatelessWidget {
       context: context,
       builder: (context, state) {
         return Visibility(
-          visible: state.selectedStories.isNotEmpty,
+          visible: state.editing,
           child: SpFadeIn.fromRight(
             child: SpPopupMenuButton(
               items: (BuildContext context) {
                 return [
                   SpPopMenuItem(
-                    title: tr("button.put_back_all"),
-                    leadingIconData: SpIcons.putBack,
-                    onPressed: () => state.putBackAll(context),
+                    title: state.selectedStories.length == state.stories.length
+                        ? tr('button.unselect_all')
+                        : tr("button.select_all"),
+                    leadingIconData:
+                        state.selectedStories.length == state.stories.length ? SpIcons.checkboxBlank : SpIcons.checkbox,
+                    onPressed: () => state.toggleSelectAll(context),
                   ),
-                  if (viewModel.type.isArchives)
+                  if (state.selectedStories.isNotEmpty)
+                    SpPopMenuItem(
+                      title: tr("button.put_back_all"),
+                      leadingIconData: SpIcons.putBack,
+                      onPressed: () => state.putBackAll(context),
+                    ),
+                  if (viewModel.type.isArchives && state.selectedStories.isNotEmpty)
                     SpPopMenuItem(
                       title: tr("button.move_to_bin_all"),
                       leadingIconData: SpIcons.delete,
                       onPressed: () => state.moveToBinAll(context),
                     ),
                   // for bin, "delete all" already show in bottom nav.
-                  if (viewModel.type.isArchives)
+                  if (viewModel.type.isArchives && state.selectedStories.isNotEmpty)
                     SpPopMenuItem(
                       title: tr("button.permanent_delete_all"),
                       leadingIconData: SpIcons.deleteForever,

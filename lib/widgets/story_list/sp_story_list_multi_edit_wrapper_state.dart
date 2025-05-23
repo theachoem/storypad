@@ -9,6 +9,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
 
   bool editing = false;
   Set<int> selectedStories = {};
+  Set<int> stories = {};
 
   void toggleSelection(StoryDbModel story) {
     if (selectedStories.contains(story.id)) {
@@ -33,6 +34,15 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
   }) {
     editing = false;
     selectedStories.clear();
+    notifyListeners();
+  }
+
+  void toggleSelectAll(BuildContext context) {
+    if (selectedStories.length == stories.length) {
+      selectedStories.clear();
+    } else {
+      selectedStories.addAll(stories);
+    }
     notifyListeners();
   }
 
