@@ -237,7 +237,10 @@ class GoogleDriveService {
 
         // user didn't authorize to access google drive file.
         if (is403) {
-          await googleSignIn.requestScopes(googleSignIn.scopes);
+          if (await googleSignIn.isSignedIn()) {
+            await googleSignIn.requestScopes(googleSignIn.scopes);
+          }
+
           return retryRequest('403');
         }
 
