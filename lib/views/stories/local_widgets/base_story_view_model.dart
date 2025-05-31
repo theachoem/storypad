@@ -48,9 +48,10 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
     bool ignoredEmpty = flowType == EditingFlowType.update;
     final latestContent = story?.draftContent ?? story?.latestContent;
+    if (latestContent == null) return false;
 
     if (!ignoredEmpty && !StoryHasDataWrittenService.callByContent(draftContent!)) return false;
-    return draftContent!.hasChanges(latestContent!);
+    return draftContent!.hasChanges(latestContent);
   }
 
   Future<bool> setTags(List<int> tags) async {
