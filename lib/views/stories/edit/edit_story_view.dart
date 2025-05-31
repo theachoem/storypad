@@ -7,7 +7,6 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
-import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/views/stories/local_widgets/manage_pages_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
@@ -80,7 +79,6 @@ class EditStoryRoute extends BaseRoute {
       'year': initialYear.toString(),
       'month': initialMonth.toString(),
       'day': initialDay.toString(),
-      'hello_text': WelcomeMessageService.get(null),
       'has_initial_tag': initialTagId != null ? 'true' : 'false',
     };
   }

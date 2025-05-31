@@ -109,6 +109,7 @@ abstract class BaseBottomSheet {
         context: context,
         pageBuilder: (context) {
           return SpCupertinoFullPageSheetConfigurations(
+            context: context,
             child: Builder(builder: (context) {
               return builder(context, MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom);
             }),

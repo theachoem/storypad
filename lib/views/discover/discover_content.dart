@@ -9,20 +9,17 @@ class _DiscoverContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: MediaQuery.removePadding(
-        context: context,
-        child: IndexedStack(
-          index: viewModel.selectedIndex,
-          children: viewModel.pages().map((page) {
-            bool selected = page.id == viewModel.selectedPage;
+      body: IndexedStack(
+        index: viewModel.selectedIndex,
+        children: viewModel.pages().map((page) {
+          bool selected = page.id == viewModel.selectedPage;
 
-            return Visibility(
-              visible: selected,
-              maintainState: viewModel.shouldMaintainState(page.id),
-              child: page.page,
-            );
-          }).toList(),
-        ),
+          return Visibility(
+            visible: selected,
+            maintainState: viewModel.shouldMaintainState(page.id),
+            child: page.page,
+          );
+        }).toList(),
       ),
     );
   }

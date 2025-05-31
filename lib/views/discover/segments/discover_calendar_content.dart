@@ -84,7 +84,7 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext _) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         heroTag: null,
@@ -116,20 +116,18 @@ class _DiscoverCalendarContentState extends State<DiscoverCalendarContent> {
             ),
           ];
         },
-        body: Builder(builder: (context) {
-          return SpStoryList.withQuery(
-            key: ValueKey(editedKey),
-            disableMultiEdit: true,
-            filter: SearchFilterObject(
-              years: {year},
-              month: month,
-              day: selectedDay,
-              types: {PathType.docs},
-              tagId: null,
-              assetId: null,
-            ),
-          );
-        }),
+        body: SpStoryList.withQuery(
+          key: ValueKey(editedKey),
+          disableMultiEdit: true,
+          filter: SearchFilterObject(
+            years: {year},
+            month: month,
+            day: selectedDay,
+            types: {PathType.docs},
+            tagId: null,
+            assetId: null,
+          ),
+        ),
       ),
     );
   }

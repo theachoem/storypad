@@ -61,7 +61,7 @@ abstract class BaseRoute {
     required bool fullscreenDialog,
   }) {
     return CupertinoSheetRoute<T>(
-      builder: (_) => SpCupertinoFullPageSheetConfigurations(child: buildPage(context)),
+      builder: (context) => SpCupertinoFullPageSheetConfigurations(context: context, child: buildPage(context)),
     );
   }
 
