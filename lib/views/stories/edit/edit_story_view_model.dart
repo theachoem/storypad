@@ -72,6 +72,14 @@ class EditStoryViewModel extends BaseStoryViewModel {
   }
 
   Future<void> _saveWithoutCheck() async {
+    story ??= StoryDbModel.fromDate(
+      openedOn,
+      initialYear: params.initialYear,
+      initialMonth: params.initialMonth,
+      initialDay: params.initialDay,
+      initialTagId: params.initialTagId,
+    );
+
     story = buildStory(draft: false);
     await StoryDbModel.db.set(story!);
     lastSavedAtNotifier.value = story?.updatedAt;
