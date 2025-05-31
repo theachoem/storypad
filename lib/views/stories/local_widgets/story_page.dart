@@ -14,6 +14,7 @@ class _StoryPage extends StatelessWidget {
     required this.canDeletePage,
     required this.onDelete,
     required this.onChanged,
+    required this.onGoToEdit,
     required this.pageIndex,
     this.showBorder = true,
     this.readOnly = false,
@@ -34,6 +35,7 @@ class _StoryPage extends StatelessWidget {
   final void Function(int oldIndex, int newIndex)? onSwap;
   final void Function()? onDelete;
   final void Function(StoryPageDbModel newRichPage)? onChanged;
+  final void Function()? onGoToEdit;
 
   final bool readOnly;
   final bool showBorder;
@@ -97,6 +99,7 @@ class _StoryPage extends StatelessWidget {
           scrollController: page.bodyScrollController,
           readOnly: readOnly,
           storyContent: storyContent,
+          onGoToEdit: onGoToEdit,
         ),
       ],
     );
@@ -104,8 +107,8 @@ class _StoryPage extends StatelessWidget {
 
   Widget buildMoreVertButton(BuildContext context) {
     return Positioned(
-      top: -20.0,
-      right: -20.0,
+      top: -16.0,
+      right: -16.0,
       child: SpFocusNodeBuilder2(
         focusNode1: page.titleFocusNode,
         focusNode2: page.bodyFocusNode,

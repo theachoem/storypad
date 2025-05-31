@@ -8,6 +8,7 @@ class _QuillEditor extends StatefulWidget {
     required this.readOnly,
     required this.storyContent,
     required this.onChanged,
+    required this.onGoToEdit,
   });
 
   final FocusNode bodyFocusNode;
@@ -16,6 +17,7 @@ class _QuillEditor extends StatefulWidget {
   final bool readOnly;
   final StoryContentDbModel storyContent;
   final void Function() onChanged;
+  final void Function()? onGoToEdit;
 
   @override
   State<_QuillEditor> createState() => _QuillEditorState();
@@ -63,6 +65,7 @@ class _QuillEditorState extends State<_QuillEditor> {
         contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
           rawEditorState,
           editable: !widget.readOnly,
+          onEdit: widget.onGoToEdit,
         ),
         scrollBottomInset: MediaQuery.of(context).viewPadding.bottom,
         scrollable: true,
