@@ -80,6 +80,7 @@
   "dialog.unlock_to_open_the_app.title": "앱을 열려면 잠금 해제가 필요해요",
   "dialog.what_should_i_call_you.message": "뭐라고 불러드릴까요?",
   "dialog.what_should_i_call_you.title": "안녕하세요",
+  "general.all": "모두",
   "general.assets": "파일",
   "general.beta": "베타",
   "general.biometrics_lock": "생체 인증 잠금",

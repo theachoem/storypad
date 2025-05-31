@@ -80,6 +80,7 @@
   "dialog.unlock_to_open_the_app.title": "解锁打开应用程序",
   "dialog.what_should_i_call_you.message": "我该怎么称呼你？",
   "dialog.what_should_i_call_you.title": "你好",
+  "general.all": "全部",
   "general.assets": "资产",
   "general.beta": "贝塔",
   "general.biometrics_lock": "生物识别锁",
