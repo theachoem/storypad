@@ -94,14 +94,18 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
         bytes: file.readAsBytesSync(),
       );
 
-      await SharePlus.instance.share(
-        ShareParams(
-          title: basename(file.path),
-          files: [
-            XFile(file.path),
-          ],
-        ),
-      );
+      if (context.mounted) {
+        await SharePlus.instance.share(
+          ShareParams(
+            title: basename(file.path),
+            sharePositionOrigin:
+                Rect.fromLTWH(0, 0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height / 2),
+            files: [
+              XFile(file.path),
+            ],
+          ),
+        );
+      }
 
       await file.delete();
     } else if (Platform.isAndroid) {
