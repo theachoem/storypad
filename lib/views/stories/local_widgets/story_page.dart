@@ -104,8 +104,8 @@ class _StoryPage extends StatelessWidget {
 
   Widget buildMoreVertButton(BuildContext context) {
     return Positioned(
-      top: -8.0,
-      right: -8.0,
+      top: -20.0,
+      right: -20.0,
       child: SpFocusNodeBuilder2(
         focusNode1: page.titleFocusNode,
         focusNode2: page.bodyFocusNode,
