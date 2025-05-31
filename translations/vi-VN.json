@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "Chúng tôi đang đồng bộ hóa dữ liệu của bạn",
   "page.home.app_bar.messages.what_in_ur_mind": "Bạn đang nghĩ gì thế?",
   "page.home.empty_message": "Vui lòng nhấp vào {EDIT_BUTTON} để thêm câu chuyện vào {YEAR}.",
+  "page.image_picker.empty_message": "Ảnh đã thêm sẽ xuất hiện ở đây.",
   "page.language.title": "Ngôn ngữ",
   "page.library.empty_message": "Hình ảnh sẽ xuất hiện ở đây.",
   "page.library.title": "Thư viện",

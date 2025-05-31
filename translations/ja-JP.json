@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "データを同期しています...",
   "page.home.app_bar.messages.what_in_ur_mind": "今、何を考えていますか？",
   "page.home.empty_message": "{EDIT_BUTTON} を押して、{YEAR} にストーリーを追加しましょう。",
+  "page.image_picker.empty_message": "追加した写真はここに表示されます。",
   "page.language.title": "言語",
   "page.library.empty_message": "ここに写真が表示されます。",
   "page.library.title": "ライブラリ",

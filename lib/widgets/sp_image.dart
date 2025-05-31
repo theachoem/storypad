@@ -99,9 +99,10 @@ class SpImage extends StatelessWidget {
     String? message = error is StateError ? error.message : error?.toString();
     return Material(
       color: ColorScheme.of(context).readOnly.surface3,
-      child: SizedBox(
+      child: Container(
         width: width,
         height: height,
+        constraints: const BoxConstraints(minHeight: 112),
         child: Wrap(
           spacing: 8.0,
           runAlignment: WrapAlignment.center,

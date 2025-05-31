@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "데이터를 동기화하고 있어요",
   "page.home.app_bar.messages.what_in_ur_mind": "지금 무슨 생각 중이세요?",
   "page.home.empty_message": "{YEAR}에 스토리를 추가하려면 {EDIT_BUTTON}을 눌러주세요",
+  "page.image_picker.empty_message": "추가된 사진이 여기에 표시됩니다.",
   "page.language.title": "언어",
   "page.library.empty_message": "여기에 사진이 보여질 거예요",
   "page.library.title": "라이브러리",

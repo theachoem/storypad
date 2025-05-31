@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "我们正在同步您的数据",
   "page.home.app_bar.messages.what_in_ur_mind": "你在想什么？",
   "page.home.empty_message": "请点击 {EDIT_BUTTON} 将故事添加到 {YEAR}。",
+  "page.image_picker.empty_message": "添加的照片将显示在这里。",
   "page.language.title": "语言",
   "page.library.empty_message": "照片将出现在这里。",
   "page.library.title": "图书馆",

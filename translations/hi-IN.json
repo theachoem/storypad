@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "हम आपका डेटा सिंक कर रहे हैं",
   "page.home.app_bar.messages.what_in_ur_mind": "आपके दिमाग में क्या है?",
   "page.home.empty_message": "कृपया {YEAR} में कहानी जोड़ने के लिए {EDIT_BUTTON} पर क्लिक करें।",
+  "page.image_picker.empty_message": "जोड़ी गई तस्वीरें यहां दिखाई देंगी.",
   "page.language.title": "भाषा",
   "page.library.empty_message": "तस्वीरें यहां दिखाई देंगी.",
   "page.library.title": "पुस्तकालय",
