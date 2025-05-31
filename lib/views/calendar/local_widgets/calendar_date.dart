@@ -1,4 +1,4 @@
-part of '../discover_calendar_content.dart';
+part of '../calendar_view.dart';
 
 class _CalendarDate extends StatelessWidget {
   const _CalendarDate({

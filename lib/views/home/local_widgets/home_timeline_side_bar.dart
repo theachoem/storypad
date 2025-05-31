@@ -1,6 +1,6 @@
 part of '../home_view.dart';
 
-class _HomeTimelineSideBar extends StatelessWidget {
+class _HomeTimelineSideBar extends StatefulWidget {
   const _HomeTimelineSideBar({
     required this.screenPadding,
     required this.backgroundColor,
@@ -11,131 +11,113 @@ class _HomeTimelineSideBar extends StatelessWidget {
   final Color backgroundColor;
   final HomeViewModel viewModel;
 
-  static const double iconSize = SpStoryTile.monogramSize + 6;
-  static const double baseIconVerticlePadding = 6.0;
-  static const double baseIconHorizontalPadding = 13.0;
-  static const double extraClickablePadding = 32.0;
+  @override
+  State<_HomeTimelineSideBar> createState() => _HomeTimelineSideBarState();
+}
 
-  // for debugging
-  static const bool showClickableAria = false;
-
-  double get bottomPadding => screenPadding.bottom + 12.0;
+class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buttons = [
-      // buildButton(
-      //   context: context,
-      //   child: const Icon(SpIcons.addFeeling, size: 24.0),
-      //   onTap: () {},
-      // ),
-      // buildButton(
-      //   context: context,
-      //   child: const Icon(SpIcons.tag, size: 24.0),
-      //   onTap: () {
-      //     TagsRoute().push(context);
-      //   },
-      // ),
-      buildButton(
-        context: context,
-        child: const Icon(SpIcons.calendar, size: 24.0),
-        onTap: () => viewModel.openDiscoverView(context),
-      ),
-    ];
-
-    double blockColorHeight = screenPadding.bottom + 12 + baseIconHorizontalPadding / 2;
-    blockColorHeight += (buttons.length - 1) * iconSize; // block background for all buttons except last one
-    blockColorHeight += iconSize / 2; // block half of last button
-    blockColorHeight += buttons.length * baseIconVerticlePadding; // block spacing between all buttons
-
     return Stack(
-      clipBehavior: Clip.none,
       children: [
-        Positioned(
-          bottom: 0,
-          left: AppTheme.getDirectionValue(context, null, screenPadding.left + baseIconHorizontalPadding),
-          right: AppTheme.getDirectionValue(context, screenPadding.right + baseIconHorizontalPadding, null),
-          child: Center(
-            child: Container(
-              width: iconSize,
-              height: blockColorHeight,
-              color: showClickableAria ? Colors.red : backgroundColor,
+        buildBackgrounds(context),
+        buildButtons(context),
+      ],
+    );
+  }
+
+  Widget buildButtons(BuildContext context) {
+    final buttons = [
+      if (kHasRelaxSoundsFeature)
+        SpFadeIn.bound(
+          child: IconButton(
+            style: IconButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+              ),
             ),
+            icon: const Icon(SpIcons.musicNote),
+            onPressed: () => const RelaxSoundsRoute().push(context),
           ),
         ),
-        Positioned(
-          bottom: blockColorHeight,
-          top: -16,
-          left: AppTheme.getDirectionValue(context, null, screenPadding.left + baseIconHorizontalPadding),
-          right: AppTheme.getDirectionValue(context, screenPadding.right + baseIconHorizontalPadding, null),
-          child: Center(
-            child: Container(
-              width: iconSize,
+    ];
+
+    return Container(
+      margin: EdgeInsets.only(
+        left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + 8.0)!,
+        right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 8.0, 0.0)!,
+        bottom: widget.screenPadding.bottom + 16.0,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 0.0,
+        children: [
+          if (expanded) ...buttons,
+          if (buttons.isNotEmpty)
+            IconButton(
+              icon: SpAnimatedIcons.fadeScale(
+                showFirst: expanded,
+                firstChild: const Icon(SpIcons.keyboardDown),
+                secondChild: const Icon(SpIcons.keyboardUp),
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              onPressed: () {
+                expanded = !expanded;
+                setState(() {});
+              },
+            ),
+          IconButton(
+            style: IconButton.styleFrom(
+              backgroundColor: ColorScheme.of(context).surface,
+              shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
+            ),
+            icon: const Icon(SpIcons.calendar),
+            onPressed: () => SpCalendarSheet(
+              initialMonth: null,
+              initialYear: widget.viewModel.year,
+            ).show(context: context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBackgrounds(BuildContext context) {
+    return Positioned.fill(
+      child: Container(
+        margin: EdgeInsets.only(
+          left: AppTheme.getDirectionValue(context, 4.0, widget.screenPadding.left + 12.0)!,
+          right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 12.0, 4.0)!,
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 12,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.0),
-                    (showClickableAria ? Colors.green : backgroundColor).withValues(alpha: 0.6),
-                    (showClickableAria ? Colors.green : backgroundColor),
+                    widget.backgroundColor.withValues(alpha: 0.0),
+                    widget.backgroundColor,
                   ],
                 ),
               ),
             ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            bottom: bottomPadding,
-            left: AppTheme.getDirectionValue(context, 0, screenPadding.left)!,
-            right: AppTheme.getDirectionValue(context, screenPadding.right, 0)!,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 0.0,
-            children: buttons,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildButton({
-    required BuildContext context,
-    required Widget child,
-    required void Function()? onTap,
-  }) {
-    return SpTapEffect(
-      scaleActive: 0.9,
-      effects: [SpTapEffectType.scaleDown],
-      onTap: onTap,
-      child: Container(
-        color: showClickableAria ? Colors.blue.withValues(alpha: 0.3) : null,
-        padding: EdgeInsets.only(
-          top: baseIconVerticlePadding,
-          bottom: baseIconVerticlePadding,
-          left: AppTheme.getDirectionValue(
-            context,
-            baseIconHorizontalPadding + extraClickablePadding,
-            baseIconHorizontalPadding,
-          )!,
-          right: AppTheme.getDirectionValue(
-            context,
-            baseIconHorizontalPadding,
-            baseIconHorizontalPadding + extraClickablePadding,
-          )!,
-        ),
-        child: Container(
-          width: iconSize,
-          height: iconSize,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            color: Theme.of(context).appBarTheme.backgroundColor,
-            shape: BoxShape.circle,
-          ),
-          child: child,
+            Expanded(
+              child: Container(
+                color: widget.backgroundColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

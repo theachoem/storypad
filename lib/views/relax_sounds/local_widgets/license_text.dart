@@ -1,4 +1,4 @@
-part of '../discover_relax_sounds_content.dart';
+part of '../relax_sounds_view.dart';
 
 class _LicenseText extends StatelessWidget {
   const _LicenseText();

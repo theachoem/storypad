@@ -10,9 +10,7 @@ import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/timer_picker_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
-import 'package:storypad/views/discover/discover_view.dart';
-import 'package:storypad/views/discover/discover_view_model.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_discover_sheet.dart';
+import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -49,9 +47,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
         child: buildContents(context, backgroundColor, provider),
         onTap: () {
           if (fromHome) {
-            SpDiscoverSheet(
-              params: const DiscoverRoute(initialPage: DiscoverSegmentId.relaxSounds),
-            ).show(context: context);
+            const RelaxSoundsRoute().push(context);
           } else {
             showTimerPicker(provider, context);
           }
