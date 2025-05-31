@@ -1,6 +1,6 @@
 import 'dart:io';
 
-// import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,9 +23,8 @@ final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
 
-// TODO: Disable for now.
-// const bool kHasRelaxSoundsFeature = false || kDebugMode;
-const bool kHasRelaxSoundsFeature = true;
+// Disable for now.
+const bool kHasRelaxSoundsFeature = false || kDebugMode;
 
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;
