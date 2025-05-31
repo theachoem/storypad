@@ -259,8 +259,22 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
+  - purchases_flutter (8.9.0):
+    - Flutter
+    - PurchasesHybridCommon (= 13.32.0)
+  - purchases_ui_flutter (8.9.0):
+    - Flutter
+    - PurchasesHybridCommonUI (= 13.32.0)
+  - PurchasesHybridCommon (13.32.0):
+    - RevenueCat (= 5.24.0)
+  - PurchasesHybridCommonUI (13.32.0):
+    - PurchasesHybridCommon (= 13.32.0)
+    - RevenueCatUI (= 5.24.0)
   - quill_native_bridge_ios (0.0.1):
     - Flutter
+  - RevenueCat (5.24.0)
+  - RevenueCatUI (5.24.0):
+    - RevenueCat (= 5.24.0)
   - SDWebImage (5.21.0):
     - SDWebImage/Core (= 5.21.0)
   - SDWebImage/Core (5.21.0)
@@ -298,6 +312,8 @@ DEPENDENCIES:
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
+  - purchases_ui_flutter (from `.symlinks/plugins/purchases_ui_flutter/ios`)
   - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -335,6 +351,10 @@ SPEC REPOS:
     - ObjectBox
     - PromisesObjC
     - PromisesSwift
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
     - SDWebImage
     - SwiftyGif
 
@@ -381,6 +401,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
+  purchases_ui_flutter:
+    :path: ".symlinks/plugins/purchases_ui_flutter/ios"
   quill_native_bridge_ios:
     :path: ".symlinks/plugins/quill_native_bridge_ios/ios"
   share_plus:
@@ -443,7 +467,13 @@ SPEC CHECKSUMS:
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
+  purchases_flutter: 5c7fbfbe656117ea8a72d132a82294a2025ef8ae
+  purchases_ui_flutter: cc928ded2b3b4278c290af785481a398ce4000bd
+  PurchasesHybridCommon: 662aa1f4769ff4ef594e35adf1a5d0ad7b3d08b7
+  PurchasesHybridCommonUI: ce17a7fcc23bc9e47b6ed117fb87b4fc99539e15
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
+  RevenueCat: 2d3639d30b8a71cbfe3d99cef8243c602793e0ec
+  RevenueCatUI: 80bec9099c200c254c0ec0025b4fb83a85fbacce
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
