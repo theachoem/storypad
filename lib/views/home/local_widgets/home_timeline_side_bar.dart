@@ -29,6 +29,22 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   }
 
   Widget buildButtons(BuildContext context) {
+    final buttons = [
+      if (kHasRelaxSoundsFeature)
+        SpFadeIn.bound(
+          child: IconButton(
+            style: IconButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+            ),
+            icon: const Icon(SpIcons.musicNote),
+            onPressed: () => const RelaxSoundsRoute().push(context),
+          ),
+        ),
+    ];
+
     return Container(
       margin: EdgeInsets.only(
         left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + 8.0)!,
@@ -39,39 +55,30 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         mainAxisSize: MainAxisSize.min,
         spacing: 0.0,
         children: [
-          if (expanded) ...[
-            SpFadeIn.bound(
-              child: IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  shape: CircleBorder(
-                    side: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
+          if (expanded) ...buttons,
+          if (buttons.isNotEmpty)
+            IconButton(
+              icon: SpAnimatedIcons.fadeScale(
+                showFirst: expanded,
+                firstChild: const Icon(SpIcons.keyboardDown),
+                secondChild: const Icon(SpIcons.keyboardUp),
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
                 ),
-                icon: const Icon(SpIcons.musicNote),
-                onPressed: () => const RelaxSoundsRoute().push(context),
               ),
+              onPressed: () {
+                expanded = !expanded;
+                setState(() {});
+              },
             ),
-          ],
           IconButton(
-            icon: SpAnimatedIcons.fadeScale(
-              showFirst: expanded,
-              firstChild: const Icon(SpIcons.keyboardDown),
-              secondChild: const Icon(SpIcons.keyboardUp),
-            ),
             style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
+              backgroundColor: ColorScheme.of(context).surface,
+              shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
             ),
-            onPressed: () {
-              expanded = !expanded;
-              setState(() {});
-            },
-          ),
-          IconButton(
-            style: IconButton.styleFrom(shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor))),
             icon: const Icon(SpIcons.calendar),
             onPressed: () => SpCalendarSheet(
               initialMonth: null,
