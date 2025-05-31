@@ -59,8 +59,9 @@ class AssetBackupService {
     final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
 
     // when image is not yet upload, allow delete locally.
-    if (uploadedEmails.isEmpty || storyCount == 0) {
+    if (uploadedEmails.isEmpty) {
       await asset.delete();
+      assets = assets?.removeElement(asset);
       notifyListeners();
       return;
     }
@@ -78,6 +79,11 @@ class AssetBackupService {
       }
 
       loadingAssetIdNotifier.value = null;
+      notifyListeners();
+    } else {
+      // Allow delete db asset when no file ID for current email found.
+      await asset.delete();
+      assets = assets?.removeElement(asset);
       notifyListeners();
     }
   }

@@ -33,8 +33,9 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
       if (kHasRelaxSoundsFeature)
         SpFadeIn.bound(
           child: IconButton(
+            color: Theme.of(context).colorScheme.onPrimary,
             style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: CircleBorder(
                 side: BorderSide(color: Theme.of(context).dividerColor),
               ),
