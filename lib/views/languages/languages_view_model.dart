@@ -75,6 +75,8 @@ class LanguagesViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void _scollToLocale(Locale locale) {
     int index = supportedLocales.indexOf(locale);
+    if (supportedLocaleKeys[index].currentContext == null) return;
+
     Scrollable.ensureVisible(
       supportedLocaleKeys[index].currentContext!,
       duration: Durations.long1,
