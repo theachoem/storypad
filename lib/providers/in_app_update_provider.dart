@@ -54,8 +54,7 @@ class InAppUpdateProvider extends ChangeNotifier {
 
   Future<void> _updateDireclyInApp() async {
     _androidInAppUpdateInfo = await _getAndroidInAppUpdateInfo();
-
-    switch (_androidInAppUpdateInfo!.installStatus) {
+    switch (_androidInAppUpdateInfo?.installStatus) {
       case InstallStatus.pending:
       case InstallStatus.downloading:
       case InstallStatus.installing:
@@ -72,6 +71,7 @@ class InAppUpdateProvider extends ChangeNotifier {
         break;
       case InstallStatus.downloaded:
         InAppUpdate.completeFlexibleUpdate();
+      case null:
         break;
     }
   }
