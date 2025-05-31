@@ -138,7 +138,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
     }
 
     if (flowType == EditingFlowType.create) {
-      if (lastSavedAtNotifier.value != null) {
+      if (lastSavedAtNotifier.value != null && story?.id != null) {
         OkCancelResult result = await showDiscardConfirmation(context);
         if (result == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id);
