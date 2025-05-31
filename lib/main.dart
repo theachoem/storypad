@@ -10,6 +10,7 @@ import 'package:storypad/initializers/firebase_remote_config_initializer.dart' s
 import 'package:storypad/initializers/legacy_storypad_initializer.dart';
 import 'package:storypad/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/initializers/onboarding_initializer.dart';
+import 'package:storypad/initializers/revenue_cat_initializer.dart';
 import 'package:storypad/initializers/theme_initializer.dart' show ThemeInitializer;
 import 'package:storypad/provider_scope.dart' show ProviderScope;
 import 'package:firebase_core/firebase_core.dart' show Firebase, FirebaseOptions;
@@ -26,6 +27,7 @@ void main({
   await DatabaseInitializer.call();
   await AppLockInitializer.call();
   await BackupRepositoryInitializer.call();
+  await RevenueCatInitializer.call();
 
   FirebaseCrashlyticsInitializer.call();
   FirebaseRemoteConfigInitializer.call();
