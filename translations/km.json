@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "យើងកំពុងធ្វើសមកាលកម្មទិន្នន័យរបស់អ្នក។",
   "page.home.app_bar.messages.what_in_ur_mind": "តើ​​អ្នកមាន​អ្វីនៅ​ក្នុង​ចិត្ត​?",
   "page.home.empty_message": "សូមចុចលើ {EDIT_BUTTON} ដើម្បីបន្ថែមរឿងទៅ {YEAR}។",
+  "page.image_picker.empty_message": "រូបថតដែលបានបន្ថែមនឹងបង្ហាញនៅទីនេះ។",
   "page.language.title": "ភាសា",
   "page.library.empty_message": "រូបថតនឹងបង្ហាញនៅទីនេះ។",
   "page.library.title": "បណ្ណាល័យ",

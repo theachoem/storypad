@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,16 +30,18 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     final assets = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return;
 
-    final asset = await SpImagePickerBottomSheet(
+    final pickAssets = await SpImagePickerBottomSheet(
       assets: assets,
     ).show(context: context);
 
-    if (asset is AssetDbModel) {
-      final index = controller.selection.baseOffset;
-      final length = controller.selection.extentOffset - index;
+    if (pickAssets is List<AssetDbModel>) {
+      for (AssetDbModel pickAsset in pickAssets) {
+        final index = controller.selection.baseOffset;
+        final length = controller.selection.extentOffset - index;
 
-      controller.replaceText(index, length, BlockEmbed.image(asset.link), null);
-      controller.moveCursorToPosition(index + 1);
+        controller.replaceText(index, length, BlockEmbed.image(pickAsset.link), null);
+        controller.moveCursorToPosition(index + 1);
+      }
 
       AnalyticsService.instance.logInsertNewPhoto();
     }
@@ -48,37 +51,37 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     FilePickerResult? result;
 
     try {
-      result = await FilePicker.platform.pickFiles(type: FileType.image);
+      result = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: true, withData: true);
     } catch (e) {
       debugPrint(e.toString());
     }
 
     if (result?.files.isNotEmpty == true) {
-      final pickedFile = result!.xFiles.first;
-      final now = DateTime.now();
+      List<AssetDbModel> saveAssets = [];
 
-      String extension = path.extension(pickedFile.path);
+      for (var file in result!.files) {
+        if (file.bytes == null) continue;
 
-      // We need to store picked file to somewhere we can manage.
-      File newFile = File("${kSupportDirectory.path}/images/${now.millisecondsSinceEpoch}$extension");
-      await newFile.parent.create(recursive: true);
+        final now = DateTime.now();
+        String extension = path.extension(file.xFile.path);
 
-      if (Platform.isAndroid) {
-        newFile = await newFile.writeAsBytes(await pickedFile.readAsBytes());
-      } else {
-        await File(pickedFile.path).rename(newFile.path);
+        // We need to store picked file to somewhere we can manage.
+        File newFile = File("${kSupportDirectory.path}/images/${now.millisecondsSinceEpoch}$extension")
+          ..createSync(recursive: true);
+        newFile = await newFile.writeAsBytes(file.bytes!);
+        if (File(file.xFile.path).parent.existsSync()) File(file.xFile.path).parent.deleteSync(recursive: true);
+
+        final asset = AssetDbModel.fromLocalPath(
+          id: now.millisecondsSinceEpoch,
+          localPath: newFile.path,
+        );
+
+        final savedAsset = await asset.save();
+        if (savedAsset != null) saveAssets.add(savedAsset);
       }
 
-      await File(pickedFile.path).parent.delete(recursive: true);
-      final asset = AssetDbModel.fromLocalPath(
-        id: now.millisecondsSinceEpoch,
-        localPath: newFile.path,
-      );
-
-      final savedAsset = await asset.save();
-
-      if (savedAsset != null && context.mounted) {
-        Navigator.maybePop(context, savedAsset);
+      if (context.mounted && saveAssets.isNotEmpty) {
+        Navigator.maybePop(context, saveAssets);
       }
     }
   }
@@ -152,7 +155,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     if (assets.isEmpty) {
       return Center(
         child: Text(
-          "Added photos will appear here",
+          tr('page.image_picker.empty_message'),
           textAlign: TextAlign.center,
           style: TextTheme.of(context).bodyLarge,
         ),
@@ -170,7 +173,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       itemBuilder: (BuildContext context, int index) {
         final asset = assets[index];
         return GestureDetector(
-          onTap: () => Navigator.pop(context, asset),
+          onTap: () => Navigator.pop(context, [asset]),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: SpImage(

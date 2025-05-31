@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "Kami sedang menyinkronkan data Anda",
   "page.home.app_bar.messages.what_in_ur_mind": "Apa yang ada di pikiranmu?",
   "page.home.empty_message": "Silakan klik {EDIT_BUTTON} untuk menambahkan cerita ke {YEAR}.",
+  "page.image_picker.empty_message": "Foto yang ditambahkan akan muncul di sini.",
   "page.language.title": "Bahasa",
   "page.library.empty_message": "Foto akan muncul di sini.",
   "page.library.title": "Perpustakaan",

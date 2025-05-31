@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "Wir synchronisieren Ihre Daten",
   "page.home.app_bar.messages.what_in_ur_mind": "Was hast du im Kopf?",
   "page.home.empty_message": "Bitte klicken Sie auf {EDIT_BUTTON}, um die Geschichte zu {YEAR} hinzuzufügen.",
+  "page.image_picker.empty_message": "Hinzugefügte Fotos werden hier angezeigt.",
   "page.language.title": "Sprache",
   "page.library.empty_message": "Fotos werden hier angezeigt.",
   "page.library.title": "Bibliothek",

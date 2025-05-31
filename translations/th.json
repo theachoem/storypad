@@ -248,6 +248,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "เรากำลังซิงค์ข้อมูลของคุณ",
   "page.home.app_bar.messages.what_in_ur_mind": "คุณคิดอะไรอยู่?",
   "page.home.empty_message": "โปรดคลิก {EDIT_BUTTON} เพื่อเพิ่มเรื่องราวให้กับ {YEAR}",
+  "page.image_picker.empty_message": "รูปภาพที่เพิ่มจะปรากฏที่นี่",
   "page.language.title": "ภาษา",
   "page.library.empty_message": "รูปภาพจะปรากฏที่นี่",
   "page.library.title": "ห้องสมุด",
