@@ -1,32 +1,9 @@
-import 'dart:io';
-import 'dart:ui';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/objects/relax_sound_object.dart';
-import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/providers/relax_sounds_provider.dart';
-import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
-import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_loop_animation_builder.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
+part of 'relax_sounds_view.dart';
 
-part 'local_widgets/volume_slider.dart';
-part 'local_widgets/sound_icon_card.dart';
-part 'local_widgets/license_text.dart';
+class _RelaxSoundsContent extends StatelessWidget {
+  const _RelaxSoundsContent(this.viewModel);
 
-class DiscoverRelaxSoundsContent extends StatelessWidget {
-  const DiscoverRelaxSoundsContent({
-    super.key,
-  });
+  final RelaxSoundsViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +14,21 @@ class DiscoverRelaxSoundsContent extends StatelessWidget {
 
     return Scaffold(
       extendBody: true,
+      appBar: AppBar(
+        title: Text(tr('page.relax_sounds.title')),
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+        ],
+      ),
       bottomNavigationBar: const SpFloatingRelaxSoundsTile(),
       body: CustomScrollView(
         controller: PrimaryScrollController.maybeOf(context),
         slivers: [
           SliverPadding(
             padding: EdgeInsets.only(
-              top: 12.0,
+              top: CupertinoSheetRoute.hasParentSheet(context) ? 8.0 : 20,
               left: MediaQuery.of(context).padding.left + 16.0,
               right: MediaQuery.of(context).padding.right + 16.0,
               bottom: 32.0,

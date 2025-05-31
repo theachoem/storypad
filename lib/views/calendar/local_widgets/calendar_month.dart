@@ -1,4 +1,4 @@
-part of '../discover_calendar_content.dart';
+part of '../calendar_view.dart';
 
 class _CalendarMonth extends StatelessWidget {
   const _CalendarMonth({
@@ -19,20 +19,6 @@ class _CalendarMonth extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 8.0),
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).padding.left,
-            right: MediaQuery.of(context).padding.right,
-          ),
-          child: _CalendarMonthHeader(
-            onChanged: onChanged,
-            year: year,
-            month: month,
-            selectedDay: selectedDay,
-          ),
-        ),
-        const Divider(height: 1),
         const SizedBox(height: 8.0),
         Padding(
           padding: EdgeInsets.only(
