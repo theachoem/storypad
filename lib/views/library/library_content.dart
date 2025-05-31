@@ -85,7 +85,7 @@ class _LibraryContent extends StatelessWidget {
           items: (context) {
             return [
               if (viewModel.storiesCount[asset.id] == 0)
-                buildDeleteButton(context, provider, asset)
+                buildDeleteButton(context, provider, asset, viewModel.storiesCount[asset.id]!)
               else
                 SpPopMenuItem(
                   leadingIconData: SpIcons.book,
@@ -141,20 +141,20 @@ class _LibraryContent extends StatelessWidget {
     );
   }
 
-  SpPopMenuItem buildDeleteButton(BuildContext context, BackupProvider provider, AssetDbModel asset) {
+  SpPopMenuItem buildDeleteButton(BuildContext context, BackupProvider provider, AssetDbModel asset, int storyCount) {
     if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
       return SpPopMenuItem(
         leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete_from_google_drive"),
-        onPressed: () => provider.assetBackupState.deleteAsset(asset),
+        onPressed: () => provider.assetBackupState.deleteAsset(asset, storyCount),
       );
     } else {
       return SpPopMenuItem(
         leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete"),
-        onPressed: () => provider.assetBackupState.deleteAsset(asset),
+        onPressed: () => provider.assetBackupState.deleteAsset(asset, storyCount),
       );
     }
   }

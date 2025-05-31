@@ -55,11 +55,11 @@ class AssetBackupService {
     notifyListeners();
   }
 
-  Future<void> deleteAsset(AssetDbModel asset) async {
+  Future<void> deleteAsset(AssetDbModel asset, int storyCount) async {
     final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
 
     // when image is not yet upload, allow delete locally.
-    if (uploadedEmails.isEmpty) {
+    if (uploadedEmails.isEmpty || storyCount == 0) {
       await asset.delete();
       notifyListeners();
       return;
