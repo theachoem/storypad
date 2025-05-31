@@ -80,6 +80,7 @@
   "dialog.unlock_to_open_the_app.title": "Déverrouillez pour ouvrir l'application",
   "dialog.what_should_i_call_you.message": "Comment dois-je t'appeler ?",
   "dialog.what_should_i_call_you.title": "Bonjour",
+  "general.all": "Tous",
   "general.assets": "Actifs",
   "general.beta": "Bêta",
   "general.biometrics_lock": "Verrouillage biométrique",

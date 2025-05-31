@@ -80,6 +80,7 @@
   "dialog.unlock_to_open_the_app.title": "Unlock to open the app",
   "dialog.what_should_i_call_you.message": "What should I call you?",
   "dialog.what_should_i_call_you.title": "Hello",
+  "general.all": "All",
   "general.assets": "Assets",
   "general.beta": "Beta",
   "general.biometrics_lock": "Biometric Lock",

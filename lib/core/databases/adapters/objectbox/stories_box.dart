@@ -94,15 +94,20 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Map<int, String?> getStoryFeelingByMonth({
     required int month,
     required int year,
+    int? tagId,
   }) {
     debugPrint("Triggering $tableName#getStoryFeelingByMonth 🍎");
 
     Map<int, String?> storyFeelingByMonth = {};
-    final result = buildQuery(filters: {
+
+    Map<String, Object> filters = {
       'year': year,
       'month': month,
       'type': PathType.docs.name,
-    }).build().find();
+    };
+
+    if (tagId != null) filters['tag'] = tagId;
+    final result = buildQuery(filters: filters).build().find();
 
     for (final story in result) {
       if (story.feeling != null) {

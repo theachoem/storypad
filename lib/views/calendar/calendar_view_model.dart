@@ -19,6 +19,8 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
   late int year = params.initialYear ?? DateTime.now().year;
   int selectedDay = DateTime.now().day;
 
+  int? selectedTagId;
+
   Map<int, String?> feelingMapByDay = {};
   int editedKey = 0;
 
@@ -57,14 +59,19 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
     });
   }
 
-  void onChanged(int year, int month, int selectedDay) {
-    if (year != this.year || month != this.month) {
-      feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+  void onChanged(int year, int month, int selectedDay, int? selectedTagId) async {
+    if (year != this.year || month != this.month || selectedTagId != this.selectedTagId) {
+      feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
+        month: month,
+        year: year,
+        tagId: selectedTagId,
+      );
     }
 
     this.selectedDay = year != this.year || month != this.month ? 1 : selectedDay;
     this.year = year;
     this.month = month;
+    this.selectedTagId = selectedTagId;
 
     notifyListeners();
   }

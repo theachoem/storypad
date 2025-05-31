@@ -80,6 +80,7 @@
   "dialog.unlock_to_open_the_app.title": "アプリを開くにはロック解除が必要です",
   "dialog.what_should_i_call_you.message": "何とお呼びすればよろしいですか？",
   "dialog.what_should_i_call_you.title": "こんにちは",
+  "general.all": "全て",
   "general.assets": "ファイル",
   "general.beta": "ベータ",
   "general.biometrics_lock": "生体認証ロック",
