@@ -33,6 +33,7 @@ class _MoreVertActionButtons extends StatelessWidget {
           effects: [SpTapEffectType.scaleDown],
           onTap: callback,
           child: Container(
+            margin: const EdgeInsets.all(8.0),
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,

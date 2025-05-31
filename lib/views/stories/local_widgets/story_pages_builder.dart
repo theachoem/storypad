@@ -52,6 +52,7 @@ class StoryPagesBuilder extends StatelessWidget {
     this.pageController,
     this.onTitleVisibilityChanged,
     this.onPageChanged,
+    this.onGoToEdit,
     this.actions,
   });
 
@@ -66,6 +67,7 @@ class StoryPagesBuilder extends StatelessWidget {
 
   // move out of action because even in read only mode, we should still listen to change.
   final void Function(StoryPageDbModel newRichPage)? onPageChanged;
+  final void Function()? onGoToEdit;
   final StoryPageBuilderAction? actions;
   final void Function(int pageIndex, StoryPageObject page, VisibilityInfo info)? onTitleVisibilityChanged;
 
@@ -207,6 +209,7 @@ class StoryPagesBuilder extends StatelessWidget {
       onFocusChange: actions?.onFocusChange != null ? (a, b) => actions!.onFocusChange(pageIndex, page, a, b) : null,
       onTitleVisibilityChanged:
           onTitleVisibilityChanged != null ? (info) => onTitleVisibilityChanged!(pageIndex, page, info) : null,
+      onGoToEdit: onGoToEdit,
     );
   }
 
