@@ -45,7 +45,13 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   }
 
   Future<void> _insertFromPhotoLibrary(BuildContext context) async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles(type: FileType.image);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
     if (result?.files.isNotEmpty == true) {
       final pickedFile = result!.xFiles.first;
