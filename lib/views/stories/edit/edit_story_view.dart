@@ -25,7 +25,6 @@ import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_focus_node_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';

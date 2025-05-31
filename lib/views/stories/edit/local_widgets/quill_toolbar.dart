@@ -23,86 +23,97 @@ class _QuillToolbar extends StatelessWidget {
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Divider(height: 1),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 4.0), child: buidlToolbar(context)),
+        buidlToolbar(context),
         const Divider(height: 1),
       ]),
     );
   }
 
   Widget buidlToolbar(BuildContext context) {
-    return QuillSimpleToolbar(
-      controller: controller,
-      config: QuillSimpleToolbarConfig(
-        color: backgroundColor,
-        buttonOptions: QuillSimpleToolbarButtonOptions(
-          color: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-            extraOptions as QuillToolbarColorButtonExtraOptions;
-            return SpQuillToolbarColorButton(
-              controller: extraOptions.controller,
-              isBackground: false,
-              positionedOnUpper: false,
-            );
-          }),
-          backgroundColor: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-            extraOptions as QuillToolbarColorButtonExtraOptions;
-            return SpQuillToolbarColorButton(
-              controller: extraOptions.controller,
-              isBackground: true,
-              positionedOnUpper: false,
-            );
-          }),
-        ),
-        embedButtons: [
-          (context, embedContext) {
-            return const VerticalDivider(
-              indent: 12,
-              endIndent: 12,
-            );
-          },
-          (context, embedContext) {
-            return IconButton(
-              tooltip: FlutterQuillLocalizations.of(context)?.image,
-              icon: const Icon(SpIcons.photo),
-              onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
-            );
-          },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(
+        top: 4.0,
+        bottom: 4.0,
+        left: MediaQuery.of(context).padding.left + 6.0,
+        right: MediaQuery.of(context).padding.right + 6.0,
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: FlutterQuillLocalizations.of(context)?.image,
+            icon: const Icon(SpIcons.photo),
+            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
+          ),
+          Container(
+            width: 1,
+            height: 16,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).dividerColor,
+            ),
+          ),
+          QuillSimpleToolbar(
+            controller: controller,
+            config: QuillSimpleToolbarConfig(
+              color: backgroundColor,
+              buttonOptions: QuillSimpleToolbarButtonOptions(
+                color: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
+                  extraOptions as QuillToolbarColorButtonExtraOptions;
+                  return SpQuillToolbarColorButton(
+                    controller: extraOptions.controller,
+                    isBackground: false,
+                    positionedOnUpper: false,
+                  );
+                }),
+                backgroundColor: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
+                  extraOptions as QuillToolbarColorButtonExtraOptions;
+                  return SpQuillToolbarColorButton(
+                    controller: extraOptions.controller,
+                    isBackground: true,
+                    positionedOnUpper: false,
+                  );
+                }),
+              ),
+              multiRowsDisplay: true,
+              showDividers: true,
+              showFontFamily: false,
+              showFontSize: false,
+              showBoldButton: true,
+              showItalicButton: true,
+              showSmallButton: false,
+              showUnderLineButton: true,
+              showLineHeightButton: false,
+              showStrikeThrough: true,
+              showInlineCode: false,
+              showColorButton: true,
+              showBackgroundColorButton: true,
+              showClearFormat: true,
+              showAlignmentButtons: true,
+              showLeftAlignment: true,
+              showCenterAlignment: true,
+              showRightAlignment: true,
+              showJustifyAlignment: true,
+              showHeaderStyle: false,
+              showListNumbers: true,
+              showListBullets: true,
+              showListCheck: true,
+              showCodeBlock: false,
+              showQuote: true,
+              showIndent: true,
+              showLink: true,
+              showUndo: true,
+              showRedo: true,
+              showDirection: false,
+              showSearchButton: false,
+              showSubscript: false,
+              showSuperscript: false,
+              showClipboardCut: false,
+              showClipboardCopy: false,
+              showClipboardPaste: false,
+            ),
+          ),
         ],
-        multiRowsDisplay: false,
-        showDividers: true,
-        showFontFamily: false,
-        showFontSize: false,
-        showBoldButton: true,
-        showItalicButton: true,
-        showSmallButton: false,
-        showUnderLineButton: true,
-        showLineHeightButton: false,
-        showStrikeThrough: true,
-        showInlineCode: false,
-        showColorButton: true,
-        showBackgroundColorButton: true,
-        showClearFormat: true,
-        showAlignmentButtons: true,
-        showLeftAlignment: true,
-        showCenterAlignment: true,
-        showRightAlignment: true,
-        showJustifyAlignment: true,
-        showHeaderStyle: false,
-        showListNumbers: true,
-        showListBullets: true,
-        showListCheck: true,
-        showCodeBlock: false,
-        showQuote: true,
-        showIndent: true,
-        showLink: true,
-        showUndo: true,
-        showRedo: true,
-        showDirection: false,
-        showSearchButton: false,
-        showSubscript: false,
-        showSuperscript: false,
-        showClipboardCut: false,
-        showClipboardCopy: false,
-        showClipboardPaste: false,
       ),
     );
   }
