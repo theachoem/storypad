@@ -70,7 +70,11 @@ class _HomeScrollInfo {
     _scrolling = true;
     List<StoryDbModel> stories = viewModel().stories?.items ?? [];
 
-    int targetStoryIndex = stories.indexWhere((e) => e.month == months[targetMonthIndex]);
+    int targetStoryIndex = -1;
+    if (targetMonthIndex >= 0 && targetMonthIndex < months.length) {
+      targetStoryIndex = stories.indexWhere((e) => e.month == months[targetMonthIndex]);
+    }
+
     if (targetStoryIndex == -1) {
       _scrolling = false;
       return;
