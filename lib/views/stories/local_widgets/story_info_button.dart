@@ -20,10 +20,12 @@ class StoryInfoButton extends StatelessWidget {
       child: IconButton(
         tooltip: tr("button.info"),
         icon: const Icon(SpIcons.info),
-        onPressed: () => SpStoryInfoSheet(
-          story: viewModel.story!,
-          persisted: viewModel.flowType == EditingFlowType.update,
-        ).show(context: context),
+        onPressed: viewModel.story == null
+            ? null
+            : () => SpStoryInfoSheet(
+                  story: viewModel.story!,
+                  persisted: viewModel.flowType == EditingFlowType.update,
+                ).show(context: context),
       ),
     );
   }
