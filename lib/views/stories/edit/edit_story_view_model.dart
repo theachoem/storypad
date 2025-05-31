@@ -124,7 +124,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
     });
   }
 
-  Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
+  Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
     if (didPop) return;
 
@@ -139,8 +139,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
     if (flowType == EditingFlowType.create) {
       if (lastSavedAtNotifier.value != null && story?.id != null) {
-        OkCancelResult result = await showDiscardConfirmation(context);
-        if (result == OkCancelResult.ok) {
+        OkCancelResult userAction = await showDiscardConfirmation(context);
+        if (userAction == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id);
           story = null;
           if (context.mounted) return Navigator.of(context).pop(null);
@@ -152,8 +152,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
       }
     } else if (flowType == EditingFlowType.update) {
       if (story?.updatedAt != initialStory?.updatedAt) {
-        OkCancelResult result = await showDiscardConfirmation(context);
-        if (result == OkCancelResult.ok) {
+        OkCancelResult userAction = await showDiscardConfirmation(context);
+        if (userAction == OkCancelResult.ok) {
           await StoryDbModel.db.set(initialStory!);
           story = initialStory;
           if (context.mounted) return Navigator.of(context).pop(null);
