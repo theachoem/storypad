@@ -6,8 +6,10 @@ class _Toolbar extends StatefulWidget {
     required this.preferences,
     required this.onThemeChanged,
     required this.backgroundColor,
+    required this.managingPage,
   });
 
+  final bool managingPage;
   final List<StoryPageObject> pages;
   final StoryPreferencesDbModel preferences;
   final void Function(StoryPreferencesDbModel) onThemeChanged;
@@ -44,19 +46,29 @@ class _ToolbarState extends State<_Toolbar> {
   void didUpdateWidget(covariant _Toolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    clearPreviousListeners();
+    setupListeners();
+  }
+
+  void clearPreviousListeners() {
+    for (int index = 0; index < widget.pages.length; index++) {
+      if (titleFocusListenters[index] != null) {
+        widget.pages[index].titleFocusNode.removeListener(titleFocusListenters[index]!);
+      }
+      if (bodyFocusListenters[index] != null) {
+        widget.pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
+      }
+    }
+
     titleFocusListenters.clear();
     bodyFocusListenters.clear();
-
-    setupListeners();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    titleFocusListenters.clear();
-    bodyFocusListenters.clear();
-
+    clearPreviousListeners();
     setupListeners();
   }
 
@@ -64,47 +76,62 @@ class _ToolbarState extends State<_Toolbar> {
     if (widget.pages[index].titleFocusNode.hasFocus) {
       titleFocused = true;
     } else {
-      titleFocused = false;
+      bool everyBodyNoFocus = widget.pages.every((e) => !e.bodyFocusNode.hasFocus);
+      if (everyBodyNoFocus && titleFocused) {
+        titleFocused = true;
+      } else {
+        titleFocused = false;
+      }
     }
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   void bodyFocusListener(int index) {
     if (widget.pages[index].bodyFocusNode.hasFocus) {
       bodyFocusedIndex = index;
+      titleFocused = false;
     }
 
-    setState(() {});
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    clearPreviousListeners();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.loose,
-      children: [
-        if (titleFocused) buildTitleToolbar(context),
-        if (!titleFocused)
-          ...List.generate(
-            widget.pages.length,
-            (index) {
-              return Visibility(
-                visible: index == bodyFocusedIndex,
-                child: Container(
-                  color: widget.backgroundColor,
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+    return Visibility(
+      visible: !widget.managingPage,
+      child: Stack(
+        fit: StackFit.loose,
+        children: [
+          if (titleFocused) buildTitleToolbar(context),
+          if (!titleFocused)
+            ...List.generate(
+              widget.pages.length,
+              (index) {
+                return Visibility(
+                  visible: index == bodyFocusedIndex,
+                  child: Container(
+                    color: widget.backgroundColor,
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: _QuillToolbar(
+                      controller: widget.pages[index].bodyController,
+                      context: context,
+                      backgroundColor: widget.backgroundColor,
+                    ),
                   ),
-                  child: _QuillToolbar(
-                    controller: widget.pages[index].bodyController,
-                    context: context,
-                    backgroundColor: widget.backgroundColor,
-                  ),
-                ),
-              );
-            },
-          )
-      ],
+                );
+              },
+            )
+        ],
+      ),
     );
   }
 

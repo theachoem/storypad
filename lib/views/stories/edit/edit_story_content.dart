@@ -29,6 +29,7 @@ class _EditStoryContent extends StatelessWidget {
       bottomNavigationBar: viewModel.story == null
           ? null
           : _Toolbar(
+              managingPage: viewModel.pagesManager.managingPage,
               pages: pages,
               backgroundColor: ColorScheme.of(context).readOnly.surface1,
               preferences: viewModel.story!.preferences,
