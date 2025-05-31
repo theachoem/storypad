@@ -72,6 +72,8 @@ class _SpFloatingPopUpButtonState extends State<SpFloatingPopUpButton> with Sing
   OverlayEntry? createFloating({
     required BuildContext context,
   }) {
+    if (!context.mounted) return null;
+
     final renderBox = context.findRenderObject();
     if (renderBox is! RenderBox) return null;
 
