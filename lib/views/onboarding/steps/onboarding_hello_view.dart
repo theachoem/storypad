@@ -33,11 +33,14 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
     super.initState();
 
     Future.delayed(const Duration(seconds: 1, milliseconds: 500)).then((e) {
-      final context = this.context;
-      if (!context.mounted) return;
-
-      OnboardingStep1Route().pushReplacement(context);
+      push();
     });
+  }
+
+  void push() {
+    if (context.mounted) {
+      OnboardingStep1Route().pushReplacement(context);
+    }
   }
 
   @override
