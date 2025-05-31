@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
@@ -47,7 +48,11 @@ class GoogleDriveBackupSource extends BaseBackupSource {
 
   @override
   Future<bool> signIn() async {
-    await _service.googleSignIn.signIn();
+    try {
+      await _service.googleSignIn.signIn();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     return _recheckIsSignedIn();
   }
 
