@@ -9,8 +9,8 @@ class _EditStoryContent extends StatelessWidget {
     if (viewModel.pagesManager.pagesMap.keys.isEmpty) return <StoryPageObject>[];
     return List.generate(viewModel.draftContent?.richPages?.length ?? 0, (index) {
       final page = viewModel.draftContent!.richPages![index];
-      return viewModel.pagesManager.pagesMap[page.id]!;
-    }).toList();
+      return viewModel.pagesManager.pagesMap[page.id];
+    }).toList().whereType<StoryPageObject>().toList();
   }
 
   @override

@@ -9,8 +9,8 @@ class _ShowChangeContent extends StatelessWidget {
     if (viewModel.pagesMap == null || viewModel.pagesMap!.keys.isEmpty) return <StoryPageObject>[];
     return List.generate(viewModel.content.richPages?.length ?? 0, (index) {
       final page = viewModel.content.richPages![index];
-      return viewModel.pagesMap![page.id]!;
-    }).toList();
+      return viewModel.pagesMap![page.id];
+    }).toList().whereType<StoryPageObject>().toList();
   }
 
   @override
