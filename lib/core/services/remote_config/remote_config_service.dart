@@ -92,7 +92,7 @@ class RemoteConfigService {
         await remoteConfig.activate();
         notifyListeners();
       }, onError: (error) {
-        debugPrint(error);
+        debugPrint(error.toString());
       });
     }
   }
