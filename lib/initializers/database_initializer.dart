@@ -11,6 +11,7 @@ class DatabaseInitializer {
   static Future<void> call() async {
     await StoryDbModel.db.initilize();
     await TagDbModel.db.initilize();
+
     await TemplateDbModel.db.initilize();
     await PreferenceDbModel.db.initilize();
     await AssetDbModel.db.initilize();

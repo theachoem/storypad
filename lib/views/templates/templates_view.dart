@@ -1,13 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/tags/show/show_tag_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_markdown_body.dart';
 
 import 'templates_view_model.dart';
 
 part 'templates_content.dart';
+part 'local_widgets/template_tile.dart';
+part 'local_widgets/empty_body.dart';
 
 class TemplatesRoute extends BaseRoute {
   const TemplatesRoute();

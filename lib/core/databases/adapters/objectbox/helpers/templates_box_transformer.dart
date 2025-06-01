@@ -1,7 +1,7 @@
 part of '../templates_box.dart';
 
 List<TemplateDbModel> _objectsToModels(Map<String, dynamic> options) {
-  List<TemplateDbModel> objects = options['objects'];
+  List<TemplateObjectBox> objects = options['objects'];
   return objects.map((object) => _objectToModel({'object': object})).toList();
 }
 

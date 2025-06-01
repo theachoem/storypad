@@ -248,7 +248,7 @@ class TemplateObjectBox extends BaseObjectBox {
   @Id(assignable: true)
   int id;
   int index;
-  List<String>? tags;
+  List<int>? tags;
   String? content;
 
   @Property(type: PropertyType.date)

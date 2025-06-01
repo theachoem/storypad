@@ -269,10 +269,20 @@ class _LibraryContent extends StatelessWidget {
           width: double.infinity,
           alignment: Alignment.center,
           padding: const EdgeInsets.all(24.0),
-          child: Text(
-            tr("page.library.empty_message"),
-            textAlign: TextAlign.center,
-            style: TextTheme.of(context).bodyLarge,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 150),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 12.0,
+              children: [
+                const Icon(SpIcons.photo, size: 32.0),
+                Text(
+                  tr("page.library.empty_message"),
+                  textAlign: TextAlign.center,
+                  style: TextTheme.of(context).bodyLarge,
+                ),
+              ],
+            ),
           ),
         ),
       );

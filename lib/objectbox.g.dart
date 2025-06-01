@@ -368,7 +368,7 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(3, 8534163020409733992),
         name: 'tags',
-        type: 30,
+        type: 27,
         flags: 0,
       ),
       obx_int.ModelProperty(
@@ -914,9 +914,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       objectToFB: (TemplateObjectBox object, fb.Builder fbb) {
         final tagsOffset = object.tags == null
             ? null
-            : fbb.writeList(
-                object.tags!.map(fbb.writeString).toList(growable: false),
-              );
+            : fbb.writeListInt64(object.tags!);
         final contentOffset = object.content == null
             ? null
             : fbb.writeString(object.content!);
@@ -955,8 +953,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final contentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 10);
-        final tagsParam = const fb.ListReader<String>(
-          fb.StringReader(asciiOptimization: true),
+        final tagsParam = const fb.ListReader<int>(
+          fb.Int64Reader(),
           lazy: false,
         ).vTableGetNullable(buffer, rootOffset, 8);
         final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
@@ -1254,7 +1252,7 @@ class TemplateObjectBox_ {
   );
 
   /// See [TemplateObjectBox.tags].
-  static final tags = obx.QueryStringVectorProperty<TemplateObjectBox>(
+  static final tags = obx.QueryIntegerVectorProperty<TemplateObjectBox>(
     _entities[4].properties[2],
   );
 

@@ -14,7 +14,7 @@ class TemplateDbModel extends BaseDbModel {
   @override
   final int id;
   final int index;
-  final List<String>? tags;
+  final List<int>? tags;
   final StoryContentDbModel? content;
   final DateTime createdAt;
 

@@ -9,7 +9,7 @@ part of 'template_db_model.dart';
 abstract class _$TemplateDbModelCWProxy {
   TemplateDbModel id(int id);
 
-  TemplateDbModel tags(List<String> tags);
+  TemplateDbModel tags(List<int>? tags);
 
   TemplateDbModel content(StoryContentDbModel? content);
 
@@ -31,7 +31,7 @@ abstract class _$TemplateDbModelCWProxy {
   /// ````
   TemplateDbModel call({
     int id,
-    List<String> tags,
+    List<int>? tags,
     StoryContentDbModel? content,
     DateTime createdAt,
     DateTime updatedAt,
@@ -51,7 +51,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel id(int id) => this(id: id);
 
   @override
-  TemplateDbModel tags(List<String> tags) => this(tags: tags);
+  TemplateDbModel tags(List<int>? tags) => this(tags: tags);
 
   @override
   TemplateDbModel content(StoryContentDbModel? content) =>
@@ -100,7 +100,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
       tags: tags == const $CopyWithPlaceholder()
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
-          : tags as List<String>,
+          : tags as List<int>?,
       content: content == const $CopyWithPlaceholder()
           ? _value.content
           // ignore: cast_nullable_to_non_nullable
@@ -142,7 +142,9 @@ extension $TemplateDbModelCopyWith on TemplateDbModel {
 TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
     TemplateDbModel(
       id: (json['id'] as num).toInt(),
-      tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
+      tags: (json['tags'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
       content: json['content'] == null
           ? null
           : StoryContentDbModel.fromJson(
