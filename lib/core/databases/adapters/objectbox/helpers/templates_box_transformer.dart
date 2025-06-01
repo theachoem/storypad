@@ -22,6 +22,7 @@ TemplateObjectBox _modelToObject(Map<String, dynamic> options) {
     updatedAt: model.updatedAt,
     lastSavedDeviceId: model.lastSavedDeviceId,
     permanentlyDeletedAt: model.permanentlyDeletedAt,
+    preferences: jsonEncode(model.preferences.toNonNullJson()),
   );
 }
 
@@ -37,5 +38,6 @@ TemplateDbModel _objectToModel(Map<String, dynamic> options) {
     updatedAt: object.updatedAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
+    preferences: StoryContentHelper.decodePreferences(object.preferences),
   );
 }

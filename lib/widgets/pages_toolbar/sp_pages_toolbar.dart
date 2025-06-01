@@ -1,7 +1,24 @@
-part of '../edit_story_view.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 
-class _Toolbar extends StatefulWidget {
-  const _Toolbar({
+part './quill_toolbar.dart';
+part './title_toolbar.dart';
+
+class SpPagesToolbar extends StatefulWidget {
+  const SpPagesToolbar({
+    super.key,
     required this.pages,
     required this.preferences,
     required this.onThemeChanged,
@@ -16,10 +33,10 @@ class _Toolbar extends StatefulWidget {
   final Color? backgroundColor;
 
   @override
-  State<_Toolbar> createState() => _ToolbarState();
+  State<SpPagesToolbar> createState() => SpPagesToolbarState();
 }
 
-class _ToolbarState extends State<_Toolbar> {
+class SpPagesToolbarState extends State<SpPagesToolbar> {
   Map<int, void Function()> titleFocusListenters = {};
   Map<int, void Function()> bodyFocusListenters = {};
 
@@ -43,7 +60,7 @@ class _ToolbarState extends State<_Toolbar> {
   }
 
   @override
-  void didUpdateWidget(covariant _Toolbar oldWidget) {
+  void didUpdateWidget(covariant SpPagesToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     clearPreviousListeners();

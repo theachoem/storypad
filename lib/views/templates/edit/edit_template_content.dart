@@ -23,17 +23,23 @@ class _EditTemplateContent extends StatelessWidget {
         initialTags: viewModel.template?.tags ?? [],
       ),
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: CupertinoSheetRoute.hasParentSheet(context) ? null : const CloseButton(),
         actions: [
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
           const StoryEndDrawerButton(),
-          if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+          const SizedBox(width: 8.0),
         ],
       ),
       body: buildBody(context, pages),
+      bottomNavigationBar: viewModel.template == null
+          ? null
+          : SpPagesToolbar(
+              managingPage: viewModel.pagesManager.managingPage,
+              pages: pages,
+              backgroundColor: ColorScheme.of(context).readOnly.surface1,
+              preferences: viewModel.template!.preferences,
+              onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+            ),
     );
   }
 
@@ -43,7 +49,7 @@ class _EditTemplateContent extends StatelessWidget {
     }
 
     return StoryPagesBuilder(
-      preferences: StoryPreferencesDbModel.create(),
+      preferences: viewModel.template?.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
       header: null,

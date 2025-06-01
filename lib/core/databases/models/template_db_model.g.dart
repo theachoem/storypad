@@ -13,6 +13,8 @@ abstract class _$TemplateDbModelCWProxy {
 
   TemplateDbModel content(StoryContentDbModel? content);
 
+  TemplateDbModel preferences(StoryPreferencesDbModel? preferences);
+
   TemplateDbModel createdAt(DateTime createdAt);
 
   TemplateDbModel updatedAt(DateTime updatedAt);
@@ -33,6 +35,7 @@ abstract class _$TemplateDbModelCWProxy {
     int id,
     List<int>? tags,
     StoryContentDbModel? content,
+    StoryPreferencesDbModel? preferences,
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
@@ -56,6 +59,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   @override
   TemplateDbModel content(StoryContentDbModel? content) =>
       this(content: content);
+
+  @override
+  TemplateDbModel preferences(StoryPreferencesDbModel? preferences) =>
+      this(preferences: preferences);
 
   @override
   TemplateDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
@@ -86,6 +93,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
     Object? content = const $CopyWithPlaceholder(),
+    Object? preferences = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
@@ -105,6 +113,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
           ? _value.content
           // ignore: cast_nullable_to_non_nullable
           : content as StoryContentDbModel?,
+      preferences: preferences == const $CopyWithPlaceholder()
+          ? _value.preferences
+          // ignore: cast_nullable_to_non_nullable
+          : preferences as StoryPreferencesDbModel?,
       createdAt: createdAt == const $CopyWithPlaceholder()
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
@@ -149,6 +161,10 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
           ? null
           : StoryContentDbModel.fromJson(
               json['content'] as Map<String, dynamic>),
+      preferences: json['preferences'] == null
+          ? null
+          : StoryPreferencesDbModel.fromJson(
+              json['preferences'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
@@ -163,6 +179,7 @@ Map<String, dynamic> _$TemplateDbModelToJson(TemplateDbModel instance) =>
       'id': instance.id,
       'index': instance.index,
       'tags': instance.tags,
+      'preferences': instance.preferences.toJson(),
       'content': instance.content?.toJson(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),

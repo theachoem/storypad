@@ -1,8 +1,9 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:html_character_entities/html_character_entities.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 
 class StoryContentHelper {
   static StoryContentDbModel stringToContent(String str) {
@@ -41,5 +42,24 @@ class StoryContentHelper {
     }
 
     return content;
+  }
+
+  static StoryPreferencesDbModel decodePreferences(
+    String? preferences, {
+    bool? showDayCount,
+  }) {
+    StoryPreferencesDbModel? decodedDreferences;
+
+    if (preferences != null) {
+      try {
+        decodedDreferences = StoryPreferencesDbModel.fromJson(jsonDecode(preferences));
+      } catch (e) {
+        debugPrint(".decodePreferences error: $e");
+      }
+    }
+
+    decodedDreferences ??= StoryPreferencesDbModel.create();
+    if (showDayCount != null) decodedDreferences = decodedDreferences.copyWith(showDayCount: showDayCount);
+    return decodedDreferences;
   }
 }

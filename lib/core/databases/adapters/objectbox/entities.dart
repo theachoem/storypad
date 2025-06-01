@@ -250,6 +250,7 @@ class TemplateObjectBox extends BaseObjectBox {
   int index;
   List<int>? tags;
   String? content;
+  String? preferences;
 
   @Property(type: PropertyType.date)
   DateTime createdAt;
@@ -268,6 +269,7 @@ class TemplateObjectBox extends BaseObjectBox {
     required this.id,
     required this.index,
     required this.content,
+    required this.preferences,
     required this.tags,
     required this.createdAt,
     required this.updatedAt,

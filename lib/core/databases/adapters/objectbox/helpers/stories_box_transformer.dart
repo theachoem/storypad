@@ -22,7 +22,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     createdAt: object.createdAt,
     tags: object.tags,
     assets: object.assets,
-    preferences: decodePreferences(object),
+    preferences: StoryContentHelper.decodePreferences(object.preferences, showDayCount: object.showDayCount),
     latestContent: object.latestContent != null ? StoryContentHelper.stringToContent(object.latestContent!) : null,
     draftContent: object.draftContent != null ? StoryContentHelper.stringToContent(object.draftContent!) : null,
     movedToBinAt: object.movedToBinAt,
@@ -93,20 +93,4 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     permanentlyDeletedAt: null,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );
-}
-
-StoryPreferencesDbModel decodePreferences(StoryObjectBox object) {
-  StoryPreferencesDbModel? preferences;
-
-  if (object.preferences != null) {
-    try {
-      preferences = StoryPreferencesDbModel.fromJson(jsonDecode(object.preferences!));
-    } catch (e) {
-      debugPrint(".decodePreferences error: $e");
-    }
-  }
-
-  preferences ??= StoryPreferencesDbModel.create();
-  if (object.showDayCount != null) preferences = preferences.copyWith(showDayCount: object.showDayCount);
-  return preferences;
 }

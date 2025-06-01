@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -170,6 +171,23 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     }
 
     return true;
+  }
+
+  Future<void> changePreferences(StoryPreferencesDbModel preferences) async {
+    if (preferences.layoutType != template?.preferences.layoutType) {
+      pagesManager.currentPageIndexNotifier.value = null;
+
+      if (pagesManager.pageController.hasClients) pagesManager.pageController.jumpToPage(0);
+      if (pagesManager.pageScrollController.hasClients) pagesManager.pageScrollController.jumpTo(0);
+    }
+
+    template = template!.copyWith(updatedAt: DateTime.now(), preferences: preferences);
+    notifyListeners();
+
+    if (hasDataWritten) {
+      await TemplateDbModel.db.set(template!);
+      lastSavedAtNotifier.value = DateTime.now();
+    }
   }
 
   void done(BuildContext context) {

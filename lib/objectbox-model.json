@@ -281,7 +281,7 @@
     },
     {
       "id": "6:4197752153260494722",
-      "lastPropertyId": "8:7677675212420904566",
+      "lastPropertyId": "9:7022531881534829655",
       "name": "TemplateObjectBox",
       "properties": [
         {
@@ -323,6 +323,11 @@
         {
           "id": "8:7677675212420904566",
           "name": "lastSavedDeviceId",
+          "type": 9
+        },
+        {
+          "id": "9:7022531881534829655",
+          "name": "preferences",
           "type": 9
         }
       ],

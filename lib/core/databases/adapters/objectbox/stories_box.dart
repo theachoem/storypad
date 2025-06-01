@@ -6,7 +6,6 @@ import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
 

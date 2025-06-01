@@ -28,7 +28,7 @@ class _EditStoryContent extends StatelessWidget {
       body: buildBody(context, pages),
       bottomNavigationBar: viewModel.story == null
           ? null
-          : _Toolbar(
+          : SpPagesToolbar(
               managingPage: viewModel.pagesManager.managingPage,
               pages: pages,
               backgroundColor: ColorScheme.of(context).readOnly.surface1,
