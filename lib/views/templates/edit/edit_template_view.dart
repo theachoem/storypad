@@ -5,6 +5,7 @@ import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/views/stories/local_widgets/story_end_drawer_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
+import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';

@@ -95,7 +95,7 @@ class _StoryPage extends StatelessWidget {
           ),
         ],
         _QuillEditor(
-          onChanged: () => onChange(),
+          onChanged: onChanged != null ? () => onChange() : null,
           bodyFocusNode: page.bodyFocusNode,
           bodyController: page.bodyController,
           scrollController: page.bodyScrollController,

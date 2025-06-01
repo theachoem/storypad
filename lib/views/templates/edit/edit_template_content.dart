@@ -45,7 +45,7 @@ class _EditTemplateContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context, List<StoryPageObject> pages) {
-    if (viewModel.draftContent == null || pages.isEmpty) {
+    if (viewModel.draftContent == null || pages.isEmpty || viewModel.template == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
@@ -53,9 +53,16 @@ class _EditTemplateContent extends StatelessWidget {
       preferences: viewModel.template?.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
-      header: null,
-      padding: MediaQuery.paddingOf(context),
-      pageScrollController: null,
+      header: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
+        child: TemplateTagLabels(template: viewModel.template!),
+      ),
+      padding: EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left,
+        right: MediaQuery.of(context).padding.right,
+        bottom: MediaQuery.of(context).padding.bottom + 12,
+      ),
+      pageScrollController: viewModel.pagesManager.pageScrollController,
       viewInsets: MediaQuery.viewInsetsOf(context),
       onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
       actions: StoryPageBuilderAction(
