@@ -21,7 +21,7 @@ class _EmptyBody extends StatelessWidget {
               children: [
                 Icon(SpIcons.book, size: 32.0),
                 Text(
-                  "Your templates will be appeared here.",
+                  tr('page.templates.empty_message'),
                   textAlign: TextAlign.center,
                   style: TextTheme.of(context).bodyLarge,
                 ),

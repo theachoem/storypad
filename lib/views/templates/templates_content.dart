@@ -14,10 +14,10 @@ class _TemplatesContent extends StatelessWidget {
         appBar: AppBar(
           title: Text(tr("page.templates.title")),
           actions: [
-            IconButton(
-              icon: const Icon(SpIcons.lightBulb),
-              onPressed: () => viewModel.goToNewPage(context),
-            ),
+            // IconButton(
+            //   icon: const Icon(SpIcons.lightBulb),
+            //   onPressed: () => viewModel.goToNewPage(context),
+            // ),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -27,7 +27,7 @@ class _TemplatesContent extends StatelessWidget {
           foregroundColor: Theme.of(context).colorScheme.primary,
           isExtended: true,
           shape: StadiumBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
-          label: const Text("New Template"),
+          label: Text(tr('button.new_template')),
           icon: const Icon(SpIcons.add),
           onPressed: () => viewModel.goToNewPage(context),
         ),
