@@ -39,7 +39,12 @@ class _TemplatesContent extends StatelessWidget {
 
     return ReorderableListView.builder(
       itemCount: templates.length,
-      padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      padding: EdgeInsets.only(
+        top: 16.0,
+        left: MediaQuery.of(context).padding.left + 16.0,
+        right: MediaQuery.of(context).padding.right + 16.0,
+        bottom: MediaQuery.of(context).padding.bottom + 16.0,
+      ),
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         return Container(
