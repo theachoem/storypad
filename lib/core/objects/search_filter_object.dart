@@ -12,6 +12,7 @@ class SearchFilterObject {
   final int? day;
   final Set<PathType> types;
   final int? tagId;
+  final int? templateId;
   final int? assetId;
   final bool? starred;
 
@@ -20,6 +21,7 @@ class SearchFilterObject {
     required this.types,
     required this.tagId,
     required this.assetId,
+    this.templateId,
     this.month,
     this.day,
     this.starred,
@@ -40,6 +42,7 @@ class SearchFilterObject {
     }
 
     if (tagId != null) filters['tag'] = tagId;
+    if (templateId != null) filters['template'] = templateId;
     if (assetId != null) filters['asset'] = assetId;
     if (starred != null) filters['starred'] = starred;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();

@@ -59,6 +59,8 @@ class StoryObjectBox extends BaseObjectBox {
   List<String>? tags;
   List<int>? assets;
 
+  int? templateId;
+
   // for query
   String? metadata;
   String? preferences;
@@ -82,6 +84,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,
+    required this.templateId,
     required this.latestContent,
     required this.draftContent,
     @Deprecated('deprecated') required this.changes,
@@ -225,6 +228,52 @@ class PreferenceObjectBox extends BaseObjectBox {
     required this.id,
     required this.key,
     required this.value,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
+  });
+
+  @override
+  void toPermanentlyDeleted() {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}
+
+@Entity()
+class TemplateObjectBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+  int index;
+  List<int>? tags;
+  String? content;
+  String? preferences;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  TemplateObjectBox({
+    required this.id,
+    required this.index,
+    required this.content,
+    required this.preferences,
+    required this.tags,
     required this.createdAt,
     required this.updatedAt,
     this.lastSavedDeviceId,

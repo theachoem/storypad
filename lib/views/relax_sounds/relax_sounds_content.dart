@@ -7,7 +7,7 @@ class _RelaxSoundsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kHasRelaxSoundsFeature) return const SizedBox.shrink();
+    if (!FeatureFlags.relaxSound) return const SizedBox.shrink();
 
     final provider = Provider.of<RelaxSoundsProvider>(context);
     Iterable<RelaxSoundObject> relaxSounds = provider.relaxSounds.values;

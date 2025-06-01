@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -10,7 +8,7 @@ const String kAppName = String.fromEnvironment('APP_NAME');
 const String kRevenueCatAndroidApiKey = String.fromEnvironment('REVENUE_CAT_ANDROID_API_KEY');
 const String kRevenueCatIosApiKey = String.fromEnvironment('REVENUE_CAT_IOS_API_KEY');
 
-const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
+const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'des';
 
 const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;
@@ -22,9 +20,6 @@ const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
-
-// Disable for now.
-const bool kHasRelaxSoundsFeature = false || kDebugMode;
 
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;

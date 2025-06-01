@@ -1,43 +1,5 @@
 part of '../stories_box.dart';
 
-// TODO: remove this method when ready.
-// This is a low level method to make sure view get rich pages instead of pages when using.
-StoryContentDbModel _convertPagesToRichPages(StoryContentDbModel content) {
-  // ignore: deprecated_member_use_from_same_package
-  if (content.pages != null) {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    content = content.copyWith(
-      pages: null,
-      richPages: List.generate(
-        // ignore: deprecated_member_use_from_same_package
-        content.pages?.length ?? 0,
-        (index) => StoryPageDbModel(
-          id: now + index,
-          title: index == 0 ? content.title : null,
-          // ignore: deprecated_member_use_from_same_package
-          body: content.pages![index],
-        ),
-      ),
-    );
-  }
-
-  return content;
-}
-
-StoryContentDbModel _stringToContent(String str) {
-  String decoded = HtmlCharacterEntities.decode(str);
-  dynamic json = jsonDecode(decoded);
-
-  StoryContentDbModel content = StoryContentDbModel.fromJson(json);
-  return _convertPagesToRichPages(content);
-}
-
-String _contentToString(StoryContentDbModel content) {
-  Map<String, dynamic> json = content.toJson();
-  String encoded = jsonEncode(json);
-  return HtmlCharacterEntities.encode(encoded);
-}
-
 StoryDbModel _objectToModel(Map<String, dynamic> map) {
   StoryObjectBox object = map['object'];
   // Map<String, dynamic>? options = map['options'];
@@ -60,12 +22,13 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     createdAt: object.createdAt,
     tags: object.tags,
     assets: object.assets,
-    preferences: decodePreferences(object),
-    latestContent: object.latestContent != null ? _stringToContent(object.latestContent!) : null,
-    draftContent: object.draftContent != null ? _stringToContent(object.draftContent!) : null,
+    preferences: StoryContentHelper.decodePreferences(object.preferences, showDayCount: object.showDayCount),
+    latestContent: object.latestContent != null ? StoryContentHelper.stringToContent(object.latestContent!) : null,
+    draftContent: object.draftContent != null ? StoryContentHelper.stringToContent(object.draftContent!) : null,
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
+    templateId: object.templateId,
   );
 }
 
@@ -121,30 +84,15 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     starred: story.starred,
     feeling: story.feeling,
     showDayCount: null,
+    templateId: story.templateId,
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
     metadata: story.latestContent?.safeMetadata,
-    latestContent: story.latestContent != null ? _contentToString(story.latestContent!) : null,
-    draftContent: story.draftContent != null ? _contentToString(story.draftContent!) : null,
+    latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
+    draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
     permanentlyDeletedAt: null,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );
-}
-
-StoryPreferencesDbModel decodePreferences(StoryObjectBox object) {
-  StoryPreferencesDbModel? preferences;
-
-  if (object.preferences != null) {
-    try {
-      preferences = StoryPreferencesDbModel.fromJson(jsonDecode(object.preferences!));
-    } catch (e) {
-      debugPrint(".decodePreferences error: $e");
-    }
-  }
-
-  preferences ??= StoryPreferencesDbModel.create();
-  if (object.showDayCount != null) preferences = preferences.copyWith(showDayCount: object.showDayCount);
-  return preferences;
 }

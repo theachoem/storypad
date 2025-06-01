@@ -22,6 +22,8 @@ TagObjectBox _modelToObject(Map<String, dynamic> options) {
     emoji: model.emoji,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
+    lastSavedDeviceId: model.lastSavedDeviceId,
+    permanentlyDeletedAt: model.permanentlyDeletedAt,
   );
 }
 

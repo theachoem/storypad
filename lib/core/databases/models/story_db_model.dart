@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 
 part 'story_db_model.g.dart';
@@ -48,6 +49,7 @@ class StoryDbModel extends BaseDbModel {
 
   @override
   final DateTime updatedAt;
+  final int? templateId;
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
 
@@ -92,6 +94,7 @@ class StoryDbModel extends BaseDbModel {
     required this.movedToBinAt,
     required this.latestContent,
     required this.draftContent,
+    required this.templateId,
     required this.lastSavedDeviceId,
     this.permanentlyDeletedAt,
   }) : _preferences = preferences;
@@ -234,8 +237,10 @@ class StoryDbModel extends BaseDbModel {
     int? initialYear,
     int? initialMonth,
     int? initialDay,
-    int? initialTagId,
+    List<int>? initialTagIds,
+    TemplateDbModel? template,
   }) {
+    List<int> tags = initialTagIds ?? template?.tags ?? [];
     final now = DateTime.now();
     return StoryDbModel(
       year: initialYear ?? date.year,
@@ -248,13 +253,14 @@ class StoryDbModel extends BaseDbModel {
       id: now.millisecondsSinceEpoch,
       starred: false,
       feeling: null,
-      preferences: StoryPreferencesDbModel.create(),
-      latestContent: StoryContentDbModel.create(),
+      preferences: template?.preferences ?? StoryPreferencesDbModel.create(),
+      latestContent: template?.content ?? StoryContentDbModel.create(),
       draftContent: null,
       updatedAt: now,
       createdAt: now,
-      tags: initialTagId != null ? [initialTagId.toString()] : [],
+      tags: tags.isNotEmpty == true ? tags.map((e) => e.toString()).toList() : null,
       assets: [],
+      templateId: template?.id,
       movedToBinAt: null,
       lastSavedDeviceId: null,
     );

@@ -1,14 +1,11 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:html_character_entities/html_character_entities.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
-import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
 
@@ -140,6 +137,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    int? template = filters?["template"];
     int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
     int? order = filters?["order"];
@@ -151,6 +149,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
         StoryObjectBox_.id.notNull().and(StoryObjectBox_.permanentlyDeletedAt.isNull());
 
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+    if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));

@@ -6,6 +6,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -24,6 +25,7 @@ abstract class BaseBackupSource {
     PreferenceDbModel.db,
     StoryDbModel.db,
     TagDbModel.db,
+    TemplateDbModel.db,
     AssetDbModel.db,
   ];
 

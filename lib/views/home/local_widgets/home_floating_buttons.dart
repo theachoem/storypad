@@ -52,9 +52,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
       opacity: Tween<double>(begin: 1, end: 0.0).animate(animation),
       child: FloatingActionButton(
         tooltip: tr("button.new_story"),
-        // Uncomment when releasing template feature.
-        // onPressed: () => toggle(context),
-        onPressed: () => widget.viewModel.goToNewPage(context),
+        onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
         child: const Icon(SpIcons.newStory),
       ),
     );
@@ -75,7 +73,10 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         tooltip: tr("page.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
         icon: const Icon(Icons.lightbulb_outlined),
-        onPressed: () {},
+        onPressed: () {
+          toggle(context);
+          widget.viewModel.goToTemplatePage(context);
+        },
       ),
     ];
 

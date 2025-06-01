@@ -1,4 +1,4 @@
-part of '../edit_story_view.dart';
+part of 'sp_pages_toolbar.dart';
 
 class _TitleToolbar extends StatelessWidget {
   const _TitleToolbar({

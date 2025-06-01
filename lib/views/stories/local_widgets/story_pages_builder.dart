@@ -16,7 +16,6 @@ import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.da
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/theme_provider.dart';
-import 'package:storypad/views/stories/local_widgets/story_header.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
@@ -59,7 +58,9 @@ class StoryPagesBuilder extends StatelessWidget {
   final EdgeInsets viewInsets;
   final ScrollController? pageScrollController;
   final EdgeInsets padding;
-  final StoryHeader? header;
+
+  /// [StoryHeader]
+  final Widget? header;
   final StoryPreferencesDbModel? preferences;
   final PageController? pageController;
   final StoryContentDbModel storyContent;

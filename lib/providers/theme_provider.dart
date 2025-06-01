@@ -17,6 +17,7 @@ class ThemeProvider extends ChangeNotifier {
     storage.remove();
     notifyListeners();
 
+    AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _theme.fontFamily);
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
     AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
     AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);

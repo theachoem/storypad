@@ -16,6 +16,7 @@ class _CalendarContent extends StatelessWidget {
       length: tags.length,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           bottom: tags.length == 1
               ? const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1))
               : buildTagsTabBar(tags),

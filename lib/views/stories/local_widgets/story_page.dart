@@ -63,7 +63,9 @@ class _StoryPage extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           buildEditor(context),
-          if (!readOnly && preferences?.layoutType == PageLayoutType.list) buildMoreVertButton(context),
+          if (canMoveUp || canMoveDown || canDeletePage) ...[
+            if (!readOnly && preferences?.layoutType == PageLayoutType.list) buildMoreVertButton(context),
+          ]
         ],
       ),
     );
@@ -93,7 +95,7 @@ class _StoryPage extends StatelessWidget {
           ),
         ],
         _QuillEditor(
-          onChanged: () => onChange(),
+          onChanged: onChanged != null ? () => onChange() : null,
           bodyFocusNode: page.bodyFocusNode,
           bodyController: page.bodyController,
           scrollController: page.bodyScrollController,

@@ -45,6 +45,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel draftContent(StoryContentDbModel? draftContent);
 
+  StoryDbModel templateId(int? templateId);
+
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
   StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
@@ -75,6 +77,7 @@ abstract class _$StoryDbModelCWProxy {
     DateTime? movedToBinAt,
     StoryContentDbModel? latestContent,
     StoryContentDbModel? draftContent,
+    int? templateId,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
   });
@@ -148,6 +151,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       this(draftContent: draftContent);
 
   @override
+  StoryDbModel templateId(int? templateId) => this(templateId: templateId);
+
+  @override
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       this(lastSavedDeviceId: lastSavedDeviceId);
 
@@ -183,6 +189,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? movedToBinAt = const $CopyWithPlaceholder(),
     Object? latestContent = const $CopyWithPlaceholder(),
     Object? draftContent = const $CopyWithPlaceholder(),
+    Object? templateId = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
@@ -263,6 +270,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.draftContent
           // ignore: cast_nullable_to_non_nullable
           : draftContent as StoryContentDbModel?,
+      templateId: templateId == const $CopyWithPlaceholder()
+          ? _value.templateId
+          // ignore: cast_nullable_to_non_nullable
+          : templateId as int?,
       lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
@@ -318,6 +329,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
           ? null
           : StoryContentDbModel.fromJson(
               json['draft_content'] as Map<String, dynamic>),
+      templateId: (json['template_id'] as num?)?.toInt(),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
       permanentlyDeletedAt: json['permanently_deleted_at'] == null
           ? null
@@ -343,6 +355,7 @@ Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
       'draft_content': instance.draftContent?.toJson(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'template_id': instance.templateId,
       'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
       'preferences': instance.preferences.toJson(),

@@ -30,7 +30,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
 
   Widget buildButtons(BuildContext context) {
     final buttons = [
-      if (kHasRelaxSoundsFeature)
+      if (FeatureFlags.relaxSound)
         SpFadeIn.bound(
           child: IconButton(
             color: Theme.of(context).colorScheme.onPrimary,

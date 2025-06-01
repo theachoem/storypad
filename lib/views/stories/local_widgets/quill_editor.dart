@@ -16,7 +16,7 @@ class _QuillEditor extends StatefulWidget {
   final ScrollController scrollController;
   final bool readOnly;
   final StoryContentDbModel storyContent;
-  final void Function() onChanged;
+  final void Function()? onChanged;
   final void Function()? onGoToEdit;
 
   @override
@@ -39,7 +39,7 @@ class _QuillEditorState extends State<_QuillEditor> {
   }
 
   void _listener() {
-    widget.onChanged();
+    widget.onChanged?.call();
   }
 
   void _focusListener() {
@@ -73,7 +73,7 @@ class _QuillEditorState extends State<_QuillEditor> {
         quillMagnifierBuilder: null,
         padding: const EdgeInsets.only(top: 4, left: 12.0, bottom: 20, right: 12.0),
         autoFocus: false,
-        checkBoxReadOnly: widget.readOnly ? false : null,
+        checkBoxReadOnly: widget.onChanged == null ? true : (widget.readOnly ? false : null),
         enableScribble: !widget.readOnly,
         showCursor: !widget.readOnly,
         paintCursorAboveText: !widget.readOnly,
