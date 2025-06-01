@@ -118,7 +118,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
 
     try {
       await assetBackupState.uploadAssets();
-      bool assetSynced = assetBackupState.localAssets == null || assetBackupState.localAssets!.isEmpty;
+      final localAssets = assetBackupState.getLocalAsset(source.email);
+      bool assetSynced = localAssets == null || localAssets.isEmpty;
       if (assetSynced) {
         await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
       }

@@ -13,7 +13,6 @@ class AssetBackupService {
   });
 
   CollectionDbModel<AssetDbModel>? assets;
-  List<AssetDbModel>? localAssets;
   ValueNotifier<int?> loadingAssetIdNotifier = ValueNotifier(null);
 
   Future<void> loadAssets() async {
@@ -21,21 +20,14 @@ class AssetBackupService {
   }
 
   Future<void> uploadAssets() async {
-    final items = assets?.items ?? [];
-    final cloudId = source.cloudId;
     final email = source.email;
     if (source.email == null) return;
 
-    localAssets = items
-        .where((e) => e.cloudDestinations[cloudId] == null || e.cloudDestinations[cloudId]?[email] == null)
-        .toList()
-        .where((e) => e.localFile?.existsSync() == true)
-        .toList();
-
+    List<AssetDbModel>? localAssets = getLocalAsset(email);
     debugPrint('🚧 $runtimeType#uploadAssets ...');
 
-    if (localAssets == null || localAssets!.isEmpty) return;
-    for (AssetDbModel asset in [...localAssets!]) {
+    if (localAssets == null || localAssets.isEmpty) return;
+    for (AssetDbModel asset in [...localAssets]) {
       if (asset.localFile == null) continue;
 
       loadingAssetIdNotifier.value = asset.id;
@@ -44,13 +36,23 @@ class AssetBackupService {
 
       if (uploadedAsset != null) {
         assets = assets?.replaceElement(uploadedAsset);
-        localAssets!.removeWhere((e) => e.id == uploadedAsset.id);
+        localAssets.removeWhere((e) => e.id == uploadedAsset.id);
       }
     }
 
     await loadAssets();
-    debugPrint('🚧 $runtimeType#uploadAssets -> Done with remain un-uploaded assets: ${localAssets?.length}');
+    debugPrint('🚧 $runtimeType#uploadAssets -> Done with remain un-uploaded assets: ${localAssets.length}');
     notifyListeners();
+  }
+
+  List<AssetDbModel>? getLocalAsset(String? email) {
+    final cloudId = source.cloudId;
+    List<AssetDbModel>? localAssets = assets?.items
+        .where((e) => e.cloudDestinations[cloudId] == null || e.cloudDestinations[cloudId]?[email] == null)
+        .toList()
+        .where((e) => e.localFile?.existsSync() == true)
+        .toList();
+    return localAssets;
   }
 
   Future<void> deleteAsset(AssetDbModel asset, int storyCount) async {

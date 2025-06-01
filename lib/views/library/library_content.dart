@@ -19,10 +19,9 @@ class _LibraryContent extends StatelessWidget {
   }
 
   Widget buildBottomNavigation(BackupProvider provider, BuildContext context) {
+    final localAssets = provider.assetBackupState.getLocalAsset(provider.source.email);
     return Visibility(
-      visible: provider.assetBackupState.localAssets != null &&
-          provider.assetBackupState.localAssets?.isNotEmpty == true &&
-          provider.source.isSignedIn == true,
+      visible: localAssets != null && localAssets.isNotEmpty == true && provider.source.isSignedIn == true,
       child: SpFadeIn.fromBottom(
         child: Column(
           mainAxisSize: MainAxisSize.min,
