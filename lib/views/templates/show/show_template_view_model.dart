@@ -62,7 +62,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     }
   }
 
-  void goToPreviousStories(BuildContext context, TemplateDbModel template) async {
+  void goToPreviousStories(BuildContext context) async {
     TemplateStoriesRoute(
       template: template,
     ).push(context);

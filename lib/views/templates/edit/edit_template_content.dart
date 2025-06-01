@@ -53,9 +53,9 @@ class _EditTemplateContent extends StatelessWidget {
       preferences: viewModel.template?.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
-      header: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
-        child: TemplateTagLabels(template: viewModel.template!),
+      header: TemplateTagLabels(
+        template: viewModel.template!,
+        margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
       ),
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,

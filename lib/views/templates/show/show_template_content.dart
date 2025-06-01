@@ -31,6 +31,11 @@ class _ShowTemplateContent extends StatelessWidget {
             items: (context) {
               return [
                 SpPopMenuItem(
+                  leadingIconData: SpIcons.book,
+                  title: tr("general.previous_stories"),
+                  onPressed: () => viewModel.goToPreviousStories(context),
+                ),
+                SpPopMenuItem(
                   titleStyle: TextStyle(color: ColorScheme.of(context).error),
                   leadingIconData: SpIcons.delete,
                   title: tr("button.delete"),
@@ -71,9 +76,9 @@ class _ShowTemplateContent extends StatelessWidget {
       preferences: viewModel.template.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
-      header: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
-        child: TemplateTagLabels(template: viewModel.template),
+      header: TemplateTagLabels(
+        template: viewModel.template,
+        margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
       ),
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
