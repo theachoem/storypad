@@ -278,9 +278,58 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "6:4197752153260494722",
+      "lastPropertyId": "8:7677675212420904566",
+      "name": "TemplateObjectBox",
+      "properties": [
+        {
+          "id": "1:4888786211485405431",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:965504840504950186",
+          "name": "index",
+          "type": 6
+        },
+        {
+          "id": "3:8534163020409733992",
+          "name": "tags",
+          "type": 30
+        },
+        {
+          "id": "4:5109357445308744818",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "5:2667031694050257510",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "6:7266303846030833481",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "7:7271579894459585661",
+          "name": "permanentlyDeletedAt",
+          "type": 10
+        },
+        {
+          "id": "8:7677675212420904566",
+          "name": "lastSavedDeviceId",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "5:4094713120589114734",
+  "lastEntityId": "6:4197752153260494722",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

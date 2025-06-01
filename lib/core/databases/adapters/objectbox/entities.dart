@@ -242,3 +242,47 @@ class PreferenceObjectBox extends BaseObjectBox {
     updatedAt = DateTime.now();
   }
 }
+
+@Entity()
+class TemplateObjectBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+  int index;
+  List<String>? tags;
+  String? content;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  TemplateObjectBox({
+    required this.id,
+    required this.index,
+    required this.content,
+    required this.tags,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
+  });
+
+  @override
+  void toPermanentlyDeleted() {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}

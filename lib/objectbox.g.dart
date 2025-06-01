@@ -347,6 +347,64 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(6, 4197752153260494722),
+    name: 'TemplateObjectBox',
+    lastPropertyId: const obx_int.IdUid(8, 7677675212420904566),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 4888786211485405431),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 965504840504950186),
+        name: 'index',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 8534163020409733992),
+        name: 'tags',
+        type: 30,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 5109357445308744818),
+        name: 'content',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 2667031694050257510),
+        name: 'createdAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 7266303846030833481),
+        name: 'updatedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 7271579894459585661),
+        name: 'permanentlyDeletedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7677675212420904566),
+        name: 'lastSavedDeviceId',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -387,7 +445,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(5, 4094713120589114734),
+    lastEntityId: const obx_int.IdUid(6, 4197752153260494722),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -845,6 +903,88 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    TemplateObjectBox: obx_int.EntityDefinition<TemplateObjectBox>(
+      model: _entities[4],
+      toOneRelations: (TemplateObjectBox object) => [],
+      toManyRelations: (TemplateObjectBox object) => {},
+      getId: (TemplateObjectBox object) => object.id,
+      setId: (TemplateObjectBox object, int id) {
+        object.id = id;
+      },
+      objectToFB: (TemplateObjectBox object, fb.Builder fbb) {
+        final tagsOffset = object.tags == null
+            ? null
+            : fbb.writeList(
+                object.tags!.map(fbb.writeString).toList(growable: false),
+              );
+        final contentOffset = object.content == null
+            ? null
+            : fbb.writeString(object.content!);
+        final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+            ? null
+            : fbb.writeString(object.lastSavedDeviceId!);
+        fbb.startTable(9);
+        fbb.addInt64(0, object.id);
+        fbb.addInt64(1, object.index);
+        fbb.addOffset(2, tagsOffset);
+        fbb.addOffset(3, contentOffset);
+        fbb.addInt64(4, object.createdAt.millisecondsSinceEpoch);
+        fbb.addInt64(5, object.updatedAt.millisecondsSinceEpoch);
+        fbb.addInt64(6, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+        fbb.addOffset(7, lastSavedDeviceIdOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final permanentlyDeletedAtValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 16);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final indexParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          6,
+          0,
+        );
+        final contentParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final tagsParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGetNullable(buffer, rootOffset, 8);
+        final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
+        );
+        final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+        );
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 18);
+        final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final object = TemplateObjectBox(
+          id: idParam,
+          index: indexParam,
+          content: contentParam,
+          tags: tagsParam,
+          createdAt: createdAtParam,
+          updatedAt: updatedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
+          permanentlyDeletedAt: permanentlyDeletedAtParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1098,5 +1238,48 @@ class AssetObjectBox_ {
   /// See [AssetObjectBox.originalSource].
   static final originalSource = obx.QueryStringProperty<AssetObjectBox>(
     _entities[3].properties[6],
+  );
+}
+
+/// [TemplateObjectBox] entity fields to define ObjectBox queries.
+class TemplateObjectBox_ {
+  /// See [TemplateObjectBox.id].
+  static final id = obx.QueryIntegerProperty<TemplateObjectBox>(
+    _entities[4].properties[0],
+  );
+
+  /// See [TemplateObjectBox.index].
+  static final index = obx.QueryIntegerProperty<TemplateObjectBox>(
+    _entities[4].properties[1],
+  );
+
+  /// See [TemplateObjectBox.tags].
+  static final tags = obx.QueryStringVectorProperty<TemplateObjectBox>(
+    _entities[4].properties[2],
+  );
+
+  /// See [TemplateObjectBox.content].
+  static final content = obx.QueryStringProperty<TemplateObjectBox>(
+    _entities[4].properties[3],
+  );
+
+  /// See [TemplateObjectBox.createdAt].
+  static final createdAt = obx.QueryDateProperty<TemplateObjectBox>(
+    _entities[4].properties[4],
+  );
+
+  /// See [TemplateObjectBox.updatedAt].
+  static final updatedAt = obx.QueryDateProperty<TemplateObjectBox>(
+    _entities[4].properties[5],
+  );
+
+  /// See [TemplateObjectBox.permanentlyDeletedAt].
+  static final permanentlyDeletedAt = obx.QueryDateProperty<TemplateObjectBox>(
+    _entities[4].properties[6],
+  );
+
+  /// See [TemplateObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId = obx.QueryStringProperty<TemplateObjectBox>(
+    _entities[4].properties[7],
   );
 }

@@ -9,6 +9,7 @@ import 'package:storypad/core/services/welcome_message_service.dart' show Welcom
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
