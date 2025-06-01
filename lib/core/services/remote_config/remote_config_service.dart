@@ -60,7 +60,7 @@ class RemoteConfigService {
   static const policyPrivacyUrl = _RemoteConfigObject<String>(
     'POLICY_PRIVACY_URL',
     _RemoteConfigValueType.string,
-    'https://storypad.me/privacy-policy/storypad',
+    'https://storypad.me/privacy-policy',
   );
 
   static const sourceCodeUrl = _RemoteConfigObject<String>(
