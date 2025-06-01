@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -19,21 +18,20 @@ class AssetBackupService {
 
   Future<void> loadAssets() async {
     assets = await AssetDbModel.db.where();
-
-    final items = assets?.items ?? [];
-    final cloudId = source.cloudId;
-    final email = source.email;
-
-    localAssets = await Isolate.run(() {
-      return items.where((e) {
-        return e.cloudDestinations[cloudId] == null || e.cloudDestinations[cloudId]?[email] == null;
-      }).toList();
-    });
-
-    localAssets = localAssets?.where((e) => e.localFile?.existsSync() == true).toList();
   }
 
   Future<void> uploadAssets() async {
+    final items = assets?.items ?? [];
+    final cloudId = source.cloudId;
+    final email = source.email;
+    if (source.email == null) return;
+
+    localAssets = items
+        .where((e) => e.cloudDestinations[cloudId] == null || e.cloudDestinations[cloudId]?[email] == null)
+        .toList()
+        .where((e) => e.localFile?.existsSync() == true)
+        .toList();
+
     debugPrint('🚧 $runtimeType#uploadAssets ...');
 
     if (localAssets == null || localAssets!.isEmpty) return;
