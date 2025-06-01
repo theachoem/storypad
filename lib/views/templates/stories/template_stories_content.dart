@@ -1,9 +1,9 @@
-part of 'show_template_view.dart';
+part of 'template_stories_view.dart';
 
-class _ShowTemplateContent extends StatelessWidget {
-  const _ShowTemplateContent(this.viewModel);
+class _TemplateStoriesContent extends StatelessWidget {
+  const _TemplateStoriesContent(this.viewModel);
 
-  final ShowTemplateViewModel viewModel;
+  final TemplateStoriesViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

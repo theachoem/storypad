@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
-import 'show_template_view.dart';
+import 'template_stories_view.dart';
 
-class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin {
-  final ShowTemplateRoute params;
+class TemplateStoriesViewModel extends ChangeNotifier with DisposeAwareMixin {
+  final TemplateStoriesRoute params;
 
-  ShowTemplateViewModel({
+  TemplateStoriesViewModel({
     required this.params,
   });
 

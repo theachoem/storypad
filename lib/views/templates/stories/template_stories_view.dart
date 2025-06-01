@@ -5,12 +5,12 @@ import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
-import 'show_template_view_model.dart';
+import 'template_stories_view_model.dart';
 
-part 'show_template_content.dart';
+part 'template_stories_content.dart';
 
-class ShowTemplateRoute extends BaseRoute {
-  const ShowTemplateRoute({
+class TemplateStoriesRoute extends BaseRoute {
+  const TemplateStoriesRoute({
     required this.template,
   });
 
@@ -20,23 +20,23 @@ class ShowTemplateRoute extends BaseRoute {
   bool get fullscreenDialog => true;
 
   @override
-  Widget buildPage(BuildContext context) => ShowTemplateView(params: this);
+  Widget buildPage(BuildContext context) => TemplateStoriesView(params: this);
 }
 
-class ShowTemplateView extends StatelessWidget {
-  const ShowTemplateView({
+class TemplateStoriesView extends StatelessWidget {
+  const TemplateStoriesView({
     super.key,
     required this.params,
   });
 
-  final ShowTemplateRoute params;
+  final TemplateStoriesRoute params;
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowTemplateViewModel>(
-      create: (context) => ShowTemplateViewModel(params: params),
+    return ViewModelProvider<TemplateStoriesViewModel>(
+      create: (context) => TemplateStoriesViewModel(params: params),
       builder: (context, viewModel, child) {
-        return _ShowTemplateContent(viewModel);
+        return _TemplateStoriesContent(viewModel);
       },
     );
   }
