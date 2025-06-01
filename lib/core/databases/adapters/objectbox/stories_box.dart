@@ -137,6 +137,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    int? template = filters?["template"];
     int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
     int? order = filters?["order"];
@@ -148,6 +149,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
         StoryObjectBox_.id.notNull().and(StoryObjectBox_.permanentlyDeletedAt.isNull());
 
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+    if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));

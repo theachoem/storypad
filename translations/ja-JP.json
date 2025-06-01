@@ -172,6 +172,7 @@
   "general.pin_unlock_title.incorrect_pin": "PINコードが正しくありません",
   "general.pin_unlock_title.must_be_4_or_6_digits": "PIN は 4 桁または 6 桁である必要があります",
   "general.preferences": "設定",
+  "general.previous_stories": "以前のストーリー",
   "general.read_our_privacy_policy": "プライバシーポリシーを確認してください",
   "general.recently": "最近",
   "general.required": "必須項目",

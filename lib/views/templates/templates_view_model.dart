@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/templates/edit/edit_template_view.dart';
+import 'package:storypad/views/templates/show/show_template_view.dart';
 import 'templates_view.dart';
 
 class TemplatesViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -47,6 +48,12 @@ class TemplatesViewModel extends ChangeNotifier with DisposeAwareMixin {
       await TemplateDbModel.db.delete(template.id);
       await load();
     }
+  }
+
+  void goToShowPage(BuildContext context, TemplateDbModel template) async {
+    ShowTemplateRoute(
+      template: template,
+    ).push(context);
   }
 
   void useTemplate(BuildContext context, TemplateDbModel template) async {

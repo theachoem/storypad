@@ -30,6 +30,11 @@ class _TemplateTile extends StatelessWidget {
             trailingIconData: SpIcons.keyboardRight,
           ),
           SpPopMenuItem(
+            leadingIconData: SpIcons.book,
+            title: tr('general.previous_stories'),
+            onPressed: () => viewModel.goToShowPage(context, template),
+          ),
+          SpPopMenuItem(
             leadingIconData: SpIcons.edit,
             title: tr('button.edit'),
             onPressed: () => viewModel.goToEditPage(context, template),
