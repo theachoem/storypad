@@ -37,18 +37,29 @@ class _TemplatesContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context) {
-    if (viewModel.templates == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (viewModel.templates!.isEmpty == true) {
+    final templates = viewModel.templates?.items;
+
+    if (templates == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (templates.isEmpty == true) {
       return const _EmptyBody();
     }
 
-    return ListView.separated(
-      itemCount: viewModel.templates!.length,
-      separatorBuilder: (BuildContext context, int index) => const Divider(height: 1),
+    return ReorderableListView.builder(
+      itemCount: templates.length,
+      padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
-        return _TemplateTile(
-          viewModel: viewModel,
-          template: viewModel.templates![index],
+        return Container(
+          key: ValueKey(templates[index].id),
+          margin: EdgeInsets.only(bottom: index == templates.length - 1 ? 0 : 8.0),
+          decoration: BoxDecoration(
+            color: ColorScheme.of(context).readOnly.surface1,
+            borderRadius: BorderRadiusGeometry.circular(8.0),
+          ),
+          child: _TemplateTile(
+            viewModel: viewModel,
+            template: templates[index],
+          ),
         );
       },
     );

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "29:2326009534719657446",
+      "lastPropertyId": "30:5473653846024956989",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -128,6 +128,11 @@
           "id": "29:2326009534719657446",
           "name": "draftContent",
           "type": 9
+        },
+        {
+          "id": "30:5473653846024956989",
+          "name": "templateId",
+          "type": 6
         }
       ],
       "relations": []

@@ -45,7 +45,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialYear: params.initialYear,
       initialMonth: params.initialMonth,
       initialDay: params.initialDay,
-      initialTagId: params.initialTagId,
+      initialTagIds: params.initialTagIds,
+      template: params.template,
     );
 
     StoryContentDbModel content = story!.generateDraftContent();
@@ -77,7 +78,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialYear: params.initialYear,
       initialMonth: params.initialMonth,
       initialDay: params.initialDay,
-      initialTagId: params.initialTagId,
+      initialTagIds: params.initialTagIds,
     );
 
     story = buildStory(draft: false);

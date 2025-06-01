@@ -13,6 +13,7 @@ import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
+import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
@@ -109,34 +110,14 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialYear: year,
     ).push(context);
 
-    if (stories != null && addedStory is StoryDbModel) {
-      if (year == addedStory.year) {
-        int index = 0;
+    await _checkNewStoryResult(addedStory);
+  }
 
-        // 1-1-2022 3pm: 0
-        // 1-1-2022 12pm: 1
-        // 2-1-2022 1am: 2
-        // 3-1-2022 1am: 3
-        //
-        // added: 1-1-2022 2pm
-        index = stories!.items.indexWhere((story) => addedStory.displayPathDate.isAfter(story.displayPathDate));
-
-        // index possibly -1
-        index = max(index, 0);
-
-        setStories(stories!.addElement(addedStory, index));
-      }
-
-      year = addedStory.year;
-      notifyListeners();
-    }
-
-    await reload(debugSource: '$runtimeType#goToNewPage');
-
-    // https://developer.android.com/guide/playcore/in-app-review#when-to-request
-    // https://developer.apple.com/app-store/ratings-and-reviews/
-    int newCount = await NewStoriesCountStorage().increase();
-    if (newCount % 10 == 0) InAppReviewService.request();
+  Future<void> goToTemplatePage(BuildContext context) async {
+    final addedStory = await TemplatesRoute(
+      initialYear: year,
+    ).push(context);
+    await _checkNewStoryResult(addedStory);
   }
 
   HomeEndDrawerState endDrawerState = HomeEndDrawerState.showSettings;
@@ -172,6 +153,37 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     scrollInfo.setupStoryKeys(stories?.items ?? []);
     notifyListeners();
+  }
+
+  Future<void> _checkNewStoryResult(Object? addedStory) async {
+    if (stories != null && addedStory is StoryDbModel) {
+      if (year == addedStory.year) {
+        int index = 0;
+
+        // 1-1-2022 3pm: 0
+        // 1-1-2022 12pm: 1
+        // 2-1-2022 1am: 2
+        // 3-1-2022 1am: 3
+        //
+        // added: 1-1-2022 2pm
+        index = stories!.items.indexWhere((story) => addedStory.displayPathDate.isAfter(story.displayPathDate));
+
+        // index possibly -1
+        index = max(index, 0);
+
+        setStories(stories!.addElement(addedStory, index));
+      }
+
+      year = addedStory.year;
+      notifyListeners();
+    }
+
+    await reload(debugSource: '$runtimeType#goToNewPage');
+
+    // https://developer.android.com/guide/playcore/in-app-review#when-to-request
+    // https://developer.apple.com/app-store/ratings-and-reviews/
+    int newCount = await NewStoriesCountStorage().increase();
+    if (newCount % 10 == 0) InAppReviewService.request();
   }
 
   @override

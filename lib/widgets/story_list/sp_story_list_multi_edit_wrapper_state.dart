@@ -118,7 +118,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr("dialog.are_you_sure_to_delete_these_stories.title"),
-      message: tr("dialog.are_you_sure_to_delete_these_stories.message"),
+      message: tr("dialog.are_you_sure.you_cant_undo_message"),
       isDestructiveAction: true,
       okLabel: tr("button.permanent_delete"),
     );

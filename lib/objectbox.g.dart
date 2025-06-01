@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(29, 2326009534719657446),
+    lastPropertyId: const obx_int.IdUid(30, 5473653846024956989),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -167,6 +167,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(29, 2326009534719657446),
         name: 'draftContent',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(30, 5473653846024956989),
+        name: 'templateId',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -514,7 +520,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final draftContentOffset = object.draftContent == null
             ? null
             : fbb.writeString(object.draftContent!);
-        fbb.startTable(30);
+        fbb.startTable(31);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -539,6 +545,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(24, preferencesOffset);
         fbb.addOffset(27, latestContentOffset);
         fbb.addOffset(28, draftContentOffset);
+        fbb.addInt64(29, object.templateId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -622,6 +629,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final movedToBinAtParam = movedToBinAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(movedToBinAtValue);
+        final templateIdParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          62,
+        );
         final latestContentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 58);
@@ -668,6 +680,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           movedToBinAt: movedToBinAtParam,
+          templateId: templateIdParam,
           latestContent: latestContentParam,
           draftContent: draftContentParam,
           changes: changesParam,
@@ -1122,6 +1135,11 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.draftContent].
   static final draftContent = obx.QueryStringProperty<StoryObjectBox>(
     _entities[0].properties[23],
+  );
+
+  /// See [StoryObjectBox.templateId].
+  static final templateId = obx.QueryIntegerProperty<StoryObjectBox>(
+    _entities[0].properties[24],
   );
 }
 

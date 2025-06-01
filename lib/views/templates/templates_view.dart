@@ -4,6 +4,7 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/tags/show/show_tag_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 import 'templates_view_model.dart';
 
@@ -19,7 +21,15 @@ part 'local_widgets/template_tile.dart';
 part 'local_widgets/empty_body.dart';
 
 class TemplatesRoute extends BaseRoute {
-  const TemplatesRoute();
+  const TemplatesRoute({
+    this.initialYear,
+    this.initialMonth,
+    this.initialDay,
+  });
+
+  final int? initialYear;
+  final int? initialMonth;
+  final int? initialDay;
 
   @override
   Widget buildPage(BuildContext context) => TemplatesView(params: this);

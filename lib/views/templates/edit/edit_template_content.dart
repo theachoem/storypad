@@ -23,6 +23,7 @@ class _EditTemplateContent extends StatelessWidget {
         initialTags: viewModel.template?.tags ?? [],
       ),
       appBar: AppBar(
+        leading: const CloseButton(),
         actions: [
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),

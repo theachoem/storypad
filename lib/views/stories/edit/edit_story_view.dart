@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
@@ -31,7 +32,8 @@ class EditStoryRoute extends BaseRoute {
   final int? initialYear;
   final int? initialMonth;
   final int? initialDay;
-  final int? initialTagId;
+  final List<int>? initialTagIds;
+  final TemplateDbModel? template;
   final StoryDbModel? story;
   final int? initialPageIndex;
   final double initialPageScrollOffet;
@@ -44,9 +46,10 @@ class EditStoryRoute extends BaseRoute {
     this.initialDay,
     this.story,
     this.pagesMap,
-    this.initialTagId,
+    this.initialTagIds,
     this.initialPageIndex,
     this.initialPageScrollOffet = 0,
+    this.template,
   }) : assert(initialYear == null || id == null);
 
   @override
@@ -66,7 +69,7 @@ class EditStoryRoute extends BaseRoute {
       'year': initialYear.toString(),
       'month': initialMonth.toString(),
       'day': initialDay.toString(),
-      'has_initial_tag': initialTagId != null ? 'true' : 'false',
+      'has_initial_tag': initialTagIds?.isNotEmpty == true ? 'true' : 'false',
     };
   }
 

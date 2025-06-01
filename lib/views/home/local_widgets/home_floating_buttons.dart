@@ -75,7 +75,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         icon: const Icon(Icons.lightbulb_outlined),
         onPressed: () {
           toggle(context);
-          const TemplatesRoute().push(context);
+          widget.viewModel.goToTemplatePage(context);
         },
       ),
     ];

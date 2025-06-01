@@ -59,6 +59,8 @@ class StoryObjectBox extends BaseObjectBox {
   List<String>? tags;
   List<int>? assets;
 
+  int? templateId;
+
   // for query
   String? metadata;
   String? preferences;
@@ -82,6 +84,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,
+    required this.templateId,
     required this.latestContent,
     required this.draftContent,
     @Deprecated('deprecated') required this.changes,

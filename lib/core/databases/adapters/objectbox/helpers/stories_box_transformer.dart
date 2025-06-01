@@ -28,6 +28,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
+    templateId: object.templateId,
   );
 }
 
@@ -83,6 +84,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     starred: story.starred,
     feeling: story.feeling,
     showDayCount: null,
+    templateId: story.templateId,
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,

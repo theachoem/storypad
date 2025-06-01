@@ -14,7 +14,7 @@ class _StoryTileActions {
       context: context,
       isDestructiveAction: true,
       title: tr("dialog.are_you_sure_to_delete_this_story.title"),
-      message: tr("dialog.are_you_sure_to_delete_this_story.message"),
+      message: tr("dialog.are_you_sure.you_cant_undo_message"),
       okLabel: tr("button.delete"),
     );
 
