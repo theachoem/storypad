@@ -43,6 +43,7 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialYear: year,
       initialMonth: month,
       initialDay: selectedDay,
+      initialTagIds: selectedTagId != null ? [selectedTagId!] : null,
     ).push(context);
 
     if (addedStory is StoryDbModel) {
