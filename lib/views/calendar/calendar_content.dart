@@ -58,8 +58,8 @@ class _CalendarContent extends StatelessWidget {
               icon: const Icon(SpIcons.keyboardRight),
               onPressed: () {
                 viewModel.onChanged(
-                  viewModel.month - 1 == 0 ? viewModel.year - 1 : viewModel.year,
-                  viewModel.month - 1 == 0 ? 12 : viewModel.month - 1,
+                  viewModel.month + 1 == 13 ? viewModel.year + 1 : viewModel.year,
+                  viewModel.month + 1 == 13 ? 1 : viewModel.month + 1,
                   viewModel.selectedDay,
                   viewModel.selectedTagId,
                 );
