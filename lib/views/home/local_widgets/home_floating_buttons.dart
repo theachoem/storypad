@@ -52,7 +52,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
       opacity: Tween<double>(begin: 1, end: 0.0).animate(animation),
       child: FloatingActionButton(
         tooltip: tr("button.new_story"),
-        onPressed: () => toggle(context),
+        onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
         child: const Icon(SpIcons.newStory),
       ),
     );

@@ -21,9 +21,6 @@ final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
 
-// Disable for now.
-const bool kHasRelaxSoundsFeature = false;
-
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;
 late final DeviceInfoObject kDeviceInfo;

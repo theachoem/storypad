@@ -10,6 +10,7 @@ class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     communityUrl,
     faqUrl,
+    featureFlags,
     localizationSupportUrl,
     policyPrivacyUrl,
     sourceCodeUrl,
@@ -42,6 +43,12 @@ class RemoteConfigService {
     'FAQ_URL',
     _RemoteConfigValueType.string,
     'https://storypad.me',
+  );
+
+  static const featureFlags = _RemoteConfigObject<Map>(
+    'FEATURE_FLAGS',
+    _RemoteConfigValueType.json,
+    {},
   );
 
   static const localizationSupportUrl = _RemoteConfigObject<String>(
