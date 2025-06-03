@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
 import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart' show RemoteConfigService;
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
@@ -22,7 +24,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backups/backups_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 

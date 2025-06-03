@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
@@ -15,7 +14,6 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:storypad/providers/backup_provider.dart';
 
 import 'offline_backup_view.dart';
 
@@ -26,6 +24,8 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   OfflineBackupsViewModel({
     required this.params,
   });
+
+  DateTime? lastDbUpdatedAt;
 
   Future<void> import(BuildContext context) async {
     AnalyticsService.instance.logImportOfflineBackup();
@@ -66,8 +66,6 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> export(BuildContext context) async {
     AnalyticsService.instance.logExportOfflineBackup();
-
-    DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
     if (lastDbUpdatedAt == null) return;
 
     final String exportFileName = "$kAppName-${kDeviceInfo.model}-backup-${DateTime.now().toIso8601String()}.json";
@@ -76,7 +74,7 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
       debugSource: '$runtimeType#export',
       future: () => BackupDatabasesToBackupObjectService.call(
         databases: BaseBackupSource.databases,
-        lastUpdatedAt: lastDbUpdatedAt,
+        lastUpdatedAt: lastDbUpdatedAt!,
       ),
     );
 

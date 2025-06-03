@@ -13,6 +13,6 @@ class OnboardingStep4ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void getStarted(BuildContext context) {
     OnboardedStorage().write(true);
-    SpOnboardingWrappper.close(context);
+    SpOnboardingWrapper.close(context);
   }
 }

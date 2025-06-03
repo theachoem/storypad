@@ -36,7 +36,7 @@ class SpImage extends StatelessWidget {
     if (link.startsWith("storypad://")) {
       return Consumer<BackupProvider>(builder: (context, provider, child) {
         return Image(
-          key: ValueKey(provider.source.email),
+          key: ValueKey(provider.currentUser?.email),
           width: width,
           height: height,
           fit: BoxFit.cover,

@@ -53,8 +53,8 @@ class _BackupsContent extends StatelessWidget {
     return SliverToBoxAdapter(
       child: UserProfileCollapsibleTile(
         viewModel: viewModel,
-        source: provider.source,
         avatarSize: avatarSize,
+        currentUser: provider.currentUser,
       ),
     );
   }

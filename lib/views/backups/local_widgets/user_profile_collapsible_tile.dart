@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
+import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/views/backups/backups_view_model.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -9,14 +9,14 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class UserProfileCollapsibleTile extends StatelessWidget {
   final BackupsViewModel viewModel;
-  final BaseBackupSource source;
   final double avatarSize;
+  final GoogleUserObject? currentUser;
 
   const UserProfileCollapsibleTile({
     super.key,
     required this.viewModel,
-    required this.source,
     required this.avatarSize,
+    required this.currentUser,
   });
 
   @override
@@ -79,21 +79,19 @@ class UserProfileCollapsibleTile extends StatelessWidget {
           ];
         },
         builder: (callback) {
-          if (source.isSignedIn == true) {
+          if (currentUser != null) {
             return ListTile(
               onTap: callback,
               title: Text(
-                source.displayName ?? "",
+                currentUser!.displayName ?? "",
                 style: TextStyle(color: ColorScheme.of(context).onPrimary),
               ),
-              subtitle: source.email != null
-                  ? Text(
-                      source.email!,
-                      style: TextStyle(color: ColorScheme.of(context).onPrimary),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : null,
+              subtitle: Text(
+                currentUser!.email,
+                style: TextStyle(color: ColorScheme.of(context).onPrimary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
               trailing: Icon(
                 SpIcons.moreVert,
@@ -123,7 +121,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
   }
 
   Widget buildPhoto(double avatarSize, bool isCollapsed, BuildContext context) {
-    bool hasPhoto = source.smallImageUrl != null && source.bigImageUrl != null;
+    bool hasPhoto = currentUser?.photoUrl != null && currentUser?.bigImageUrl != null;
 
     return AnimatedContainer(
       duration: Durations.medium1,
@@ -136,7 +134,7 @@ class UserProfileCollapsibleTile extends StatelessWidget {
         ),
         image: hasPhoto
             ? DecorationImage(
-                image: CachedNetworkImageProvider(isCollapsed ? source.smallImageUrl! : source.bigImageUrl!),
+                image: CachedNetworkImageProvider(isCollapsed ? currentUser!.photoUrl! : currentUser!.bigImageUrl!),
                 fit: BoxFit.cover,
               )
             : null,

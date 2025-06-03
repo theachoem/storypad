@@ -18,7 +18,7 @@ class _HomeAppBarMessage extends StatelessWidget {
 
         bool showWelcomeMessage = true;
 
-        if (provider.syncing) {
+        if (provider.backupStatus?.syning == true) {
           showWelcomeMessage = false;
           title = "${tr("page.home.app_bar.messages.we_syncing_ur_data")} ";
           trailing = Container(

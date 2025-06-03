@@ -24,9 +24,7 @@ part 'local_widgets/home_scroll_app_bar_info.dart';
 class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
-  HomeViewModel({
-    required BuildContext context,
-  }) {
+  HomeViewModel() {
     nickname = PreferenceDbModel.db.nickname.get();
 
     AnalyticsService.instance.logViewHome(year: year);
@@ -81,7 +79,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     await reload(debugSource: '$runtimeType#refresh');
 
     // no need to wait because home app bar already show loading UI during syning.
-    if (context.mounted) context.read<BackupProvider>().recheckAndSync();
+    if (context.mounted) context.read<BackupProvider>().syncFromCloudIfNeeded();
   }
 
   Future<void> changeYear(int newYear) async {

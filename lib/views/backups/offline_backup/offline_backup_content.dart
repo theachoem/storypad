@@ -25,8 +25,7 @@ class _OfflineBackupsContent extends StatelessWidget {
             action: FilledButton.tonalIcon(
               icon: const Icon(SpIcons.exportOffline),
               label: Text(tr('button.export')),
-              onPressed:
-                  context.read<BackupProvider>().lastDbUpdatedAt == null ? null : () => viewModel.export(context),
+              onPressed: viewModel.lastDbUpdatedAt == null ? null : () => viewModel.export(context),
             ),
           ),
           const SizedBox(height: 12.0),

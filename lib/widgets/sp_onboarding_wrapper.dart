@@ -4,8 +4,8 @@ import 'package:storypad/initializers/onboarding_initializer.dart';
 import 'package:storypad/views/onboarding/onboarding_view.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 
-class SpOnboardingWrappper extends StatefulWidget {
-  const SpOnboardingWrappper({
+class SpOnboardingWrapper extends StatefulWidget {
+  const SpOnboardingWrapper({
     super.key,
     required this.child,
     required this.onOnboarded,
@@ -15,18 +15,18 @@ class SpOnboardingWrappper extends StatefulWidget {
   final void Function() onOnboarded;
 
   static void close(BuildContext context) {
-    context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.close();
+    context.findAncestorStateOfType<_SpOnboardingWrapperState>()?.close();
   }
 
   static void open(BuildContext context) {
-    context.findAncestorStateOfType<_SpOnboardingWrappperState>()?.open();
+    context.findAncestorStateOfType<_SpOnboardingWrapperState>()?.open();
   }
 
   @override
-  State<SpOnboardingWrappper> createState() => _SpOnboardingWrappperState();
+  State<SpOnboardingWrapper> createState() => _SpOnboardingWrapperState();
 }
 
-class _SpOnboardingWrappperState extends State<SpOnboardingWrappper> with TickerProviderStateMixin {
+class _SpOnboardingWrapperState extends State<SpOnboardingWrapper> with TickerProviderStateMixin {
   AnimationController? onboardingAnimationController;
   AnimationController? homeAnimationController;
 
