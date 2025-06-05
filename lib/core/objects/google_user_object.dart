@@ -31,6 +31,13 @@ class GoogleUserObject {
     return imageUrl.replaceAll(lowQuality, highQuality);
   }
 
+  Map<String, String> get authHeaders {
+    return <String, String>{
+      'Authorization': 'Bearer $accessToken',
+      'X-Goog-AuthUser': '0',
+    };
+  }
+
   Map<String, dynamic> toJson() => _$GoogleUserObjectToJson(this);
   factory GoogleUserObject.fromJson(Map<String, dynamic> json) => _$GoogleUserObjectFromJson(json);
 }

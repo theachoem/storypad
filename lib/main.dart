@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
 import 'package:flutter/material.dart' show WidgetsFlutterBinding, runApp;
 import 'package:storypad/app.dart' show App;
 import 'package:storypad/initializers/app_lock_initializer.dart';
+import 'package:storypad/initializers/backup_initializer.dart';
 import 'package:storypad/initializers/database_initializer.dart' show DatabaseInitializer;
 import 'package:storypad/initializers/constants_initializer.dart' show ConstantsInitializer;
 import 'package:storypad/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
@@ -24,6 +25,7 @@ void main({
   await ConstantsInitializer.call();
   await DatabaseInitializer.call();
   await AppLockInitializer.call();
+  await BackupRepositoryInitializer.call();
 
   FirebaseCrashlyticsInitializer.call();
   FirebaseRemoteConfigInitializer.call();

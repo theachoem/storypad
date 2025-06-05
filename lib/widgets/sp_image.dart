@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -31,30 +33,29 @@ class SpImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (link.startsWith("storypad://")) {
-      // TODO: email from actual email serice
-      String? email;
-      return Image(
-        key: ValueKey(email),
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-        // TODO: use GoogleSignInAccount
-        image: SpDbImageProvider(assetLink: link, currentUser: null),
-        errorBuilder: (context, error, strackTrace) =>
-            errorWidget?.call(context, link, error) ??
-            buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
-        loadingBuilder: (context, child, loadingProgress) {
-          return Stack(
-            children: [
-              SpGradientLoading(
-                height: height ?? defaultSize,
-                width: width ?? defaultSize,
-              ),
-              child
-            ],
-          );
-        },
-      );
+      return Consumer<BackupProvider>(builder: (context, provider, child) {
+        return Image(
+          key: ValueKey(provider.currentUser?.accessToken),
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          image: SpDbImageProvider(assetLink: link, currentUser: provider.currentUser),
+          errorBuilder: (context, error, strackTrace) =>
+              errorWidget?.call(context, link, error) ??
+              buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
+          loadingBuilder: (context, child, loadingProgress) {
+            return Stack(
+              children: [
+                SpGradientLoading(
+                  height: height ?? defaultSize,
+                  width: width ?? defaultSize,
+                ),
+                child
+              ],
+            );
+          },
+        );
+      });
     } else if (isImageBase64(link)) {
       return Image.memory(
         base64.decode(link),

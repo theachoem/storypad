@@ -44,7 +44,6 @@ class SpImagesViewer extends StatefulWidget {
       ImageProvider? imageProvider;
 
       if (imageUrl.startsWith('storypad://')) {
-        // TODO: put GoogleSignInAccount
         imageProvider = SpDbImageProvider(assetLink: imageUrl, currentUser: null);
       } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);

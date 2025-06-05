@@ -5,11 +5,12 @@ class _HomeAppBarMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BackupProvider backupProvider = Provider.of<BackupProvider>(context);
+
     String? title;
     Widget? trailing;
 
-    // TODO: syncing from provider instead.
-    bool syncing = true;
+    bool syncing = backupProvider.syncing;
     Widget child = Text(
       WelcomeMessageService.get(context),
       maxLines: 3,

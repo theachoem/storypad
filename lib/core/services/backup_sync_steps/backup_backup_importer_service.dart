@@ -1,0 +1,33 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+
+class BackupBackupImporterService {
+  final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
+  Stream<BackupSyncMessage?> get message => controller.stream;
+
+  void reset() {
+    controller.add(null);
+  }
+
+  Future<bool> start(BackupObject? backup) async {
+    debugPrint('🚧 $runtimeType#start ...');
+
+    if (backup == null) {
+      controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
+      return true;
+    }
+
+    controller.add(BackupSyncMessage(processing: true, success: true, message: null));
+    final int changesCount = await RestoreBackupService.instance.restoreOnlyNewData(backup: backup);
+    controller.add(BackupSyncMessage(
+      processing: false,
+      success: true,
+      message: '$changesCount records are imported or updated.',
+    ));
+
+    return true;
+  }
+}

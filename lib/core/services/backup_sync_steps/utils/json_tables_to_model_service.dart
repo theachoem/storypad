@@ -1,6 +1,6 @@
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/services/backups/restore_backup_service.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
 
 class JsonTablesToModelService {
   // {
@@ -12,7 +12,7 @@ class JsonTablesToModelService {
   ) {
     Map<String, List<BaseDbModel>> maps = {};
 
-    for (BaseDbAdapter db in RestoreBackupService.databases) {
+    for (BaseDbAdapter db in BackupRepository.databases) {
       dynamic contents = tables[db.tableName];
       if (contents is List) {
         maps[db.tableName] = _decodeContents(contents, db);
