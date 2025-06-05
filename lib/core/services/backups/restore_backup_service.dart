@@ -1,13 +1,24 @@
 import 'dart:async';
-
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/preference_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/services/backups/json_tables_to_model_service.dart';
 import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 
 class RestoreBackupService {
   RestoreBackupService._();
+
+  static final List<BaseDbAdapter> databases = [
+    PreferenceDbModel.db,
+    StoryDbModel.db,
+    TagDbModel.db,
+    TemplateDbModel.db,
+    AssetDbModel.db,
+  ];
 
   final List<FutureOr<void> Function()> _listeners = [];
 
@@ -25,7 +36,7 @@ class RestoreBackupService {
     Map<String, dynamic> tables = backup.tables;
     Map<String, List<BaseDbModel>> datas = JsonTablesToModelService.decode(tables);
 
-    for (BaseDbAdapter db in BaseBackupSource.databases) {
+    for (BaseDbAdapter db in RestoreBackupService.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
       if (items != null) {
         for (BaseDbModel newRecord in items) {
@@ -73,7 +84,7 @@ class RestoreBackupService {
     Map<String, dynamic> tables = backup.tables;
     Map<String, List<BaseDbModel>> datas = JsonTablesToModelService.decode(tables);
 
-    for (BaseDbAdapter db in BaseBackupSource.databases) {
+    for (BaseDbAdapter db in RestoreBackupService.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
       if (items != null) {
         for (BaseDbModel item in items) {
