@@ -88,6 +88,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return storyCountsByType;
   }
 
+  int getStoryCountBy({
+    Map<String, dynamic>? filters,
+  }) {
+    return buildQuery(filters: filters).build().count();
+  }
+
   Map<int, String?> getStoryFeelingByMonth({
     required int month,
     required int year,

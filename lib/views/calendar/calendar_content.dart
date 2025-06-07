@@ -19,7 +19,7 @@ class _CalendarContent extends StatelessWidget {
           centerTitle: true,
           bottom: tags.length == 1
               ? const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1))
-              : buildTagsTabBar(tags),
+              : buildTagsTabBar(tags, context),
           title: SpTapEffect(
             onTap: () async {
               final result =
@@ -30,6 +30,7 @@ class _CalendarContent extends StatelessWidget {
                   result.month,
                   viewModel.selectedDay,
                   viewModel.selectedTagId,
+                  viewModel.tabIndex,
                 );
               }
             },
@@ -50,6 +51,7 @@ class _CalendarContent extends StatelessWidget {
                 viewModel.month - 1 == 0 ? 12 : viewModel.month - 1,
                 viewModel.selectedDay,
                 viewModel.selectedTagId,
+                viewModel.tabIndex,
               );
             },
           ),
@@ -62,6 +64,7 @@ class _CalendarContent extends StatelessWidget {
                   viewModel.month + 1 == 13 ? 1 : viewModel.month + 1,
                   viewModel.selectedDay,
                   viewModel.selectedTagId,
+                  viewModel.tabIndex,
                 );
               },
             ),
@@ -88,6 +91,7 @@ class _CalendarContent extends StatelessWidget {
                     month,
                     selectedDay,
                     viewModel.selectedTagId,
+                    viewModel.tabIndex,
                   ),
                 ),
               ),
@@ -96,36 +100,47 @@ class _CalendarContent extends StatelessWidget {
           body: SpStoryList.withQuery(
             key: ValueKey(viewModel.editedKey),
             disableMultiEdit: true,
-            filter: SearchFilterObject(
-              years: {viewModel.year},
-              month: viewModel.month,
-              day: viewModel.selectedDay,
-              types: {PathType.docs},
-              tagId: viewModel.selectedTagId,
-              assetId: null,
-            ),
+            filter: viewModel.filter,
           ),
         ),
       ),
     );
   }
 
-  TabBar buildTagsTabBar(List<TagDbModel> tags) {
+  TabBar buildTagsTabBar(List<TagDbModel> tags, BuildContext context) {
     return TabBar(
       onTap: (index) {
         TagDbModel tag = tags[index];
-        viewModel.onChanged(
-          viewModel.year,
-          viewModel.month,
-          viewModel.selectedDay,
-          tag.id == 0 ? null : tag.id,
-        );
+        viewModel.onChanged(viewModel.year, viewModel.month, null, tag.id == 0 ? null : tag.id, index);
       },
       isScrollable: true,
       tabAlignment: TabAlignment.start,
-      tabs: tags.map((tag) {
-        return Tab(text: tag.title);
-      }).toList(),
+      tabs: List.generate(tags.length, (index) {
+        return Tab(
+          child: Row(
+            spacing: 8.0,
+            children: [
+              Text(tags[index].title),
+              if (viewModel.currentStoryCountByTabIndex[index] != null && index == viewModel.tabIndex)
+                SpFadeIn.bound(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).primary,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Text(
+                      viewModel.currentStoryCountByTabIndex[index].toString(),
+                      style: TextStyle(
+                        color: ColorScheme.of(context).onPrimary,
+                      ),
+                    ),
+                  ),
+                )
+            ],
+          ),
+        );
+      }),
     );
   }
 }

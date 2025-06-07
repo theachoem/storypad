@@ -17,7 +17,7 @@ class _CalendarDate extends StatelessWidget {
   final DateTime date;
   final String? feeling;
 
-  final void Function(int year, int month, int selectedDay) onChanged;
+  final void Function(int year, int month, int? selectedDay) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,9 @@ class _CalendarDate extends StatelessWidget {
 
     return SpTapEffect(
       effects: [SpTapEffectType.scaleDown],
-      onTap: !currentMonth ? null : () => onChanged(selectedYear, selectedMonth, date.day),
+      onTap: !currentMonth
+          ? null
+          : () => onChanged(selectedYear, selectedMonth, selectedDay == date.day ? null : date.day),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
