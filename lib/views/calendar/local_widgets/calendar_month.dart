@@ -11,9 +11,9 @@ class _CalendarMonth extends StatelessWidget {
 
   final int month;
   final int year;
-  final int selectedDay;
+  final int? selectedDay;
   final Map<int, String?> feelingMapByDay;
-  final void Function(int year, int month, int selectedDay) onChanged;
+  final void Function(int year, int month, int? selectedDay) onChanged;
 
   @override
   Widget build(BuildContext context) {
