@@ -11,6 +11,7 @@ import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
+import 'package:storypad/views/backups/backups_view.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';

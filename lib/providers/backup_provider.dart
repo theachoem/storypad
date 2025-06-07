@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
@@ -7,7 +8,7 @@ import 'package:storypad/core/services/messenger_service.dart';
 
 class BackupProvider extends ChangeNotifier {
   BackupProvider() {
-    load();
+    recheckAndSync();
 
     step1MessageStream.listen((message) {
       step1Message = message;
@@ -69,7 +70,7 @@ class BackupProvider extends ChangeNotifier {
   bool _syncing = false;
   bool get syncing => _syncing;
 
-  Future<void> load() async {
+  Future<void> recheckAndSync() async {
     _connectionStatus = await backupRepository.checkConnection();
     notifyListeners();
 
@@ -78,18 +79,6 @@ class BackupProvider extends ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  Future<void> recheckAndSync() async {
-    if (!readyToSynced) {
-      _connectionStatus = await backupRepository.checkConnection();
-      notifyListeners();
-    }
-
-    if (readyToSynced) {
-      await _syncBackupAcrossDevices(currentUser!.email);
-      notifyListeners();
-    }
   }
 
   // Synchronization flow for multiple devices:
