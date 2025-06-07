@@ -21,7 +21,7 @@ dependencies:
   dismissible_page: ^1.0.2
   dynamic_color: ^1.7.0
   easy_localization: ^3.0.7+1
-  file_picker: ^10.1.2
+  file_picker: ^10.1.9
   firebase_analytics: ^11.4.5
   firebase_core: ^3.13.0
   firebase_crashlytics: ^4.3.5
