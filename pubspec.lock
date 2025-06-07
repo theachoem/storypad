@@ -410,7 +410,7 @@ packages:
     source: hosted
     version: "1.0.2"
   dynamic_color:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: dynamic_color
       sha256: eae98052fa6e2826bdac3dd2e921c6ce2903be15c6b7f8b6d8a5d49b5086298d
