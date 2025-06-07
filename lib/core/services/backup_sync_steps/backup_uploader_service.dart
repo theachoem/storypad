@@ -12,6 +12,16 @@ import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dar
 import 'package:storypad/core/services/google_drive_client.dart';
 import 'package:storypad/core/types/file_path_type.dart';
 
+class BackupUploaderResponse {
+  final bool hasError;
+  final CloudFileObject? uploadedCloudFile;
+
+  BackupUploaderResponse({
+    required this.hasError,
+    required this.uploadedCloudFile,
+  });
+}
+
 class BackupUploaderService {
   final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
   Stream<BackupSyncMessage?> get message => controller.stream;
@@ -20,15 +30,23 @@ class BackupUploaderService {
     controller.add(null);
   }
 
-  Future<bool> start(GoogleDriveClient client, DateTime? lastDbUpdatedAt) async {
+  Future<BackupUploaderResponse> start(
+    GoogleDriveClient client,
+    DateTime? lastSyncedAt,
+    DateTime? lastDbUpdatedAt,
+  ) async {
     try {
-      if (lastDbUpdatedAt == null) {
+      if (lastDbUpdatedAt == null || lastSyncedAt == lastDbUpdatedAt) {
         controller.add(BackupSyncMessage(
           processing: false,
           success: true,
           message: 'No new stories to upload.',
         ));
-        return true;
+
+        return BackupUploaderResponse(
+          hasError: false,
+          uploadedCloudFile: null,
+        );
       }
 
       return _start(client, lastDbUpdatedAt);
@@ -38,11 +56,15 @@ class BackupUploaderService {
         success: false,
         message: 'Failed to upload new stories due to [$error]',
       ));
-      return false;
+
+      return BackupUploaderResponse(
+        hasError: true,
+        uploadedCloudFile: null,
+      );
     }
   }
 
-  Future<bool> _start(GoogleDriveClient client, DateTime lastDbUpdatedAt) async {
+  Future<BackupUploaderResponse> _start(GoogleDriveClient client, DateTime lastDbUpdatedAt) async {
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
 
     BackupObject backup = await BackupDatabasesToBackupObjectService.call(
@@ -55,7 +77,7 @@ class BackupUploaderService {
       backup,
     );
 
-    final CloudFileObject? uploadedFile = await client.uploadFile(
+    final uploadedFile = await client.uploadFile(
       backup.fileInfo.fileNameWithExtention,
       file,
     );
@@ -66,7 +88,11 @@ class BackupUploaderService {
         success: true,
         message: 'All new stories uploaded successfully.',
       ));
-      return true;
+
+      return BackupUploaderResponse(
+        hasError: false,
+        uploadedCloudFile: uploadedFile,
+      );
     }
 
     controller.add(BackupSyncMessage(
@@ -75,7 +101,10 @@ class BackupUploaderService {
       message: 'Failed to upload new stories due to [Unknown]',
     ));
 
-    return false;
+    return BackupUploaderResponse(
+      hasError: true,
+      uploadedCloudFile: null,
+    );
   }
 
   Future<io.File> constructBackupFile(

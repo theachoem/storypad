@@ -6,31 +6,6 @@ import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dar
 import 'package:storypad/core/services/messenger_service.dart';
 
 class BackupProvider extends ChangeNotifier {
-  BackupRepository get backupRepository => BackupRepository.appInstance;
-
-  GoogleUserObject? get currentUser => backupRepository.currentUser;
-  bool get isSignedIn => backupRepository.isSignedIn;
-
-  BackupConnectionStatus? _connectionStatus;
-  BackupConnectionStatus? get connectionStatus => _connectionStatus;
-
-  Stream<BackupSyncMessage?> get step1MessageStream => backupRepository.step1.message;
-  Stream<BackupSyncMessage?> get step2MessageStream => backupRepository.step2.message;
-  Stream<BackupSyncMessage?> get step3MessageStream => backupRepository.step3.message;
-  Stream<BackupSyncMessage?> get step4MessageStream => backupRepository.step4.message;
-
-  BackupSyncMessage? step1Message;
-  BackupSyncMessage? step2Message;
-  BackupSyncMessage? step3Message;
-  BackupSyncMessage? step4Message;
-
-  bool get syncing => [
-        step1Message?.processing,
-        step2Message?.processing,
-        step3Message?.processing,
-        step4Message?.processing,
-      ].any((processing) => processing == true);
-
   BackupProvider() {
     load();
 
@@ -53,24 +28,124 @@ class BackupProvider extends ChangeNotifier {
       step4Message = message;
       notifyListeners();
     });
+
+    for (var database in BackupRepository.databases) {
+      database.addGlobalListener(_databaseListener);
+    }
   }
+
+  Future<void> _databaseListener() async {
+    _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
+    notifyListeners();
+  }
+
+  BackupRepository get backupRepository => BackupRepository.appInstance;
+
+  GoogleUserObject? get currentUser => backupRepository.currentUser;
+  bool get isSignedIn => backupRepository.isSignedIn;
+
+  Stream<BackupSyncMessage?> get step1MessageStream => backupRepository.step1ImagesUploader.message;
+  Stream<BackupSyncMessage?> get step2MessageStream => backupRepository.step2LatestBackupChecker.message;
+  Stream<BackupSyncMessage?> get step3MessageStream => backupRepository.step3LatestBackupImporter.message;
+  Stream<BackupSyncMessage?> get step4MessageStream => backupRepository.step4NewBackupUploader.message;
+
+  BackupSyncMessage? step1Message;
+  BackupSyncMessage? step2Message;
+  BackupSyncMessage? step3Message;
+  BackupSyncMessage? step4Message;
+
+  BackupConnectionStatus? _connectionStatus;
+  BackupConnectionStatus? get connectionStatus => _connectionStatus;
+
+  bool get synced => lastSyncedAt != null && lastSyncedAt == lastDbUpdatedAt;
+  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentUser?.email != null;
+
+  DateTime? _lastSyncedAt;
+  DateTime? get lastSyncedAt => _lastSyncedAt;
+
+  DateTime? _lastDbUpdatedAt;
+  DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
+
+  bool _syncing = false;
+  bool get syncing => _syncing;
 
   Future<void> load() async {
     _connectionStatus = await backupRepository.checkConnection();
     notifyListeners();
-    if (_connectionStatus != BackupConnectionStatus.readyToSync || currentUser?.email == null) return;
 
-    await backupRepository.sync(currentUser!.email);
+    if (readyToSynced) {
+      await _syncBackupAcrossDevices(currentUser!.email);
+    }
+
+    notifyListeners();
   }
 
   Future<void> recheckAndSync() async {
-    if (_connectionStatus != BackupConnectionStatus.readyToSync) {
-      await load();
+    if (!readyToSynced) {
+      _connectionStatus = await backupRepository.checkConnection();
+      notifyListeners();
     }
 
-    if (_connectionStatus == BackupConnectionStatus.readyToSync) {
-      await backupRepository.sync(currentUser!.email);
+    if (readyToSynced) {
+      await _syncBackupAcrossDevices(currentUser!.email);
+      notifyListeners();
     }
+  }
+
+  // Synchronization flow for multiple devices:
+  //
+  // 1. Device A writes a new story at 12 PM and backs up the data to google drive.
+  // 2. Device B writes a new story at 3 PM. Before backing up, it retrieves the latest backup from 12 PM.
+  //    - It compares each document from the backup with the local data.
+  //    - If a document from the backup has a newer `updatedAt` timestamp than the local version, the backup data is applied.
+  // 3. Device A opens the app again and retrieves the latest data from 3 PM.
+  //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
+  //
+  Future<void> _syncBackupAcrossDevices(String email) async {
+    Future<void> call(String email) async {
+      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
+      backupRepository.resetMessages();
+      notifyListeners();
+
+      bool step1Success = await backupRepository.startStep1();
+      if (!step1Success) {
+        _connectionStatus = await backupRepository.checkConnection();
+        notifyListeners();
+        return;
+      }
+
+      final step2Response = await backupRepository.startStep2(_lastDbUpdatedAt);
+      _lastSyncedAt = step2Response.lastSyncedAt;
+      notifyListeners();
+
+      if (step2Response.hasError) {
+        _connectionStatus = await backupRepository.checkConnection();
+        notifyListeners();
+        return;
+      }
+
+      bool step3Success =
+          await backupRepository.startStep3(step2Response.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
+      if (!step3Success) return;
+
+      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
+      notifyListeners();
+
+      final backupUploaderResponse = await backupRepository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
+      if (backupUploaderResponse.hasError) return;
+
+      // once all success, mark both equal to indicate that they are synced.
+      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
+      _lastSyncedAt = backupUploaderResponse.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
+    }
+
+    _syncing = true;
+    notifyListeners();
+
+    await call(email);
+
+    _syncing = false;
+    notifyListeners();
   }
 
   Future<void> signIn(BuildContext context) async {
@@ -78,11 +153,29 @@ class BackupProvider extends ChangeNotifier {
       debugSource: '$runtimeType#signIn',
       future: () => backupRepository.signIn(),
     );
+
     notifyListeners();
+    await recheckAndSync();
+  }
+
+  Future<void> requestScope(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#requestScope',
+      future: () => backupRepository.requestScope(),
+    );
+
+    notifyListeners();
+    await recheckAndSync();
   }
 
   Future<void> signOut(BuildContext context) async {
     await backupRepository.signOut();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    backupRepository.dispose();
+    super.dispose();
   }
 }

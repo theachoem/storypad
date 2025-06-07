@@ -45,12 +45,12 @@ class GoogleDriveClient {
     _currentUser = await GoogleUserStorage().readObject();
   }
 
-  Future<bool> reauthenticate() async {
+  Future<bool> reauthenticateIfNeeded() async {
     _currentUser = await GoogleUserStorage().readObject();
     if (currentUser == null || !await googleSignIn.isSignedIn()) return false;
 
     final account = await googleSignIn.signInSilently(
-      reAuthenticate: true,
+      reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),
       suppressErrors: false,
     );
 
@@ -91,6 +91,7 @@ class GoogleDriveClient {
   Future<void> signOut() async {
     await googleSignIn.disconnect();
     await GoogleUserStorage().remove();
+    _currentUser = null;
   }
 
   Future<bool> canAccessRequestedScopes() async {
@@ -109,6 +110,7 @@ class GoogleDriveClient {
       final Map<String, dynamic> tokenInfo = json.decode(response.body);
       accessedScopes = tokenInfo['scope'] as String?;
     } catch (e) {
+      debugPrint(e.toString());
       return false;
     }
 
@@ -118,27 +120,33 @@ class GoogleDriveClient {
   }
 
   Future<bool> requestScope() async {
-    if (isSignedIn) return false;
+    if (!isSignedIn) return false;
 
-    await googleSignIn.requestScopes(googleSignIn.scopes);
-    bool success = await canAccessRequestedScopes();
+    bool requested = await googleSignIn.requestScopes(googleSignIn.scopes);
+    bool authorized = await canAccessRequestedScopes();
+
+    // in case we request scope success but still unauthorize, it mean user can disconnect app from Google app directly.
+    if (requested && !authorized) {
+      await googleSignIn.disconnect();
+      _currentUser = null;
+      await GoogleUserStorage().remove();
+    }
 
     // after request, access token might be renew.
     final account = googleSignIn.currentUser;
-    if (success && account != null) {
-      await GoogleUserStorage().writeObject(
-        GoogleUserObject(
-          id: account.id,
-          email: account.email,
-          displayName: account.displayName,
-          photoUrl: account.photoUrl,
-          accessToken: await account.authentication.then((e) => e.accessToken),
-          refreshedAt: DateTime.now(),
-        ),
+    if (authorized && account != null) {
+      _currentUser = GoogleUserObject(
+        id: account.id,
+        email: account.email,
+        displayName: account.displayName,
+        photoUrl: account.photoUrl,
+        accessToken: await account.authentication.then((e) => e.accessToken),
+        refreshedAt: DateTime.now(),
       );
+      await GoogleUserStorage().writeObject(_currentUser!);
     }
 
-    return success;
+    return authorized;
   }
 
   Future<String?> getFileContent(CloudFileObject file) async {

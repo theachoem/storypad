@@ -16,7 +16,6 @@ dependencies:
   audio_service: ^0.18.18
   cached_network_image: ^3.4.1
   copy_with_extension: ^6.0.1
-  connectivity_plus: ^6.1.4
   cupertino_icons: ^1.0.8
   device_info_plus: ^11.3.3
   dismissible_page: ^1.0.2

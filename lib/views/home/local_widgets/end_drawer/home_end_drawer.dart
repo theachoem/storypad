@@ -1,9 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
 import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart' show RemoteConfigService;
+import 'package:storypad/core/types/backup_connection_status.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
@@ -23,6 +28,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 part 'home_end_drawer_header.dart';
 part 'community_tile.dart';
 part 'language_tile.dart';
+part 'backup_tile.dart';
 
 class HomeEndDrawer extends StatelessWidget {
   const HomeEndDrawer(this.viewModel, {super.key});
@@ -70,8 +76,7 @@ class HomeEndDrawer extends StatelessWidget {
               // onTap: () => LibraryRoute().push(context),
             ),
           const Divider(),
-          // TODO: backup tile
-          // const _BackupTile(),
+          const _BackupTile(),
           const Divider(),
           buildThemeTile(context),
           const _LanguageTile(),

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,11 +26,23 @@ class GoogleUserObject {
 
   String? get bigImageUrl => _maximizeImage(photoUrl);
 
+  static const int RENEWAL_THRESHOLD_MINUTES = 55;
+
   String? _maximizeImage(String? imageUrl) {
     if (imageUrl == null) return null;
     String lowQuality = "s96-c";
     String highQuality = "s0";
     return imageUrl.replaceAll(lowQuality, highQuality);
+  }
+
+  bool isRefreshedRecently() {
+    if (refreshedAt == null) {
+      return false;
+    }
+
+    final now = DateTime.now();
+    final difference = now.difference(refreshedAt!);
+    return difference.inMinutes < RENEWAL_THRESHOLD_MINUTES;
   }
 
   Map<String, String> get authHeaders {

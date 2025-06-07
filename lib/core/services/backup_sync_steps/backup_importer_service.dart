@@ -20,10 +20,12 @@ class BackupImporterService {
 
   Future<bool> start(
     BackupObject? backup,
+    DateTime? lastSyncedAt,
+    DateTime? lastDbUpdatedAt,
   ) async {
     debugPrint('🚧 $runtimeType#start ...');
 
-    if (backup == null) {
+    if (lastSyncedAt == null || backup == null || (lastSyncedAt == lastDbUpdatedAt)) {
       controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
       return true;
     }

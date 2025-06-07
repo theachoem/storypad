@@ -16,17 +16,16 @@ class BackupImagesUploaderService {
   }
 
   Future<bool> start(GoogleDriveClient client) async {
-    try {
-      debugPrint('🚧 $runtimeType#start ...');
-      return _start(client);
-    } catch (e) {
+    debugPrint('🚧 $runtimeType#start ...');
+
+    return _start(client).onError((e, s) {
       controller.add(BackupSyncMessage(
         processing: false,
         success: false,
         message: 'Failed to upload images due to [error]',
       ));
       return false;
-    }
+    });
   }
 
   Future<bool> _start(GoogleDriveClient client) async {
