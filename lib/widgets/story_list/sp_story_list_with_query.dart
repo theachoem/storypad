@@ -72,7 +72,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   }
 
   void _listenToRestoreService() {
-    RestoreBackupService.instance.addListener(() async {
+    RestoreBackupService.appInstance.addListener(() async {
       load(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }

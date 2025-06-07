@@ -6,11 +6,9 @@ import 'package:storypad/core/services/backup_sync_steps/utils/json_tables_to_mo
 import 'package:storypad/core/objects/backup_object.dart';
 
 class RestoreBackupService {
-  RestoreBackupService._();
-
   final List<FutureOr<void> Function()> _listeners = [];
 
-  static final RestoreBackupService instance = RestoreBackupService._();
+  static final RestoreBackupService appInstance = RestoreBackupService();
 
   void addListener(
     Future<void> Function() callback,

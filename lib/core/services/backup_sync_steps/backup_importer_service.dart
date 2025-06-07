@@ -4,15 +4,23 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 
-class BackupBackupImporterService {
+class BackupImporterService {
+  final RestoreBackupService restoreService;
   final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
+
   Stream<BackupSyncMessage?> get message => controller.stream;
+
+  BackupImporterService({
+    required this.restoreService,
+  });
 
   void reset() {
     controller.add(null);
   }
 
-  Future<bool> start(BackupObject? backup) async {
+  Future<bool> start(
+    BackupObject? backup,
+  ) async {
     debugPrint('🚧 $runtimeType#start ...');
 
     if (backup == null) {
@@ -21,7 +29,7 @@ class BackupBackupImporterService {
     }
 
     controller.add(BackupSyncMessage(processing: true, success: true, message: null));
-    final int changesCount = await RestoreBackupService.instance.restoreOnlyNewData(backup: backup);
+    final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
     controller.add(BackupSyncMessage(
       processing: false,
       success: true,

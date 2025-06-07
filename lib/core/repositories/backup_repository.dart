@@ -6,10 +6,11 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:storypad/core/services/backup_sync_steps/backup_backup_importer_service.dart';
+import 'package:storypad/core/services/backup_sync_steps/backup_importer_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_latest_checker_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_uploader_service.dart';
@@ -27,7 +28,7 @@ class BackupRepository {
 
   final BackupImagesUploaderService step1;
   final BackupLatestCheckerService step2;
-  final BackupBackupImporterService step3;
+  final BackupImporterService step3;
   final BackupUploaderService step4;
 
   final InternetCheckerService internetChecker;
@@ -45,7 +46,7 @@ class BackupRepository {
   static final BackupRepository appInstance = BackupRepository(
     step1: BackupImagesUploaderService(),
     step2: BackupLatestCheckerService(),
-    step3: BackupBackupImporterService(),
+    step3: BackupImporterService(restoreService: RestoreBackupService.appInstance),
     step4: BackupUploaderService(),
     internetChecker: InternetCheckerService(),
     googleDriveClient: GoogleDriveClient(),

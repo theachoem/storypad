@@ -30,7 +30,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');
 
-    RestoreBackupService.instance.addListener(() async {
+    RestoreBackupService.appInstance.addListener(() async {
       reload(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }
