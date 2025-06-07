@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAU8Q8SrWFufbf5uC7TPDVC9aDw4_aqvRw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>892248434003</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.juniorise.spooky.community</string>
+	<key>PROJECT_ID</key>
+	<string>juniorise-spooky-community</string>
+	<key>STORAGE_BUCKET</key>
+	<string>juniorise-spooky-community.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:892248434003:ios:83be1e9203a1be7e63eda6</string>
+</dict>
+</plist>

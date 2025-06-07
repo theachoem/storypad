@@ -33,6 +33,7 @@ function save_dart_main_file() {
 
 function ensure_generated_dart_define_exist() {
   touch ios/Flutter/GeneratedDartDefines.xcconfig
+  touch macos/Flutter/ephemeral/GeneratedDartDefines.xcconfig
 }
 
 function configure() {
@@ -41,7 +42,7 @@ function configure() {
   PACKAGE_NAME=$3
   WEB_APPLICATION_ID=$4
   ACCOUNT=$5
-  PLATFORMS=${PLATFORMS:-'android,ios'}
+  PLATFORMS=${PLATFORMS:-'android,ios,macos'}
 
   save_dart_main_file $FLAVOR
   ensure_generated_dart_define_exist

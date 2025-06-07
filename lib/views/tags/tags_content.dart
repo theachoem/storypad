@@ -43,6 +43,7 @@ class _TagsContent extends StatelessWidget {
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
       ),
+      buildDefaultDragHandles: true,
       itemCount: provider.tags?.items.length ?? 0,
       onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
       proxyDecorator: (child, index, animation) {
@@ -86,16 +87,22 @@ class _TagsContent extends StatelessWidget {
   Widget buildTile(TagDbModel tag, int storyCount, TagsProvider provider, BuildContext context) {
     return ListTile(
       tileColor: Colors.transparent,
-      contentPadding: const EdgeInsets.only(left: 16.0, right: 4.0),
-      leading: const Icon(SpIcons.dragIndicator),
+      contentPadding: !viewModel.checkable ? null : const EdgeInsets.only(left: 4.0, right: 16.0),
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
+      trailing: [
+        TargetPlatform.linux,
+        TargetPlatform.windows,
+        TargetPlatform.macOS,
+      ].contains(Theme.of(context).platform)
+          ? null
+          : const Icon(SpIcons.dragIndicator),
       onTap: () => provider.viewTag(
         context: context,
         tag: tag,
         storyViewOnly: viewModel.params.storyViewOnly,
       ),
-      trailing: !viewModel.checkable
+      leading: !viewModel.checkable
           ? null
           : Checkbox.adaptive(
               tristate: false,

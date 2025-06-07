@@ -9,6 +9,7 @@ import 'package:storypad/views/stories/local_widgets/story_info_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/stories/local_widgets/story_theme_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_end_drawer_button.dart';
+import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -50,9 +51,11 @@ class ShowStoryView extends StatelessWidget {
         return PopScope(
           canPop: !viewModel.pagesManager.managingPage,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: SpStoryPreferenceTheme(
-            preferences: viewModel.story?.preferences,
-            child: _ShowStoryContent(viewModel),
+          child: DesktopMainMenuPadding(
+            child: SpStoryPreferenceTheme(
+              preferences: viewModel.story?.preferences,
+              child: _ShowStoryContent(viewModel),
+            ),
           ),
         );
       },

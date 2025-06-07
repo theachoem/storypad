@@ -1,5 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
 import 'package:storypad/core/extensions/color_extension.dart';
@@ -51,6 +54,11 @@ class UrlOpenerService {
     String url, {
     bool prefersDeepLink = false,
   }) async {
+    if (!kIsWeb || !Platform.isIOS || !Platform.isAndroid) {
+      await launchUrlString(url, deeplinkOnly: prefersDeepLink);
+      return;
+    }
+
     Color toolbarColor = Theme.of(context).appBarTheme.backgroundColor ?? Colors.white;
     Color foregroundColor = Theme.of(context).appBarTheme.foregroundColor ?? toolbarColor.darken(0.5);
 

@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:animations/animations.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -181,31 +180,21 @@ class AppTheme extends StatelessWidget {
     required ThemeProvider provider,
     required Widget Function(ColorScheme lightScheme, ColorScheme darkScheme) builder,
   }) {
-    return DynamicColorBuilder(builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
+    bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
 
-      ColorScheme lightScheme;
-      ColorScheme darkScheme;
+    ColorScheme lightScheme = ColorScheme.fromSeed(
+      seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+      brightness: Brightness.light,
+      dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+    );
 
-      if (provider.theme.colorSeed == null && lightDynamic != null && darkDynamic != null) {
-        lightScheme = lightDynamic;
-        darkScheme = darkDynamic;
-      } else {
-        lightScheme = ColorScheme.fromSeed(
-          seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
-          brightness: Brightness.light,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
+    ColorScheme darkScheme = ColorScheme.fromSeed(
+      seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+      brightness: Brightness.dark,
+      dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+    );
 
-        darkScheme = ColorScheme.fromSeed(
-          seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
-          brightness: Brightness.dark,
-          dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-        );
-      }
-
-      return builder(lightScheme, darkScheme);
-    });
+    return builder(lightScheme, darkScheme);
   }
 
   static FontWeight calculateFontWeight(FontWeight defaultWeight, FontWeight currentWeight) {

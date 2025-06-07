@@ -12,6 +12,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
+import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart' show SpAppLockWrapper;
@@ -69,10 +70,13 @@ class HomeView extends StatelessWidget {
       create: (context) => HomeViewModel(),
       builder: (context, viewModel, child) {
         _reloadContext = context;
-        return SpAppLockWrapper(
-          child: SpOnboardingWrapper(
-            child: _HomeContent(viewModel),
-            onOnboarded: () => viewModel.onboard(),
+
+        return DesktopMainMenuPadding(
+          child: SpAppLockWrapper(
+            child: SpOnboardingWrapper(
+              child: _HomeContent(viewModel),
+              onOnboarded: () => viewModel.onboard(),
+            ),
           ),
         );
       },
