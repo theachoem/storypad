@@ -69,8 +69,12 @@ class SpStoryList extends StatelessWidget {
   Widget buildList(BuildContext listContext) {
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(vertical: 16.0)
-          .copyWith(left: MediaQuery.of(listContext).padding.left, right: MediaQuery.of(listContext).padding.right),
+      padding: EdgeInsets.only(
+        top: 16.0,
+        left: MediaQuery.of(listContext).padding.left,
+        right: MediaQuery.of(listContext).padding.right,
+        bottom: MediaQuery.of(listContext).padding.bottom + 16.0,
+      ),
       itemCount: stories?.items.length ?? 0,
       itemBuilder: (context, index) {
         final story = stories!.items[index];
