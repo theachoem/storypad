@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_object.dart';
@@ -42,12 +43,8 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     loading = true;
 
     try {
-      files = await context
-          .read<BackupProvider>()
-          .backupRepository
-          .googleDriveClient
-          .fetchAllBackups(null)
-          .then((e) => e?.files);
+      files =
+          await context.read<BackupProvider>().repository.googleDriveClient.fetchAllBackups(null).then((e) => e?.files);
       if (context.mounted) deleteOldBackupsSilently(context);
     } catch (e) {
       errorMessage = e.toString();
@@ -80,7 +77,7 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     for (String id in toRemoveBackupsIds) {
-      context.read<BackupProvider>().backupRepository.googleDriveClient.deleteFile(id);
+      context.read<BackupProvider>().repository.googleDriveClient.deleteFile(id);
     }
   }
 
@@ -93,7 +90,7 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
           debugSource: '$runtimeType#openCloudFile',
           future: () async {
             final fileContent =
-                await context.read<BackupProvider>().backupRepository.googleDriveClient.getFileContent(cloudFile);
+                await context.read<BackupProvider>().repository.googleDriveClient.getFileContent(cloudFile);
 
             if (fileContent == null) return null;
             dynamic decodedContents = jsonDecode(fileContent);
@@ -109,11 +106,13 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> deleteCloudFile(BuildContext context, CloudFileObject file) async {
+    AnalyticsService.instance.logDeleteCloudBackup(file: file);
+
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#deleteCloudFile',
       future: () async {
-        bool success = await context.read<BackupProvider>().backupRepository.googleDriveClient.deleteFile(file.id);
-        if (success) files?.removeWhere((e) => e.id == file.id);
+        bool? success = await context.read<BackupProvider>().repository.googleDriveClient.deleteFile(file.id);
+        if (success == true) files?.removeWhere((e) => e.id == file.id);
         notifyListeners();
       },
     );

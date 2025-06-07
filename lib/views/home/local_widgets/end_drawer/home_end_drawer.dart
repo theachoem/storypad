@@ -17,6 +17,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/languages/languages_view.dart' show LanguagesRoute;
+import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/search/search_view.dart' show SearchRoute;
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
@@ -73,8 +74,7 @@ class HomeEndDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(SpIcons.photo),
               title: Text(tr("page.library.title")),
-              // TODO: library route
-              // onTap: () => LibraryRoute().push(context),
+              onTap: () => LibraryRoute().push(context),
             ),
           const Divider(),
           const _BackupTile(),

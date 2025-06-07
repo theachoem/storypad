@@ -40,7 +40,7 @@ class _BackupsContent extends StatelessWidget {
                   buildSliverBackupList(context)
                 ] else ...[
                   buildSliverEmpty()
-                ]
+                ],
               ],
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -36,19 +37,19 @@ class BackupProvider extends ChangeNotifier {
   }
 
   Future<void> _databaseListener() async {
-    _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
     notifyListeners();
   }
 
-  BackupRepository get backupRepository => BackupRepository.appInstance;
+  BackupRepository get repository => BackupRepository.appInstance;
 
-  GoogleUserObject? get currentUser => backupRepository.currentUser;
-  bool get isSignedIn => backupRepository.isSignedIn;
+  GoogleUserObject? get currentUser => repository.currentUser;
+  bool get isSignedIn => repository.isSignedIn;
 
-  Stream<BackupSyncMessage?> get step1MessageStream => backupRepository.step1ImagesUploader.message;
-  Stream<BackupSyncMessage?> get step2MessageStream => backupRepository.step2LatestBackupChecker.message;
-  Stream<BackupSyncMessage?> get step3MessageStream => backupRepository.step3LatestBackupImporter.message;
-  Stream<BackupSyncMessage?> get step4MessageStream => backupRepository.step4NewBackupUploader.message;
+  Stream<BackupSyncMessage?> get step1MessageStream => repository.step1ImagesUploader.message;
+  Stream<BackupSyncMessage?> get step2MessageStream => repository.step2LatestBackupChecker.message;
+  Stream<BackupSyncMessage?> get step3MessageStream => repository.step3LatestBackupImporter.message;
+  Stream<BackupSyncMessage?> get step4MessageStream => repository.step4NewBackupUploader.message;
 
   BackupSyncMessage? step1Message;
   BackupSyncMessage? step2Message;
@@ -71,13 +72,49 @@ class BackupProvider extends ChangeNotifier {
   bool get syncing => _syncing;
 
   Future<void> recheckAndSync() async {
-    _connectionStatus = await backupRepository.checkConnection();
+    _syncing = true;
+    notifyListeners();
+
+    _connectionStatus = await repository.checkConnection();
     notifyListeners();
 
     if (readyToSynced) {
       await _syncBackupAcrossDevices(currentUser!.email);
     }
 
+    _syncing = false;
+    notifyListeners();
+  }
+
+  Future<void> signIn(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#signIn',
+      future: () => repository.signIn(),
+    );
+
+    AnalyticsService.instance.logSignInWithGoogle();
+    notifyListeners();
+    await recheckAndSync();
+  }
+
+  Future<void> requestScope(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#requestScope',
+      future: () => repository.requestScope(),
+    );
+
+    AnalyticsService.instance.logRequestGoogleDriveScope();
+    notifyListeners();
+    await recheckAndSync();
+  }
+
+  Future<void> signOut(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#signOut',
+      future: () => repository.signOut(),
+    );
+
+    AnalyticsService.instance.logSignOut();
     notifyListeners();
   }
 
@@ -91,80 +128,44 @@ class BackupProvider extends ChangeNotifier {
   //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
   //
   Future<void> _syncBackupAcrossDevices(String email) async {
-    Future<void> call(String email) async {
-      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
-      backupRepository.resetMessages();
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    repository.resetMessages();
+    notifyListeners();
+
+    bool step1Success = await repository.startStep1();
+    if (!step1Success) {
+      _connectionStatus = await repository.checkConnection();
       notifyListeners();
-
-      bool step1Success = await backupRepository.startStep1();
-      if (!step1Success) {
-        _connectionStatus = await backupRepository.checkConnection();
-        notifyListeners();
-        return;
-      }
-
-      final step2Response = await backupRepository.startStep2(_lastDbUpdatedAt);
-      _lastSyncedAt = step2Response.lastSyncedAt;
-      notifyListeners();
-
-      if (step2Response.hasError) {
-        _connectionStatus = await backupRepository.checkConnection();
-        notifyListeners();
-        return;
-      }
-
-      bool step3Success =
-          await backupRepository.startStep3(step2Response.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
-      if (!step3Success) return;
-
-      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
-      notifyListeners();
-
-      final backupUploaderResponse = await backupRepository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
-      if (backupUploaderResponse.hasError) return;
-
-      // once all success, mark both equal to indicate that they are synced.
-      _lastDbUpdatedAt = await backupRepository.getLastDbUpdatedAt();
-      _lastSyncedAt = backupUploaderResponse.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
+      return;
     }
 
-    _syncing = true;
+    final step2Response = await repository.startStep2(_lastDbUpdatedAt);
+    _lastSyncedAt = step2Response.lastSyncedAt;
     notifyListeners();
 
-    await call(email);
+    if (step2Response.hasError) {
+      _connectionStatus = await repository.checkConnection();
+      notifyListeners();
+      return;
+    }
 
-    _syncing = false;
+    bool step3Success = await repository.startStep3(step2Response.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
+    if (!step3Success) return;
+
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
     notifyListeners();
-  }
 
-  Future<void> signIn(BuildContext context) async {
-    await MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#signIn',
-      future: () => backupRepository.signIn(),
-    );
+    final backupUploaderResponse = await repository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
+    if (backupUploaderResponse.hasError) return;
 
-    notifyListeners();
-    await recheckAndSync();
-  }
-
-  Future<void> requestScope(BuildContext context) async {
-    await MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#requestScope',
-      future: () => backupRepository.requestScope(),
-    );
-
-    notifyListeners();
-    await recheckAndSync();
-  }
-
-  Future<void> signOut(BuildContext context) async {
-    await backupRepository.signOut();
-    notifyListeners();
+    // once all success, mark both equal to indicate that they are synced.
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    _lastSyncedAt = backupUploaderResponse.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
   }
 
   @override
   void dispose() {
-    backupRepository.dispose();
+    repository.dispose();
     super.dispose();
   }
 }

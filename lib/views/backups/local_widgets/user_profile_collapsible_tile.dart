@@ -75,6 +75,10 @@ class UserProfileCollapsibleTile extends StatelessWidget {
           items: (BuildContext context) {
             return [
               SpPopMenuItem(
+                title: tr('general.we_dont_store_your_email_info'),
+                onPressed: null,
+              ),
+              SpPopMenuItem(
                 title: tr('button.sign_out'),
                 titleStyle: TextStyle(color: ColorScheme.of(context).error),
                 onPressed: () => viewModel.signOut(context),
