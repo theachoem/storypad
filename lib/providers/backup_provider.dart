@@ -73,6 +73,7 @@ class BackupProvider extends ChangeNotifier {
 
   Future<void> recheckAndSync() async {
     _syncing = true;
+    repository.resetMessages();
     notifyListeners();
 
     _connectionStatus = await repository.checkConnection();
@@ -129,7 +130,6 @@ class BackupProvider extends ChangeNotifier {
   //
   Future<void> _syncBackupAcrossDevices(String email) async {
     _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
-    repository.resetMessages();
     notifyListeners();
 
     bool step1Success = await repository.startStep1();

@@ -26,7 +26,7 @@ class _CalendarContent extends StatelessWidget {
 
   Widget buildScaffold(List<TagDbModel> tags, BuildContext context) {
     return Scaffold(
-      appBar: buildAppar(tags, context),
+      appBar: buildAppBar(tags, context),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         tooltip: tr("button.new_story"),
@@ -63,7 +63,7 @@ class _CalendarContent extends StatelessWidget {
     );
   }
 
-  AppBar buildAppar(List<TagDbModel> tags, BuildContext context) {
+  AppBar buildAppBar(List<TagDbModel> tags, BuildContext context) {
     return AppBar(
       toolbarHeight: 72,
       centerTitle: true,

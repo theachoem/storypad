@@ -93,7 +93,7 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     this.tabIndex = tabIndex;
-    this.selectedDay = year != this.year || month != this.month ? 1 : selectedDay;
+    this.selectedDay = year != this.year || month != this.month ? null : selectedDay;
     this.year = year;
     this.month = month;
     this.selectedTagId = selectedTagId;
