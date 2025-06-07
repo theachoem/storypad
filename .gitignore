@@ -54,6 +54,9 @@ android/app/src/storypad/google-services.json
 ios/Firebase/spooky/GoogleService-Info.plist
 ios/Firebase/storypad/GoogleService-Info.plist
 
+macos/Firebase/spooky/GoogleService-Info.plist
+macos/Firebase/storypad/GoogleService-Info.plist
+
 lib/firebase_options/spooky.dart
 lib/firebase_options/storypad.dart
 

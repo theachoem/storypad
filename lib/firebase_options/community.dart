@@ -28,10 +28,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -58,6 +55,17 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAU8Q8SrWFufbf5uC7TPDVC9aDw4_aqvRw',
+    appId: '1:892248434003:ios:83be1e9203a1be7e63eda6',
+    messagingSenderId: '892248434003',
+    projectId: 'juniorise-spooky-community',
+    storageBucket: 'juniorise-spooky-community.firebasestorage.app',
+    androidClientId: '892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com',
+    iosClientId: '892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com',
+    iosBundleId: 'com.juniorise.spooky.community',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAU8Q8SrWFufbf5uC7TPDVC9aDw4_aqvRw',
     appId: '1:892248434003:ios:83be1e9203a1be7e63eda6',
     messagingSenderId: '892248434003',
