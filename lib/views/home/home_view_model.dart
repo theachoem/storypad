@@ -8,7 +8,7 @@ import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/in_app_review_service.dart';
-import 'package:storypad/core/services/backups/restore_backup_service.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -24,15 +24,13 @@ part 'local_widgets/home_scroll_app_bar_info.dart';
 class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
-  HomeViewModel({
-    required BuildContext context,
-  }) {
+  HomeViewModel() {
     nickname = PreferenceDbModel.db.nickname.get();
 
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');
 
-    RestoreBackupService.instance.addListener(() async {
+    RestoreBackupService.appInstance.addListener(() async {
       reload(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }

@@ -40,7 +40,7 @@ class _BackupsContent extends StatelessWidget {
                   buildSliverBackupList(context)
                 ] else ...[
                   buildSliverEmpty()
-                ]
+                ],
               ],
             ),
           ),
@@ -53,7 +53,6 @@ class _BackupsContent extends StatelessWidget {
     return SliverToBoxAdapter(
       child: UserProfileCollapsibleTile(
         viewModel: viewModel,
-        source: provider.source,
         avatarSize: avatarSize,
       ),
     );
@@ -63,7 +62,9 @@ class _BackupsContent extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.all(16.0),
       sliver: SliverToBoxAdapter(
-        child: Text(tr("general.no_backup_found")),
+        child: Text(viewModel.errorMessage?.contains('Request had insufficient authentication scopes') == true
+            ? tr('list_tile.backup.no_permission_subtitle')
+            : tr("general.no_backup_found")),
       ),
     );
   }

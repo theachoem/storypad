@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -120,6 +121,13 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logRequestGoogleDriveScope() {
+    debug('logRequestGoogleDriveScope');
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('request_google_drive_scope'),
+    );
+  }
+
   Future<void> logSignOut() {
     debug('logSignOut');
     return FirebaseAnalytics.instance.logEvent(
@@ -158,14 +166,26 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
-  Future<void> logDeleteCloudFile({
-    required CloudFileObject cloudFile,
+  Future<void> logDeleteCloudBackup({
+    required CloudFileObject file,
   }) {
-    final parameters = sanitizeParameters({'version': cloudFile.getFileInfo()?.version});
-    debug('logDeleteCloudFile', parameters);
+    final parameters = sanitizeParameters({});
+    debug('logDeleteCloudBackup', parameters);
 
     return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('delete_cloud_file'),
+      name: sanitizeEventName('delete_cloud_backup'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logDeleteAsset({
+    required AssetDbModel asset,
+  }) {
+    final parameters = sanitizeParameters({});
+    debug('logDeleteAsset', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('delete_asset'),
       parameters: parameters,
     );
   }

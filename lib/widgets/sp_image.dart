@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
@@ -36,11 +35,11 @@ class SpImage extends StatelessWidget {
     if (link.startsWith("storypad://")) {
       return Consumer<BackupProvider>(builder: (context, provider, child) {
         return Image(
-          key: ValueKey(provider.source.email),
+          key: ValueKey(provider.currentUser?.accessToken),
           width: width,
           height: height,
           fit: BoxFit.cover,
-          image: SpDbImageProvider(assetLink: link, currentUser: GoogleDriveService.instance.googleSignIn.currentUser),
+          image: SpDbImageProvider(assetLink: link, currentUser: provider.currentUser),
           errorBuilder: (context, error, strackTrace) =>
               errorWidget?.call(context, link, error) ??
               buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),

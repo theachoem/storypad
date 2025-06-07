@@ -1,13 +1,14 @@
 import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart' show Consumer, ReadContext;
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart' show AppTheme;
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/constants/feature_flags.dart';
 import 'package:storypad/core/services/welcome_message_service.dart' show WelcomeMessageService;
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
@@ -18,14 +19,13 @@ import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
 import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;
-import 'package:storypad/widgets/sp_onboarding_wrapper.dart' show SpOnboardingWrappper;
+import 'package:storypad/widgets/sp_onboarding_wrapper.dart' show SpOnboardingWrapper;
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart' show SpStoryListMultiEditWrapper;
 import 'package:storypad/widgets/base_view/view_model_provider.dart' show ViewModelProvider;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
 import 'package:storypad/core/helpers/date_format_helper.dart' show DateFormatHelper;
 import 'package:storypad/providers/in_app_update_provider.dart' show InAppUpdateProvider;
-import 'package:storypad/providers/backup_provider.dart' show BackupProvider;
 import 'package:storypad/widgets/sp_cross_fade.dart' show SpCrossFade;
 import 'package:storypad/widgets/sp_fade_in.dart' show SpFadeIn;
 import 'package:storypad/widgets/sp_loop_animation_builder.dart' show SpLoopAnimationBuilder;
@@ -66,11 +66,11 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(
-      create: (context) => HomeViewModel(context: context),
+      create: (context) => HomeViewModel(),
       builder: (context, viewModel, child) {
         _reloadContext = context;
         return SpAppLockWrapper(
-          child: SpOnboardingWrappper(
+          child: SpOnboardingWrapper(
             child: _HomeContent(viewModel),
             onOnboarded: () => viewModel.onboard(),
           ),

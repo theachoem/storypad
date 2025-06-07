@@ -1,17 +1,14 @@
 import 'dart:async';
-
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/services/backups/json_tables_to_model_service.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/json_tables_to_model_service.dart';
 import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 
 class RestoreBackupService {
-  RestoreBackupService._();
-
   final List<FutureOr<void> Function()> _listeners = [];
 
-  static final RestoreBackupService instance = RestoreBackupService._();
+  static final RestoreBackupService appInstance = RestoreBackupService();
 
   void addListener(
     Future<void> Function() callback,
@@ -19,13 +16,15 @@ class RestoreBackupService {
     _listeners.add(callback);
   }
 
-  Future<void> restoreOnlyNewData({
+  Future<int> restoreOnlyNewData({
     required BackupObject backup,
   }) async {
     Map<String, dynamic> tables = backup.tables;
     Map<String, List<BaseDbModel>> datas = JsonTablesToModelService.decode(tables);
 
-    for (BaseDbAdapter db in BaseBackupSource.databases) {
+    int changesCount = 0;
+
+    for (BaseDbAdapter db in BackupRepository.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
       if (items != null) {
         for (BaseDbModel newRecord in items) {
@@ -37,8 +36,10 @@ class RestoreBackupService {
 
               if (hasUpdateAfterDelete) {
                 await db.set(newRecord, runCallbacks: false);
+                changesCount++;
               } else {
                 await db.delete(existingRecord.id, runCallbacks: false);
+                changesCount++;
               }
             }
           } else if (existingRecord != null) {
@@ -48,6 +49,7 @@ class RestoreBackupService {
 
               if (newContent) {
                 await db.set(newRecord, runCallbacks: false);
+                changesCount++;
               } else if (unSyncContent) {
                 // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
                 // This prevents the app from incorrectly assuming the database is fully synced after restoration.
@@ -59,12 +61,14 @@ class RestoreBackupService {
             }
           } else {
             await db.set(newRecord, runCallbacks: false);
+            changesCount++;
           }
         }
       }
     }
 
     await _triggerCallback();
+    return changesCount;
   }
 
   Future<void> forceRestore({
@@ -73,7 +77,7 @@ class RestoreBackupService {
     Map<String, dynamic> tables = backup.tables;
     Map<String, List<BaseDbModel>> datas = JsonTablesToModelService.decode(tables);
 
-    for (BaseDbAdapter db in BaseBackupSource.databases) {
+    for (BaseDbAdapter db in BackupRepository.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
       if (items != null) {
         for (BaseDbModel item in items) {

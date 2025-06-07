@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
-import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/providers/theme_provider.dart';
@@ -20,6 +20,9 @@ class ProviderScope extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ListenableProvider<BackupProvider>(
+          create: (context) => BackupProvider(),
+        ),
         ListenableProvider<TagsProvider>(
           create: (context) => TagsProvider(),
         ),
@@ -28,10 +31,6 @@ class ProviderScope extends StatelessWidget {
         ),
         ListenableProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
-        ),
-        ListenableProvider<BackupProvider>(
-          lazy: false,
-          create: (context) => BackupProvider(),
         ),
         ListenableProvider<InAppUpdateProvider>(
           create: (context) => InAppUpdateProvider(),

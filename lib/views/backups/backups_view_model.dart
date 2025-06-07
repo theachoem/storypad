@@ -1,7 +1,9 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_object.dart';
@@ -26,10 +28,12 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   List<CloudFileObject>? files;
 
   bool get hasData => files?.isNotEmpty == true;
+  String? errorMessage;
 
   Future<void> load(BuildContext context) async {
-    if (context.read<BackupProvider>().source.isSignedIn == null ||
-        context.read<BackupProvider>().source.isSignedIn == false) {
+    errorMessage = null;
+
+    if (context.read<BackupProvider>().isSignedIn == false) {
       loading = false;
       files = null;
       notifyListeners();
@@ -37,9 +41,15 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     loading = true;
-    files = await context.read<BackupProvider>().source.fetchAllCloudFiles().then((e) => e?.files);
 
-    if (context.mounted) deleteOldBackupsSilently(context);
+    try {
+      files =
+          await context.read<BackupProvider>().repository.googleDriveClient.fetchAllBackups(null).then((e) => e?.files);
+      if (context.mounted) deleteOldBackupsSilently(context);
+    } catch (e) {
+      errorMessage = e.toString();
+      debugPrint('$runtimeType#load failed $e');
+    }
 
     loading = false;
     notifyListeners();
@@ -67,7 +77,7 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     for (String id in toRemoveBackupsIds) {
-      context.read<BackupProvider>().queueDeleteBackupState.delete(id);
+      context.read<BackupProvider>().repository.googleDriveClient.deleteFile(id);
     }
   }
 
@@ -77,8 +87,16 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   ) async {
     BackupObject? backup = loadedBackups[cloudFile.id] ??
         await MessengerService.of(context).showLoading(
-          future: () => context.read<BackupProvider>().source.getBackup(cloudFile),
           debugSource: '$runtimeType#openCloudFile',
+          future: () async {
+            final fileContent =
+                await context.read<BackupProvider>().repository.googleDriveClient.getFileContent(cloudFile);
+
+            if (fileContent == null) return null;
+            dynamic decodedContents = jsonDecode(fileContent);
+            final backupContent = BackupObject.fromContents(decodedContents);
+            return backupContent;
+          },
         );
 
     if (backup != null && context.mounted) {
@@ -88,27 +106,25 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> deleteCloudFile(BuildContext context, CloudFileObject file) async {
+    AnalyticsService.instance.logDeleteCloudBackup(file: file);
+
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#deleteCloudFile',
       future: () async {
-        await context.read<BackupProvider>().deleteCloudFile(file);
-        files?.removeWhere((e) => e.id == file.id);
+        bool? success = await context.read<BackupProvider>().repository.googleDriveClient.deleteFile(file.id);
+        if (success == true) files?.removeWhere((e) => e.id == file.id);
         notifyListeners();
       },
     );
   }
 
   Future<void> signOut(BuildContext context) async {
-    await context
-        .read<BackupProvider>()
-        .signOut(context: context, showLoading: true, debugSource: '$runtimeType#signOut');
+    await context.read<BackupProvider>().signOut(context);
     if (context.mounted) await load(context);
   }
 
   Future<void> signIn(BuildContext context) async {
-    await context
-        .read<BackupProvider>()
-        .signIn(context: context, showLoading: true, debugSource: '$runtimeType#signIn');
+    await context.read<BackupProvider>().signIn(context);
     if (context.mounted) await load(context);
   }
 }

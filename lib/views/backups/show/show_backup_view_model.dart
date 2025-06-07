@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/backups/tables/show/show_table_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'show_backup_view.dart';
 
 class ShowBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -12,8 +15,18 @@ class ShowBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   });
 
-  void restore(BuildContext context) {
-    context.read<BackupProvider>().forceRestore(params.backup, context);
+  void restore(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#forceRestore',
+      future: () => RestoreBackupService.appInstance.forceRestore(backup: params.backup),
+    );
+
+    if (!context.mounted) return;
+    AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: params.backup.fileInfo);
+    await HomeView.reload(debugSource: '$runtimeType#forceRestore');
+
+    if (!context.mounted) return;
+    MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));
   }
 
   void viewBackupContent({

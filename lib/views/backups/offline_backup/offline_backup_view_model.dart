@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/services/backup_sources/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -75,7 +75,7 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#export',
       future: () => BackupDatabasesToBackupObjectService.call(
-        databases: BaseBackupSource.databases,
+        databases: BackupRepository.databases,
         lastUpdatedAt: lastDbUpdatedAt,
       ),
     );

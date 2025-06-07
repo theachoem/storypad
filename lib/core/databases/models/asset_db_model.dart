@@ -6,13 +6,14 @@ import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart';
 
 part 'asset_db_model.g.dart';
 
 @CopyWith()
 @JsonSerializable()
 class AssetDbModel extends BaseDbModel {
+  static const String cloudId = "google_drive";
+
   static final AssetsBox db = AssetsBox();
 
   @override
@@ -82,7 +83,7 @@ class AssetDbModel extends BaseDbModel {
   }
 
   List<String>? getGoogleDriveForEmails() {
-    return cloudDestinations[GoogleDriveBackupSource().cloudId]?.keys.toList();
+    return cloudDestinations[cloudId]?.keys.toList();
   }
 
   String? getGoogleDriveUrlForEmail(String email) {
@@ -94,8 +95,7 @@ class AssetDbModel extends BaseDbModel {
   }
 
   String? getGoogleDriveIdForEmail(String email) {
-    final service = GoogleDriveBackupSource();
-    return cloudDestinations[service.cloudId]?[email]?['file_id'];
+    return cloudDestinations[cloudId]?[email]?['file_id'];
   }
 
   Future<AssetDbModel?> save() async => db.set(this);
@@ -110,12 +110,12 @@ class AssetDbModel extends BaseDbModel {
 
   AssetDbModel copyWithGoogleDriveCloudFile({
     required CloudFileObject cloudFile,
+    required String email,
   }) {
     Map<String, Map<String, Map<String, String>>> newCloudDestinations = {...cloudDestinations};
-    final service = GoogleDriveBackupSource();
 
-    newCloudDestinations[service.cloudId] ??= {};
-    newCloudDestinations[service.cloudId]![service.email!] = {
+    newCloudDestinations[cloudId] ??= {};
+    newCloudDestinations[cloudId]![email] = {
       'file_id': cloudFile.id,
       'file_name': cloudFile.fileName!,
     };

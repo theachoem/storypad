@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/services/backups/restore_backup_service.dart';
+import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
@@ -72,7 +72,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   }
 
   void _listenToRestoreService() {
-    RestoreBackupService.instance.addListener(() async {
+    RestoreBackupService.appInstance.addListener(() async {
       load(debugSource: '$runtimeType#_listenToRestoreService');
     });
   }

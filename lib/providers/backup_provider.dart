@@ -1,101 +1,121 @@
-import 'dart:async' show Future;
-import 'package:easy_localization/easy_localization.dart' show tr;
-import 'package:firebase_crashlytics/firebase_crashlytics.dart' show FirebaseCrashlytics;
-import 'package:flutter/material.dart'
-    show
-        AppLifecycleState,
-        BuildContext,
-        ChangeNotifier,
-        WidgetsBinding,
-        WidgetsBindingObserver,
-        debugPrint,
-        debugPrintStack;
-import 'package:storypad/core/mixins/debounched_callback.dart' show DebounchedCallback;
-import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
-import 'package:storypad/core/objects/backup_object.dart' show BackupObject;
-import 'package:storypad/core/objects/cloud_file_object.dart' show CloudFileObject;
-import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
-import 'package:storypad/core/services/asset_backup_service.dart' show AssetBackupService;
-import 'package:storypad/core/services/backup_sources/base_backup_source.dart' show BaseBackupSource;
-import 'package:storypad/core/services/backup_sources/google_drive_backup_source.dart' show GoogleDriveBackupSource;
-import 'package:storypad/core/services/messenger_service.dart' show MessengerService;
-import 'package:storypad/core/services/queue_delete_backup_service.dart' show QueueDeleteBackupService;
-import 'package:storypad/core/services/backups/restore_backup_service.dart' show RestoreBackupService;
-import 'package:storypad/views/home/home_view.dart';
+import 'package:flutter/material.dart';
 
-class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBindingObserver {
-  final GoogleDriveBackupSource source = GoogleDriveBackupSource();
+import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/types/backup_connection_status.dart';
+import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 
-  late final AssetBackupService assetBackupState = AssetBackupService(
-    notifyListeners: notifyListeners,
-    source: source,
-  );
+class BackupProvider extends ChangeNotifier {
+  BackupProvider() {
+    recheckAndSync();
 
-  late final QueueDeleteBackupService queueDeleteBackupState = QueueDeleteBackupService(
-    source: source,
-  );
+    step1MessageStream.listen((message) {
+      step1Message = message;
+      notifyListeners();
+    });
+
+    step2MessageStream.listen((message) {
+      step2Message = message;
+      notifyListeners();
+    });
+
+    step3MessageStream.listen((message) {
+      step3Message = message;
+      notifyListeners();
+    });
+
+    step4MessageStream.listen((message) {
+      step4Message = message;
+      notifyListeners();
+    });
+
+    for (var database in BackupRepository.databases) {
+      database.addGlobalListener(_databaseListener);
+    }
+  }
+
+  Future<void> _databaseListener() async {
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    notifyListeners();
+  }
+
+  BackupRepository get repository => BackupRepository.appInstance;
+
+  GoogleUserObject? get currentUser => repository.currentUser;
+  bool get isSignedIn => repository.isSignedIn;
+
+  Stream<BackupSyncMessage?> get step1MessageStream => repository.step1ImagesUploader.message;
+  Stream<BackupSyncMessage?> get step2MessageStream => repository.step2LatestBackupChecker.message;
+  Stream<BackupSyncMessage?> get step3MessageStream => repository.step3LatestBackupImporter.message;
+  Stream<BackupSyncMessage?> get step4MessageStream => repository.step4NewBackupUploader.message;
+
+  BackupSyncMessage? step1Message;
+  BackupSyncMessage? step2Message;
+  BackupSyncMessage? step3Message;
+  BackupSyncMessage? step4Message;
+
+  BackupConnectionStatus? _connectionStatus;
+  BackupConnectionStatus? get connectionStatus => _connectionStatus;
+
+  bool get synced => lastSyncedAt != null && lastSyncedAt == lastDbUpdatedAt;
+  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentUser?.email != null;
+
+  DateTime? _lastSyncedAt;
+  DateTime? get lastSyncedAt => _lastSyncedAt;
 
   DateTime? _lastDbUpdatedAt;
   DateTime? get lastDbUpdatedAt => _lastDbUpdatedAt;
 
-  CloudFileObject? _syncedFile;
-  CloudFileObject? get syncedFile => _syncedFile;
-  DateTime? get lastSyncedAt => _syncedFile?.getFileInfo()?.createdAt;
-
-  int? _storyCount;
-  bool get storyEmpty => _storyCount == 0;
-
   bool _syncing = false;
   bool get syncing => _syncing;
-  bool get synced => lastSyncedAt != null && lastSyncedAt == lastDbUpdatedAt;
 
-  void setSyncing(bool value) {
-    _syncing = value;
+  Future<void> recheckAndSync() async {
+    _syncing = true;
     notifyListeners();
-  }
 
-  bool canBackup() => !storyEmpty && _lastDbUpdatedAt != null && _lastDbUpdatedAt != lastSyncedAt;
-
-  Future<void> _databaseListener() async {
-    debugPrint('BackupProvider#_databaseListener');
-    await _loadLocalData();
+    _connectionStatus = await repository.checkConnection();
     notifyListeners();
-  }
 
-  BackupProvider() {
-    WidgetsBinding.instance.addObserver(this);
-
-    for (var database in BaseBackupSource.databases) {
-      database.addGlobalListener(_databaseListener);
+    if (readyToSynced) {
+      await _syncBackupAcrossDevices(currentUser!.email);
     }
 
-    Future.delayed(const Duration(seconds: 1)).then((_) {
-      _load();
-    });
-  }
-
-  Future<void> _load() async {
-    await _loadLocalData();
-    await _loadLatestSyncedFile();
+    _syncing = false;
     notifyListeners();
-
-    if (!synced) await syncBackupAcrossDevices();
   }
 
-  Future<void> _loadLocalData() async {
-    _lastDbUpdatedAt = await _getLastDbUpdatedAt();
-    _storyCount = await StoryDbModel.db.count();
-    await assetBackupState.loadAssets();
+  Future<void> signIn(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#signIn',
+      future: () => repository.signIn(),
+    );
+
+    AnalyticsService.instance.logSignInWithGoogle();
+    notifyListeners();
+    await recheckAndSync();
   }
 
-  Future<void> _loadLatestSyncedFile() async {
-    await source.authenticate();
-    if (source.isSignedIn == null) return;
-    if (source.isSignedIn == true) {
-      _syncedFile = await source.getLastestBackupFile();
-    } else {
-      _syncedFile = null;
-    }
+  Future<void> requestScope(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#requestScope',
+      future: () => repository.requestScope(),
+    );
+
+    AnalyticsService.instance.logRequestGoogleDriveScope();
+    notifyListeners();
+    await recheckAndSync();
+  }
+
+  Future<void> signOut(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#signOut',
+      future: () => repository.signOut(),
+    );
+
+    AnalyticsService.instance.logSignOut();
+    notifyListeners();
   }
 
   // Synchronization flow for multiple devices:
@@ -107,176 +127,45 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback, WidgetsBind
   // 3. Device A opens the app again and retrieves the latest data from 3 PM.
   //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
   //
-  Future<void> syncBackupAcrossDevices() async {
-    await source.authenticate();
-
-    if (source.isSignedIn == null || !source.isSignedIn!) return;
-    if (syncing) return;
-
-    AnalyticsService.instance.logSyncBackup();
-    setSyncing(true);
-
-    try {
-      await assetBackupState.uploadAssets();
-      final localAssets = assetBackupState.getLocalAsset(source.email);
-      bool assetSynced = localAssets == null || localAssets.isEmpty;
-      if (assetSynced) {
-        await _syncBackupAcrossDevices().timeout(const Duration(seconds: 60));
-      }
-    } catch (e) {
-      debugPrint("🐛 $runtimeType#_syncBackupAcrossDevices error: $e");
-
-      StackTrace? stackTrace;
-      if (e is StateError) {
-        debugPrintStack(stackTrace: e.stackTrace);
-        stackTrace = e.stackTrace;
-      }
-
-      FirebaseCrashlytics.instance.recordError(e, stackTrace);
-    }
-
-    setSyncing(false);
-  }
-
-  Future<void> _syncBackupAcrossDevices() async {
-    await _loadLatestSyncedFile();
+  Future<void> _syncBackupAcrossDevices(String email) async {
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    repository.resetMessages();
     notifyListeners();
 
-    final previousSyncedFile = _syncedFile;
-    if (previousSyncedFile != null && lastSyncedAt != _lastDbUpdatedAt) {
-      BackupObject? backup = await source.getBackup(previousSyncedFile);
-      if (backup != null) {
-        debugPrint('🚧 $runtimeType#_syncBackupAcrossDevices -> restoreOnlyNewData');
-        await RestoreBackupService.instance.restoreOnlyNewData(backup: backup);
-        await _loadLocalData();
-      }
-    }
-
-    if (canBackup()) {
-      CloudFileObject? uploadedSyncedFile = await source.backup(lastDbUpdatedAt: lastDbUpdatedAt!);
-      if (uploadedSyncedFile == null) return;
-
-      // delete previous backup file if from same device ID.
-      bool sameDeviceID = previousSyncedFile != null &&
-          previousSyncedFile.getFileInfo()?.device.id == uploadedSyncedFile.getFileInfo()?.device.id;
-      if (sameDeviceID) {
-        queueDeleteBackupState.delete(previousSyncedFile.id);
-      }
-
-      _syncedFile = uploadedSyncedFile;
+    bool step1Success = await repository.startStep1();
+    if (!step1Success) {
+      _connectionStatus = await repository.checkConnection();
       notifyListeners();
-    }
-  }
-
-  Future<DateTime?> _getLastDbUpdatedAt() async {
-    DateTime? updatedAt;
-
-    for (var db in BaseBackupSource.databases) {
-      DateTime? newUpdatedAt = await db.getLastUpdatedAt();
-      if (newUpdatedAt == null) continue;
-
-      if (updatedAt != null) {
-        if (newUpdatedAt.isBefore(updatedAt)) continue;
-        updatedAt = newUpdatedAt;
-      } else {
-        updatedAt = newUpdatedAt;
-      }
+      return;
     }
 
-    return updatedAt;
-  }
-
-  Future<void> signOut({
-    required BuildContext context,
-    required String debugSource,
-    bool showLoading = false,
-  }) async {
-    Future<void> _() async {
-      await source.signOut();
-      await _loadLatestSyncedFile();
-      await assetBackupState.loadAssets();
-    }
-
-    showLoading
-        ? await MessengerService.of(context).showLoading(future: () => _(), debugSource: debugSource)
-        : await _();
-
-    AnalyticsService.instance.logSignOut();
-    notifyListeners();
-  }
-
-  Future<void> signIn({
-    required BuildContext context,
-    required String debugSource,
-    bool showLoading = false,
-  }) async {
-    Future<void> _() async {
-      await source.signIn();
-      await _loadLatestSyncedFile();
-      await assetBackupState.loadAssets();
-    }
-
-    showLoading
-        ? await MessengerService.of(context).showLoading(future: () => _(), debugSource: debugSource)
-        : await _();
-
-    AnalyticsService.instance.logSignInWithGoogle();
-    notifyListeners();
-  }
-
-  Future<void> deleteCloudFile(CloudFileObject file) async {
-    await source.deleteCloudFile(file.id);
-    await _loadLatestSyncedFile();
-
-    AnalyticsService.instance.logDeleteCloudFile(cloudFile: file);
-    notifyListeners();
-  }
-
-  Future<void> recheckAndSync() async {
-    await _loadLocalData();
-    await _loadLatestSyncedFile();
-
-    debugPrint('$runtimeType#recheck synced: $synced');
+    final step2Response = await repository.startStep2(_lastDbUpdatedAt);
+    _lastSyncedAt = step2Response.lastSyncedAt;
     notifyListeners();
 
-    if (!synced) await syncBackupAcrossDevices();
-  }
-
-  Future<void> forceRestore(BackupObject backup, BuildContext context) async {
-    await MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#forceRestore',
-      future: () => RestoreBackupService.instance.forceRestore(backup: backup),
-    );
-
-    if (!context.mounted) return;
-    AnalyticsService.instance.logForceRestoreBackup(backupFileInfo: backup.fileInfo);
-    await HomeView.reload(debugSource: '$runtimeType#forceRestore');
-
-    if (!context.mounted) return;
-    MessengerService.of(context).showSnackBar(tr("snack_bar.force_restore_success"));
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.resumed:
-        recheckAndSync();
-        break;
+    if (step2Response.hasError) {
+      _connectionStatus = await repository.checkConnection();
+      notifyListeners();
+      return;
     }
+
+    bool step3Success = await repository.startStep3(step2Response.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
+    if (!step3Success) return;
+
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    notifyListeners();
+
+    final backupUploaderResponse = await repository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
+    if (backupUploaderResponse.hasError) return;
+
+    // once all success, mark both equal to indicate that they are synced.
+    _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
+    _lastSyncedAt = backupUploaderResponse.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
   }
 
   @override
   void dispose() {
-    assetBackupState.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    repository.dispose();
     super.dispose();
   }
 }

@@ -13,43 +13,7 @@ class _LibraryContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr("page.library.title_with_app_name")),
       ),
-      bottomNavigationBar: buildBottomNavigation(provider, context),
       body: buildBody(context, provider),
-    );
-  }
-
-  Widget buildBottomNavigation(BackupProvider provider, BuildContext context) {
-    final localAssets = provider.assetBackupState.getLocalAsset(provider.source.email);
-    return Visibility(
-      visible: localAssets != null && localAssets.isNotEmpty == true && provider.source.isSignedIn == true,
-      child: SpFadeIn.fromBottom(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Divider(height: 1),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                  .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
-              child: Row(
-                spacing: 8.0,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ValueListenableBuilder<int?>(
-                    valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
-                    builder: (context, loadingAssetId, child) {
-                      return FilledButton.icon(
-                        icon: Icon(SpIcons.googleDrive),
-                        label: Text(tr("button.upload_to_google_drive")),
-                        onPressed: loadingAssetId != null ? null : () => provider.assetBackupState.uploadAssets(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -57,11 +21,11 @@ class _LibraryContent extends StatelessWidget {
     BuildContext context,
     BackupProvider provider,
   ) {
-    if (provider.assetBackupState.assets?.items == null) {
+    if (viewModel.assets?.items == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
-    if (provider.assetBackupState.assets?.items.isEmpty == true) {
+    if (viewModel.assets?.items.isEmpty == true) {
       return buildEmptyBody(context);
     }
 
@@ -72,12 +36,12 @@ class _LibraryContent extends StatelessWidget {
         left: MediaQuery.of(context).padding.left + 16.0,
         right: MediaQuery.of(context).padding.right + 16.0,
       ),
-      itemCount: provider.assetBackupState.assets?.items.length ?? 0,
+      itemCount: viewModel.assets?.items.length ?? 0,
       mainAxisSpacing: 8.0,
       crossAxisSpacing: 8.0,
       gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemBuilder: (context, index) {
-        final asset = provider.assetBackupState.assets!.items[index];
+        final asset = viewModel.assets!.items[index];
 
         return SpPopupMenuButton(
           dyGetter: (dy) => dy + 100,
@@ -95,7 +59,7 @@ class _LibraryContent extends StatelessWidget {
                 leadingIconData: SpIcons.photo,
                 title: tr("button.view"),
                 onPressed: () {
-                  final assetLinks = provider.assetBackupState.assets?.items.map((e) => e.link).toList() ?? [];
+                  final assetLinks = viewModel.assets?.items.map((e) => e.link).toList() ?? [];
                   SpImagesViewer.fromString(
                     images: assetLinks,
                     initialIndex: assetLinks.indexOf(asset.link),
@@ -115,23 +79,15 @@ class _LibraryContent extends StatelessWidget {
                     Positioned(
                       top: 8.0,
                       right: 8.0,
-                      child: ValueListenableBuilder<int?>(
-                        valueListenable: provider.assetBackupState.loadingAssetIdNotifier,
-                        builder: (context, loadingAssetId, child) {
-                          return buildImageStatus(
-                            context: context,
-                            asset: asset,
-                            provider: provider,
-                            loadingAssetId: loadingAssetId,
-                          );
-                        },
+                      child: buildImageStatus(
+                        context: context,
+                        asset: asset,
+                        provider: provider,
                       ),
                     ),
                   ],
                 ),
-                Text(
-                  plural("plural.story", viewModel.storiesCount[asset.id] ?? 0),
-                ),
+                Text(plural("plural.story", viewModel.storiesCount[asset.id] ?? 0)),
               ],
             );
           },
@@ -146,14 +102,14 @@ class _LibraryContent extends StatelessWidget {
         leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete_from_google_drive"),
-        onPressed: () => provider.assetBackupState.deleteAsset(asset, storyCount),
+        onPressed: () => viewModel.deleteAsset(context, asset, storyCount),
       );
     } else {
       return SpPopMenuItem(
         leadingIconData: SpIcons.delete,
         titleStyle: TextStyle(color: ColorScheme.of(context).error),
         title: tr("button.delete"),
-        onPressed: () => provider.assetBackupState.deleteAsset(asset, storyCount),
+        onPressed: () => viewModel.deleteAsset(context, asset, storyCount),
       );
     }
   }
@@ -162,16 +118,10 @@ class _LibraryContent extends StatelessWidget {
     required BuildContext context,
     required AssetDbModel asset,
     required BackupProvider provider,
-    required int? loadingAssetId,
   }) {
     Widget child;
 
-    if (loadingAssetId == asset.id) {
-      child = const SizedBox.square(
-        dimension: 16.0,
-        child: CircularProgressIndicator.adaptive(),
-      );
-    } else if (!asset.isGoogleDriveUploadedFor(provider.source.email)) {
+    if (!asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
       child = CircleAvatar(
         radius: 16.0,
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
@@ -181,9 +131,9 @@ class _LibraryContent extends StatelessWidget {
           size: 20.0,
         ),
       );
-    } else if (asset.isGoogleDriveUploadedFor(provider.source.email)) {
+    } else if (asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
       child = Tooltip(
-        message: asset.getGoogleDriveUrlForEmail(provider.source.email!),
+        message: asset.getGoogleDriveUrlForEmail(provider.currentUser!.email),
         child: CircleAvatar(
           radius: 16.0,
           backgroundColor: ColorScheme.of(context).bootstrap.success.color,

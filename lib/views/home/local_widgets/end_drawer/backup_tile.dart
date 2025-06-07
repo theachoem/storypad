@@ -1,187 +1,143 @@
 part of 'home_end_drawer.dart';
 
-class _BackupTile extends StatefulWidget {
+class _BackupTile extends StatelessWidget {
   const _BackupTile();
 
   @override
-  State<_BackupTile> createState() => _BackupTileState();
-}
-
-class _BackupTileState extends State<_BackupTile> {
-  bool focusing = true;
-
-  @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<BackupProvider>(context);
+    BackupProvider provider = Provider.of<BackupProvider>(context);
 
-    if (provider.source.isSignedIn == true) {
-      return _SignedInTile(provider: provider);
-    } else {
-      return _UnsignInTile(provider: provider);
-    }
-  }
-}
-
-class _UnsignInTile extends StatelessWidget {
-  const _UnsignInTile({
-    required this.provider,
-  });
-
-  final BackupProvider provider;
-
-  Future<void> signIn(BuildContext context, BackupProvider provider) {
-    return provider.signIn(
-      context: context,
-      showLoading: true,
-      debugSource: '$runtimeType#signIn',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 0.0,
-      children: [
-        ListTile(
-          onTap: () => BackupsRoute().push(context),
-          leading: const Icon(SpIcons.cloudUpload),
-          title: Text(tr('list_tile.backup.title')),
-          subtitle: Text(tr('list_tile.backup.unsignin_subtitle')),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-        ),
-        Container(
-          margin: const EdgeInsets.only(left: 52.0),
-          transform: Matrix4.identity()..translate(0.0, -8.0),
-          child: FilledButton.icon(
-            icon: Icon(SpIcons.googleDrive),
-            label: Text(tr("button.sign_in")),
-            onPressed: () => signIn(context, provider),
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class _SignedInTile extends StatelessWidget {
-  const _SignedInTile({
-    required this.provider,
-  });
-
-  final BackupProvider provider;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildTile(context),
-        if (!provider.syncing &&
-            !provider.synced &&
-            (provider.lastDbUpdatedAt != null || provider.lastSyncedAt != null))
-          buildSyncButton(context),
-      ],
-    );
-  }
-
-  Widget buildTile(BuildContext context) {
     Widget leading;
-    Widget? subtitle;
+    Widget title = const Text("...");
+    Widget subtitle = const Text("...");
+    Widget? action;
+
+    if (!provider.isSignedIn) {
+      leading = Icon(SpIcons.cloudOff);
+      title = Text(tr("list_tile.backup.title"));
+      subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
+      action = FilledButton.icon(
+        icon: Icon(SpIcons.googleDrive),
+        label: Text(tr('button.sign_in')),
+        onPressed: () => provider.signIn(context),
+      );
+    } else {
+      switch (provider.connectionStatus) {
+        case BackupConnectionStatus.noInternet:
+          leading = Icon(SpIcons.cloudOff);
+          title = Text(tr("list_tile.backup.title"));
+          subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
+          action = FilledButton.icon(
+            icon: const Icon(SpIcons.refresh),
+            label: Text(tr('button.refresh')),
+            onPressed: () => provider.recheckAndSync(),
+          );
+          break;
+        case BackupConnectionStatus.needGoogleDrivePermission:
+          leading = Icon(SpIcons.cloudOff);
+          title = Text(tr("list_tile.backup.title"));
+          subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
+          action = FilledButton.icon(
+            icon: Icon(SpIcons.googleDrive),
+            label: Text(tr('button.grant_permission')),
+            onPressed: () => provider.requestScope(context),
+          );
+          break;
+        case BackupConnectionStatus.readyToSync:
+          leading = Icon(SpIcons.googleDrive);
+          title = Text(tr("list_tile.backup.title"));
+          subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
+          action = FilledButton(
+            child: Text(tr('button.sync')),
+            onPressed: () => provider.recheckAndSync(),
+          );
+          break;
+        case null:
+          leading = const SizedBox.square(dimension: 24, child: CircularProgressIndicator.adaptive());
+          title = Text(tr("list_tile.backup.title"));
+          subtitle = Text(tr('list_tile.backup.setting_up_connection'));
+          action = null;
+          break;
+      }
+    }
+
+    if (provider.synced) {
+      leading = Icon(SpIcons.googleDrive);
+      subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
+      action = null;
+      title = RichText(
+        textScaler: MediaQuery.textScalerOf(context),
+        text: TextSpan(
+          text: "${tr("list_tile.backup.title")} ",
+          style: TextTheme.of(context).bodyLarge,
+          children: [
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                SpIcons.cloudDone,
+                color: ColorScheme.of(context).bootstrap.success.color,
+                size: 16.0,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (provider.syncing) {
-      leading = const SizedBox.square(
-        dimension: 24.0,
-        child: CircularProgressIndicator.adaptive(),
-      );
+      leading = const SizedBox.square(dimension: 24, child: CircularProgressIndicator.adaptive());
       subtitle = Text(tr("general.syncing"));
-    } else if (provider.synced) {
-      leading = Icon(
-        SpIcons.cloudDone,
-        color: ColorScheme.of(context).bootstrap.success.color,
+      action = null;
+
+      if (provider.step1Message != null) subtitle = Text("${tr("general.syncing")} 1/4");
+      if (provider.step2Message != null) subtitle = Text("${tr("general.syncing")} 2/4");
+      if (provider.step3Message != null) subtitle = Text("${tr("general.syncing")} 3/4");
+      if (provider.step4Message != null) subtitle = Text("${tr("general.syncing")} 4/4");
+
+      title = RichText(
+        textScaler: MediaQuery.textScalerOf(context),
+        text: TextSpan(
+          text: tr("list_tile.backup.title"),
+          style: TextTheme.of(context).bodyLarge,
+          children: [
+            const WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: SizedBox.square(dimension: 12, child: CircularProgressIndicator.adaptive(strokeWidth: 2)),
+              ),
+            ),
+          ],
+        ),
       );
-      subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
-    } else if (provider.lastDbUpdatedAt != null) {
-      String? deviceModel = provider.syncedFile?.getFileInfo()?.device.model;
-
-      String fallbackMessage = [
-        if (deviceModel != null) deviceModel,
-        if (provider.lastSyncedAt != null) DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale),
-      ].join(", ");
-
-      if (fallbackMessage.isEmpty && provider.source.email != null) {
-        fallbackMessage = provider.source.email!;
-      }
-
-      leading = const Icon(SpIcons.cloudUpload);
-      subtitle = provider.canBackup() ? Text(tr("list_tile.backup.some_data_has_not_sync_subtitle")) : null;
-
-      if (subtitle == null && fallbackMessage.isNotEmpty) subtitle = Text(fallbackMessage);
-    } else {
-      leading = const Icon(SpIcons.cloudUpload);
-      subtitle = Text(provider.source.email ?? tr("general.na"));
     }
 
-    if (provider.source.smallImageUrl != null) {
+    if (provider.currentUser?.photoUrl != null) {
       leading = Transform.scale(
         scale: 1.5,
         child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(provider.source.smallImageUrl!),
+          backgroundImage: CachedNetworkImageProvider(provider.currentUser!.photoUrl!),
           radius: 12.0,
         ),
       );
     }
 
-    return FutureBuilder(
-      future: Future.delayed(Durations.long4).then((value) => 1),
-      builder: (context, snapshot) {
-        bool focusDisabled = provider.synced || snapshot.data == 1;
-
-        return AnimatedContainer(
-          duration: const Duration(seconds: 1),
-          curve: Curves.ease,
-          color: focusDisabled
-              ? Theme.of(context).scaffoldBackgroundColor
-              : ColorScheme.of(context).primary.withValues(alpha: 0.1),
-          child: Material(
-            color: Colors.transparent,
-            child: ListTile(
-              leading: leading,
-              onTap: () => BackupsRoute().push(context),
-              subtitle: subtitle,
-              title: RichText(
-                textScaler: MediaQuery.textScalerOf(context),
-                text: TextSpan(
-                  text: "${tr("list_tile.backup.title")} ",
-                  style: TextTheme.of(context).bodyLarge,
-                  children: [
-                    if (provider.synced)
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Icon(
-                          SpIcons.cloudDone,
-                          color: ColorScheme.of(context).bootstrap.success.color,
-                          size: 16.0,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          onTap: () => BackupsRoute().push(context),
+          leading: leading,
+          title: title,
+          subtitle: subtitle,
+        ),
+        if (action != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 52.0),
+            child: action,
           ),
-        );
-      },
-    );
-  }
-
-  Widget buildSyncButton(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 52.0),
-      transform: Matrix4.identity()..translate(0.0, -8.0),
-      child: OutlinedButton.icon(
-        label: Text(tr("button.sync")),
-        onPressed: provider.syncing ? null : () => provider.syncBackupAcrossDevices(),
-      ),
+        const SizedBox(height: 4.0),
+      ],
     );
   }
 }

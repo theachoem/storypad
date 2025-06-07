@@ -15,6 +15,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject assetId(int? assetId);
 
+  SearchFilterObject templateId(int? templateId);
+
   SearchFilterObject month(int? month);
 
   SearchFilterObject day(int? day);
@@ -32,6 +34,7 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<PathType> types,
     int? tagId,
     int? assetId,
+    int? templateId,
     int? month,
     int? day,
     bool? starred,
@@ -57,6 +60,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject assetId(int? assetId) => this(assetId: assetId);
 
   @override
+  SearchFilterObject templateId(int? templateId) =>
+      this(templateId: templateId);
+
+  @override
   SearchFilterObject month(int? month) => this(month: month);
 
   @override
@@ -78,6 +85,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? types = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
+    Object? templateId = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
@@ -99,6 +107,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
           : assetId as int?,
+      templateId: templateId == const $CopyWithPlaceholder()
+          ? _value.templateId
+          // ignore: cast_nullable_to_non_nullable
+          : templateId as int?,
       month: month == const $CopyWithPlaceholder()
           ? _value.month
           // ignore: cast_nullable_to_non_nullable
@@ -136,6 +148,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
           .toSet(),
       tagId: (json['tag_id'] as num?)?.toInt(),
       assetId: (json['asset_id'] as num?)?.toInt(),
+      templateId: (json['template_id'] as num?)?.toInt(),
       month: (json['month'] as num?)?.toInt(),
       day: (json['day'] as num?)?.toInt(),
       starred: json['starred'] as bool?,
@@ -148,6 +161,7 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
       'tag_id': instance.tagId,
+      'template_id': instance.templateId,
       'asset_id': instance.assetId,
       'starred': instance.starred,
     };

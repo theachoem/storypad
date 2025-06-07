@@ -44,7 +44,7 @@ class _CommunityContent extends StatelessWidget {
           ListTile(
             leading: const Icon(SpIcons.onboarding),
             title: Text(tr('general.onboard_page')),
-            onTap: () => SpOnboardingWrappper.open(context),
+            onTap: () => SpOnboardingWrapper.open(context),
           ),
           ListTile(
             leading: Icon(SpIcons.license),

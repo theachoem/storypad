@@ -3,15 +3,15 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:ui' as ui;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:storypad/core/objects/google_user_object.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   final String assetLink;
   final double scale;
-  final GoogleSignInAccount? currentUser;
+  final GoogleUserObject? currentUser;
 
   SpDbImageProvider({
     required this.assetLink,
@@ -60,7 +60,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
           http.Response? response;
           response = await http.get(
             Uri.parse(imageUrl),
-            headers: await currentUser?.authHeaders ?? {},
+            headers: currentUser?.authHeaders,
           );
 
           final downloadedFile = File(asset.downloadFilePath);
@@ -91,7 +91,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     }
     return other is SpDbImageProvider &&
         other.assetLink == assetLink &&
-        currentUser?.email == other.currentUser?.email &&
+        currentUser?.accessToken == other.currentUser?.accessToken &&
         other.scale == scale;
   }
 

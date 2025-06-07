@@ -11,9 +11,9 @@ class BackupDatabasesToBackupObjectService {
     required List<BaseDbAdapter<BaseDbModel>> databases,
     required DateTime lastUpdatedAt,
   }) async {
-    debugPrint('BackupFileConstructor#constructBackup');
+    debugPrint('BackupDatabasesToBackupObjectService#constructBackup');
     Map<String, dynamic> tables = await _constructTables(databases);
-    debugPrint('BackupFileConstructor#constructBackup ${tables.keys}');
+    debugPrint('BackupDatabasesToBackupObjectService#constructBackup ${tables.keys}');
 
     return BackupObject(
       tables: tables,

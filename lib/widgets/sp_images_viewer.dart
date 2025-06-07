@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/google_drive/google_drive_service.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 
 class SpImageViewerProvider {
@@ -45,8 +44,7 @@ class SpImagesViewer extends StatefulWidget {
       ImageProvider? imageProvider;
 
       if (imageUrl.startsWith('storypad://')) {
-        imageProvider =
-            SpDbImageProvider(assetLink: imageUrl, currentUser: GoogleDriveService.instance.googleSignIn.currentUser);
+        imageProvider = SpDbImageProvider(assetLink: imageUrl, currentUser: null);
       } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);
       } else if (File(imageUrl).existsSync()) {
