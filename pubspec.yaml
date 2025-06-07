@@ -10,7 +10,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  adaptive_dialog: ^2.4.1
+  adaptive_dialog:
+    path: packages/adaptive_dialog
   animated_clipper: ^0.2.0+2
   animations: ^2.0.11
   audio_service: ^0.18.18
