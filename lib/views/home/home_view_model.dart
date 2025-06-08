@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/in_app_review_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/storages/new_stories_count_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -73,6 +74,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   void onboard() {
     nickname = PreferenceDbModel.db.nickname.get();
     notifyListeners();
+
+    // onboard is considered re-starting experience,
+    // reset to show new badge back.
+    NewBadgeStorage().remove();
   }
 
   Future<void> refresh(BuildContext context) async {

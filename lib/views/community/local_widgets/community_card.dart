@@ -1,30 +1,45 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:storypad/core/services/remote_config/remote_config_service.dart';
-import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/gen/assets.gen.dart';
-import 'package:storypad/widgets/sp_card.dart';
+part of '../community_view.dart';
 
-class CommunityCard extends StatelessWidget {
-  const CommunityCard({
-    super.key,
-  });
-
-  Future<void> openCustomTab(BuildContext context) async {
-    await UrlOpenerService.openInCustomTab(
-      context,
-      RemoteConfigService.communityUrl.get(),
-      prefersDeepLink: true,
-    );
-  }
+class _CommunityCard extends StatelessWidget {
+  const _CommunityCard();
 
   @override
   Widget build(BuildContext context) {
-    return SpCard.withLogo(
-      title: tr('list_tile.join_x.title'),
-      subtitle: tr('list_tile.join_x.message'),
-      logo: Assets.images.xLogo500x500.provider(),
-      onTap: () => openCustomTab(context),
+    return Container(
+      margin: const EdgeInsets.all(16.0).copyWith(bottom: 8.0, top: 8.0),
+      padding: const EdgeInsets.all(16.0).copyWith(bottom: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Theme.of(context).dividerColor),
+      ),
+      child: Column(
+        spacing: 12.0,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(tr('general.reach_us_description')),
+          Container(
+            transform: Matrix4.identity()..translate(-4.0, 0.0),
+            child: Wrap(
+              spacing: Platform.isMacOS ? 8.0 : 0.0,
+              runSpacing: Platform.isMacOS ? 8.0 : 0.0,
+              children: [
+                IconButton.filledTonal(
+                  icon: Icon(MdiIcons.twitter),
+                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://x.com/storypadapp"),
+                ),
+                IconButton.filledTonal(
+                  icon: Icon(MdiIcons.reddit),
+                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://www.reddit.com/r/StoryPad"),
+                ),
+                IconButton.filledTonal(
+                  icon: Icon(MdiIcons.bug),
+                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://storypad.me#footer"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

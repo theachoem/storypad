@@ -46,8 +46,6 @@ class SpIcons {
   static const IconData faceUnlock = Icons.face_unlock_outlined;
   static const IconData fingerprint = Icons.fingerprint_outlined;
   static final IconData lockQuestion = kIsCupertino ? CupertinoIcons.question_circle : MdiIcons.lockQuestion;
-  static const IconData keyboardLeft = kIsCupertino ? CupertinoIcons.left_chevron : Icons.keyboard_arrow_left;
-  static const IconData keyboardRight = kIsCupertino ? CupertinoIcons.right_chevron : Icons.keyboard_arrow_right;
   static const IconData folderOpen = kIsCupertino ? CupertinoIcons.folder_open : Icons.folder_open;
   static const IconData profile = kIsCupertino ? CupertinoIcons.person : Icons.person;
   static const IconData delete = kIsCupertino ? CupertinoIcons.delete : Icons.delete_outline;
@@ -77,9 +75,9 @@ class SpIcons {
   static const IconData exportOffline = kIsCupertino ? CupertinoIcons.arrow_down_doc : Icons.download;
   static const IconData importOffline = kIsCupertino ? CupertinoIcons.arrow_up_doc : Icons.folder_open;
   static const IconData update = kIsCupertino ? CupertinoIcons.arrow_down : Icons.system_update;
-  static const IconData keyboLeft = kIsCupertino ? CupertinoIcons.chevron_up : Icons.keyboard_arrow_up_outlined;
+  static const IconData keyboardLeft = kIsCupertino ? CupertinoIcons.left_chevron : Icons.keyboard_arrow_left;
+  static const IconData keyboardRight = kIsCupertino ? CupertinoIcons.right_chevron : Icons.keyboard_arrow_right;
   static const IconData keyboardUp = kIsCupertino ? CupertinoIcons.chevron_up : Icons.keyboard_arrow_up_outlined;
-  static const IconData keyboarLeft = kIsCupertino ? CupertinoIcons.chevron_down : Icons.keyboard_arrow_down_outlined;
   static const IconData keyboardDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.keyboard_arrow_down_outlined;
   static const IconData dropDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.arrow_drop_down;
   static const IconData globe = kIsCupertino ? CupertinoIcons.globe : Icons.language;

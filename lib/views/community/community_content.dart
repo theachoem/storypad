@@ -18,19 +18,19 @@ class _CommunityContent extends StatelessWidget {
           right: MediaQuery.of(context).padding.right,
         ),
         children: [
-          const SizedBox(height: 8.0),
-          const CommunityCard(),
-          const SizedBox(height: 12.0),
+          const _CommunityCard(),
           if (RemoteConfigService.faqUrl.get().trim().isNotEmpty == true)
             ListTile(
               leading: const Icon(SpIcons.question),
               title: Text(tr("list_tile.faq.title")),
+              trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.faqUrl.get()),
             ),
           if (RemoteConfigService.policyPrivacyUrl.get().trim().isNotEmpty == true)
             ListTile(
               leading: const Icon(SpIcons.policy),
               title: Text(tr("list_tile.privacy_policy.title")),
+              trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
             ),
           if (RemoteConfigService.sourceCodeUrl.get().trim().isNotEmpty == true)
@@ -61,7 +61,7 @@ class _CommunityContent extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(SpIcons.star),
+            leading: Icon(SpIcons.star, color: ColorScheme.of(context).bootstrap.warning.color),
             title: Text(tr("list_tile.rate.title")),
             onTap: () => AppStoreOpenerService.call(),
           ),

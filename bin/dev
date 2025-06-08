@@ -25,6 +25,9 @@ case "$FLAVOR" in
 --storypad-ios)
   CMD="flutter run --flavor storypad --dart-define=CUPERTINO=yes --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart"
   ;;
+--storypad-macos)
+  CMD="flutter run --flavor storypad --dart-define=CUPERTINO=yes --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart -d macos"
+  ;;
 --spooky-ios)
   CMD="flutter run --flavor spooky --dart-define=CUPERTINO=yes --dart-define-from-file=configs/spooky.json --target=lib/main_spooky.dart"
   ;;

@@ -386,12 +386,8 @@ class $AssetsImagesGen {
   AssetGenImage get storypadLogo512x512 =>
       const AssetGenImage('assets/images/storypad_logo_512x512.png');
 
-  /// File path: assets/images/x_logo_500x500.png
-  AssetGenImage get xLogo500x500 =>
-      const AssetGenImage('assets/images/x_logo_500x500.png');
-
   /// List of all assets
-  List<AssetGenImage> get values => [storypadLogo512x512, xLogo500x500];
+  List<AssetGenImage> get values => [storypadLogo512x512];
 }
 
 class $AssetsImagesOnboardingGen {

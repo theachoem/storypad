@@ -24,6 +24,7 @@ class UrlOpenerService {
     );
   }
 
+  static Future<bool> canLaunchUrl(Uri uri) => launcher.canLaunchUrl(uri);
   static Future<bool> launchUrl(
     Uri uri, {
     launcher.LaunchMode mode = launcher.LaunchMode.platformDefault,
@@ -32,7 +33,13 @@ class UrlOpenerService {
       bool launched = false;
 
       try {
-        launched = await launcher.launchUrl(uri, mode: mode);
+        launched = await launcher.launchUrl(
+          uri,
+          mode: mode,
+          browserConfiguration: const launcher.BrowserConfiguration(
+            showTitle: true,
+          ),
+        );
       } catch (e) {
         debugPrint('$UrlOpenerService.launchUrl failed $e');
       }
