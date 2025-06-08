@@ -8,7 +8,6 @@ part './remote_config_object.dart';
 
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
-    communityUrl,
     faqUrl,
     featureFlags,
     localizationSupportUrl,
@@ -32,12 +31,6 @@ class RemoteConfigService {
   void addListener(Type key, void Function() callback) {
     _listeners[key] = callback;
   }
-
-  static const communityUrl = _RemoteConfigObject<String>(
-    'COMMUNITY_URL',
-    _RemoteConfigValueType.string,
-    'https://x.com/i/communities/1914397037266919766',
-  );
 
   static const faqUrl = _RemoteConfigObject<String>(
     'FAQ_URL',

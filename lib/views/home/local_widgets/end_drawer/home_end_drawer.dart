@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
 import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/core/services/remote_config/remote_config_service.dart' show RemoteConfigService;
+import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
@@ -82,10 +82,8 @@ class HomeEndDrawer extends StatelessWidget {
           buildThemeTile(context),
           const _LanguageTile(),
           buildAppLockTile(context),
-          if (RemoteConfigService.communityUrl.get().trim().isNotEmpty == true) ...[
-            const Divider(),
-            const _CommunityTile(),
-          ],
+          const Divider(),
+          const _CommunityTile(),
         ],
       ),
     );
