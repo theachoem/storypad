@@ -28,9 +28,6 @@ class TemplatesRoute extends BaseRoute {
   final int? initialDay;
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => TemplatesView(params: this);
 }
 

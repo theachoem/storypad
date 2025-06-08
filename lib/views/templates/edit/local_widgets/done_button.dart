@@ -14,13 +14,13 @@ class _DoneButton extends StatelessWidget {
         valueListenable: viewModel.lastSavedAtNotifier,
         builder: (_, lastSavedAt, child) {
           bool disabled = lastSavedAt == null;
-          return OutlinedButton.icon(
+          return IconButton.filledTonal(
+            tooltip: tr("button.done"),
             icon: SpAnimatedIcons(
               firstChild: const Icon(SpIcons.save),
               secondChild: const Icon(SpIcons.check),
               showFirst: disabled,
             ),
-            label: Text(tr("button.done")),
             // use root context for done, it use for pop.
             // context in this builder will be disposed when readOnly.
             onPressed: disabled ? null : () => viewModel.done(context),

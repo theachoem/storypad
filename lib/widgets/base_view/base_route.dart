@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -69,6 +70,21 @@ abstract class BaseRoute {
     required BuildContext context,
     required bool fullscreenDialog,
   }) {
+    if (fullscreenDialog) {
+      return PageRouteBuilder(
+        fullscreenDialog: fullscreenDialog,
+        pageBuilder: (context, animation, secondaryAnimation) => buildPage(context),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SharedAxisTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.vertical,
+            child: child,
+          );
+        },
+      );
+    }
+
     return MaterialPageRoute<T>(
       fullscreenDialog: fullscreenDialog,
       builder: (context) => buildPage(context),

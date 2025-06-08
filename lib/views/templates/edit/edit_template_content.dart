@@ -23,11 +23,12 @@ class _EditTemplateContent extends StatelessWidget {
         initialTags: viewModel.template?.tags ?? [],
       ),
       appBar: AppBar(
+        title: viewModel.flowType == EditingFlowType.create ? Text(tr('button.new_template')) : null,
         leading: const CloseButton(),
         actions: [
-          _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
           const StoryEndDrawerButton(),
+          _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
         ],
       ),

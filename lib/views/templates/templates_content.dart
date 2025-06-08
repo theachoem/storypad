@@ -17,10 +17,10 @@ class _TemplatesContent extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: tr('button.new_template'),
         elevation: 0.0,
-        backgroundColor: ColorScheme.of(context).surface,
-        foregroundColor: ColorScheme.of(context).primary,
-        shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
+        backgroundColor: ColorScheme.of(context).secondary,
+        foregroundColor: ColorScheme.of(context).onSecondary,
         heroTag: null,
         child: const Icon(SpIcons.add),
         onPressed: () => viewModel.goToNewPage(context),
