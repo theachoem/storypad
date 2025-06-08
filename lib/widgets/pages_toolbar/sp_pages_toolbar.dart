@@ -90,6 +90,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   }
 
   void titleFocusListener(int index) {
+    if (index >= widget.pages.length) return;
     if (widget.pages[index].titleFocusNode.hasFocus) {
       titleFocused = true;
     } else {
@@ -105,6 +106,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   }
 
   void bodyFocusListener(int index) {
+    if (index >= widget.pages.length) return;
     if (widget.pages[index].bodyFocusNode.hasFocus) {
       bodyFocusedIndex = index;
       titleFocused = false;
