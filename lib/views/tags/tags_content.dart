@@ -87,7 +87,9 @@ class _TagsContent extends StatelessWidget {
   Widget buildTile(TagDbModel tag, int storyCount, TagsProvider provider, BuildContext context) {
     return ListTile(
       tileColor: Colors.transparent,
-      contentPadding: !viewModel.checkable ? null : const EdgeInsets.only(left: 4.0, right: 16.0),
+      contentPadding: !viewModel.checkable
+          ? const EdgeInsets.only(left: 16.0, right: 16.0)
+          : const EdgeInsets.only(left: 4.0, right: 16.0),
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
       trailing: [

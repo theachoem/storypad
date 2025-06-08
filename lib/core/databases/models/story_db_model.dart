@@ -6,6 +6,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -275,8 +276,14 @@ class StoryDbModel extends BaseDbModel {
     initialStory = initialStory.copyWith(
       latestContent: initialStory.latestContent!.copyWith(
         title: "Let's Begin: $year ✨",
-        pages: [delta.toJson()],
         plainText: body,
+        richPages: [
+          StoryPageDbModel(
+            id: DateTime.now().millisecondsSinceEpoch,
+            title: "Let's Begin: $year ✨",
+            body: delta.toJson(),
+          )
+        ],
       ),
     );
 

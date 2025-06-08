@@ -102,7 +102,7 @@ class _CalendarDate extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: backgroundColor?.withValues(alpha: 0.1),
+          color: backgroundColor,
         ),
         alignment: Alignment.center,
         child: FeelingObject.feelingsByKey[feeling]?.image64.image(width: 26),
