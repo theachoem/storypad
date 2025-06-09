@@ -6,6 +6,10 @@ class BackupObject {
   final BackupFileObject fileInfo;
   final int version;
 
+  int? originalFileSize;
+
+  // BackupObject version is different from BackupFileObject version.
+  // they serve different purpose.
   static const int currentVersion = 1;
 
   BackupObject({

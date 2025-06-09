@@ -149,7 +149,7 @@ class GoogleDriveClient {
     return authorized;
   }
 
-  Future<String?> getFileContent(CloudFileObject file) async {
+  Future<(String, int)?> getFileContent(CloudFileObject file) async {
     drive.DriveApi? client = await googleDriveClient;
     if (client == null) return null;
 
@@ -157,7 +157,22 @@ class GoogleDriveClient {
     if (fileInfo == null) return null;
 
     Object? media = await client.files.get(fileInfo.id, downloadOptions: drive.DownloadOptions.fullMedia);
-    if (media is drive.Media) {
+    if (media is! drive.Media) return null;
+
+    if (file.getFileInfo()?.hasCompression == true) {
+      List<int> dataStore = [];
+
+      final completer = Completer<List<int>>();
+      media.stream.listen(
+        (data) => dataStore.insertAll(dataStore.length, data),
+        onDone: () => completer.complete(dataStore),
+        onError: (error) => completer.completeError(error),
+      );
+
+      final bytes = await completer.future;
+      final decodedBytes = io.gzip.decode(bytes);
+      return (utf8.decode(decodedBytes), bytes.length);
+    } else {
       List<int> dataStore = [];
 
       Completer completer = Completer();
@@ -168,10 +183,8 @@ class GoogleDriveClient {
       );
 
       await completer.future;
-      return utf8.decode(dataStore);
+      return (utf8.decode(dataStore), dataStore.length);
     }
-
-    return null;
   }
 
   Future<CloudFileListObject?> fetchAllBackups(String? nextToken) async {
@@ -179,7 +192,7 @@ class GoogleDriveClient {
     if (client == null) return null;
 
     drive.FileList fileList = await client.files.list(
-      q: "name contains '.json'",
+      q: "name contains '.json' or name contains '.zip'",
       spaces: "appDataFolder",
       pageToken: nextToken,
     );

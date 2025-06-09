@@ -10,6 +10,7 @@ import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/gzip_service.dart';
 import 'package:storypad/core/types/file_path_type.dart';
 
 class BackupUploaderResponse {
@@ -122,6 +123,11 @@ class BackupUploaderService {
     debugPrint('BackupFileConstructor#constructFile encodingJson');
     String encodedJson = jsonEncode(backup.toContents());
     debugPrint('BackupFileConstructor#constructFile encodedJson');
+
+    if (backup.fileInfo.hasCompression == true) {
+      final compressed = GzipService.compress(encodedJson);
+      return file.writeAsBytes(compressed);
+    }
 
     return file.writeAsString(encodedJson);
   }
