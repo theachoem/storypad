@@ -9,24 +9,22 @@ class _DoneButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpFadeIn.bound(
-      child: ValueListenableBuilder(
-        valueListenable: viewModel.lastSavedAtNotifier,
-        builder: (_, lastSavedAt, child) {
-          bool disabled = lastSavedAt == null;
-          return OutlinedButton.icon(
-            icon: SpAnimatedIcons(
-              firstChild: const Icon(SpIcons.save),
-              secondChild: const Icon(SpIcons.check),
-              showFirst: disabled,
+    return ValueListenableBuilder(
+      valueListenable: viewModel.lastSavedAtNotifier,
+      builder: (_, lastSavedAt, child) {
+        return Visibility(
+          visible: lastSavedAt != null,
+          child: SpFadeIn.bound(
+            child: OutlinedButton.icon(
+              icon: const Icon(SpIcons.check),
+              label: Text(tr("button.done")),
+              // use root context for done, it use for pop.
+              // context in this builder will be disposed when readOnly.
+              onPressed: () => viewModel.done(context),
             ),
-            label: Text(tr("button.done")),
-            // use root context for done, it use for pop.
-            // context in this builder will be disposed when readOnly.
-            onPressed: disabled ? null : () => viewModel.done(context),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

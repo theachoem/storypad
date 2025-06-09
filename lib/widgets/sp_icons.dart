@@ -79,7 +79,7 @@ class SpIcons {
   static const IconData keyboardRight = kIsCupertino ? CupertinoIcons.right_chevron : Icons.keyboard_arrow_right;
   static const IconData keyboardUp = kIsCupertino ? CupertinoIcons.chevron_up : Icons.keyboard_arrow_up_outlined;
   static const IconData keyboardDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.keyboard_arrow_down_outlined;
-  static const IconData dropDown = kIsCupertino ? CupertinoIcons.chevron_down : Icons.arrow_drop_down;
+  static const IconData dropDown = Icons.arrow_drop_down;
   static const IconData globe = kIsCupertino ? CupertinoIcons.globe : Icons.language;
   static const IconData add = kIsCupertino ? CupertinoIcons.plus : Icons.add;
   static const IconData factCheck = kIsCupertino ? CupertinoIcons.text_badge_checkmark : Icons.fact_check_outlined;
