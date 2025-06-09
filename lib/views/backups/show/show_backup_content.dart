@@ -11,6 +11,12 @@ class _ShowBackupContent extends StatelessWidget {
   Widget build(BuildContext context) {
     String? backupAt = DateFormatHelper.yMEd_jmNullable(backup.fileInfo.createdAt, context.locale);
 
+    String? sizeInKB;
+
+    if (backup.originalFileSize != null) {
+      sizeInKB = "${(backup.originalFileSize! / 1024).toStringAsFixed(2)}kb";
+    }
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
@@ -19,7 +25,10 @@ class _ShowBackupContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    backup.fileInfo.device.model,
+                    [
+                      backup.fileInfo.device.model,
+                      sizeInKB,
+                    ].join(" - "),
                     style: TextTheme.of(context).titleSmall,
                   ),
                   Text(

@@ -29,6 +29,8 @@ class CloudFileObject {
     );
   }
 
+  bool? get hasCompression => getFileInfo()?.hasCompression;
+
   // story2025-01-20 21:31:05.234761.zip
   BackupFileObject? getFileInfo() {
     if (fileName == null) return null;

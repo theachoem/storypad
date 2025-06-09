@@ -77,7 +77,9 @@ class BackupLatestCheckerService {
       );
     }
 
-    final fileContent = await client.getFileContent(lastestBackupFile);
+    final result = await client.getFileContent(lastestBackupFile);
+    final fileContent = result?.$1;
+
     if (fileContent == null) {
       controller.add(BackupSyncMessage(
         processing: false,

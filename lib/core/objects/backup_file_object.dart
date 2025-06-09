@@ -17,8 +17,10 @@ class BackupFileObject {
   BackupFileObject({
     required this.createdAt,
     required this.device,
-    this.version = '1',
+    this.version = '2',
   });
+
+  bool? get hasCompression => version == '2';
 
   // v1: Backup::v1::2022-06-14T17:44:47.097469::Pixel 5.json
   String get fileName {
@@ -32,11 +34,17 @@ class BackupFileObject {
   }
 
   String get fileNameWithExtention {
-    return "$fileName.json";
+    if (version == '1') {
+      return "$fileName.json";
+    } else {
+      return "$fileName.zip";
+    }
   }
 
   static BackupFileObject? fromFileName(String fileName) {
+    if (fileName.endsWith(".zip")) fileName = fileName.replaceAll(".zip", "");
     if (fileName.endsWith(".json")) fileName = fileName.replaceAll(".json", "");
+
     List<String> value = fileName.trim().split(splitBy);
 
     if (value.isNotEmpty) {
@@ -44,6 +52,7 @@ class BackupFileObject {
 
       switch (version) {
         case "1":
+        case "2":
           try {
             int millisecondsEpoch = int.parse(value[2]);
             DateTime createdAt = DateTime.fromMillisecondsSinceEpoch(millisecondsEpoch);

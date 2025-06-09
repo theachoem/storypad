@@ -89,12 +89,16 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
         await MessengerService.of(context).showLoading(
           debugSource: '$runtimeType#openCloudFile',
           future: () async {
-            final fileContent =
-                await context.read<BackupProvider>().repository.googleDriveClient.getFileContent(cloudFile);
+            final result = await context.read<BackupProvider>().repository.googleDriveClient.getFileContent(cloudFile);
+
+            final fileContent = result?.$1;
 
             if (fileContent == null) return null;
             dynamic decodedContents = jsonDecode(fileContent);
+
             final backupContent = BackupObject.fromContents(decodedContents);
+            backupContent.originalFileSize = result?.$2;
+
             return backupContent;
           },
         );
