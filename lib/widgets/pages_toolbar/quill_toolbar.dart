@@ -94,7 +94,7 @@ class _QuillToolbar extends StatelessWidget {
               showCenterAlignment: false,
               showRightAlignment: false,
               showJustifyAlignment: false,
-              showHeaderStyle: true,
+              showHeaderStyle: false,
               showListNumbers: true,
               showListBullets: true,
               showListCheck: true,

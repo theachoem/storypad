@@ -19,8 +19,6 @@ abstract class _$StoryContentDbModelCWProxy {
 
   StoryContentDbModel richPages(List<StoryPageDbModel>? richPages);
 
-  StoryContentDbModel metadata(String? metadata);
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -34,7 +32,6 @@ abstract class _$StoryContentDbModelCWProxy {
     DateTime createdAt,
     List<List<dynamic>>? pages,
     List<StoryPageDbModel>? richPages,
-    String? metadata,
   });
 }
 
@@ -66,9 +63,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
       this(richPages: richPages);
 
   @override
-  StoryContentDbModel metadata(String? metadata) => this(metadata: metadata);
-
-  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -83,7 +77,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? pages = const $CopyWithPlaceholder(),
     Object? richPages = const $CopyWithPlaceholder(),
-    Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return StoryContentDbModel(
       id: id == const $CopyWithPlaceholder()
@@ -110,10 +103,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
           ? _value.richPages
           // ignore: cast_nullable_to_non_nullable
           : richPages as List<StoryPageDbModel>?,
-      metadata: metadata == const $CopyWithPlaceholder()
-          ? _value.metadata
-          // ignore: cast_nullable_to_non_nullable
-          : metadata as String?,
     );
   }
 }
@@ -139,7 +128,6 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as List<dynamic>)
           .toList(),
       richPages: _richPagesFromJson(json['rich_pages']),
-      metadata: json['metadata'] as String?,
     );
 
 Map<String, dynamic> _$StoryContentDbModelToJson(
@@ -149,7 +137,6 @@ Map<String, dynamic> _$StoryContentDbModelToJson(
       'title': instance.title,
       'plain_text': instance.plainText,
       'created_at': instance.createdAt.toIso8601String(),
-      'metadata': instance.metadata,
       'pages': instance.pages,
       'rich_pages': instance.richPages?.map((e) => e.toJson()).toList(),
     };

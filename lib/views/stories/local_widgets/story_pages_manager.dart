@@ -50,7 +50,7 @@ class StoryPagesManager extends StatelessWidget {
             Widget child = buildPage(context, page, index);
             return SpReorderableItem(
               index: index,
-              onAccepted: (int oldIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: index),
+              onAccepted: (int oldIndex) => viewModel.reorderPages(oldIndex: oldIndex, newIndex: index),
               onDragStarted: () => viewModel.pagesManager.draggingNotifier.value = true,
               onDragCompleted: () => viewModel.pagesManager.draggingNotifier.value = false,
               child: child,

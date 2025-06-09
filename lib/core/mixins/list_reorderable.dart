@@ -11,4 +11,20 @@ extension ListReoderable<T> on List<T> {
 
     return newItems;
   }
+
+  List<T> reorder({
+    required int oldIndex,
+    required int newIndex,
+  }) {
+    if (oldIndex < 0 || oldIndex >= length) return this;
+    if (newIndex < 0 || newIndex > length) return this;
+
+    final items = toList();
+    final item = items.removeAt(oldIndex);
+
+    final insertIndex = (oldIndex < newIndex && oldIndex != newIndex - 1) ? newIndex - 1 : newIndex;
+
+    items.insert(insertIndex, item);
+    return items;
+  }
 }

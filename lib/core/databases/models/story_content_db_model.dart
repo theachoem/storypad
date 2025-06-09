@@ -4,6 +4,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/mixins/comparable.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 
 part 'story_content_db_model.g.dart';
@@ -40,13 +41,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   List<String>? get includeCompareKeys => ['title', 'rich_pages'];
 
-  // metadata should be title + plain text
-  // better if with all pages.
-  final String? metadata;
-  String? get safeMetadata {
-    return metadata ?? [title ?? "", plainText ?? ""].join("\n");
-  }
-
   @override
   DateTime get updatedAt => createdAt;
 
@@ -64,8 +58,34 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.createdAt,
     required this.pages,
     required this.richPages,
-    required this.metadata,
   });
+
+  String? generatePlainText(List<StoryPageDbModel>? newRichPages) {
+    if (newRichPages == null || newRichPages.isEmpty) return null;
+    return [
+      newRichPages.first.plainText ?? '',
+      if (newRichPages.length > 1)
+        for (final p in newRichPages.getRange(1, newRichPages.length)) ...[
+          p.title ?? '',
+          p.plainText ?? '',
+        ],
+    ].join('\n').trim();
+  }
+
+  StoryContentDbModel reorder({
+    required int oldIndex,
+    required int newIndex,
+  }) {
+    List<StoryPageDbModel> newRichPages = [
+      ...richPages ?? <StoryPageDbModel>[],
+    ].reorder(oldIndex: oldIndex, newIndex: newIndex);
+
+    return copyWith(
+      title: newRichPages.first.title,
+      plainText: generatePlainText(newRichPages),
+      richPages: newRichPages,
+    );
+  }
 
   StoryContentDbModel addRichPage({
     int? crossAxisCount,
@@ -87,12 +107,17 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   }
 
   StoryContentDbModel removeRichPage(int pageId) {
+    List<StoryPageDbModel> newRichPages = [
+      ...richPages ?? [],
+    ]..removeWhere((e) => e.id == pageId);
+
     return copyWith(
-        title: richPages?.first.title,
-        plainText: richPages?.first.plainText,
-        richPages: [
-          ...richPages ?? [],
-        ]..removeWhere((e) => e.id == pageId));
+      title: richPages?.first.title,
+      plainText: generatePlainText(newRichPages),
+      richPages: [
+        ...richPages ?? [],
+      ]..removeWhere((e) => e.id == pageId),
+    );
   }
 
   StoryContentDbModel replacePage(StoryPageDbModel newPage) {
@@ -102,7 +127,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
     return copyWith(
       title: index == 0 ? newPage.title : title,
-      plainText: index == 0 ? newPage.plainText : plainText,
+      plainText: generatePlainText(richPages),
       richPages: richPages,
     );
   }
@@ -116,6 +141,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     return oldContent.copyWith(
       id: now.millisecondsSinceEpoch,
       createdAt: now,
+      plainText: oldContent.plainText,
     );
   }
 
@@ -129,7 +155,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       createdAt: createdAt ?? DateTime.now(),
       pages: null,
       richPages: null,
-      metadata: null,
     );
   }
 

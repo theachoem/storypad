@@ -10,7 +10,6 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
@@ -213,19 +212,11 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     }
   }
 
-  Future<void> swapPages({
+  Future<void> reorderPages({
     required int oldIndex,
     required int newIndex,
   }) async {
-    List<StoryPageDbModel> pages = [
-      ...draftContent?.richPages ?? <StoryPageDbModel>[],
-    ].swap(oldIndex: oldIndex, newIndex: newIndex);
-
-    draftContent = draftContent!.copyWith(
-      title: pages.first.title,
-      plainText: pages.first.plainText,
-      richPages: pages,
-    );
+    draftContent = draftContent?.reorder(oldIndex: oldIndex, newIndex: newIndex);
 
     await saveDraft();
     notifyListeners();
@@ -237,7 +228,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     if (!pagesManager.managingPage) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (pagesManager.pageScrollController.hasClients) {
-          pagesManager.scrollToPage(pages[newIndex].id);
+          pagesManager.scrollToPage(draftContent!.richPages![newIndex].id);
         }
       });
     }

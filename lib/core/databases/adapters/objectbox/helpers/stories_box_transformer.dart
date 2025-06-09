@@ -69,6 +69,11 @@ List<StoryObjectBox> _modelsToObjects(Map<String, dynamic> map) {
 StoryObjectBox _modelToObject(Map<String, dynamic> map) {
   StoryDbModel story = map['model'];
 
+  final content = story.draftContent ?? story.latestContent;
+  String? searchMetadata = content?.richPages?.map((e) {
+    return [e.title, e.plainText].join("\n");
+  }).join("\n");
+
   return StoryObjectBox(
     id: story.id,
     version: story.version,
@@ -88,7 +93,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
-    metadata: story.latestContent?.safeMetadata,
+    metadata: searchMetadata,
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],

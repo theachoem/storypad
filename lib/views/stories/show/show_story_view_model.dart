@@ -33,7 +33,20 @@ class ShowStoryViewModel extends BaseStoryViewModel {
       readOnly: true,
     );
 
-    draftContent = content;
+    // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.
+    // plainText is needed when saving back to draft content for homepage display & search.
+    draftContent = content.copyWith(
+      richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
+    );
+
+    // Save if detect data is invalid mostly from previous version before 2.12.3
+    // No need to do following in edit story view.
+    if (draftContent?.plainText != draftContent?.generatePlainText(draftContent?.richPages)) {
+      draftContent = draftContent?.copyWith(plainText: draftContent?.generatePlainText(draftContent?.richPages));
+      story = buildStory(draft: false);
+      StoryDbModel.db.set(story!);
+    }
+
     notifyListeners();
   }
 

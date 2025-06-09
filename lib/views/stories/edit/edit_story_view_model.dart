@@ -59,7 +59,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialPagesMap: initialPagesMap,
     );
 
-    draftContent = content;
+    // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.
+    // plainText is needed when saving back to draft content for homepage display & search.
+    draftContent = content.copyWith(
+      richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
+    );
+
     notifyListeners();
   }
 
