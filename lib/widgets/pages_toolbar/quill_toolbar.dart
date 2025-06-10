@@ -90,7 +90,7 @@ class _QuillToolbar extends StatelessWidget {
               showBackgroundColorButton: true,
               showClearFormat: true,
               showAlignmentButtons: true,
-              showLeftAlignment: true,
+              showLeftAlignment: false,
               showCenterAlignment: false,
               showRightAlignment: false,
               showJustifyAlignment: false,
