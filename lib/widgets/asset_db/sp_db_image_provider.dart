@@ -40,52 +40,60 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     SpDbImageProvider key, {
     required ImageDecoderCallback decode,
   }) async {
-    assert(key == this);
-
     AssetDbModel? asset = await AssetDbModel.findBy(assetLink: assetLink);
     File? localFile = asset?.localFile;
 
-    var uploadedEmails = asset?.getGoogleDriveForEmails() ?? [];
-    if (localFile == null && uploadedEmails.isNotEmpty == true && !uploadedEmails.contains(currentUser?.email)) {
-      throw StateError('Login with ${asset?.getGoogleDriveForEmails()?.join(" or ")} to see the image.');
-    }
+    try {
+      assert(key == this);
 
-    if (currentUser?.email != null && asset?.getGoogleDriveIdForEmail(currentUser!.email) != null) {
-      final imageUrl = asset!.getGoogleDriveUrlForEmail(currentUser!.email);
-      if (imageUrl == null) throw StateError('$assetLink with $imageUrl cannot be loaded');
+      var uploadedEmails = asset?.getGoogleDriveForEmails() ?? [];
+      if (localFile == null && uploadedEmails.isNotEmpty == true && !uploadedEmails.contains(currentUser?.email)) {
+        throw StateError('Login with ${asset?.getGoogleDriveForEmails()?.join(" or ")} to see the image.');
+      }
 
-      final downloadedFile = File(asset.downloadFilePath);
-      if (!downloadedFile.existsSync()) {
-        http.Response? response;
-        response = await http.get(
-          Uri.parse(imageUrl),
-          headers: currentUser?.authHeaders,
-        );
-
-        if (response.statusCode == 403) {
-          throw StateError('Sign in with ${currentUser?.email} to see image.');
-        }
-
-        if (response.statusCode != 200) {
-          throw StateError('Failed to fetch image. Status: ${response.statusCode}');
-        }
-
-        final contentType = response.headers['content-type'];
-        if (contentType == null || !contentType.startsWith('image/')) {
-          throw StateError('Invalid content type: $contentType');
-        }
+      if (currentUser?.email != null && asset?.getGoogleDriveIdForEmail(currentUser!.email) != null) {
+        final imageUrl = asset!.getGoogleDriveUrlForEmail(currentUser!.email);
+        if (imageUrl == null) throw StateError('$assetLink with $imageUrl cannot be loaded');
 
         final downloadedFile = File(asset.downloadFilePath);
-        await downloadedFile.create(recursive: true);
-        await downloadedFile.writeAsBytes(response.bodyBytes);
-        localFile = downloadedFile;
-      }
-    }
+        if (!downloadedFile.existsSync()) {
+          http.Response? response;
+          response = await http.get(
+            Uri.parse(imageUrl),
+            headers: currentUser?.authHeaders,
+          );
 
-    if (localFile != null) {
-      return decode(await ui.ImmutableBuffer.fromFilePath(localFile.path));
-    } else {
-      throw StateError('$assetLink cannot be loaded.');
+          if (response.statusCode == 403) {
+            throw StateError('Sign in with ${currentUser?.email} to see image.');
+          }
+
+          if (response.statusCode != 200) {
+            throw StateError('Failed to fetch image. Status: ${response.statusCode}');
+          }
+
+          final contentType = response.headers['content-type'];
+          if (contentType == null || !contentType.startsWith('image/')) {
+            throw StateError('Invalid content type: $contentType');
+          }
+
+          final downloadedFile = File(asset.downloadFilePath);
+          await downloadedFile.create(recursive: true);
+          await downloadedFile.writeAsBytes(response.bodyBytes);
+          localFile = downloadedFile;
+        }
+      }
+
+      if (localFile != null) {
+        return decode(await ui.ImmutableBuffer.fromFilePath(localFile.path));
+      } else {
+        throw StateError('$assetLink cannot be loaded.');
+      }
+    } catch (e) {
+      if (asset != null && File(asset.downloadFilePath).existsSync()) {
+        File(asset.downloadFilePath).deleteSync();
+      }
+
+      rethrow;
     }
   }
 
