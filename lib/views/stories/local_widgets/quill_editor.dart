@@ -85,6 +85,19 @@ class _QuillEditorState extends State<_QuillEditor> {
           SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
+        customLeadingBlockBuilder: (node, config) {
+          final attribute = config.attrs[Attribute.list.key] ?? config.attrs[Attribute.codeBlock.key];
+          final isCheck = attribute == Attribute.checked || attribute == Attribute.unchecked;
+
+          if (isCheck) {
+            return Checkbox.adaptive(
+              value: config.value,
+              onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,
+            );
+          }
+
+          return null;
+        },
       ),
     );
   }
