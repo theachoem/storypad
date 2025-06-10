@@ -13,6 +13,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'languages_view_model.dart';
 
 part 'languages_content.dart';
+part 'local_widgets/feedback_banner.dart';
 
 class LanguagesRoute extends BaseRoute {
   LanguagesRoute({
