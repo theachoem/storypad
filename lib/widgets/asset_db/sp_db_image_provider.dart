@@ -56,24 +56,29 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
 
       final downloadedFile = File(asset.downloadFilePath);
       if (!downloadedFile.existsSync()) {
-        try {
-          http.Response? response;
-          response = await http.get(
-            Uri.parse(imageUrl),
-            headers: currentUser?.authHeaders,
-          );
+        http.Response? response;
+        response = await http.get(
+          Uri.parse(imageUrl),
+          headers: currentUser?.authHeaders,
+        );
 
-          final downloadedFile = File(asset.downloadFilePath);
-          await downloadedFile.create(recursive: true);
-          await downloadedFile.writeAsBytes(response.bodyBytes);
-
-          localFile = downloadedFile;
-        } catch (e) {
-          if (e is HttpException && e.message.contains('403')) {
-            throw StateError('Sign in with ${currentUser!.email} to see image.');
-          }
-          rethrow;
+        if (response.statusCode == 403) {
+          throw StateError('Sign in with ${currentUser?.email} to see image.');
         }
+
+        if (response.statusCode != 200) {
+          throw StateError('Failed to fetch image. Status: ${response.statusCode}');
+        }
+
+        final contentType = response.headers['content-type'];
+        if (contentType == null || !contentType.startsWith('image/')) {
+          throw StateError('Invalid content type: $contentType');
+        }
+
+        final downloadedFile = File(asset.downloadFilePath);
+        await downloadedFile.create(recursive: true);
+        await downloadedFile.writeAsBytes(response.bodyBytes);
+        localFile = downloadedFile;
       }
     }
 
