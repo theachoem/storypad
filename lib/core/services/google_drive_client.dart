@@ -216,7 +216,7 @@ class GoogleDriveClient {
 
     drive.FileList fileList = await client.files.list(
       spaces: "appDataFolder",
-      q: "name contains '.json'",
+      q: "name contains '.json' or name contains '.zip'",
       orderBy: "createdTime desc",
       pageSize: 1,
     );
