@@ -18,6 +18,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart'
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/languages/languages_view.dart' show LanguagesRoute;
 import 'package:storypad/views/library/library_view.dart';
+import 'package:storypad/views/paywalls/paywalls_view.dart';
 import 'package:storypad/views/search/search_view.dart' show SearchRoute;
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
@@ -25,6 +26,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart' show Color
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 part 'home_end_drawer_header.dart';

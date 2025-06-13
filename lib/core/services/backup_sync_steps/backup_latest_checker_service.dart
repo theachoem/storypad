@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -53,7 +54,7 @@ class BackupLatestCheckerService {
       controller.add(BackupSyncMessage(
         processing: false,
         success: true,
-        message: 'Everything is up to date',
+        message: tr('general.everything_up_to_date'),
       ));
 
       return BackupLatestCheckerResponse(
@@ -67,7 +68,7 @@ class BackupLatestCheckerService {
       controller.add(BackupSyncMessage(
         processing: false,
         success: true,
-        message: 'Everything is up to date',
+        message: tr('general.everything_up_to_date'),
       ));
 
       return BackupLatestCheckerResponse(
