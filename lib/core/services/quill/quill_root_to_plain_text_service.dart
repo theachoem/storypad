@@ -1,55 +1,85 @@
-import 'package:flutter_quill/flutter_quill.dart';
+// ignore_for_file: implementation_imports
+
+import 'dart:collection';
+import 'package:flutter_quill/src/document/nodes/block.dart' show Block;
+import 'package:flutter_quill/src/document/nodes/line.dart' show Line;
+import 'package:flutter_quill/src/document/nodes/leaf.dart' show QuillText, Embed;
+import 'package:flutter_quill/src/document/nodes/node.dart' show Root, Node;
 
 class QuillRootToPlainTextService {
-  static String call(Root root) {
-    String plainText = root.children.map((Node e) {
-      final atts = e.style.attributes;
-      Attribute? att = atts['list'] ?? atts['blockquote'] ?? atts['code-block'] ?? atts['header'];
+  static String call(
+    Root root, {
+    bool markdown = true,
+  }) {
+    return extract(root.children, markdown);
+  }
 
-      if (e is Block) {
-        int index = 0;
-        String result = "";
+  static String extract(
+    LinkedList<Node> children,
+    bool markdown, {
+    String prefix = '',
+  }) {
+    return children.map((node) {
+      if (node is Block) {
+        return extract(node.children, markdown, prefix: prefix);
+      } else if (node is Line) {
+        final attrs = node.style.attributes;
+        final indent = '\t' * (attrs['indent']?.value ?? 0);
+        final list = attrs['list']?.value;
+        final isBlockquote = attrs.containsKey('blockquote');
+        final isCodeBlock = attrs.containsKey('code-block');
 
-        if (att?.key == "code-block") {
-          result += "```\n";
+        String linePrefix = indent;
+
+        if (isCodeBlock) {
+          final content = extract(node.children, markdown, prefix: '');
+          return '```\n$content\n```\n';
         }
 
-        for (Node entry in e.children) {
-          if (att?.key == "blockquote") {
-            String text = entry.toPlainText();
-            text = text.replaceFirst(RegExp('\n'), '', text.length - 1);
-            result += "\n> $text";
-          } else if (att?.key == "code-block") {
-            result += entry.toPlainText();
-          } else {
-            if (att?.value == "checked") {
-              result += '- [x] ${entry.toPlainText()}';
-            } else if (att?.value == "unchecked") {
-              result += "- [ ] ${entry.toPlainText()}";
-            } else if (att?.value == "ordered") {
-              index++;
-              result += "$index. ${entry.toPlainText()}";
-            } else if (att?.value == "bullet") {
-              result += "- ${entry.toPlainText()}";
-            }
-          }
+        if (isBlockquote) {
+          linePrefix += '> ';
+        } else if (list == 'bullet') {
+          linePrefix += '- ';
+        } else if (list == 'ordered') {
+          linePrefix += '1. ';
+        } else if (list == 'checked') {
+          linePrefix += '- [x] ';
+        } else if (list == 'unchecked') {
+          linePrefix += '- [ ] ';
         }
 
-        if (att?.key == "code-block") {
-          result += "```";
+        return "${extract(node.children, markdown, prefix: linePrefix)}\n";
+      } else if (node is QuillText) {
+        final text = node.value.trim();
+        if (!markdown) return prefix + text;
+
+        final style = node.style.attributes;
+
+        final isBold = style.containsKey('bold');
+        final isItalic = style.containsKey('italic');
+
+        String result = text;
+        if (isBold && isItalic) {
+          result = '***$text***';
+        } else if (isBold) {
+          result = '**$text**';
+        } else if (isItalic) {
+          result = '*$text*';
         }
 
-        return result;
-      } else if (e is Line && att != null) {
-        String prefix = "#" * ((att.value as int) + 3);
-        return "$prefix ${e.toPlainText()}";
+        return prefix + result;
+      } else if (node is Embed) {
+        final embed = node.value;
+
+        // embed has no prefix.
+        if (embed.type == 'image') {
+          return '\n[image]';
+        }
+
+        return node.toPlainText();
       } else {
-        return e.toPlainText();
+        return node.toPlainText();
       }
     }).join();
-
-    // replace all image object to empty
-    plainText = plainText.replaceAll("\uFFFC", "");
-    return plainText;
   }
 }

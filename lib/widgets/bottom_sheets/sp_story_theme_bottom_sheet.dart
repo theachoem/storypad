@@ -14,6 +14,7 @@ import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart'
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_color_list_selector.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -123,49 +124,69 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
   }
 
   Widget buildHeader(CmValueNotifier<StoryPreferencesDbModel> notifier) {
+    List<Widget> actions = [
+      buildMoreOptionsButton(notifier),
+      Builder(builder: (context) {
+        return IconButton(
+          icon: const Icon(SpIcons.share),
+          onPressed: () {
+            if (viewModel.story != null && viewModel.draftContent != null) {
+              SpShareStoryBottomSheet(
+                story: viewModel.story!,
+                draftContent: viewModel.draftContent!,
+                pagesManager: viewModel.pagesManager,
+              ).show(context: context);
+            }
+          },
+        );
+      }),
+    ];
+
+    if (!kIsCupertino) actions = actions.reversed.toList();
+
     return Row(
       mainAxisAlignment: kIsCupertino ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
       children: [
-        SpPopupMenuButton(
-          dyGetter: (dy) => dy + 56,
-          items: (context) {
-            return [
-              SpPopMenuItem(
-                leadingIconData: SpIcons.info,
-                title: tr("button.info"),
-                onPressed: () => SpStoryInfoSheet(
-                  story: viewModel.story!,
-                  persisted: viewModel.flowType == EditingFlowType.update,
-                ).show(context: context),
-              ),
-              SpPopMenuItem(
-                leadingIconData: SpIcons.refresh,
-                title: tr("button.reset_theme"),
-                titleStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: notifier.value.allReseted ? Theme.of(context).dividerColor : null),
-                onPressed: notifier.value.allReseted
-                    ? null
-                    : () {
-                        notifier.value = notifier.value.resetTheme();
-                        onThemeChanged(notifier.value);
-                      },
-              ),
-            ];
-          },
-          builder: (callback) {
-            return Row(
-              children: [
-                IconButton(
-                  icon: const Icon(SpIcons.moreVert),
-                  onPressed: callback,
-                ),
-              ],
-            );
-          },
-        ),
+        Row(children: actions),
         if (kIsCupertino) const CloseButton(),
       ],
+    );
+  }
+
+  Widget buildMoreOptionsButton(CmValueNotifier<StoryPreferencesDbModel> notifier) {
+    return SpPopupMenuButton(
+      dyGetter: (dy) => dy + 56,
+      items: (context) {
+        return [
+          SpPopMenuItem(
+            leadingIconData: SpIcons.info,
+            title: tr("button.info"),
+            onPressed: () => SpStoryInfoSheet(
+              story: viewModel.story!,
+              persisted: viewModel.flowType == EditingFlowType.update,
+            ).show(context: context),
+          ),
+          SpPopMenuItem(
+            leadingIconData: SpIcons.refresh,
+            title: tr("button.reset_theme"),
+            titleStyle: TextTheme.of(context)
+                .bodyMedium
+                ?.copyWith(color: notifier.value.allReseted ? Theme.of(context).dividerColor : null),
+            onPressed: notifier.value.allReseted
+                ? null
+                : () {
+                    notifier.value = notifier.value.resetTheme();
+                    onThemeChanged(notifier.value);
+                  },
+          ),
+        ];
+      },
+      builder: (callback) {
+        return IconButton(
+          icon: const Icon(SpIcons.moreVert),
+          onPressed: callback,
+        );
+      },
     );
   }
 }
