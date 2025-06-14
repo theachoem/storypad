@@ -542,6 +542,28 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logShareApp() {
+    final parameters = sanitizeParameters({});
+    debug('logShareApp', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('share_app'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logShareStory({
+    required String option,
+  }) {
+    final parameters = sanitizeParameters({'option': option});
+    debug('logShareStory', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('share_story'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logClearPIN() {
     final parameters = sanitizeParameters({});
     debug('logClearPIN', parameters);

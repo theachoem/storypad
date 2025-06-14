@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -15,7 +18,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 
 class SpShareStoryBottomSheet extends BaseBottomSheet {
   @override
-  bool get fullScreen => false;
+  bool get fullScreen => true;
 
   final StoryDbModel story;
   final StoryContentDbModel draftContent;
@@ -29,12 +32,32 @@ class SpShareStoryBottomSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return _ShareStoryBottomSheet(
-      story: story,
-      draftContent: draftContent,
-      pagesManager: pagesManager,
-      bottomPadding: bottomPadding,
-    );
+    if (kIsCupertino) {
+      return _ShareStoryBottomSheet(
+        story: story,
+        draftContent: draftContent,
+        pagesManager: pagesManager,
+        bottomPadding: bottomPadding,
+      );
+    } else {
+      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
+      return DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: maxChildSize,
+        initialChildSize: maxChildSize,
+        builder: (context, controller) {
+          return PrimaryScrollController(
+            controller: controller,
+            child: _ShareStoryBottomSheet(
+              story: story,
+              draftContent: draftContent,
+              pagesManager: pagesManager,
+              bottomPadding: bottomPadding,
+            ),
+          );
+        },
+      );
+    }
   }
 }
 
@@ -99,57 +122,100 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: kIsCupertino ? 72 : null,
+        centerTitle: true,
+        leading: null,
+        automaticallyImplyLeading: false,
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+        ],
+        title: buildOptions(context),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom + 12,
+          left: 16.0,
+          right: 16.0,
+        ),
+        child: FilledButton.icon(
+          icon: const Icon(SpIcons.share),
+          label: Text(tr("button.share")),
+          // TODO: on ios it does not show share logo well.
+          onPressed: () => share(),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: TextField(
+          expands: true,
+          controller: controller,
+          maxLength: null,
+          maxLines: null,
+          decoration: const InputDecoration(hintText: "..."),
+          onSubmitted: (value) => share(),
+        ),
+      ),
+    );
+  }
+
+  Widget buildOptions(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: Wrap(
+        spacing: 4.0,
+        runSpacing: 4.0,
         children: [
-          Wrap(
-            spacing: 4.0,
-            runSpacing: 4.0,
-            children: [
-              ChoiceChip(
-                showCheckmark: false,
-                avatar: Icon(MdiIcons.text),
-                label: const Text("Text"),
-                selected: option == _ShareOption.txt,
-                onSelected: (value) {
-                  option = _ShareOption.txt;
-                  controller.text = getShareText(context);
-                  setState(() {});
-                },
-              ),
-              ChoiceChip(
-                showCheckmark: false,
-                avatar: Icon(MdiIcons.languageMarkdown),
-                label: const Text("Markdown"),
-                selected: option == _ShareOption.markdown,
-                onSelected: (value) {
-                  option = _ShareOption.markdown;
-                  controller.text = getShareText(context);
-                  setState(() {});
-                },
-              ),
-            ],
+          ChoiceChip(
+            showCheckmark: false,
+            avatar: Icon(MdiIcons.text),
+            label: const Text("Text"),
+            selected: option == _ShareOption.txt,
+            onSelected: (value) {
+              option = _ShareOption.txt;
+              controller.text = getShareText(context);
+              setState(() {});
+            },
           ),
+<<<<<<< HEAD
           const SizedBox(height: 8.0),
           TextField(
             controller: controller,
             maxLength: null,
-            maxLines: 18,
+            maxLines: 10,
             decoration: const InputDecoration(hintText: "..."),
-            onSubmitted: (value) => SharePlus.instance.share(ShareParams(text: controller.text.trim())),
+            onSubmitted: (value) => share(),
           ),
           const SizedBox(height: 12.0),
           FilledButton.icon(
             icon: const Icon(SpIcons.share),
             label: Text(tr("button.share")),
             // TODO: on ios it does not show share logo well.
-            onPressed: () => SharePlus.instance.share(ShareParams(text: controller.text.trim())),
+            onPressed: () => share(),
           ),
           SizedBox(height: widget.bottomPadding)
+=======
+          ChoiceChip(
+            showCheckmark: false,
+            avatar: Icon(MdiIcons.languageMarkdown),
+            label: const Text("Markdown"),
+            selected: option == _ShareOption.markdown,
+            onSelected: (value) {
+              option = _ShareOption.markdown;
+              controller.text = getShareText(context);
+              setState(() {});
+            },
+          ),
+>>>>>>> ab0a6b61 (Add share app / story analytics)
         ],
       ),
     );
+  }
+
+  Future<void> share() async {
+    AnalyticsService.instance.logShareStory(option: option.name);
+    SharePlus.instance.share(ShareParams(text: controller.text.trim()));
   }
 }

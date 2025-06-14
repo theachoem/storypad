@@ -1,5 +1,9 @@
 name: storypad
-version: 2.13.0+389
+<<<<<<< HEAD
+version: 2.13.0+390
+=======
+version: 2.13.0+392
+>>>>>>> ab0a6b61 (Add share app / story analytics)
 publish_to: none
 environment:
   sdk: ^3.5.4
