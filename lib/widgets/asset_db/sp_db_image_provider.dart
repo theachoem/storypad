@@ -102,6 +102,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
+
     return other is SpDbImageProvider &&
         other.assetLink == assetLink &&
         currentUser?.accessToken == other.currentUser?.accessToken &&
@@ -109,7 +110,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   }
 
   @override
-  int get hashCode => Object.hash(assetLink, scale);
+  int get hashCode => Object.hash(assetLink, currentUser?.email, scale);
 
   @override
   String toString() =>
