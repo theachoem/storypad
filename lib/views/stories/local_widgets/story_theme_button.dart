@@ -18,10 +18,12 @@ class StoryThemeButton extends StatelessWidget {
       tag: "page.theme.title",
       child: IconButton(
         tooltip: tr("page.theme.title"),
-        icon: const Icon(SpIcons.theme),
+        icon: const Icon(SpIcons.moreVert),
         onPressed: () => SpStoryThemeBottomSheet(
           story: viewModel.story!,
           onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+          draftContent: viewModel.draftContent,
+          viewModel: viewModel,
         ).show(context: context),
       ),
     );

@@ -36,6 +36,7 @@
   "button.refresh": "リフレッシュ",
   "button.remember": "記憶する",
   "button.reset": "リセット",
+  "button.reset_theme": "テーマをリセットする",
   "button.restore": "復元",
   "button.restore_this_version": "このバージョンを復元",
   "button.save": "保存",

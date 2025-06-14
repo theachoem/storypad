@@ -36,6 +36,7 @@
   "button.refresh": "Refresh",
   "button.remember": "Remember",
   "button.reset": "Reset",
+  "button.reset_theme": "Reset theme",
   "button.restore": "Restore",
   "button.restore_this_version": "Restore this version",
   "button.save": "Save",

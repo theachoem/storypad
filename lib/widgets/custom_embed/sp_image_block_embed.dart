@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:animated_clipper/animated_clipper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:storypad/app_theme.dart';
@@ -51,12 +49,6 @@ class _QuillImageRenderer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String link = node.value.data;
-
-    if (kDebugMode) {
-      print("Image delta: ${node.value.data}");
-      print(jsonEncode(node.toDelta().toJson()));
-      print(jsonEncode(node.style.toJson()));
-    }
 
     return LayoutBuilder(builder: (context, constraints) {
       double? width;
