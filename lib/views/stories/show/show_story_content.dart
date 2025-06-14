@@ -51,7 +51,7 @@ class _ShowStoryContent extends StatelessWidget {
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
+        bottom: MediaQuery.of(context).padding.bottom,
       ),
       pages: pages,
       preferences: viewModel.story?.preferences,
@@ -87,13 +87,6 @@ class _ShowStoryContent extends StatelessWidget {
           const StoryEndDrawerButton(),
           StoryThemeButton(viewModel: viewModel),
         ],
-        if (viewModel.pagesManager.managingPage) ...[
-          SpFadeIn.bound(
-            delay: Durations.short1,
-            child: StoryInfoButton(viewModel: viewModel),
-          ),
-        ],
-        ManagePagesButton(viewModel: viewModel),
         const SizedBox(width: 8.0),
       ],
     );

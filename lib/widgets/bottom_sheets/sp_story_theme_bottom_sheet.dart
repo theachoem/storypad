@@ -5,12 +5,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_color_list_selector.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
@@ -19,10 +23,14 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class SpStoryThemeBottomSheet extends BaseBottomSheet {
   final StoryDbModel story;
+  final StoryContentDbModel? draftContent;
+  final BaseStoryViewModel viewModel;
   final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
 
   SpStoryThemeBottomSheet({
     required this.story,
+    required this.draftContent,
+    required this.viewModel,
     required this.onThemeChanged,
   });
 
@@ -85,6 +93,17 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
                   onThemeChanged(notifier.value);
                 },
               ),
+              ListTile(
+                leading: Icon(SpIcons.book),
+                title: Text(tr("button.manage_pages")),
+                subtitle: Text(plural('plural.page', draftContent?.richPages?.length ?? 0)),
+                trailing: const Icon(SpIcons.keyboardRight),
+                onTap: () async {
+                  await Navigator.maybePop(context);
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  viewModel.pagesManager.toggleManagingPage();
+                },
+              ),
               const Divider(height: 1),
               const SizedBox(height: 12.0),
               SpLayoutTypeSection(
@@ -112,8 +131,16 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
           items: (context) {
             return [
               SpPopMenuItem(
+                leadingIconData: SpIcons.info,
+                title: tr("button.info"),
+                onPressed: () => SpStoryInfoSheet(
+                  story: viewModel.story!,
+                  persisted: viewModel.flowType == EditingFlowType.update,
+                ).show(context: context),
+              ),
+              SpPopMenuItem(
                 leadingIconData: SpIcons.refresh,
-                title: tr("button.reset"),
+                title: tr("button.reset_theme"),
                 titleStyle: TextTheme.of(context)
                     .bodyMedium
                     ?.copyWith(color: notifier.value.allReseted ? Theme.of(context).dividerColor : null),
@@ -123,13 +150,17 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
                         notifier.value = notifier.value.resetTheme();
                         onThemeChanged(notifier.value);
                       },
-              )
+              ),
             ];
           },
           builder: (callback) {
-            return IconButton(
-              icon: const Icon(SpIcons.moreVert),
-              onPressed: callback,
+            return Row(
+              children: [
+                IconButton(
+                  icon: const Icon(SpIcons.moreVert),
+                  onPressed: callback,
+                ),
+              ],
             );
           },
         ),
