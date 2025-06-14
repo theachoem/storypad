@@ -1,10 +1,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:collection';
-import 'package:flutter_quill/src/document/nodes/block.dart' show Block;
-import 'package:flutter_quill/src/document/nodes/line.dart' show Line;
-import 'package:flutter_quill/src/document/nodes/leaf.dart' show QuillText, Embed;
-import 'package:flutter_quill/src/document/nodes/node.dart' show Root, Node;
+import 'package:flutter_quill/flutter_quill.dart';
 
 class QuillRootToPlainTextService {
   static String call(
@@ -20,6 +17,10 @@ class QuillRootToPlainTextService {
     String prefix = '',
   }) {
     return children.map((node) {
+      if (node.toPlainText().contains('storypad')) {
+        // print(node.runtimeType);
+      }
+
       if (node is Block) {
         return extract(node.children, markdown, prefix: prefix);
       } else if (node is Line) {
@@ -32,13 +33,20 @@ class QuillRootToPlainTextService {
         String linePrefix = indent;
 
         if (isCodeBlock) {
-          final content = extract(node.children, markdown, prefix: '');
+          final content = extract(node.children, markdown, prefix: linePrefix);
           return '```\n$content\n```\n';
         }
 
         if (isBlockquote) {
-          linePrefix += '> ';
-        } else if (list == 'bullet') {
+          final content = extract(node.children, markdown, prefix: '');
+
+          final indentCount = attrs['indent']?.value ?? 0;
+          final quotePrefix = '>' * indentCount + '\t';
+
+          return '$quotePrefix$content\n';
+        }
+
+        if (list == 'bullet') {
           linePrefix += '- ';
         } else if (list == 'ordered') {
           linePrefix += '1. ';
@@ -50,16 +58,20 @@ class QuillRootToPlainTextService {
 
         return "${extract(node.children, markdown, prefix: linePrefix)}\n";
       } else if (node is QuillText) {
-        final text = node.value.trim();
-        if (!markdown) return prefix + text;
-
+        final text = node.value;
         final style = node.style.attributes;
+
+        if (!markdown) return prefix + text;
 
         final isBold = style.containsKey('bold');
         final isItalic = style.containsKey('italic');
+        final isLink = style.containsKey(Attribute.link.key);
 
         String result = text;
-        if (isBold && isItalic) {
+
+        if (isLink) {
+          return '$prefix[${node.toPlainText()}](${style[Attribute.link.key]?.value})';
+        } else if (isBold && isItalic) {
           result = '***$text***';
         } else if (isBold) {
           result = '**$text**';
