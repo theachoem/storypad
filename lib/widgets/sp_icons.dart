@@ -93,4 +93,5 @@ class SpIcons {
   static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
   static const IconData timer = kIsCupertino ? CupertinoIcons.timer : Icons.timer_outlined;
   static const IconData lightBulb = kIsCupertino ? CupertinoIcons.lightbulb : Icons.lightbulb_outline;
+  static const IconData zoomInMap = kIsCupertino ? CupertinoIcons.rectangle_expand_vertical : Icons.zoom_in_map;
 }

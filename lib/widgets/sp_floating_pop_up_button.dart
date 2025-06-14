@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:animated_clipper/animated_clipper.dart';
@@ -18,7 +19,7 @@ class SpFloatingPopUpButton extends StatefulWidget {
 
   final double Function(double dy)? dyGetter;
   final Widget Function(VoidCallback open) builder;
-  final Widget Function(VoidCallback close) floatingBuilder;
+  final Widget Function(FutureOr<void> Function() close) floatingBuilder;
   final double estimatedFloatingWidth;
   final double margin;
   final bool bottomToTop;
