@@ -86,7 +86,7 @@ class QuillRootToPlainTextService {
 
         // embed has no prefix.
         if (embed.type == 'image') {
-          return '\n[image]';
+          return '';
         }
 
         return node.toPlainText();

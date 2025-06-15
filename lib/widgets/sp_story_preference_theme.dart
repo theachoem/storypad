@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/providers/theme_provider.dart';
 
 class SpStoryPreferenceTheme extends StatelessWidget {
@@ -57,14 +58,25 @@ class SpStoryPreferenceTheme extends StatelessWidget {
       };
     }
 
-    return Theme(
-      data: AppTheme.getTheme(
-        colorScheme: colorScheme,
-        fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
-        fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
-        scaffoldBackgroundColor: scaffoldBackgroundColor,
+    TextScaler textScaler = switch (preferences?.fontSize) {
+      null => MediaQuery.textScalerOf(context),
+      FontSizeOption.small => const TextScaler.linear(0.85),
+      FontSizeOption.normal => const TextScaler.linear(1.0),
+      FontSizeOption.large => const TextScaler.linear(1.15),
+      FontSizeOption.extraLarge => const TextScaler.linear(1.3),
+    };
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+      child: Theme(
+        data: AppTheme.getTheme(
+          colorScheme: colorScheme,
+          fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
+          fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
+          scaffoldBackgroundColor: scaffoldBackgroundColor,
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 

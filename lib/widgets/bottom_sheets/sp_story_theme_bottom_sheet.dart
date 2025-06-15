@@ -12,6 +12,7 @@ import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/theme_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
+import 'package:storypad/views/theme/local_widgets/font_size_tile.dart';
 import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
@@ -111,20 +112,30 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
           //     onThemeChanged(preferences);
           //   },
           // ),
-          FontWeightTile(
-            currentFontWeight: preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
-            onChanged: (value) {
-              preferences = preferences.copyWith(fontWeightIndex: value.index);
-              setState(() {});
 
-              widget.onThemeChanged(preferences);
-            },
-          ),
           FontFamilyTile(
             currentFontWeight: preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
             currentFontFamily: preferences.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
             onChanged: (fontFamily) {
               preferences = preferences.copyWith(fontFamily: fontFamily);
+              setState(() {});
+
+              widget.onThemeChanged(preferences);
+            },
+          ),
+          FontSizeTile(
+            currentFontSize: preferences.fontSize,
+            onChanged: (fontSize) {
+              preferences = preferences.copyWith(fontSize: fontSize);
+              setState(() {});
+
+              widget.onThemeChanged(preferences);
+            },
+          ),
+          FontWeightTile(
+            currentFontWeight: preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
+            onChanged: (value) {
+              preferences = preferences.copyWith(fontWeightIndex: value.index);
               setState(() {});
 
               widget.onThemeChanged(preferences);

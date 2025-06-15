@@ -19,6 +19,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel fontFamily(String? fontFamily);
 
+  StoryPreferencesDbModel fontSize(FontSizeOption? fontSize);
+
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex);
 
   StoryPreferencesDbModel titleFontFamily(String? titleFontFamily);
@@ -40,6 +42,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     int? colorSeedValue,
     int? colorTone,
     String? fontFamily,
+    FontSizeOption? fontSize,
     int? fontWeightIndex,
     String? titleFontFamily,
     int? titleFontWeightIndex,
@@ -78,6 +81,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(fontFamily: fontFamily);
 
   @override
+  StoryPreferencesDbModel fontSize(FontSizeOption? fontSize) =>
+      this(fontSize: fontSize);
+
+  @override
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex) =>
       this(fontWeightIndex: fontWeightIndex);
 
@@ -108,6 +115,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorTone = const $CopyWithPlaceholder(),
     Object? fontFamily = const $CopyWithPlaceholder(),
+    Object? fontSize = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? titleFontFamily = const $CopyWithPlaceholder(),
     Object? titleFontWeightIndex = const $CopyWithPlaceholder(),
@@ -138,6 +146,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.fontFamily
           // ignore: cast_nullable_to_non_nullable
           : fontFamily as String?,
+      fontSize: fontSize == const $CopyWithPlaceholder()
+          ? _value.fontSize
+          // ignore: cast_nullable_to_non_nullable
+          : fontSize as FontSizeOption?,
       fontWeightIndex: fontWeightIndex == const $CopyWithPlaceholder()
           ? _value.fontWeightIndex
           // ignore: cast_nullable_to_non_nullable
@@ -178,6 +190,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
       colorTone: (json['color_tone'] as num?)?.toInt(),
       fontFamily: json['font_family'] as String?,
+      fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
       titleFontFamily: json['title_font_family'] as String?,
       titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
@@ -193,11 +206,19 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'color_seed_value': instance.colorSeedValue,
       'color_tone': instance.colorTone,
       'font_family': instance.fontFamily,
+      'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
       'font_weight_index': instance.fontWeightIndex,
       'title_font_family': instance.titleFontFamily,
       'title_font_weight_index': instance.titleFontWeightIndex,
       'layout_type': _$PageLayoutTypeEnumMap[instance.layoutType]!,
     };
+
+const _$FontSizeOptionEnumMap = {
+  FontSizeOption.small: 'small',
+  FontSizeOption.normal: 'normal',
+  FontSizeOption.large: 'large',
+  FontSizeOption.extraLarge: 'extraLarge',
+};
 
 const _$PageLayoutTypeEnumMap = {
   PageLayoutType.list: 'list',

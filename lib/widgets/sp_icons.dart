@@ -68,7 +68,8 @@ class SpIcons {
   static const IconData darkMode = kIsCupertino ? CupertinoIcons.moon : Icons.dark_mode_outlined;
   static const IconData lightMode = kIsCupertino ? CupertinoIcons.sun_min : Icons.light_mode_outlined;
   static const IconData font = kIsCupertino ? CupertinoIcons.textbox : Icons.font_download_outlined;
-  static const IconData fontWeight = kIsCupertino ? CupertinoIcons.textformat_size : Icons.format_size_outlined;
+  static const IconData fontWeight = kIsCupertino ? CupertinoIcons.bold : Icons.format_bold_outlined;
+  static const IconData fontSize = kIsCupertino ? CupertinoIcons.textformat_size : Icons.format_size_outlined;
   static const IconData warning = kIsCupertino ? CupertinoIcons.exclamationmark : Icons.error_outline;
   static const IconData refresh = kIsCupertino ? CupertinoIcons.refresh : Icons.refresh;
   static const IconData calendar = kIsCupertino ? CupertinoIcons.calendar : Icons.calendar_month;
