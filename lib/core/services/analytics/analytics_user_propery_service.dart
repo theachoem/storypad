@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
+import 'package:storypad/core/types/font_size_option.dart';
 
 // Logging analytics events without user-identifiable information.
 class AnalyticsUserProperyService extends BaseAnalyticsService {
@@ -61,6 +62,17 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     return FirebaseAnalytics.instance.setUserProperty(
       name: 'font_family',
       value: newFontFamily,
+    );
+  }
+
+  Future<void> logSetFontSize({
+    required FontSizeOption? newFontSize,
+  }) {
+    debug('logSetFontSize', {'value': newFontSize?.name ?? 'system'});
+
+    return FirebaseAnalytics.instance.setUserProperty(
+      name: 'font_size',
+      value: newFontSize?.name ?? 'system',
     );
   }
 }
