@@ -8,7 +8,7 @@ const String kAppName = String.fromEnvironment('APP_NAME');
 const String kRevenueCatAndroidApiKey = String.fromEnvironment('REVENUE_CAT_ANDROID_API_KEY');
 const String kRevenueCatIosApiKey = String.fromEnvironment('REVENUE_CAT_IOS_API_KEY');
 
-const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'ys';
+const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 
 const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;

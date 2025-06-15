@@ -126,7 +126,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       appBar: AppBar(
         toolbarHeight: kIsCupertino ? 72 : null,
         centerTitle: true,
-        leading: null,
+        leading: const SizedBox.shrink(),
         automaticallyImplyLeading: false,
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
@@ -150,6 +150,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: TextField(
+          textAlignVertical: const TextAlignVertical(y: -1.0),
           expands: true,
           controller: controller,
           maxLength: null,
@@ -162,55 +163,34 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
   }
 
   Widget buildOptions(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
-      child: Wrap(
-        spacing: 4.0,
-        runSpacing: 4.0,
-        children: [
-          ChoiceChip(
-            showCheckmark: false,
-            avatar: Icon(MdiIcons.text),
-            label: const Text("Text"),
-            selected: option == _ShareOption.txt,
-            onSelected: (value) {
-              option = _ShareOption.txt;
-              controller.text = getShareText(context);
-              setState(() {});
-            },
-          ),
-<<<<<<< HEAD
-          const SizedBox(height: 8.0),
-          TextField(
-            controller: controller,
-            maxLength: null,
-            maxLines: 10,
-            decoration: const InputDecoration(hintText: "..."),
-            onSubmitted: (value) => share(),
-          ),
-          const SizedBox(height: 12.0),
-          FilledButton.icon(
-            icon: const Icon(SpIcons.share),
-            label: Text(tr("button.share")),
-            // TODO: on ios it does not show share logo well.
-            onPressed: () => share(),
-          ),
-          SizedBox(height: widget.bottomPadding)
-=======
-          ChoiceChip(
-            showCheckmark: false,
-            avatar: Icon(MdiIcons.languageMarkdown),
-            label: const Text("Markdown"),
-            selected: option == _ShareOption.markdown,
-            onSelected: (value) {
-              option = _ShareOption.markdown;
-              controller.text = getShareText(context);
-              setState(() {});
-            },
-          ),
->>>>>>> ab0a6b61 (Add share app / story analytics)
-        ],
-      ),
+    return Row(
+      spacing: 4.0,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ChoiceChip(
+          showCheckmark: false,
+          avatar: Icon(MdiIcons.text),
+          label: const Text("Text"),
+          selected: option == _ShareOption.txt,
+          onSelected: (value) {
+            option = _ShareOption.txt;
+            controller.text = getShareText(context);
+            setState(() {});
+          },
+        ),
+        ChoiceChip(
+          showCheckmark: false,
+          avatar: Icon(MdiIcons.languageMarkdown),
+          label: const Text("Markdown"),
+          selected: option == _ShareOption.markdown,
+          onSelected: (value) {
+            option = _ShareOption.markdown;
+            controller.text = getShareText(context);
+            setState(() {});
+          },
+        ),
+      ],
     );
   }
 

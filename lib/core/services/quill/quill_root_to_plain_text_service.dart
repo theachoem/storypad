@@ -37,11 +37,12 @@ class QuillRootToPlainTextService {
           return '```\n$content\n```\n';
         }
 
+        // output: >> for multiple indent.
         if (isBlockquote) {
           final content = extract(node.children, markdown, prefix: '');
 
-          final indentCount = attrs['indent']?.value ?? 0;
-          final quotePrefix = '>' * indentCount + '\t';
+          final indentCount = attrs['indent']?.value;
+          final quotePrefix = indentCount != null ? '> ' * (indentCount + 1) : '> ';
 
           return '$quotePrefix$content\n';
         }
