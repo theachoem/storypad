@@ -61,6 +61,22 @@ class _QuillEditorState extends State<_QuillEditor> {
       controller: widget.bodyController,
       scrollController: widget.scrollController,
       config: QuillEditorConfig(
+        customStyles: DefaultStyles(
+          quote: DefaultTextBlockStyle(
+            TextTheme.of(context).bodyLarge!.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.8)),
+            const HorizontalSpacing(0.0, 0.0),
+            const VerticalSpacing(4.0, 4.0),
+            const VerticalSpacing(0.0, 0.0),
+            BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
+                  width: MediaQuery.textScalerOf(context).scale(3),
+                ),
+              ),
+            ),
+          ),
+        ),
         keyboardAppearance: Theme.of(context).brightness,
         contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
           rawEditorState,

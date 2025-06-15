@@ -12,6 +12,17 @@ class ThemeProvider extends ChangeNotifier {
   ThemeObject get theme => _theme;
   ThemeMode get themeMode => theme.themeMode;
 
+  // Sometimes reading `ColorScheme.of(context).brightness` may not reflect the correct dark mode state,
+  // especially if the widget hasn't rebuilt yet after a system theme change.
+  // In such cases, we determine dark mode based directly on ThemeMode and platform brightness.
+  bool isDarkModeBaseOnThemeMode(BuildContext context) {
+    if (themeMode == ThemeMode.system) {
+      return View.of(context).platformDispatcher.platformBrightness == Brightness.dark;
+    } else {
+      return themeMode == ThemeMode.dark;
+    }
+  }
+
   void reset() {
     _theme = ThemeObject.initial();
     storage.remove();

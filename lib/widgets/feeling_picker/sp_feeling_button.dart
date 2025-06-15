@@ -63,9 +63,28 @@ class SpFeelingButton extends StatelessWidget {
                         ),
                       );
                     },
-                    child: FeelingObject.feelingsByKey[feeling]?.image64
-                            .image(width: 24, key: ValueKey('feeling-$feeling')) ??
-                        const Icon(SpIcons.addFeeling, key: ValueKey('feeling-none')),
+                    child: Container(
+                      decoration: FeelingObject.feelingsByKey[feeling] != null
+                          ? BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 1,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 0),
+                                ),
+                              ],
+                            )
+                          : null,
+                      child: FeelingObject.feelingsByKey[feeling]?.image64
+                              .image(width: 24, key: ValueKey('feeling-$feeling')) ??
+                          Icon(
+                            SpIcons.addFeeling,
+                            key: const ValueKey('feeling-none'),
+                            color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                          ),
+                    ),
                   ),
                 ),
               ),
