@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/theme_provider.dart';
@@ -19,8 +18,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   static final Map<Color, ColorScheme> _cacheDarkColorSchemes = {};
   static final Map<Color, ColorScheme> _cacheLightColorSchemes = {};
 
-  static bool isMonochrome(StoryPreferencesDbModel? preferences, BuildContext context) {
-    final colorSeed = preferences?.colorSeed ?? context.read<ThemeProvider>().theme.colorSeed ?? kDefaultColorSeed;
+  bool isMonochrome(StoryPreferencesDbModel? preferences, BuildContext context) {
+    final colorSeed = preferences?.colorSeed;
     return colorSeed == Colors.black || colorSeed == Colors.white;
   }
 
@@ -38,12 +37,12 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.06), colorScheme.surface),
         66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.01), colorScheme.surface),
         99 => baseColor,
-        _ => colorScheme.readOnly.surface3,
+        _ => colorScheme.surface,
       };
     } else if (preferences?.colorSeed != null) {
       scaffoldBackgroundColor = switch (preferences?.colorToneFallback) {
         0 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
-        33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05), colorScheme.surface),
+        33 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05), colorScheme.surface),
         66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 2), colorScheme.surface),
         99 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 3), colorScheme.surface),
         _ => colorScheme.readOnly.surface3,
@@ -51,10 +50,10 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     } else {
       scaffoldBackgroundColor = switch (preferences?.colorToneFallback) {
         0 => colorScheme.surface,
-        33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
+        33 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
         66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05), colorScheme.surface),
         99 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 2), colorScheme.surface),
-        _ => colorScheme.readOnly.surface3,
+        _ => colorScheme.surface,
       };
     }
 
@@ -69,7 +68,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     );
   }
 
-  static ColorScheme getStoryColorScheme(
+  ColorScheme getStoryColorScheme(
     StoryPreferencesDbModel? preferences,
     BuildContext context,
   ) {
@@ -95,7 +94,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     }
   }
 
-  static Color? getRouteBackgroundColor(
+  Color? getRouteBackgroundColor(
     StoryPreferencesDbModel? preferences,
     BuildContext context,
   ) {

@@ -128,7 +128,11 @@ class SpColorListSelector extends StatelessWidget {
             width: 40,
             height: 40,
             transformAlignment: Alignment.center,
-            transform: Matrix4.identity()..scale(selected ? 0.8 : 1.0),
+            transform: Matrix4.identity()
+              ..scale(
+                // black / white color look smaller with eye even they has same size. Scale a little bit.
+                selected ? 0.8 : (backgroundColor == Colors.black || backgroundColor == Colors.white ? 1.03 : 1.0),
+              ),
             decoration: BoxDecoration(
               color: backgroundColor,
               shape: BoxShape.circle,

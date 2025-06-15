@@ -124,9 +124,9 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: kIsCupertino ? 72 : null,
+        toolbarHeight: CupertinoSheetRoute.hasParentSheet(context) ? 72 : null,
         centerTitle: true,
-        leading: const SizedBox.shrink(),
+        leading: CupertinoSheetRoute.hasParentSheet(context) ? const SizedBox.shrink() : null,
         automaticallyImplyLeading: false,
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
