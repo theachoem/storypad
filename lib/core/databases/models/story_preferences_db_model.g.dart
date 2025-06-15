@@ -15,6 +15,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue);
 
+  StoryPreferencesDbModel colorTone(int? colorTone);
+
   StoryPreferencesDbModel fontFamily(String? fontFamily);
 
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex);
@@ -36,6 +38,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     String? starIcon,
     bool? showTime,
     int? colorSeedValue,
+    int? colorTone,
     String? fontFamily,
     int? fontWeightIndex,
     String? titleFontFamily,
@@ -65,6 +68,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
   @override
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue) =>
       this(colorSeedValue: colorSeedValue);
+
+  @override
+  StoryPreferencesDbModel colorTone(int? colorTone) =>
+      this(colorTone: colorTone);
 
   @override
   StoryPreferencesDbModel fontFamily(String? fontFamily) =>
@@ -99,6 +106,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? starIcon = const $CopyWithPlaceholder(),
     Object? showTime = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
+    Object? colorTone = const $CopyWithPlaceholder(),
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? titleFontFamily = const $CopyWithPlaceholder(),
@@ -122,6 +130,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
           : colorSeedValue as int?,
+      colorTone: colorTone == const $CopyWithPlaceholder()
+          ? _value.colorTone
+          // ignore: cast_nullable_to_non_nullable
+          : colorTone as int?,
       fontFamily: fontFamily == const $CopyWithPlaceholder()
           ? _value.fontFamily
           // ignore: cast_nullable_to_non_nullable
@@ -164,6 +176,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       starIcon: json['star_icon'] as String?,
       showTime: json['show_time'] as bool?,
       colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+      colorTone: (json['color_tone'] as num?)?.toInt(),
       fontFamily: json['font_family'] as String?,
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
       titleFontFamily: json['title_font_family'] as String?,
@@ -178,6 +191,7 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'show_day_count': instance.showDayCount,
       'show_time': instance.showTime,
       'color_seed_value': instance.colorSeedValue,
+      'color_tone': instance.colorTone,
       'font_family': instance.fontFamily,
       'font_weight_index': instance.fontWeightIndex,
       'title_font_family': instance.titleFontFamily,

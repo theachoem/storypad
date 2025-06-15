@@ -29,13 +29,41 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     ColorScheme colorScheme = getStoryColorScheme(preferences, context);
 
+    Color? scaffoldBackgroundColor;
+
+    if (isMonochrome(preferences, context) == true) {
+      Color baseColor = AppTheme.isDarkMode(context) ? Colors.black : Colors.white;
+      scaffoldBackgroundColor = switch (preferences?.colorToneFallback) {
+        0 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
+        33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.06), colorScheme.surface),
+        66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.01), colorScheme.surface),
+        99 => baseColor,
+        _ => colorScheme.readOnly.surface3,
+      };
+    } else if (preferences?.colorSeed != null) {
+      scaffoldBackgroundColor = switch (preferences?.colorToneFallback) {
+        0 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
+        33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05), colorScheme.surface),
+        66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 2), colorScheme.surface),
+        99 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 3), colorScheme.surface),
+        _ => colorScheme.readOnly.surface3,
+      };
+    } else {
+      scaffoldBackgroundColor = switch (preferences?.colorToneFallback) {
+        0 => colorScheme.surface,
+        33 || null => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11), colorScheme.surface),
+        66 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05), colorScheme.surface),
+        99 => Color.alphaBlend(colorScheme.primary.withValues(alpha: 0.11 + 0.05 * 2), colorScheme.surface),
+        _ => colorScheme.readOnly.surface3,
+      };
+    }
+
     return Theme(
       data: AppTheme.getTheme(
         colorScheme: colorScheme,
         fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
         fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
-        scaffoldBackgroundColor:
-            isMonochrome(preferences, context) == true ? colorScheme.surface : colorScheme.readOnly.surface3,
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
       ),
       child: child,
     );

@@ -25,6 +25,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final bool? showTime;
 
   final int? colorSeedValue;
+  final int? colorTone;
   final String? fontFamily;
   final int? fontWeightIndex;
 
@@ -38,11 +39,14 @@ class StoryPreferencesDbModel extends BaseDbModel {
   FontWeight? get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : null;
   FontWeight? get titleFontWeight => titleFontWeightIndex != null ? FontWeight.values[titleFontWeightIndex!] : null;
 
+  int get colorToneFallback => colorTone ?? 0;
+
   StoryPreferencesDbModel({
     required this.showDayCount,
     required this.starIcon,
     required this.showTime,
     required this.colorSeedValue,
+    required this.colorTone,
     required this.fontFamily,
     required this.fontWeightIndex,
     required this.titleFontFamily,
@@ -59,6 +63,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
   bool get allReseted =>
       [
         colorSeedValue,
+        colorTone,
         fontFamily,
         fontWeightIndex,
         titleFontFamily,
@@ -74,6 +79,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
   StoryPreferencesDbModel resetTheme() {
     return copyWith(
       colorSeedValue: null,
+      colorTone: null,
       fontFamily: null,
       fontWeightIndex: null,
       titleFontFamily: null,
@@ -88,6 +94,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       starIcon: null,
       showTime: false,
       colorSeedValue: null,
+      colorTone: null,
       fontFamily: null,
       fontWeightIndex: null,
       titleFontFamily: null,
