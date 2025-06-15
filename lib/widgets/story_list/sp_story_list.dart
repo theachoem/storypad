@@ -94,7 +94,7 @@ class SpStoryList extends StatelessWidget {
               listContext: listContext,
               onTap: () {
                 if (viewOnly) {
-                  ShowChangeRoute(content: story.latestContent!).push(context);
+                  ShowChangeRoute(content: story.latestContent!, preferences: story.preferences).push(context);
                 } else {
                   ShowStoryRoute(id: story.id, story: story).push(context, rootNavigator: true);
                 }

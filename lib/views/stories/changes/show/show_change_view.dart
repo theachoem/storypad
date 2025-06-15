@@ -1,3 +1,4 @@
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
@@ -12,9 +13,11 @@ part 'show_change_content.dart';
 class ShowChangeRoute extends BaseRoute {
   ShowChangeRoute({
     required this.content,
+    required this.preferences,
   });
 
   final StoryContentDbModel content;
+  final StoryPreferencesDbModel? preferences;
 
   @override
   Widget buildPage(BuildContext context) => ShowChangeView(params: this);

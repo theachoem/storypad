@@ -100,7 +100,11 @@ class StoryHeader extends StatelessWidget {
           }
         },
         onViewPrevious: () async {
-          await ShowChangeRoute(content: viewModel.story!.latestContent!).push(context);
+          await ShowChangeRoute(
+            content: viewModel.story!.latestContent!,
+            preferences: viewModel.story!.preferences,
+          ).push(context);
+
           await viewModel.load();
         },
       ),
