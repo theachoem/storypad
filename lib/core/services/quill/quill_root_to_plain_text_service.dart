@@ -58,9 +58,9 @@ class QuillRootToPlainTextService {
 
           linePrefix += '$formattedIndex ';
         } else if (list == 'checked') {
-          linePrefix += '- [x] ';
+          linePrefix += markdown ? '- [x] ' : '✅ ';
         } else if (list == 'unchecked') {
-          linePrefix += '- [ ] ';
+          linePrefix += markdown ? '- [ ] ' : '⏹️ ';
         }
 
         return "${extract(node.children, markdown, prefix: linePrefix)}\n";

@@ -106,9 +106,12 @@ class _QuillEditorState extends State<_QuillEditor> {
           final isCheck = attribute == Attribute.checked || attribute == Attribute.unchecked;
 
           if (isCheck) {
-            return Checkbox.adaptive(
-              value: config.value,
-              onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,
+            return Container(
+              alignment: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight),
+              child: Checkbox.adaptive(
+                value: config.value,
+                onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,
+              ),
             );
           }
 
