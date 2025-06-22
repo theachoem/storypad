@@ -22,7 +22,7 @@ class _LanguagesContent extends StatelessWidget {
       floatingActionButton: viewModel.params.showThemeFAB
           ? FloatingActionButton(
               child: const Icon(SpIcons.theme),
-              onPressed: () => ThemeRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context))
+              onPressed: () => SettingsRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context))
           : null,
       body: ListView.builder(
         padding: const EdgeInsets.only(bottom: 16.0),

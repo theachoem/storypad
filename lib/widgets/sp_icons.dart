@@ -15,6 +15,7 @@ class SpIcons {
   static const IconData starFilled = kIsCupertino ? CupertinoIcons.star_fill : Icons.star;
   static const IconData share = kIsCupertino ? CupertinoIcons.share : Icons.ios_share_outlined;
   static const IconData search = kIsCupertino ? CupertinoIcons.search : Icons.search;
+  static const IconData setting = kIsCupertino ? CupertinoIcons.settings : Icons.settings;
   static const IconData tag = kIsCupertino ? CupertinoIcons.tag : Icons.sell_outlined;
   static const IconData archive = kIsCupertino ? CupertinoIcons.archivebox : Icons.archive_outlined;
   static const IconData theme = kIsCupertino ? CupertinoIcons.paintbrush : Icons.color_lens_outlined;

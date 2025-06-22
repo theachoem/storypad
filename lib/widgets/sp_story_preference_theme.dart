@@ -4,7 +4,7 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/types/font_size_option.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 
 class SpStoryPreferenceTheme extends StatelessWidget {
   const SpStoryPreferenceTheme({
@@ -26,7 +26,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<DevicePreferencesProvider>(context);
     ColorScheme colorScheme = getStoryColorScheme(preferences, context);
 
     Color? scaffoldBackgroundColor;
@@ -71,8 +71,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
       child: Theme(
         data: AppTheme.getTheme(
           colorScheme: colorScheme,
-          fontFamily: preferences?.fontFamily ?? themeProvider.theme.fontFamily,
-          fontWeight: preferences?.fontWeight ?? themeProvider.theme.fontWeight,
+          fontFamily: preferences?.fontFamily ?? themeProvider.preferences.fontFamily,
+          fontWeight: preferences?.fontWeight ?? themeProvider.preferences.fontWeight,
           scaffoldBackgroundColor: scaffoldBackgroundColor,
         ),
         child: child,

@@ -2,10 +2,8 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/theme_object.dart';
 import 'package:storypad/core/storages/base_object_storages/object_storage.dart';
 
+@Deprecated('Use [DevicePreferencesStorage] instead')
 class ThemeStorage extends ObjectStorage<ThemeObject> {
-  ThemeStorage._();
-  static final ThemeStorage instance = ThemeStorage._();
-
   ThemeObject get theme => _theme ?? ThemeObject.initial();
   ThemeObject? _theme;
 

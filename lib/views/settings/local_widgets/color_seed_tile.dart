@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 
@@ -12,7 +12,7 @@ class ColorSeedTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeProvider provider = Provider.of<ThemeProvider>(context);
+    DevicePreferencesProvider provider = Provider.of<DevicePreferencesProvider>(context);
     return SpFloatingPopUpButton(
       estimatedFloatingWidth: spColorPickerMinWidth,
       bottomToTop: false,
@@ -20,7 +20,7 @@ class ColorSeedTile extends StatelessWidget {
       floatingBuilder: (close) {
         return SpColorPicker(
           position: SpColorPickerPosition.top,
-          currentColor: provider.theme.colorSeed,
+          currentColor: provider.preferences.colorSeed,
           level: SpColorPickerLevel.one,
           onPickedColor: (color) {
             provider.setColorSeed(color);
@@ -31,7 +31,7 @@ class ColorSeedTile extends StatelessWidget {
       builder: (void Function() open) {
         return ListTile(
           title: Text(tr("list_tile.color_seed.title")),
-          subtitle: Text(provider.theme.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
+          subtitle: Text(provider.preferences.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
           leading: Container(
             width: 24,
             height: 24,
@@ -43,8 +43,8 @@ class ColorSeedTile extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: provider.theme.colorSeedCustomized
-                    ? provider.theme.colorSeed
+                color: provider.preferences.colorSeedCustomized
+                    ? provider.preferences.colorSeed
                     : Theme.of(context).colorScheme.primary,
               ),
             ),

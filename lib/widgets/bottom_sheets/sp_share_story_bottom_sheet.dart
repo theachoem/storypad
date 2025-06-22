@@ -11,6 +11,7 @@ import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -103,6 +104,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       pages: pages,
       displayPathDate: widget.story.displayPathDate,
       tags: tags ?? [],
+      timeFormat: context.read<DevicePreferencesProvider>().preferences.timeFormat,
       locale: context.locale,
       feeling: feeling?.translation(context),
       markdown: option == _ShareOption.markdown,

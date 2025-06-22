@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/views/home/home_view.dart';
 
 class App extends StatelessWidget {
@@ -17,7 +18,7 @@ class App extends StatelessWidget {
       path: 'translations',
       supportedLocales: kSupportedLocales,
       fallbackLocale: kFallbackLocale,
-      child: AppTheme(builder: (context, theme, darkTheme, themeMode) {
+      child: AppTheme(builder: (context, preferences, theme, darkTheme, themeMode) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           themeMode: themeMode,
@@ -36,7 +37,11 @@ class App extends StatelessWidget {
           builder: (context, child) {
             return GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: child,
+              child: MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24),
+                child: child!,
+              ),
             );
           },
         );

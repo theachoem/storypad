@@ -26,6 +26,12 @@ class DateFormatHelper {
         .format(date);
   }
 
+  static String yMEd_Hm(DateTime date, Locale locale) {
+    return DateFormat.yMEd(locale.toLanguageTag())
+        .addPattern("- ${DateFormat.Hm(locale.toLanguageTag()).pattern!}")
+        .format(date);
+  }
+
   static String? yMEd_jmNullable(DateTime? date, Locale locale) {
     if (date == null) return null;
     return DateFormat.yMEd(locale.toLanguageTag())
@@ -44,6 +50,10 @@ class DateFormatHelper {
 
   static String jm(DateTime date, Locale locale) {
     return DateFormat.jm(locale.toLanguageTag()).format(date);
+  }
+
+  static String Hm(DateTime date, Locale locale) {
+    return DateFormat.Hm(locale.toLanguageTag()).format(date);
   }
 
   static String Hms(DateTime date, Locale locale) {

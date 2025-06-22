@@ -20,7 +20,7 @@ import 'package:storypad/views/languages/languages_view.dart' show LanguagesRout
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/search/search_view.dart' show SearchRoute;
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
-import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
+import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
@@ -115,9 +115,9 @@ class HomeEndDrawer extends StatelessWidget {
 
   Widget buildThemeTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(SpIcons.theme),
-      title: Text(tr("page.theme.title")),
-      onTap: () => ThemeRoute().push(context),
+      leading: const Icon(SpIcons.setting),
+      title: Text(tr("page.settings.title")),
+      onTap: () => SettingsRoute().push(context),
     );
   }
 

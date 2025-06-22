@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 
 // Logging analytics events without user-identifiable information.
 class AnalyticsUserProperyService extends BaseAnalyticsService {
@@ -73,6 +74,17 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     return FirebaseAnalytics.instance.setUserProperty(
       name: 'font_size',
       value: newFontSize?.name ?? 'system',
+    );
+  }
+
+  Future<void> logSetTimeFormat({
+    required TimeFormatOption timeFormat,
+  }) {
+    debug('logSetTimeFormat', {'value': timeFormat.name});
+
+    return FirebaseAnalytics.instance.setUserProperty(
+      name: 'time_format',
+      value: timeFormat.label,
     );
   }
 }
