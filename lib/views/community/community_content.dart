@@ -59,18 +59,6 @@ class _CommunityContent extends StatelessWidget {
               );
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: Icon(SpIcons.star, color: ColorScheme.of(context).bootstrap.warning.color),
-            title: Text(tr("list_tile.rate.title")),
-            onTap: () => AppStoreOpenerService.call(),
-          ),
-          ListTile(
-            leading: const Icon(SpIcons.share),
-            title: Text(tr("list_tile.share_app.title")),
-            subtitle: Text(tr("list_tile.share_app.subtitle")),
-            onTap: () => SpShareAppBottomSheet().show(context: context),
-          ),
         ],
       ),
     );

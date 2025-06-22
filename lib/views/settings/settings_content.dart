@@ -35,6 +35,10 @@ class _SettingsContent extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          const SizedBox(height: 8),
+          const LanguageTile(),
+          buildAppLockTile(context),
+          const Divider(),
           ThemeModeTile.globalTheme(),
           const ColorSeedTile(),
           const Divider(),
@@ -43,6 +47,14 @@ class _SettingsContent extends StatelessWidget {
           TimeFormatTile.globalTheme(),
         ],
       ),
+    );
+  }
+
+  Widget buildAppLockTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(SpIcons.lock),
+      title: Text(tr("page.app_lock.title")),
+      onTap: () => AppLocksRoute().push(context),
     );
   }
 }

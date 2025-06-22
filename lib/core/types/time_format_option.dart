@@ -8,9 +8,9 @@ enum TimeFormatOption {
   String get label {
     switch (this) {
       case TimeFormatOption.h12:
-        return '12-hour';
+        return '12-Hour';
       case TimeFormatOption.h24:
-        return '24-hour';
+        return '24-Hour';
     }
   }
 
