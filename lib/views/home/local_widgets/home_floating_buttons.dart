@@ -50,12 +50,26 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: Tween<double>(begin: 1, end: 0.0).animate(animation),
-      child: FloatingActionButton(
+      child: buildButton(context),
+    );
+  }
+
+  Widget buildButton(BuildContext context) {
+    if (MediaQuery.accessibleNavigationOf(context)) {
+      return FloatingActionButton.extended(
+        tooltip: tr("button.new_story"),
+        onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
+        label: Text(tr("button.new_story")),
+        icon: const Icon(SpIcons.newStory),
+        shape: const StadiumBorder(),
+      );
+    } else {
+      return FloatingActionButton(
         tooltip: tr("button.new_story"),
         onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
         child: const Icon(SpIcons.newStory),
-      ),
-    );
+      );
+    }
   }
 
   Widget buildExpandedScaffold(BuildContext context) {
