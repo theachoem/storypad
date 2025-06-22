@@ -74,6 +74,7 @@ class SpIcons {
   static const IconData warning = kIsCupertino ? CupertinoIcons.exclamationmark : Icons.error_outline;
   static const IconData refresh = kIsCupertino ? CupertinoIcons.refresh : Icons.refresh;
   static const IconData calendar = kIsCupertino ? CupertinoIcons.calendar : Icons.calendar_month;
+  static const IconData history = kIsCupertino ? CupertinoIcons.time : Icons.history_outlined;
   static const IconData exportOffline = kIsCupertino ? CupertinoIcons.arrow_down_doc : Icons.download;
   static const IconData importOffline = kIsCupertino ? CupertinoIcons.arrow_up_doc : Icons.folder_open;
   static const IconData update = kIsCupertino ? CupertinoIcons.arrow_down : Icons.system_update;

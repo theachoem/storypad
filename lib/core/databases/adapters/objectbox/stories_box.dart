@@ -140,6 +140,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<String>? types = filters?["types"];
     int? year = filters?["year"];
     List<int>? years = filters?["years"];
+    List<int>? excludeYears = filters?["exclude_years"];
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
@@ -162,6 +163,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (types != null) conditions = conditions.and(StoryObjectBox_.type.oneOf(types));
     if (year != null) conditions = conditions.and(StoryObjectBox_.year.equals(year));
     if (years != null) conditions = conditions.and(StoryObjectBox_.year.oneOf(years));
+    if (excludeYears != null) conditions = conditions.and(StoryObjectBox_.year.notOneOf(excludeYears));
     if (month != null) conditions = conditions.and(StoryObjectBox_.month.equals(month));
     if (day != null) conditions = conditions.and(StoryObjectBox_.day.equals(day));
 
