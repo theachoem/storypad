@@ -12,7 +12,6 @@ class _ThrowbackContent extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: buildAskUserToResponseBottomNav(context),
       floatingActionButton: FloatingActionButton(
-        shape: const StadiumBorder(),
         child: const Icon(SpIcons.newStory),
         onPressed: () => viewModel.goToNewPage(context),
       ),

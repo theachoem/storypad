@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/feature_flags.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -72,7 +71,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       ).toDatabaseFilter(),
     );
 
-    _throwbackDates = FeatureFlags.throwback && DateTime.now().year == year
+    _throwbackDates = DateTime.now().year == year
         ? await StoryDbModel.db
             .where(
               filters: SearchFilterObject(

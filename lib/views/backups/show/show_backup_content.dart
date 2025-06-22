@@ -73,6 +73,10 @@ class _ShowBackupContent extends StatelessWidget {
               leadingIconData = SpIcons.table;
               translateTabledName = tr("general.assets");
               break;
+            case 'templates':
+              leadingIconData = SpIcons.lightBulb;
+              translateTabledName = tr("page.templates.title");
+              break;
             default:
               leadingIconData = SpIcons.table;
               translateTabledName = table.key;
