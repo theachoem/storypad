@@ -1,7 +1,14 @@
-part of 'home_end_drawer.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/views/languages/languages_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
-class _LanguageTile extends StatelessWidget {
-  const _LanguageTile();
+class LanguageTile extends StatelessWidget {
+  const LanguageTile({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

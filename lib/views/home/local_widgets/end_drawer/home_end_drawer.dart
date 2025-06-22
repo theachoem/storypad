@@ -4,19 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
-import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/app_locks/app_locks_view.dart' show AppLocksRoute;
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/backups/backups_view.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
-import 'package:storypad/views/languages/languages_view.dart' show LanguagesRoute;
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/search/search_view.dart' show SearchRoute;
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
@@ -25,11 +23,11 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart' show Color
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 part 'home_end_drawer_header.dart';
 part 'community_tile.dart';
-part 'language_tile.dart';
 part 'backup_tile.dart';
 
 class HomeEndDrawer extends StatelessWidget {
@@ -79,11 +77,20 @@ class HomeEndDrawer extends StatelessWidget {
           const Divider(),
           const _BackupTile(),
           const Divider(),
-          buildThemeTile(context),
-          const _LanguageTile(),
-          buildAppLockTile(context),
+          buildSettingTile(context),
           const Divider(),
           const _CommunityTile(),
+          ListTile(
+            leading: const Icon(SpIcons.star),
+            title: Text(tr("list_tile.rate.title")),
+            onTap: () => AppStoreOpenerService.call(),
+          ),
+          ListTile(
+            leading: const Icon(SpIcons.share),
+            title: Text(tr("list_tile.share_app.title")),
+            subtitle: Text(tr("list_tile.share_app.subtitle")),
+            onTap: () => SpShareAppBottomSheet().show(context: context),
+          ),
         ],
       ),
     );
@@ -113,19 +120,11 @@ class HomeEndDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildThemeTile(BuildContext context) {
+  Widget buildSettingTile(BuildContext context) {
     return ListTile(
       leading: const Icon(SpIcons.setting),
       title: Text(tr("page.settings.title")),
       onTap: () => SettingsRoute().push(context),
-    );
-  }
-
-  Widget buildAppLockTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(SpIcons.lock),
-      title: Text(tr("page.app_lock.title")),
-      onTap: () => AppLocksRoute().push(context),
     );
   }
 }

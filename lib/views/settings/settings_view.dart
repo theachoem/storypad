@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/views/app_locks/app_locks_view.dart';
+import 'package:storypad/views/settings/local_widgets/language_tile.dart';
 import 'package:storypad/views/settings/local_widgets/time_format_tile.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';

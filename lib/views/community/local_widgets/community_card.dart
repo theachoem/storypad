@@ -23,17 +23,30 @@ class _CommunityCard extends StatelessWidget {
               spacing: Platform.isMacOS ? 8.0 : 0.0,
               runSpacing: Platform.isMacOS ? 8.0 : 0.0,
               children: [
-                IconButton.filledTonal(
-                  icon: Icon(MdiIcons.twitter),
-                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://x.com/storypadapp"),
+                const SizedBox(height: 48.0),
+                SpFadeIn.fromBottom(
+                  delay: Durations.medium1,
+                  duration: Durations.medium4,
+                  child: IconButton.filled(
+                    icon: Icon(MdiIcons.reddit),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://www.reddit.com/r/StoryPad"),
+                  ),
                 ),
-                IconButton.filledTonal(
-                  icon: Icon(MdiIcons.reddit),
-                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://www.reddit.com/r/StoryPad"),
+                SpFadeIn.fromBottom(
+                  delay: Durations.medium2,
+                  duration: Durations.medium4,
+                  child: IconButton.filledTonal(
+                    icon: Icon(MdiIcons.twitter),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://x.com/storypadapp"),
+                  ),
                 ),
-                IconButton.filledTonal(
-                  icon: Icon(MdiIcons.bug),
-                  onPressed: () => UrlOpenerService.openInCustomTab(context, "https://storypad.me#footer"),
+                SpFadeIn.fromBottom(
+                  delay: Durations.medium3,
+                  duration: Durations.medium4,
+                  child: IconButton.filledTonal(
+                    icon: Icon(MdiIcons.bug),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://storypad.me#footer"),
+                  ),
                 ),
               ],
             ),
