@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -256,8 +255,6 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     bool draft = true,
   }) {
     Set<int> assets = {};
-
-    debugPrint(jsonEncode(draftContent?.richPages?.first.body));
 
     for (StoryPageDbModel page in draftContent?.richPages ?? []) {
       for (var node in page.body ?? []) {
