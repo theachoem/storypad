@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -27,24 +28,40 @@ class SpStoryInfoSheet extends BaseBottomSheet {
         ListTile(
           leading: const Icon(SpIcons.edit),
           title: Text(tr('list_tile.story_date.title')),
-          subtitle: Text(DateFormatHelper.yMEd_jm(story.displayPathDate, context.locale)),
+          subtitle: Text(context
+              .read<DevicePreferencesProvider>()
+              .preferences
+              .timeFormat
+              .formatDateTime(story.displayPathDate, context.locale)),
         ),
         if (persisted) ...[
           if (story.movedToBinAt != null)
             ListTile(
               leading: const Icon(SpIcons.delete),
               title: Text(tr('list_tile.moved_to_bin_at.title')),
-              subtitle: Text(DateFormatHelper.yMEd_jm(story.movedToBinAt!, context.locale)),
+              subtitle: Text(context
+                  .read<DevicePreferencesProvider>()
+                  .preferences
+                  .timeFormat
+                  .formatDateTime(story.movedToBinAt!, context.locale)),
             ),
           ListTile(
             leading: const Icon(SpIcons.calendar),
             title: Text(tr("list_tile.updated_at.title")),
-            subtitle: Text(DateFormatHelper.yMEd_jm(story.updatedAt, context.locale)),
+            subtitle: Text(context
+                .read<DevicePreferencesProvider>()
+                .preferences
+                .timeFormat
+                .formatDateTime(story.updatedAt, context.locale)),
           ),
           ListTile(
             leading: const Icon(SpIcons.info),
             title: Text(tr("list_tile.created_at.title")),
-            subtitle: Text(DateFormatHelper.yMEd_jm(story.createdAt, context.locale)),
+            subtitle: Text(context
+                .read<DevicePreferencesProvider>()
+                .preferences
+                .timeFormat
+                .formatDateTime(story.createdAt, context.locale)),
           ),
         ],
         SizedBox(height: MediaQuery.of(context).padding.bottom),
