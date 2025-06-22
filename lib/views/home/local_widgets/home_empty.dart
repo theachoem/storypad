@@ -28,7 +28,7 @@ class _HomeEmpty extends StatelessWidget {
                 SpTapEffectType.touchableOpacity,
                 SpTapEffectType.scaleDown,
               ],
-              onTap: () => ThemeRoute().push(context),
+              onTap: () => SettingsRoute().push(context),
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 child: SpLoopAnimationBuilder(

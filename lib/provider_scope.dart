@@ -5,7 +5,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 
 // global providers
 class ProviderScope extends StatelessWidget {
@@ -29,8 +29,8 @@ class ProviderScope extends StatelessWidget {
         ListenableProvider<AppLockProvider>(
           create: (context) => AppLockProvider(),
         ),
-        ListenableProvider<ThemeProvider>(
-          create: (context) => ThemeProvider(),
+        ListenableProvider<DevicePreferencesProvider>(
+          create: (context) => DevicePreferencesProvider(),
         ),
         ListenableProvider<InAppUpdateProvider>(
           create: (context) => InAppUpdateProvider(),

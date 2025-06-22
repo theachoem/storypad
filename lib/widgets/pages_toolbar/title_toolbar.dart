@@ -13,8 +13,9 @@ class _TitleToolbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontWeight = preferences.titleFontWeight ?? kTitleDefaultFontWeight;
 
-    final fontFamily =
-        preferences.titleFontFamily ?? preferences.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily;
+    final fontFamily = preferences.titleFontFamily ??
+        preferences.fontFamily ??
+        context.read<DevicePreferencesProvider>().preferences.fontFamily;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -16,10 +16,10 @@ class FontWeightTile extends StatelessWidget {
   final void Function(FontWeight value) onChanged;
 
   static Widget globalTheme() {
-    return Consumer<ThemeProvider>(
+    return Consumer<DevicePreferencesProvider>(
       builder: (context, provider, child) {
         return FontWeightTile(
-          currentFontWeight: provider.theme.fontWeight,
+          currentFontWeight: provider.preferences.fontWeight,
           onChanged: (FontWeight fontWeight) => provider.setFontWeight(fontWeight),
         );
       },

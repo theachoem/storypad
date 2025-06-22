@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -29,7 +29,7 @@ class _SpThemeModeIconState extends State<SpThemeModeIcon> with DebounchedCallba
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
+    return Consumer<DevicePreferencesProvider>(
       builder: (context, provider, child) {
         debouncedCallback(() {
           setDarkMode(provider.isDarkModeBaseOnThemeMode(context));

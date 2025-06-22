@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart'
     show Brightness, BuildContext, ChangeNotifier, Color, FontWeight, ThemeMode, View;
 import 'package:storypad/core/constants/app_constants.dart' show kDefaultFontWeight;
-import 'package:storypad/core/objects/theme_object.dart' show ThemeObject;
+import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart' show AnalyticsUserProperyService;
-import 'package:storypad/core/storages/theme_storage.dart' show ThemeStorage;
+import 'package:storypad/core/storages/device_preferences_storage.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 
-class ThemeProvider extends ChangeNotifier {
-  static ThemeStorage get storage => ThemeStorage.instance;
+class DevicePreferencesProvider extends ChangeNotifier {
+  static DevicePreferencesStorage get storage => DevicePreferencesStorage.appInstance;
 
-  ThemeObject _theme = storage.theme;
-  ThemeObject get theme => _theme;
-  ThemeMode get themeMode => theme.themeMode;
+  DevicePreferencesObject _preferences = storage.preferences;
+  DevicePreferencesObject get preferences => _preferences;
+  ThemeMode get themeMode => preferences.themeMode;
 
   // Sometimes reading `ColorScheme.of(context).brightness` may not reflect the correct dark mode state,
   // especially if the widget hasn't rebuilt yet after a system theme change.
@@ -24,30 +25,34 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   void reset() {
-    _theme = ThemeObject.initial();
+    _preferences = DevicePreferencesObject.initial();
     storage.remove();
     notifyListeners();
 
-    AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _theme.fontFamily);
+    AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _preferences.fontFamily);
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
     AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
     AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);
   }
 
   void setColorSeed(Color color) {
-    _theme = _theme.copyWithNewColor(color, removeIfSame: true);
-    storage.writeObject(_theme);
+    _preferences = _preferences.copyWith(
+      // ignore: deprecated_member_use
+      colorSeedValue: _preferences.colorSeedValue == color.value ? null : color.value,
+    );
+
+    storage.writeObject(_preferences);
     notifyListeners();
 
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(
-      newColor: _theme.colorSeed,
+      newColor: _preferences.colorSeed,
     );
   }
 
   void setThemeMode(ThemeMode? value) {
     if (value != null && value != themeMode) {
-      _theme = _theme.copyWith(themeMode: value);
-      storage.writeObject(_theme);
+      _preferences = _preferences.copyWith(themeMode: value);
+      storage.writeObject(_preferences);
       notifyListeners();
 
       AnalyticsUserProperyService.instance.logSetThemeMode(
@@ -57,8 +62,8 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   void setFontWeight(FontWeight fontWeight) {
-    _theme = _theme.copyWith(fontWeight: fontWeight);
-    storage.writeObject(_theme);
+    _preferences = _preferences.copyWith(fontWeightIndex: fontWeight.index);
+    storage.writeObject(_preferences);
     notifyListeners();
 
     AnalyticsUserProperyService.instance.logSetFontWeight(
@@ -67,12 +72,22 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   void setFontFamily(String fontFamily) {
-    _theme = _theme.copyWith(fontFamily: fontFamily);
-    storage.writeObject(_theme);
+    _preferences = _preferences.copyWith(fontFamily: fontFamily);
+    storage.writeObject(_preferences);
     notifyListeners();
 
     AnalyticsUserProperyService.instance.logSetFontFamily(
       newFontFamily: fontFamily,
+    );
+  }
+
+  void setTimeFormat(TimeFormatOption timeFormat) {
+    _preferences = _preferences.copyWith(timeFormat: timeFormat);
+    storage.writeObject(_preferences);
+    notifyListeners();
+
+    AnalyticsUserProperyService.instance.logSetTimeFormat(
+      timeFormat: timeFormat,
     );
   }
 

@@ -1,15 +1,15 @@
-part of 'theme_view.dart';
+part of 'settings_view.dart';
 
-class _ThemeContent extends StatelessWidget {
-  const _ThemeContent(this.viewModel);
+class _SettingsContent extends StatelessWidget {
+  const _SettingsContent(this.viewModel);
 
-  final ThemeViewModel viewModel;
+  final SettingsViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr("page.theme.title")),
+        title: Text(tr("page.settings.title")),
         actions: [
           SpPopupMenuButton(
             items: (context) {
@@ -18,7 +18,7 @@ class _ThemeContent extends StatelessWidget {
                   leadingIconData: SpIcons.refresh,
                   title: tr("button.reset"),
                   onPressed: () {
-                    context.read<ThemeProvider>().reset();
+                    context.read<DevicePreferencesProvider>().reset();
                   },
                 ),
               ];
@@ -40,6 +40,7 @@ class _ThemeContent extends StatelessWidget {
           const Divider(),
           FontFamilyTile.globalTheme(),
           FontWeightTile.globalTheme(),
+          TimeFormatTile.globalTheme(),
         ],
       ),
     );

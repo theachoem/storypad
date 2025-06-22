@@ -1,24 +1,18 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
-class SpFontWeightSheet extends BaseBottomSheet {
-  const SpFontWeightSheet({
-    required this.fontWeight,
+class SpTimeFormatSheet extends BaseBottomSheet {
+  const SpTimeFormatSheet({
+    required this.timeFormat,
     required this.onChanged,
-    this.showDefaultLabel = true,
-    this.defaultFontWeight = kDefaultFontWeight,
   });
 
-  final FontWeight defaultFontWeight;
-  final FontWeight fontWeight;
-  final bool showDefaultLabel;
-  final void Function(FontWeight fontWeight) onChanged;
+  final TimeFormatOption timeFormat;
+  final void Function(TimeFormatOption timeFormat) onChanged;
 
   @override
   bool get fullScreen => false;
@@ -26,8 +20,8 @@ class SpFontWeightSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
     return SpSingleStateWidget.listen(
-      initialValue: fontWeight,
-      builder: (context, selectedFontWeight, notifier) {
+      initialValue: timeFormat,
+      builder: (context, selectedTimeFormat, notifier) {
         return SingleChildScrollView(
           padding: EdgeInsets.zero,
           child: Column(
@@ -35,17 +29,11 @@ class SpFontWeightSheet extends BaseBottomSheet {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ...FontWeight.values.map((fontWeight) {
-                String title = FontWeightTile.getFontWeightTitle(fontWeight);
-
-                if (defaultFontWeight == fontWeight && showDefaultLabel) {
-                  title += ' (${tr('general.default')})';
-                }
-
+              ...TimeFormatOption.values.map((timeFormat) {
                 return ListTile(
-                  title: Text(title),
+                  title: Text(timeFormat.label),
                   trailing: Visibility(
-                    visible: fontWeight == selectedFontWeight,
+                    visible: timeFormat == selectedTimeFormat,
                     child: SpFadeIn.fromBottom(
                       child: Icon(
                         SpIcons.checkCircle,
@@ -54,7 +42,7 @@ class SpFontWeightSheet extends BaseBottomSheet {
                     ),
                   ),
                   onTap: () {
-                    notifier.value = fontWeight;
+                    notifier.value = timeFormat;
                     onChanged(notifier.value);
                   },
                 );

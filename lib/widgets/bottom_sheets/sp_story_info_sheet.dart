@@ -27,7 +27,7 @@ class SpStoryInfoSheet extends BaseBottomSheet {
         ListTile(
           leading: const Icon(SpIcons.edit),
           title: Text(tr('list_tile.story_date.title')),
-          subtitle: Text(DateFormatHelper.yMEd(story.displayPathDate, context.locale)),
+          subtitle: Text(DateFormatHelper.yMEd_jm(story.displayPathDate, context.locale)),
         ),
         if (persisted) ...[
           if (story.movedToBinAt != null)

@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -18,11 +18,11 @@ class FontFamilyTile extends StatelessWidget {
   final void Function(String fontFamily) onChanged;
 
   static Widget globalTheme() {
-    return Consumer<ThemeProvider>(
+    return Consumer<DevicePreferencesProvider>(
       builder: (context, provider, child) {
         return FontFamilyTile(
-          currentFontWeight: provider.theme.fontWeight,
-          currentFontFamily: provider.theme.fontFamily,
+          currentFontWeight: provider.preferences.fontWeight,
+          currentFontFamily: provider.preferences.fontFamily,
           onChanged: (fontFamily) => provider.setFontFamily(fontFamily),
         );
       },

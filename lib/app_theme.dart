@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/core/objects/device_preferences_object.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 
 class AppTheme extends StatelessWidget {
   const AppTheme({
@@ -15,7 +16,13 @@ class AppTheme extends StatelessWidget {
     required this.builder,
   });
 
-  final Widget Function(BuildContext context, ThemeData theme, ThemeData darkTheme, ThemeMode themeMode) builder;
+  final Widget Function(
+    BuildContext context,
+    DevicePreferencesObject preferences,
+    ThemeData lightTheme,
+    ThemeData darkTheme,
+    ThemeMode preferencesMode,
+  ) builder;
 
   // default text direction
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
@@ -23,11 +30,11 @@ class AppTheme extends StatelessWidget {
   static bool isDarkMode(BuildContext context) => Theme.of(context).brightness == Brightness.dark;
 
   static bool isMonochrome(BuildContext context) =>
-      context.read<ThemeProvider>().theme.colorSeed == Colors.black ||
-      context.read<ThemeProvider>().theme.colorSeed == Colors.white;
+      context.read<DevicePreferencesProvider>().preferences.colorSeed == Colors.black ||
+      context.read<DevicePreferencesProvider>().preferences.colorSeed == Colors.white;
 
   static FontWeight getThemeFontWeight(BuildContext context, FontWeight fontWeight) {
-    return calculateFontWeight(fontWeight, context.read<ThemeProvider>().theme.fontWeight);
+    return calculateFontWeight(fontWeight, context.read<DevicePreferencesProvider>().preferences.fontWeight);
   }
 
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
@@ -40,23 +47,23 @@ class AppTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(builder: (context, provider, child) {
+    return Consumer<DevicePreferencesProvider>(builder: (context, provider, child) {
       return buildColorScheme(
         provider: provider,
         builder: (ColorScheme lightScheme, ColorScheme darkScheme) {
-          final theme = getTheme(
+          final lightTheme = getTheme(
             colorScheme: lightScheme,
-            fontFamily: provider.theme.fontFamily,
-            fontWeight: provider.theme.fontWeight,
+            fontFamily: provider.preferences.fontFamily,
+            fontWeight: provider.preferences.fontWeight,
           );
 
           final darkTheme = getTheme(
             colorScheme: darkScheme,
-            fontFamily: provider.theme.fontFamily,
-            fontWeight: provider.theme.fontWeight,
+            fontFamily: provider.preferences.fontFamily,
+            fontWeight: provider.preferences.fontWeight,
           );
 
-          return builder(context, theme, darkTheme, provider.themeMode);
+          return builder(context, provider.preferences, lightTheme, darkTheme, provider.themeMode);
         },
       );
     });
@@ -177,19 +184,19 @@ class AppTheme extends StatelessWidget {
   }
 
   Widget buildColorScheme({
-    required ThemeProvider provider,
+    required DevicePreferencesProvider provider,
     required Widget Function(ColorScheme lightScheme, ColorScheme darkScheme) builder,
   }) {
-    bool monochrome = provider.theme.colorSeed == Colors.black || provider.theme.colorSeed == Colors.white;
+    bool monochrome = provider.preferences.colorSeed == Colors.black || provider.preferences.colorSeed == Colors.white;
 
     ColorScheme lightScheme = ColorScheme.fromSeed(
-      seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+      seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
       brightness: Brightness.light,
       dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
     );
 
     ColorScheme darkScheme = ColorScheme.fromSeed(
-      seedColor: provider.theme.colorSeed ?? kDefaultColorSeed,
+      seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
       brightness: Brightness.dark,
       dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
     );

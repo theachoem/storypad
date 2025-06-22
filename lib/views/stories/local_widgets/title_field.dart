@@ -20,7 +20,9 @@ class _TitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextStyle baseStyle = GoogleFonts.getFont(
-      preferences?.titleFontFamily ?? preferences?.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
+      preferences?.titleFontFamily ??
+          preferences?.fontFamily ??
+          context.read<DevicePreferencesProvider>().preferences.fontFamily,
       color: Theme.of(context).textTheme.titleMedium?.color,
       fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
       fontWeight: AppTheme.calculateFontWeight(

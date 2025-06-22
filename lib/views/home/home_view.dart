@@ -11,7 +11,7 @@ import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
-import 'package:storypad/views/theme/theme_view.dart' show ThemeRoute;
+import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
 import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';

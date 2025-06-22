@@ -9,11 +9,11 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
-import 'package:storypad/views/theme/local_widgets/font_family_tile.dart';
-import 'package:storypad/views/theme/local_widgets/font_size_tile.dart';
-import 'package:storypad/views/theme/local_widgets/font_weight_tile.dart';
+import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
+import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
+import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
@@ -114,8 +114,10 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
           // ),
 
           FontFamilyTile(
-            currentFontWeight: preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
-            currentFontFamily: preferences.fontFamily ?? context.read<ThemeProvider>().theme.fontFamily,
+            currentFontWeight:
+                preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
+            currentFontFamily:
+                preferences.fontFamily ?? context.read<DevicePreferencesProvider>().preferences.fontFamily,
             onChanged: (fontFamily) {
               preferences = preferences.copyWith(fontFamily: fontFamily);
               setState(() {});
@@ -133,7 +135,8 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
             },
           ),
           FontWeightTile(
-            currentFontWeight: preferences.fontWeight ?? context.read<ThemeProvider>().theme.fontWeight,
+            currentFontWeight:
+                preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
             onChanged: (value) {
               preferences = preferences.copyWith(fontWeightIndex: value.index);
               setState(() {});
@@ -213,7 +216,7 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
     List<Widget> actions = [
       buildMoreOptionsButton(context),
       IconButton(
-        onPressed: () => context.read<ThemeProvider>().toggleThemeMode(context),
+        onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
         icon: SpThemeModeIcon(parentContext: context),
       ),
       Builder(builder: (context) {

@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -122,11 +122,13 @@ class SpStoryLabels extends StatelessWidget {
     bool showTime = story.preferredShowTime || !fromStoryTile;
     if (showTime) {
       children.add(
-        buildPin(
-          context: context,
-          title: DateFormatHelper.jm(story.displayPathDate, context.locale),
-          onTap: () => showTimePicker(context),
-        ),
+        Consumer<DevicePreferencesProvider>(builder: (context, provider, child) {
+          return buildPin(
+            context: context,
+            title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
+            onTap: () => showTimePicker(context),
+          );
+        }),
       );
     }
 

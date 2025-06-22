@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/providers/theme_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -17,10 +17,10 @@ class ThemeModeTile extends StatelessWidget {
   final void Function(ThemeMode themeMode) onChanged;
 
   static Widget globalTheme() {
-    return Consumer<ThemeProvider>(
+    return Consumer<DevicePreferencesProvider>(
       builder: (context, provider, child) {
         return ThemeModeTile(
-          currentThemeMode: provider.theme.themeMode,
+          currentThemeMode: provider.preferences.themeMode,
           onChanged: (ThemeMode themeMode) => provider.setThemeMode(themeMode),
         );
       },
