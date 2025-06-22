@@ -6,12 +6,14 @@ import 'package:storypad/app_theme.dart' show AppTheme;
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/constants/feature_flags.dart';
+import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/welcome_message_service.dart' show WelcomeMessageService;
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
+import 'package:storypad/views/throwback/throwback_view.dart';
 import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
@@ -51,6 +53,7 @@ part 'local_widgets/home_empty.dart';
 part 'local_widgets/app_update_floating_button.dart';
 part 'local_widgets/rounded_indicator.dart';
 part 'local_widgets/home_timeline_side_bar.dart';
+part 'local_widgets/throwback_tile.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/feature_flags.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -39,6 +40,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   String? nickname;
   int year = DateTime.now().year;
 
+  List<DateTime>? _throwbackDates;
+  List<DateTime>? get throwbackDates => _throwbackDates;
+  bool get hasThrowback => _throwbackDates?.isNotEmpty == true;
+
   CollectionDbModel<StoryDbModel>? _stories;
   CollectionDbModel<StoryDbModel>? get stories => _stories;
   void setStories(CollectionDbModel<StoryDbModel>? value) {
@@ -66,6 +71,22 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         assetId: null,
       ).toDatabaseFilter(),
     );
+
+    _throwbackDates = FeatureFlags.throwback && DateTime.now().year == year
+        ? await StoryDbModel.db
+            .where(
+              filters: SearchFilterObject(
+                years: {},
+                excludeYears: {DateTime.now().year},
+                month: DateTime.now().month,
+                day: DateTime.now().day,
+                types: {PathType.docs, PathType.archives},
+                tagId: null,
+                assetId: null,
+              ).toDatabaseFilter(),
+            )
+            .then((e) => e?.items.map((e) => e.displayPathDate).toSet().toList())
+        : null;
 
     setStories(stories);
     notifyListeners();

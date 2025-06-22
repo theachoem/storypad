@@ -65,6 +65,9 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext listContext) {
+    int itemsCount = viewModel.stories?.items.length ?? 0;
+    if (viewModel.hasThrowback) itemsCount += 1;
+
     if (viewModel.stories == null) {
       return const SliverFillRemaining(
         child: Center(
@@ -73,7 +76,7 @@ class _HomeContent extends StatelessWidget {
       );
     }
 
-    if (viewModel.stories!.items.isEmpty) {
+    if (itemsCount == 0) {
       return SliverFillRemaining(
         child: _HomeEmpty(viewModel: viewModel),
       );
@@ -87,10 +90,19 @@ class _HomeContent extends StatelessWidget {
         bottom: kToolbarHeight + 200 + MediaQuery.of(listContext).padding.bottom,
       ),
       sliver: SliverList.builder(
-        itemCount: viewModel.stories?.items.length ?? 0,
-        itemBuilder: (context, index) {
+        itemCount: itemsCount,
+        itemBuilder: (context, itemIndex) {
+          if (viewModel.hasThrowback && itemIndex == 0) {
+            return _ThrowbackTile(
+              throwbackDates: viewModel.throwbackDates,
+            );
+          }
+
+          int storyIndex = itemIndex;
+          if (viewModel.hasThrowback) storyIndex = itemIndex - 1;
+
           return buildStoryTile(
-            index: index,
+            index: storyIndex,
             context: context,
             listContext: listContext,
           );
