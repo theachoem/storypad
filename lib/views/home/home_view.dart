@@ -13,6 +13,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
+import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/views/throwback/throwback_view.dart';
 import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';

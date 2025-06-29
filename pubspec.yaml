@@ -1,5 +1,5 @@
 name: storypad
-version: 2.14.0+401
+version: 2.15.0+402
 publish_to: none
 environment:
   sdk: ^3.5.4
@@ -47,7 +47,7 @@ dependencies:
   in_app_update: ^4.2.3
   json_annotation: ^4.9.0
   json_serializable: ^6.9.5
-  just_audio: ^0.10.0
+  just_audio: ^0.10.4
   local_auth: ^2.3.0
   material_design_icons_flutter: ^7.0.7296
   objectbox: ^4.2.0

@@ -9,6 +9,7 @@ import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/backups/backups_view.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
@@ -78,6 +79,11 @@ class HomeEndDrawer extends StatelessWidget {
           const _BackupTile(),
           const Divider(),
           buildSettingTile(context),
+          ListTile(
+            leading: const Icon(Icons.app_registration_rounded),
+            title: Text(tr('page.add_ons.title')),
+            onTap: () => const AddOnsRoute().push(context),
+          ),
           const Divider(),
           const _CommunityTile(),
           ListTile(
