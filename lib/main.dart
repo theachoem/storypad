@@ -18,7 +18,10 @@ void main({
   FirebaseOptions? firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: firebaseOptions);
+  FirebaseCrashlyticsInitializer.call();
+  FirebaseRemoteConfigInitializer.call();
 
   // core
   await EasyLocalization.ensureInitialized();
@@ -26,9 +29,6 @@ void main({
   await DatabaseInitializer.call();
   await AppLockInitializer.call();
   await BackupRepositoryInitializer.call();
-
-  FirebaseCrashlyticsInitializer.call();
-  FirebaseRemoteConfigInitializer.call();
 
   // ui
   await ThemeInitializer.call();

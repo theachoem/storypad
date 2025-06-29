@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
@@ -6,6 +7,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 
 class BackupProvider extends ChangeNotifier {
   BackupProvider() {
@@ -93,9 +95,14 @@ class BackupProvider extends ChangeNotifier {
       future: () => repository.signIn(),
     );
 
+    if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
     AnalyticsService.instance.logSignInWithGoogle();
+
+    _connectionStatus = BackupConnectionStatus.readyToSync;
+    _lastSyncedAt = null;
+    _lastDbUpdatedAt = null;
+
     notifyListeners();
-    await recheckAndSync();
   }
 
   Future<void> requestScope(BuildContext context) async {
@@ -115,7 +122,13 @@ class BackupProvider extends ChangeNotifier {
       future: () => repository.signOut(),
     );
 
+    if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
     AnalyticsService.instance.logSignOut();
+
+    _connectionStatus = null;
+    _lastSyncedAt = null;
+    _lastDbUpdatedAt = null;
+
     notifyListeners();
   }
 

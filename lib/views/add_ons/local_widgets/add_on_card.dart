@@ -11,6 +11,8 @@ class _AddOnCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+
     return Material(
       color: ColorScheme.of(context).surface,
       clipBehavior: Clip.hardEdge,
@@ -24,7 +26,7 @@ class _AddOnCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             buildTextContents(context),
-            buildActionAndPrice(context),
+            buildActionAndPrice(context, iapProvider),
             const SizedBox(height: 8.0),
           ],
         ),
@@ -46,25 +48,30 @@ class _AddOnCard extends StatelessWidget {
     );
   }
 
-  Widget buildActionAndPrice(BuildContext context) {
+  Widget buildActionAndPrice(BuildContext context, InAppPurchaseProvider iapProvider) {
     return Padding(
       padding: const EdgeInsets.only(left: 12.0, right: 16.0),
       child: Row(
         children: [
-          OutlinedButton(
-            onPressed: onTap,
-            child: Text(tr('button.view')),
-          ),
-          Expanded(
-            child: Text(
-              addOn.displayPrice,
-              style: TextTheme.of(context).titleLarge?.copyWith(
-                    color: ColorScheme.of(context).primary,
-                    fontWeight: AppTheme.getThemeFontWeight(context, FontWeight.bold),
-                  ),
-              textAlign: TextAlign.end,
+          if (iapProvider.isActive(addOn.type.productIdentifier))
+            OutlinedButton.icon(
+              onPressed: onTap,
+              icon: const Icon(SpIcons.verifiedFilled),
+              label: Text(tr('button.view')),
+            )
+          else
+            OutlinedButton(
+              onPressed: onTap,
+              child: Text(tr('button.view')),
             ),
-          ),
+          if (addOn.displayPrice != null)
+            Expanded(
+              child: Text(
+                addOn.displayPrice!,
+                style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
+                textAlign: TextAlign.end,
+              ),
+            ),
         ],
       ),
     );

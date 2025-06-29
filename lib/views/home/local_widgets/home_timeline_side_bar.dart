@@ -20,19 +20,21 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
 
   @override
   Widget build(BuildContext context) {
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+
     return Stack(
       fit: StackFit.passthrough,
       clipBehavior: Clip.none,
       children: [
         buildBackgrounds(context),
-        buildButtons(context),
+        buildButtons(context, iapProvider),
       ],
     );
   }
 
-  Widget buildButtons(BuildContext context) {
+  Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
     final buttons = [
-      if (FeatureFlags.relaxSound)
+      if (provider.relaxSound)
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr('add_ons.relax_sounds.title'),
@@ -46,7 +48,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
             onPressed: () => const RelaxSoundsRoute().push(context),
           ),
         ),
-      if (FeatureFlags.template)
+      if (provider.template)
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr("add_ons.templates.title"),

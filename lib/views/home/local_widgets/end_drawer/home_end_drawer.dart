@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
-import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
+import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
@@ -26,10 +26,12 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
 part 'home_end_drawer_header.dart';
 part 'community_tile.dart';
 part 'backup_tile.dart';
+part 'add_ons_tile.dart';
 
 class HomeEndDrawer extends StatelessWidget {
   const HomeEndDrawer(this.viewModel, {super.key});
@@ -79,11 +81,7 @@ class HomeEndDrawer extends StatelessWidget {
           const _BackupTile(),
           const Divider(),
           buildSettingTile(context),
-          ListTile(
-            leading: const Icon(Icons.app_registration_rounded),
-            title: Text(tr('page.add_ons.title')),
-            onTap: () => const AddOnsRoute().push(context),
-          ),
+          if (kStoryPad) const _AddOnsTile(),
           const Divider(),
           const _CommunityTile(),
           ListTile(

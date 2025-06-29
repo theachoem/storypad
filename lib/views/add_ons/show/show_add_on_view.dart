@@ -1,11 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
-import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/local_widgets/profile_avatar.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
 
 import 'show_add_on_view_model.dart';

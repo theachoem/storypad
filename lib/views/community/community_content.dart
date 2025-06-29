@@ -29,7 +29,7 @@ class _CommunityContent extends StatelessWidget {
           if (RemoteConfigService.policyPrivacyUrl.get().trim().isNotEmpty == true)
             ListTile(
               leading: const Icon(SpIcons.policy),
-              title: Text(tr("list_tile.privacy_policy.title")),
+              title: Text(tr("general.privacy_policy")),
               trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
             ),

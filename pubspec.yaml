@@ -1,5 +1,5 @@
 name: storypad
-version: 2.15.0+402
+version: 2.15.0+407
 publish_to: none
 environment:
   sdk: ^3.5.4
@@ -59,6 +59,7 @@ dependencies:
   shared_preferences: ^2.5.3
   sqflite: ^2.4.2
   visibility_detector: ^0.4.0+2
+  purchases_flutter: ^8.10.4
 
 dev_dependencies:
   build_runner: ^2.4.15

@@ -98,4 +98,5 @@ class SpIcons {
   static const IconData lightBulb = kIsCupertino ? CupertinoIcons.lightbulb : Icons.lightbulb_outline;
   static const IconData zoomInMap = kIsCupertino ? CupertinoIcons.rectangle_expand_vertical : Icons.zoom_in_map;
   static const IconData addOns = kIsCupertino ? CupertinoIcons.square_grid_2x2 : Icons.grid_view_rounded;
+  static const IconData verifiedFilled = !kIsCupertino ? CupertinoIcons.checkmark_seal_fill : Icons.verified;
 }
