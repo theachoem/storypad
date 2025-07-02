@@ -9,7 +9,7 @@ class _TemplatesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr("page.templates.title")),
+        title: Text(tr("add_ons.templates.title")),
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))

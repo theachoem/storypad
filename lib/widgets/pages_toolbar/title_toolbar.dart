@@ -11,8 +11,7 @@ class _TitleToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontWeight = preferences.titleFontWeight ?? kTitleDefaultFontWeight;
-
+    final fontWeight = AppTheme.getThemeFontWeight(context, preferences.titleFontWeight ?? kTitleDefaultFontWeight);
     final fontFamily = preferences.titleFontFamily ??
         preferences.fontFamily ??
         context.read<DevicePreferencesProvider>().preferences.fontFamily;

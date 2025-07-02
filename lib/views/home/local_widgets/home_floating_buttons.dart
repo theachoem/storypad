@@ -46,6 +46,9 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     super.dispose();
   }
 
+  /// [FeatureFlags.template]
+  static const bool expandableFAB = false;
+
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
@@ -58,7 +61,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     if (MediaQuery.accessibleNavigationOf(context)) {
       return FloatingActionButton.extended(
         tooltip: tr("button.new_story"),
-        onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
+        onPressed: expandableFAB ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
         label: Text(tr("button.new_story")),
         icon: const Icon(SpIcons.newStory),
         shape: const StadiumBorder(),
@@ -66,7 +69,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     } else {
       return FloatingActionButton(
         tooltip: tr("button.new_story"),
-        onPressed: FeatureFlags.template ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
+        onPressed: expandableFAB ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
         child: const Icon(SpIcons.newStory),
       );
     }
@@ -84,7 +87,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         },
       ),
       IconButton.filledTonal(
-        tooltip: tr("page.templates.title"),
+        tooltip: tr("add_ons.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
         icon: const Icon(Icons.lightbulb_outlined),
         onPressed: () {

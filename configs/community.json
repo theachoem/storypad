@@ -1,5 +1,8 @@
 {
   "APP_NAME": "SpookyC.",
+  "REVENUE_CAT_ANDROID_API_KEY": "",
+  "REVENUE_CAT_IOS_API_KEY": "",
+  "EMAIL_HASHER_SECRET_KEY": "1d156eea3e3cc9878a4a82da741e3b59e096ba71b589e75a8188f5de1586f122",
   "GOOGLE_CLIENT_ID": "892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com",
   "GOOGLE_REVERSED_CLIENT_ID": "com.googleusercontent.apps.892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5"
 }

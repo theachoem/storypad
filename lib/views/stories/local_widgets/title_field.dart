@@ -25,10 +25,7 @@ class _TitleField extends StatelessWidget {
           context.read<DevicePreferencesProvider>().preferences.fontFamily,
       color: Theme.of(context).textTheme.titleMedium?.color,
       fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-      fontWeight: AppTheme.calculateFontWeight(
-        kTitleDefaultFontWeight,
-        preferences?.titleFontWeight ?? kTitleDefaultFontWeight,
-      ),
+      fontWeight: AppTheme.getThemeFontWeight(context, preferences?.titleFontWeight ?? kTitleDefaultFontWeight),
     );
 
     return TextFormField(

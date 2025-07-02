@@ -29,7 +29,7 @@ class _CommunityContent extends StatelessWidget {
           if (RemoteConfigService.policyPrivacyUrl.get().trim().isNotEmpty == true)
             ListTile(
               leading: const Icon(SpIcons.policy),
-              title: Text(tr("list_tile.privacy_policy.title")),
+              title: Text(tr("general.privacy_policy")),
               trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.policyPrivacyUrl.get()),
             ),
@@ -40,6 +40,14 @@ class _CommunityContent extends StatelessWidget {
               subtitle: Text(tr("list_tile.source_code.subtitle")),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get()),
             ),
+          if (RemoteConfigService.donationUrl.get().trim().isNotEmpty == true) ...[
+            const Divider(),
+            ListTile(
+              leading: Icon(SpIcons.favoriteFilled, color: ColorScheme.of(context).bootstrap.info.color),
+              title: Text(tr('list_tile.donation.title')),
+              onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.donationUrl.get()),
+            ),
+          ],
           const Divider(),
           ListTile(
             leading: const Icon(SpIcons.onboarding),
@@ -58,6 +66,12 @@ class _CommunityContent extends StatelessWidget {
                 applicationVersion: "${kPackageInfo.version}+${kPackageInfo.buildNumber}",
               );
             },
+          ),
+          ListTile(
+            leading: const Icon(SpIcons.share),
+            title: Text(tr("list_tile.share_app.title")),
+            subtitle: Text(tr("list_tile.share_app.subtitle")),
+            onTap: () => SpShareAppBottomSheet().show(context: context),
           ),
         ],
       ),

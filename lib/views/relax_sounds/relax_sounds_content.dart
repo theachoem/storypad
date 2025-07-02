@@ -7,20 +7,19 @@ class _RelaxSoundsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!FeatureFlags.relaxSound) return const SizedBox.shrink();
-
     final provider = Provider.of<RelaxSoundsProvider>(context);
     Iterable<RelaxSoundObject> relaxSounds = provider.relaxSounds.values;
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Text(tr('page.relax_sounds.title')),
+        title: Text(tr('add_ons.relax_sounds.title')),
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
         ],
+        bottom: const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1)),
       ),
       bottomNavigationBar: const SpFloatingRelaxSoundsTile(),
       body: CustomScrollView(
@@ -28,7 +27,7 @@ class _RelaxSoundsContent extends StatelessWidget {
         slivers: [
           SliverPadding(
             padding: EdgeInsets.only(
-              top: CupertinoSheetRoute.hasParentSheet(context) ? 8.0 : 20,
+              top: CupertinoSheetRoute.hasParentSheet(context) ? 16.0 : 20,
               left: MediaQuery.of(context).padding.left + 16.0,
               right: MediaQuery.of(context).padding.right + 16.0,
               bottom: 32.0,

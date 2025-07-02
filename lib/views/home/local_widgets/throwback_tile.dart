@@ -26,6 +26,13 @@ class _ThrowbackTile extends StatelessWidget {
       title = tr('list_tile.throwback.a_few_year_ago_title');
     }
 
+    return SpTapEffect(
+      onTap: () => view(context),
+      child: buildContent(context, title, subtitle),
+    );
+  }
+
+  Widget buildContent(BuildContext context, String title, String subtitle) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
       child: Row(

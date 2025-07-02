@@ -20,22 +20,26 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
 
   @override
   Widget build(BuildContext context) {
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+
     return Stack(
+      fit: StackFit.passthrough,
+      clipBehavior: Clip.none,
       children: [
         buildBackgrounds(context),
-        buildButtons(context),
+        buildButtons(context, iapProvider),
       ],
     );
   }
 
-  Widget buildButtons(BuildContext context) {
+  Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
     final buttons = [
-      if (FeatureFlags.relaxSound)
+      if (provider.relaxSound)
         SpFadeIn.bound(
           child: IconButton(
-            color: Theme.of(context).colorScheme.onPrimary,
+            tooltip: tr('add_ons.relax_sounds.title'),
             style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               shape: CircleBorder(
                 side: BorderSide(color: Theme.of(context).dividerColor),
               ),
@@ -44,10 +48,25 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
             onPressed: () => const RelaxSoundsRoute().push(context),
           ),
         ),
+      if (provider.template)
+        SpFadeIn.bound(
+          child: IconButton(
+            tooltip: tr("add_ons.templates.title"),
+            style: IconButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+            ),
+            icon: const Icon(SpIcons.lightBulb),
+            onPressed: () => const TemplatesRoute().push(context),
+          ),
+        ),
     ];
 
     return Container(
       margin: EdgeInsets.only(
+        top: 8.0,
         left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + 8.0)!,
         right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 8.0, 0.0)!,
         bottom: widget.screenPadding.bottom + 16.0,
@@ -59,16 +78,15 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
           if (expanded) ...buttons,
           if (buttons.isNotEmpty)
             IconButton(
+              tooltip: expanded ? tr('button.dimiss') : tr('page.add_ons.title'),
               icon: SpAnimatedIcons.fadeScale(
                 showFirst: expanded,
                 firstChild: const Icon(SpIcons.keyboardDown),
-                secondChild: const Icon(SpIcons.keyboardUp),
+                secondChild: const Icon(SpIcons.addOns),
               ),
               style: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
+                shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
               ),
               onPressed: () {
                 expanded = !expanded;
@@ -76,6 +94,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               },
             ),
           IconButton(
+            tooltip: tr('page.calendar.title'),
             style: IconButton.styleFrom(
               backgroundColor: ColorScheme.of(context).surface,
               shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
@@ -92,34 +111,39 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   }
 
   Widget buildBackgrounds(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        margin: EdgeInsets.only(
-          left: AppTheme.getDirectionValue(context, 4.0, widget.screenPadding.left + 12.0)!,
-          right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 12.0, 4.0)!,
-        ),
-        child: Column(
-          children: [
-            Container(
-              height: 12,
+    return Positioned(
+      left: AppTheme.getDirectionValue(context, 4.0, widget.screenPadding.left + 12.0)!,
+      right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 12.0, 4.0)!,
+      bottom: 0,
+      top: 0,
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 32,
+            child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
                     widget.backgroundColor.withValues(alpha: 0.0),
+                    widget.backgroundColor.withValues(alpha: 0.8),
                     widget.backgroundColor,
                   ],
                 ),
               ),
             ),
-            Expanded(
-              child: Container(
-                color: widget.backgroundColor,
-              ),
+          ),
+          Positioned.fill(
+            top: 32,
+            child: Container(
+              color: widget.backgroundColor,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

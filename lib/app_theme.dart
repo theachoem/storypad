@@ -33,16 +33,35 @@ class AppTheme extends StatelessWidget {
       context.read<DevicePreferencesProvider>().preferences.colorSeed == Colors.black ||
       context.read<DevicePreferencesProvider>().preferences.colorSeed == Colors.white;
 
-  static FontWeight getThemeFontWeight(BuildContext context, FontWeight fontWeight) {
-    return calculateFontWeight(fontWeight, context.read<DevicePreferencesProvider>().preferences.fontWeight);
-  }
-
   static T? getDirectionValue<T extends Object>(BuildContext context, T? rtlValue, T? ltrValue) {
     if (Directionality.of(context) == TextDirection.rtl) {
       return rtlValue;
     } else {
       return ltrValue;
     }
+  }
+
+  static FontWeight getThemeFontWeight(BuildContext context, FontWeight defaultWeight) {
+    FontWeight preferredFontWeight = context.read<DevicePreferencesProvider>().preferences.fontWeight;
+
+    final fontWeights = {
+      0: FontWeight.w100,
+      1: FontWeight.w200,
+      2: FontWeight.w300,
+      3: FontWeight.w400,
+      4: FontWeight.w500,
+      5: FontWeight.w600,
+      6: FontWeight.w700,
+      7: FontWeight.w800,
+      8: FontWeight.w900,
+    };
+
+    int indexOf(FontWeight weight) => fontWeights.entries.firstWhere((e) => e.value == weight).key;
+
+    final diff = indexOf(defaultWeight) - indexOf(FontWeight.w400);
+    final newIndex = (indexOf(preferredFontWeight) + diff).clamp(0, 8);
+
+    return fontWeights[newIndex]!;
   }
 
   @override
@@ -83,7 +102,7 @@ class AppTheme extends StatelessWidget {
     ThemeData baseTheme = darkMode ? ThemeData.dark() : ThemeData.light();
 
     TextStyle calculateTextStyle(TextStyle textStyle, FontWeight defaultFontWeight) {
-      return textStyle.copyWith(fontWeight: calculateFontWeight(defaultFontWeight, fontWeight));
+      return textStyle.copyWith(fontWeight: _calculateFontWeight(defaultFontWeight, fontWeight));
     }
 
     Color? dividerColor = colorScheme.onSurface.withValues(alpha: 0.15);
@@ -204,8 +223,9 @@ class AppTheme extends StatelessWidget {
     return builder(lightScheme, darkScheme);
   }
 
-  static FontWeight calculateFontWeight(FontWeight defaultWeight, FontWeight currentWeight) {
+  static FontWeight _calculateFontWeight(FontWeight defaultWeight, FontWeight preferredFontWeight) {
     int changeBy = defaultWeight == FontWeight.w400 ? 0 : 1;
+
     Map<int, FontWeight> fontWeights = {
       0: FontWeight.w100,
       1: FontWeight.w200,
@@ -218,7 +238,7 @@ class AppTheme extends StatelessWidget {
       8: FontWeight.w900,
     };
 
-    int index = currentWeight.index + changeBy;
+    int index = preferredFontWeight.index + changeBy;
     return fontWeights[math.max(math.min(8, index), 0)]!;
   }
 }

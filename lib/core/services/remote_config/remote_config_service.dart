@@ -14,6 +14,7 @@ class RemoteConfigService {
     policyPrivacyUrl,
     sourceCodeUrl,
     surveyUrl,
+    donationUrl,
   ];
 
   FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
@@ -65,7 +66,13 @@ class RemoteConfigService {
   static const surveyUrl = _RemoteConfigObject<String>(
     'SURVEY_URL',
     _RemoteConfigValueType.string,
-    'https://forms.gle/XaZTB9NTMuNWa3R26',
+    '',
+  );
+
+  static const donationUrl = _RemoteConfigObject<String>(
+    'DONATATION_URL',
+    _RemoteConfigValueType.string,
+    'https://coff.ee/theachoem',
   );
 
   Future<void> initialize() async {

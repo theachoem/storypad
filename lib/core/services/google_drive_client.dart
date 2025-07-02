@@ -89,7 +89,7 @@ class GoogleDriveClient {
   }
 
   Future<void> signOut() async {
-    await googleSignIn.disconnect();
+    await googleSignIn.signOut();
     await GoogleUserStorage().remove();
     _currentUser = null;
   }
