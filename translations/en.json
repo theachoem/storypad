@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "Biometrics Lock",
   "list_tile.color_seed.title": "Color Seed",
   "list_tile.created_at.title": "Created",
+  "list_tile.donation.title": "Donate",
   "list_tile.export_backup.subtitle": "Save stories to your device offline",
   "list_tile.export_backup.title": "Export Backup",
   "list_tile.faq.title": "FAQ",

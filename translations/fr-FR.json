@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "Verrouillage biométrique",
   "list_tile.color_seed.title": "Graine de couleur",
   "list_tile.created_at.title": "Créé",
+  "list_tile.donation.title": "Faire un don",
   "list_tile.export_backup.subtitle": "Enregistrez des histoires sur votre appareil hors ligne",
   "list_tile.export_backup.title": "Exporter la sauvegarde",
   "list_tile.faq.title": "FAQ",

@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "Cerradura biométrica",
   "list_tile.color_seed.title": "Semilla de color",
   "list_tile.created_at.title": "Creado",
+  "list_tile.donation.title": "Donar",
   "list_tile.export_backup.subtitle": "Guarde historias en su dispositivo sin conexión",
   "list_tile.export_backup.title": "Exportar copia de seguridad",
   "list_tile.faq.title": "Preguntas frecuentes",

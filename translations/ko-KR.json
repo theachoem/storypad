@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "생체 인증 잠금",
   "list_tile.color_seed.title": "색상 시드",
   "list_tile.created_at.title": "작성일",
+  "list_tile.donation.title": "기부하기",
   "list_tile.export_backup.subtitle": "스토리를 오프라인으로 기기에 저장",
   "list_tile.export_backup.title": "백업 내보내기",
   "list_tile.faq.title": "자주 묻는 질문",

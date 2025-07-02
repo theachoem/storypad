@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "Blokada biometryczna",
   "list_tile.color_seed.title": "Nasiona koloru",
   "list_tile.created_at.title": "Stworzony",
+  "list_tile.donation.title": "Podarować",
   "list_tile.export_backup.subtitle": "Zapisuj historie na swoim urządzeniu w trybie offline",
   "list_tile.export_backup.title": "Eksportuj kopię zapasową",
   "list_tile.faq.title": "Często zadawane pytania",

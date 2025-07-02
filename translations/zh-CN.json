@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "生物识别锁",
   "list_tile.color_seed.title": "彩色种子",
   "list_tile.created_at.title": "已创建",
+  "list_tile.donation.title": "捐",
   "list_tile.export_backup.subtitle": "离线将故事保存到您的设备",
   "list_tile.export_backup.title": "导出备份",
   "list_tile.faq.title": "常问问题",

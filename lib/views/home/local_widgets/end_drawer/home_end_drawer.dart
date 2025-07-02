@@ -24,7 +24,6 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart' show Color
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
@@ -88,12 +87,6 @@ class HomeEndDrawer extends StatelessWidget {
             leading: const Icon(SpIcons.star),
             title: Text(tr("list_tile.rate.title")),
             onTap: () => AppStoreOpenerService.call(),
-          ),
-          ListTile(
-            leading: const Icon(SpIcons.share),
-            title: Text(tr("list_tile.share_app.title")),
-            subtitle: Text(tr("list_tile.share_app.subtitle")),
-            onTap: () => SpShareAppBottomSheet().show(context: context),
           ),
         ],
       ),

@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "生体認証ロック",
   "list_tile.color_seed.title": "カラーシード",
   "list_tile.created_at.title": "作成日",
+  "list_tile.donation.title": "寄付する",
   "list_tile.export_backup.subtitle": "ストーリーをオフラインでデバイスに保存する",
   "list_tile.export_backup.title": "バックアップのエクスポート",
   "list_tile.faq.title": "よくある質問",

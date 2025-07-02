@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "ล็อคไบโอเมตริกซ์",
   "list_tile.color_seed.title": "เมล็ดพันธุ์สี",
   "list_tile.created_at.title": "สร้าง",
+  "list_tile.donation.title": "บริจาค",
   "list_tile.export_backup.subtitle": "บันทึกเรื่องราวลงในอุปกรณ์ของคุณแบบออฟไลน์",
   "list_tile.export_backup.title": "ส่งออกข้อมูลสำรอง",
   "list_tile.faq.title": "คำถามที่พบบ่อย",

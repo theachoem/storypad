@@ -40,6 +40,14 @@ class _CommunityContent extends StatelessWidget {
               subtitle: Text(tr("list_tile.source_code.subtitle")),
               onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.sourceCodeUrl.get()),
             ),
+          if (RemoteConfigService.donationUrl.get().trim().isNotEmpty == true) ...[
+            const Divider(),
+            ListTile(
+              leading: Icon(SpIcons.favoriteFilled, color: ColorScheme.of(context).bootstrap.info.color),
+              title: Text(tr('list_tile.donation.title')),
+              onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.donationUrl.get()),
+            ),
+          ],
           const Divider(),
           ListTile(
             leading: const Icon(SpIcons.onboarding),
@@ -58,6 +66,12 @@ class _CommunityContent extends StatelessWidget {
                 applicationVersion: "${kPackageInfo.version}+${kPackageInfo.buildNumber}",
               );
             },
+          ),
+          ListTile(
+            leading: const Icon(SpIcons.share),
+            title: Text(tr("list_tile.share_app.title")),
+            subtitle: Text(tr("list_tile.share_app.subtitle")),
+            onTap: () => SpShareAppBottomSheet().show(context: context),
           ),
         ],
       ),

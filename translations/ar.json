@@ -235,6 +235,7 @@
   "list_tile.biometrics_lock.title": "قفل القياسات الحيوية",
   "list_tile.color_seed.title": "بذور اللون",
   "list_tile.created_at.title": "مخلوق",
+  "list_tile.donation.title": "يتبرع",
   "list_tile.export_backup.subtitle": "حفظ القصص على جهازك دون اتصال بالإنترنت",
   "list_tile.export_backup.title": "تصدير النسخ الاحتياطي",
   "list_tile.faq.title": "التعليمات",
