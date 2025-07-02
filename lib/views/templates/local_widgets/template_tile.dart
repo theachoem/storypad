@@ -11,13 +11,6 @@ class _TemplateTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> promps = [];
-    final pages = template.content?.richPages ?? <StoryPageDbModel>[];
-
-    for (int i = 1; i < pages.length; i++) {
-      promps.add(pages[i].title ?? tr('general.na'));
-    }
-
     return MediaQuery.removePadding(
       context: context,
       removeLeft: true,
@@ -35,11 +28,6 @@ class _TemplateTile extends StatelessWidget {
           children: [
             if (template.content?.displayShortBody?.trim().isNotEmpty == true)
               SpMarkdownBody(body: template.content!.displayShortBody!),
-            if (promps.isNotEmpty)
-              Text(
-                promps.join("\n"),
-                overflow: TextOverflow.ellipsis,
-              ),
             const SizedBox(height: 8.0),
             TemplateTagLabels(template: template)
           ],

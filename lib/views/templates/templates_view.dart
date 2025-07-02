@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
