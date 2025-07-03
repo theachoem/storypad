@@ -17,6 +17,7 @@ import 'package:storypad/widgets/sp_images_viewer.dart';
 import 'show_add_on_view_model.dart';
 
 part 'show_add_on_content.dart';
+part '../local_widgets/demo_images.dart';
 
 class ShowAddOnRoute extends BaseRoute {
   const ShowAddOnRoute({

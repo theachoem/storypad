@@ -20,7 +20,7 @@ class _ShowAddOnContent extends StatelessWidget {
       body: ListView(
         children: [
           buildContents(context, iapProvider),
-          buildDemoImages(context),
+          _DemoImages(demoImageUrls: viewModel.demoImageUrls, context: context),
           const SizedBox(height: 24.0),
           buildFAQTitle(context),
           const SizedBox(height: 8.0),
@@ -178,50 +178,6 @@ class _ShowAddOnContent extends StatelessWidget {
             children: actions,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildDemoImages(BuildContext context) {
-    if (viewModel.demoImageUrls == null) {
-      return Container(
-        height: 240,
-        alignment: Alignment.centerLeft,
-        child: Container(
-          width: 110,
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          decoration: BoxDecoration(
-            color: ColorScheme.of(context).readOnly.surface1,
-            borderRadius: BorderRadiusGeometry.circular(8.0),
-          ),
-        ),
-      );
-    }
-
-    return SizedBox(
-      height: 240,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: viewModel.demoImageUrls?.length ?? 0,
-        scrollDirection: Axis.horizontal,
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 8.0),
-        itemBuilder: (context, index) {
-          final imageUrl = viewModel.demoImageUrls![index];
-          return SpFadeIn(
-            child: GestureDetector(
-              onTap: () => SpImagesViewer.fromString(
-                initialIndex: index,
-                images: viewModel.demoImageUrls!,
-              ).show(context),
-              child: ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(8.0),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }
