@@ -417,6 +417,64 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(7, 7447837682900434922),
+    name: 'RelaxSoundMixBox',
+    lastPropertyId: const obx_int.IdUid(8, 5312486173104212263),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 313537167867615676),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 4518666253956758444),
+        name: 'name',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 8484003766353545544),
+        name: 'sounds',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 713199041146636257),
+        name: 'createdAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 7838093783314215653),
+        name: 'updatedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 359413979246993001),
+        name: 'permanentlyDeletedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 764543406322651921),
+        name: 'lastSavedDeviceId',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 5312486173104212263),
+        name: 'index',
+        type: 6,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -457,7 +515,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(6, 4197752153260494722),
+    lastEntityId: const obx_int.IdUid(7, 7447837682900434922),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -1010,6 +1068,81 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    RelaxSoundMixBox: obx_int.EntityDefinition<RelaxSoundMixBox>(
+      model: _entities[5],
+      toOneRelations: (RelaxSoundMixBox object) => [],
+      toManyRelations: (RelaxSoundMixBox object) => {},
+      getId: (RelaxSoundMixBox object) => object.id,
+      setId: (RelaxSoundMixBox object, int id) {
+        object.id = id;
+      },
+      objectToFB: (RelaxSoundMixBox object, fb.Builder fbb) {
+        final nameOffset = fbb.writeString(object.name);
+        final soundsOffset = fbb.writeString(object.sounds);
+        final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+            ? null
+            : fbb.writeString(object.lastSavedDeviceId!);
+        fbb.startTable(9);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, nameOffset);
+        fbb.addOffset(2, soundsOffset);
+        fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
+        fbb.addInt64(4, object.updatedAt.millisecondsSinceEpoch);
+        fbb.addInt64(5, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+        fbb.addOffset(6, lastSavedDeviceIdOffset);
+        fbb.addInt64(7, object.index);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final permanentlyDeletedAtValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 14);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final indexParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          18,
+          0,
+        );
+        final nameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final soundsParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 8, '');
+        final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+        );
+        final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
+        );
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 16);
+        final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final object = RelaxSoundMixBox(
+          id: idParam,
+          index: indexParam,
+          name: nameParam,
+          sounds: soundsParam,
+          createdAt: createdAtParam,
+          updatedAt: updatedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
+          permanentlyDeletedAt: permanentlyDeletedAtParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1316,5 +1449,48 @@ class TemplateObjectBox_ {
   /// See [TemplateObjectBox.preferences].
   static final preferences = obx.QueryStringProperty<TemplateObjectBox>(
     _entities[4].properties[8],
+  );
+}
+
+/// [RelaxSoundMixBox] entity fields to define ObjectBox queries.
+class RelaxSoundMixBox_ {
+  /// See [RelaxSoundMixBox.id].
+  static final id = obx.QueryIntegerProperty<RelaxSoundMixBox>(
+    _entities[5].properties[0],
+  );
+
+  /// See [RelaxSoundMixBox.name].
+  static final name = obx.QueryStringProperty<RelaxSoundMixBox>(
+    _entities[5].properties[1],
+  );
+
+  /// See [RelaxSoundMixBox.sounds].
+  static final sounds = obx.QueryStringProperty<RelaxSoundMixBox>(
+    _entities[5].properties[2],
+  );
+
+  /// See [RelaxSoundMixBox.createdAt].
+  static final createdAt = obx.QueryDateProperty<RelaxSoundMixBox>(
+    _entities[5].properties[3],
+  );
+
+  /// See [RelaxSoundMixBox.updatedAt].
+  static final updatedAt = obx.QueryDateProperty<RelaxSoundMixBox>(
+    _entities[5].properties[4],
+  );
+
+  /// See [RelaxSoundMixBox.permanentlyDeletedAt].
+  static final permanentlyDeletedAt = obx.QueryDateProperty<RelaxSoundMixBox>(
+    _entities[5].properties[5],
+  );
+
+  /// See [RelaxSoundMixBox.lastSavedDeviceId].
+  static final lastSavedDeviceId = obx.QueryStringProperty<RelaxSoundMixBox>(
+    _entities[5].properties[6],
+  );
+
+  /// See [RelaxSoundMixBox.index].
+  static final index = obx.QueryIntegerProperty<RelaxSoundMixBox>(
+    _entities[5].properties[7],
   );
 }

@@ -26,9 +26,14 @@ class MultiAudioPlayersService {
   }
 
   // make sure to download file from UI before playing.
-  Future<void> playAnAudio(String urlPath) async {
+  Future<void> playAnAudio(
+    String urlPath, {
+    double? initialVolume,
+  }) async {
     _playingStates[urlPath] ??= PlayerState(false, ProcessingState.idle);
     _players[urlPath] ??= _constructAudioService(urlPath);
+
+    setVolume(urlPath, initialVolume ?? 0.5);
 
     await _players[urlPath]!.play();
   }

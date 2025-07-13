@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/multi_audio_notification_service.dart';
 import 'package:storypad/core/services/multi_audio_player_service.dart';
 import 'package:storypad/core/services/relax_sound_timer_service.dart';
 
-class RelaxSoundsProvider extends ChangeNotifier {
+class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
   Map<String, RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
   String get selectedSoundsLabel => selectedRelaxSounds.map((e) => e.label).join(", ");
   List<RelaxSoundObject> get selectedRelaxSounds {
@@ -44,11 +46,18 @@ class RelaxSoundsProvider extends ChangeNotifier {
   bool? _playing;
   bool get playing => _playing ?? false;
 
+  // flag for UI to only show save mix button when mix does not exist.
+  // to avoid saving dublicate mixes.
+  bool? _canSaveMix;
+  bool get canSaveMix => _canSaveMix ?? false;
+
   bool isSoundSelected(RelaxSoundObject sound) => audioPlayersService.exist(sound.soundUrlPath);
   double? getVolume(RelaxSoundObject sound) => audioPlayersService.getVolume(sound.soundUrlPath);
   void setVolumn(RelaxSoundObject sound, double volumn) {
     audioPlayersService.setVolume(sound.soundUrlPath, volumn);
     notifyListeners();
+
+    refreshCanSaveMix();
   }
 
   void setStopIn(Duration duration) {
@@ -67,15 +76,36 @@ class RelaxSoundsProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> toggleSound(RelaxSoundObject sound) async {
+  Future<void> toggleSound(
+    RelaxSoundObject sound, {
+    double? initialVolume,
+  }) async {
     if (isSoundSelected(sound)) {
       await audioPlayersService.removeAnAudio(sound.soundUrlPath);
     } else {
-      await audioPlayersService.playAnAudio(sound.soundUrlPath);
+      await audioPlayersService.playAnAudio(sound.soundUrlPath, initialVolume: initialVolume);
       audioPlayersService.playAll();
     }
 
     notifyListeners();
+
+    refreshCanSaveMix();
+  }
+
+  Future<void> playAll({
+    required Map<RelaxSoundObject, double?> soundWithInitialVolume,
+  }) async {
+    audioPlayersService.removeAllAudios();
+
+    for (var entry in soundWithInitialVolume.entries) {
+      await audioPlayersService.playAnAudio(
+        entry.key.soundUrlPath,
+        initialVolume: entry.value,
+      );
+    }
+
+    notifyListeners();
+    refreshCanSaveMix();
   }
 
   void togglePlayPause() {
@@ -85,10 +115,34 @@ class RelaxSoundsProvider extends ChangeNotifier {
     } else {
       audioPlayersService.playAll();
     }
+
+    refreshCanSaveMix();
   }
 
   void dismiss() {
     audioPlayersService.removeAllAudios();
+
+    refreshCanSaveMix();
+  }
+
+  void refreshCanSaveMix() async {
+    _canSaveMix = await findExistingMix(ignoreVolume: false) == null;
+    notifyListeners();
+  }
+
+  Future<RelaxSoundMixModel?> findExistingMix({
+    required bool ignoreVolume,
+  }) async {
+    final saved = await RelaxSoundMixModel.db.where().then((e) => e?.items) ?? [];
+
+    final playing = selectedRelaxSounds
+        .map((s) => "${s.soundUrlPath}:${ignoreVolume ? 1 : getVolume(relaxSounds[s.soundUrlPath]!)}")
+        .toSet();
+
+    return saved.where((mix) {
+      final db = mix.sounds.map((s) => "${s.soundUrlPath}:${ignoreVolume ? 1 : s.volume}").toSet();
+      return db.length == playing.length && db.containsAll(playing);
+    }).firstOrNull;
   }
 
   @override

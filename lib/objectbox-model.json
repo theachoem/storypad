@@ -337,9 +337,58 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "7:7447837682900434922",
+      "lastPropertyId": "8:5312486173104212263",
+      "name": "RelaxSoundMixBox",
+      "properties": [
+        {
+          "id": "1:313537167867615676",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:4518666253956758444",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:8484003766353545544",
+          "name": "sounds",
+          "type": 9
+        },
+        {
+          "id": "4:713199041146636257",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "5:7838093783314215653",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "6:359413979246993001",
+          "name": "permanentlyDeletedAt",
+          "type": 10
+        },
+        {
+          "id": "7:764543406322651921",
+          "name": "lastSavedDeviceId",
+          "type": 9
+        },
+        {
+          "id": "8:5312486173104212263",
+          "name": "index",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "6:4197752153260494722",
+  "lastEntityId": "7:7447837682900434922",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
