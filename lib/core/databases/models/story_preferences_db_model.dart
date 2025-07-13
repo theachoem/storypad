@@ -95,6 +95,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       fontWeightIndex: null,
       titleFontFamily: null,
       titleFontWeightIndex: null,
+      titleExpanded: null,
       layoutType: PageLayoutType.list,
     );
   }
