@@ -20,10 +20,10 @@ class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
     for (String urlPath in params.addOn.demoImages) {
       String? imageUrl = await FirestoreStorageService.instance.getDownloadURL(urlPath);
       demoImageUrls ??= [];
-      if (imageUrl != null) demoImageUrls?.add(imageUrl);
-    }
 
-    notifyListeners();
+      if (imageUrl != null) demoImageUrls?.add(imageUrl);
+      notifyListeners();
+    }
   }
 
   void purchase(BuildContext context, String productIdentifier) async {
