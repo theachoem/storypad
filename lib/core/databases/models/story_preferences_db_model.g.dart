@@ -27,6 +27,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel titleFontWeightIndex(int? titleFontWeightIndex);
 
+  StoryPreferencesDbModel titleExpanded(bool? titleExpanded);
+
   StoryPreferencesDbModel layoutType(PageLayoutType layoutType);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -46,6 +48,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     int? fontWeightIndex,
     String? titleFontFamily,
     int? titleFontWeightIndex,
+    bool? titleExpanded,
     PageLayoutType layoutType,
   });
 }
@@ -97,6 +100,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
       this(titleFontWeightIndex: titleFontWeightIndex);
 
   @override
+  StoryPreferencesDbModel titleExpanded(bool? titleExpanded) =>
+      this(titleExpanded: titleExpanded);
+
+  @override
   StoryPreferencesDbModel layoutType(PageLayoutType layoutType) =>
       this(layoutType: layoutType);
 
@@ -119,6 +126,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? titleFontFamily = const $CopyWithPlaceholder(),
     Object? titleFontWeightIndex = const $CopyWithPlaceholder(),
+    Object? titleExpanded = const $CopyWithPlaceholder(),
     Object? layoutType = const $CopyWithPlaceholder(),
   }) {
     return StoryPreferencesDbModel(
@@ -162,6 +170,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.titleFontWeightIndex
           // ignore: cast_nullable_to_non_nullable
           : titleFontWeightIndex as int?,
+      titleExpanded: titleExpanded == const $CopyWithPlaceholder()
+          ? _value.titleExpanded
+          // ignore: cast_nullable_to_non_nullable
+          : titleExpanded as bool?,
       layoutType: layoutType == const $CopyWithPlaceholder()
           ? _value.layoutType
           // ignore: cast_nullable_to_non_nullable
@@ -194,6 +206,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
       titleFontFamily: json['title_font_family'] as String?,
       titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
+      titleExpanded: json['title_expanded'] as bool?,
       layoutType: _layoutTypeFromJson(json['layout_type']),
     );
 
@@ -210,6 +223,7 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
       'font_weight_index': instance.fontWeightIndex,
       'title_font_family': instance.titleFontFamily,
       'title_font_weight_index': instance.titleFontWeightIndex,
+      'title_expanded': instance.titleExpanded,
       'layout_type': _$PageLayoutTypeEnumMap[instance.layoutType]!,
     };
 

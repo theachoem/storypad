@@ -24,7 +24,7 @@ class _TitleField extends StatelessWidget {
           preferences?.fontFamily ??
           context.read<DevicePreferencesProvider>().preferences.fontFamily,
       color: Theme.of(context).textTheme.titleMedium?.color,
-      fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+      fontSize: preferences?.titleFontSize ?? Theme.of(context).textTheme.titleMedium?.fontSize,
       fontWeight: AppTheme.getThemeFontWeight(context, preferences?.titleFontWeight ?? kTitleDefaultFontWeight),
     );
 
@@ -40,10 +40,10 @@ class _TitleField extends StatelessWidget {
       autofocus: false,
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (value) => bodyFocusNode.requestFocus(),
-      decoration: const InputDecoration(
-        hintText: "Title...",
+      decoration: InputDecoration(
+        hintText: tr('input.title.hint'),
         isCollapsed: true,
-        contentPadding: EdgeInsets.only(top: 12, left: 12.0, bottom: 4, right: 12.0),
+        contentPadding: const EdgeInsets.only(top: 12, left: 12.0, bottom: 4, right: 12.0),
         border: InputBorder.none,
       ),
     );

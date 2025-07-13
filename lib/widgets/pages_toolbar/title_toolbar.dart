@@ -33,6 +33,22 @@ class _TitleToolbar extends StatelessWidget {
               const SizedBox(width: 4.0),
               buildFontWeightButton(fontWeight, context),
               IconButton.outlined(
+                tooltip: tr('general.font_size'),
+                onPressed: () => onThemeChanged(
+                  preferences.copyWith(titleExpanded: !preferences.titleExpandedFallback),
+                ),
+                color: ColorScheme.of(context).primary,
+                style: IconButton.styleFrom(
+                  side: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+                icon: Transform.flip(
+                  flipX: preferences.titleExpandedFallback,
+                  child: const Icon(SpIcons.fontSize),
+                ),
+              ),
+              IconButton.outlined(
                 tooltip: tr('button.reset'),
                 color: ColorScheme.of(context).primary,
                 style: IconButton.styleFrom(
@@ -43,7 +59,11 @@ class _TitleToolbar extends StatelessWidget {
                 icon: const Icon(SpIcons.refresh),
                 onPressed: preferences.titleReseted
                     ? null
-                    : () => onThemeChanged(preferences.copyWith(titleFontFamily: null, titleFontWeightIndex: null)),
+                    : () => onThemeChanged(preferences.copyWith(
+                          titleFontFamily: null,
+                          titleFontWeightIndex: null,
+                          titleExpanded: null,
+                        )),
               )
             ],
           ),
