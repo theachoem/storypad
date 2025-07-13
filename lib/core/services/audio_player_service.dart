@@ -9,7 +9,7 @@ class AudioPlayerService {
   final String urlPath;
   final void Function(PlayerState state) onStateChanged;
 
-  late double _volumn = _player.volume;
+  late double _volume = _player.volume;
 
   AudioPlayerService({
     required this.urlPath,
@@ -28,9 +28,9 @@ class AudioPlayerService {
   Completer<bool>? _setupCompleter;
   String? _downloadUrl;
 
-  double getVolume() => _volumn;
+  double getVolume() => _volume;
   void setVolume(double volume) {
-    _volumn = volume;
+    _volume = volume;
     _player.setVolume(volume);
   }
 

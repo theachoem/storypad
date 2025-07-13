@@ -44,6 +44,16 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   }
 
   @override
+  Future<Map<String, int>> getDeletedRecords() async {
+    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt.notNull();
+    List<TemplateObjectBox> result =
+        await box.query(conditions).order(TemplateObjectBox_.id, flags: Order.descending).build().findAsync();
+    return {
+      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
+    };
+  }
+
+  @override
   TemplateDbModel modelFromJson(Map<String, dynamic> json) {
     return TemplateDbModel.fromJson(json);
   }

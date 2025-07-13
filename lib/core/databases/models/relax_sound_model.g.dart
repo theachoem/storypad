@@ -30,8 +30,7 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
   final RelaxSoundModel _value;
 
   @override
-  RelaxSoundModel soundUrlPath(String soundUrlPath) =>
-      this(soundUrlPath: soundUrlPath);
+  RelaxSoundModel soundUrlPath(String soundUrlPath) => this(soundUrlPath: soundUrlPath);
 
   @override
   RelaxSoundModel volume(double volume) => this(volume: volume);
@@ -71,14 +70,12 @@ extension $RelaxSoundModelCopyWith on RelaxSoundModel {
 // JsonSerializableGenerator
 // **************************************************************************
 
-RelaxSoundModel _$RelaxSoundModelFromJson(Map<String, dynamic> json) =>
-    RelaxSoundModel(
+RelaxSoundModel _$RelaxSoundModelFromJson(Map<String, dynamic> json) => RelaxSoundModel(
       soundUrlPath: json['sound_url_path'] as String,
       volume: (json['volume'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$RelaxSoundModelToJson(RelaxSoundModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RelaxSoundModelToJson(RelaxSoundModel instance) => <String, dynamic>{
       'sound_url_path': instance.soundUrlPath,
       'volume': instance.volume,
     };

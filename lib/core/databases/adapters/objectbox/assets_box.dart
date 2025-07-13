@@ -35,6 +35,16 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }
 
   @override
+  Future<Map<String, int>> getDeletedRecords() async {
+    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt.notNull();
+    List<AssetObjectBox> result =
+        await box.query(conditions).order(AssetObjectBox_.id, flags: Order.descending).build().findAsync();
+    return {
+      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
+    };
+  }
+
+  @override
   AssetDbModel modelFromJson(Map<String, dynamic> json) => AssetDbModel.fromJson(json);
 
   @override

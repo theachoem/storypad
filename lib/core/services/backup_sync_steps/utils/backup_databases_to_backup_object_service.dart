@@ -13,15 +13,27 @@ class BackupDatabasesToBackupObjectService {
   }) async {
     debugPrint('BackupDatabasesToBackupObjectService#constructBackup');
     Map<String, dynamic> tables = await _constructTables(databases);
+    Map<String, Map<String, int>> deletedRecords = await _constructDeletedRecords(databases);
     debugPrint('BackupDatabasesToBackupObjectService#constructBackup ${tables.keys}');
 
     return BackupObject(
       tables: tables,
+      deletedRecords: deletedRecords,
       fileInfo: BackupFileObject(
         createdAt: lastUpdatedAt,
         device: kDeviceInfo,
       ),
     );
+  }
+
+  static Future<Map<String, Map<String, int>>> _constructDeletedRecords(List<BaseDbAdapter> databases) async {
+    Map<String, Map<String, int>> tables = {};
+
+    for (BaseDbAdapter db in databases) {
+      tables[db.tableName] = await db.getDeletedRecords();
+    }
+
+    return tables;
   }
 
   static Future<Map<String, dynamic>> _constructTables(List<BaseDbAdapter> databases) async {

@@ -53,8 +53,8 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
 
   bool isSoundSelected(RelaxSoundObject sound) => audioPlayersService.exist(sound.soundUrlPath);
   double? getVolume(RelaxSoundObject sound) => audioPlayersService.getVolume(sound.soundUrlPath);
-  void setVolumn(RelaxSoundObject sound, double volumn) {
-    audioPlayersService.setVolume(sound.soundUrlPath, volumn);
+  void setVolumn(RelaxSoundObject sound, double volume) {
+    audioPlayersService.setVolume(sound.soundUrlPath, volume);
     notifyListeners();
 
     refreshCanSaveMix();

@@ -36,6 +36,16 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   }
 
   @override
+  Future<Map<String, int>> getDeletedRecords() async {
+    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt.notNull();
+    List<PreferenceObjectBox> result =
+        await box.query(conditions).order(PreferenceObjectBox_.id, flags: Order.descending).build().findAsync();
+    return {
+      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
+    };
+  }
+
+  @override
   PreferenceDbModel modelFromJson(Map<String, dynamic> json) => PreferenceDbModel.fromJson(json);
 
   @override

@@ -39,7 +39,7 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
       ));
     }
 
-    // save to existing mix with different volumn when exist.
+    // save to existing mix with different volume when exist.
     RelaxSoundMixModel? existingMix = await provider.findExistingMix(ignoreVolume: true);
     await RelaxSoundMixModel.db.set(
       RelaxSoundMixModel(
