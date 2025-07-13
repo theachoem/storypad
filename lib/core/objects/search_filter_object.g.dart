@@ -17,6 +17,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject templateId(int? templateId);
 
+  SearchFilterObject excludeYears(Set<int>? excludeYears);
+
   SearchFilterObject month(int? month);
 
   SearchFilterObject day(int? day);
@@ -35,6 +37,7 @@ abstract class _$SearchFilterObjectCWProxy {
     int? tagId,
     int? assetId,
     int? templateId,
+    Set<int>? excludeYears,
     int? month,
     int? day,
     bool? starred,
@@ -64,6 +67,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
       this(templateId: templateId);
 
   @override
+  SearchFilterObject excludeYears(Set<int>? excludeYears) =>
+      this(excludeYears: excludeYears);
+
+  @override
   SearchFilterObject month(int? month) => this(month: month);
 
   @override
@@ -86,6 +93,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? tagId = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
+    Object? excludeYears = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
@@ -111,6 +119,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.templateId
           // ignore: cast_nullable_to_non_nullable
           : templateId as int?,
+      excludeYears: excludeYears == const $CopyWithPlaceholder()
+          ? _value.excludeYears
+          // ignore: cast_nullable_to_non_nullable
+          : excludeYears as Set<int>?,
       month: month == const $CopyWithPlaceholder()
           ? _value.month
           // ignore: cast_nullable_to_non_nullable
@@ -149,6 +161,9 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       tagId: (json['tag_id'] as num?)?.toInt(),
       assetId: (json['asset_id'] as num?)?.toInt(),
       templateId: (json['template_id'] as num?)?.toInt(),
+      excludeYears: (json['exclude_years'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toSet(),
       month: (json['month'] as num?)?.toInt(),
       day: (json['day'] as num?)?.toInt(),
       starred: json['starred'] as bool?,
@@ -157,6 +172,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
     <String, dynamic>{
       'years': instance.years.toList(),
+      'exclude_years': instance.excludeYears?.toList(),
       'month': instance.month,
       'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),

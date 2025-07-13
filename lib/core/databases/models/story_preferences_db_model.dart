@@ -33,6 +33,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
 
   final String? titleFontFamily;
   final int? titleFontWeightIndex;
+  final bool? titleExpanded;
 
   @JsonKey(fromJson: _layoutTypeFromJson)
   final PageLayoutType layoutType;
@@ -42,6 +43,8 @@ class StoryPreferencesDbModel extends BaseDbModel {
   FontWeight? get titleFontWeight => titleFontWeightIndex != null ? FontWeight.values[titleFontWeightIndex!] : null;
 
   int get colorToneFallback => colorTone ?? 0;
+  double get titleFontSize => titleExpandedFallback ? 18.0 : 16.0;
+  bool get titleExpandedFallback => titleExpanded ?? true;
 
   StoryPreferencesDbModel({
     required this.showDayCount,
@@ -54,6 +57,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     required this.fontWeightIndex,
     required this.titleFontFamily,
     required this.titleFontWeightIndex,
+    required this.titleExpanded,
     required this.layoutType,
   });
 
@@ -72,12 +76,14 @@ class StoryPreferencesDbModel extends BaseDbModel {
         fontWeightIndex,
         titleFontFamily,
         titleFontWeightIndex,
+        titleExpanded,
       ].every((e) => e == null) &&
       layoutType == PageLayoutType.list;
 
   bool get titleReseted => [
         titleFontFamily,
         titleFontWeightIndex,
+        titleExpanded,
       ].every((e) => e == null);
 
   StoryPreferencesDbModel resetTheme() {
@@ -106,6 +112,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       titleFontFamily: null,
       titleFontWeightIndex: null,
       layoutType: PageLayoutType.list,
+      titleExpanded: null,
     );
   }
 
