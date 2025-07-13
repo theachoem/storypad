@@ -40,16 +40,15 @@ class _TemplatesContent extends StatelessWidget {
     return ReorderableListView.builder(
       itemCount: templates.length,
       padding: EdgeInsets.only(
-        top: 16.0,
-        left: MediaQuery.of(context).padding.left + 16.0,
-        right: MediaQuery.of(context).padding.right + 16.0,
+        left: MediaQuery.of(context).padding.left + 10.0,
+        right: MediaQuery.of(context).padding.right + 10.0,
         bottom: MediaQuery.of(context).padding.bottom + 16.0,
       ),
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         return Container(
           key: ValueKey(templates[index].id),
-          margin: EdgeInsets.only(bottom: index == templates.length - 1 ? 0 : 8.0),
+          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6.0),
           decoration: BoxDecoration(
             color: ColorScheme.of(context).readOnly.surface1,
             borderRadius: BorderRadiusGeometry.circular(8.0),

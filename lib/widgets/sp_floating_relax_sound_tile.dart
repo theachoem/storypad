@@ -44,7 +44,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
         backgroundColor: backgroundColor,
         provider: provider,
         child: buildContents(context, backgroundColor, provider),
-        onTap: fromHome ? () => const RelaxSoundsRoute().push(context) : null,
+        onTap: fromHome ? () => const RelaxSoundsRoute().push(context) : () => showTimerPicker(provider, context),
       ),
     );
   }
