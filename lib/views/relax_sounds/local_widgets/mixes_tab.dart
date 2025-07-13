@@ -43,9 +43,9 @@ class _MixesTab extends StatelessWidget {
     return ReorderableListView.builder(
       itemCount: viewModel.mixes?.length ?? 0,
       padding: EdgeInsets.only(
-        top: 12.0,
-        left: MediaQuery.of(context).padding.left + 12.0,
-        right: MediaQuery.of(context).padding.right + 12.0,
+        top: 10.0,
+        left: MediaQuery.of(context).padding.left + 10.0,
+        right: MediaQuery.of(context).padding.right + 10.0,
         bottom: MediaQuery.of(context).padding.bottom + 16.0,
       ),
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
@@ -74,7 +74,7 @@ class _MixesTab extends StatelessWidget {
 
     return Container(
       key: ValueKey(mix.id),
-      margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+      margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
       child: SpFadeIn.fromBottom(
         child: ListTile(
           onTap: () => viewModel.playMix(context, mix, sounds),
@@ -114,7 +114,7 @@ class _MixesTab extends StatelessWidget {
 
               Widget child = const SizedBox(height: 40, width: 40);
               if (index == sounds.length - 1) {
-                child = buildSoundIcon(relaxSound);
+                child = buildSoundIcon(relaxSound, backgroundColor);
               }
 
               return Transform.rotate(
@@ -144,7 +144,10 @@ class _MixesTab extends StatelessWidget {
     );
   }
 
-  Widget buildSoundIcon(RelaxSoundObject relaxSound) {
+  Widget buildSoundIcon(
+    RelaxSoundObject relaxSound,
+    Color backgroundColor,
+  ) {
     return SpFirestoreStorageDownloaderBuilder(
       filePath: relaxSound.svgIconUrlPath,
       builder: (context, file, failed) {
@@ -155,7 +158,7 @@ class _MixesTab extends StatelessWidget {
           semanticsLabel: relaxSound.label,
           height: 40,
           colorFilter: ColorFilter.mode(
-            ColorScheme.of(context).onSurface,
+            backgroundColor,
             BlendMode.srcIn,
           ),
         );
