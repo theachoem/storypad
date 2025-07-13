@@ -40,10 +40,7 @@ class BackupDatabasesToBackupObjectService {
     Map<String, CollectionDbModel<BaseDbModel>> tables = {};
 
     for (BaseDbAdapter db in databases) {
-      CollectionDbModel<BaseDbModel>? items = await db.where(options: {
-        'all_changes': true,
-      });
-
+      CollectionDbModel<BaseDbModel>? items = await db.where();
       tables[db.tableName] = items ?? CollectionDbModel(items: []);
     }
 

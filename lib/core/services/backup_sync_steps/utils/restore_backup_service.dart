@@ -39,7 +39,7 @@ class RestoreBackupService {
 
           if (existingRecord != null) {
             if (existingRecord.updatedAt == null || existingRecord.updatedAt!.isBefore(deletedAt)) {
-              await db.delete(id, runCallbacks: false);
+              await db.delete(id, runCallbacks: false, deletedAt: deletedAt);
               changesCount++;
             }
           }

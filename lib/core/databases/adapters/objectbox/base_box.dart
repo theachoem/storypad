@@ -172,13 +172,14 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<T?> delete(
     int id, {
     bool runCallbacks = true,
+    DateTime? deletedAt,
   }) async {
     debugPrint("Triggering $tableName#delete 🍎");
     B? object = box.get(id);
 
     if (object != null) {
       object.setDeviceId();
-      object.toPermanentlyDeleted();
+      object.toPermanentlyDeleted(deletedAt: deletedAt);
       await box.putAsync(object);
     }
 

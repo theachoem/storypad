@@ -19,6 +19,7 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   Future<BaseDbModel?> delete(
     int id, {
     bool runCallbacks = true,
+    DateTime? deletedAt,
   }) {
     throw UnimplementedError();
   }
