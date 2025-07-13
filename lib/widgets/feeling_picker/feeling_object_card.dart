@@ -35,14 +35,19 @@ class _FeelingObjectCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Wrap(
-              direction: Axis.vertical,
               alignment: WrapAlignment.center,
-              runAlignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
+              runAlignment: WrapAlignment.center,
               children: [
-                icon,
-                const SizedBox(height: 8.0),
-                buildName(context),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon,
+                    const SizedBox(height: 8.0),
+                    buildName(context),
+                  ],
+                ),
               ],
             ),
           ),
