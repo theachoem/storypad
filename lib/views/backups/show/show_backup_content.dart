@@ -77,6 +77,10 @@ class _ShowBackupContent extends StatelessWidget {
               leadingIconData = SpIcons.lightBulb;
               translateTabledName = tr("add_ons.templates.title");
               break;
+            case 'relax_sound_mixes':
+              leadingIconData = SpIcons.musicNote;
+              translateTabledName = tr("general.sound_mixes");
+              break;
             default:
               leadingIconData = SpIcons.table;
               translateTabledName = table.key;

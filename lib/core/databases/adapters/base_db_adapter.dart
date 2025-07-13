@@ -50,6 +50,9 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   bool hasDeleted(int id);
 
+  // id: deleted_at
+  Future<Map<String, int>> getDeletedRecords();
+
   T modelFromJson(Map<String, dynamic> json);
 
   Future<void> afterCommit([T? model]) async {

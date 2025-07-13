@@ -26,6 +26,27 @@ class RestoreBackupService {
 
     for (BaseDbAdapter db in BackupRepository.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
+      Map<String, int>? deletedAtRecordsById = backup.deletedRecords?[db.tableName];
+
+      // 1. delete records that has been deleted from other app.
+      if (deletedAtRecordsById != null) {
+        for (var entry in deletedAtRecordsById.entries) {
+          int? id = int.tryParse(entry.key);
+          if (id == null) continue;
+
+          DateTime deletedAt = DateTime.fromMillisecondsSinceEpoch(entry.value);
+          BaseDbModel? existingRecord = await db.find(id, returnDeleted: false);
+
+          if (existingRecord != null) {
+            if (existingRecord.updatedAt == null || existingRecord.updatedAt!.isBefore(deletedAt)) {
+              await db.delete(id, runCallbacks: false);
+              changesCount++;
+            }
+          }
+        }
+      }
+
+      // 2. restore records / prepare records for next backup.
       if (items != null) {
         for (BaseDbModel newRecord in items) {
           BaseDbModel? existingRecord = await db.find(newRecord.id, returnDeleted: true);
@@ -36,9 +57,6 @@ class RestoreBackupService {
 
               if (hasUpdateAfterDelete) {
                 await db.set(newRecord, runCallbacks: false);
-                changesCount++;
-              } else {
-                await db.delete(existingRecord.id, runCallbacks: false);
                 changesCount++;
               }
             }

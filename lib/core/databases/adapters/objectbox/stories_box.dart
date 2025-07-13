@@ -202,6 +202,16 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
+  Future<Map<String, int>> getDeletedRecords() async {
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt.notNull();
+    List<StoryObjectBox> result =
+        await box.query(conditions).order(StoryObjectBox_.id, flags: Order.descending).build().findAsync();
+    return {
+      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
+    };
+  }
+
+  @override
   StoryDbModel modelFromJson(Map<String, dynamic> json) {
     /// Migrate to v2, mostly from backup file. For DB level check: [StoriesBox#migrateDataToV2]
     if (json['version'] == 1) {

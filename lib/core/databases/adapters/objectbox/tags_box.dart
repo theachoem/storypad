@@ -68,6 +68,16 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   }
 
   @override
+  Future<Map<String, int>> getDeletedRecords() async {
+    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt.notNull();
+    List<TagObjectBox> result =
+        await box.query(conditions).order(TagObjectBox_.id, flags: Order.descending).build().findAsync();
+    return {
+      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
+    };
+  }
+
+  @override
   TagDbModel modelFromJson(Map<String, dynamic> json) {
     return TagDbModel.fromJson(json);
   }
