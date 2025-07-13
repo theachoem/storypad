@@ -15,7 +15,7 @@ class _VolumeSlider extends StatelessWidget {
       left: 16.0,
       right: 16.0,
       child: Slider(
-        divisions: 5,
+        divisions: 10,
         allowedInteraction: SliderInteraction.tapAndSlide,
         thumbColor: Theme.of(context).colorScheme.surface,
         value: provider.getVolume(relaxSound)!,

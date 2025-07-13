@@ -31,25 +31,7 @@ class _SoundIconCard extends StatelessWidget {
       child: SpFirestoreStorageDownloaderBuilder(
         filePath: relaxSound.svgIconUrlPath,
         builder: (context, file, failed) {
-          if (file == null) {
-            return SpLoopAnimationBuilder(
-              duration: const Duration(seconds: 1),
-              reverseDuration: const Duration(seconds: 1),
-              builder: (context, value, child) {
-                return SizedBox(
-                  height: 48,
-                  child: Icon(
-                    SpIcons.musicNote,
-                    color: Color.lerp(
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.1),
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
-                      value,
-                    ),
-                  ),
-                );
-              },
-            );
-          }
+          if (file == null) return const _SoundIconLoading();
 
           return SpAnimatedIcons.fadeScale(
             showFirst: !settingUp,

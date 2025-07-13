@@ -21,9 +21,11 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   const SpFloatingRelaxSoundsTile({
     super.key,
     this.fromHome = false,
+    this.onSaveMix,
   });
 
   final bool fromHome;
+  final void Function(BuildContext context)? onSaveMix;
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +44,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
         backgroundColor: backgroundColor,
         provider: provider,
         child: buildContents(context, backgroundColor, provider),
-        onTap: () {
-          if (fromHome) {
-            const RelaxSoundsRoute().push(context);
-          } else {
-            showTimerPicker(provider, context);
-          }
-        },
+        onTap: fromHome ? () => const RelaxSoundsRoute().push(context) : null,
       ),
     );
   }
@@ -187,12 +183,22 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
             ),
           ),
         if (!fromHome)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              SpIcons.timer,
-              color: foregroundColor,
-            ),
+          Row(
+            children: [
+              if (onSaveMix != null && provider.canSaveMix)
+                SpFadeIn(
+                  child: IconButton(
+                    onPressed: () => onSaveMix!(context),
+                    color: foregroundColor,
+                    icon: const Icon(SpIcons.save),
+                  ),
+                ),
+              IconButton(
+                onPressed: () => showTimerPicker(provider, context),
+                color: foregroundColor,
+                icon: const Icon(SpIcons.timer),
+              )
+            ],
           ),
       ],
     );

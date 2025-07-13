@@ -98,11 +98,6 @@ class StoryObjectBox extends BaseObjectBox {
 
   @override
   void toPermanentlyDeleted() {
-    latestContent = null;
-    draftContent = null;
-    tags = null;
-    assets = null;
-    metadata = null;
     updatedAt = DateTime.now();
     permanentlyDeletedAt = DateTime.now();
   }
@@ -274,6 +269,51 @@ class TemplateObjectBox extends BaseObjectBox {
     required this.content,
     required this.preferences,
     required this.tags,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastSavedDeviceId,
+    this.permanentlyDeletedAt,
+  });
+
+  @override
+  void toPermanentlyDeleted() {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}
+
+@Entity()
+class RelaxSoundMixBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+  int index;
+
+  String name;
+  String sounds;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  RelaxSoundMixBox({
+    required this.id,
+    required this.index,
+    required this.name,
+    required this.sounds,
     required this.createdAt,
     required this.updatedAt,
     this.lastSavedDeviceId,
