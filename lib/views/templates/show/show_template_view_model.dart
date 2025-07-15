@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/templates/edit/edit_template_view.dart';
@@ -58,6 +59,9 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     ).push(context, rootNavigator: true);
 
     if (context.mounted && result is StoryDbModel) {
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        HomeView.reload(debugSource: '$runtimeType#useTemplate');
+      });
       Navigator.maybePop(context, result);
     }
   }

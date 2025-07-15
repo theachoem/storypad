@@ -21,6 +21,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     return _box!;
   }
 
+  Future<void> cleanupOldDeletedRecords();
   Future<B> modelToObject(T model, [Map<String, dynamic>? options]);
   Future<List<B>> modelsToObjects(List<T> models, [Map<String, dynamic>? options]);
 
@@ -40,6 +41,8 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
       directory: directory.path,
       macosApplicationGroup: '24KJ877SZ9',
     );
+
+    await cleanupOldDeletedRecords();
   }
 
   @override
@@ -63,6 +66,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
 
   QueryBuilder<B> buildQuery({
     Map<String, dynamic>? filters,
+    bool returnDeleted = false,
   });
 
   @override
@@ -79,6 +83,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<CollectionDbModel<T>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
+    bool returnDeleted = false,
   }) async {
     debugPrint("Triggering $tableName#where 🍎");
 

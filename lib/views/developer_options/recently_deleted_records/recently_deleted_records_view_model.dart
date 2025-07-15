@@ -23,11 +23,7 @@ class RecentlyDeletedRecordsViewModel extends ChangeNotifier with DisposeAwareMi
   }
 
   Future<CollectionDbModel<StoryDbModel>?> getDeletedRecords() async {
-    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    final conditions = StoryObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(StoryObjectBox_.updatedAt.greaterOrEqualDate(sevenDaysAgo))
-        .and(StoryObjectBox_.latestContent.notNull());
+    final conditions = StoryObjectBox_.permanentlyDeletedAt.notNull().and(StoryObjectBox_.latestContent.notNull());
 
     QueryBuilder<StoryObjectBox> queryBuilder = StoryDbModel.db.box.query(conditions);
 
