@@ -30,7 +30,7 @@ class BackupDatabasesToBackupObjectService {
     Map<String, Map<String, int>> tables = {};
 
     for (BaseDbAdapter db in databases) {
-      tables[db.tableName] = await db.getDeletedRecords();
+      tables[db.tableName] = await db.getDeletedRecordByIds();
     }
 
     return tables;

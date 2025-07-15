@@ -202,8 +202,11 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt.notNull();
+  Future<Map<String, int>> getDeletedRecordByIds() async {
+    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    final conditions =
+        StoryObjectBox_.permanentlyDeletedAt.notNull().and(StoryObjectBox_.updatedAt.greaterOrEqualDate(sevenDaysAgo));
+
     List<StoryObjectBox> result =
         await box.query(conditions).order(StoryObjectBox_.id, flags: Order.descending).build().findAsync();
     return {

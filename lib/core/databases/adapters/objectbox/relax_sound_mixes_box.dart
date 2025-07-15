@@ -42,7 +42,7 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
+  Future<Map<String, int>> getDeletedRecordByIds() async {
     Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt.notNull();
     List<RelaxSoundMixBox> result =
         await box.query(conditions).order(RelaxSoundMixBox_.id, flags: Order.descending).build().findAsync();

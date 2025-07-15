@@ -90,7 +90,7 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() {
+  Future<Map<String, int>> getDeletedRecordByIds() {
     throw UnimplementedError();
   }
 }

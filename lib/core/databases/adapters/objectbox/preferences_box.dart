@@ -36,7 +36,7 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
+  Future<Map<String, int>> getDeletedRecordByIds() async {
     Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt.notNull();
     List<PreferenceObjectBox> result =
         await box.query(conditions).order(PreferenceObjectBox_.id, flags: Order.descending).build().findAsync();

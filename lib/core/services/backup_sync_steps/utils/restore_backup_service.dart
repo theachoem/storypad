@@ -34,12 +34,16 @@ class RestoreBackupService {
           int? id = int.tryParse(entry.key);
           if (id == null) continue;
 
-          DateTime deletedAt = DateTime.fromMillisecondsSinceEpoch(entry.value);
-          BaseDbModel? existingRecord = await db.find(id, returnDeleted: false);
+          DateTime deletedAtOnOtherDevice = DateTime.fromMillisecondsSinceEpoch(entry.value);
+          BaseDbModel? existingRecord = await db.find(id, returnDeleted: true);
 
           if (existingRecord != null) {
-            if (existingRecord.updatedAt == null || existingRecord.updatedAt!.isBefore(deletedAt)) {
-              await db.delete(id, runCallbacks: false, deletedAt: deletedAt);
+            bool hasUpdateAfterDeleteFromOtherDevice = existingRecord.permanentlyDeletedAt == null &&
+                existingRecord.updatedAt != null &&
+                existingRecord.updatedAt!.isAfter(deletedAtOnOtherDevice);
+
+            if (hasUpdateAfterDeleteFromOtherDevice) {
+              await db.delete(id, runCallbacks: false, deletedAt: deletedAtOnOtherDevice);
               changesCount++;
             }
           }
@@ -50,11 +54,11 @@ class RestoreBackupService {
       if (items != null) {
         for (BaseDbModel newRecord in items) {
           BaseDbModel? existingRecord = await db.find(newRecord.id, returnDeleted: true);
+          bool deletedOnThisDevice = existingRecord?.permanentlyDeletedAt != null;
 
-          if (existingRecord?.permanentlyDeletedAt != null) {
+          if (deletedOnThisDevice) {
             if (newRecord.updatedAt != null) {
               bool hasUpdateAfterDelete = newRecord.updatedAt!.isAfter(existingRecord!.permanentlyDeletedAt!);
-
               if (hasUpdateAfterDelete) {
                 await db.set(newRecord, runCallbacks: false);
                 changesCount++;

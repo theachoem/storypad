@@ -44,7 +44,7 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
+  Future<Map<String, int>> getDeletedRecordByIds() async {
     Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt.notNull();
     List<TemplateObjectBox> result =
         await box.query(conditions).order(TemplateObjectBox_.id, flags: Order.descending).build().findAsync();

@@ -35,7 +35,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
+  Future<Map<String, int>> getDeletedRecordByIds() async {
     Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt.notNull();
     List<AssetObjectBox> result =
         await box.query(conditions).order(AssetObjectBox_.id, flags: Order.descending).build().findAsync();

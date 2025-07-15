@@ -114,14 +114,15 @@ class StoryDbModel extends BaseDbModel {
 
   bool get inBins => type == PathType.bins;
   bool get inArchives => type == PathType.archives;
+  bool get permanentlyDeleted => permanentlyDeletedAt != null;
 
   bool get editable => type == PathType.docs && !cloudViewing;
-  bool get putBackAble => (inBins || unarchivable) && !cloudViewing;
+  bool get putBackAble => (permanentlyDeleted || inBins || unarchivable) && !cloudViewing;
 
   bool get archivable => type == PathType.docs && !cloudViewing;
   bool get unarchivable => type == PathType.archives && !cloudViewing;
-  bool get canMoveToBin => !inBins && !cloudViewing;
-  bool get hardDeletable => inBins && !cloudViewing;
+  bool get canMoveToBin => !permanentlyDeleted && !inBins && !cloudViewing;
+  bool get hardDeletable => !permanentlyDeleted && inBins && !cloudViewing;
 
   int? get willBeRemovedInDays {
     if (movedToBinAt != null) {
@@ -157,6 +158,7 @@ class StoryDbModel extends BaseDbModel {
         type: PathType.docs,
         updatedAt: DateTime.now(),
         movedToBinAt: null,
+        permanentlyDeletedAt: null,
       ),
     );
   }

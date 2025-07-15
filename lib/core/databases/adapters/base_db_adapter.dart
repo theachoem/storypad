@@ -52,7 +52,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   bool hasDeleted(int id);
 
   // id: deleted_at
-  Future<Map<String, int>> getDeletedRecords();
+  Future<Map<String, int>> getDeletedRecordByIds();
 
   T modelFromJson(Map<String, dynamic> json);
 
