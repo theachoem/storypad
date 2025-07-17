@@ -29,26 +29,26 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
   }
 
   @override
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt
+        .notNull()
+        .and(RelaxSoundMixBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
+  }
+
+  @override
   QueryBuilder<RelaxSoundMixBox> buildQuery({
     Map<String, dynamic>? filters,
+    bool returnDeleted = false,
   }) {
-    Condition<RelaxSoundMixBox> conditions =
-        RelaxSoundMixBox_.id.notNull().and(RelaxSoundMixBox_.permanentlyDeletedAt.isNull());
+    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.id.notNull();
+    if (!returnDeleted) conditions = conditions.and(RelaxSoundMixBox_.permanentlyDeletedAt.isNull());
 
     QueryBuilder<RelaxSoundMixBox> queryBuilder = box.query(conditions);
     queryBuilder.order(RelaxSoundMixBox_.index);
 
     return queryBuilder;
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt.notNull();
-    List<RelaxSoundMixBox> result =
-        await box.query(conditions).order(RelaxSoundMixBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
   }
 
   @override

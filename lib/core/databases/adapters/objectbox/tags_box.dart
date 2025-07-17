@@ -34,9 +34,19 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   }
 
   @override
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt
+        .notNull()
+        .and(TagObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
+  }
+
+  @override
   Future<CollectionDbModel<TagDbModel>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
+    bool returnDeleted = false,
   }) async {
     CollectionDbModel<TagDbModel>? result = await super.where(filters: filters);
     List<TagDbModel> items = result?.items ?? [];
@@ -56,25 +66,18 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   QueryBuilder<TagObjectBox> buildQuery({
     Map<String, dynamic>? filters,
+    bool returnDeleted = false,
   }) {
     int? order = filters?["order"];
-    Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull().and(TagObjectBox_.permanentlyDeletedAt.isNull());
+
+    Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull();
+    if (!returnDeleted) conditions = conditions.and(TagObjectBox_.permanentlyDeletedAt.isNull());
 
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
 
     queryBuilder.order(TagObjectBox_.index, flags: order ?? 0);
 
     return queryBuilder;
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt.notNull();
-    List<TagObjectBox> result =
-        await box.query(conditions).order(TagObjectBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
   }
 
   @override

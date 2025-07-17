@@ -51,6 +51,7 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   Future<CollectionDbModel<BaseDbModel>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
+    bool returnDeleted = false,
   }) {
     throw UnimplementedError();
   }
@@ -86,11 +87,6 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
     List<BaseDbModel> records, {
     bool runCallbacks = true,
   }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() {
     throw UnimplementedError();
   }
 }

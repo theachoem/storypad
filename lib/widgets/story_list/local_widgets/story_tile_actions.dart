@@ -77,6 +77,22 @@ class _StoryTileActions {
       story: updatedStory,
     );
 
+    Future<void> undoMoveToBin(StoryDbModel originalStory) async {
+      StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
+      if (updatedStory == null) return;
+
+      AnalyticsService.instance.logUndoMoveStoryToBin(
+        story: updatedStory,
+      );
+
+      // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
+      if (listContext.mounted) {
+        await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoMoveToBin');
+      }
+
+      return reloadHome('$runtimeType#undoMoveToBin');
+    }
+
     if (context.mounted) {
       MessengerService.of(context).showSnackBar(
         tr("snack_bar.move_to_bin_success"),
@@ -85,21 +101,7 @@ class _StoryTileActions {
           return SnackBarAction(
             label: tr("button.undo"),
             textColor: foreground,
-            onPressed: () async {
-              StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
-              if (updatedStory == null) return;
-
-              AnalyticsService.instance.logUndoMoveStoryToBin(
-                story: updatedStory,
-              );
-
-              // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
-              if (listContext.mounted) {
-                await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
-              }
-
-              return reloadHome('$runtimeType#moveToBin');
-            },
+            onPressed: () => undoMoveToBin(originalStory),
           );
         },
       );
@@ -144,7 +146,7 @@ class _StoryTileActions {
     StoryDbModel? updatedStory = await originalStory.putBack();
     if (updatedStory == null) return;
 
-    await reloadHome('$runtimeType#moveToBin');
+    await reloadHome('$runtimeType#putBack');
 
     AnalyticsService.instance.logPutStoryBack(
       story: updatedStory,
@@ -160,8 +162,8 @@ class _StoryTileActions {
         );
 
         if (listContext.mounted) {
-          await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
-          await reloadHome('$runtimeType#putBack');
+          await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoPutBack');
+          await reloadHome('$runtimeType#undoPutBack');
         }
       }
 

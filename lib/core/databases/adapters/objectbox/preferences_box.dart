@@ -29,20 +29,22 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   }
 
   @override
-  QueryBuilder<PreferenceObjectBox> buildQuery({Map<String, dynamic>? filters}) {
-    Condition<PreferenceObjectBox> conditions =
-        PreferenceObjectBox_.id.notNull().and(PreferenceObjectBox_.permanentlyDeletedAt.isNull());
-    return box.query(conditions);
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt
+        .notNull()
+        .and(PreferenceObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
   }
 
   @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt.notNull();
-    List<PreferenceObjectBox> result =
-        await box.query(conditions).order(PreferenceObjectBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
+  QueryBuilder<PreferenceObjectBox> buildQuery({
+    Map<String, dynamic>? filters,
+    bool returnDeleted = false,
+  }) {
+    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.id.notNull();
+    if (!returnDeleted) conditions = conditions.and(PreferenceObjectBox_.permanentlyDeletedAt.isNull());
+    return box.query(conditions);
   }
 
   @override

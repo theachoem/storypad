@@ -25,7 +25,6 @@ void main() {
         tables: testTables,
         fileInfo: testFileInfo,
         version: 2,
-        deletedRecords: {},
       );
 
       expect(backupObject.version, 2);
@@ -37,7 +36,6 @@ void main() {
       final backupObject = BackupObject(
         tables: testTables,
         fileInfo: testFileInfo,
-        deletedRecords: {},
       );
 
       expect(backupObject.version, BackupObject.currentVersion);
@@ -48,7 +46,6 @@ void main() {
         tables: testTables,
         fileInfo: testFileInfo,
         version: 1,
-        deletedRecords: {},
       );
 
       final contents = backupObject.toContents();

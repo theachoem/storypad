@@ -29,28 +29,29 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   }
 
   @override
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt
+        .notNull()
+        .and(TemplateObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
+  }
+
+  @override
   QueryBuilder<TemplateObjectBox> buildQuery({
     Map<String, dynamic>? filters,
+    bool returnDeleted = false,
   }) {
     int? order = filters?["order"];
-    Condition<TemplateObjectBox> conditions =
-        TemplateObjectBox_.id.notNull().and(TemplateObjectBox_.permanentlyDeletedAt.isNull());
+
+    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.id.notNull();
+    if (!returnDeleted) conditions = conditions.and(TemplateObjectBox_.permanentlyDeletedAt.isNull());
 
     QueryBuilder<TemplateObjectBox> queryBuilder = box.query(conditions);
 
     queryBuilder.order(TemplateObjectBox_.index, flags: order ?? 0);
 
     return queryBuilder;
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt.notNull();
-    List<TemplateObjectBox> result =
-        await box.query(conditions).order(TemplateObjectBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
   }
 
   @override

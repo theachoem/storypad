@@ -40,6 +40,7 @@ class _TemplatesContent extends StatelessWidget {
     return ReorderableListView.builder(
       itemCount: templates.length,
       padding: EdgeInsets.only(
+        top: 8.0,
         left: MediaQuery.of(context).padding.left + 10.0,
         right: MediaQuery.of(context).padding.right + 10.0,
         bottom: MediaQuery.of(context).padding.bottom + 16.0,

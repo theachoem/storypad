@@ -16,6 +16,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   Future<CollectionDbModel<T>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
+    bool returnDeleted = false,
   });
 
   Future<T?> touch(
@@ -50,9 +51,6 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   });
 
   bool hasDeleted(int id);
-
-  // id: deleted_at
-  Future<Map<String, int>> getDeletedRecords();
 
   T modelFromJson(Map<String, dynamic> json);
 

@@ -26,56 +26,25 @@ class RestoreBackupService {
 
     for (BaseDbAdapter db in BackupRepository.databases) {
       List<BaseDbModel>? items = datas[db.tableName];
-      Map<String, int>? deletedAtRecordsById = backup.deletedRecords?[db.tableName];
 
-      // 1. delete records that has been deleted from other app.
-      if (deletedAtRecordsById != null) {
-        for (var entry in deletedAtRecordsById.entries) {
-          int? id = int.tryParse(entry.key);
-          if (id == null) continue;
-
-          DateTime deletedAt = DateTime.fromMillisecondsSinceEpoch(entry.value);
-          BaseDbModel? existingRecord = await db.find(id, returnDeleted: false);
-
-          if (existingRecord != null) {
-            if (existingRecord.updatedAt == null || existingRecord.updatedAt!.isBefore(deletedAt)) {
-              await db.delete(id, runCallbacks: false, deletedAt: deletedAt);
-              changesCount++;
-            }
-          }
-        }
-      }
-
-      // 2. restore records / prepare records for next backup.
       if (items != null) {
         for (BaseDbModel newRecord in items) {
           BaseDbModel? existingRecord = await db.find(newRecord.id, returnDeleted: true);
 
-          if (existingRecord?.permanentlyDeletedAt != null) {
-            if (newRecord.updatedAt != null) {
-              bool hasUpdateAfterDelete = newRecord.updatedAt!.isAfter(existingRecord!.permanentlyDeletedAt!);
+          if (existingRecord != null && existingRecord.updatedAt != null && newRecord.updatedAt != null) {
+            bool backupHasNewerContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
+            bool deviceHasNewerContent = existingRecord.updatedAt!.isAfter(newRecord.updatedAt!);
 
-              if (hasUpdateAfterDelete) {
-                await db.set(newRecord, runCallbacks: false);
-                changesCount++;
-              }
-            }
-          } else if (existingRecord != null) {
-            if (existingRecord.updatedAt != null && newRecord.updatedAt != null) {
-              bool newContent = existingRecord.updatedAt!.isBefore(newRecord.updatedAt!);
-              bool unSyncContent = existingRecord.updatedAt!.isAfter(newRecord.updatedAt!);
-
-              if (newContent) {
-                await db.set(newRecord, runCallbacks: false);
-                changesCount++;
-              } else if (unSyncContent) {
-                // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
-                // This prevents the app from incorrectly assuming the database is fully synced after restoration.
-                await db.touch(existingRecord, runCallbacks: false);
-              } else {
-                // this case, contents may be deleted & unchanged on other device.
-                // so we can ignore them.
-              }
+            if (backupHasNewerContent) {
+              await db.set(newRecord, runCallbacks: false);
+              changesCount++;
+            } else if (deviceHasNewerContent) {
+              // Update `updatedAt` to mark the record as unsynced, ensuring the backup provider picks it up later.
+              // This prevents the app from incorrectly assuming the database is fully synced after restoration.
+              await db.touch(existingRecord, runCallbacks: false);
+            } else {
+              // this case, contents may be deleted & unchanged on other device.
+              // so we can ignore them.
             }
           } else {
             await db.set(newRecord, runCallbacks: false);

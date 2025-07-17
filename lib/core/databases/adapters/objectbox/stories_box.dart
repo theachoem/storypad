@@ -55,6 +55,15 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return object?.updatedAt;
   }
 
+  @override
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
+  }
+
   Future<Map<int, int>> getStoryCountsByYear({
     Map<String, dynamic>? filters,
   }) async {
@@ -134,7 +143,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
-  QueryBuilder<StoryObjectBox> buildQuery({Map<String, dynamic>? filters}) {
+  QueryBuilder<StoryObjectBox> buildQuery({
+    Map<String, dynamic>? filters,
+    bool returnDeleted = false,
+  }) {
     String? query = filters?["query"];
     String? type = filters?["type"];
     List<String>? types = filters?["types"];
@@ -152,9 +164,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? selectedYears = filters?["selected_years"];
     List<int>? yearsRange = filters?["years_range"];
 
-    Condition<StoryObjectBox>? conditions =
-        StoryObjectBox_.id.notNull().and(StoryObjectBox_.permanentlyDeletedAt.isNull());
+    Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
 
+    if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
     if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
@@ -199,16 +211,6 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       ..order(StoryObjectBox_.minute, flags: order ?? Order.descending);
 
     return queryBuilder;
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt.notNull();
-    List<StoryObjectBox> result =
-        await box.query(conditions).order(StoryObjectBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
   }
 
   @override

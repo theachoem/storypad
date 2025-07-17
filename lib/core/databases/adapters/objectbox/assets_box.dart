@@ -24,24 +24,26 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }
 
   @override
-  QueryBuilder<AssetObjectBox> buildQuery({Map<String, dynamic>? filters}) {
-    Condition<AssetObjectBox> conditions =
-        AssetObjectBox_.id.notNull().and(AssetObjectBox_.permanentlyDeletedAt.isNull());
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt
+        .notNull()
+        .and(AssetObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    await box.query(conditions).build().removeAsync();
+  }
+
+  @override
+  QueryBuilder<AssetObjectBox> buildQuery({
+    Map<String, dynamic>? filters,
+    bool returnDeleted = false,
+  }) {
+    Condition<AssetObjectBox> conditions = AssetObjectBox_.id.notNull();
+    if (!returnDeleted) conditions = conditions.and(AssetObjectBox_.permanentlyDeletedAt.isNull());
 
     QueryBuilder<AssetObjectBox> queryBuilder = box.query(conditions);
     queryBuilder = queryBuilder.order(AssetObjectBox_.id, flags: Order.descending);
 
     return queryBuilder;
-  }
-
-  @override
-  Future<Map<String, int>> getDeletedRecords() async {
-    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt.notNull();
-    List<AssetObjectBox> result =
-        await box.query(conditions).order(AssetObjectBox_.id, flags: Order.descending).build().findAsync();
-    return {
-      for (final data in result) data.id.toString(): data.permanentlyDeletedAt!.millisecondsSinceEpoch,
-    };
   }
 
   @override
