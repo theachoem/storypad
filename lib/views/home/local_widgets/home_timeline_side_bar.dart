@@ -34,34 +34,25 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
 
   Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
     final buttons = [
-      if (provider.relaxSound)
-        SpFadeIn.bound(
-          child: IconButton(
-            tooltip: tr('add_ons.relax_sounds.title'),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
+      SpFadeIn.bound(
+        child: IconButton(
+          tooltip: tr('add_ons.relax_sounds.title'),
+          style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            shape: CircleBorder(
+              side: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            icon: const Icon(SpIcons.musicNote),
-            onPressed: () => const RelaxSoundsRoute().push(context),
           ),
+          icon: const Icon(SpIcons.musicNote),
+          onPressed: () {
+            if (provider.relaxSound) {
+              const RelaxSoundsRoute().push(context);
+            } else {
+              const AddOnsRoute().push(context);
+            }
+          },
         ),
-      if (provider.template)
-        SpFadeIn.bound(
-          child: IconButton(
-            tooltip: tr("add_ons.templates.title"),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-            ),
-            icon: const Icon(SpIcons.lightBulb),
-            onPressed: () => const TemplatesRoute().push(context),
-          ),
-        ),
+      ),
     ];
 
     return Container(

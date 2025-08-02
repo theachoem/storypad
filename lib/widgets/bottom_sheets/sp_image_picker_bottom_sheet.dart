@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,8 +6,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/helpers/path_helper.dart' as path;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
@@ -62,21 +61,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       for (var file in result!.files) {
         if (file.bytes == null) continue;
 
-        final now = DateTime.now();
-        String extension = path.extension(file.xFile.path);
-
-        // We need to store picked file to somewhere we can manage.
-        File newFile = File("${kSupportDirectory.path}/images/${now.millisecondsSinceEpoch}$extension")
-          ..createSync(recursive: true);
-        newFile = await newFile.writeAsBytes(file.bytes!);
-        if (File(file.xFile.path).parent.existsSync()) File(file.xFile.path).parent.deleteSync(recursive: true);
-
-        final asset = AssetDbModel.fromLocalPath(
-          id: now.millisecondsSinceEpoch,
-          localPath: newFile.path,
-        );
-
-        final savedAsset = await asset.save();
+        final savedAsset = await InsertFileToDbService.insert(file.xFile, file.bytes!);
         if (savedAsset != null) saveAssets.add(savedAsset);
       }
 

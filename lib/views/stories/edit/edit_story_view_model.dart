@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -64,6 +65,17 @@ class EditStoryViewModel extends BaseStoryViewModel {
     draftContent = content.copyWith(
       richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
     );
+
+    if (params.initialAsset?.link != null) {
+      final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
+      final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
+      pagesManager.pagesMap.first.bodyController.replaceText(
+        index,
+        length,
+        BlockEmbed.image(params.initialAsset!.link),
+        null,
+      );
+    }
 
     notifyListeners();
   }
