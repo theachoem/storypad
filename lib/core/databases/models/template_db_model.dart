@@ -41,7 +41,7 @@ class TemplateDbModel extends BaseDbModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
+    required this.permanentlyDeletedAt,
     int? index,
   })  : index = index ?? 0,
         _preferences = preferences;

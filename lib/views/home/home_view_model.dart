@@ -14,6 +14,7 @@ import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_nickname_bottom_sheet.dart';
@@ -137,20 +138,19 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     await _checkNewStoryResult(addedStory);
   }
 
-  void takePhoto(BuildContext context) async {
+  void takePhoto() async {
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(source: ImageSource.camera);
     if (photo == null) return;
 
     AssetDbModel? asset = await InsertFileToDbService.insert(photo, await photo.readAsBytes());
     if (asset == null) return;
-    if (!context.mounted) return;
 
     final addedStory = await EditStoryRoute(
       id: null,
       initialYear: year,
       initialAsset: asset,
-    ).push(context);
+    ).push(HomeView.reloadContext!);
 
     await _checkNewStoryResult(addedStory);
   }

@@ -57,6 +57,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       cloudDestinations: jsonEncode(model.cloudDestinations),
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
+      permanentlyDeletedAt: model.permanentlyDeletedAt,
     );
   }
 
@@ -72,6 +73,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         cloudDestinations: jsonEncode(model.cloudDestinations),
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
+        permanentlyDeletedAt: model.permanentlyDeletedAt,
       );
     }).toList();
   }

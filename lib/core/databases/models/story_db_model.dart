@@ -97,7 +97,7 @@ class StoryDbModel extends BaseDbModel {
     required this.draftContent,
     required this.templateId,
     required this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
+    required this.permanentlyDeletedAt,
   }) : _preferences = preferences;
 
   bool get draftStory => draftContent != null;
@@ -265,6 +265,7 @@ class StoryDbModel extends BaseDbModel {
       assets: [],
       templateId: template?.id,
       movedToBinAt: null,
+      permanentlyDeletedAt: null,
       lastSavedDeviceId: null,
     );
   }

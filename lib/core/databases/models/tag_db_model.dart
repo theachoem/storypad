@@ -37,7 +37,7 @@ class TagDbModel extends BaseDbModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
+    required this.permanentlyDeletedAt,
     int? index,
   }) : index = index ?? 0;
 
@@ -60,6 +60,7 @@ class TagDbModel extends BaseDbModel {
       emoji: null,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      permanentlyDeletedAt: null,
       lastSavedDeviceId: null,
     );
   }

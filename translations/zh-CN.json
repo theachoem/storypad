@@ -198,7 +198,7 @@
   "general.security_question.name_of_elementary_school": "你的小学叫什么名字？",
   "general.security_question.name_of_your_first_pet": "你的第一只宠物叫什么名字？",
   "general.security_question.name_of_your_first_teacher": "你的第一位老师叫什么名字？",
-  "general.share_app_sample_text": "我正在用 {APP_NAME} 来写我的故事和日记 - 美好的日子，糟糕的日子，以及两者之间的一切。\n\n尝试一下吧📖✨\n{网址}",
+  "general.share_app_sample_text": "我正在用 {APP_NAME} 来写我的故事和日记 - 美好的日子，糟糕的日子，以及两者之间的一切。\n\n尝试一下吧📖✨\n{URL}",
   "general.size_extra_large": "特大",
   "general.size_large": "大",
   "general.size_normal": "常规",

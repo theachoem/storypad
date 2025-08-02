@@ -32,6 +32,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       createdAt: openedOn,
       updatedAt: openedOn,
       lastSavedDeviceId: null,
+      permanentlyDeletedAt: null,
     );
 
     latestContent = template?.content ?? StoryContentDbModel.create(createdAt: openedOn);

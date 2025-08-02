@@ -114,6 +114,7 @@ class StorypadLegacyDatabase {
           movedToBinAt: null,
           latestContent: content,
           draftContent: null,
+          permanentlyDeletedAt: null,
         ));
       }
 

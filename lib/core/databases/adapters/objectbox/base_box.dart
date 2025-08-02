@@ -66,15 +66,16 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
 
   QueryBuilder<B> buildQuery({
     Map<String, dynamic>? filters,
-    bool returnDeleted = false,
+    required bool returnDeleted,
   });
 
   @override
   Future<int> count({
     Map<String, dynamic>? filters,
+    bool returnDeleted = false,
   }) async {
     debugPrint("Triggering $tableName#count 🍎");
-    QueryBuilder<B>? queryBuilder = buildQuery(filters: filters);
+    QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
     Query<B>? query = queryBuilder.build();
     return query.count();
   }
@@ -88,7 +89,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     debugPrint("Triggering $tableName#where 🍎");
 
     List<B> objects;
-    QueryBuilder<B>? queryBuilder = buildQuery(filters: filters);
+    QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
 
     Query<B>? query = queryBuilder.build();
     objects = await query.findAsync();

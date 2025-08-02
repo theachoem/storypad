@@ -62,6 +62,7 @@ class HomeView extends StatelessWidget {
   });
 
   static BuildContext? _reloadContext;
+  static BuildContext? get reloadContext => _reloadContext;
   static Future<void> reload({
     required String debugSource,
   }) async {

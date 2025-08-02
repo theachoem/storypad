@@ -95,8 +95,8 @@ class StoryObjectBox extends BaseObjectBox {
     required this.assets,
     required this.metadata,
     required this.preferences,
+    required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
   });
 
   @override
@@ -146,8 +146,8 @@ class TagObjectBox extends BaseObjectBox {
     required this.emoji,
     required this.createdAt,
     required this.updatedAt,
+    required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
   });
 
   @override
@@ -190,8 +190,8 @@ class AssetObjectBox extends BaseObjectBox {
     required this.cloudDestinations,
     required this.createdAt,
     required this.updatedAt,
+    required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
   });
 
   @override
@@ -282,8 +282,8 @@ class TemplateObjectBox extends BaseObjectBox {
     required this.tags,
     required this.createdAt,
     required this.updatedAt,
+    required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
   });
 
   @override
@@ -329,8 +329,8 @@ class RelaxSoundMixBox extends BaseObjectBox {
     required this.sounds,
     required this.createdAt,
     required this.updatedAt,
+    required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
   });
 
   @override

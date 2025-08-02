@@ -89,7 +89,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         icon: const Icon(SpIcons.camera),
         onPressed: () {
           toggle(context);
-          widget.viewModel.takePhoto(context);
+          widget.viewModel.takePhoto();
         },
       ),
       IconButton.outlined(

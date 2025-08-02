@@ -37,7 +37,7 @@ class AssetDbModel extends BaseDbModel {
     required this.createdAt,
     required this.updatedAt,
     required this.lastSavedDeviceId,
-    this.permanentlyDeletedAt,
+    required this.permanentlyDeletedAt,
   });
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;
@@ -74,6 +74,7 @@ class AssetDbModel extends BaseDbModel {
       cloudDestinations: {},
       createdAt: now,
       updatedAt: now,
+      permanentlyDeletedAt: null,
       lastSavedDeviceId: null,
     );
   }

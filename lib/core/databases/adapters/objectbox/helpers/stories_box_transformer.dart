@@ -97,7 +97,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
-    permanentlyDeletedAt: null,
+    permanentlyDeletedAt: story.permanentlyDeletedAt,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );
 }
