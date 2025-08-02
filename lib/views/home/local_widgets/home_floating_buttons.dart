@@ -46,9 +46,6 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     super.dispose();
   }
 
-  /// [FeatureFlags.template]
-  static const bool expandableFAB = false;
-
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
@@ -61,7 +58,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     if (MediaQuery.accessibleNavigationOf(context)) {
       return FloatingActionButton.extended(
         tooltip: tr("button.new_story"),
-        onPressed: expandableFAB ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
+        onPressed: () => toggle(context),
         label: Text(tr("button.new_story")),
         icon: const Icon(SpIcons.newStory),
         shape: const StadiumBorder(),
@@ -69,7 +66,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     } else {
       return FloatingActionButton(
         tooltip: tr("button.new_story"),
-        onPressed: expandableFAB ? () => toggle(context) : () => widget.viewModel.goToNewPage(context),
+        onPressed: () => toggle(context),
         child: const Icon(SpIcons.newStory),
       );
     }
@@ -86,13 +83,27 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           widget.viewModel.goToNewPage(context);
         },
       ),
-      IconButton.filledTonal(
+      IconButton.outlined(
+        tooltip: tr("button.take_photo"),
+        visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
+        icon: const Icon(SpIcons.camera),
+        onPressed: () {
+          toggle(context);
+          widget.viewModel.takePhoto(context);
+        },
+      ),
+      IconButton.outlined(
         tooltip: tr("add_ons.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
         icon: const Icon(Icons.lightbulb_outlined),
         onPressed: () {
           toggle(context);
-          widget.viewModel.goToTemplatePage(context);
+
+          if (context.read<InAppPurchaseProvider>().template) {
+            widget.viewModel.goToTemplatePage(context);
+          } else {
+            const AddOnsRoute().push(context);
+          }
         },
       ),
     ];

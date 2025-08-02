@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
@@ -32,6 +33,7 @@ class EditStoryRoute extends BaseRoute {
   final int? initialYear;
   final int? initialMonth;
   final int? initialDay;
+  final AssetDbModel? initialAsset;
   final List<int>? initialTagIds;
   final TemplateDbModel? template;
   final StoryDbModel? story;
@@ -44,6 +46,7 @@ class EditStoryRoute extends BaseRoute {
     this.initialMonth,
     this.initialYear,
     this.initialDay,
+    this.initialAsset,
     this.story,
     this.pagesMap,
     this.initialTagIds,
