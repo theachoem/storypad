@@ -16,8 +16,8 @@ import 'package:storypad/providers/backup_provider.dart';
 class InAppPurchaseProvider extends ChangeNotifier {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
-  bool get relaxSound => kDebugMode || isActive(AppProduct.relax_sounds.productIdentifier);
-  bool get template => kDebugMode || isActive(AppProduct.templates.productIdentifier);
+  bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
+  bool get template => isActive(AppProduct.templates.productIdentifier);
 
   CustomerInfo? _customerInfo;
 

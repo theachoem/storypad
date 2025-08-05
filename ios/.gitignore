@@ -35,3 +35,7 @@ Runner/GeneratedPluginRegistrant.*
 
 # Apple Connect API keys
 private_keys
+
+# Key for revenue cat
+StoreKit/StoreKitTestCertificate.cer
+StoreKit/SubscriptionOfferKey.p8

@@ -1,0 +1,145 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "17F9A15C",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : true,
+      "internalID" : "6748109452",
+      "localizations" : [
+        {
+          "description" : "Set the mood before you write or read.",
+          "displayName" : "Relaxing Sounds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "relax_sounds",
+      "referenceName" : "relax_sounds",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : true,
+      "internalID" : "6747943661",
+      "localizations" : [
+        {
+          "description" : "Set the mood before you write or read.",
+          "displayName" : "Relaxing Sounds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.tc.writestory.relax_sounds",
+      "referenceName" : "relax_sounds_deprecated",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : true,
+      "internalID" : "6748109594",
+      "localizations" : [
+        {
+          "description" : "Create your own daily writing templates.",
+          "displayName" : "Templates",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "templates",
+      "referenceName" : "templates",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : true,
+      "internalID" : "6747943532",
+      "localizations" : [
+        {
+          "description" : "Create your own daily writing templates.",
+          "displayName" : "Templates",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.tc.writestory.templates",
+      "referenceName" : "templates_deprecated",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6744032172",
+    "_askToBuyEnabled" : false,
+    "_developerTeamID" : "XF9U464CCP",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 776111304.02624404,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "subscriptionOffersKeyPair" : {
+    "id" : "DE92348D",
+    "privateKey" : "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg9WJZ0ZzEn5H9FS4TcSoNo8SuJpWpR+dnfpnRHOjknQmgCgYIKoZIzj0DAQehRANCAAQeHVR0tPtnuILZiCI7T6wet0Q7mHzNED1/9osTiCMepFTT+NXv5RG8NXJnVErEK2Y5IyanR6sns5zVoWJQrBU1"
+  },
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
