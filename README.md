@@ -40,7 +40,7 @@ Before getting started, ensure you have the following tools:
 - Ruby: 3.3.5 (for IOS)
 - Flutter: 3.29.0
 
-> If you're using asdf, refer to this [guide](docs/contributions/setup_asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
+> If you're using asdf, refer to this [guide](docs/setup_asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
 
 For easy setup and running, the GoogleService-Info.plist, google-services.json, and Dart defines are provided directly in this repo. Simply run the project with:
 
@@ -84,3 +84,7 @@ A big thank you to the maintainers of the packages StoryPad relies on - without 
 StoryPad is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
 We chose the GPL license to ensure that StoryPad’s source code remains free and open. Anyone can use, study, modify, and distribute it - but any modifications must also remain open-source under the same license.
+
+🌐 **Website:** [StoryPad.me](https://storypad.me) - Explore the official StoryPad website for features, screenshots, and more.  
+💻 **App Source Code:** [github.com/theachoem/storypad](https://github.com/theachoem/storypad)  
+🖥 **Website Source Code:** [github.com/theachoem/storypad.me](https://github.com/theachoem/storypad.me)
