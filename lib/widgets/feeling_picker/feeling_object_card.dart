@@ -59,25 +59,28 @@ class _FeelingObjectCard extends StatelessWidget {
   Widget buildName(BuildContext context) {
     return SizedBox(
       width: 100 - 4,
-      child: RichText(
-        maxLines: 2,
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
-          style: Theme.of(context).textTheme.labelSmall,
-          text: name,
-          children: [
-            if (showSuffixIcon)
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Icon(
-                  SpIcons.expandMore,
-                  size: 16.0,
-                  color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
-                ),
-              )
-          ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: RichText(
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          textScaler: MediaQuery.textScalerOf(context),
+          text: TextSpan(
+            style: Theme.of(context).textTheme.labelSmall,
+            text: name,
+            children: [
+              if (showSuffixIcon)
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Icon(
+                    SpIcons.expandMore,
+                    size: 16.0,
+                    color: ColorScheme.of(context).onSurface.withValues(alpha: 0.3),
+                  ),
+                )
+            ],
+          ),
         ),
       ),
     );

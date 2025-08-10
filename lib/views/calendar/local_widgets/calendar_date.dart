@@ -125,10 +125,13 @@ class _CalendarDate extends StatelessWidget {
         constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
         decoration: BoxDecoration(shape: BoxShape.circle, color: backgroundColor),
         alignment: Alignment.center,
-        child: Text(
-          DateFormatHelper.d(date, context.locale),
-          textAlign: TextAlign.center,
-          style: TextTheme.of(context).bodyLarge?.copyWith(color: foregroundColor),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            DateFormatHelper.d(date, context.locale),
+            textAlign: TextAlign.center,
+            style: TextTheme.of(context).bodyLarge?.copyWith(color: foregroundColor),
+          ),
         ),
       );
     }
