@@ -30,6 +30,8 @@ class FirestoreStorageService {
   static FirestoreStorageService instance = FirestoreStorageService();
 
   Map<String, dynamic>? _hash;
+  Map<String, String>? _downloadUrlsByUrlPath;
+
   Future<Map<String, dynamic>?> get hash async =>
       _hash ??= await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
         return json.decode(jsonString);
@@ -51,11 +53,20 @@ class FirestoreStorageService {
   }
 
   Future<String?> getDownloadURL(String urlPath) async {
+    _downloadUrlsByUrlPath ??= {};
+
     try {
+      if (_downloadUrlsByUrlPath?[urlPath] != null) return _downloadUrlsByUrlPath?[urlPath];
+
       final storageRef = FirebaseStorage.instance.ref();
       final String hashPath = await getHashPath(urlPath);
       final childRef = storageRef.child(hashPath);
-      return childRef.getDownloadURL();
+
+      return _downloadUrlsByUrlPath?[urlPath] = await childRef.getDownloadURL();
+    } on FirebaseException catch (e) {
+      // https://firebase.google.com/docs/storage/flutter/handle-errors
+      debugPrint("FirestoreStorageService#getDownloadURL code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}");
+      return null;
     } catch (e) {
       debugPrint(e.toString());
       return null;
