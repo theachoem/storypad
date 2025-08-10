@@ -76,7 +76,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
     List<IconButton> buttons = [
       IconButton.filled(
         tooltip: tr("button.new_story"),
-        visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
+        visualDensity: const VisualDensity(horizontal: 2, vertical: 2),
         icon: const Icon(SpIcons.add),
         onPressed: () {
           toggle(context);
@@ -87,6 +87,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         tooltip: tr("button.take_photo"),
         visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
         icon: const Icon(SpIcons.camera),
+        color: Colors.white,
         onPressed: () {
           toggle(context);
           widget.viewModel.takePhoto();
@@ -96,6 +97,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         tooltip: tr("add_ons.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
         icon: const Icon(Icons.lightbulb_outlined),
+        color: Colors.white,
         onPressed: () {
           toggle(context);
 
