@@ -24,6 +24,8 @@ class _GoogleAuthClient extends http.BaseClient {
   }
 }
 
+// These class aren responsible for call google drive APIs.
+// Exception should not catch here. Let repository handle it.
 class GoogleDriveClient {
   GoogleUserObject? _currentUser;
   GoogleUserObject? get currentUser => _currentUser;

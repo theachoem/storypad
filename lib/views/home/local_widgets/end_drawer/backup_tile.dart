@@ -23,6 +23,16 @@ class _BackupTile extends StatelessWidget {
       );
     } else {
       switch (provider.connectionStatus) {
+        case BackupConnectionStatus.unknownError:
+          leading = Icon(SpIcons.cloudOff);
+          title = Text(tr("list_tile.backup.title"));
+          subtitle = Text(tr('list_tile.backup.unknown_error'));
+          action = FilledButton.icon(
+            icon: const Icon(SpIcons.refresh),
+            label: Text(tr('button.retry')),
+            onPressed: () => provider.recheckAndSync(),
+          );
+          break;
         case BackupConnectionStatus.noInternet:
           leading = Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
