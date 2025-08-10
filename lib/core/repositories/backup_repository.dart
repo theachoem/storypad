@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -59,9 +60,31 @@ class BackupRepository {
   GoogleUserObject? get currentUser => googleDriveClient.currentUser;
   bool get isSignedIn => currentUser != null;
 
-  Future<bool> requestScope() => googleDriveClient.requestScope();
-  Future<void> signIn() => googleDriveClient.signIn();
-  Future<void> signOut() => googleDriveClient.signOut();
+  Future<bool> requestScope() async {
+    try {
+      return googleDriveClient.requestScope();
+    } catch (e, stackTrace) {
+      debugPrint('$runtimeType#requestScope error: $e $stackTrace');
+      return false;
+    }
+  }
+
+  Future<bool> signIn() async {
+    try {
+      return googleDriveClient.signIn();
+    } catch (e, stackTrace) {
+      debugPrint('$runtimeType#signIn error: $e $stackTrace');
+      return false;
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await googleDriveClient.signOut();
+    } catch (e, stackTrace) {
+      debugPrint('$runtimeType#signOut error: $e $stackTrace');
+    }
+  }
 
   void resetMessages() {
     step1ImagesUploader.reset();
@@ -98,17 +121,21 @@ class BackupRepository {
   }
 
   Future<BackupConnectionStatus?> checkConnection() async {
-    if (!isSignedIn) return null;
+    try {
+      if (!isSignedIn) return null;
 
-    final hasInternet = await internetChecker.check();
-    if (!hasInternet) return BackupConnectionStatus.noInternet;
+      final hasInternet = await internetChecker.check();
+      if (!hasInternet) return BackupConnectionStatus.noInternet;
 
-    await googleDriveClient.reauthenticateIfNeeded();
+      await googleDriveClient.reauthenticateIfNeeded();
+      final bool canAccessRequestedScopes = await googleDriveClient.canAccessRequestedScopes();
+      if (!canAccessRequestedScopes) return BackupConnectionStatus.needGoogleDrivePermission;
 
-    final bool canAccessRequestedScopes = await googleDriveClient.canAccessRequestedScopes();
-    if (!canAccessRequestedScopes) return BackupConnectionStatus.needGoogleDrivePermission;
-
-    return BackupConnectionStatus.readyToSync;
+      return BackupConnectionStatus.readyToSync;
+    } catch (e, stackTrace) {
+      debugPrint('$runtimeType#checkConnection unknownError: $e $stackTrace');
+      return BackupConnectionStatus.unknownError;
+    }
   }
 
   Future<DateTime?> getLastDbUpdatedAt() async {
