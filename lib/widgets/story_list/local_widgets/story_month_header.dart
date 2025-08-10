@@ -66,9 +66,12 @@ class _MonthChip extends StatelessWidget {
           borderWidth: 1,
           borderColor: Theme.of(context).dividerColor,
         ),
-        child: Text(
-          DateFormatHelper.MMM(DateTime(2000, story.month), context.locale),
-          style: TextTheme.of(context).labelSmall,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            DateFormatHelper.MMM(DateTime(2000, story.month), context.locale),
+            style: TextTheme.of(context).labelSmall,
+          ),
         ),
       ),
     );

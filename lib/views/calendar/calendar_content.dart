@@ -132,27 +132,30 @@ class _CalendarContent extends StatelessWidget {
       tabAlignment: TabAlignment.start,
       tabs: List.generate(tags.length, (index) {
         return Tab(
-          child: Row(
-            spacing: 8.0,
-            children: [
-              Text(tags[index].title),
-              if (viewModel.currentStoryCountByTabIndex[index] != null && index == viewModel.tabIndex)
-                SpFadeIn.bound(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      color: ColorScheme.of(context).primary,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Text(
-                      viewModel.currentStoryCountByTabIndex[index].toString(),
-                      style: TextStyle(
-                        color: ColorScheme.of(context).onPrimary,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              spacing: 8.0,
+              children: [
+                Text(tags[index].title),
+                if (viewModel.currentStoryCountByTabIndex[index] != null && index == viewModel.tabIndex)
+                  SpFadeIn.bound(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).primary,
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Text(
+                        viewModel.currentStoryCountByTabIndex[index].toString(),
+                        style: TextStyle(
+                          color: ColorScheme.of(context).onPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                )
-            ],
+                  )
+              ],
+            ),
           ),
         );
       }),

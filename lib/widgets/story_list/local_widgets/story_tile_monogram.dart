@@ -35,12 +35,15 @@ class _StoryTileMonogram extends StatelessWidget {
         Container(
           width: monogramSize,
           color: ColorScheme.of(context).surface.withValues(),
-          child: Text(
-            DateFormatHelper.E(story.displayPathDate, context.locale),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: TextTheme.of(context).labelMedium,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              DateFormatHelper.E(story.displayPathDate, context.locale),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextTheme.of(context).labelMedium,
+            ),
           ),
         ),
         Container(
@@ -51,9 +54,12 @@ class _StoryTileMonogram extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: Text(
-            story.displayPathDate.day.toString(),
-            style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              story.displayPathDate.day.toString(),
+              style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
+            ),
           ),
         ),
       ],
