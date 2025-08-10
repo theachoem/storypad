@@ -18,7 +18,7 @@ class DevicePreferencesProvider extends ChangeNotifier {
   // In such cases, we determine dark mode based directly on ThemeMode and platform brightness.
   bool isDarkModeBaseOnThemeMode(BuildContext context) {
     if (themeMode == ThemeMode.system) {
-      return View.of(context).platformDispatcher.platformBrightness == Brightness.dark;
+      return View.maybeOf(context)?.platformDispatcher.platformBrightness == Brightness.dark;
     } else {
       return themeMode == ThemeMode.dark;
     }
@@ -93,7 +93,7 @@ class DevicePreferencesProvider extends ChangeNotifier {
 
   void toggleThemeMode(BuildContext context) {
     if (themeMode == ThemeMode.system) {
-      Brightness? brightness = View.of(context).platformDispatcher.platformBrightness;
+      Brightness? brightness = View.maybeOf(context)?.platformDispatcher.platformBrightness;
       bool isDarkMode = brightness == Brightness.dark;
       setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
     } else {

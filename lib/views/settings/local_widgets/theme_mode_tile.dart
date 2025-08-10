@@ -29,7 +29,7 @@ class ThemeModeTile extends StatelessWidget {
 
   bool isDarkMode(BuildContext context) {
     if (currentThemeMode == ThemeMode.system) {
-      Brightness? brightness = View.of(context).platformDispatcher.platformBrightness;
+      Brightness? brightness = View.maybeOf(context)?.platformDispatcher.platformBrightness;
       return brightness == Brightness.dark;
     } else {
       return currentThemeMode == ThemeMode.dark;
