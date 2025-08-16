@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/initializers/onboarding_initializer.dart';
 import 'package:storypad/views/onboarding/onboarding_view.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
@@ -128,7 +129,7 @@ class _SpOnboardingWrapperState extends State<SpOnboardingWrapper> with TickerPr
         ),
         builder: (context, child) {
           return Container(
-            transform: Matrix4.identity()..translate(0.0, lerpDouble(56.0, 0.0, homeAnimation.value)!),
+            transform: Matrix4.identity()..spTranslate(0.0, lerpDouble(56.0, 0.0, homeAnimation.value)!),
             child: child,
           );
         },
@@ -150,7 +151,7 @@ class _SpOnboardingWrapperState extends State<SpOnboardingWrapper> with TickerPr
         ),
         builder: (context, child) {
           return Container(
-            transform: Matrix4.identity()..translate(0.0, lerpDouble(-56.0, 0.0, animation.value)!),
+            transform: Matrix4.identity()..spTranslate(0.0, lerpDouble(-56.0, 0.0, animation.value)!),
             child: child,
           );
         },

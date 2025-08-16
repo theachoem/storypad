@@ -26,7 +26,7 @@ class ListStorage<T> extends DefaultStorage<String> {
     return null;
   }
 
-  List<T>? toType(decoded) {
+  List<T>? toType(dynamic decoded) {
     if (decoded is! List) return null;
     List<T> output = [];
     for (dynamic element in decoded) {

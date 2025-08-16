@@ -129,7 +129,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
                   result,
                   Positioned.fill(
                     child: Container(
-                      transform: Matrix4.identity()..scale(widget.borderOption?.scale ?? 1.25),
+                      transform: Matrix4.identity()..scaleAdjoint(widget.borderOption?.scale ?? 1.25),
                       transformAlignment: Alignment.center,
                       decoration: BoxDecoration(
                         border: Border.all(

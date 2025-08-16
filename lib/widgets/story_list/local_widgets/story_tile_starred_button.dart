@@ -27,7 +27,7 @@ class _StoryTileStarredButton extends StatelessWidget {
       left: AppTheme.getDirectionValue(context, 0.0, null),
       right: AppTheme.getDirectionValue(context, null, 0.0),
       child: Container(
-        transform: Matrix4.identity()..translate(x, y),
+        transform: Matrix4.identity()..spTranslate(x, y),
         child: _StoryTileFavoriteButton(
           story: story,
           toggleStarred: viewOnly ? null : _StoryTileActions(story: story, listContext: listContext).toggleStarred,

@@ -22,18 +22,18 @@ dependencies:
   dismissible_page: ^1.0.2
   easy_localization: ^3.0.7+1
   file_picker: ^10.1.9
-  firebase_analytics: ^11.4.5
-  firebase_core: ^3.13.0
-  firebase_crashlytics: ^4.3.5
-  firebase_remote_config: ^5.4.3
-  firebase_storage: ^12.4.5
+  firebase_analytics: ^12.0.0
+  firebase_core: ^4.0.0
+  firebase_crashlytics: ^5.0.0
+  firebase_remote_config: ^6.0.0
+  firebase_storage: ^13.0.0
   flutter_custom_tabs: ^2.3.0
   flutter_markdown: ^0.7.7
   flutter_native_splash: ^2.4.6
   flutter_quill:
     git:
       url: https://github.com/theachoem/flutter-quill.git
-      ref: e504d0af4cbc2132857a4da6aec876ccbda9cbf6
+      ref: 7e89a3e878700ff61b85c1aaa20ebb5e01ee307a
   flutter_secure_storage: ^10.0.0-beta.4
   flutter_slidable: ^4.0.0
   flutter_staggered_grid_view: ^0.7.0
@@ -59,7 +59,7 @@ dependencies:
   shared_preferences: ^2.5.3
   sqflite: ^2.4.2
   visibility_detector: ^0.4.0+2
-  purchases_flutter: ^8.10.4
+  purchases_flutter: ^9.2.1
   image_picker: ^1.1.2
 
 dev_dependencies:
@@ -68,7 +68,7 @@ dev_dependencies:
   csv: ^6.0.0
   flutter_gen_runner: ^5.8.0
   flutter_launcher_icons: ^0.14.3
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
   mockito: ^5.4.6

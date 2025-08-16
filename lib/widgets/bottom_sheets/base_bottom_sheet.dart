@@ -107,7 +107,7 @@ abstract class BaseBottomSheet {
     if (fullScreen) {
       return showCupertinoSheet(
         context: context,
-        pageBuilder: (context) {
+        builder: (context) {
           return SpCupertinoFullPageSheetConfigurations(
             context: context,
             child: Builder(builder: (context) {
