@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -28,6 +29,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
   }
 
   Future<void> _initialize(BuildContext context) async {
+    if (!kIAPEnabled) return;
+
     await Purchases.setLogLevel(LogLevel.verbose);
     PurchasesConfiguration? configuration;
 
@@ -43,6 +46,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
   }
 
   Future<void> revalidateCustomerInfo(BuildContext context) async {
+    if (!kIAPEnabled) return;
+
     await _logoutIfInvalid(context);
     if (!context.mounted) return;
 
@@ -65,6 +70,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
     BuildContext context,
     String productIdentifier,
   ) async {
+    if (!kIAPEnabled) return;
+
     await _loginIfNot(context);
 
     if (_customerInfo == null) return;
@@ -76,12 +83,13 @@ class InAppPurchaseProvider extends ChangeNotifier {
     ).then((e) => e.firstOrNull);
 
     if (storeProduct != null) {
-      CustomerInfo result = await Purchases.purchaseStoreProduct(storeProduct);
-      bool success = result.entitlements.all[productIdentifier]?.isActive == true;
-
-      if (success) {
-        _customerInfo = result;
+      try {
+        PurchaseResult result = await Purchases.purchaseStoreProduct(storeProduct);
+        _customerInfo = result.customerInfo;
         notifyListeners();
+      } on PlatformException catch (e) {
+        PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
+        debugPrint('$runtimeType#purchase error: $errorCode');
       }
     }
   }
@@ -91,12 +99,15 @@ class InAppPurchaseProvider extends ChangeNotifier {
   Future<void> restorePurchase(
     BuildContext context,
   ) async {
+    if (!kIAPEnabled) return;
+
     await _logoutIfInvalid(context);
     if (!context.mounted) return;
     return _loginIfNot(context);
   }
 
   Future<void> _loginIfNot(BuildContext context) async {
+    if (!kIAPEnabled) return;
     if (_customerInfo != null) return;
 
     GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
@@ -119,6 +130,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   }
 
   Future<void> _logoutIfInvalid(BuildContext context) async {
+    if (!kIAPEnabled) return;
     GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
 
     if (currentUser != null && _customerInfo != null) {

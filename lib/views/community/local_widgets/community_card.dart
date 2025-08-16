@@ -18,7 +18,7 @@ class _CommunityCard extends StatelessWidget {
         children: [
           Text(tr('general.reach_us_description')),
           Container(
-            transform: Matrix4.identity()..translate(-4.0, 0.0),
+            transform: Matrix4.identity()..spTranslate(-4.0, 0.0),
             child: Wrap(
               spacing: Platform.isMacOS ? 8.0 : 0.0,
               runSpacing: Platform.isMacOS ? 8.0 : 0.0,

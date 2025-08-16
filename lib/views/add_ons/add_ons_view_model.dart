@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -34,10 +35,9 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
     errorMessage = null;
 
     try {
-      storeProducts = await Purchases.getProducts(
-        AppProduct.productIdentifiers,
-        productCategory: ProductCategory.nonSubscription,
-      );
+      storeProducts = kIAPEnabled
+          ? await Purchases.getProducts(AppProduct.productIdentifiers, productCategory: ProductCategory.nonSubscription)
+          : [];
     } on PlatformException catch (e) {
       errorMessage = e.message;
       debugPrint('$runtimeType#load error: $errorMessage');

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 
 class SpFadeIn extends StatelessWidget {
   const SpFadeIn({
@@ -42,7 +43,7 @@ class SpFadeIn extends StatelessWidget {
             child: child,
             builder: (context, child) {
               return Transform(
-                transform: Matrix4.identity()..translate(lerpDouble(-4.0, 0, animation.value)!, 0.0),
+                transform: Matrix4.identity()..spTranslate(lerpDouble(-4.0, 0, animation.value)!, 0.0),
                 child: child,
               );
             },
@@ -71,7 +72,7 @@ class SpFadeIn extends StatelessWidget {
             child: child,
             builder: (context, child) {
               return Transform(
-                transform: Matrix4.identity()..translate(lerpDouble(4.0, 0, animation.value)!, 0.0),
+                transform: Matrix4.identity()..spTranslate(lerpDouble(4.0, 0, animation.value)!, 0.0),
                 child: child,
               );
             },
@@ -100,7 +101,7 @@ class SpFadeIn extends StatelessWidget {
             child: child,
             builder: (context, child) {
               return Transform(
-                transform: Matrix4.identity()..translate(0.0, lerpDouble(-4.0, 0, animation.value)!),
+                transform: Matrix4.identity()..spTranslate(0.0, lerpDouble(-4.0, 0, animation.value)!),
                 child: child,
               );
             },
@@ -131,7 +132,7 @@ class SpFadeIn extends StatelessWidget {
             child: child,
             builder: (context, child) {
               return Transform(
-                transform: Matrix4.identity()..translate(0.0, lerpDouble(4.0, 0, animation.value)!),
+                transform: Matrix4.identity()..spTranslate(0.0, lerpDouble(4.0, 0, animation.value)!),
                 child: child,
               );
             },
@@ -161,7 +162,7 @@ class SpFadeIn extends StatelessWidget {
             builder: (context, child) {
               return AnimatedContainer(
                 duration: Durations.medium1,
-                transform: Matrix4.identity()..scale(animation.value > 0.2 ? 1.0 : 0.9),
+                transform: Matrix4.identity()..scaleAdjoint(animation.value > 0.2 ? 1.0 : 0.9),
                 transformAlignment: Alignment.center,
                 curve: Curves.ease,
                 child: child,

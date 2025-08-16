@@ -21,7 +21,7 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
     return context.read<SpStoryListMultiEditWrapperState>();
   }
 
-  static tryListen({
+  static Widget tryListen({
     required BuildContext context,
     required Widget Function(BuildContext context, SpStoryListMultiEditWrapperState? state) builder,
   }) {
@@ -45,7 +45,7 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
     );
   }
 
-  static listen({
+  static Consumer<SpStoryListMultiEditWrapperState> listen({
     required BuildContext context,
     required Widget Function(BuildContext context, SpStoryListMultiEditWrapperState state) builder,
   }) {

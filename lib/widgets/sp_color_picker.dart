@@ -133,6 +133,7 @@ class SpColorPickerState extends State<SpColorPicker> {
     }
   }
 
+  // ignore: strict_top_level_inference
   void extendChildren(color) {
     setState(() {
       isColorChildPicking = true;
