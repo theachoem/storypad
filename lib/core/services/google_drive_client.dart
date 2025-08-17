@@ -89,7 +89,7 @@ class GoogleDriveClient {
   Future<drive.DriveApi?> get googleDriveClient async {
     if (!_initialized) await initialize();
 
-    if (_currentAccount == null) return null;
+    if (!isSignedIn) return null;
 
     final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
     if (authorization == null) return null;
@@ -111,13 +111,13 @@ class GoogleDriveClient {
     if (!_initialized) await initialize();
 
     _currentUser = await GoogleUserStorage().readObject();
-    if (_currentAccount != null) {
+    if (isSignedIn && _currentAccount != null) {
       await _updateCurrentUserFromAccount(_currentAccount!);
-      return _currentUser != null;
+      return isSignedIn;
     }
 
     await googleSignIn.attemptLightweightAuthentication();
-    return _currentUser != null;
+    return isSignedIn;
   }
 
   Future<bool> signIn() async {
@@ -128,7 +128,7 @@ class GoogleDriveClient {
 
       if (_currentAccount != null) {
         await _updateCurrentUserFromAccount(_currentAccount!);
-        return _currentUser != null;
+        return isSignedIn;
       }
 
       return false;
@@ -155,7 +155,7 @@ class GoogleDriveClient {
   Future<bool> canAccessRequestedScopes() async {
     if (!_initialized) await initialize();
 
-    if (_currentAccount == null) return false;
+    if (!isSignedIn) return false;
 
     final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
     return authorization != null;
@@ -164,7 +164,7 @@ class GoogleDriveClient {
   Future<bool> requestScope() async {
     if (!_initialized) await initialize();
 
-    if (!isSignedIn || _currentAccount == null) return false;
+    if (!isSignedIn) return false;
 
     GoogleSignInClientAuthorization? authorization;
 
@@ -176,10 +176,10 @@ class GoogleDriveClient {
 
     if (authorization?.accessToken != null) {
       _currentUser = GoogleUserObject(
-        id: _currentAccount!.id,
-        email: _currentAccount!.email,
-        displayName: _currentAccount!.displayName,
-        photoUrl: _currentAccount!.photoUrl,
+        id: _currentUser?.id ?? _currentAccount!.id,
+        email: _currentUser?.email ?? _currentAccount!.email,
+        displayName: _currentUser?.displayName ?? _currentAccount!.displayName,
+        photoUrl: _currentUser?.photoUrl ?? _currentAccount!.photoUrl,
         accessToken: authorization!.accessToken,
         refreshedAt: DateTime.now(),
       );
