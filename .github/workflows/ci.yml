@@ -34,7 +34,9 @@ jobs:
       run: dart run build_runner build --delete-conflicting-outputs
 
     - name: Verify formatting
-      run: dart format --output=none --set-exit-if-changed --line-length=120 .
+      run: |
+        # Format only lib/ and test/ directories, excluding .g.dart files and packages folder
+        find lib test -name "*.dart" -not -name "*.g.dart" | xargs dart format --output=none --set-exit-if-changed --line-length=120
 
     - name: Analyze project source
       run: flutter analyze
