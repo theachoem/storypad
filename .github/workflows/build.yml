@@ -1,0 +1,110 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'App flavor to build'
+        required: true
+        default: 'community'
+        type: choice
+        options:
+        - community
+        - storypad
+        - spooky
+
+jobs:
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.flavor)) || fromJSON('["community"]') }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.35.1'
+        channel: 'stable'
+        cache: true
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Generate code
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Build APK
+      run: bin/build_apk --${{ matrix.flavor }}
+
+    - name: Build App Bundle
+      run: bin/build_appbundle --${{ matrix.flavor }}
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk-${{ matrix.flavor }}
+        path: build/app/outputs/flutter-apk/*.apk
+
+    - name: Upload App Bundle artifact  
+      uses: actions/upload-artifact@v4
+      with:
+        name: appbundle-${{ matrix.flavor }}
+        path: build/app/outputs/bundle/**/*.aab
+
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    strategy:
+      matrix:
+        flavor: ["community"]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3.5'
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.35.1'
+        channel: 'stable'
+        cache: true
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Generate code
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Setup iOS
+      run: |
+        cd ios
+        pod install
+
+    - name: Build iOS
+      run: bin/build_ipa --${{ matrix.flavor }}
+
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ipa-${{ matrix.flavor }}
+        path: build/ios/ipa/*.ipa
