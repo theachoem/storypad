@@ -46,10 +46,8 @@ class GoogleDriveClient {
   Future<void> initialize() async {
     if (_initialized) return;
     
-    // For mobile platforms, initialize without explicit client IDs as they come from configuration files
     await googleSignIn.initialize();
     
-    // Listen to authentication events
     _authSubscription = googleSignIn.authenticationEvents.listen(
       (GoogleSignInAccount? account) {
         _currentAccount = account;
@@ -68,9 +66,7 @@ class GoogleDriveClient {
     
     _initialized = true;
     
-    // Attempt lightweight authentication
     final result = googleSignIn.attemptLightweightAuthentication();
-    // On some platforms this returns a Future, on others it doesn't
     if (result is Future) {
       await result;
     }
@@ -82,49 +78,37 @@ class GoogleDriveClient {
   }
   
   Future<void> _updateCurrentUserFromAccount(GoogleSignInAccount account) async {
-    try {
-      // Get authorization for the required scopes
-      final authorization = await account.authorizationClient.authorizationForScopes(_scopes);
-      
-      if (authorization != null) {
-        _currentUser = GoogleUserObject(
-          id: account.id,
-          email: account.email,
-          displayName: account.displayName,
-          photoUrl: account.photoUrl,
-          accessToken: authorization.accessToken,
-          refreshedAt: DateTime.now(),
-        );
+    final authorization = await account.authorizationClient.authorizationForScopes(_scopes);
+    
+    if (authorization != null) {
+      _currentUser = GoogleUserObject(
+        id: account.id,
+        email: account.email,
+        displayName: account.displayName,
+        photoUrl: account.photoUrl,
+        accessToken: authorization.accessToken,
+        refreshedAt: DateTime.now(),
+      );
 
-        await GoogleUserStorage().writeObject(_currentUser!);
-      }
-    } catch (e) {
-      debugPrint('Error updating current user: $e');
+      await GoogleUserStorage().writeObject(_currentUser!);
     }
   }
 
   Future<drive.DriveApi?> get googleDriveClient async {
-    if (!_initialized) {
-      await initialize();
-    }
+    if (!_initialized) await initialize();
     
     if (_currentAccount == null) return null;
     
-    try {
-      final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
-      if (authorization == null) return null;
-      
-      final authHeaders = <String, String>{
-        'Authorization': 'Bearer ${authorization.accessToken}',
-        'X-Goog-AuthUser': '0',
-      };
-      
-      final _GoogleAuthClient client = _GoogleAuthClient(authHeaders);
-      return drive.DriveApi(client);
-    } catch (e) {
-      debugPrint('Error getting drive client: $e');
-      return null;
-    }
+    final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
+    if (authorization == null) return null;
+    
+    final authHeaders = <String, String>{
+      'Authorization': 'Bearer ${authorization.accessToken}',
+      'X-Goog-AuthUser': '0',
+    };
+    
+    final _GoogleAuthClient client = _GoogleAuthClient(authHeaders);
+    return drive.DriveApi(client);
   }
 
   Future<void> loadUserLocally() async {
@@ -132,9 +116,7 @@ class GoogleDriveClient {
   }
 
   Future<bool> reauthenticateIfNeeded() async {
-    if (!_initialized) {
-      await initialize();
-    }
+    if (!_initialized) await initialize();
     
     _currentUser = await GoogleUserStorage().readObject();
     
@@ -144,128 +126,71 @@ class GoogleDriveClient {
       return _currentUser != null;
     }
     
-    // Try lightweight authentication
-    try {
-      await googleSignIn.attemptLightweightAuthentication();
-      // The result will come through the authentication events stream
-      return _currentUser != null;
-    } on GoogleSignInException catch (e) {
-      debugPrint('Google Sign-In exception during reauthentication: ${e.code} - ${e.message}');
-      return false;
-    } catch (e) {
-      debugPrint('Reauthentication failed: $e');
-      return false;
-    }
+    await googleSignIn.attemptLightweightAuthentication();
+    return _currentUser != null;
   }
 
   Future<bool> signIn() async {
-    if (!_initialized) {
-      await initialize();
-    }
+    if (!_initialized) await initialize();
     
-    try {
-      if (googleSignIn.supportsAuthenticate()) {
-        await googleSignIn.authenticate(scopeHint: _scopes);
-        
-        // Wait for the authentication event to update our state
-        if (_currentAccount != null) {
-          await _updateCurrentUserFromAccount(_currentAccount!);
-          return _currentUser != null;
-        }
-        
-        return false;
-      } else {
-        // For platforms that don't support authenticate (like web),
-        // the application should use platform-specific sign-in UI
-        debugPrint('Platform does not support authenticate() method. Use platform-specific sign-in UI.');
-        return false;
+    if (googleSignIn.supportsAuthenticate()) {
+      await googleSignIn.authenticate(scopeHint: _scopes);
+      
+      if (_currentAccount != null) {
+        await _updateCurrentUserFromAccount(_currentAccount!);
+        return _currentUser != null;
       }
-    } on GoogleSignInException catch (e) {
-      debugPrint('Google Sign-In exception: ${e.code} - ${e.message}');
+      
       return false;
-    } catch (e) {
-      debugPrint('Sign in failed: $e');
+    } else {
+      debugPrint('Platform does not support authenticate() method. Use platform-specific sign-in UI.');
       return false;
     }
   }
 
   Future<void> signOut() async {
-    try {
-      await googleSignIn.signOut();
-      await GoogleUserStorage().remove();
-      _currentUser = null;
-      _currentAccount = null;
-    } catch (e) {
-      debugPrint('Sign out failed: $e');
-    }
+    await googleSignIn.signOut();
+    await GoogleUserStorage().remove();
+    _currentUser = null;
+    _currentAccount = null;
   }
   
   Future<void> disconnect() async {
-    try {
-      await googleSignIn.disconnect();
-      await GoogleUserStorage().remove();
-      _currentUser = null;
-      _currentAccount = null;
-    } catch (e) {
-      debugPrint('Disconnect failed: $e');
-    }
+    await googleSignIn.disconnect();
+    await GoogleUserStorage().remove();
+    _currentUser = null;
+    _currentAccount = null;
   }
 
   Future<bool> canAccessRequestedScopes() async {
-    if (!_initialized) {
-      await initialize();
-    }
+    if (!_initialized) await initialize();
     
     if (_currentAccount == null) return false;
     
-    try {
-      final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
-      return authorization != null;
-    } catch (e) {
-      debugPrint('Error checking scopes: $e');
-      return false;
-    }
+    final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
+    return authorization != null;
   }
 
   Future<bool> requestScope() async {
-    if (!_initialized) {
-      await initialize();
-    }
+    if (!_initialized) await initialize();
     
     if (!isSignedIn || _currentAccount == null) return false;
 
-    try {
-      final authorization = await _currentAccount!.authorizationClient.authorizeScopes(_scopes);
-      
-      if (authorization != null) {
-        // Update the current user with new access token
-        _currentUser = GoogleUserObject(
-          id: _currentAccount!.id,
-          email: _currentAccount!.email,
-          displayName: _currentAccount!.displayName,
-          photoUrl: _currentAccount!.photoUrl,
-          accessToken: authorization.accessToken,
-          refreshedAt: DateTime.now(),
-        );
-        await GoogleUserStorage().writeObject(_currentUser!);
-        return true;
-      } else {
-        // Authorization was not granted
-        debugPrint('Authorization for scopes was not granted');
-        return false;
-      }
-    } on GoogleSignInException catch (e) {
-      debugPrint('Google Sign-In exception during scope request: ${e.code} - ${e.message}');
-      
-      // If user cancelled or there's an auth error, we might need to disconnect
-      if (e.code == GoogleSignInExceptionCode.canceled || 
-          e.code == GoogleSignInExceptionCode.authenticationError) {
-        await disconnect();
-      }
-      
-      return false;
-    } catch (e) {
-      debugPrint('Error requesting scopes: $e');
+    final authorization = await _currentAccount!.authorizationClient.authorizeScopes(_scopes);
+    
+    if (authorization != null) {
+      _currentUser = GoogleUserObject(
+        id: _currentAccount!.id,
+        email: _currentAccount!.email,
+        displayName: _currentAccount!.displayName,
+        photoUrl: _currentAccount!.photoUrl,
+        accessToken: authorization.accessToken,
+        refreshedAt: DateTime.now(),
+      );
+      await GoogleUserStorage().writeObject(_currentUser!);
+      return true;
+    } else {
+      debugPrint('Authorization for scopes was not granted');
       return false;
     }
   }
