@@ -3,7 +3,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -131,13 +130,6 @@ class AppTheme extends StatelessWidget {
       appBarTheme: AppBarTheme(
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         backgroundColor: lightMode ? colorScheme.surface : colorScheme.readOnly.surface1,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: darkMode ? Brightness.light : Brightness.dark,
-          statusBarBrightness: darkMode ? Brightness.dark : Brightness.light,
-          systemNavigationBarColor: scaffoldBackgroundColor,
-          systemNavigationBarIconBrightness: darkMode ? Brightness.light : Brightness.dark,
-        ),
       ),
       tabBarTheme: TabBarThemeData(
         dividerColor: dividerColor,
