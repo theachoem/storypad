@@ -46,38 +46,33 @@ class GoogleDriveClient {
   Future<void> initialize() async {
     if (_initialized) return;
     
-    try {
-      // For mobile platforms, initialize without explicit client IDs as they come from configuration files
-      await googleSignIn.initialize();
-      
-      // Listen to authentication events
-      _authSubscription = googleSignIn.authenticationEvents.listen(
-        (GoogleSignInAccount? account) {
-          _currentAccount = account;
-          if (account != null) {
-            _updateCurrentUserFromAccount(account);
-          } else {
-            _currentUser = null;
-          }
-        },
-        onError: (error) {
-          debugPrint('GoogleDriveClient authentication error: $error');
+    // For mobile platforms, initialize without explicit client IDs as they come from configuration files
+    await googleSignIn.initialize();
+    
+    // Listen to authentication events
+    _authSubscription = googleSignIn.authenticationEvents.listen(
+      (GoogleSignInAccount? account) {
+        _currentAccount = account;
+        if (account != null) {
+          _updateCurrentUserFromAccount(account);
+        } else {
           _currentUser = null;
-          _currentAccount = null;
         }
-      );
-      
-      _initialized = true;
-      
-      // Attempt lightweight authentication
-      final result = googleSignIn.attemptLightweightAuthentication();
-      // On some platforms this returns a Future, on others it doesn't
-      if (result is Future) {
-        await result;
+      },
+      onError: (error) {
+        debugPrint('GoogleDriveClient authentication error: $error');
+        _currentUser = null;
+        _currentAccount = null;
       }
-    } catch (e) {
-      debugPrint('GoogleDriveClient initialization error: $e');
-      rethrow;
+    );
+    
+    _initialized = true;
+    
+    // Attempt lightweight authentication
+    final result = googleSignIn.attemptLightweightAuthentication();
+    // On some platforms this returns a Future, on others it doesn't
+    if (result is Future) {
+      await result;
     }
   }
   
