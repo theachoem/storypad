@@ -22,9 +22,6 @@ void main({
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Enable edge-to-edge for better navigation bar integration
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
   await Firebase.initializeApp(options: firebaseOptions);
   FirebaseCrashlyticsInitializer.call();
   FirebaseRemoteConfigInitializer.call();
@@ -40,6 +37,7 @@ void main({
   await ThemeInitializer.call();
   await LegacyStoryPadInitializer.call();
   await OnboardingInitializer.call();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   LicensesInitializer.call();
 

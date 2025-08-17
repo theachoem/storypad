@@ -3,6 +3,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -70,6 +71,8 @@ class AppTheme extends StatelessWidget {
       return buildColorScheme(
         provider: provider,
         builder: (ColorScheme lightScheme, ColorScheme darkScheme) {
+          final isDarkMode = provider.isDarkModeBaseOnThemeMode(context);
+
           final lightTheme = getTheme(
             colorScheme: lightScheme,
             fontFamily: provider.preferences.fontFamily,
@@ -82,7 +85,18 @@ class AppTheme extends StatelessWidget {
             fontWeight: provider.preferences.fontWeight,
           );
 
-          return builder(context, provider.preferences, lightTheme, darkTheme, provider.themeMode);
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+              statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: Colors.transparent,
+              systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+              systemNavigationBarDividerColor: Colors.transparent,
+              systemNavigationBarContrastEnforced: false,
+            ),
+            child: builder(context, provider.preferences, lightTheme, darkTheme, provider.themeMode),
+          );
         },
       );
     });
