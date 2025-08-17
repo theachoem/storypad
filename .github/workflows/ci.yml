@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Read Flutter version from .tool-versions
+      id: flutter-version
+      run: |
+        FLUTTER_VERSION=$(grep flutter .tool-versions | awk '{print $2}' | cut -d'-' -f1)
+        echo "version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ steps.flutter-version.outputs.version }}
+        cache: true
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Generate code
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Verify formatting
+      run: |
+        # Format only lib/ and test/ directories, excluding generated files
+        find lib test -name "*.dart" -not -name "*.g.dart" -not -name "*.gen.dart" -not -name "*.mocks.dart" -not -path "*/firebase_options/*" | xargs dart format --output=none --set-exit-if-changed --line-length=120
+
+    - name: Analyze project source
+      run: flutter analyze
+
+    - name: Run tests
+      run: flutter test --coverage
+
+    - name: Upload coverage reports to Codecov
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        file: coverage/lcov.info
+        fail_ci_if_error: false

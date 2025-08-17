@@ -7,7 +7,7 @@ funding:
 
 environment:
   sdk: ^3.6.0
-  flutter: '>=3.27.0'
+  flutter: ">=3.35.1"
 
 dependencies:
   flutter:

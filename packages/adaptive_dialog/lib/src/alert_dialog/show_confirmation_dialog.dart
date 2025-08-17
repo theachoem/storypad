@@ -1,5 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -119,12 +118,10 @@ class _ConfirmationMaterialDialog<T> extends StatefulWidget {
   final bool toggleable;
 
   @override
-  _ConfirmationMaterialDialogState<T> createState() =>
-      _ConfirmationMaterialDialogState<T>();
+  _ConfirmationMaterialDialogState<T> createState() => _ConfirmationMaterialDialogState<T>();
 }
 
-class _ConfirmationMaterialDialogState<T>
-    extends State<_ConfirmationMaterialDialog<T>> {
+class _ConfirmationMaterialDialogState<T> extends State<_ConfirmationMaterialDialog<T>> {
   T? _selectedKey;
   final _scrollController = ScrollController();
 
@@ -176,29 +173,28 @@ class _ConfirmationMaterialDialogState<T>
             Flexible(
               child: SizedBox(
                 height: widget.contentMaxHeight,
-                child: ListView(
-                  // This switches physics automatically, so if there is enough
-                  // height, `NeverScrollableScrollPhysics` will be set.
-                  controller: _scrollController,
-                  shrinkWrap: widget.shrinkWrap,
-                  children: widget.actions
-                      .map(
-                        (action) => RadioListTile<T>(
-                          title: Text(
-                            action.label,
-                            style: action.textStyle,
+                child: RadioGroup(
+                  groupValue: _selectedKey,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedKey = value;
+                    });
+                  },
+                  child: ListView(
+                    // This switches physics automatically, so if there is enough
+                    // height, `NeverScrollableScrollPhysics` will be set.
+                    controller: _scrollController,
+                    shrinkWrap: widget.shrinkWrap,
+                    children: widget.actions
+                        .map(
+                          (action) => RadioListTile<T>(
+                            title: Text(action.label, style: action.textStyle),
+                            value: action.key,
+                            toggleable: widget.toggleable,
                           ),
-                          value: action.key,
-                          groupValue: _selectedKey,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedKey = value;
-                            });
-                          },
-                          toggleable: widget.toggleable,
-                        ),
-                      )
-                      .toList(),
+                        )
+                        .toList(),
+                  ),
                 ),
               ),
             ),
@@ -212,21 +208,15 @@ class _ConfirmationMaterialDialogState<T>
                 children: [
                   TextButton(
                     child: Text(
-                      (widget.fullyCapitalized
-                              ? cancelLabel?.toUpperCase()
-                              : cancelLabel) ??
+                      (widget.fullyCapitalized ? cancelLabel?.toUpperCase() : cancelLabel) ??
                           MaterialLocalizations.of(context).cancelButtonLabel,
                     ),
                     onPressed: () => widget.onSelect(null),
                   ),
                   TextButton(
-                    onPressed: _selectedKey == null
-                        ? null
-                        : () => widget.onSelect(_selectedKey),
+                    onPressed: _selectedKey == null ? null : () => widget.onSelect(_selectedKey),
                     child: Text(
-                      (widget.fullyCapitalized
-                              ? okLabel?.toUpperCase()
-                              : okLabel) ??
+                      (widget.fullyCapitalized ? okLabel?.toUpperCase() : okLabel) ??
                           MaterialLocalizations.of(context).okButtonLabel,
                     ),
                   ),
