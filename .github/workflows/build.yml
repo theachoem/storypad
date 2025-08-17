@@ -13,8 +13,6 @@ on:
         type: choice
         options:
         - community
-        - storypad
-        - spooky
 
 jobs:
   build-android:
