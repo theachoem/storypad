@@ -1,6 +1,6 @@
 # StoryPad - Open Source Diary & Journal App
 
-[![CI](https://github.com/theachoem/storypad/actions/workflows/ci.yml/badge.svg)](https://github.com/theachoem/storypad/actions/workflows/ci.yml) [![Build](https://github.com/theachoem/storypad/actions/workflows/build.yml/badge.svg)](https://github.com/theachoem/storypad/actions/workflows/build.yml) [![GitHub stars](https://img.shields.io/github/stars/theachoem/storypad?style=social)](https://github.com/theachoem/storypad/stargazers) [![GitHub license](https://img.shields.io/github/license/theachoem/storypad)](LICENSE) [![GitHub issues](https://img.shields.io/github/issues/theachoem/storypad)](https://github.com/theachoem/storypad/issues)
+[![GitHub stars](https://img.shields.io/github/stars/theachoem/storypad?style=social)](https://github.com/theachoem/storypad/stargazers) [![GitHub license](https://img.shields.io/github/license/theachoem/storypad)](LICENSE) [![GitHub issues](https://img.shields.io/github/issues/theachoem/storypad)](https://github.com/theachoem/storypad/issues)
 
 📝 **StoryPad** is a beautiful, privacy-first, open source journal & diary app designed for people who value simplicity, minimalism, and control over their personal data.
 
@@ -72,37 +72,6 @@ StoryPad leverages the MVVM (Model-View-ViewModel) pattern while each view is co
 ### 3. Local Database:
 
 StoryPad uses ObjectBox as the local database solution for persistent data storage. ObjectBox provides fast, efficient, and scalable database operations with rich search capabilities, making it ideal for mobile apps that require high-performance data handling.
-
-## 🔧 CI/CD & Development
-
-StoryPad uses GitHub Actions for continuous integration and deployment:
-
-- **CI Workflow**: Runs tests, linting, and code analysis on every pull request
-- **Build Workflow**: Creates Android APK and App Bundle artifacts for all flavors
-- **Dependencies**: Weekly security checks and dependency updates
-- **Release**: Automated release creation with build artifacts when tags are pushed
-
-### Development Commands
-
-```bash
-# Run the community flavor
-bin/dev --community
-
-# Run tests
-flutter test
-
-# Build APK for community flavor  
-bin/build_apk --community
-
-# Code analysis
-flutter analyze
-
-# Format code
-dart format .
-```
-
-All workflows are configured to use the exact tool versions specified in `.tool-versions`:
-- Java 21, Ruby 3.3.5, Flutter 3.35.1-stable
 
 ## 🤝 Learn & Contribute
 
