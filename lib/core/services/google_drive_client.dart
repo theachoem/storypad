@@ -47,6 +47,7 @@ class GoogleDriveClient {
     if (_initialized) return;
     
     try {
+      // For mobile platforms, initialize without explicit client IDs as they come from configuration files
       await googleSignIn.initialize();
       
       // Listen to authentication events
@@ -69,7 +70,11 @@ class GoogleDriveClient {
       _initialized = true;
       
       // Attempt lightweight authentication
-      await googleSignIn.attemptLightweightAuthentication();
+      final result = googleSignIn.attemptLightweightAuthentication();
+      // On some platforms this returns a Future, on others it doesn't
+      if (result is Future) {
+        await result;
+      }
     } catch (e) {
       debugPrint('GoogleDriveClient initialization error: $e');
       rethrow;
@@ -166,19 +171,20 @@ class GoogleDriveClient {
     try {
       if (googleSignIn.supportsAuthenticate()) {
         await googleSignIn.authenticate(scopeHint: _scopes);
+        
+        // Wait for the authentication event to update our state
+        if (_currentAccount != null) {
+          await _updateCurrentUserFromAccount(_currentAccount!);
+          return _currentUser != null;
+        }
+        
+        return false;
       } else {
         // For platforms that don't support authenticate (like web),
-        // this should be handled by platform-specific UI
-        throw UnsupportedError('This platform requires platform-specific sign-in UI');
+        // the application should use platform-specific sign-in UI
+        debugPrint('Platform does not support authenticate() method. Use platform-specific sign-in UI.');
+        return false;
       }
-      
-      // Wait for the authentication event to update our state
-      if (_currentAccount != null) {
-        await _updateCurrentUserFromAccount(_currentAccount!);
-        return _currentUser != null;
-      }
-      
-      return false;
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In exception: ${e.code} - ${e.message}');
       return false;
@@ -196,6 +202,17 @@ class GoogleDriveClient {
       _currentAccount = null;
     } catch (e) {
       debugPrint('Sign out failed: $e');
+    }
+  }
+  
+  Future<void> disconnect() async {
+    try {
+      await googleSignIn.disconnect();
+      await GoogleUserStorage().remove();
+      _currentUser = null;
+      _currentAccount = null;
+    } catch (e) {
+      debugPrint('Disconnect failed: $e');
     }
   }
 
@@ -237,11 +254,20 @@ class GoogleDriveClient {
         );
         await GoogleUserStorage().writeObject(_currentUser!);
         return true;
+      } else {
+        // Authorization was not granted
+        debugPrint('Authorization for scopes was not granted');
+        return false;
       }
-      
-      return false;
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In exception during scope request: ${e.code} - ${e.message}');
+      
+      // If user cancelled or there's an auth error, we might need to disconnect
+      if (e.code == GoogleSignInExceptionCode.canceled || 
+          e.code == GoogleSignInExceptionCode.authenticationError) {
+        await disconnect();
+      }
+      
       return false;
     } catch (e) {
       debugPrint('Error requesting scopes: $e');
