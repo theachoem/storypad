@@ -25,26 +25,14 @@ void main() {
         equals(Colors.transparent),
       );
       
-      // Verify navigation bar divider is also transparent
-      expect(
-        annotatedRegion.value.systemNavigationBarDividerColor,
-        equals(Colors.transparent),
-      );
-      
       // Verify navigation bar contrast enforcement is disabled for 3-button navigation  
       expect(
         annotatedRegion.value.systemNavigationBarContrastEnforced,
         equals(false),
       );
-      
-      // Verify status bar is transparent
-      expect(
-        annotatedRegion.value.statusBarColor,
-        equals(Colors.transparent),
-      );
     });
 
-    testWidgets('system UI overlay style adjusts for light theme', (WidgetTester tester) async {
+    testWidgets('system UI overlay style has minimal required properties for edge-to-edge', (WidgetTester tester) async {
       await tester.pumpWidget(const App());
       await tester.pumpAndSettle();
 
@@ -55,14 +43,14 @@ void main() {
       final AnnotatedRegion<SystemUiOverlayStyle> annotatedRegion = 
           tester.widget(annotatedRegionFinder);
 
-      // In light theme, icons should be dark
+      // Only the essential properties should be set for edge-to-edge
       expect(
-        annotatedRegion.value.systemNavigationBarIconBrightness,
-        equals(Brightness.dark),
+        annotatedRegion.value.systemNavigationBarColor,
+        equals(Colors.transparent),
       );
       expect(
-        annotatedRegion.value.statusBarIconBrightness,
-        equals(Brightness.dark),
+        annotatedRegion.value.systemNavigationBarContrastEnforced,
+        equals(false),
       );
     });
 

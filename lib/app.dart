@@ -29,13 +29,8 @@ class App extends StatelessWidget {
         
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-            statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
             systemNavigationBarColor: Colors.transparent,
-            systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-            systemNavigationBarDividerColor: Colors.transparent,
-            systemNavigationBarContrastEnforced: false, // Disable contrast enforcement for 3-button navigation
+            systemNavigationBarContrastEnforced: false, // Critical for 3-button navigation edge-to-edge
           ),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
