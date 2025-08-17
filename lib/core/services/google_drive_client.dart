@@ -34,7 +34,6 @@ class GoogleDriveClient {
   final Map<String, String> _folderDriveIdByFolderName = {};
 
   GoogleSignIn get googleSignIn => GoogleSignIn.instance;
-  GoogleSignInAccount? _currentAccount;
 
   static const List<String> _scopes = [drive.DriveApi.driveAppdataScope];
 
@@ -48,7 +47,6 @@ class GoogleDriveClient {
 
     _authSubscription = googleSignIn.authenticationEvents.listen((account) {
       if (account is GoogleSignInAuthenticationEventSignIn) {
-        _currentAccount = account.user;
         _updateCurrentUserFromAccount(account.user);
       } else {
         _currentUser = null;
@@ -56,7 +54,6 @@ class GoogleDriveClient {
     }, onError: (error) {
       debugPrint('$runtimeType#authenticationEvents listen error: $error');
       _currentUser = null;
-      _currentAccount = null;
     });
 
     _initialized = true;
@@ -91,7 +88,10 @@ class GoogleDriveClient {
 
     if (!isSignedIn) return null;
 
-    final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
+    final currentAccount = googleSignIn.currentUser;
+    if (currentAccount == null) return null;
+
+    final authorization = await currentAccount.authorizationClient.authorizationForScopes(_scopes);
     if (authorization == null) return null;
 
     final authHeaders = <String, String>{
@@ -111,8 +111,8 @@ class GoogleDriveClient {
     if (!_initialized) await initialize();
 
     _currentUser = await GoogleUserStorage().readObject();
-    if (isSignedIn && _currentAccount != null) {
-      await _updateCurrentUserFromAccount(_currentAccount!);
+    if (isSignedIn && googleSignIn.currentUser != null) {
+      await _updateCurrentUserFromAccount(googleSignIn.currentUser!);
       return isSignedIn;
     }
 
@@ -126,8 +126,9 @@ class GoogleDriveClient {
     if (googleSignIn.supportsAuthenticate()) {
       await googleSignIn.authenticate(scopeHint: _scopes);
 
-      if (_currentAccount != null) {
-        await _updateCurrentUserFromAccount(_currentAccount!);
+      final currentAccount = googleSignIn.currentUser;
+      if (currentAccount != null) {
+        await _updateCurrentUserFromAccount(currentAccount);
         return isSignedIn;
       }
 
@@ -142,14 +143,12 @@ class GoogleDriveClient {
     await googleSignIn.signOut();
     await GoogleUserStorage().remove();
     _currentUser = null;
-    _currentAccount = null;
   }
 
   Future<void> disconnect() async {
     await googleSignIn.disconnect();
     await GoogleUserStorage().remove();
     _currentUser = null;
-    _currentAccount = null;
   }
 
   Future<bool> canAccessRequestedScopes() async {
@@ -157,7 +156,10 @@ class GoogleDriveClient {
 
     if (!isSignedIn) return false;
 
-    final authorization = await _currentAccount!.authorizationClient.authorizationForScopes(_scopes);
+    final currentAccount = googleSignIn.currentUser;
+    if (currentAccount == null) return false;
+
+    final authorization = await currentAccount.authorizationClient.authorizationForScopes(_scopes);
     return authorization != null;
   }
 
@@ -166,20 +168,23 @@ class GoogleDriveClient {
 
     if (!isSignedIn) return false;
 
+    final currentAccount = googleSignIn.currentUser;
+    if (currentAccount == null) return false;
+
     GoogleSignInClientAuthorization? authorization;
 
     try {
-      authorization = await _currentAccount!.authorizationClient.authorizeScopes(_scopes);
+      authorization = await currentAccount.authorizationClient.authorizeScopes(_scopes);
     } catch (e) {
       debugPrint('$runtimeType#requestScope error: $e');
     }
 
     if (authorization?.accessToken != null) {
       _currentUser = GoogleUserObject(
-        id: _currentUser?.id ?? _currentAccount!.id,
-        email: _currentUser?.email ?? _currentAccount!.email,
-        displayName: _currentUser?.displayName ?? _currentAccount!.displayName,
-        photoUrl: _currentUser?.photoUrl ?? _currentAccount!.photoUrl,
+        id: _currentUser?.id ?? currentAccount.id,
+        email: _currentUser?.email ?? currentAccount.email,
+        displayName: _currentUser?.displayName ?? currentAccount.displayName,
+        photoUrl: _currentUser?.photoUrl ?? currentAccount.photoUrl,
         accessToken: authorization!.accessToken,
         refreshedAt: DateTime.now(),
       );
