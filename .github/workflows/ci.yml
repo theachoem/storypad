@@ -15,11 +15,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Read Flutter version from .tool-versions
+      id: flutter-version
+      run: |
+        FLUTTER_VERSION=$(grep flutter .tool-versions | awk '{print $2}')
+        echo "version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.35.1'
-        channel: 'stable'
+        flutter-version: ${{ steps.flutter-version.outputs.version }}
         cache: true
 
     - name: Get dependencies
