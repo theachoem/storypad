@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/types/time_format_option.dart';
+import 'package:storypad/core/widgets/edge_to_edge_wrapper.dart';
 import 'package:storypad/views/home/home_view.dart';
 
 class App extends StatelessWidget {
@@ -20,18 +20,7 @@ class App extends StatelessWidget {
       supportedLocales: kSupportedLocales,
       fallbackLocale: kFallbackLocale,
       child: AppTheme(builder: (context, preferences, theme, darkTheme, themeMode) {
-        final isDarkMode = themeMode == ThemeMode.dark || 
-                           (themeMode == ThemeMode.system && 
-                            MediaQuery.platformBrightnessOf(context) == Brightness.dark);
-        
-        final currentTheme = isDarkMode ? darkTheme : theme;
-        final scaffoldBackgroundColor = currentTheme.scaffoldBackgroundColor;
-        
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.transparent,
-            systemNavigationBarContrastEnforced: false, // Critical for 3-button navigation edge-to-edge
-          ),
+        return EdgeToEdgeWrapper(
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             themeMode: themeMode,
