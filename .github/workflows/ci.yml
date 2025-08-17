@@ -35,8 +35,8 @@ jobs:
 
     - name: Verify formatting
       run: |
-        # Format only lib/ and test/ directories, excluding .g.dart files and packages folder
-        find lib test -name "*.dart" -not -name "*.g.dart" | xargs dart format --output=none --set-exit-if-changed --line-length=120
+        # Format only lib/ and test/ directories, excluding generated files
+        find lib test -name "*.dart" -not -name "*.g.dart" -not -name "*.gen.dart" -not -name "*.mocks.dart" -not -path "*/firebase_options/*" | xargs dart format --output=none --set-exit-if-changed --line-length=120
 
     - name: Analyze project source
       run: flutter analyze
