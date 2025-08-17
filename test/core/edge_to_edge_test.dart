@@ -31,6 +31,12 @@ void main() {
         equals(Colors.transparent),
       );
       
+      // Verify navigation bar contrast enforcement is disabled for 3-button navigation  
+      expect(
+        annotatedRegion.value.systemNavigationBarContrastEnforced,
+        equals(false),
+      );
+      
       // Verify status bar is transparent
       expect(
         annotatedRegion.value.statusBarColor,

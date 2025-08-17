@@ -35,6 +35,7 @@ class App extends StatelessWidget {
             systemNavigationBarColor: Colors.transparent,
             systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
             systemNavigationBarDividerColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false, // Disable contrast enforcement for 3-button navigation
           ),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
