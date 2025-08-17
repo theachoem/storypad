@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
 import 'package:firebase_core/firebase_core.dart' show Firebase, FirebaseOptions;
 import 'package:storypad/app.dart' show App;
@@ -36,6 +37,7 @@ void main({
   await ThemeInitializer.call();
   await LegacyStoryPadInitializer.call();
   await OnboardingInitializer.call();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   LicensesInitializer.call();
 

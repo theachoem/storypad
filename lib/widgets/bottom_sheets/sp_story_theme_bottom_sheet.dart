@@ -1,6 +1,8 @@
 // TODO: fix color.value deprecation
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -216,7 +218,12 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
     List<Widget> actions = [
       buildMoreOptionsButton(context),
       IconButton(
-        onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+        onPressed: () {
+          if (Platform.isAndroid) context.read<DevicePreferencesProvider>().toggleThemeMode(context);
+
+          // TODO: fix material modal to dynamic base on theme mode instead of pop
+          Navigator.maybePop(context);
+        },
         icon: SpThemeModeIcon(parentContext: context),
       ),
       Builder(builder: (context) {
