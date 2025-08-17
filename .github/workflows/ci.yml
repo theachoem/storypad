@@ -18,7 +18,7 @@ jobs:
     - name: Read Flutter version from .tool-versions
       id: flutter-version
       run: |
-        FLUTTER_VERSION=$(grep flutter .tool-versions | awk '{print $2}')
+        FLUTTER_VERSION=$(grep flutter .tool-versions | awk '{print $2}' | cut -d'-' -f1)
         echo "version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
 
     - name: Setup Flutter
@@ -34,7 +34,7 @@ jobs:
       run: dart run build_runner build --delete-conflicting-outputs
 
     - name: Verify formatting
-      run: dart format --output=none --set-exit-if-changed .
+      run: dart format --output=none --set-exit-if-changed --line-length=120 .
 
     - name: Analyze project source
       run: flutter analyze
