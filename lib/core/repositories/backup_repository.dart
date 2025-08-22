@@ -161,5 +161,6 @@ class BackupRepository {
     step2LatestBackupChecker.controller.close();
     step3LatestBackupImporter.controller.close();
     step4NewBackupUploader.controller.close();
+    googleDriveClient.dispose();
   }
 }
