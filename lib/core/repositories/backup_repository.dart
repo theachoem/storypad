@@ -71,7 +71,8 @@ class BackupRepository {
 
   Future<bool> signIn() async {
     try {
-      return googleDriveClient.signIn();
+      await googleDriveClient.signIn();
+      return true;
     } catch (e, stackTrace) {
       debugPrint('$runtimeType#signIn error: $e $stackTrace');
       return false;
@@ -128,7 +129,7 @@ class BackupRepository {
       if (!hasInternet) return BackupConnectionStatus.noInternet;
 
       await googleDriveClient.reauthenticateIfNeeded();
-      final bool canAccessRequestedScopes = await googleDriveClient.canAccessRequestedScopes();
+      final bool canAccessRequestedScopes = googleDriveClient.canAccessRequestedScopes;
       if (!canAccessRequestedScopes) return BackupConnectionStatus.needGoogleDrivePermission;
 
       return BackupConnectionStatus.readyToSync;
