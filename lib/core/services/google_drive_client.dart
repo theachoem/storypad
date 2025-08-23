@@ -70,10 +70,14 @@ class GoogleDriveClient {
       if (result != null) await _setUser(result, authorization);
       return true;
     } on PlatformException catch (e) {
-      if (e.details is Map && e.details['NSUnderlyingError']['code'] == '400') {
-        _clearUser();
+      final details = e.details;
+
+      if (details is Map) {
+        final underlyingError = details['NSUnderlyingError'];
+        final code = underlyingError is Map ? underlyingError['code'] : null;
+        if (code == '400') await _clearUser();
       }
-      return false;
+      rethrow;
     }
   }
 
