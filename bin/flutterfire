@@ -42,7 +42,7 @@ function configure() {
   PACKAGE_NAME=$3
   WEB_APPLICATION_ID=$4
   ACCOUNT=$5
-  PLATFORMS=${PLATFORMS:-'android,ios,macos'}
+  PLATFORMS=${PLATFORMS:-'android,ios,macos,web'}
 
   save_dart_main_file $FLAVOR
   ensure_generated_dart_define_exist
@@ -112,7 +112,7 @@ function main() {
     ;;
 
   --storypad)
-    configure 'storypad' 'tc-write-story' 'com.tc.writestory' '1:315543702519:android:4e9cf4c1923c1dab74fcf2' $2
+    configure 'storypad' 'tc-write-story' 'com.tc.writestory' '1:315543702519:web:3c1c02aab9ff9aa974fcf2' $2
     exit 0
     ;;
 

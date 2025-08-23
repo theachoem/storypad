@@ -16,6 +16,7 @@ pluginManagement {
     }
 }
 
+// To check the latest version: https://mvnrepository.com/artifact/<id>
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     id "com.android.application" version "8.6.0" apply false

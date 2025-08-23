@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -85,11 +83,7 @@ class BackupProvider extends ChangeNotifier {
     notifyListeners();
 
     if (readyToSynced) {
-      await runZonedGuarded(() async {
-        await _syncBackupAcrossDevices(currentUser!.email).timeout(const Duration(minutes: 3));
-      }, (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, reason: 'Uncaught in zone');
-      });
+      await _syncBackupAcrossDevices(currentUser!.email).timeout(const Duration(minutes: 3));
     }
 
     _syncing = false;

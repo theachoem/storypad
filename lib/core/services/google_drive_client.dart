@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
@@ -29,17 +30,31 @@ class _GoogleAuthClient extends http.BaseClient {
 class GoogleDriveClient {
   GoogleUserObject? _currentUser;
   GoogleUserObject? get currentUser => _currentUser;
+
+  GoogleSignInAccount? _googleSignInAccount;
+  GoogleSignInAccount? get googleSignInAccount => _googleSignInAccount;
+
   bool get isSignedIn => _currentUser != null;
+  bool get canAccessRequestedScopes => _currentUser?.accessToken != null;
 
   final Map<String, String> _folderDriveIdByFolderName = {};
+  static const List<String> _scopes = [drive.DriveApi.driveAppdataScope];
 
-  final GoogleSignIn googleSignIn = GoogleSignIn.standard(
-    scopes: [drive.DriveApi.driveAppdataScope],
-  );
+  Completer<GoogleSignIn>? googleSignInCompleter;
+  Future<GoogleSignIn> get googleSignIn async {
+    if (googleSignInCompleter != null) return googleSignInCompleter!.future;
+    googleSignInCompleter = Completer();
+
+    GoogleSignIn.instance.initialize().then((_) {
+      googleSignInCompleter!.complete(GoogleSignIn.instance);
+    });
+
+    return googleSignInCompleter!.future;
+  }
 
   Future<drive.DriveApi?> get googleDriveClient async {
-    if (googleSignIn.currentUser == null) return null;
-    final _GoogleAuthClient client = _GoogleAuthClient(await googleSignIn.currentUser!.authHeaders);
+    if (currentUser == null) return null;
+    final _GoogleAuthClient client = _GoogleAuthClient(currentUser!.authHeaders);
     return drive.DriveApi(client);
   }
 
@@ -48,107 +63,42 @@ class GoogleDriveClient {
   }
 
   Future<bool> reauthenticateIfNeeded() async {
-    _currentUser = await GoogleUserStorage().readObject();
-    if (currentUser == null || !await googleSignIn.isSignedIn()) return false;
-
-    final account = await googleSignIn.signInSilently(
-      reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),
-      suppressErrors: false,
-    );
-
-    if (account != null) {
-      _currentUser = GoogleUserObject(
-        id: account.id,
-        email: account.email,
-        displayName: account.displayName,
-        photoUrl: account.photoUrl,
-        accessToken: await account.authentication.then((e) => e.accessToken),
-        refreshedAt: DateTime.now(),
-      );
-
-      await GoogleUserStorage().writeObject(_currentUser!);
-      return true;
-    }
-
-    return false;
-  }
-
-  Future<bool> signIn() async {
-    final GoogleSignInAccount? account = await googleSignIn.signIn();
-    if (account == null) return false;
-
-    _currentUser = GoogleUserObject(
-      id: account.id,
-      email: account.email,
-      displayName: account.displayName,
-      photoUrl: account.photoUrl,
-      accessToken: await account.authentication.then((e) => e.accessToken),
-      refreshedAt: DateTime.now(),
-    );
-
-    await GoogleUserStorage().writeObject(_currentUser!);
-    return true;
-  }
-
-  Future<void> signOut() async {
-    await googleSignIn.signOut();
-    await GoogleUserStorage().remove();
-    _currentUser = null;
-  }
-
-  Future<bool> canAccessRequestedScopes() async {
-    final user = googleSignIn.currentUser;
-    if (user == null) return false;
-
-    final accessToken = (await user.authentication).accessToken;
-    if (accessToken == null) return false;
-
-    String? accessedScopes;
     try {
-      http.Response response = await http.get(
-        Uri.parse('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=$accessToken'),
-      );
-      if (response.statusCode != 200) return false;
-      final Map<String, dynamic> tokenInfo = json.decode(response.body);
-      accessedScopes = tokenInfo['scope'] as String?;
-    } catch (e) {
-      debugPrint(e.toString());
+      GoogleSignInAccount? result = await (await googleSignIn).attemptLightweightAuthentication();
+      GoogleSignInClientAuthorization? authorization =
+          await result?.authorizationClient.authorizationForScopes(_scopes);
+      if (result != null) await _setUser(result, authorization);
+      return true;
+    } on PlatformException catch (e) {
+      if (e.details is Map && e.details['NSUnderlyingError']['code'] == '400') {
+        _clearUser();
+      }
       return false;
     }
-
-    return googleSignIn.scopes.every((requestedScope) {
-      return accessedScopes?.contains(requestedScope) ?? false;
-    });
   }
 
   Future<bool> requestScope() async {
-    if (!isSignedIn) return false;
+    if (_googleSignInAccount == null) return false;
 
-    bool requested = await googleSignIn.requestScopes(googleSignIn.scopes);
-    bool authorized = await canAccessRequestedScopes();
-
-    // in case we request scope success but still unauthorize, it mean user can disconnect app from Google app directly.
-    if (requested && !authorized) {
-      await googleSignIn.disconnect();
-      _currentUser = null;
-      await GoogleUserStorage().remove();
+    try {
+      GoogleSignInClientAuthorization authorization =
+          await _googleSignInAccount!.authorizationClient.authorizeScopes(_scopes);
+      await _setUser(_googleSignInAccount!, authorization);
+      return true;
+    } on GoogleSignInException catch (_) {
+      return false;
     }
+  }
 
-    // after request, access token might be renew.
-    final account = googleSignIn.currentUser;
-    if (authorized && account != null) {
-      _currentUser = GoogleUserObject(
-        id: account.id,
-        email: account.email,
-        displayName: account.displayName,
-        photoUrl: account.photoUrl,
-        accessToken: await account.authentication.then((e) => e.accessToken),
-        refreshedAt: DateTime.now(),
-      );
-      await GoogleUserStorage().writeObject(_currentUser!);
-    }
+  Future<void> signIn() async {
+    GoogleSignInAccount account = await (await googleSignIn).authenticate();
+    GoogleSignInClientAuthorization? authorization = await account.authorizationClient.authorizationForScopes(_scopes);
+    return _setUser(account, authorization);
+  }
 
-    return authorized;
+  Future<void> signOut() async {
+    await (await googleSignIn).signOut();
+    await _clearUser();
   }
 
   Future<(String, int)?> getFileContent(CloudFileObject file) async {
@@ -295,5 +245,24 @@ class GoogleDriveClient {
     debugPrint("Drive folder ${createdFolder.name} created: ${createdFolder.id}");
 
     return _folderDriveIdByFolderName[folderName] = createdFolder.id!;
+  }
+
+  Future<void> _clearUser() async {
+    _googleSignInAccount = null;
+    _currentUser = null;
+    await GoogleUserStorage().remove();
+  }
+
+  Future<void> _setUser(GoogleSignInAccount account, GoogleSignInClientAuthorization? authorization) async {
+    _googleSignInAccount = account;
+    _currentUser = GoogleUserObject(
+      id: account.id,
+      email: account.email,
+      displayName: account.displayName,
+      photoUrl: account.photoUrl,
+      accessToken: authorization?.accessToken,
+      refreshedAt: DateTime.now(),
+    );
+    await GoogleUserStorage().writeObject(_currentUser!);
   }
 }

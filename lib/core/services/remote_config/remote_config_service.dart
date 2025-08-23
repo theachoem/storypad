@@ -72,7 +72,7 @@ class RemoteConfigService {
   static const donationUrl = _RemoteConfigObject<String>(
     'DONATATION_URL',
     _RemoteConfigValueType.string,
-    'https://coff.ee/theachoem',
+    '',
   );
 
   Future<void> initialize() async {
