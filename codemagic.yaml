@@ -1,0 +1,158 @@
+# How to Configure This Workflow in the Codemagic Portal
+#
+# 1. Required environment variables:
+#
+#   - FIREBASE_CLI_TOKEN
+#   - GOOGLE_PLAY_SERVICE_ACCOUNT_STORYPAD (used to upload ipa to Google Play Console)
+#   - GOOGLE_PLAY_SERVICE_ACCOUNT_SPOOKY (used to upload ipa to Google Play Console)
+#   - DART_DEFINES_STORYPAD_JSON
+#   - DART_DEFINES_SPOOKY_JSON
+#
+# 2. iOS and Android code signing setup:
+#
+#   a. iOS certificates and provisioning profiles (for building & signing IPA):
+#     - Go to Team > Integrations in Codemagic.
+#     - Add an Apple Developer Portal integration to:
+#       - Fetch certificates automatically
+#       - Upload IPA to the App Store
+#     - After integration, go to Team > Code signing identities to fetch iOS certificates.
+#     - Similarly, fetch provisioning profiles for use in the iOS build.
+#
+#   b. Android keystore (for building & signing app bundle):
+#     - Go to Team > Code signing identities.
+#     - Upload your Android keystore file (e.g., app/android/keystore.jks).
+#     - Provide the required information from app/android/key.properties:
+#       * storePassword
+#       * keyPassword
+#       * keyAlias
+
+workflows:
+  storypad-ci:
+    name: StoryPad CI/CD
+    max_build_duration: 90
+    integrations:
+      app_store_connect: Thea Choem - Apple Connect API Key
+    environment:
+      flutter: 3.35.1
+      xcode: 16.1
+      cocoapods: 1.16.2
+      groups:
+        - android
+        - dart_defines
+        - firebase_cli
+      android_signing:
+        - storypad_keystore
+      ios_signing:
+        distribution_type: app_store
+        provisioning_profiles:
+          - storypad_ios_provisioning_profile
+        certificates:
+          - storypad_ios_signing_certificate
+
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: "storypad-v*"
+        - pattern: "spooky-v*"
+
+    scripts:
+      - name: Parse tag
+        script: |
+          TAG_NAME=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "Detected tag: $TAG_NAME"
+
+          if [[ -z "$TAG_NAME" ]]; then
+            echo "No tag found. Exiting."
+            exit 1
+          fi
+
+          # Extract app name (everything before the first hyphen)
+          TAG_APP=${TAG_NAME%%-*}
+
+          # Extract version/build (everything after the first hyphen)
+          TAG_VERSION_BUILD=${TAG_NAME#*-}
+
+          if [[ -z "$TAG_APP" || -z "$TAG_VERSION_BUILD" ]]; then
+            echo "Invalid tag format: $TAG_NAME"
+            exit 1
+          fi
+
+          echo "TAG_APP='$TAG_APP'"
+          echo "TAG_VERSION_BUILD='$TAG_VERSION_BUILD'"
+
+          # Save to environment file
+          echo "TAG_APP=$TAG_APP" >> $CM_ENV
+          echo "TAG_VERSION_BUILD=$TAG_VERSION_BUILD" >> $CM_ENV
+
+      - name: Decode DART_DEFINES
+        script: |
+          mkdir -p configs
+
+          echo $DART_DEFINES_STORYPAD_JSON > configs/storypad.json
+          echo $DART_DEFINES_SPOOKY_JSON > configs/spooky.json
+
+          cat configs/storypad.json
+          cat configs/spooky.json
+
+      - name: Setup Firebase
+        script: |
+          FLUTTERFIRE_CLI_VERSION="1.1.0"
+
+          install_firebase_cli() {
+            mkdir -p "$HOME/firebase"
+            curl -Lo "$HOME/firebase/firebase" https://github.com/firebase/firebase-tools/releases/download/v14.1.0/firebase-tools-linux
+            chmod +x "$HOME/firebase/firebase"
+          }
+
+          install_flutterfire_cli() { dart pub global activate flutterfire_cli $FLUTTERFIRE_CLI_VERSION; }
+          run_if_not_installed() { command -v $1 >/dev/null || $2; }
+
+          run_if_not_installed firebase install_firebase_cli
+          run_if_not_installed flutterfire install_flutterfire_cli
+
+          # Persist PATH change for subsequent steps in this workflow
+          export PATH="$HOME/.pub-cache/bin:$HOME/firebase:$PATH"
+
+          # flutterfire command will generate file under this folder which might not exist yet.
+          mkdir -p macos/Flutter/ephemeral
+
+          bin/flutterfire --$TAG_APP
+
+      # https://docs.flutter.dev/deployment/ios#create-a-build-archive-with-codemagic-cli-tools
+      # https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app
+      - name: Build iOS IPA
+        script: |
+          # Set up code signing settings on Xcode project
+          xcode-project use-profiles --export-options-plist=$HOME/export_options.plist
+
+          flutter build ipa \
+            --release \
+            --flavor $TAG_APP \
+            --dart-define=CUPERTINO=yes \
+            --dart-define-from-file=configs/$TAG_APP.json \
+            --target=lib/main_$TAG_APP.dart \
+            --export-options-plist=$HOME/export_options.plist
+
+      - name: Build Android App Bundle
+        script: |
+          flutter build appbundle \
+            --release \
+            --flavor $TAG_APP \
+            --dart-define-from-file=configs/$TAG_APP.json \
+            --target=lib/main_$TAG_APP.dart
+
+    artifacts:
+      - build/app/outputs/bundle/**/*.aab
+      - build/ios/ipa/*.ipa
+
+    # https://docs.codemagic.io/yaml-publishing/google-play/
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
+      google_play:
+        track: internal
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_STORYPAD
+        submit_as_draft: false
