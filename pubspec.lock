@@ -1029,6 +1029,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  icloud_storage_sync:
+    dependency: "direct main"
+    description:
+      path: "packages/icloud_storage_sync"
+      relative: true
+    source: path
+    version: "0.0.2"
   image:
     dependency: transitive
     description:

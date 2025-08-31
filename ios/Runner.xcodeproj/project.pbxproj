@@ -96,7 +96,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		62795B042E4284C4008D1665 /* Exceptions for "StoreKit" folder in "Runner" target */ = {
+		62795B042E4284C4008D1665 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"StoryPad - Timeline Diary.storekit",
@@ -106,18 +106,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		62795B012E4284AD008D1665 /* StoreKit */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				62795B042E4284C4008D1665 /* Exceptions for "StoreKit" folder in "Runner" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = StoreKit;
-			sourceTree = "<group>";
-		};
+		6255C1A62E5B4897009B4939 /* core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = core; sourceTree = "<group>"; };
+		62795B012E4284AD008D1665 /* StoreKit */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (62795B042E4284C4008D1665 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = StoreKit; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +251,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				6255C1A62E5B4897009B4939 /* core */,
 				623F38B02D80A5FD00156016 /* Runner.entitlements */,
 				62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */,
 				62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */,
@@ -317,6 +308,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6255C1A62E5B4897009B4939 /* core */,
 			);
 			name = Runner;
 			productName = Runner;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart'
 import 'package:storypad/core/constants/app_constants.dart' show kDefaultFontWeight;
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart' show AnalyticsUserProperyService;
-import 'package:storypad/core/storages/device_preferences_storage.dart';
+import 'package:storypad/core/local_storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
 class DevicePreferencesProvider extends ChangeNotifier {

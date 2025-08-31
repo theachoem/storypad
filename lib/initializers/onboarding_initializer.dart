@@ -1,5 +1,5 @@
 import 'package:storypad/core/databases/models/preference_db_model.dart';
-import 'package:storypad/core/storages/onboarded_storage.dart';
+import 'package:storypad/core/local_storages/onboarded_storage.dart';
 
 // initialize after database.
 class OnboardingInitializer {

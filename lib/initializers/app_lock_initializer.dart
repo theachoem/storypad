@@ -2,7 +2,7 @@
 
 import 'package:storypad/core/objects/app_lock_object.dart';
 import 'package:storypad/core/services/local_auth_service.dart';
-import 'package:storypad/core/storages/app_lock_storage.dart';
+import 'package:storypad/core/local_storages/app_lock_storage.dart';
 
 class _AppLockInitialData {
   final LocalAuthService localAuth;
