@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:storypad/core/storages/base_object_storages/bool_storage.dart';
+import 'package:storypad/core/local_storages/base_object_storages/bool_storage.dart';
 
 class FakeBoolStorage extends BoolStorage {}
 

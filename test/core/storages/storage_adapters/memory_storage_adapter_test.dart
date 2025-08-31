@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:storypad/core/storages/preference_storages/default_storage.dart';
-import 'package:storypad/core/storages/storage_adapters/base_storage_adapter.dart';
-import 'package:storypad/core/storages/storage_adapters/memory_storage_adapter.dart';
+import 'package:storypad/core/local_storages/preference_storages/default_storage.dart';
+import 'package:storypad/core/local_storages/storage_adapters/base_storage_adapter.dart';
+import 'package:storypad/core/local_storages/storage_adapters/memory_storage_adapter.dart';
 
 class FakeStorage<T> extends DefaultStorage<T> {
   @override

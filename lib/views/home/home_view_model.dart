@@ -11,7 +11,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
-import 'package:storypad/core/storages/new_badge_storage.dart';
+import 'package:storypad/core/local_storages/new_badge_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/home_view.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/core/storages/dimissed_surveys_storage.dart';
+import 'package:storypad/core/local_storages/dimissed_surveys_storage.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';

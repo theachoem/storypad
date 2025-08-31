@@ -8,7 +8,7 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/storages/google_user_storage.dart';
+import 'package:storypad/core/local_storages/google_user_storage.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
