@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 enum InAppUpdateStatus {
   downloading,
   updateAvailable,
@@ -6,11 +8,11 @@ enum InAppUpdateStatus {
   String get label {
     switch (this) {
       case downloading:
-        return 'Updating...';
+        return tr('general.updating');
       case updateAvailable:
-        return 'Update';
+        return tr('general.update');
       case installAvailable:
-        return 'Install';
+        return tr('general.restart');
     }
   }
 

@@ -5,7 +5,6 @@ import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/local_widgets/profile_avatar.dart';
 import 'package:storypad/views/add_ons/show/show_add_on_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';

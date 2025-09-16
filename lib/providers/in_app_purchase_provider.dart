@@ -1,13 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/providers/backup_provider.dart';
 
 // This provider securely manages in-app purchases across platforms without storing your actual email.
 // It authenticates using your Google account via SSO, then immediately hashes your email locally.
@@ -24,7 +20,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   InAppPurchaseProvider(BuildContext context) {
     _initialize(context).then((_) async {
       if (!context.mounted) return;
-      await revalidateCustomerInfo(context);
+      await _loadCustomerInfo(context);
     });
   }
 
@@ -45,24 +41,14 @@ class InAppPurchaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> revalidateCustomerInfo(BuildContext context) async {
+  Future<void> _loadCustomerInfo(BuildContext context) async {
     if (!kIAPEnabled) return;
 
-    await _logoutIfInvalid(context);
-    if (!context.mounted) return;
-
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
-    if (currentUser != null) {
-      String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
-      if (_customerInfo?.originalAppUserId == hash) return;
-
-      try {
-        LogInResult result = await Purchases.logIn(hash);
-        _customerInfo = result.customerInfo;
-        notifyListeners();
-      } catch (e) {
-        debugPrint('$runtimeType#revalidateCustomerInfo error Purchases.login: $e');
-      }
+    try {
+      _customerInfo = await Purchases.getCustomerInfo();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('$runtimeType#_loadCustomerInfo error Purchases.login: $e');
     }
   }
 
@@ -71,9 +57,6 @@ class InAppPurchaseProvider extends ChangeNotifier {
     String productIdentifier,
   ) async {
     if (!kIAPEnabled) return;
-
-    await _loginIfNot(context);
-
     if (_customerInfo == null) return;
     if (isActive(productIdentifier)) return;
 
@@ -84,7 +67,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
     if (storeProduct != null) {
       try {
-        PurchaseResult result = await Purchases.purchaseStoreProduct(storeProduct);
+        PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
         _customerInfo = result.customerInfo;
         notifyListeners();
       } on PlatformException catch (e) {
@@ -94,57 +77,10 @@ class InAppPurchaseProvider extends ChangeNotifier {
     }
   }
 
-  // Restore purchase handle like a refresh.
-  // Make sure data is valid & _customerInfo is latest.
   Future<void> restorePurchase(
     BuildContext context,
   ) async {
     if (!kIAPEnabled) return;
-
-    await _logoutIfInvalid(context);
-    if (!context.mounted) return;
-    return _loginIfNot(context);
-  }
-
-  Future<void> _loginIfNot(BuildContext context) async {
-    if (!kIAPEnabled) return;
-    if (_customerInfo != null) return;
-
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
-    if (currentUser == null) {
-      await context.read<BackupProvider>().signIn(context);
-      if (context.mounted) currentUser = context.read<BackupProvider>().currentUser;
-    }
-
-    if (currentUser != null) {
-      String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
-
-      try {
-        LogInResult loginResult = await Purchases.logIn(hash);
-        _customerInfo = loginResult.customerInfo;
-        notifyListeners();
-      } catch (e) {
-        debugPrint('$runtimeType#purchase error Purchases.login: $e');
-      }
-    }
-  }
-
-  Future<void> _logoutIfInvalid(BuildContext context) async {
-    if (!kIAPEnabled) return;
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
-
-    if (currentUser != null && _customerInfo != null) {
-      String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
-
-      if (_customerInfo?.originalAppUserId != hash) {
-        await Purchases.logOut();
-        _customerInfo = null;
-        notifyListeners();
-      }
-    } else if (currentUser == null && _customerInfo != null) {
-      await Purchases.logOut();
-      _customerInfo = null;
-      notifyListeners();
-    }
+    await _loadCustomerInfo(context);
   }
 }

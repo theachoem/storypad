@@ -23,7 +23,7 @@ class _SpThemeModeIconState extends State<SpThemeModeIcon> with DebounchedCallba
   void setDarkMode(bool value) {
     if (value != isDarkMode) {
       isDarkMode = value;
-      setState(() {});
+      if (mounted) setState(() {});
     }
   }
 

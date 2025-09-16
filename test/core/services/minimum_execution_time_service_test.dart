@@ -19,7 +19,13 @@ void main() {
       final totalDuration = endedAt.difference(startedAt);
 
       expect(result, equals('done'));
-      expect(totalDuration >= minDuration, isTrue, reason: 'Expected at least $minDuration but got $totalDuration');
+
+      // Allow tiny drift (up to 5ms) because of timer precision
+      expect(
+        totalDuration.inMilliseconds >= minDuration.inMilliseconds - 5,
+        isTrue,
+        reason: 'Expected around $minDuration but got $totalDuration',
+      );
     });
 
     test('does not delay if callback is slower than minimum duration', () async {
