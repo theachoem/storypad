@@ -57,27 +57,48 @@ android {
 
     signingConfigs {
         spookyRelease {
-            def keystoreProperties = loadKeystoreProperties('./keys/spooky/spooky_key.properties')
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (System.getenv()["CI"]) {
+                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["CM_KEY_ALIAS"]
+                keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+                def keystoreProperties = loadKeystoreProperties('./keys/spooky/spooky_key.properties')
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
         }
 
         storypadRelease {
-            def keystoreProperties = loadKeystoreProperties('./keys/storypad/storypad_key.properties')
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (System.getenv()["CI"]) {
+              storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+              storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+              keyAlias System.getenv()["CM_KEY_ALIAS"]
+              keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+              def keystoreProperties = loadKeystoreProperties('./keys/storypad/storypad_key.properties')
+              keyAlias keystoreProperties['keyAlias']
+              keyPassword keystoreProperties['keyPassword']
+              storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+              storePassword keystoreProperties['storePassword']
+            }
         }
 
         communityRelease {
-            def keystoreProperties = loadKeystoreProperties('./keys/community/community_key.properties')
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (System.getenv()["CI"]) {
+              storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+              storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+              keyAlias System.getenv()["CM_KEY_ALIAS"]
+              keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+              def keystoreProperties = loadKeystoreProperties('./keys/storypad/community_key.properties')
+              keyAlias keystoreProperties['keyAlias']
+              keyPassword keystoreProperties['keyPassword']
+              storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+              storePassword keystoreProperties['storePassword']
+            }
         }
 
         spookyDebug {
