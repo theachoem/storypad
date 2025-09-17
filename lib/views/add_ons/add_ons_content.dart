@@ -11,10 +11,6 @@ class _AddOnsContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr('page.add_ons.title')),
         centerTitle: kIsCupertino,
-        actions: [
-          const ProfileAvatar(),
-          const SizedBox(width: 8.0),
-        ],
       ),
       body: buildBody(context),
       bottomNavigationBar: buildBottomNavigation(context),

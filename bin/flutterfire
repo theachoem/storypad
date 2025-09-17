@@ -61,7 +61,7 @@ function configure() {
     --ios-build-config=Release-$FLAVOR
     --macos-build-config=Release-$FLAVOR
     --account=$ACCOUNT
-    --token=$TOKEN
+    --token=$FIREBASE_CLI_TOKEN
     --yes"
 
   run_command "flutterfire configure
@@ -78,7 +78,7 @@ function configure() {
     --ios-build-config=Debug-$FLAVOR
     --macos-build-config=Debug-$FLAVOR
     --account=$ACCOUNT
-    --token=$TOKEN
+    --token=$FIREBASE_CLI_TOKEN
     --yes"
 
   # IOS won't run without build-config=Debug
@@ -97,7 +97,7 @@ function configure() {
     --ios-build-config=Profile-$FLAVOR
     --macos-build-config=Profile-$FLAVOR
     --account=$ACCOUNT
-    --token=$TOKEN
+    --token=$FIREBASE_CLI_TOKEN
     --yes"
 }
 
@@ -107,17 +107,17 @@ function main() {
   case $1 in
 
   --community)
-    configure 'community' 'juniorise-spooky-community' 'com.juniorise.spooky.community' '1:892248434003:android:07ab4b2c947355a263eda6' $2
+    configure 'community' 'juniorise-spooky-community' 'com.juniorise.spooky.community' '1:892248434003:web:88cf8dd20a7c2ddc63eda6' $2
     exit 0
     ;;
 
   --storypad)
-    configure 'storypad' 'tc-write-story' 'com.tc.writestory' '1:315543702519:android:4e9cf4c1923c1dab74fcf2' $2
+    configure 'storypad' 'tc-write-story' 'com.tc.writestory' '1:315543702519:web:3c1c02aab9ff9aa974fcf2' $2
     exit 0
     ;;
 
   --spooky)
-    configure 'spooky' 'juniorise-spooky' 'com.juniorise.spooky' '1:845318918007:android:8d9f8265b46011fd349b72' $2
+    configure 'spooky' 'juniorise-spooky' 'com.juniorise.spooky' '1:845318918007:web:09bcc6c7d64dd809349b72' $2
     exit 0
     ;;
 

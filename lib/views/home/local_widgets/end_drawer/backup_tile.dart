@@ -18,7 +18,7 @@ class _BackupTile extends StatelessWidget {
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       action = FilledButton.icon(
         icon: Icon(SpIcons.googleDrive),
-        label: Text(tr('button.sign_in')),
+        label: Text(tr('button.connect')),
         onPressed: () => provider.signIn(context),
       );
     } else {

@@ -49,7 +49,13 @@ class GoogleDriveClient {
 
   Future<bool> reauthenticateIfNeeded() async {
     _currentUser = await GoogleUserStorage().readObject();
-    if (currentUser == null || !await googleSignIn.isSignedIn()) return false;
+    if (currentUser == null) return false;
+
+    if (!await googleSignIn.isSignedIn()) {
+      _currentUser = null;
+      await GoogleUserStorage().remove();
+      return false;
+    }
 
     final account = await googleSignIn.signInSilently(
       reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),

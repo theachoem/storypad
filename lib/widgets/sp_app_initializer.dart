@@ -30,7 +30,9 @@ class _SpAppInitializerState extends State<SpAppInitializer> {
   void initState() {
     super.initState();
 
-    widget.onPlatformInitialized();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onPlatformInitialized();
+    });
   }
 
   @override
