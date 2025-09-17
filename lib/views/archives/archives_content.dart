@@ -105,16 +105,16 @@ class _ArchivesContent extends StatelessWidget {
                 style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
                 child: Text("${tr("button.permanent_delete")} (${state.selectedStories.length})"),
                 onPressed: () async {
-                  bool deleted = await state.permanantDeleteAll(context);
-                  if (deleted) viewModel.refreshList();
+                  await state.permanantDeleteAll(context);
+                  viewModel.refreshList();
                 },
               ),
             if (viewModel.type.isArchives)
               FilledButton(
                 child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
                 onPressed: () async {
-                  bool moved = await state.moveToBinAll(context);
-                  if (moved) viewModel.refreshList();
+                  await state.moveToBinAll(context);
+                  viewModel.refreshList();
                 },
               ),
           ],
@@ -145,13 +145,19 @@ class _ArchivesContent extends StatelessWidget {
                     SpPopMenuItem(
                       title: tr("button.put_back_all"),
                       leadingIconData: SpIcons.putBack,
-                      onPressed: () => state.putBackAll(context),
+                      onPressed: () async {
+                        await state.putBackAll(context);
+                        viewModel.refreshList();
+                      },
                     ),
                   if (viewModel.type.isArchives && state.selectedStories.isNotEmpty)
                     SpPopMenuItem(
                       title: tr("button.move_to_bin_all"),
                       leadingIconData: SpIcons.delete,
-                      onPressed: () => state.moveToBinAll(context),
+                      onPressed: () async {
+                        await state.moveToBinAll(context);
+                        viewModel.refreshList();
+                      },
                     ),
                   // for bin, "delete all" already show in bottom nav.
                   if (viewModel.type.isArchives && state.selectedStories.isNotEmpty)
@@ -159,7 +165,10 @@ class _ArchivesContent extends StatelessWidget {
                       title: tr("button.permanent_delete_all"),
                       leadingIconData: SpIcons.deleteForever,
                       titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                      onPressed: () => state.permanantDeleteAll(context),
+                      onPressed: () async {
+                        await state.permanantDeleteAll(context);
+                        viewModel.refreshList();
+                      },
                     ),
                 ];
               },

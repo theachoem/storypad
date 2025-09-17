@@ -54,15 +54,19 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     );
 
     if (result == OkCancelResult.ok && context.mounted) {
-      for (int i = 0; i < selectedStories.length; i++) {
-        int id = selectedStories.elementAt(i);
-        final record = await StoryDbModel.db.find(id);
-        await record?.putBack(runCallbacks: i == selectedStories.length - 1);
-      }
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#putBackAll',
+        future: () async {
+          for (int i = 0; i < selectedStories.length; i++) {
+            int id = selectedStories.elementAt(i);
+            final record = await StoryDbModel.db.find(id);
+            await record?.putBack(runCallbacks: i == selectedStories.length - 1);
+          }
+          await HomeView.reload(debugSource: '$runtimeType#putBackAll');
+        },
+      );
 
       turnOffEditing();
-      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
-
       return true;
     }
 
@@ -78,14 +82,19 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     );
 
     if (result == OkCancelResult.ok && context.mounted) {
-      for (int i = 0; i < selectedStories.length; i++) {
-        int id = selectedStories.elementAt(i);
-        final record = await StoryDbModel.db.find(id);
-        await record?.moveToBin(runCallbacks: i == selectedStories.length - 1);
-      }
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#moveToBinAll',
+        future: () async {
+          for (int i = 0; i < selectedStories.length; i++) {
+            int id = selectedStories.elementAt(i);
+            final record = await StoryDbModel.db.find(id);
+            await record?.moveToBin(runCallbacks: i == selectedStories.length - 1);
+          }
+          await HomeView.reload(debugSource: '$runtimeType#moveToBinAll');
+        },
+      );
 
       turnOffEditing();
-      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 
@@ -100,14 +109,20 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     );
 
     if (result == OkCancelResult.ok && context.mounted) {
-      for (int i = 0; i < selectedStories.length; i++) {
-        int id = selectedStories.elementAt(i);
-        final record = await StoryDbModel.db.find(id);
-        await record?.archive(runCallbacks: i == selectedStories.length - 1);
-      }
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#archiveAll',
+        future: () async {
+          for (int i = 0; i < selectedStories.length; i++) {
+            int id = selectedStories.elementAt(i);
+            final record = await StoryDbModel.db.find(id);
+            await record?.archive(runCallbacks: i == selectedStories.length - 1);
+          }
+
+          await HomeView.reload(debugSource: '$runtimeType#archiveAll');
+        },
+      );
 
       turnOffEditing();
-      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 
@@ -126,13 +141,18 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
     if (result == OkCancelResult.ok && context.mounted) {
       final state = SpStoryListMultiEditWrapper.of(context);
 
-      for (int i = 0; i < state.selectedStories.length; i++) {
-        int id = state.selectedStories.elementAt(i);
-        await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
-      }
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#putBackAll',
+        future: () async {
+          for (int i = 0; i < state.selectedStories.length; i++) {
+            int id = state.selectedStories.elementAt(i);
+            await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
+          }
+          await HomeView.reload(debugSource: '$runtimeType#putBackAll');
+        },
+      );
 
       turnOffEditing();
-      await HomeView.reload(debugSource: '$runtimeType#putBackAll');
       return true;
     }
 
