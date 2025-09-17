@@ -8,10 +8,12 @@ class _TitleField extends StatelessWidget {
     required this.readOnly,
     required this.onChanged,
     required this.bodyFocusNode,
+    required this.largerTitle,
   });
 
   final FocusNode titleFocusNode;
   final FocusNode bodyFocusNode;
+  final bool largerTitle;
   final TextEditingController? titleController;
   final StoryPreferencesDbModel? preferences;
   final bool readOnly;
@@ -19,12 +21,15 @@ class _TitleField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double? fontSize = preferences?.titleFontSize ?? Theme.of(context).textTheme.titleMedium?.fontSize;
+    if (fontSize != null && largerTitle) fontSize += 2;
+
     TextStyle baseStyle = GoogleFonts.getFont(
       preferences?.titleFontFamily ??
           preferences?.fontFamily ??
           context.read<DevicePreferencesProvider>().preferences.fontFamily,
       color: Theme.of(context).textTheme.titleMedium?.color,
-      fontSize: preferences?.titleFontSize ?? Theme.of(context).textTheme.titleMedium?.fontSize,
+      fontSize: fontSize,
       fontWeight: AppTheme.getThemeFontWeight(context, preferences?.titleFontWeight ?? kTitleDefaultFontWeight),
     );
 

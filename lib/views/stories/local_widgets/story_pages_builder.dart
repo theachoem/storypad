@@ -10,6 +10,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_pages_block.dart';
@@ -21,10 +22,10 @@ import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_default_scroll_controller.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_focus_node_builder2.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_page_view_datas.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -45,7 +46,7 @@ class StoryPagesBuilder extends StatelessWidget {
     required this.preferences,
     required this.pages,
     required this.storyContent,
-    required this.header,
+    required this.headerBuilder,
     required this.padding,
     required this.pageScrollController,
     required this.viewInsets,
@@ -61,7 +62,7 @@ class StoryPagesBuilder extends StatelessWidget {
   final EdgeInsets padding;
 
   /// [StoryHeader]
-  final Widget? header;
+  final Widget Function(StoryPageObject page)? headerBuilder;
   final StoryPreferencesDbModel? preferences;
   final PageController? pageController;
   final StoryContentDbModel storyContent;
@@ -187,7 +188,7 @@ class StoryPagesBuilder extends StatelessWidget {
   Widget buildPage(
     StoryPageObject page,
     BuildContext context, {
-    bool showBorder = true,
+    bool smallPage = true,
   }) {
     final pageIndex = pages.indexWhere((p) => page.id == p.id);
 
@@ -197,7 +198,7 @@ class StoryPagesBuilder extends StatelessWidget {
     return _StoryPage(
       key: page.key,
       preferences: preferences,
-      showBorder: showBorder,
+      smallPage: smallPage,
       readOnly: readOnly,
       pageIndex: pageIndex,
       page: page,

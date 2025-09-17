@@ -58,7 +58,7 @@ class _EditStoryContent extends StatelessWidget {
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
     return StoryPagesBuilder(
       viewInsets: MediaQuery.viewInsetsOf(context),
-      header: StoryHeader.fromEditStory(viewModel: viewModel, context: context),
+      headerBuilder: (page) => StoryHeader.fromEditStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,

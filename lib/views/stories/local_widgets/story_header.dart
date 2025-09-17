@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
@@ -30,9 +31,11 @@ class StoryHeader extends StatelessWidget {
     required this.onToggleManagingPage,
     required this.onChangeDate,
     required this.onSizeChange,
+    required this.page,
   });
 
   final StoryDbModel story;
+  final StoryPageObject page;
   final StoryContentDbModel draftContent;
   final SpStoryLabelsDraftActions? draftActions;
   final ValueNotifier<int?>? currentPageIndexNotifier;
@@ -45,6 +48,7 @@ class StoryHeader extends StatelessWidget {
   final bool readOnly;
 
   factory StoryHeader.fromEditStory({
+    required StoryPageObject page,
     required EditStoryViewModel viewModel,
     required BuildContext context,
   }) {
@@ -63,14 +67,17 @@ class StoryHeader extends StatelessWidget {
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: null,
+      page: page,
     );
   }
 
   factory StoryHeader.fromShowStory({
+    required StoryPageObject page,
     required ShowStoryViewModel viewModel,
     required BuildContext context,
   }) {
     return StoryHeader(
+      page: page,
       currentPageIndexNotifier: viewModel.story?.preferences.layoutType == PageLayoutType.pages
           ? viewModel.pagesManager.currentPageIndexNotifier
           : null,
