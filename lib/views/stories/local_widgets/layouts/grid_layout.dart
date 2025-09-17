@@ -15,7 +15,7 @@ class _GridLayout extends StatelessWidget {
       controller: builder.pageScrollController,
       padding: builder.padding,
       children: [
-        if (builder.header != null) builder.header!,
+        if (builder.headerBuilder != null) builder.headerBuilder!(builder.pages[0]),
         buildLayout(blocks, context),
       ],
     );

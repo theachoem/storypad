@@ -108,6 +108,7 @@ class _QuillEditorState extends State<_QuillEditor> {
           if (isCheck) {
             return Container(
               alignment: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight),
+              transform: Matrix4.identity()..spTranslate(-6.0),
               child: Checkbox.adaptive(
                 value: config.value,
                 onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,

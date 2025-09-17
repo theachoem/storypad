@@ -28,7 +28,7 @@ class _ShowChangeContent extends StatelessWidget {
 
     return StoryPagesBuilder(
       viewInsets: MediaQuery.viewInsetsOf(context),
-      header: null,
+      headerBuilder: null,
       preferences: viewModel.params.preferences,
       pages: pages,
       storyContent: viewModel.content,

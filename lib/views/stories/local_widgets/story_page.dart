@@ -16,7 +16,7 @@ class _StoryPage extends StatelessWidget {
     required this.onChanged,
     required this.onGoToEdit,
     required this.pageIndex,
-    this.showBorder = true,
+    this.smallPage = true,
     this.readOnly = false,
   });
 
@@ -38,7 +38,7 @@ class _StoryPage extends StatelessWidget {
   final void Function()? onGoToEdit;
 
   final bool readOnly;
-  final bool showBorder;
+  final bool smallPage;
 
   void onChange() {
     StoryPageDbModel richPage = page.page.copyWith(
@@ -53,7 +53,8 @@ class _StoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: showBorder
+      padding: EdgeInsets.zero,
+      decoration: smallPage
           ? BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(color: Theme.of(context).dividerColor),
@@ -79,29 +80,41 @@ class _StoryPage extends StatelessWidget {
       spacing: 0.0,
       children: [
         if (readOnly && page.titleController.text.trim().isEmpty) ...[
-          const SizedBox(height: 8)
+          const SizedBox(height: 8),
         ] else ...[
           VisibilityDetector(
             key: ValueKey('page-title-${page.id}'),
             onVisibilityChanged: onTitleVisibilityChanged,
-            child: _TitleField(
-              titleFocusNode: page.titleFocusNode,
-              bodyFocusNode: page.bodyFocusNode,
-              titleController: page.titleController,
-              preferences: preferences,
-              readOnly: readOnly,
-              onChanged: (_) => onChange(),
+            child: Padding(
+              padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _TitleField(
+                titleFocusNode: page.titleFocusNode,
+                bodyFocusNode: page.bodyFocusNode,
+                titleController: page.titleController,
+                preferences: preferences,
+                readOnly: readOnly,
+                largerTitle: !smallPage,
+                onChanged: (_) => onChange(),
+              ),
             ),
           ),
         ],
-        _QuillEditor(
-          onChanged: onChanged != null ? () => onChange() : null,
-          bodyFocusNode: page.bodyFocusNode,
-          bodyController: page.bodyController,
-          scrollController: page.bodyScrollController,
-          readOnly: readOnly,
-          storyContent: storyContent,
-          onGoToEdit: onGoToEdit,
+        if (!smallPage) ...[
+          const SizedBox(height: 4),
+          const Divider(height: 1, indent: 0.0, endIndent: 0.0),
+          const SizedBox(height: 8),
+        ],
+        Padding(
+          padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
+          child: _QuillEditor(
+            onChanged: onChanged != null ? () => onChange() : null,
+            bodyFocusNode: page.bodyFocusNode,
+            bodyController: page.bodyController,
+            scrollController: page.bodyScrollController,
+            readOnly: readOnly,
+            storyContent: storyContent,
+            onGoToEdit: onGoToEdit,
+          ),
         ),
       ],
     );
