@@ -69,7 +69,7 @@
         <key>NSAppTransportSecurity</key>
         <dict>
             <key>NSAllowsArbitraryLoads</key>
-            <true />
+            <false />
         </dict>
         <key>UIApplicationSupportsIndirectInputEvents</key>
         <true />

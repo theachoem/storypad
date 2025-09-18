@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/app_product.dart';
 
 // This provider securely manages in-app purchases across platforms without storing your actual email.
@@ -45,10 +46,11 @@ class InAppPurchaseProvider extends ChangeNotifier {
     if (!kIAPEnabled) return;
 
     try {
+      AppLogger.info('$runtimeType#purchase ...');
       _customerInfo = await Purchases.getCustomerInfo();
       notifyListeners();
-    } catch (e) {
-      debugPrint('$runtimeType#_loadCustomerInfo error Purchases.login: $e');
+    } catch (e, s) {
+      AppLogger.error('$runtimeType#_loadCustomerInfo error Purchases.login: $e', stackTrace: s);
     }
   }
 
@@ -60,6 +62,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     if (_customerInfo == null) return;
     if (isActive(productIdentifier)) return;
 
+    AppLogger.info('$runtimeType#purchase ...');
     StoreProduct? storeProduct = await Purchases.getProducts(
       [productIdentifier],
       productCategory: ProductCategory.nonSubscription,
@@ -70,9 +73,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
         PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
         _customerInfo = result.customerInfo;
         notifyListeners();
-      } on PlatformException catch (e) {
+      } on PlatformException catch (e, s) {
         PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
-        debugPrint('$runtimeType#purchase error: $errorCode');
+        AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
       }
     }
   }
@@ -81,6 +84,14 @@ class InAppPurchaseProvider extends ChangeNotifier {
     BuildContext context,
   ) async {
     if (!kIAPEnabled) return;
-    await _loadCustomerInfo(context);
+    try {
+      AppLogger.info('$runtimeType#restorePurchase ...');
+      await Purchases.invalidateCustomerInfoCache();
+      _customerInfo = await Purchases.restorePurchases();
+      notifyListeners();
+    } on PlatformException catch (e, s) {
+      PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
+      AppLogger.error('$runtimeType#restorePurchase error: $errorCode', stackTrace: s);
+    }
   }
 }

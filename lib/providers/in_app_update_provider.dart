@@ -93,7 +93,6 @@ class InAppUpdateProvider extends ChangeNotifier {
           break;
         case InstallStatus.downloaded:
           setDisplayStatus(InAppUpdateStatus.installAvailable);
-          InAppUpdate.completeFlexibleUpdate();
           break;
       }
     });

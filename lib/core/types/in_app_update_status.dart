@@ -10,9 +10,9 @@ enum InAppUpdateStatus {
       case downloading:
         return tr('general.updating');
       case updateAvailable:
-        return tr('general.update');
+        return tr('button.update');
       case installAvailable:
-        return tr('general.restart');
+        return tr('button.restart');
     }
   }
 
