@@ -104,7 +104,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     return StoryPreferencesDbModel(
       showDayCount: false,
       starIcon: null,
-      showTime: false,
+      showTime: true,
       colorSeedValue: null,
       colorTone: null,
       fontFamily: null,
