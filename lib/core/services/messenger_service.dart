@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 
 class MessengerService {
   final BuildContext context;
@@ -75,9 +76,7 @@ class MessengerService {
     required Future<T?> Function() future,
     required String? debugSource,
   }) async {
-    if (debugSource != null) {
-      debugPrint("LOADING $debugSource");
-    }
+    if (debugSource != null) AppLogger.info("LOADING... $debugSource");
 
     Completer<T?> completer = Completer();
     future().then((value) => completer.complete(value));
@@ -85,22 +84,25 @@ class MessengerService {
     if (!kIsWeb && Platform.isIOS) {
       return showCupertinoDialog<T>(
         context: context,
-        builder: (context) => _loadingBuilder<T>(context, completer),
+        builder: (context) => _loadingBuilder<T>(context, completer, debugSource),
         barrierDismissible: false,
       );
     } else {
       return showDialog<T>(
         context: context,
-        builder: (context) => _loadingBuilder<T>(context, completer),
+        builder: (context) => _loadingBuilder<T>(context, completer, debugSource),
         barrierDismissible: false,
       );
     }
   }
 
-  Widget _loadingBuilder<T>(BuildContext context, Completer<T?> future) {
+  Widget _loadingBuilder<T>(BuildContext context, Completer<T?> future, String? debugSource) {
     return FutureBuilder<T?>(
       future: future.future.then((value) {
-        if (context.mounted) Navigator.of(context).pop(value);
+        if (debugSource != null) AppLogger.info("LOADED $debugSource with $value");
+        if (context.mounted) {
+          Navigator.of(context).pop(value);
+        }
         return value;
       }),
       builder: (context, snapshot) {

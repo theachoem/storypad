@@ -127,6 +127,7 @@ class BackupProvider extends ChangeNotifier {
       future: () => repository.signOut(),
     );
 
+    if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
     AnalyticsService.instance.logSignOut();
 
     _connectionStatus = null;

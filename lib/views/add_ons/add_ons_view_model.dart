@@ -1,15 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -81,12 +78,5 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
     ];
 
     notifyListeners();
-  }
-
-  Future<void> restorePurchase(BuildContext context) async {
-    return MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#restorePurchase',
-      future: () => context.read<InAppPurchaseProvider>().restorePurchase(context),
-    );
   }
 }

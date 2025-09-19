@@ -44,7 +44,7 @@ class _ShowAddOnContent extends StatelessWidget {
       ),
       ExpansionTile(
         title: Text(
-          '2. Can I use my purchase on multiple devices?',
+          '2. Will my purchase work on all my devices?',
           style: TextTheme.of(context).titleSmall,
         ),
         minTileHeight: 4.0,
@@ -52,8 +52,34 @@ class _ShowAddOnContent extends StatelessWidget {
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
-            "Yes! It works on all devices of the same platform. No account needed.",
+            "Absolutely. Once you buy it, you can use the add-on on all your devices where you sign in with the same account, whether it's your phone, tablet, iPad.",
           ),
+        ],
+      ),
+      ExpansionTile(
+        title: Text(
+          '3. Do I need to sign in with Google to purchase?',
+          style: TextTheme.of(context).titleSmall,
+        ),
+        minTileHeight: 4.0,
+        childrenPadding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+        expandedAlignment: Alignment.centerLeft,
+        children: [
+          const Text(
+            "Yes, you need to sign in with Google. This helps us restore your purchases later. We don't keep your email, only a secure ID.",
+          ),
+          Consumer<BackupProvider>(builder: (context, provider, child) {
+            return Visibility(
+              visible: !provider.isSignedIn,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4.0),
+                child: OutlinedButton(
+                  onPressed: () => provider.signIn(context),
+                  child: const Text('Sign In'),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     ];

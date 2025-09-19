@@ -57,7 +57,7 @@ class _AddOnsContent extends StatelessWidget {
           ),
           (
             tr('button.restore_purchase'),
-            () => viewModel.restorePurchase(context),
+            () => context.read<InAppPurchaseProvider>().restorePurchase(context),
           ),
         ].map((link) {
           return SpTapEffect(
