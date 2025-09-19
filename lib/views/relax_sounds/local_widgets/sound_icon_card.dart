@@ -11,11 +11,6 @@ class _SoundIconCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<RelaxSoundsProvider>(context);
-    final state = provider.playerStateFor(relaxSound.soundUrlPath);
-
-    bool settingUp = selected && (state == null || state.processingState != ProcessingState.ready);
-
     return AnimatedContainer(
       curve: Curves.ease,
       duration: Durations.short2,
@@ -32,20 +27,7 @@ class _SoundIconCard extends StatelessWidget {
         filePath: relaxSound.svgIconUrlPath,
         builder: (context, file, failed) {
           if (file == null) return const _SoundIconLoading();
-
-          return SpAnimatedIcons.fadeScale(
-            showFirst: !settingUp,
-            duration: Durations.medium1,
-            secondChild: Container(
-              height: 48,
-              alignment: Alignment.center,
-              child: const SizedBox.square(
-                dimension: 16.0,
-                child: CircularProgressIndicator.adaptive(),
-              ),
-            ),
-            firstChild: buildSvgIcon(file, context),
-          );
+          return buildSvgIcon(file, context);
         },
       ),
     );
