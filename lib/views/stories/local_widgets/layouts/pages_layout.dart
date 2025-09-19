@@ -28,7 +28,7 @@ class _PagesLayoutState extends State<_PagesLayout> {
   }
 
   void _setPageOffset() {
-    pageOffset.value = widget.builder.pageController?.page ?? 0.0;
+    pageOffset.value = widget.builder.pageController?.offset ?? 0.0;
   }
 
   @override
@@ -48,30 +48,26 @@ class _PagesLayoutState extends State<_PagesLayout> {
       itemBuilder: (context, index) {
         return Stack(
           children: [
-            SpDefaultScrollController(builder: (context, scrollController) {
-              return Scrollbar(
-                controller: scrollController,
-                interactive: true,
-                child: SingleChildScrollView(
-                  clipBehavior: Clip.none,
-                  controller: scrollController,
-                  padding: EdgeInsets.only(
-                    bottom: keyboardOpened ? widget.builder.viewInsets.bottom + 16.0 : 16.0,
+            SingleChildScrollView(
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.only(
+                bottom: keyboardOpened ? widget.builder.viewInsets.bottom + 16.0 : 16.0,
+              ),
+              child: Column(
+                children: [
+                  if (widget.builder.headerBuilder != null) buildHeader(index, screenWidth),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 200),
+                    child: widget.builder.buildPage(
+                      widget.builder.pages[index],
+                      context,
+                      smallPage: false,
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      if (widget.builder.headerBuilder != null) buildHeader(index, screenWidth),
-                      widget.builder.buildPage(
-                        widget.builder.pages[index],
-                        context,
-                        smallPage: false,
-                      ),
-                      widget.builder._buildAddButton(),
-                    ],
-                  ),
-                ),
-              );
-            }),
+                  widget.builder._buildAddButton(),
+                ],
+              ),
+            ),
             buildPageNumber(index, context),
           ],
         );
@@ -85,20 +81,33 @@ class _PagesLayoutState extends State<_PagesLayout> {
       child: widget.builder.headerBuilder!(widget.builder.pages[pageIndex]),
       builder: (context, offset, child) {
         SpPageViewDatas datas = SpPageViewDatas.fromOffset(
-          pageOffset: offset,
           itemIndex: pageIndex,
           controller: widget.builder.pageController!,
           width: screenWidth,
         );
 
-        return Transform(
-          transform: Matrix4.identity()
-            ..spTranslate(datas.translateX1)
-            ..spTranslate(datas.translateX2 ?? 0),
-          child: Opacity(
-            opacity: datas.opacity,
-            child: child,
-          ),
+        return Column(
+          children: [
+            Transform(
+              transform: Matrix4.identity()
+                ..spTranslate(datas.translateX1)
+                ..spTranslate(datas.translateX2 ?? 0),
+              child: Opacity(
+                opacity: datas.opacity,
+                child: child!,
+              ),
+            ),
+            Transform(
+              transform: Matrix4.identity()..spTranslate(offset - pageIndex * screenWidth),
+              child: Opacity(
+                opacity: datas.opacity,
+                child: const Padding(
+                  padding: EdgeInsetsGeometry.only(top: 8.0),
+                  child: Divider(height: 1, indent: 0.0, endIndent: 0.0),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

@@ -99,11 +99,6 @@ class _StoryPage extends StatelessWidget {
             ),
           ),
         ],
-        if (!smallPage) ...[
-          const SizedBox(height: 4),
-          const Divider(height: 1, indent: 0.0, endIndent: 0.0),
-          const SizedBox(height: 8),
-        ],
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
           child: _QuillEditor(

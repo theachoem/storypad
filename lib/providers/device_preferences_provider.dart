@@ -91,13 +91,20 @@ class DevicePreferencesProvider extends ChangeNotifier {
     );
   }
 
-  void toggleThemeMode(BuildContext context) {
+  void toggleThemeMode(
+    BuildContext context, {
+    Duration? delay,
+  }) async {
     if (themeMode == ThemeMode.system) {
       Brightness? brightness = View.maybeOf(context)?.platformDispatcher.platformBrightness;
       bool isDarkMode = brightness == Brightness.dark;
+
+      if (delay != null) await Future.delayed(delay, () {});
       setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
     } else {
       bool isDarkMode = themeMode == ThemeMode.dark;
+
+      if (delay != null) await Future.delayed(delay, () {});
       setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
     }
   }

@@ -13,7 +13,6 @@ class SpPageViewDatas {
   );
 
   factory SpPageViewDatas.fromOffset({
-    required double pageOffset,
     required int itemIndex,
     required PageController controller,
     required double width,
