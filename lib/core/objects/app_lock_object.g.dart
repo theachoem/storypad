@@ -13,12 +13,13 @@ abstract class _$AppLockObjectCWProxy {
 
   AppLockObject securityAnswers(Map<AppLockQuestion, String>? securityAnswers);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppLockObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppLockObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AppLockObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AppLockObject call({
     String? pin,
     bool? enabledBiometric,
@@ -26,32 +27,34 @@ abstract class _$AppLockObjectCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppLockObject.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAppLockObject.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfAppLockObject.copyWith(...)` or call `instanceOfAppLockObject.copyWith.fieldName(value)` for a single field.
 class _$AppLockObjectCWProxyImpl implements _$AppLockObjectCWProxy {
   const _$AppLockObjectCWProxyImpl(this._value);
 
   final AppLockObject _value;
 
   @override
-  AppLockObject pin(String? pin) => this(pin: pin);
+  AppLockObject pin(String? pin) => call(pin: pin);
 
   @override
   AppLockObject enabledBiometric(bool? enabledBiometric) =>
-      this(enabledBiometric: enabledBiometric);
+      call(enabledBiometric: enabledBiometric);
 
   @override
   AppLockObject securityAnswers(
           Map<AppLockQuestion, String>? securityAnswers) =>
-      this(securityAnswers: securityAnswers);
+      call(securityAnswers: securityAnswers);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppLockObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppLockObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AppLockObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AppLockObject call({
     Object? pin = const $CopyWithPlaceholder(),
     Object? enabledBiometric = const $CopyWithPlaceholder(),
@@ -75,7 +78,8 @@ class _$AppLockObjectCWProxyImpl implements _$AppLockObjectCWProxy {
 }
 
 extension $AppLockObjectCopyWith on AppLockObject {
-  /// Returns a callable class that can be used as follows: `instanceOfAppLockObject.copyWith(...)` or like so:`instanceOfAppLockObject.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfAppLockObject.copyWith(...)` or `instanceOfAppLockObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$AppLockObjectCWProxy get copyWith => _$AppLockObjectCWProxyImpl(this);
 }

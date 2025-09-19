@@ -19,12 +19,13 @@ abstract class _$StoryContentDbModelCWProxy {
 
   StoryContentDbModel richPages(List<StoryPageDbModel>? richPages);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryContentDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryContentDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryContentDbModel call({
     int id,
     String? title,
@@ -35,41 +36,43 @@ abstract class _$StoryContentDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfStoryContentDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfStoryContentDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfStoryContentDbModel.copyWith(...)` or call `instanceOfStoryContentDbModel.copyWith.fieldName(value)` for a single field.
 class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
   const _$StoryContentDbModelCWProxyImpl(this._value);
 
   final StoryContentDbModel _value;
 
   @override
-  StoryContentDbModel id(int id) => this(id: id);
+  StoryContentDbModel id(int id) => call(id: id);
 
   @override
-  StoryContentDbModel title(String? title) => this(title: title);
+  StoryContentDbModel title(String? title) => call(title: title);
 
   @override
   StoryContentDbModel plainText(String? plainText) =>
-      this(plainText: plainText);
+      call(plainText: plainText);
 
   @override
   StoryContentDbModel createdAt(DateTime createdAt) =>
-      this(createdAt: createdAt);
+      call(createdAt: createdAt);
 
   @override
-  StoryContentDbModel pages(List<List<dynamic>>? pages) => this(pages: pages);
+  StoryContentDbModel pages(List<List<dynamic>>? pages) => call(pages: pages);
 
   @override
   StoryContentDbModel richPages(List<StoryPageDbModel>? richPages) =>
-      this(richPages: richPages);
+      call(richPages: richPages);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryContentDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryContentDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryContentDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryContentDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
@@ -79,7 +82,7 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
     Object? richPages = const $CopyWithPlaceholder(),
   }) {
     return StoryContentDbModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
@@ -91,7 +94,7 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
           ? _value.plainText
           // ignore: cast_nullable_to_non_nullable
           : plainText as String?,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
@@ -108,7 +111,8 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
 }
 
 extension $StoryContentDbModelCopyWith on StoryContentDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfStoryContentDbModel.copyWith(...)` or like so:`instanceOfStoryContentDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfStoryContentDbModel.copyWith(...)` or `instanceOfStoryContentDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$StoryContentDbModelCWProxy get copyWith =>
       _$StoryContentDbModelCWProxyImpl(this);

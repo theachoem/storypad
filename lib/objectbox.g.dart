@@ -716,12 +716,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final preferencesParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 52);
-        final lastSavedDeviceIdParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 46);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 46);
         final object = StoryObjectBox(
           id: idParam,
           version: versionParam,
@@ -746,8 +746,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           assets: assetsParam,
           metadata: metadataParam,
           preferences: preferencesParam,
-          lastSavedDeviceId: lastSavedDeviceIdParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
         return object;
@@ -822,12 +822,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
         );
-        final lastSavedDeviceIdParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 22);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 22);
         final object = TagObjectBox(
           id: idParam,
           title: titleParam,
@@ -837,8 +837,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           emoji: emojiParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
-          lastSavedDeviceId: lastSavedDeviceIdParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
         return object;
@@ -961,20 +961,20 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
         );
-        final lastSavedDeviceIdParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 16);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 16);
         final object = AssetObjectBox(
           id: idParam,
           originalSource: originalSourceParam,
           cloudDestinations: cloudDestinationsParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
-          lastSavedDeviceId: lastSavedDeviceIdParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
         return object;
@@ -1047,12 +1047,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
-        final lastSavedDeviceIdParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 18);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 18);
         final object = TemplateObjectBox(
           id: idParam,
           index: indexParam,
@@ -1061,8 +1061,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           tags: tagsParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
-          lastSavedDeviceId: lastSavedDeviceIdParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
         return object;
@@ -1123,12 +1123,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
         );
-        final lastSavedDeviceIdParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 16);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 16);
         final object = RelaxSoundMixBox(
           id: idParam,
           index: indexParam,
@@ -1136,8 +1136,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           sounds: soundsParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
-          lastSavedDeviceId: lastSavedDeviceIdParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
         return object;

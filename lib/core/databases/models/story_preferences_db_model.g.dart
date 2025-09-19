@@ -31,12 +31,13 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel layoutType(PageLayoutType layoutType);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPreferencesDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryPreferencesDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryPreferencesDbModel call({
     bool? showDayCount,
     String? starIcon,
@@ -53,7 +54,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfStoryPreferencesDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfStoryPreferencesDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfStoryPreferencesDbModel.copyWith(...)` or call `instanceOfStoryPreferencesDbModel.copyWith.fieldName(value)` for a single field.
 class _$StoryPreferencesDbModelCWProxyImpl
     implements _$StoryPreferencesDbModelCWProxy {
   const _$StoryPreferencesDbModelCWProxyImpl(this._value);
@@ -62,59 +64,60 @@ class _$StoryPreferencesDbModelCWProxyImpl
 
   @override
   StoryPreferencesDbModel showDayCount(bool? showDayCount) =>
-      this(showDayCount: showDayCount);
+      call(showDayCount: showDayCount);
 
   @override
   StoryPreferencesDbModel starIcon(String? starIcon) =>
-      this(starIcon: starIcon);
+      call(starIcon: starIcon);
 
   @override
-  StoryPreferencesDbModel showTime(bool? showTime) => this(showTime: showTime);
+  StoryPreferencesDbModel showTime(bool? showTime) => call(showTime: showTime);
 
   @override
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue) =>
-      this(colorSeedValue: colorSeedValue);
+      call(colorSeedValue: colorSeedValue);
 
   @override
   StoryPreferencesDbModel colorTone(int? colorTone) =>
-      this(colorTone: colorTone);
+      call(colorTone: colorTone);
 
   @override
   StoryPreferencesDbModel fontFamily(String? fontFamily) =>
-      this(fontFamily: fontFamily);
+      call(fontFamily: fontFamily);
 
   @override
   StoryPreferencesDbModel fontSize(FontSizeOption? fontSize) =>
-      this(fontSize: fontSize);
+      call(fontSize: fontSize);
 
   @override
   StoryPreferencesDbModel fontWeightIndex(int? fontWeightIndex) =>
-      this(fontWeightIndex: fontWeightIndex);
+      call(fontWeightIndex: fontWeightIndex);
 
   @override
   StoryPreferencesDbModel titleFontFamily(String? titleFontFamily) =>
-      this(titleFontFamily: titleFontFamily);
+      call(titleFontFamily: titleFontFamily);
 
   @override
   StoryPreferencesDbModel titleFontWeightIndex(int? titleFontWeightIndex) =>
-      this(titleFontWeightIndex: titleFontWeightIndex);
+      call(titleFontWeightIndex: titleFontWeightIndex);
 
   @override
   StoryPreferencesDbModel titleExpanded(bool? titleExpanded) =>
-      this(titleExpanded: titleExpanded);
+      call(titleExpanded: titleExpanded);
 
   @override
   StoryPreferencesDbModel layoutType(PageLayoutType layoutType) =>
-      this(layoutType: layoutType);
+      call(layoutType: layoutType);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPreferencesDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPreferencesDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryPreferencesDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryPreferencesDbModel call({
     Object? showDayCount = const $CopyWithPlaceholder(),
     Object? starIcon = const $CopyWithPlaceholder(),
@@ -174,16 +177,18 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.titleExpanded
           // ignore: cast_nullable_to_non_nullable
           : titleExpanded as bool?,
-      layoutType: layoutType == const $CopyWithPlaceholder()
-          ? _value.layoutType
-          // ignore: cast_nullable_to_non_nullable
-          : layoutType as PageLayoutType,
+      layoutType:
+          layoutType == const $CopyWithPlaceholder() || layoutType == null
+              ? _value.layoutType
+              // ignore: cast_nullable_to_non_nullable
+              : layoutType as PageLayoutType,
     );
   }
 }
 
 extension $StoryPreferencesDbModelCopyWith on StoryPreferencesDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfStoryPreferencesDbModel.copyWith(...)` or like so:`instanceOfStoryPreferencesDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfStoryPreferencesDbModel.copyWith(...)` or `instanceOfStoryPreferencesDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$StoryPreferencesDbModelCWProxy get copyWith =>
       _$StoryPreferencesDbModelCWProxyImpl(this);

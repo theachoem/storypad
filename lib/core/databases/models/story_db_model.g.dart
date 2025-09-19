@@ -51,12 +51,13 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryDbModel call({
     int version,
     PathType type,
@@ -83,92 +84,94 @@ abstract class _$StoryDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfStoryDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfStoryDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfStoryDbModel.copyWith(...)` or call `instanceOfStoryDbModel.copyWith.fieldName(value)` for a single field.
 class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   const _$StoryDbModelCWProxyImpl(this._value);
 
   final StoryDbModel _value;
 
   @override
-  StoryDbModel version(int version) => this(version: version);
+  StoryDbModel version(int version) => call(version: version);
 
   @override
-  StoryDbModel type(PathType type) => this(type: type);
+  StoryDbModel type(PathType type) => call(type: type);
 
   @override
-  StoryDbModel id(int id) => this(id: id);
+  StoryDbModel id(int id) => call(id: id);
 
   @override
-  StoryDbModel starred(bool? starred) => this(starred: starred);
+  StoryDbModel starred(bool? starred) => call(starred: starred);
 
   @override
-  StoryDbModel feeling(String? feeling) => this(feeling: feeling);
+  StoryDbModel feeling(String? feeling) => call(feeling: feeling);
 
   @override
-  StoryDbModel year(int year) => this(year: year);
+  StoryDbModel year(int year) => call(year: year);
 
   @override
-  StoryDbModel month(int month) => this(month: month);
+  StoryDbModel month(int month) => call(month: month);
 
   @override
-  StoryDbModel day(int day) => this(day: day);
+  StoryDbModel day(int day) => call(day: day);
 
   @override
-  StoryDbModel hour(int? hour) => this(hour: hour);
+  StoryDbModel hour(int? hour) => call(hour: hour);
 
   @override
-  StoryDbModel minute(int? minute) => this(minute: minute);
+  StoryDbModel minute(int? minute) => call(minute: minute);
 
   @override
-  StoryDbModel second(int? second) => this(second: second);
+  StoryDbModel second(int? second) => call(second: second);
 
   @override
-  StoryDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
+  StoryDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
 
   @override
-  StoryDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
+  StoryDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
 
   @override
   StoryDbModel preferences(StoryPreferencesDbModel? preferences) =>
-      this(preferences: preferences);
+      call(preferences: preferences);
 
   @override
-  StoryDbModel tags(List<String>? tags) => this(tags: tags);
+  StoryDbModel tags(List<String>? tags) => call(tags: tags);
 
   @override
-  StoryDbModel assets(List<int>? assets) => this(assets: assets);
+  StoryDbModel assets(List<int>? assets) => call(assets: assets);
 
   @override
   StoryDbModel movedToBinAt(DateTime? movedToBinAt) =>
-      this(movedToBinAt: movedToBinAt);
+      call(movedToBinAt: movedToBinAt);
 
   @override
   StoryDbModel latestContent(StoryContentDbModel? latestContent) =>
-      this(latestContent: latestContent);
+      call(latestContent: latestContent);
 
   @override
   StoryDbModel draftContent(StoryContentDbModel? draftContent) =>
-      this(draftContent: draftContent);
+      call(draftContent: draftContent);
 
   @override
-  StoryDbModel templateId(int? templateId) => this(templateId: templateId);
+  StoryDbModel templateId(int? templateId) => call(templateId: templateId);
 
   @override
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
-      this(lastSavedDeviceId: lastSavedDeviceId);
+      call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
   StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
-      this(permanentlyDeletedAt: permanentlyDeletedAt);
+      call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryDbModel call({
     Object? version = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),
@@ -194,15 +197,15 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
     return StoryDbModel(
-      version: version == const $CopyWithPlaceholder()
+      version: version == const $CopyWithPlaceholder() || version == null
           ? _value.version
           // ignore: cast_nullable_to_non_nullable
           : version as int,
-      type: type == const $CopyWithPlaceholder()
+      type: type == const $CopyWithPlaceholder() || type == null
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as PathType,
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
@@ -214,15 +217,15 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.feeling
           // ignore: cast_nullable_to_non_nullable
           : feeling as String?,
-      year: year == const $CopyWithPlaceholder()
+      year: year == const $CopyWithPlaceholder() || year == null
           ? _value.year
           // ignore: cast_nullable_to_non_nullable
           : year as int,
-      month: month == const $CopyWithPlaceholder()
+      month: month == const $CopyWithPlaceholder() || month == null
           ? _value.month
           // ignore: cast_nullable_to_non_nullable
           : month as int,
-      day: day == const $CopyWithPlaceholder()
+      day: day == const $CopyWithPlaceholder() || day == null
           ? _value.day
           // ignore: cast_nullable_to_non_nullable
           : day as int,
@@ -238,11 +241,11 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.second
           // ignore: cast_nullable_to_non_nullable
           : second as int?,
-      updatedAt: updatedAt == const $CopyWithPlaceholder()
+      updatedAt: updatedAt == const $CopyWithPlaceholder() || updatedAt == null
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
@@ -287,7 +290,8 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
 }
 
 extension $StoryDbModelCopyWith on StoryDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfStoryDbModel.copyWith(...)` or like so:`instanceOfStoryDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfStoryDbModel.copyWith(...)` or `instanceOfStoryDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$StoryDbModelCWProxy get copyWith => _$StoryDbModelCWProxyImpl(this);
 }

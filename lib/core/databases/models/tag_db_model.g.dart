@@ -27,12 +27,13 @@ abstract class _$TagDbModelCWProxy {
 
   TagDbModel index(int? index);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TagDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TagDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TagDbModel call({
     int id,
     int version,
@@ -47,52 +48,54 @@ abstract class _$TagDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTagDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTagDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfTagDbModel.copyWith(...)` or call `instanceOfTagDbModel.copyWith.fieldName(value)` for a single field.
 class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
   const _$TagDbModelCWProxyImpl(this._value);
 
   final TagDbModel _value;
 
   @override
-  TagDbModel id(int id) => this(id: id);
+  TagDbModel id(int id) => call(id: id);
 
   @override
-  TagDbModel version(int version) => this(version: version);
+  TagDbModel version(int version) => call(version: version);
 
   @override
-  TagDbModel title(String title) => this(title: title);
+  TagDbModel title(String title) => call(title: title);
 
   @override
-  TagDbModel starred(bool? starred) => this(starred: starred);
+  TagDbModel starred(bool? starred) => call(starred: starred);
 
   @override
-  TagDbModel emoji(String? emoji) => this(emoji: emoji);
+  TagDbModel emoji(String? emoji) => call(emoji: emoji);
 
   @override
-  TagDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
+  TagDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
 
   @override
-  TagDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
+  TagDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
 
   @override
   TagDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
-      this(lastSavedDeviceId: lastSavedDeviceId);
+      call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
   TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
-      this(permanentlyDeletedAt: permanentlyDeletedAt);
+      call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-  TagDbModel index(int? index) => this(index: index);
+  TagDbModel index(int? index) => call(index: index);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TagDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TagDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TagDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
@@ -106,15 +109,15 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return TagDbModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
-      version: version == const $CopyWithPlaceholder()
+      version: version == const $CopyWithPlaceholder() || version == null
           ? _value.version
           // ignore: cast_nullable_to_non_nullable
           : version as int,
-      title: title == const $CopyWithPlaceholder()
+      title: title == const $CopyWithPlaceholder() || title == null
           ? _value.title
           // ignore: cast_nullable_to_non_nullable
           : title as String,
@@ -126,11 +129,11 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
           ? _value.emoji
           // ignore: cast_nullable_to_non_nullable
           : emoji as String?,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      updatedAt: updatedAt == const $CopyWithPlaceholder()
+      updatedAt: updatedAt == const $CopyWithPlaceholder() || updatedAt == null
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
@@ -151,7 +154,8 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
 }
 
 extension $TagDbModelCopyWith on TagDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfTagDbModel.copyWith(...)` or like so:`instanceOfTagDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfTagDbModel.copyWith(...)` or `instanceOfTagDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$TagDbModelCWProxy get copyWith => _$TagDbModelCWProxyImpl(this);
 }

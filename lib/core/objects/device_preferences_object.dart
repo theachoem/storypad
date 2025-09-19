@@ -5,6 +5,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
 part 'device_preferences_object.g.dart';
@@ -14,6 +15,7 @@ part 'device_preferences_object.g.dart';
 class DevicePreferencesObject {
   @JsonKey(name: 'font_family')
   final String? _fontFamily;
+  final FontSizeOption? fontSize;
   final int? fontWeightIndex;
 
   @JsonKey(name: 'theme_mode')
@@ -34,6 +36,7 @@ class DevicePreferencesObject {
 
   DevicePreferencesObject({
     String? fontFamily,
+    this.fontSize,
     this.fontWeightIndex,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
