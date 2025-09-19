@@ -234,6 +234,7 @@
   "input.tag.hint": "ví dụ. Riêng tư",
   "input.title.hint": "Tiêu đề...",
   "input.year.hint": "ví dụ. 2004",
+  "list_tile.archived_at.title": "Đã lưu trữ",
   "list_tile.ask_for_locale_suggestion.subtitle": "Nhận thấy một lỗi sai hoặc cần một ngôn ngữ mới? Hãy chia sẻ đề xuất của bạn với chúng tôi!",
   "list_tile.backup.no_internet_subtitle": "Kết nối Internet để kiểm tra trạng thái sao lưu của bạn.",
   "list_tile.backup.no_permission_subtitle": "Cấp quyền sao lưu câu chuyện của bạn lên Google Drive.",

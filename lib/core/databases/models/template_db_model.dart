@@ -28,6 +28,8 @@ class TemplateDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final String? lastSavedDeviceId;
 
+  final DateTime? archivedAt;
+
   @override
   final DateTime? permanentlyDeletedAt;
 
@@ -40,11 +42,14 @@ class TemplateDbModel extends BaseDbModel {
     StoryPreferencesDbModel? preferences,
     required this.createdAt,
     required this.updatedAt,
+    required this.archivedAt,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
     int? index,
   })  : index = index ?? 0,
         _preferences = preferences;
+
+  bool get archived => archivedAt != null;
 
   @override
   Map<String, dynamic> toJson() => _$TemplateDbModelToJson(this);

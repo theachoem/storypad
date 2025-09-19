@@ -234,6 +234,7 @@
   "input.tag.hint": "np. Osobisty",
   "input.title.hint": "Tytuł...",
   "input.year.hint": "np. 2004",
+  "list_tile.archived_at.title": "Zarchiwizowane",
   "list_tile.ask_for_locale_suggestion.subtitle": "Zauważyłeś błąd lub potrzebujesz nowego języka? Podziel się z nami swoimi sugestiami!",
   "list_tile.backup.no_internet_subtitle": "Połącz się z Internetem, aby sprawdzić stan kopii zapasowej.",
   "list_tile.backup.no_permission_subtitle": "Udziel pozwolenia na tworzenie kopii zapasowych swoich historii na Dysku Google.",

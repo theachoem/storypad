@@ -234,6 +234,7 @@
   "input.tag.hint": "p.ej. Personal",
   "input.title.hint": "Título...",
   "input.year.hint": "p.ej. 2004",
+  "list_tile.archived_at.title": "Archivado",
   "list_tile.ask_for_locale_suggestion.subtitle": "¿Notas un error o necesitas un nuevo idioma? ¡Comparte tus sugerencias con nosotros!",
   "list_tile.backup.no_internet_subtitle": "Conéctese a Internet para comprobar el estado de su copia de seguridad.",
   "list_tile.backup.no_permission_subtitle": "Otorga permiso para realizar copias de seguridad de tus historias en Google Drive.",

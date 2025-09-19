@@ -234,6 +234,7 @@
   "input.tag.hint": "예: 일상",
   "input.title.hint": "제목 입력...",
   "input.year.hint": "예: 2004년",
+  "list_tile.archived_at.title": "보관됨",
   "list_tile.ask_for_locale_suggestion.subtitle": "번역이 이상하거나 새로운 언어가 필요하신가요? 제안을 보내주세요!",
   "list_tile.backup.no_internet_subtitle": "인터넷에 연결하여 백업 상태를 확인하세요.",
   "list_tile.backup.no_permission_subtitle": "Google Drive에 스토리를 백업할 수 있는 권한을 부여합니다.",

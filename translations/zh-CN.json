@@ -234,6 +234,7 @@
   "input.tag.hint": "例如：日常",
   "input.title.hint": "标题...",
   "input.year.hint": "例如：2004",
+  "list_tile.archived_at.title": "已归档",
   "list_tile.ask_for_locale_suggestion.subtitle": "注意到错误或需要新语言？与我们分享您的建议！",
   "list_tile.backup.no_internet_subtitle": "连接到互联网来检查备份状态。",
   "list_tile.backup.no_permission_subtitle": "授予将你的故事备份到 Google Drive 的权限。",

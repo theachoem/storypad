@@ -286,7 +286,7 @@
     },
     {
       "id": "6:4197752153260494722",
-      "lastPropertyId": "9:7022531881534829655",
+      "lastPropertyId": "10:3267732544409712890",
       "name": "TemplateObjectBox",
       "properties": [
         {
@@ -334,6 +334,11 @@
           "id": "9:7022531881534829655",
           "name": "preferences",
           "type": 9
+        },
+        {
+          "id": "10:3267732544409712890",
+          "name": "archivedAt",
+          "type": 10
         }
       ],
       "relations": []

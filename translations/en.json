@@ -234,6 +234,7 @@
   "input.tag.hint": "eg. Personal",
   "input.title.hint": "Title...",
   "input.year.hint": "eg. 2004",
+  "list_tile.archived_at.title": "Archived",
   "list_tile.ask_for_locale_suggestion.subtitle": "Notice a mistake or need a new language? Share your suggestions with us!",
   "list_tile.backup.no_internet_subtitle": "Connect to the internet to check your backup status.",
   "list_tile.backup.no_permission_subtitle": "Grant permission to back up your stories to Google Drive.",

@@ -356,7 +356,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(6, 4197752153260494722),
     name: 'TemplateObjectBox',
-    lastPropertyId: const obx_int.IdUid(9, 7022531881534829655),
+    lastPropertyId: const obx_int.IdUid(10, 3267732544409712890),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -411,6 +411,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(9, 7022531881534829655),
         name: 'preferences',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 3267732544409712890),
+        name: 'archivedAt',
+        type: 10,
         flags: 0,
       ),
     ],
@@ -1001,7 +1007,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final preferencesOffset = object.preferences == null
             ? null
             : fbb.writeString(object.preferences!);
-        fbb.startTable(10);
+        fbb.startTable(11);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.index);
         fbb.addOffset(2, tagsOffset);
@@ -1011,6 +1017,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(6, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
         fbb.addOffset(7, lastSavedDeviceIdOffset);
         fbb.addOffset(8, preferencesOffset);
+        fbb.addInt64(9, object.archivedAt?.millisecondsSinceEpoch);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1019,6 +1026,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final rootOffset = buffer.derefObject(0);
         final permanentlyDeletedAtValue = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 16);
+        final archivedAtValue = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          22,
+        );
         final idParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -1047,6 +1059,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
+        final archivedAtParam = archivedAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(archivedAtValue);
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
@@ -1061,6 +1076,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           tags: tagsParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
+          archivedAt: archivedAtParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
         );
@@ -1449,6 +1465,11 @@ class TemplateObjectBox_ {
   /// See [TemplateObjectBox.preferences].
   static final preferences = obx.QueryStringProperty<TemplateObjectBox>(
     _entities[4].properties[8],
+  );
+
+  /// See [TemplateObjectBox.archivedAt].
+  static final archivedAt = obx.QueryDateProperty<TemplateObjectBox>(
+    _entities[4].properties[9],
   );
 }
 
