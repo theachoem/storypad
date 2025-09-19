@@ -19,12 +19,13 @@ abstract class _$RelaxSoundObjectCWProxy {
 
   RelaxSoundObject dayColor(int dayColor);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundObject call({
     String artist,
     String translationKey,
@@ -35,42 +36,44 @@ abstract class _$RelaxSoundObjectCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelaxSoundObject.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelaxSoundObject.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfRelaxSoundObject.copyWith(...)` or call `instanceOfRelaxSoundObject.copyWith.fieldName(value)` for a single field.
 class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   const _$RelaxSoundObjectCWProxyImpl(this._value);
 
   final RelaxSoundObject _value;
 
   @override
-  RelaxSoundObject artist(String artist) => this(artist: artist);
+  RelaxSoundObject artist(String artist) => call(artist: artist);
 
   @override
   RelaxSoundObject translationKey(String translationKey) =>
-      this(translationKey: translationKey);
+      call(translationKey: translationKey);
 
   @override
   RelaxSoundObject svgIconUrlPath(String svgIconUrlPath) =>
-      this(svgIconUrlPath: svgIconUrlPath);
+      call(svgIconUrlPath: svgIconUrlPath);
 
   @override
   RelaxSoundObject background(FirestoreStorageBackground background) =>
-      this(background: background);
+      call(background: background);
 
   @override
   RelaxSoundObject soundUrlPath(String soundUrlPath) =>
-      this(soundUrlPath: soundUrlPath);
+      call(soundUrlPath: soundUrlPath);
 
   @override
-  RelaxSoundObject dayColor(int dayColor) => this(dayColor: dayColor);
+  RelaxSoundObject dayColor(int dayColor) => call(dayColor: dayColor);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundObject call({
     Object? artist = const $CopyWithPlaceholder(),
     Object? translationKey = const $CopyWithPlaceholder(),
@@ -80,27 +83,31 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
     Object? dayColor = const $CopyWithPlaceholder(),
   }) {
     return RelaxSoundObject(
-      artist: artist == const $CopyWithPlaceholder()
+      artist: artist == const $CopyWithPlaceholder() || artist == null
           ? _value.artist
           // ignore: cast_nullable_to_non_nullable
           : artist as String,
-      translationKey: translationKey == const $CopyWithPlaceholder()
+      translationKey: translationKey == const $CopyWithPlaceholder() ||
+              translationKey == null
           ? _value.translationKey
           // ignore: cast_nullable_to_non_nullable
           : translationKey as String,
-      svgIconUrlPath: svgIconUrlPath == const $CopyWithPlaceholder()
+      svgIconUrlPath: svgIconUrlPath == const $CopyWithPlaceholder() ||
+              svgIconUrlPath == null
           ? _value.svgIconUrlPath
           // ignore: cast_nullable_to_non_nullable
           : svgIconUrlPath as String,
-      background: background == const $CopyWithPlaceholder()
-          ? _value.background
-          // ignore: cast_nullable_to_non_nullable
-          : background as FirestoreStorageBackground,
-      soundUrlPath: soundUrlPath == const $CopyWithPlaceholder()
-          ? _value.soundUrlPath
-          // ignore: cast_nullable_to_non_nullable
-          : soundUrlPath as String,
-      dayColor: dayColor == const $CopyWithPlaceholder()
+      background:
+          background == const $CopyWithPlaceholder() || background == null
+              ? _value.background
+              // ignore: cast_nullable_to_non_nullable
+              : background as FirestoreStorageBackground,
+      soundUrlPath:
+          soundUrlPath == const $CopyWithPlaceholder() || soundUrlPath == null
+              ? _value.soundUrlPath
+              // ignore: cast_nullable_to_non_nullable
+              : soundUrlPath as String,
+      dayColor: dayColor == const $CopyWithPlaceholder() || dayColor == null
           ? _value.dayColor
           // ignore: cast_nullable_to_non_nullable
           : dayColor as int,
@@ -109,7 +116,8 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
 }
 
 extension $RelaxSoundObjectCopyWith on RelaxSoundObject {
-  /// Returns a callable class that can be used as follows: `instanceOfRelaxSoundObject.copyWith(...)` or like so:`instanceOfRelaxSoundObject.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfRelaxSoundObject.copyWith(...)` or `instanceOfRelaxSoundObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$RelaxSoundObjectCWProxy get copyWith => _$RelaxSoundObjectCWProxyImpl(this);
 }

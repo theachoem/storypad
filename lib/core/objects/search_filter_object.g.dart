@@ -25,12 +25,13 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject starred(bool? starred);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SearchFilterObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// SearchFilterObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   SearchFilterObject call({
     Set<int> years,
     Set<PathType> types,
@@ -44,49 +45,51 @@ abstract class _$SearchFilterObjectCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSearchFilterObject.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSearchFilterObject.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfSearchFilterObject.copyWith(...)` or call `instanceOfSearchFilterObject.copyWith.fieldName(value)` for a single field.
 class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   const _$SearchFilterObjectCWProxyImpl(this._value);
 
   final SearchFilterObject _value;
 
   @override
-  SearchFilterObject years(Set<int> years) => this(years: years);
+  SearchFilterObject years(Set<int> years) => call(years: years);
 
   @override
-  SearchFilterObject types(Set<PathType> types) => this(types: types);
+  SearchFilterObject types(Set<PathType> types) => call(types: types);
 
   @override
-  SearchFilterObject tagId(int? tagId) => this(tagId: tagId);
+  SearchFilterObject tagId(int? tagId) => call(tagId: tagId);
 
   @override
-  SearchFilterObject assetId(int? assetId) => this(assetId: assetId);
+  SearchFilterObject assetId(int? assetId) => call(assetId: assetId);
 
   @override
   SearchFilterObject templateId(int? templateId) =>
-      this(templateId: templateId);
+      call(templateId: templateId);
 
   @override
   SearchFilterObject excludeYears(Set<int>? excludeYears) =>
-      this(excludeYears: excludeYears);
+      call(excludeYears: excludeYears);
 
   @override
-  SearchFilterObject month(int? month) => this(month: month);
+  SearchFilterObject month(int? month) => call(month: month);
 
   @override
-  SearchFilterObject day(int? day) => this(day: day);
+  SearchFilterObject day(int? day) => call(day: day);
 
   @override
-  SearchFilterObject starred(bool? starred) => this(starred: starred);
+  SearchFilterObject starred(bool? starred) => call(starred: starred);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SearchFilterObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// SearchFilterObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   SearchFilterObject call({
     Object? years = const $CopyWithPlaceholder(),
     Object? types = const $CopyWithPlaceholder(),
@@ -99,11 +102,11 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? starred = const $CopyWithPlaceholder(),
   }) {
     return SearchFilterObject(
-      years: years == const $CopyWithPlaceholder()
+      years: years == const $CopyWithPlaceholder() || years == null
           ? _value.years
           // ignore: cast_nullable_to_non_nullable
           : years as Set<int>,
-      types: types == const $CopyWithPlaceholder()
+      types: types == const $CopyWithPlaceholder() || types == null
           ? _value.types
           // ignore: cast_nullable_to_non_nullable
           : types as Set<PathType>,
@@ -140,7 +143,8 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
 }
 
 extension $SearchFilterObjectCopyWith on SearchFilterObject {
-  /// Returns a callable class that can be used as follows: `instanceOfSearchFilterObject.copyWith(...)` or like so:`instanceOfSearchFilterObject.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfSearchFilterObject.copyWith(...)` or `instanceOfSearchFilterObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$SearchFilterObjectCWProxy get copyWith =>
       _$SearchFilterObjectCWProxyImpl(this);

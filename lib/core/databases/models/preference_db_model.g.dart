@@ -21,12 +21,13 @@ abstract class _$PreferenceDbModelCWProxy {
 
   PreferenceDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `PreferenceDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// PreferenceDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   PreferenceDbModel call({
     int id,
     String key,
@@ -38,43 +39,45 @@ abstract class _$PreferenceDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPreferenceDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPreferenceDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfPreferenceDbModel.copyWith(...)` or call `instanceOfPreferenceDbModel.copyWith.fieldName(value)` for a single field.
 class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
   const _$PreferenceDbModelCWProxyImpl(this._value);
 
   final PreferenceDbModel _value;
 
   @override
-  PreferenceDbModel id(int id) => this(id: id);
+  PreferenceDbModel id(int id) => call(id: id);
 
   @override
-  PreferenceDbModel key(String key) => this(key: key);
+  PreferenceDbModel key(String key) => call(key: key);
 
   @override
-  PreferenceDbModel value(String value) => this(value: value);
+  PreferenceDbModel value(String value) => call(value: value);
 
   @override
-  PreferenceDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
+  PreferenceDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
 
   @override
-  PreferenceDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
+  PreferenceDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
 
   @override
   PreferenceDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
-      this(lastSavedDeviceId: lastSavedDeviceId);
+      call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
   PreferenceDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
-      this(permanentlyDeletedAt: permanentlyDeletedAt);
+      call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PreferenceDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `PreferenceDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// PreferenceDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   PreferenceDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? key = const $CopyWithPlaceholder(),
@@ -85,23 +88,23 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
     return PreferenceDbModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
-      key: key == const $CopyWithPlaceholder()
+      key: key == const $CopyWithPlaceholder() || key == null
           ? _value.key
           // ignore: cast_nullable_to_non_nullable
           : key as String,
-      value: value == const $CopyWithPlaceholder()
+      value: value == const $CopyWithPlaceholder() || value == null
           ? _value.value
           // ignore: cast_nullable_to_non_nullable
           : value as String,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      updatedAt: updatedAt == const $CopyWithPlaceholder()
+      updatedAt: updatedAt == const $CopyWithPlaceholder() || updatedAt == null
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
@@ -118,7 +121,8 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
 }
 
 extension $PreferenceDbModelCopyWith on PreferenceDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfPreferenceDbModel.copyWith(...)` or like so:`instanceOfPreferenceDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfPreferenceDbModel.copyWith(...)` or `instanceOfPreferenceDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$PreferenceDbModelCWProxy get copyWith =>
       _$PreferenceDbModelCWProxyImpl(this);

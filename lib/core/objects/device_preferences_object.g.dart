@@ -9,6 +9,8 @@ part of 'device_preferences_object.dart';
 abstract class _$DevicePreferencesObjectCWProxy {
   DevicePreferencesObject fontFamily(String? fontFamily);
 
+  DevicePreferencesObject fontSize(FontSizeOption? fontSize);
+
   DevicePreferencesObject fontWeightIndex(int? fontWeightIndex);
 
   DevicePreferencesObject themeMode(ThemeMode? themeMode);
@@ -17,14 +19,16 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DevicePreferencesObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// DevicePreferencesObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   DevicePreferencesObject call({
     String? fontFamily,
+    FontSizeOption? fontSize,
     int? fontWeightIndex,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
@@ -32,7 +36,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfDevicePreferencesObject.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfDevicePreferencesObject.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfDevicePreferencesObject.copyWith(...)` or call `instanceOfDevicePreferencesObject.copyWith.fieldName(value)` for a single field.
 class _$DevicePreferencesObjectCWProxyImpl
     implements _$DevicePreferencesObjectCWProxy {
   const _$DevicePreferencesObjectCWProxyImpl(this._value);
@@ -41,34 +46,40 @@ class _$DevicePreferencesObjectCWProxyImpl
 
   @override
   DevicePreferencesObject fontFamily(String? fontFamily) =>
-      this(fontFamily: fontFamily);
+      call(fontFamily: fontFamily);
+
+  @override
+  DevicePreferencesObject fontSize(FontSizeOption? fontSize) =>
+      call(fontSize: fontSize);
 
   @override
   DevicePreferencesObject fontWeightIndex(int? fontWeightIndex) =>
-      this(fontWeightIndex: fontWeightIndex);
+      call(fontWeightIndex: fontWeightIndex);
 
   @override
   DevicePreferencesObject themeMode(ThemeMode? themeMode) =>
-      this(themeMode: themeMode);
+      call(themeMode: themeMode);
 
   @override
   DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat) =>
-      this(timeFormat: timeFormat);
+      call(timeFormat: timeFormat);
 
   @override
   DevicePreferencesObject colorSeedValue(int? colorSeedValue) =>
-      this(colorSeedValue: colorSeedValue);
+      call(colorSeedValue: colorSeedValue);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DevicePreferencesObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// DevicePreferencesObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   DevicePreferencesObject call({
     Object? fontFamily = const $CopyWithPlaceholder(),
+    Object? fontSize = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
@@ -79,6 +90,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.fontFamily
           // ignore: cast_nullable_to_non_nullable
           : fontFamily as String?,
+      fontSize: fontSize == const $CopyWithPlaceholder()
+          ? _value.fontSize
+          // ignore: cast_nullable_to_non_nullable
+          : fontSize as FontSizeOption?,
       fontWeightIndex: fontWeightIndex == const $CopyWithPlaceholder()
           ? _value.fontWeightIndex
           // ignore: cast_nullable_to_non_nullable
@@ -100,7 +115,8 @@ class _$DevicePreferencesObjectCWProxyImpl
 }
 
 extension $DevicePreferencesObjectCopyWith on DevicePreferencesObject {
-  /// Returns a callable class that can be used as follows: `instanceOfDevicePreferencesObject.copyWith(...)` or like so:`instanceOfDevicePreferencesObject.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfDevicePreferencesObject.copyWith(...)` or `instanceOfDevicePreferencesObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$DevicePreferencesObjectCWProxy get copyWith =>
       _$DevicePreferencesObjectCWProxyImpl(this);
@@ -114,6 +130,7 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
         Map<String, dynamic> json) =>
     DevicePreferencesObject(
       fontFamily: json['font_family'] as String?,
+      fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
       fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
       themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
       timeFormat:
@@ -124,12 +141,20 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
 Map<String, dynamic> _$DevicePreferencesObjectToJson(
         DevicePreferencesObject instance) =>
     <String, dynamic>{
+      'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
       'font_weight_index': instance.fontWeightIndex,
       'color_seed_value': instance.colorSeedValue,
       'font_family': instance.fontFamily,
       'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
       'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
     };
+
+const _$FontSizeOptionEnumMap = {
+  FontSizeOption.small: 'small',
+  FontSizeOption.normal: 'normal',
+  FontSizeOption.large: 'large',
+  FontSizeOption.extraLarge: 'extraLarge',
+};
 
 const _$ThemeModeEnumMap = {
   ThemeMode.system: 'system',

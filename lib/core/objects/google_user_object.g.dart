@@ -19,12 +19,13 @@ abstract class _$GoogleUserObjectCWProxy {
 
   GoogleUserObject refreshedAt(DateTime? refreshedAt);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `GoogleUserObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GoogleUserObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// GoogleUserObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   GoogleUserObject call({
     String id,
     String email,
@@ -35,41 +36,43 @@ abstract class _$GoogleUserObjectCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfGoogleUserObject.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfGoogleUserObject.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfGoogleUserObject.copyWith(...)` or call `instanceOfGoogleUserObject.copyWith.fieldName(value)` for a single field.
 class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
   const _$GoogleUserObjectCWProxyImpl(this._value);
 
   final GoogleUserObject _value;
 
   @override
-  GoogleUserObject id(String id) => this(id: id);
+  GoogleUserObject id(String id) => call(id: id);
 
   @override
-  GoogleUserObject email(String email) => this(email: email);
+  GoogleUserObject email(String email) => call(email: email);
 
   @override
   GoogleUserObject displayName(String? displayName) =>
-      this(displayName: displayName);
+      call(displayName: displayName);
 
   @override
-  GoogleUserObject photoUrl(String? photoUrl) => this(photoUrl: photoUrl);
+  GoogleUserObject photoUrl(String? photoUrl) => call(photoUrl: photoUrl);
 
   @override
   GoogleUserObject accessToken(String? accessToken) =>
-      this(accessToken: accessToken);
+      call(accessToken: accessToken);
 
   @override
   GoogleUserObject refreshedAt(DateTime? refreshedAt) =>
-      this(refreshedAt: refreshedAt);
+      call(refreshedAt: refreshedAt);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `GoogleUserObject(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GoogleUserObject(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// GoogleUserObject(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   GoogleUserObject call({
     Object? id = const $CopyWithPlaceholder(),
     Object? email = const $CopyWithPlaceholder(),
@@ -79,11 +82,11 @@ class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
     Object? refreshedAt = const $CopyWithPlaceholder(),
   }) {
     return GoogleUserObject(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as String,
-      email: email == const $CopyWithPlaceholder()
+      email: email == const $CopyWithPlaceholder() || email == null
           ? _value.email
           // ignore: cast_nullable_to_non_nullable
           : email as String,
@@ -108,7 +111,8 @@ class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
 }
 
 extension $GoogleUserObjectCopyWith on GoogleUserObject {
-  /// Returns a callable class that can be used as follows: `instanceOfGoogleUserObject.copyWith(...)` or like so:`instanceOfGoogleUserObject.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfGoogleUserObject.copyWith(...)` or `instanceOfGoogleUserObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$GoogleUserObjectCWProxy get copyWith => _$GoogleUserObjectCWProxyImpl(this);
 }

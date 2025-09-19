@@ -19,12 +19,13 @@ abstract class _$StoryPageDbModelCWProxy {
 
   StoryPageDbModel plainText(String? plainText);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPageDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryPageDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryPageDbModel call({
     int id,
     String? title,
@@ -35,40 +36,42 @@ abstract class _$StoryPageDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfStoryPageDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfStoryPageDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfStoryPageDbModel.copyWith(...)` or call `instanceOfStoryPageDbModel.copyWith.fieldName(value)` for a single field.
 class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
   const _$StoryPageDbModelCWProxyImpl(this._value);
 
   final StoryPageDbModel _value;
 
   @override
-  StoryPageDbModel id(int id) => this(id: id);
+  StoryPageDbModel id(int id) => call(id: id);
 
   @override
-  StoryPageDbModel title(String? title) => this(title: title);
+  StoryPageDbModel title(String? title) => call(title: title);
 
   @override
-  StoryPageDbModel body(List<dynamic>? body) => this(body: body);
+  StoryPageDbModel body(List<dynamic>? body) => call(body: body);
 
   @override
   StoryPageDbModel crossAxisCount(int? crossAxisCount) =>
-      this(crossAxisCount: crossAxisCount);
+      call(crossAxisCount: crossAxisCount);
 
   @override
   StoryPageDbModel mainAxisCount(int? mainAxisCount) =>
-      this(mainAxisCount: mainAxisCount);
+      call(mainAxisCount: mainAxisCount);
 
   @override
-  StoryPageDbModel plainText(String? plainText) => this(plainText: plainText);
+  StoryPageDbModel plainText(String? plainText) => call(plainText: plainText);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPageDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// StoryPageDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   StoryPageDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
@@ -78,7 +81,7 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
     Object? plainText = const $CopyWithPlaceholder(),
   }) {
     return StoryPageDbModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
@@ -107,7 +110,8 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
 }
 
 extension $StoryPageDbModelCopyWith on StoryPageDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfStoryPageDbModel.copyWith(...)` or like so:`instanceOfStoryPageDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfStoryPageDbModel.copyWith(...)` or `instanceOfStoryPageDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$StoryPageDbModelCWProxy get copyWith => _$StoryPageDbModelCWProxyImpl(this);
 }

@@ -1,3 +1,5 @@
+// dart format width=80
+
 /// GENERATED CODE - DO NOT MODIFY BY HAND
 /// *****************************************************
 ///  FlutterGen
@@ -5,7 +7,7 @@
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 
@@ -54,9 +56,6 @@ class $TranslationsGen {
   /// File path: translations/pt-BR.json
   String get ptBR => 'translations/pt-BR.json';
 
-  /// File path: translations/th.json
-  String get th => 'translations/th.json';
-
   /// File path: translations/vi-VN.json
   String get viVN => 'translations/vi-VN.json';
 
@@ -65,24 +64,23 @@ class $TranslationsGen {
 
   /// List of all assets
   List<String> get values => [
-    ar,
-    deDE,
-    en,
-    es419,
-    esES,
-    frFR,
-    hiIN,
-    id,
-    itIT,
-    jaJP,
-    km,
-    koKR,
-    plPL,
-    ptBR,
-    th,
-    viVN,
-    zhCN,
-  ];
+        ar,
+        deDE,
+        en,
+        es419,
+        esES,
+        frFR,
+        hiIN,
+        id,
+        itIT,
+        jaJP,
+        km,
+        koKR,
+        plPL,
+        ptBR,
+        viVN,
+        zhCN
+      ];
 }
 
 class $AssetsEmoji64Gen {
@@ -91,8 +89,7 @@ class $AssetsEmoji64Gen {
   /// File path: assets/emoji-64/beaming-face-with-smiling-eyes-64x64-1395554.png
   AssetGenImage get beamingFaceWithSmilingEyes64x641395554 =>
       const AssetGenImage(
-        'assets/emoji-64/beaming-face-with-smiling-eyes-64x64-1395554.png',
-      );
+          'assets/emoji-64/beaming-face-with-smiling-eyes-64x64-1395554.png');
 
   /// File path: assets/emoji-64/confounded-face-64x64-1395561.png
   AssetGenImage get confoundedFace64x641395561 =>
@@ -108,8 +105,7 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/disappointed-face-64x64-1395587.png
   AssetGenImage get disappointedFace64x641395587 => const AssetGenImage(
-    'assets/emoji-64/disappointed-face-64x64-1395587.png',
-  );
+      'assets/emoji-64/disappointed-face-64x64-1395587.png');
 
   /// File path: assets/emoji-64/dizzy-face-64x64-1395573.png
   AssetGenImage get dizzyFace64x641395573 =>
@@ -117,8 +113,7 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/downcast-face-with-sweat-64x64-1395586.png
   AssetGenImage get downcastFaceWithSweat64x641395586 => const AssetGenImage(
-    'assets/emoji-64/downcast-face-with-sweat-64x64-1395586.png',
-  );
+      'assets/emoji-64/downcast-face-with-sweat-64x64-1395586.png');
 
   /// File path: assets/emoji-64/drooling-face-64x64-1395566.png
   AssetGenImage get droolingFace64x641395566 =>
@@ -126,18 +121,15 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/expressionless-face-64x64-1395580.png
   AssetGenImage get expressionlessFace64x641395580 => const AssetGenImage(
-    'assets/emoji-64/expressionless-face-64x64-1395580.png',
-  );
+      'assets/emoji-64/expressionless-face-64x64-1395580.png');
 
   /// File path: assets/emoji-64/face-blowing-a-kiss-64x64-1395556.png
   AssetGenImage get faceBlowingAKiss64x641395556 => const AssetGenImage(
-    'assets/emoji-64/face-blowing-a-kiss-64x64-1395556.png',
-  );
+      'assets/emoji-64/face-blowing-a-kiss-64x64-1395556.png');
 
   /// File path: assets/emoji-64/face-savoring-food-64x64-1395567.png
   AssetGenImage get faceSavoringFood64x641395567 => const AssetGenImage(
-    'assets/emoji-64/face-savoring-food-64x64-1395567.png',
-  );
+      'assets/emoji-64/face-savoring-food-64x64-1395567.png');
 
   /// File path: assets/emoji-64/face-vomiting-64x64-1395569.png
   AssetGenImage get faceVomiting64x641395569 =>
@@ -145,43 +137,35 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/face-with-head-bandage-64x64-1395563.png
   AssetGenImage get faceWithHeadBandage64x641395563 => const AssetGenImage(
-    'assets/emoji-64/face-with-head-bandage-64x64-1395563.png',
-  );
+      'assets/emoji-64/face-with-head-bandage-64x64-1395563.png');
 
   /// File path: assets/emoji-64/face-with-medical-mask-64x64-1395570.png
   AssetGenImage get faceWithMedicalMask64x641395570 => const AssetGenImage(
-    'assets/emoji-64/face-with-medical-mask-64x64-1395570.png',
-  );
+      'assets/emoji-64/face-with-medical-mask-64x64-1395570.png');
 
   /// File path: assets/emoji-64/face-with-monocle-64x64-1395562.png
   AssetGenImage get faceWithMonocle64x641395562 => const AssetGenImage(
-    'assets/emoji-64/face-with-monocle-64x64-1395562.png',
-  );
+      'assets/emoji-64/face-with-monocle-64x64-1395562.png');
 
   /// File path: assets/emoji-64/face-with-open-mouth-64x64-1395578.png
   AssetGenImage get faceWithOpenMouth64x641395578 => const AssetGenImage(
-    'assets/emoji-64/face-with-open-mouth-64x64-1395578.png',
-  );
+      'assets/emoji-64/face-with-open-mouth-64x64-1395578.png');
 
   /// File path: assets/emoji-64/face-with-raised-eyebrow-64x64-1395571.png
   AssetGenImage get faceWithRaisedEyebrow64x641395571 => const AssetGenImage(
-    'assets/emoji-64/face-with-raised-eyebrow-64x64-1395571.png',
-  );
+      'assets/emoji-64/face-with-raised-eyebrow-64x64-1395571.png');
 
   /// File path: assets/emoji-64/face-with-rolling-eyes-64x64-1395546.png
   AssetGenImage get faceWithRollingEyes64x641395546 => const AssetGenImage(
-    'assets/emoji-64/face-with-rolling-eyes-64x64-1395546.png',
-  );
+      'assets/emoji-64/face-with-rolling-eyes-64x64-1395546.png');
 
   /// File path: assets/emoji-64/face-with-symbols-on-mouth-64x64-1395550.png
   AssetGenImage get faceWithSymbolsOnMouth64x641395550 => const AssetGenImage(
-    'assets/emoji-64/face-with-symbols-on-mouth-64x64-1395550.png',
-  );
+      'assets/emoji-64/face-with-symbols-on-mouth-64x64-1395550.png');
 
   /// File path: assets/emoji-64/face-with-tears-of-joy-64x64-1395560.png
   AssetGenImage get faceWithTearsOfJoy64x641395560 => const AssetGenImage(
-    'assets/emoji-64/face-with-tears-of-joy-64x64-1395560.png',
-  );
+      'assets/emoji-64/face-with-tears-of-joy-64x64-1395560.png');
 
   /// File path: assets/emoji-64/face-with-tongue-64x64-1395588.png
   AssetGenImage get faceWithTongue64x641395588 =>
@@ -189,8 +173,7 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/face-without-mouth-64x64-1395577.png
   AssetGenImage get faceWithoutMouth64x641395577 => const AssetGenImage(
-    'assets/emoji-64/face-without-mouth-64x64-1395577.png',
-  );
+      'assets/emoji-64/face-without-mouth-64x64-1395577.png');
 
   /// File path: assets/emoji-64/fearful-face-64x64-1395553.png
   AssetGenImage get fearfulFace64x641395553 =>
@@ -211,23 +194,19 @@ class $AssetsEmoji64Gen {
   /// File path: assets/emoji-64/grinning-face-with-smiling-eyes-64x64-1395548.png
   AssetGenImage get grinningFaceWithSmilingEyes64x641395548 =>
       const AssetGenImage(
-        'assets/emoji-64/grinning-face-with-smiling-eyes-64x64-1395548.png',
-      );
+          'assets/emoji-64/grinning-face-with-smiling-eyes-64x64-1395548.png');
 
   /// File path: assets/emoji-64/grinning-face-with-sweat-64x64-1395555.png
   AssetGenImage get grinningFaceWithSweat64x641395555 => const AssetGenImage(
-    'assets/emoji-64/grinning-face-with-sweat-64x64-1395555.png',
-  );
+      'assets/emoji-64/grinning-face-with-sweat-64x64-1395555.png');
 
   /// File path: assets/emoji-64/grinning-squinting-face-64x64-1395574.png
   AssetGenImage get grinningSquintingFace64x641395574 => const AssetGenImage(
-    'assets/emoji-64/grinning-squinting-face-64x64-1395574.png',
-  );
+      'assets/emoji-64/grinning-squinting-face-64x64-1395574.png');
 
   /// File path: assets/emoji-64/loudly-crying-face-64x64-1395592.png
   AssetGenImage get loudlyCryingFace64x641395592 => const AssetGenImage(
-    'assets/emoji-64/loudly-crying-face-64x64-1395592.png',
-  );
+      'assets/emoji-64/loudly-crying-face-64x64-1395592.png');
 
   /// File path: assets/emoji-64/money-mouth-face-64x64-1395557.png
   AssetGenImage get moneyMouthFace64x641395557 =>
@@ -255,40 +234,33 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/slightly-smiling-face-64x64-1395552.png
   AssetGenImage get slightlySmilingFace64x641395552 => const AssetGenImage(
-    'assets/emoji-64/slightly-smiling-face-64x64-1395552.png',
-  );
+      'assets/emoji-64/slightly-smiling-face-64x64-1395552.png');
 
   /// File path: assets/emoji-64/smiling-face-with-halo-64x64-1395582.png
   AssetGenImage get smilingFaceWithHalo64x641395582 => const AssetGenImage(
-    'assets/emoji-64/smiling-face-with-halo-64x64-1395582.png',
-  );
+      'assets/emoji-64/smiling-face-with-halo-64x64-1395582.png');
 
   /// File path: assets/emoji-64/smiling-face-with-heart-eyes-64x64-1395589.png
   AssetGenImage get smilingFaceWithHeartEyes64x641395589 => const AssetGenImage(
-    'assets/emoji-64/smiling-face-with-heart-eyes-64x64-1395589.png',
-  );
+      'assets/emoji-64/smiling-face-with-heart-eyes-64x64-1395589.png');
 
   /// File path: assets/emoji-64/smiling-face-with-hearts-64x64-1395545.png
   AssetGenImage get smilingFaceWithHearts64x641395545 => const AssetGenImage(
-    'assets/emoji-64/smiling-face-with-hearts-64x64-1395545.png',
-  );
+      'assets/emoji-64/smiling-face-with-hearts-64x64-1395545.png');
 
   /// File path: assets/emoji-64/smiling-face-with-horns-64x64-1395558.png
   AssetGenImage get smilingFaceWithHorns64x641395558 => const AssetGenImage(
-    'assets/emoji-64/smiling-face-with-horns-64x64-1395558.png',
-  );
+      'assets/emoji-64/smiling-face-with-horns-64x64-1395558.png');
 
   /// File path: assets/emoji-64/smiling-face-with-smiling-eyes-64x64-1395594.png
   AssetGenImage get smilingFaceWithSmilingEyes64x641395594 =>
       const AssetGenImage(
-        'assets/emoji-64/smiling-face-with-smiling-eyes-64x64-1395594.png',
-      );
+          'assets/emoji-64/smiling-face-with-smiling-eyes-64x64-1395594.png');
 
   /// File path: assets/emoji-64/smiling-face-with-sunglasses-64x64-1395549.png
   AssetGenImage get smilingFaceWithSunglasses64x641395549 =>
       const AssetGenImage(
-        'assets/emoji-64/smiling-face-with-sunglasses-64x64-1395549.png',
-      );
+          'assets/emoji-64/smiling-face-with-sunglasses-64x64-1395549.png');
 
   /// File path: assets/emoji-64/smirking-face-64x64-1395593.png
   AssetGenImage get smirkingFace64x641395593 =>
@@ -296,8 +268,7 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/squinting-face-with-tongue-64x64-1395581.png
   AssetGenImage get squintingFaceWithTongue64x641395581 => const AssetGenImage(
-    'assets/emoji-64/squinting-face-with-tongue-64x64-1395581.png',
-  );
+      'assets/emoji-64/squinting-face-with-tongue-64x64-1395581.png');
 
   /// File path: assets/emoji-64/star-struck-64x64-1395565.png
   AssetGenImage get starStruck64x641395565 =>
@@ -313,8 +284,7 @@ class $AssetsEmoji64Gen {
 
   /// File path: assets/emoji-64/winking-face-with-tongue-64x64-1395583.png
   AssetGenImage get winkingFaceWithTongue64x641395583 => const AssetGenImage(
-    'assets/emoji-64/winking-face-with-tongue-64x64-1395583.png',
-  );
+      'assets/emoji-64/winking-face-with-tongue-64x64-1395583.png');
 
   /// File path: assets/emoji-64/zany-face-64x64-1395572.png
   AssetGenImage get zanyFace64x641395572 =>
@@ -322,57 +292,57 @@ class $AssetsEmoji64Gen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-    beamingFaceWithSmilingEyes64x641395554,
-    confoundedFace64x641395561,
-    confusedFace64x641395584,
-    cryingFace64x641395579,
-    disappointedFace64x641395587,
-    dizzyFace64x641395573,
-    downcastFaceWithSweat64x641395586,
-    droolingFace64x641395566,
-    expressionlessFace64x641395580,
-    faceBlowingAKiss64x641395556,
-    faceSavoringFood64x641395567,
-    faceVomiting64x641395569,
-    faceWithHeadBandage64x641395563,
-    faceWithMedicalMask64x641395570,
-    faceWithMonocle64x641395562,
-    faceWithOpenMouth64x641395578,
-    faceWithRaisedEyebrow64x641395571,
-    faceWithRollingEyes64x641395546,
-    faceWithSymbolsOnMouth64x641395550,
-    faceWithTearsOfJoy64x641395560,
-    faceWithTongue64x641395588,
-    faceWithoutMouth64x641395577,
-    fearfulFace64x641395553,
-    flushedFace64x641395564,
-    grimacingFace64x641395576,
-    grinningFace64x641395591,
-    grinningFaceWithSmilingEyes64x641395548,
-    grinningFaceWithSweat64x641395555,
-    grinningSquintingFace64x641395574,
-    loudlyCryingFace64x641395592,
-    moneyMouthFace64x641395557,
-    nauseatedFace64x641395559,
-    nerdFace64x641395568,
-    neutralFace64x641395585,
-    poutingFace64x641395575,
-    sleepingFace64x641395590,
-    slightlySmilingFace64x641395552,
-    smilingFaceWithHalo64x641395582,
-    smilingFaceWithHeartEyes64x641395589,
-    smilingFaceWithHearts64x641395545,
-    smilingFaceWithHorns64x641395558,
-    smilingFaceWithSmilingEyes64x641395594,
-    smilingFaceWithSunglasses64x641395549,
-    smirkingFace64x641395593,
-    squintingFaceWithTongue64x641395581,
-    starStruck64x641395565,
-    tiredFace64x641395547,
-    winkingFace64x641395551,
-    winkingFaceWithTongue64x641395583,
-    zanyFace64x641395572,
-  ];
+        beamingFaceWithSmilingEyes64x641395554,
+        confoundedFace64x641395561,
+        confusedFace64x641395584,
+        cryingFace64x641395579,
+        disappointedFace64x641395587,
+        dizzyFace64x641395573,
+        downcastFaceWithSweat64x641395586,
+        droolingFace64x641395566,
+        expressionlessFace64x641395580,
+        faceBlowingAKiss64x641395556,
+        faceSavoringFood64x641395567,
+        faceVomiting64x641395569,
+        faceWithHeadBandage64x641395563,
+        faceWithMedicalMask64x641395570,
+        faceWithMonocle64x641395562,
+        faceWithOpenMouth64x641395578,
+        faceWithRaisedEyebrow64x641395571,
+        faceWithRollingEyes64x641395546,
+        faceWithSymbolsOnMouth64x641395550,
+        faceWithTearsOfJoy64x641395560,
+        faceWithTongue64x641395588,
+        faceWithoutMouth64x641395577,
+        fearfulFace64x641395553,
+        flushedFace64x641395564,
+        grimacingFace64x641395576,
+        grinningFace64x641395591,
+        grinningFaceWithSmilingEyes64x641395548,
+        grinningFaceWithSweat64x641395555,
+        grinningSquintingFace64x641395574,
+        loudlyCryingFace64x641395592,
+        moneyMouthFace64x641395557,
+        nauseatedFace64x641395559,
+        nerdFace64x641395568,
+        neutralFace64x641395585,
+        poutingFace64x641395575,
+        sleepingFace64x641395590,
+        slightlySmilingFace64x641395552,
+        smilingFaceWithHalo64x641395582,
+        smilingFaceWithHeartEyes64x641395589,
+        smilingFaceWithHearts64x641395545,
+        smilingFaceWithHorns64x641395558,
+        smilingFaceWithSmilingEyes64x641395594,
+        smilingFaceWithSunglasses64x641395549,
+        smirkingFace64x641395593,
+        squintingFaceWithTongue64x641395581,
+        starStruck64x641395565,
+        tiredFace64x641395547,
+        winkingFace64x641395551,
+        winkingFaceWithTongue64x641395583,
+        zanyFace64x641395572
+      ];
 }
 
 class $AssetsImagesGen {
@@ -395,23 +365,19 @@ class $AssetsImagesOnboardingGen {
 
   /// File path: assets/images/onboarding/dark_drawer_not_signed_in_221x510.jpg
   AssetGenImage get darkDrawerNotSignedIn221x510 => const AssetGenImage(
-    'assets/images/onboarding/dark_drawer_not_signed_in_221x510.jpg',
-  );
+      'assets/images/onboarding/dark_drawer_not_signed_in_221x510.jpg');
 
   /// File path: assets/images/onboarding/dark_drawer_signed_in_221x510.jpg
   AssetGenImage get darkDrawerSignedIn221x510 => const AssetGenImage(
-    'assets/images/onboarding/dark_drawer_signed_in_221x510.jpg',
-  );
+      'assets/images/onboarding/dark_drawer_signed_in_221x510.jpg');
 
   /// File path: assets/images/onboarding/dark_drawer_synced_221x510.jpg
   AssetGenImage get darkDrawerSynced221x510 => const AssetGenImage(
-    'assets/images/onboarding/dark_drawer_synced_221x510.jpg',
-  );
+      'assets/images/onboarding/dark_drawer_synced_221x510.jpg');
 
   /// File path: assets/images/onboarding/dark_drawer_syning_221x510.jpg
   AssetGenImage get darkDrawerSyning221x510 => const AssetGenImage(
-    'assets/images/onboarding/dark_drawer_syning_221x510.jpg',
-  );
+      'assets/images/onboarding/dark_drawer_syning_221x510.jpg');
 
   /// File path: assets/images/onboarding/dark_home_300x360.jpg
   AssetGenImage get darkHome300x360 =>
@@ -419,28 +385,23 @@ class $AssetsImagesOnboardingGen {
 
   /// File path: assets/images/onboarding/dark_story_details_300x360.jpg
   AssetGenImage get darkStoryDetails300x360 => const AssetGenImage(
-    'assets/images/onboarding/dark_story_details_300x360.jpg',
-  );
+      'assets/images/onboarding/dark_story_details_300x360.jpg');
 
   /// File path: assets/images/onboarding/light_drawer_not_signed_in_221x510.jpg
   AssetGenImage get lightDrawerNotSignedIn221x510 => const AssetGenImage(
-    'assets/images/onboarding/light_drawer_not_signed_in_221x510.jpg',
-  );
+      'assets/images/onboarding/light_drawer_not_signed_in_221x510.jpg');
 
   /// File path: assets/images/onboarding/light_drawer_signed_in_221x510.jpg
   AssetGenImage get lightDrawerSignedIn221x510 => const AssetGenImage(
-    'assets/images/onboarding/light_drawer_signed_in_221x510.jpg',
-  );
+      'assets/images/onboarding/light_drawer_signed_in_221x510.jpg');
 
   /// File path: assets/images/onboarding/light_drawer_synced_221x510.jpg
   AssetGenImage get lightDrawerSynced221x510 => const AssetGenImage(
-    'assets/images/onboarding/light_drawer_synced_221x510.jpg',
-  );
+      'assets/images/onboarding/light_drawer_synced_221x510.jpg');
 
   /// File path: assets/images/onboarding/light_drawer_syning_221x510.jpg
   AssetGenImage get lightDrawerSyning221x510 => const AssetGenImage(
-    'assets/images/onboarding/light_drawer_syning_221x510.jpg',
-  );
+      'assets/images/onboarding/light_drawer_syning_221x510.jpg');
 
   /// File path: assets/images/onboarding/light_home_300x360.jpg
   AssetGenImage get lightHome300x360 =>
@@ -448,8 +409,7 @@ class $AssetsImagesOnboardingGen {
 
   /// File path: assets/images/onboarding/light_story_details_300x360.jpg
   AssetGenImage get lightStoryDetails300x360 => const AssetGenImage(
-    'assets/images/onboarding/light_story_details_300x360.jpg',
-  );
+      'assets/images/onboarding/light_story_details_300x360.jpg');
 
   /// File path: assets/images/onboarding/toolbar_dark_1690x70.jpg
   AssetGenImage get toolbarDark1690x70 =>
@@ -461,21 +421,21 @@ class $AssetsImagesOnboardingGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-    darkDrawerNotSignedIn221x510,
-    darkDrawerSignedIn221x510,
-    darkDrawerSynced221x510,
-    darkDrawerSyning221x510,
-    darkHome300x360,
-    darkStoryDetails300x360,
-    lightDrawerNotSignedIn221x510,
-    lightDrawerSignedIn221x510,
-    lightDrawerSynced221x510,
-    lightDrawerSyning221x510,
-    lightHome300x360,
-    lightStoryDetails300x360,
-    toolbarDark1690x70,
-    toolbarLight1690x70,
-  ];
+        darkDrawerNotSignedIn221x510,
+        darkDrawerSignedIn221x510,
+        darkDrawerSynced221x510,
+        darkDrawerSyning221x510,
+        darkHome300x360,
+        darkStoryDetails300x360,
+        lightDrawerNotSignedIn221x510,
+        lightDrawerSignedIn221x510,
+        lightDrawerSynced221x510,
+        lightDrawerSyning221x510,
+        lightHome300x360,
+        lightStoryDetails300x360,
+        toolbarDark1690x70,
+        toolbarLight1690x70
+      ];
 }
 
 class Assets {
@@ -491,12 +451,18 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+    this.animation,
+  });
 
   final String _assetName;
 
   final Size? size;
   final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
 
   Image image({
     Key? key,
@@ -551,11 +517,30 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({AssetBundle? bundle, String? package}) {
-    return AssetImage(_assetName, bundle: bundle, package: package);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
   }
 
   String get path => _assetName;
 
   String get keyName => _assetName;
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
 }

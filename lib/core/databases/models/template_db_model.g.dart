@@ -25,12 +25,13 @@ abstract class _$TemplateDbModelCWProxy {
 
   TemplateDbModel index(int? index);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TemplateDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TemplateDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TemplateDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TemplateDbModel call({
     int id,
     List<int>? tags,
@@ -44,51 +45,53 @@ abstract class _$TemplateDbModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTemplateDbModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTemplateDbModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfTemplateDbModel.copyWith(...)` or call `instanceOfTemplateDbModel.copyWith.fieldName(value)` for a single field.
 class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   const _$TemplateDbModelCWProxyImpl(this._value);
 
   final TemplateDbModel _value;
 
   @override
-  TemplateDbModel id(int id) => this(id: id);
+  TemplateDbModel id(int id) => call(id: id);
 
   @override
-  TemplateDbModel tags(List<int>? tags) => this(tags: tags);
+  TemplateDbModel tags(List<int>? tags) => call(tags: tags);
 
   @override
   TemplateDbModel content(StoryContentDbModel? content) =>
-      this(content: content);
+      call(content: content);
 
   @override
   TemplateDbModel preferences(StoryPreferencesDbModel? preferences) =>
-      this(preferences: preferences);
+      call(preferences: preferences);
 
   @override
-  TemplateDbModel createdAt(DateTime createdAt) => this(createdAt: createdAt);
+  TemplateDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
 
   @override
-  TemplateDbModel updatedAt(DateTime updatedAt) => this(updatedAt: updatedAt);
+  TemplateDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
 
   @override
   TemplateDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
-      this(lastSavedDeviceId: lastSavedDeviceId);
+      call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
   TemplateDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
-      this(permanentlyDeletedAt: permanentlyDeletedAt);
+      call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-  TemplateDbModel index(int? index) => this(index: index);
+  TemplateDbModel index(int? index) => call(index: index);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TemplateDbModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TemplateDbModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TemplateDbModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TemplateDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
@@ -101,7 +104,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return TemplateDbModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
@@ -117,11 +120,11 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
           ? _value.preferences
           // ignore: cast_nullable_to_non_nullable
           : preferences as StoryPreferencesDbModel?,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      updatedAt: updatedAt == const $CopyWithPlaceholder()
+      updatedAt: updatedAt == const $CopyWithPlaceholder() || updatedAt == null
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
@@ -142,7 +145,8 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
 }
 
 extension $TemplateDbModelCopyWith on TemplateDbModel {
-  /// Returns a callable class that can be used as follows: `instanceOfTemplateDbModel.copyWith(...)` or like so:`instanceOfTemplateDbModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfTemplateDbModel.copyWith(...)` or `instanceOfTemplateDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$TemplateDbModelCWProxy get copyWith => _$TemplateDbModelCWProxyImpl(this);
 }

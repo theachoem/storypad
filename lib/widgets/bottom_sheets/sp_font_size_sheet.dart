@@ -9,10 +9,12 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 class SpFontSizeSheet extends BaseBottomSheet {
   const SpFontSizeSheet({
     required this.fontSize,
+    required this.isDefaultToSystem,
     required this.onChanged,
   });
 
   final FontSizeOption? fontSize;
+  final bool isDefaultToSystem;
   final void Function(FontSizeOption? fontSize) onChanged;
 
   @override
@@ -31,8 +33,16 @@ class SpFontSizeSheet extends BaseBottomSheet {
             mainAxisSize: MainAxisSize.min,
             children: [
               ...[null, ...FontSizeOption.values].map((fontSize) {
+                String? label = fontSize?.label;
+
+                if (isDefaultToSystem) {
+                  label ??= "${tr('general.system')} (${tr('general.default')})";
+                } else {
+                  label ??= tr('general.default');
+                }
+
                 return ListTile(
-                  title: Text(fontSize?.label ?? "${tr('general.system')} (${tr('general.default')})"),
+                  title: Text(label),
                   trailing: Visibility(
                     visible: fontSize == selectedFontSize,
                     child: SpFadeIn.fromBottom(

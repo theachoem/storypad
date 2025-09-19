@@ -23,12 +23,13 @@ abstract class _$RelaxSoundMixModelCWProxy {
 
   RelaxSoundMixModel index(int? index);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundMixModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundMixModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundMixModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundMixModel call({
     int id,
     String name,
@@ -41,49 +42,51 @@ abstract class _$RelaxSoundMixModelCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelaxSoundMixModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelaxSoundMixModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfRelaxSoundMixModel.copyWith(...)` or call `instanceOfRelaxSoundMixModel.copyWith.fieldName(value)` for a single field.
 class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
   const _$RelaxSoundMixModelCWProxyImpl(this._value);
 
   final RelaxSoundMixModel _value;
 
   @override
-  RelaxSoundMixModel id(int id) => this(id: id);
+  RelaxSoundMixModel id(int id) => call(id: id);
 
   @override
-  RelaxSoundMixModel name(String name) => this(name: name);
+  RelaxSoundMixModel name(String name) => call(name: name);
 
   @override
   RelaxSoundMixModel sounds(List<RelaxSoundModel> sounds) =>
-      this(sounds: sounds);
+      call(sounds: sounds);
 
   @override
   RelaxSoundMixModel createdAt(DateTime createdAt) =>
-      this(createdAt: createdAt);
+      call(createdAt: createdAt);
 
   @override
   RelaxSoundMixModel updatedAt(DateTime updatedAt) =>
-      this(updatedAt: updatedAt);
+      call(updatedAt: updatedAt);
 
   @override
   RelaxSoundMixModel lastSavedDeviceId(String? lastSavedDeviceId) =>
-      this(lastSavedDeviceId: lastSavedDeviceId);
+      call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
   RelaxSoundMixModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
-      this(permanentlyDeletedAt: permanentlyDeletedAt);
+      call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-  RelaxSoundMixModel index(int? index) => this(index: index);
+  RelaxSoundMixModel index(int? index) => call(index: index);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundMixModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundMixModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundMixModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundMixModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
@@ -95,23 +98,23 @@ class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return RelaxSoundMixModel(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
-      name: name == const $CopyWithPlaceholder()
+      name: name == const $CopyWithPlaceholder() || name == null
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
-      sounds: sounds == const $CopyWithPlaceholder()
+      sounds: sounds == const $CopyWithPlaceholder() || sounds == null
           ? _value.sounds
           // ignore: cast_nullable_to_non_nullable
           : sounds as List<RelaxSoundModel>,
-      createdAt: createdAt == const $CopyWithPlaceholder()
+      createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      updatedAt: updatedAt == const $CopyWithPlaceholder()
+      updatedAt: updatedAt == const $CopyWithPlaceholder() || updatedAt == null
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
@@ -132,7 +135,8 @@ class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
 }
 
 extension $RelaxSoundMixModelCopyWith on RelaxSoundMixModel {
-  /// Returns a callable class that can be used as follows: `instanceOfRelaxSoundMixModel.copyWith(...)` or like so:`instanceOfRelaxSoundMixModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfRelaxSoundMixModel.copyWith(...)` or `instanceOfRelaxSoundMixModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$RelaxSoundMixModelCWProxy get copyWith =>
       _$RelaxSoundMixModelCWProxyImpl(this);

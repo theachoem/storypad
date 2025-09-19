@@ -42,6 +42,7 @@ class _SettingsContent extends StatelessWidget {
           ThemeModeTile.globalTheme(),
           const ColorSeedTile(),
           const Divider(),
+          FontSizeTile.globalTheme(),
           FontFamilyTile.globalTheme(),
           FontWeightTile.globalTheme(),
           TimeFormatTile.globalTheme(),

@@ -11,48 +11,53 @@ abstract class _$RelaxSoundModelCWProxy {
 
   RelaxSoundModel volume(double volume);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundModel call({
     String soundUrlPath,
     double volume,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelaxSoundModel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelaxSoundModel.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfRelaxSoundModel.copyWith(...)` or call `instanceOfRelaxSoundModel.copyWith.fieldName(value)` for a single field.
 class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
   const _$RelaxSoundModelCWProxyImpl(this._value);
 
   final RelaxSoundModel _value;
 
   @override
-  RelaxSoundModel soundUrlPath(String soundUrlPath) => this(soundUrlPath: soundUrlPath);
+  RelaxSoundModel soundUrlPath(String soundUrlPath) =>
+      call(soundUrlPath: soundUrlPath);
 
   @override
-  RelaxSoundModel volume(double volume) => this(volume: volume);
+  RelaxSoundModel volume(double volume) => call(volume: volume);
 
   @override
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelaxSoundModel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundModel(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RelaxSoundModel(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RelaxSoundModel call({
     Object? soundUrlPath = const $CopyWithPlaceholder(),
     Object? volume = const $CopyWithPlaceholder(),
   }) {
     return RelaxSoundModel(
-      soundUrlPath: soundUrlPath == const $CopyWithPlaceholder()
-          ? _value.soundUrlPath
-          // ignore: cast_nullable_to_non_nullable
-          : soundUrlPath as String,
-      volume: volume == const $CopyWithPlaceholder()
+      soundUrlPath:
+          soundUrlPath == const $CopyWithPlaceholder() || soundUrlPath == null
+              ? _value.soundUrlPath
+              // ignore: cast_nullable_to_non_nullable
+              : soundUrlPath as String,
+      volume: volume == const $CopyWithPlaceholder() || volume == null
           ? _value.volume
           // ignore: cast_nullable_to_non_nullable
           : volume as double,
@@ -61,7 +66,8 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
 }
 
 extension $RelaxSoundModelCopyWith on RelaxSoundModel {
-  /// Returns a callable class that can be used as follows: `instanceOfRelaxSoundModel.copyWith(...)` or like so:`instanceOfRelaxSoundModel.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfRelaxSoundModel.copyWith(...)` or `instanceOfRelaxSoundModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$RelaxSoundModelCWProxy get copyWith => _$RelaxSoundModelCWProxyImpl(this);
 }
@@ -70,12 +76,14 @@ extension $RelaxSoundModelCopyWith on RelaxSoundModel {
 // JsonSerializableGenerator
 // **************************************************************************
 
-RelaxSoundModel _$RelaxSoundModelFromJson(Map<String, dynamic> json) => RelaxSoundModel(
+RelaxSoundModel _$RelaxSoundModelFromJson(Map<String, dynamic> json) =>
+    RelaxSoundModel(
       soundUrlPath: json['sound_url_path'] as String,
       volume: (json['volume'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$RelaxSoundModelToJson(RelaxSoundModel instance) => <String, dynamic>{
+Map<String, dynamic> _$RelaxSoundModelToJson(RelaxSoundModel instance) =>
+    <String, dynamic>{
       'sound_url_path': instance.soundUrlPath,
       'volume': instance.volume,
     };
