@@ -19,6 +19,8 @@ abstract class _$TemplateDbModelCWProxy {
 
   TemplateDbModel updatedAt(DateTime updatedAt);
 
+  TemplateDbModel archivedAt(DateTime? archivedAt);
+
   TemplateDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
   TemplateDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
@@ -39,6 +41,7 @@ abstract class _$TemplateDbModelCWProxy {
     StoryPreferencesDbModel? preferences,
     DateTime createdAt,
     DateTime updatedAt,
+    DateTime? archivedAt,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
     int? index,
@@ -73,6 +76,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
 
   @override
+  TemplateDbModel archivedAt(DateTime? archivedAt) =>
+      call(archivedAt: archivedAt);
+
+  @override
   TemplateDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       call(lastSavedDeviceId: lastSavedDeviceId);
 
@@ -99,6 +106,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
     Object? preferences = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
+    Object? archivedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
@@ -128,6 +136,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
           ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
           : updatedAt as DateTime,
+      archivedAt: archivedAt == const $CopyWithPlaceholder()
+          ? _value.archivedAt
+          // ignore: cast_nullable_to_non_nullable
+          : archivedAt as DateTime?,
       lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
@@ -171,6 +183,9 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
               json['preferences'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      archivedAt: json['archived_at'] == null
+          ? null
+          : DateTime.parse(json['archived_at'] as String),
       lastSavedDeviceId: json['last_saved_device_id'] as String?,
       permanentlyDeletedAt: json['permanently_deleted_at'] == null
           ? null
@@ -188,6 +203,7 @@ Map<String, dynamic> _$TemplateDbModelToJson(TemplateDbModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_saved_device_id': instance.lastSavedDeviceId,
+      'archived_at': instance.archivedAt?.toIso8601String(),
       'permanently_deleted_at':
           instance.permanentlyDeletedAt?.toIso8601String(),
       'stories_count': instance.storiesCount,

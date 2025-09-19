@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
@@ -20,11 +19,13 @@ class TemplatesRoute extends BaseRoute {
     this.initialYear,
     this.initialMonth,
     this.initialDay,
+    this.viewingArchives = false,
   });
 
   final int? initialYear;
   final int? initialMonth;
   final int? initialDay;
+  final bool viewingArchives;
 
   @override
   Widget buildPage(BuildContext context) => TemplatesView(params: this);

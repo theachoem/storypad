@@ -31,6 +31,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       content: null,
       createdAt: openedOn,
       updatedAt: openedOn,
+      archivedAt: null,
       lastSavedDeviceId: null,
       permanentlyDeletedAt: null,
     );

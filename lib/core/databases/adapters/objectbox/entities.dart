@@ -267,6 +267,9 @@ class TemplateObjectBox extends BaseObjectBox {
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
+  @Property(type: PropertyType.date)
+  DateTime? archivedAt;
+
   @override
   @Property(type: PropertyType.date)
   DateTime? permanentlyDeletedAt;
@@ -282,6 +285,7 @@ class TemplateObjectBox extends BaseObjectBox {
     required this.tags,
     required this.createdAt,
     required this.updatedAt,
+    required this.archivedAt,
     required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,
   });

@@ -7,20 +7,20 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/templates/edit/edit_template_view.dart';
 import 'package:storypad/views/templates/stories/template_stories_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_template_info_sheet.dart';
 
 import 'show_template_view.dart';
 
 class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final ShowTemplateRoute params;
 
-  ShowTemplateViewModel({
-    required this.params,
-  }) {
+  ShowTemplateViewModel({required this.params}) {
     _setTemplate(params.template);
 
     pagesManager = StoryPagesManagerInfo(
@@ -67,9 +67,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   void goToPreviousStories(BuildContext context) async {
-    TemplateStoriesRoute(
-      template: template,
-    ).push(context);
+    TemplateStoriesRoute(template: template).push(context);
   }
 
   Future<void> goToEditPage(BuildContext context) async {
@@ -93,6 +91,25 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     super.dispose();
   }
 
+  void archive(BuildContext context) async {
+    TemplateDbModel archivedTemplate = template.copyWith(archivedAt: DateTime.now(), updatedAt: DateTime.now());
+    await TemplateDbModel.db.set(archivedTemplate);
+
+    if (context.mounted) {
+      MessengerService.of(context).showSnackBar(tr('snack_bar.archive_success'), success: true);
+      Navigator.maybePop(context);
+    }
+  }
+
+  void putBack(BuildContext context) async {
+    TemplateDbModel putBackTemplate = template.copyWith(archivedAt: null, updatedAt: DateTime.now());
+    await TemplateDbModel.db.set(putBackTemplate);
+
+    if (context.mounted) {
+      Navigator.maybePop(context);
+    }
+  }
+
   void delete(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
@@ -105,5 +122,12 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       await TemplateDbModel.db.delete(template.id);
       if (context.mounted) Navigator.maybePop(context);
     }
+  }
+
+  void showInfo(BuildContext context) {
+    SpTemplateInfoSheet(
+      template: template,
+      persisted: true,
+    ).show(context: context);
   }
 }

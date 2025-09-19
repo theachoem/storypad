@@ -21,11 +21,12 @@ class _ShowTemplateContent extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
-          IconButton(
-            tooltip: tr("button.edit"),
-            icon: const Icon(SpIcons.edit),
-            onPressed: () => viewModel.goToEditPage(context),
-          ),
+          if (!viewModel.template.archived)
+            IconButton(
+              tooltip: tr("button.edit"),
+              icon: const Icon(SpIcons.edit),
+              onPressed: () => viewModel.goToEditPage(context),
+            ),
           SpPopupMenuButton(
             dyGetter: (dy) => dy + 72,
             items: (context) {
@@ -35,11 +36,28 @@ class _ShowTemplateContent extends StatelessWidget {
                   title: tr("general.previous_stories"),
                   onPressed: () => viewModel.goToPreviousStories(context),
                 ),
+                if (viewModel.template.archived)
+                  SpPopMenuItem(
+                    leadingIconData: SpIcons.putBack,
+                    title: tr("button.put_back"),
+                    onPressed: () => viewModel.putBack(context),
+                  )
+                else
+                  SpPopMenuItem(
+                    leadingIconData: SpIcons.archive,
+                    title: tr("button.archive"),
+                    onPressed: () => viewModel.archive(context),
+                  ),
                 SpPopMenuItem(
                   titleStyle: TextStyle(color: ColorScheme.of(context).error),
                   leadingIconData: SpIcons.delete,
                   title: tr("button.delete"),
                   onPressed: () => viewModel.delete(context),
+                ),
+                SpPopMenuItem(
+                  leadingIconData: SpIcons.info,
+                  title: tr("button.info"),
+                  onPressed: () => viewModel.showInfo(context),
                 ),
               ];
             },
@@ -52,18 +70,20 @@ class _ShowTemplateContent extends StatelessWidget {
             },
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
       body: buildBody(context, pages),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: null,
-        onPressed: () => viewModel.useTemplate(context),
-        shape: const StadiumBorder(),
-        label: Text(tr('button.use_template')),
-        icon: const Icon(SpIcons.newStory),
-      ),
+      floatingActionButton: viewModel.template.archived
+          ? null
+          : FloatingActionButton.extended(
+              heroTag: null,
+              onPressed: () => viewModel.useTemplate(context),
+              shape: const StadiumBorder(),
+              label: Text(tr('button.use_template')),
+              icon: const Icon(SpIcons.newStory),
+            ),
     );
   }
 

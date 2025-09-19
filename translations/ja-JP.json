@@ -234,6 +234,7 @@
   "input.tag.hint": "例えば：日常",
   "input.title.hint": "タイトルを入力...",
   "input.year.hint": "例えば：2004年",
+  "list_tile.archived_at.title": "アーカイブ済み",
   "list_tile.ask_for_locale_suggestion.subtitle": "間違いに気づいた場合、または新しい言語が必要ですか？あなたの提案を私たちと共有してください！",
   "list_tile.backup.no_internet_subtitle": "バックアップの状態を確認するには、インターネットに接続してください。",
   "list_tile.backup.no_permission_subtitle": "ストーリーを Google ドライブにバックアップする権限を付与します。",

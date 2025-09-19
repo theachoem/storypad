@@ -10,21 +10,30 @@ import 'templates_view.dart';
 class TemplatesViewModel extends ChangeNotifier with DisposeAwareMixin {
   final TemplatesRoute params;
 
-  TemplatesViewModel({
-    required this.params,
-  }) {
+  TemplatesViewModel({required this.params}) {
     load();
   }
 
   CollectionDbModel<TemplateDbModel>? templates;
 
   Future<void> load() async {
-    templates = await TemplateDbModel.db.where();
+    templates = await TemplateDbModel.db.where(filters: {'archived': params.viewingArchives});
     notifyListeners();
   }
 
   Future<void> goToNewPage(BuildContext context) async {
     await EditTemplateRoute().push(context);
+    await load();
+  }
+
+  void goToArchivesPage(BuildContext context) async {
+    await TemplatesRoute(
+      viewingArchives: true,
+      initialYear: params.initialYear,
+      initialMonth: params.initialMonth,
+      initialDay: params.initialDay,
+    ).push(context);
+
     await load();
   }
 

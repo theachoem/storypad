@@ -234,6 +234,7 @@
   "input.tag.hint": "على سبيل المثال. شخصي",
   "input.title.hint": "عنوان...",
   "input.year.hint": "على سبيل المثال. 2004",
+  "list_tile.archived_at.title": "مؤرشفة",
   "list_tile.ask_for_locale_suggestion.subtitle": "لاحظت وجود خطأ أو تحتاج إلى لغة جديدة؟ شارك اقتراحاتك معنا!",
   "list_tile.backup.no_internet_subtitle": "قم بالاتصال بالإنترنت للتحقق من حالة النسخ الاحتياطي لديك.",
   "list_tile.backup.no_permission_subtitle": "امنح الإذن بعمل نسخة احتياطية لقصصك على Google Drive.",

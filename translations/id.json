@@ -234,6 +234,7 @@
   "input.tag.hint": "misalnya. Pribadi",
   "input.title.hint": "Judul...",
   "input.year.hint": "misalnya. 2004",
+  "list_tile.archived_at.title": "Diarsipkan",
   "list_tile.ask_for_locale_suggestion.subtitle": "Perhatikan kesalahan atau butuh bahasa baru? Bagikan saran Anda dengan kami!",
   "list_tile.backup.no_internet_subtitle": "Hubungkan ke internet untuk memeriksa status pencadangan Anda.",
   "list_tile.backup.no_permission_subtitle": "Berikan izin untuk mencadangkan cerita Anda ke Google Drive.",
