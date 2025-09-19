@@ -71,15 +71,23 @@ class _SoundsTab extends StatelessWidget {
     return SpTapEffect(
       effects: [SpTapEffectType.touchableOpacity],
       onTap: () async {
-        await provider.toggleSound(relaxSound);
+        File? cachedFile = await viewModel.downloadRelaxSound(relaxSound);
+        if (cachedFile != null) {
+          await provider.toggleSound(relaxSound);
+        }
       },
       child: Column(
         spacing: 8.0,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _SoundIconCard(
-            relaxSound: relaxSound,
-            selected: selected,
+          Stack(
+            children: [
+              _SoundIconCard(
+                relaxSound: relaxSound,
+                selected: selected,
+              ),
+              if (!viewModel.downloaded(relaxSound)) buildDownloadIcon(context, relaxSound),
+            ],
           ),
           Text(
             relaxSound.label,
@@ -89,5 +97,28 @@ class _SoundsTab extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget buildDownloadIcon(BuildContext context, RelaxSoundObject relaxSound) {
+    if (viewModel.dowloading(relaxSound)) {
+      return const Positioned(
+        top: 8.0,
+        right: 8.0,
+        child: SizedBox.square(
+          dimension: 16.0,
+          child: CircularProgressIndicator.adaptive(),
+        ),
+      );
+    } else {
+      return Positioned(
+        top: 8.0,
+        right: 8.0,
+        child: Icon(
+          Icons.download,
+          color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
+          size: 16.0,
+        ),
+      );
+    }
   }
 }

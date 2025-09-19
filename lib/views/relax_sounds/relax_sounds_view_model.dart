@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/relax_sound_model.dart';
@@ -5,6 +7,7 @@ import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
+import 'package:storypad/core/services/firestore_storage_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/views/relax_sounds/edit_mix/edit_mix_view.dart';
 import 'relax_sounds_view.dart';
@@ -18,11 +21,48 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
-  List<RelaxSoundMixModel>? mixes;
+  List<RelaxSoundMixModel>? _mixes;
+  List<RelaxSoundMixModel>? get mixes => _mixes;
+
+  final Set<String> _downloadedSoundUrlPaths = {};
+  final Set<String> _downloadingSoundsUrlPaths = {};
+
+  bool dowloading(RelaxSoundObject relaxSound) => _downloadingSoundsUrlPaths.contains(relaxSound.soundUrlPath);
+  bool downloaded(RelaxSoundObject relaxSound) => _downloadedSoundUrlPaths.contains(relaxSound.soundUrlPath);
 
   Future<void> load() async {
-    mixes = await RelaxSoundMixModel.db.where().then((value) => value?.items) ?? [];
+    _mixes = await RelaxSoundMixModel.db.where().then((value) => value?.items) ?? [];
+    await loadDownloadSounds();
     notifyListeners();
+  }
+
+  Future<void> loadDownloadSounds() async {
+    for (final sound in RelaxSoundObject.defaultSoundsList().values) {
+      File? cachedFile = await FirestoreStorageService.instance.getCachedFile(sound.soundUrlPath);
+      if (cachedFile != null) _downloadedSoundUrlPaths.add(sound.soundUrlPath);
+    }
+  }
+
+  // AudioPlayerService will also download the sound if not cached. But download in view model to show loading state & give user better UX.
+  Future<File?> downloadRelaxSound(RelaxSoundObject relaxSound) async {
+    File? cachedFile = await FirestoreStorageService.instance.getCachedFile(relaxSound.soundUrlPath);
+
+    if (cachedFile != null) {
+      _downloadedSoundUrlPaths.add(relaxSound.soundUrlPath);
+      notifyListeners();
+      return cachedFile;
+    } else {
+      _downloadingSoundsUrlPaths.add(relaxSound.soundUrlPath);
+      notifyListeners();
+
+      cachedFile = await FirestoreStorageService.instance.downloadFile(relaxSound.soundUrlPath).then((e) => e.file);
+
+      if (cachedFile != null) _downloadedSoundUrlPaths.add(relaxSound.soundUrlPath);
+      _downloadingSoundsUrlPaths.remove(relaxSound.soundUrlPath);
+      notifyListeners();
+
+      return cachedFile;
+    }
   }
 
   void saveMix(BuildContext context) async {
@@ -64,14 +104,14 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> reorder(int oldIndex, int newIndex) async {
-    if (mixes == null) return;
+    if (_mixes == null) return;
 
-    mixes = mixes!.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    _mixes = _mixes!.reorder(oldIndex: oldIndex, newIndex: newIndex);
     notifyListeners();
 
-    int length = mixes!.length;
+    int length = _mixes!.length;
     for (int i = 0; i < length; i++) {
-      final item = mixes!.elementAt(i);
+      final item = _mixes!.elementAt(i);
       if (item.index != i) {
         await RelaxSoundMixModel.db.set(item.copyWith(index: i, updatedAt: DateTime.now()));
       }
@@ -85,6 +125,12 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
     RelaxSoundMixModel mix,
     Iterable<RelaxSoundObject> sounds,
   ) async {
+    for (final sound in sounds) {
+      File? file = await downloadRelaxSound(sound);
+      if (file == null) return;
+    }
+
+    if (!context.mounted) return;
     await context.read<RelaxSoundsProvider>().playAll(soundWithInitialVolume: {
       for (var sound in sounds)
         sound: mix.sounds.where((saved) => saved.soundUrlPath == sound.soundUrlPath).firstOrNull?.volume

@@ -34,7 +34,7 @@ for (let file of files) {
   const remoteFile = bucket.file(destination);
   const [exists] = await remoteFile.exists();
 
-  if (getFileSize(filePath) > 10) {
+  if (getFileSize(filePath) > 20) {
     console.log(`⚠️ Exit as bigger than 10mb ${filePathWithHash}`);
     process.exit(1);
   }

@@ -13,6 +13,7 @@ class _RelaxSoundsContent extends StatelessWidget {
         extendBody: true,
         appBar: AppBar(
           title: Text(tr('add_ons.relax_sounds.title')),
+          backgroundColor: ColorScheme.of(context).surface,
           automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
           actions: [
             if (CupertinoSheetRoute.hasParentSheet(context))

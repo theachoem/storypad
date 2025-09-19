@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
@@ -26,7 +27,6 @@ class AudioPlayerService {
   bool? _setLoop;
   bool? _setAudioSource;
   Completer<bool>? _setupCompleter;
-  String? _downloadUrl;
 
   double getVolume() => _volume;
   void setVolume(double volume) {
@@ -39,17 +39,21 @@ class AudioPlayerService {
 
     _setupCompleter = Completer();
     _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
-    _downloadUrl ??= await FirestoreStorageService.instance.getDownloadURL(urlPath);
 
-    if (_downloadUrl == null) {
-      _setupCompleter?.complete(false);
-      return false;
-    } else {
-      final audioSource = LockCachingAudioSource(Uri.parse(_downloadUrl!));
-      _setAudioSource ??= await _player.setAudioSource(await audioSource.resolve()).then((e) => true);
+    File? cachedFile = await FirestoreStorageService.instance.getCachedFile(urlPath);
+    if (cachedFile != null) {
+      _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
       _setupCompleter?.complete(true);
-
       return true;
+    } else {
+      File? cachedFile = await FirestoreStorageService.instance.downloadFile(urlPath).then((e) => e.file);
+      if (cachedFile != null) {
+        _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
+        _setupCompleter?.complete(true);
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 

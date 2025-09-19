@@ -27,6 +27,9 @@ class FirestoreStorageResponse {
 }
 
 class FirestoreStorageService {
+  // ignore: constant_identifier_names
+  static const int MAX_DOWNLOAD_SIZE = 20 * 1024 * 1024; // 20mb
+
   static FirestoreStorageService instance = FirestoreStorageService();
 
   Map<String, dynamic>? _hash;
@@ -73,7 +76,7 @@ class FirestoreStorageService {
     }
   }
 
-  // max download is 10mb, we will validate during uploading in:
+  // max download is 20mb, we will validate during uploading in:
   // bin/firebase_admin/upload_files_to_firestore_storages.js
   Future<FirestoreStorageResponse> downloadFile(String urlPath) async {
     assert(urlPath.startsWith("/"));
@@ -88,7 +91,7 @@ class FirestoreStorageService {
     if (!File(downloadPath).parent.existsSync()) File(downloadPath).parent.createSync(recursive: true);
 
     try {
-      final content = await childRef.getData();
+      final content = await childRef.getData(MAX_DOWNLOAD_SIZE);
 
       if (content != null) {
         await File(downloadPath).writeAsBytes(content);

@@ -113,8 +113,21 @@ class _MixesTab extends StatelessWidget {
               final relaxSound = sounds.elementAt(index);
 
               Widget child = const SizedBox(height: 40, width: 40);
+
               if (index == sounds.length - 1) {
-                child = buildSoundIcon(relaxSound, backgroundColor);
+                if (sounds.any((e) => viewModel.dowloading(relaxSound))) {
+                  child = const SizedBox.square(
+                    dimension: 32.0,
+                    child: Center(
+                      child: SizedBox.square(
+                        dimension: 16.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
+                  );
+                } else {
+                  child = buildSoundIcon(relaxSound, backgroundColor);
+                }
               }
 
               return Transform.rotate(
