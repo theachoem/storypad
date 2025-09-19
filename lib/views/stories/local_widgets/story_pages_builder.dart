@@ -21,7 +21,6 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_default_scroll_controller.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_focus_node_builder2.dart';
 import 'package:storypad/widgets/sp_icons.dart';

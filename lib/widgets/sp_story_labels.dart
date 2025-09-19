@@ -99,6 +99,7 @@ class SpStoryLabels extends StatelessWidget {
         buildPin(
           leadingIconData: SpIcons.managingPage,
           context: context,
+          tooltip: tr('button.manage_pages'),
           title: plural("plural.page", pageCount),
           onTap: onToggleManagingPage,
         ),
@@ -184,10 +185,11 @@ class SpStoryLabels extends StatelessWidget {
     );
   }
 
-  Material buildPin({
+  Widget buildPin({
     required BuildContext context,
     required String title,
     required void Function()? onTap,
+    String? tooltip,
     IconData? leadingIconData,
   }) {
     Widget text;
@@ -210,7 +212,7 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    return Material(
+    final child = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
       color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
       child: InkWell(
@@ -224,6 +226,11 @@ class SpStoryLabels extends StatelessWidget {
           child: text,
         ),
       ),
+    );
+
+    return Tooltip(
+      message: tooltip ?? title,
+      child: child,
     );
   }
 }

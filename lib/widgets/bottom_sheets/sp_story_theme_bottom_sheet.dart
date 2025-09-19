@@ -1,8 +1,6 @@
 // TODO: fix color.value deprecation
 // ignore_for_file: deprecated_member_use
 
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -146,17 +144,6 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
               widget.onThemeChanged(preferences);
             },
           ),
-          ListTile(
-            leading: Icon(SpIcons.book),
-            title: Text(tr("button.manage_pages")),
-            subtitle: Text(plural('plural.page', widget.draftContent?.richPages?.length ?? 0)),
-            trailing: const Icon(SpIcons.keyboardRight),
-            onTap: () async {
-              await Navigator.maybePop(context);
-              FocusManager.instance.primaryFocus?.unfocus();
-              widget.viewModel.pagesManager.toggleManagingPage();
-            },
-          ),
           const Divider(height: 1),
           const SizedBox(height: 12.0),
           SpLayoutTypeSection(
@@ -219,10 +206,15 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
       buildMoreOptionsButton(context),
       IconButton(
         onPressed: () {
-          if (Platform.isAndroid) context.read<DevicePreferencesProvider>().toggleThemeMode(context);
-
-          // TODO: fix material modal to dynamic base on theme mode instead of pop
-          Navigator.maybePop(context);
+          if (kIsCupertino) {
+            context.read<DevicePreferencesProvider>().toggleThemeMode(context);
+          } else {
+            context
+                .read<DevicePreferencesProvider>()
+                .toggleThemeMode(context, delay: const Duration(milliseconds: 300));
+            // TODO: fix material modal to dynamic base on theme mode instead of pop
+            Navigator.maybePop(context);
+          }
         },
         icon: SpThemeModeIcon(parentContext: context),
       ),
