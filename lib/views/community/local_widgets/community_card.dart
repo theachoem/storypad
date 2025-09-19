@@ -29,7 +29,7 @@ class _CommunityCard extends StatelessWidget {
                   duration: Durations.medium4,
                   child: IconButton.filled(
                     icon: Icon(MdiIcons.reddit),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://www.reddit.com/r/StoryPad"),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
                   ),
                 ),
                 SpFadeIn.fromBottom(
@@ -37,7 +37,7 @@ class _CommunityCard extends StatelessWidget {
                   duration: Durations.medium4,
                   child: IconButton.filledTonal(
                     icon: Icon(MdiIcons.twitter),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://x.com/storypadapp"),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.twitterUrl.get()),
                   ),
                 ),
                 SpFadeIn.fromBottom(
@@ -45,7 +45,7 @@ class _CommunityCard extends StatelessWidget {
                   duration: Durations.medium4,
                   child: IconButton.filledTonal(
                     icon: Icon(MdiIcons.bug),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, "https://storypad.me#footer"),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.bugReportUrl.get()),
                   ),
                 ),
               ],

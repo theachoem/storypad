@@ -3,9 +3,11 @@ import 'package:easy_localization/easy_localization.dart' show tr, BuildContextE
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import "package:storypad/core/constants/app_constants.dart" show kStoryPad;
+import "package:storypad/core/constants/app_constants.dart";
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
+import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';

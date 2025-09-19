@@ -8,13 +8,17 @@ part './remote_config_object.dart';
 
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
+    bugReportUrl,
     faqUrl,
     featureFlags,
     localizationSupportUrl,
     policyPrivacyUrl,
+    redditUrl,
     sourceCodeUrl,
     surveyUrl,
+    twitterUrl,
     donationUrl,
+    websiteUrl,
   ];
 
   FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
@@ -33,10 +37,16 @@ class RemoteConfigService {
     _listeners[key] = callback;
   }
 
+  static const bugReportUrl = _RemoteConfigObject<String>(
+    'BUG_REPORT_URL',
+    _RemoteConfigValueType.string,
+    'https://storypad.me#footer',
+  );
+
   static const faqUrl = _RemoteConfigObject<String>(
     'FAQ_URL',
     _RemoteConfigValueType.string,
-    'https://storypad.me',
+    'https://storypad.me/#faq',
   );
 
   static const featureFlags = _RemoteConfigObject<Map>(
@@ -57,6 +67,12 @@ class RemoteConfigService {
     'https://storypad.me/privacy-policy',
   );
 
+  static const redditUrl = _RemoteConfigObject<String>(
+    'REDDIT_URL',
+    _RemoteConfigValueType.string,
+    'https://www.reddit.com/r/StoryPad',
+  );
+
   static const sourceCodeUrl = _RemoteConfigObject<String>(
     'SOURCE_CODE_URL',
     _RemoteConfigValueType.string,
@@ -69,10 +85,22 @@ class RemoteConfigService {
     '',
   );
 
+  static const twitterUrl = _RemoteConfigObject<String>(
+    'TWITTER_URL',
+    _RemoteConfigValueType.string,
+    'https://x.com/storypadapp',
+  );
+
   static const donationUrl = _RemoteConfigObject<String>(
     'DONATATION_URL',
     _RemoteConfigValueType.string,
     'https://coff.ee/theachoem',
+  );
+
+  static const websiteUrl = _RemoteConfigObject<String>(
+    'WEBSITE_URL',
+    _RemoteConfigValueType.string,
+    'https://storypad.me',
   );
 
   Future<void> initialize() async {
