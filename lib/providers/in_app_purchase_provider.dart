@@ -6,8 +6,11 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_sheet.dart';
 
 // This provider securely manages in-app purchases across platforms without storing your actual email.
 // It authenticates using your Google account via SSO, then immediately hashes your email locally.
@@ -60,8 +63,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
         LogInResult result = await Purchases.logIn(hash);
         _customerInfo = result.customerInfo;
         notifyListeners();
-      } catch (e) {
-        debugPrint('$runtimeType#revalidateCustomerInfo error Purchases.login: $e');
+      } catch (e, s) {
+        AppLogger.error('$runtimeType#revalidateCustomerInfo error Purchases.login: $e', stackTrace: s);
       }
     }
   }
@@ -87,9 +90,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
         PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
         _customerInfo = result.customerInfo;
         notifyListeners();
-      } on PlatformException catch (e) {
+      } on PlatformException catch (e, s) {
         PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
-        debugPrint('$runtimeType#purchase error: $errorCode');
+        AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
       }
     }
   }
@@ -112,20 +115,25 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
     GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
     if (currentUser == null) {
-      await context.read<BackupProvider>().signIn(context);
+      await SpConnectWithGoogleDriveSheet().show(context: context);
       if (context.mounted) currentUser = context.read<BackupProvider>().currentUser;
     }
 
-    if (currentUser != null) {
+    if (currentUser != null && context.mounted) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
 
-      try {
-        LogInResult loginResult = await Purchases.logIn(hash);
-        _customerInfo = loginResult.customerInfo;
-        notifyListeners();
-      } catch (e) {
-        debugPrint('$runtimeType#purchase error Purchases.login: $e');
-      }
+      MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#_loginIfNot',
+        future: () async {
+          try {
+            LogInResult loginResult = await Purchases.logIn(hash);
+            _customerInfo = loginResult.customerInfo;
+            notifyListeners();
+          } catch (e, s) {
+            AppLogger.error('$runtimeType#purchase error Purchases.login: $e', stackTrace: s);
+          }
+        },
+      );
     }
   }
 
