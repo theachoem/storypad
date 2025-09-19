@@ -33,16 +33,14 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
                 decoration: const InputDecoration(hintText: "..."),
                 initialValue: notifier.value,
                 onChanged: (value) => notifier.value = value,
-                onFieldSubmitted: (value) => SharePlus.instance.share(ShareParams(text: notifier.value.trim())),
+                onFieldSubmitted: (value) => shareApp(notifier),
               ),
               const SizedBox(height: 16.0),
               FilledButton.icon(
                 icon: const Icon(SpIcons.share),
                 label: Text(tr("button.share")),
                 // TODO: on ios it does not show share logo well.
-                onPressed: () => SharePlus.instance.share(ShareParams(
-                  text: notifier.value.trim(),
-                )),
+                onPressed: () => shareApp(notifier),
               ),
               buildBottomPadding(bottomPadding),
             ],

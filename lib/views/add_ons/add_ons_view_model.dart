@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/add_on_object.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -25,25 +26,23 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   List<AddOnObject>? addOns;
   List<StoreProduct>? storeProducts;
-  String? errorMessage;
 
   StoreProduct? getProduct(String productIdentifier) {
     return storeProducts?.where((storeProduct) => storeProduct.identifier == productIdentifier).firstOrNull;
   }
 
   Future<void> load() async {
-    errorMessage = null;
-
     try {
       storeProducts = kIAPEnabled
           ? await Purchases.getProducts(AppProduct.productIdentifiers, productCategory: ProductCategory.nonSubscription)
           : [];
-    } on PlatformException catch (e) {
-      errorMessage = e.message;
-      debugPrint('$runtimeType#load error: $errorMessage');
-    } catch (e) {
-      errorMessage = e.toString();
-      debugPrint('$runtimeType#load error: $errorMessage');
+    } on PlatformException catch (e, s) {
+      AppLogger.error(
+        '$runtimeType#load PlatformException - code: ${e.code}, message: ${e.message}, details: ${e.details}',
+        stackTrace: s,
+      );
+    } catch (e, s) {
+      AppLogger.error('$runtimeType#load error: ${e.toString()}', stackTrace: s);
     }
 
     addOns = [

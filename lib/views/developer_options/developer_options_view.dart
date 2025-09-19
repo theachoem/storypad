@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/views/developer_options/recently_deleted_records/recently_deleted_records_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_logs_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class DeveloperOptionsRoute extends BaseRoute {
@@ -36,7 +37,14 @@ class DeveloperOptionsView extends StatelessWidget {
             ),
             trailing: const Icon(SpIcons.keyboardRight),
             onTap: () => const RecentlyDeletedRecordsRoute().push(context),
-          )
+          ),
+          ListTile(
+            leading: const Icon(SpIcons.info),
+            title: const Text("See Debug Logs"),
+            subtitle: const Text("View the app debug logs."),
+            trailing: const Icon(SpIcons.keyboardRight),
+            onTap: () => SpShareLogsBottomSheet().show(context: context),
+          ),
         ],
       ),
     );
