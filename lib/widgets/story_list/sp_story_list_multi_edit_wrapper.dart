@@ -57,6 +57,18 @@ class SpStoryListMultiEditWrapper extends StatelessWidget {
     );
   }
 
+  factory SpStoryListMultiEditWrapper.withListener({
+    required Widget Function(BuildContext context, SpStoryListMultiEditWrapperState state) builder,
+  }) {
+    return SpStoryListMultiEditWrapper(builder: (context) {
+      return Consumer<SpStoryListMultiEditWrapperState>(
+        builder: (context, state, child) {
+          return builder(context, state);
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableProvider(

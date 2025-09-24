@@ -19,20 +19,25 @@ class _HomeContent extends StatelessWidget {
       length: viewModel.months.length,
       child: _HomeScaffold(
         viewModel: viewModel,
-        endDrawer: LayoutBuilder(
-          builder: (context, constraints) {
-            return Drawer(
-              // we want to make it look like a side panel on larger screens.
-              width: constraints.maxWidth >= 450 ? 400 : null,
-              child: const SpNestedNavigation(initialScreen: HomeEndDrawer()),
-            );
-          },
-        ),
+        endDrawer: buildEndDrawer(),
         appBar: _HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
         floatingActionButton: buildFloatingButtons(context),
       ),
+    );
+  }
+
+  Widget buildEndDrawer() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool bigScreen = constraints.maxWidth >= 450;
+
+        return Drawer(
+          width: bigScreen ? 400 : null,
+          child: bigScreen ? const SpNestedNavigation(initialScreen: HomeEndDrawer()) : const HomeEndDrawer(),
+        );
+      },
     );
   }
 
