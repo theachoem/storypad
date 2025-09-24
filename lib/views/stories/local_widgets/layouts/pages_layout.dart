@@ -12,8 +12,6 @@ class _PagesLayout extends StatefulWidget {
 }
 
 class _PagesLayoutState extends State<_PagesLayout> {
-  bool get keyboardOpened => widget.builder.viewInsets.bottom > 100;
-
   final ValueNotifier<double> pageOffset = ValueNotifier(0.0);
 
   @override
@@ -50,9 +48,7 @@ class _PagesLayoutState extends State<_PagesLayout> {
           children: [
             SingleChildScrollView(
               clipBehavior: Clip.none,
-              padding: EdgeInsets.only(
-                bottom: keyboardOpened ? widget.builder.viewInsets.bottom + 16.0 : 16.0,
-              ),
+              padding: widget.builder.padding,
               child: Column(
                 children: [
                   if (widget.builder.headerBuilder != null) buildHeader(index, screenWidth),

@@ -34,6 +34,9 @@ case "$FLAVOR" in
 --community-ios | "")
   CMD="flutter run --flavor community --dart-define=CUPERTINO=yes --dart-define-from-file=configs/community.json --target=lib/main_community.dart"
   ;;
+--community-macos | "")
+  CMD="flutter run --flavor community --dart-define=CUPERTINO=yes --dart-define-from-file=configs/community.json --target=lib/main_community.dart -d macos"
+  ;;
 *)
   echo "Invalid option: $FLAVOR"
   echo "Usage: bin/dev [--storypad | --spooky | --community]"

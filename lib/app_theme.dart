@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:animations/animations.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -220,21 +221,37 @@ class AppTheme extends StatelessWidget {
     required DevicePreferencesProvider provider,
     required Widget Function(ColorScheme lightScheme, ColorScheme darkScheme) builder,
   }) {
-    bool monochrome = provider.preferences.colorSeed == Colors.black || provider.preferences.colorSeed == Colors.white;
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        ColorScheme lightScheme;
+        ColorScheme darkScheme;
 
-    ColorScheme lightScheme = ColorScheme.fromSeed(
-      seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
-      brightness: Brightness.light,
-      dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+        bool hasDynamicColor = lightDynamic != null && darkDynamic != null;
+        bool useDynamicColor = provider.preferences.colorSeed == null;
+
+        if (hasDynamicColor && useDynamicColor) {
+          lightScheme = lightDynamic;
+          darkScheme = darkDynamic;
+        } else {
+          bool monochrome =
+              provider.preferences.colorSeed == Colors.black || provider.preferences.colorSeed == Colors.white;
+
+          lightScheme = ColorScheme.fromSeed(
+            seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
+            brightness: Brightness.light,
+            dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+          );
+
+          darkScheme = ColorScheme.fromSeed(
+            seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
+            brightness: Brightness.dark,
+            dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+          );
+        }
+
+        return builder(lightScheme, darkScheme);
+      },
     );
-
-    ColorScheme darkScheme = ColorScheme.fromSeed(
-      seedColor: provider.preferences.colorSeed ?? kDefaultColorSeed,
-      brightness: Brightness.dark,
-      dynamicSchemeVariant: monochrome ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
-    );
-
-    return builder(lightScheme, darkScheme);
   }
 
   static FontWeight _calculateFontWeight(FontWeight defaultWeight, FontWeight preferredFontWeight) {
