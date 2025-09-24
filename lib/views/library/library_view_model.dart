@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,10 +50,21 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
       return;
     }
 
-    await MessengerService.of(context).showLoading(
-      debugSource: 'LibraryViewModel#deleteAsset',
-      future: () => _deleteAsset(context, asset, storyCount),
+    OkCancelResult userAction = await showOkCancelAlertDialog(
+      context: context,
+      isDestructiveAction: true,
+      title: tr('dialog.are_you_sure.title'),
+      message: tr('dialog.are_you_sure.you_cant_undo_message'),
+      okLabel: tr('button.delete'),
+      cancelLabel: tr('button.cancel'),
     );
+
+    if (userAction == OkCancelResult.ok && context.mounted) {
+      await MessengerService.of(context).showLoading(
+        debugSource: 'LibraryViewModel#deleteAsset',
+        future: () => _deleteAsset(context, asset, storyCount),
+      );
+    }
   }
 
   Future<bool> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {

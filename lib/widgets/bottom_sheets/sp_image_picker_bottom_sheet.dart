@@ -164,7 +164,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
             child: SpImage(
               link: asset.link,
               width: double.infinity,
-              height: null,
+              height: 120,
             ),
           ),
         );

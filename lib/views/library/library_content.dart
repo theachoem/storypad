@@ -26,73 +26,98 @@ class _LibraryContent extends StatelessWidget {
     }
 
     if (viewModel.assets?.items.isEmpty == true) {
-      return buildEmptyBody(context);
+      return _EmptyBody(context: context);
     }
 
-    return MasonryGridView.builder(
-      padding: EdgeInsets.only(
-        top: 16.0,
-        bottom: MediaQuery.of(context).padding.bottom + 16.0,
-        left: MediaQuery.of(context).padding.left + 16.0,
-        right: MediaQuery.of(context).padding.right + 16.0,
-      ),
-      itemCount: viewModel.assets?.items.length ?? 0,
-      mainAxisSpacing: 8.0,
-      crossAxisSpacing: 8.0,
-      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (context, index) {
-        final asset = viewModel.assets!.items[index];
+    return LayoutBuilder(builder: (context, constraints) {
+      return MasonryGridView.builder(
+        padding: EdgeInsets.only(
+          top: 16.0,
+          bottom: MediaQuery.of(context).padding.bottom + 16.0,
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+        ),
+        itemCount: viewModel.assets?.items.length ?? 0,
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
+        itemBuilder: (context, index) {
+          final asset = viewModel.assets!.items[index];
+          return buildItem(asset, provider, context);
+        },
+      );
+    });
+  }
 
-        return SpPopupMenuButton(
-          dyGetter: (dy) => dy + 100,
-          items: (context) {
-            return [
-              if (viewModel.storiesCount[asset.id] == 0)
-                buildDeleteButton(context, provider, asset, viewModel.storiesCount[asset.id]!)
-              else
-                SpPopMenuItem(
-                  leadingIconData: SpIcons.book,
-                  title: tr("general.stories"),
-                  onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
-                ),
-              SpPopMenuItem(
-                leadingIconData: SpIcons.photo,
-                title: tr("button.view"),
-                onPressed: () {
-                  final assetLinks = viewModel.assets?.items.map((e) => e.link).toList() ?? [];
-                  SpImagesViewer.fromString(
-                    images: assetLinks,
-                    initialIndex: assetLinks.indexOf(asset.link),
-                  ).show(context);
-                },
-              )
-            ];
-          },
-          builder: (callback) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4.0,
-              children: [
-                Stack(
-                  children: [
-                    buildImage(context, asset, callback),
-                    Positioned(
-                      top: 8.0,
-                      right: 8.0,
-                      child: buildImageStatus(
-                        context: context,
-                        asset: asset,
-                        provider: provider,
-                      ),
+  Widget buildItem(AssetDbModel asset, BackupProvider provider, BuildContext context) {
+    return SpPopupMenuButton(
+      dyGetter: (dy) => dy + 100,
+      items: (context) {
+        return [
+          if (viewModel.storiesCount[asset.id] == 0)
+            buildDeleteButton(context, provider, asset, viewModel.storiesCount[asset.id]!)
+          else
+            SpPopMenuItem(
+              leadingIconData: SpIcons.book,
+              title: tr("general.stories"),
+              onPressed: () => ShowAssetRoute(assetId: asset.id, storyViewOnly: false).push(context),
+            ),
+          SpPopMenuItem(
+            leadingIconData: SpIcons.photo,
+            title: tr("button.view"),
+            onPressed: () {
+              final assetLinks = viewModel.assets?.items.map((e) => e.link).toList() ?? [];
+              SpImagesViewer.fromString(
+                images: assetLinks,
+                initialIndex: assetLinks.indexOf(asset.link),
+              ).show(context);
+            },
+          ),
+          SpPopMenuItem(
+            leadingIconData: SpIcons.info,
+            title: tr("button.info"),
+            onPressed: () => SpAssetInfoSheet(asset: asset).show(context: context),
+          ),
+        ];
+      },
+      builder: (callback) {
+        return SpTapEffect(
+          onTap: callback,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4.0,
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: SpImage(
+                      link: asset.link,
+                      width: double.infinity,
+                      height: 120,
                     ),
-                  ],
-                ),
-                Text(plural("plural.story", viewModel.storiesCount[asset.id] ?? 0)),
-              ],
-            );
-          },
+                  ),
+                  _ImageStatus(context: context, asset: asset, provider: provider),
+                  const _BlackOverlay(),
+                  buildStoryCount(asset),
+                ],
+              ),
+            ],
+          ),
         );
       },
+    );
+  }
+
+  Widget buildStoryCount(AssetDbModel asset) {
+    return Positioned(
+      left: 8.0,
+      right: 8.0,
+      bottom: 4.0,
+      child: IgnorePointer(
+        ignoring: true,
+        child: Text(plural("plural.story", viewModel.storiesCount[asset.id] ?? 0)),
+      ),
     );
   }
 
@@ -112,129 +137,5 @@ class _LibraryContent extends StatelessWidget {
         onPressed: () => viewModel.deleteAsset(context, asset, storyCount),
       );
     }
-  }
-
-  Widget buildImageStatus({
-    required BuildContext context,
-    required AssetDbModel asset,
-    required BackupProvider provider,
-  }) {
-    Widget child;
-
-    if (!asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
-      child = CircleAvatar(
-        radius: 16.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
-        child: Icon(
-          SpIcons.cloudOff,
-          size: 20.0,
-        ),
-      );
-    } else if (asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
-      child = Tooltip(
-        message: asset.getGoogleDriveUrlForEmail(provider.currentUser!.email),
-        child: CircleAvatar(
-          radius: 16.0,
-          backgroundColor: ColorScheme.of(context).bootstrap.success.color,
-          foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
-          child: const Icon(
-            SpIcons.cloudDone,
-            size: 20.0,
-          ),
-        ),
-      );
-    } else {
-      child = CircleAvatar(
-        radius: 16.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.info.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
-        child: const Icon(
-          SpIcons.warning,
-          size: 20.0,
-        ),
-      );
-    }
-
-    return child;
-  }
-
-  Widget buildImage(
-    BuildContext context,
-    AssetDbModel asset,
-    void Function() onTap,
-  ) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.0),
-      child: SpTapEffect(
-        onTap: onTap,
-        child: SpImage(
-          link: asset.link,
-          width: 200,
-          height: 200,
-          errorWidget: (context, url, error) {
-            String message = error is StateError ? error.message : error.toString();
-            return Material(
-              color: ColorScheme.of(context).readOnly.surface3,
-              child: InkWell(
-                onTap: () => onTap(),
-                child: SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Wrap(
-                    spacing: 8.0,
-                    runAlignment: WrapAlignment.center,
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    runSpacing: 8.0,
-                    children: [
-                      const Icon(SpIcons.imageNotSupported),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          message,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildEmptyBody(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: constraints.maxHeight,
-          width: double.infinity,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(24.0),
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 150),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12.0,
-              children: [
-                const Icon(SpIcons.photo, size: 32.0),
-                Text(
-                  tr("page.library.empty_message"),
-                  textAlign: TextAlign.center,
-                  style: TextTheme.of(context).bodyLarge,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
   }
 }
