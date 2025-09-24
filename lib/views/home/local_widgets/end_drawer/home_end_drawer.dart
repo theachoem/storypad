@@ -35,12 +35,12 @@ part 'backup_tile.dart';
 part 'add_ons_tile.dart';
 
 class HomeEndDrawer extends StatelessWidget {
-  const HomeEndDrawer(this.viewModel, {super.key});
-
-  final HomeViewModel viewModel;
+  const HomeEndDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<HomeViewModel>();
+
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
       return HomeYearsView(
         params: HomeYearsRoute(viewModel: viewModel),
@@ -99,7 +99,7 @@ class HomeEndDrawer extends StatelessWidget {
     return ListTile(
       leading: const Icon(SpIcons.search),
       title: Text(tr("page.search.title")),
-      onTap: () => SearchRoute(initialYear: viewModel.year).push(context),
+      onTap: () => SearchRoute(initialYear: context.read<HomeViewModel>().year).push(context),
     );
   }
 

@@ -26,7 +26,8 @@ class _HomeScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: getBackgroundColor(context),
       resizeToAvoidBottomInset: false,
-      endDrawerEnableOpenDragGesture: true,
+      drawerEnableOpenDragGesture: false,
+      endDrawerEnableOpenDragGesture: false,
       endDrawer: endDrawer,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
