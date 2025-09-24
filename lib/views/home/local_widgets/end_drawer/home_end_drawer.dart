@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart";
@@ -53,8 +52,7 @@ class HomeEndDrawer extends StatelessWidget {
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
-          if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+          CloseButton(onPressed: () => Scaffold.maybeOf(context)?.closeEndDrawer()),
         ],
       ),
       body: ListView(

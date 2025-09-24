@@ -22,7 +22,8 @@ class _HomeContent extends StatelessWidget {
         endDrawer: LayoutBuilder(
           builder: (context, constraints) {
             return Drawer(
-              width: min(constraints.maxWidth, 400),
+              // we want to make it look like a side panel on larger screens.
+              width: constraints.maxWidth >= 450 ? 400 : null,
               child: const SpNestedNavigation(initialScreen: HomeEndDrawer()),
             );
           },

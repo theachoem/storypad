@@ -26,7 +26,7 @@ class _TemplatesContent extends StatelessWidget {
   }
 
   Widget buildFAB(BuildContext context) {
-    if (!MediaQuery.accessibleNavigationOf(context)) {
+    if (MediaQuery.accessibleNavigationOf(context)) {
       return FloatingActionButton.extended(
         tooltip: tr('button.new_template'),
         elevation: 0.0,

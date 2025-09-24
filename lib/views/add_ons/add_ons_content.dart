@@ -18,6 +18,8 @@ class _AddOnsContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context) {
+    final padding = MediaQuery.of(context).padding;
+
     if (viewModel.addOns == null) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -25,7 +27,13 @@ class _AddOnsContent extends StatelessWidget {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      padding: const EdgeInsets.all(16.0).add(
+        EdgeInsets.only(
+          bottom: padding.bottom,
+          left: padding.left,
+          right: padding.right,
+        ),
+      ),
       separatorBuilder: (context, index) => const SizedBox(height: 16.0),
       itemCount: viewModel.addOns!.length,
       itemBuilder: (context, index) {
