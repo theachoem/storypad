@@ -150,7 +150,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       id: null,
       initialYear: year,
       initialAsset: asset,
-    ).push(HomeView.reloadContext!);
+    ).push(HomeView.homeContext!);
 
     await _checkNewStoryResult(addedStory);
   }

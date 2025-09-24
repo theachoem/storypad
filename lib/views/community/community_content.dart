@@ -52,7 +52,15 @@ class _CommunityContent extends StatelessWidget {
           ListTile(
             leading: const Icon(SpIcons.onboarding),
             title: Text(tr('general.onboard_page')),
-            onTap: () => SpOnboardingWrapper.open(context),
+            onTap: () async {
+              if (Scaffold.maybeOf(context)?.hasEndDrawer == true) {
+                Scaffold.of(context).closeEndDrawer();
+                SpOnboardingWrapper.open(context);
+              } else {
+                await Navigator.maybePop(context);
+                SpOnboardingWrapper.open(HomeView.homeContext!);
+              }
+            },
           ),
           ListTile(
             leading: Icon(SpIcons.license),

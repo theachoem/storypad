@@ -61,12 +61,12 @@ class HomeView extends StatelessWidget {
     super.key,
   });
 
-  static BuildContext? _reloadContext;
-  static BuildContext? get reloadContext => _reloadContext;
+  static BuildContext? _homeContext;
+  static BuildContext? get homeContext => _homeContext;
   static Future<void> reload({
     required String debugSource,
   }) async {
-    return _reloadContext?.read<HomeViewModel>().reload(debugSource: debugSource);
+    return _homeContext?.read<HomeViewModel>().reload(debugSource: debugSource);
   }
 
   @override
@@ -74,13 +74,14 @@ class HomeView extends StatelessWidget {
     return ViewModelProvider<HomeViewModel>(
       create: (context) => HomeViewModel(),
       builder: (context, viewModel, child) {
-        _reloadContext = context;
-
         return DesktopMainMenuPadding(
           child: SpAppLockWrapper(
             child: SpOnboardingWrapper(
-              child: _HomeContent(viewModel),
               onOnboarded: () => viewModel.onboard(),
+              child: Builder(builder: (context) {
+                _homeContext = context;
+                return _HomeContent(viewModel);
+              }),
             ),
           ),
         );
