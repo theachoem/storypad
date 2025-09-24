@@ -19,7 +19,14 @@ class _HomeContent extends StatelessWidget {
       length: viewModel.months.length,
       child: _HomeScaffold(
         viewModel: viewModel,
-        endDrawer: Drawer(child: SpNestedNavigation(initialScreen: HomeEndDrawer(viewModel))),
+        endDrawer: LayoutBuilder(
+          builder: (context, constraints) {
+            return Drawer(
+              width: min(constraints.maxWidth, 400),
+              child: const SpNestedNavigation(initialScreen: HomeEndDrawer()),
+            );
+          },
+        ),
         appBar: _HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
