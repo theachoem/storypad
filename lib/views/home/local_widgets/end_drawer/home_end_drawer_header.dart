@@ -8,7 +8,10 @@ class _HomeEndDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => HomeYearsRoute(viewModel: viewModel).push(context),
+      onTap: () async {
+        viewModel.endDrawerState = HomeEndDrawerState.showYearsView;
+        viewModel.notifyListeners();
+      },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

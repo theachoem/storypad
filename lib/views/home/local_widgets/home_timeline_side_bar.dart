@@ -33,27 +33,30 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   }
 
   Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
-    final buttons = [
-      SpFadeIn.bound(
-        child: IconButton(
-          tooltip: tr('add_ons.relax_sounds.title'),
-          style: IconButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: CircleBorder(
-              side: BorderSide(color: Theme.of(context).dividerColor),
+    List<Widget> buttons = switch (kIAPEnabled) {
+      false => [],
+      true => [
+          SpFadeIn.bound(
+            child: IconButton(
+              tooltip: tr('add_ons.relax_sounds.title'),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              icon: const Icon(SpIcons.musicNote),
+              onPressed: () {
+                if (provider.relaxSound) {
+                  const RelaxSoundsRoute().push(context);
+                } else {
+                  const AddOnsRoute().push(context);
+                }
+              },
             ),
           ),
-          icon: const Icon(SpIcons.musicNote),
-          onPressed: () {
-            if (provider.relaxSound) {
-              const RelaxSoundsRoute().push(context);
-            } else {
-              const AddOnsRoute().push(context);
-            }
-          },
-        ),
-      ),
-    ];
+        ]
+    };
 
     return Container(
       margin: EdgeInsets.only(

@@ -93,21 +93,22 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           widget.viewModel.takePhoto();
         },
       ),
-      IconButton.outlined(
-        tooltip: tr("add_ons.templates.title"),
-        visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
-        icon: const Icon(Icons.lightbulb_outlined),
-        color: Colors.white,
-        onPressed: () {
-          toggle(context);
+      if (kIAPEnabled)
+        IconButton.outlined(
+          tooltip: tr("add_ons.templates.title"),
+          visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
+          icon: const Icon(Icons.lightbulb_outlined),
+          color: Colors.white,
+          onPressed: () {
+            toggle(context);
 
-          if (context.read<InAppPurchaseProvider>().template) {
-            widget.viewModel.goToTemplatePage(context);
-          } else {
-            const AddOnsRoute().push(context);
-          }
-        },
-      ),
+            if (context.read<InAppPurchaseProvider>().template) {
+              widget.viewModel.goToTemplatePage(context);
+            } else {
+              const AddOnsRoute().push(context);
+            }
+          },
+        ),
     ];
 
     return GestureDetector(

@@ -25,6 +25,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart' show Color
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
@@ -43,8 +44,11 @@ class HomeEndDrawer extends StatelessWidget {
     final viewModel = Provider.of<HomeViewModel>(context);
 
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
-      return HomeYearsView(
-        params: HomeYearsRoute(viewModel: viewModel),
+      return SpFadeIn.fromRight(
+        duration: Durations.long1,
+        child: HomeYearsView(
+          params: HomeYearsRoute(viewModel: viewModel),
+        ),
       );
     }
 
@@ -79,7 +83,7 @@ class HomeEndDrawer extends StatelessWidget {
           const _BackupTile(),
           const Divider(),
           buildSettingTile(context),
-          if (kStoryPad) const _AddOnsTile(),
+          if (kStoryPad && kIAPEnabled) const _AddOnsTile(),
           const Divider(),
           const _CommunityTile(),
           ListTile(
