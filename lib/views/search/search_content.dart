@@ -7,18 +7,18 @@ class _SearchContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpStoryListMultiEditWrapper(
-      builder: (BuildContext context) {
+    return SpStoryListMultiEditWrapper.withListener(
+      builder: (context, state) {
         return PopScope(
-          canPop: false,
+          canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: buildScaffold(context),
+          child: buildScaffold(context, state),
         );
       },
     );
   }
 
-  Widget buildScaffold(BuildContext context) {
+  Widget buildScaffold(BuildContext context, SpStoryListMultiEditWrapperState state) {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -41,7 +41,7 @@ class _SearchContent extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: buildBottomNavigationBar(context),
+      bottomNavigationBar: buildBottomNavigationBar(context, state),
       body: ValueListenableBuilder<String>(
         valueListenable: viewModel.queryNotifier,
         builder: (context, query, child) {
@@ -54,26 +54,21 @@ class _SearchContent extends StatelessWidget {
     );
   }
 
-  Widget buildBottomNavigationBar(BuildContext context) {
-    return SpStoryListMultiEditWrapper.listen(
-      context: context,
-      builder: (context, state) {
-        return SpMultiEditBottomNavBar(
-          editing: state.editing,
-          onCancel: () => state.turnOffEditing(),
-          buttons: [
-            OutlinedButton(
-              child: Text("${tr("button.archive")} (${state.selectedStories.length})"),
-              onPressed: () => state.archiveAll(context),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
-              child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
-              onPressed: () => state.moveToBinAll(context),
-            ),
-          ],
-        );
-      },
+  Widget buildBottomNavigationBar(BuildContext context, SpStoryListMultiEditWrapperState state) {
+    return SpMultiEditBottomNavBar(
+      editing: state.editing,
+      onCancel: () => state.turnOffEditing(),
+      buttons: [
+        OutlinedButton(
+          child: Text("${tr("button.archive")} (${state.selectedStories.length})"),
+          onPressed: () => state.archiveAll(context),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
+          child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
+          onPressed: () => state.moveToBinAll(context),
+        ),
+      ],
     );
   }
 }

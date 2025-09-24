@@ -7,16 +7,16 @@ class _ArchivesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpStoryListMultiEditWrapper(
-      builder: (BuildContext context) {
+    return SpStoryListMultiEditWrapper.withListener(
+      builder: (BuildContext context, SpStoryListMultiEditWrapperState state) {
         return PopScope(
-          canPop: false,
+          canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
           child: Scaffold(
             appBar: AppBar(
               title: buildTitle(context),
               actions: [
-                buildEditButton(context),
+                buildEditButton(context, state),
                 buildMoreEditingOptionsButton(context),
               ],
             ),
@@ -37,21 +37,16 @@ class _ArchivesContent extends StatelessWidget {
     );
   }
 
-  Widget buildEditButton(BuildContext context) {
-    return SpStoryListMultiEditWrapper.listen(
-      context: context,
-      builder: (context, state) {
-        return Visibility(
-          visible: !state.editing,
-          child: SpFadeIn.fromRight(
-            child: IconButton(
-              tooltip: tr("button.edit"),
-              icon: const Icon(SpIcons.edit),
-              onPressed: () => state.turnOnEditing(),
-            ),
-          ),
-        );
-      },
+  Widget buildEditButton(BuildContext context, SpStoryListMultiEditWrapperState state) {
+    return Visibility(
+      visible: !state.editing,
+      child: SpFadeIn.fromRight(
+        child: IconButton(
+          tooltip: tr("button.edit"),
+          icon: const Icon(SpIcons.edit),
+          onPressed: () => state.turnOnEditing(),
+        ),
+      ),
     );
   }
 

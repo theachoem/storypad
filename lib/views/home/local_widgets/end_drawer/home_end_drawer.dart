@@ -34,11 +34,13 @@ part 'backup_tile.dart';
 part 'add_ons_tile.dart';
 
 class HomeEndDrawer extends StatelessWidget {
-  const HomeEndDrawer({super.key});
+  const HomeEndDrawer({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<HomeViewModel>();
+    final viewModel = Provider.of<HomeViewModel>(context);
 
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
       return HomeYearsView(
@@ -52,7 +54,7 @@ class HomeEndDrawer extends StatelessWidget {
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
-          CloseButton(onPressed: () => Scaffold.maybeOf(context)?.closeEndDrawer()),
+          const CloseButton(),
         ],
       ),
       body: ListView(
