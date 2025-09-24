@@ -8,6 +8,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/library/show/show_asset_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
@@ -17,6 +18,9 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'library_view_model.dart';
 
 part 'library_content.dart';
+part 'local_widgets/empty_body.dart';
+part 'local_widgets/black_overlay.dart';
+part 'local_widgets/image_status.dart';
 
 class LibraryRoute extends BaseRoute {
   LibraryRoute();
