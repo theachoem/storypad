@@ -7,15 +7,19 @@ import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/reddit_opener_service.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_markdown_body.dart';
 
 class SpShareStoryBottomSheet extends BaseBottomSheet {
   @override
@@ -151,16 +155,68 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: TextField(
-          textAlignVertical: const TextAlignVertical(y: -1.0),
-          expands: true,
-          controller: controller,
-          maxLength: null,
-          maxLines: null,
-          decoration: const InputDecoration(hintText: "..."),
-          onSubmitted: (value) => share(),
+        child: Column(
+          children: [
+            Expanded(
+              child: TextField(
+                textAlignVertical: const TextAlignVertical(y: -1.0),
+                expands: true,
+                controller: controller,
+                maxLength: null,
+                maxLines: null,
+                decoration: const InputDecoration(hintText: "..."),
+                onSubmitted: (value) => share(),
+              ),
+            ),
+            if (kIAPEnabled) buildShareToRedditCard(context),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget buildShareToRedditCard(BuildContext context) {
+    return Visibility(
+      visible: MediaQuery.of(context).viewInsets.bottom == 0, // keyboard closed
+      child: Container(
+        margin: const EdgeInsets.only(top: 16.0),
+        child: ListTile(
+          contentPadding: const EdgeInsets.only(left: 12.0, right: 6.0, top: 6.0, bottom: 8.0),
+          leading: Icon(Icons.reddit_outlined, size: 32.0, color: Theme.of(context).colorScheme.primary),
+          trailing: IconButton(
+            onPressed: () => submitRedditPost(),
+            icon: const Icon(SpIcons.share),
+          ),
+          tileColor: Theme.of(context).colorScheme.readOnly.surface1,
+          shape: RoundedSuperellipseBorder(
+            side: BorderSide(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          title: SpMarkdownBody(
+            body: "### ${tr(
+              'list_tile.share_to_reddit.title',
+              namedArgs: {'REDDIT_LINK': '[r/StoryPad](${RemoteConfigService.redditUrl.get()})'},
+            )}",
+          ),
+          subtitle: SpMarkdownBody(
+            body: tr('list_tile.share_to_reddit.subtitle'),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void submitRedditPost() {
+    // split the text first like except empty lines consider a title, then body is rest
+    final lines = controller.text.split('\n').map((line) => line.trim()).where((line) => line.isNotEmpty).toList();
+
+    String? title = lines.isNotEmpty ? lines.first : null;
+    String body = lines.length > 1 ? lines.skip(1).join('\n') : '';
+
+    RedditOpenerService.submitPost(
+      title: title,
+      body: body,
+      context: context,
     );
   }
 

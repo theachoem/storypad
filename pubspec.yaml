@@ -1,5 +1,5 @@
 name: storypad
-version: 2.16.5+457
+version: 2.17.0+460
 publish_to: none
 environment:
   sdk: ^3.5.4
@@ -16,6 +16,7 @@ dependencies:
   animations: ^2.0.11
   audio_service: ^0.18.18
   cached_network_image: ^3.4.1
+  cloud_firestore: ^6.0.2
   copy_with_extension: ^9.1.1
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.1.0

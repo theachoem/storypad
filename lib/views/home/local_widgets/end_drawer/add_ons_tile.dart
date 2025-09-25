@@ -6,7 +6,7 @@ class _AddOnsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpNewBadgeBuilder(
-      badge: NewBadge.add_on_tile,
+      badge: NewBadge.add_on_tile_with_reward,
       builder: (context, newBadge, hideBadge) {
         return ListTile(
           leading: const Icon(SpIcons.addOns),
