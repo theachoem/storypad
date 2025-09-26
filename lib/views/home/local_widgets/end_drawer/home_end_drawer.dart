@@ -83,7 +83,7 @@ class HomeEndDrawer extends StatelessWidget {
           const _BackupTile(),
           const Divider(),
           buildSettingTile(context),
-          if (kStoryPad && kIAPEnabled) const _AddOnsTile(),
+          if (kIAPEnabled) const _AddOnsTile(),
           const Divider(),
           const _CommunityTile(),
           ListTile(

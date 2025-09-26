@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class SpMarkdownBody extends StatelessWidget {
@@ -14,7 +15,12 @@ class SpMarkdownBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return MarkdownBody(
       data: body,
-      onTapLink: (url, _, __) {},
+      onTapLink: (text, href, title) => UrlOpenerService.openForMarkdown(
+        context: context,
+        text: text,
+        href: href,
+        title: title,
+      ),
       styleSheet: MarkdownStyleSheet(
         blockquoteDecoration: BoxDecoration(
           color: Colors.transparent,

@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class MessengerService {
   final BuildContext context;
@@ -70,6 +73,81 @@ class MessengerService {
 
   void hideCurrentMaterialBanner() {
     return state?.hideCurrentMaterialBanner();
+  }
+
+  Future<void> showError([String? errorMessage]) async {
+    return showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 1)).then((value) {
+          if (context.mounted) Navigator.of(context).pop();
+        });
+
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SpFadeIn.bound(
+                child: CircleAvatar(
+                  radius: 48,
+                  backgroundColor: ColorScheme.of(context).readOnly.surface3,
+                  child: SpFadeIn.bound(
+                    child: Icon(
+                      SpIcons.errorCircle,
+                      size: 56,
+                      color: ColorScheme.of(context).bootstrap.danger.color,
+                    ),
+                  ),
+                ),
+              ),
+              if (errorMessage != null) ...[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    errorMessage,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> showSuccess() async {
+    return showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 1)).then((value) {
+          if (context.mounted) Navigator.of(context).pop();
+        });
+
+        return Center(
+          child: SpFadeIn.bound(
+            child: CircleAvatar(
+              radius: 48,
+              backgroundColor: ColorScheme.of(context).readOnly.surface3,
+              child: SpFadeIn.bound(
+                duration: Durations.long1,
+                child: Icon(
+                  SpIcons.checkCircle,
+                  size: 56,
+                  color: ColorScheme.of(context).bootstrap.success.color,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<T?> showLoading<T>({

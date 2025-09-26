@@ -43,6 +43,7 @@ class _SpNewBadgeBuilderState extends State<SpNewBadgeBuilder> {
   }
 
   Widget? buildNewBadge(BuildContext context) {
+    if (widget.badge == NewBadge.none) return null;
     if (!showNewBadge) return null;
 
     return Material(

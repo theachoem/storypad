@@ -58,7 +58,7 @@ class _ShowAddOnContent extends StatelessWidget {
       ),
       ExpansionTile(
         title: Text(
-          '3. Do I need to sign in with Google to purchase?',
+          '3. Do I need to connect with Google Drive to purchase?',
           style: TextTheme.of(context).titleSmall,
         ),
         minTileHeight: 4.0,
@@ -66,7 +66,7 @@ class _ShowAddOnContent extends StatelessWidget {
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
-            "Yes, you need to sign in with Google. This helps us restore your purchases later. We don't keep your email, only a secure ID.",
+            "Yes, you need to connect with Google Drive. This helps us restore your purchases later. We don't keep your email, only a secure ID.",
           ),
           Consumer<BackupProvider>(builder: (context, provider, child) {
             return Visibility(

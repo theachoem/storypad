@@ -17,7 +17,6 @@ class RemoteConfigService {
     sourceCodeUrl,
     surveyUrl,
     twitterUrl,
-    donationUrl,
     websiteUrl,
   ];
 
@@ -89,12 +88,6 @@ class RemoteConfigService {
     'TWITTER_URL',
     _RemoteConfigValueType.string,
     'https://x.com/storypadapp',
-  );
-
-  static const donationUrl = _RemoteConfigObject<String>(
-    'DONATATION_URL',
-    _RemoteConfigValueType.string,
-    'https://coff.ee/theachoem',
   );
 
   static const websiteUrl = _RemoteConfigObject<String>(
