@@ -77,7 +77,7 @@ Share your story/diary on any social media in any format: text, photo, or video 
 
 - **1 post** → 1 week free add-on
 - **10+ upvotes/likes** → 1 month free add-on
-- **100+ upvotes/likes** → Lifetime add-on unlock!
+- **50+ upvotes/likes** → Lifetime add-on unlock!
 
 > After posting, message your link to [u/storypadapp](https://www.reddit.com/user/storypadapp) or [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
 
