@@ -125,10 +125,7 @@ Share your story/diary on any social media in any format: text, photo, or video 
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
               onPressed: text.isNotEmpty == true
-                  ? () async {
-                      bool success = await context.read<InAppPurchaseProvider>().applyReward(context, text);
-                      if (context.mounted && success) Navigator.maybePop(context);
-                    }
+                  ? () => context.read<InAppPurchaseProvider>().applyReward(context, text)
                   : null,
               child: Text(tr('button.unlock')),
             );
@@ -136,10 +133,7 @@ Share your story/diary on any social media in any format: text, photo, or video 
             return FilledButton.icon(
               label: Text(tr('button.unlock')),
               onPressed: text.isNotEmpty == true
-                  ? () async {
-                      bool success = await context.read<InAppPurchaseProvider>().applyReward(context, text);
-                      if (context.mounted && success) Navigator.maybePop(context);
-                    }
+                  ? () => context.read<InAppPurchaseProvider>().applyReward(context, text)
                   : null,
             );
           }
