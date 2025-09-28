@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
@@ -48,52 +49,96 @@ class GoogleDriveClient {
   }
 
   Future<bool> reauthenticateIfNeeded() async {
-    _currentUser = await GoogleUserStorage().readObject();
-    if (currentUser == null) return false;
+    try {
+      _currentUser = await GoogleUserStorage().readObject();
+      if (currentUser == null) {
+        throw const exp.AuthException(
+          'No stored user found',
+          exp.AuthExceptionType.signInRequired,
+        );
+      }
 
-    if (!await googleSignIn.isSignedIn()) {
-      _currentUser = null;
-      await GoogleUserStorage().remove();
-      return false;
+      if (!await googleSignIn.isSignedIn()) {
+        _currentUser = null;
+        await GoogleUserStorage().remove();
+        throw const exp.AuthException(
+          'Not signed in to Google',
+          exp.AuthExceptionType.signInRequired,
+        );
+      }
+
+      final account = await googleSignIn.signInSilently(
+        reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),
+        suppressErrors: false,
+      );
+
+      if (account != null) {
+        _currentUser = GoogleUserObject(
+          id: account.id,
+          email: account.email,
+          displayName: account.displayName,
+          photoUrl: account.photoUrl,
+          accessToken: await account.authentication.then((e) => e.accessToken),
+          refreshedAt: DateTime.now(),
+        );
+
+        await GoogleUserStorage().writeObject(_currentUser!);
+        return true;
+      }
+
+      throw const exp.AuthException(
+        'Silent sign-in failed',
+        exp.AuthExceptionType.tokenExpired,
+      );
+    } on exp.AuthException {
+      rethrow;
+    } catch (e) {
+      throw exp.AuthException(
+        'Reauthentication failed: $e',
+        exp.AuthExceptionType.signInFailed,
+        context: 'reauthenticateIfNeeded',
+      );
     }
+  }
 
-    final account = await googleSignIn.signInSilently(
-      reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),
-      suppressErrors: false,
-    );
+  Future<bool> signIn() async {
+    try {
+      final GoogleSignInAccount? account = await googleSignIn.signIn();
+      if (account == null) {
+        throw const exp.AuthException(
+          'Sign-in was cancelled by user',
+          exp.AuthExceptionType.signInFailed,
+        );
+      }
 
-    if (account != null) {
+      final authentication = await account.authentication;
+      if (authentication.accessToken == null) {
+        throw const exp.AuthException(
+          'Failed to obtain access token',
+          exp.AuthExceptionType.signInFailed,
+        );
+      }
+
       _currentUser = GoogleUserObject(
         id: account.id,
         email: account.email,
         displayName: account.displayName,
         photoUrl: account.photoUrl,
-        accessToken: await account.authentication.then((e) => e.accessToken),
+        accessToken: authentication.accessToken,
         refreshedAt: DateTime.now(),
       );
 
       await GoogleUserStorage().writeObject(_currentUser!);
       return true;
+    } catch (e) {
+      if (e is exp.AuthException) rethrow;
+
+      throw exp.AuthException(
+        'Sign-in failed: $e',
+        exp.AuthExceptionType.signInFailed,
+        context: 'signIn',
+      );
     }
-
-    return false;
-  }
-
-  Future<bool> signIn() async {
-    final GoogleSignInAccount? account = await googleSignIn.signIn();
-    if (account == null) return false;
-
-    _currentUser = GoogleUserObject(
-      id: account.id,
-      email: account.email,
-      displayName: account.displayName,
-      photoUrl: account.photoUrl,
-      accessToken: await account.authentication.then((e) => e.accessToken),
-      refreshedAt: DateTime.now(),
-    );
-
-    await GoogleUserStorage().writeObject(_currentUser!);
-    return true;
   }
 
   Future<void> signOut() async {
@@ -103,28 +148,90 @@ class GoogleDriveClient {
   }
 
   Future<bool> canAccessRequestedScopes() async {
-    final user = googleSignIn.currentUser;
-    if (user == null) return false;
-
-    final accessToken = (await user.authentication).accessToken;
-    if (accessToken == null) return false;
-
-    String? accessedScopes;
     try {
-      http.Response response = await http.get(
-        Uri.parse('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=$accessToken'),
-      );
-      if (response.statusCode != 200) return false;
-      final Map<String, dynamic> tokenInfo = json.decode(response.body);
-      accessedScopes = tokenInfo['scope'] as String?;
-    } catch (e) {
-      debugPrint(e.toString());
-      return false;
-    }
+      final user = googleSignIn.currentUser;
+      if (user == null) {
+        throw const exp.AuthException(
+          'No current user',
+          exp.AuthExceptionType.signInRequired,
+        );
+      }
 
-    return googleSignIn.scopes.every((requestedScope) {
-      return accessedScopes?.contains(requestedScope) ?? false;
-    });
+      final authentication = await user.authentication;
+      final accessToken = authentication.accessToken;
+      if (accessToken == null) {
+        throw const exp.AuthException(
+          'No access token available',
+          exp.AuthExceptionType.tokenExpired,
+        );
+      }
+
+      String? accessedScopes;
+      try {
+        http.Response response = await http
+            .get(
+              Uri.parse('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=$accessToken'),
+            )
+            .timeout(const Duration(seconds: 10));
+
+        if (response.statusCode == 401) {
+          throw const exp.AuthException(
+            'Access token is invalid or expired',
+            exp.AuthExceptionType.tokenExpired,
+          );
+        }
+
+        if (response.statusCode == 403) {
+          throw const exp.AuthException(
+            'Access token has been revoked',
+            exp.AuthExceptionType.tokenRevoked,
+          );
+        }
+
+        if (response.statusCode != 200) {
+          throw exp.NetworkException(
+            'Failed to validate token: HTTP ${response.statusCode}',
+            context: 'token validation',
+          );
+        }
+
+        final Map<String, dynamic> tokenInfo = json.decode(response.body);
+        accessedScopes = tokenInfo['scope'] as String?;
+      } on io.SocketException catch (e) {
+        throw exp.NetworkException(
+          'Network error during token validation: $e',
+          context: 'canAccessRequestedScopes',
+        );
+      } on TimeoutException catch (e) {
+        throw exp.NetworkException(
+          'Timeout during token validation: $e',
+          context: 'canAccessRequestedScopes',
+        );
+      }
+
+      final hasRequiredScopes = googleSignIn.scopes.every((requestedScope) {
+        return accessedScopes?.contains(requestedScope) ?? false;
+      });
+
+      if (!hasRequiredScopes) {
+        throw const exp.AuthException(
+          'Insufficient scopes granted',
+          exp.AuthExceptionType.insufficientScopes,
+        );
+      }
+
+      return true;
+    } on exp.AuthException {
+      rethrow;
+    } on exp.NetworkException {
+      rethrow;
+    } catch (e) {
+      throw exp.AuthException(
+        'Scope validation failed: $e',
+        exp.AuthExceptionType.signInFailed,
+        context: 'canAccessRequestedScopes',
+      );
+    }
   }
 
   Future<bool> requestScope() async {
@@ -196,16 +303,20 @@ class GoogleDriveClient {
   }
 
   Future<CloudFileListObject?> fetchAllBackups(String? nextToken) async {
-    drive.DriveApi? client = await googleDriveClient;
-    if (client == null) return null;
+    try {
+      drive.DriveApi client = await _getAuthenticatedClient();
 
-    drive.FileList fileList = await client.files.list(
-      q: "name contains '.json' or name contains '.zip'",
-      spaces: "appDataFolder",
-      pageToken: nextToken,
-    );
+      drive.FileList fileList = await client.files.list(
+        q: "name contains '.json' or name contains '.zip'",
+        spaces: "appDataFolder",
+        pageToken: nextToken,
+      );
 
-    return CloudFileListObject.fromGoogleDrive(fileList);
+      return CloudFileListObject.fromGoogleDrive(fileList);
+    } catch (e) {
+      _handleApiException(e, 'fetchAllBackups');
+      rethrow;
+    }
   }
 
   Future<CloudFileObject?> findFileById(String fileId) async {
@@ -219,18 +330,22 @@ class GoogleDriveClient {
   }
 
   Future<CloudFileObject?> fetchLatestBackup() async {
-    drive.DriveApi? client = await googleDriveClient;
-    if (client == null) return null;
+    try {
+      drive.DriveApi? client = await _getAuthenticatedClient();
 
-    drive.FileList fileList = await client.files.list(
-      spaces: "appDataFolder",
-      q: "name contains '.json' or name contains '.zip'",
-      orderBy: "createdTime desc",
-      pageSize: 1,
-    );
+      drive.FileList fileList = await client.files.list(
+        spaces: "appDataFolder",
+        q: "name contains '.json' or name contains '.zip'",
+        orderBy: "createdTime desc",
+        pageSize: 1,
+      );
 
-    if (fileList.files?.firstOrNull == null) return null;
-    return CloudFileObject.fromGoogleDrive(fileList.files!.first);
+      if (fileList.files?.firstOrNull == null) return null;
+      return CloudFileObject.fromGoogleDrive(fileList.files!.first);
+    } catch (e) {
+      _handleApiException(e, 'fetchLatestBackup');
+      rethrow;
+    }
   }
 
   Future<CloudFileObject?> uploadFile(
@@ -239,44 +354,157 @@ class GoogleDriveClient {
     String? folderName,
   }) async {
     debugPrint('GoogleDriveService#uploadFile $fileName');
-    drive.DriveApi? client = await googleDriveClient;
 
-    if (client == null) return null;
+    try {
+      if (!file.existsSync()) {
+        throw exp.FileOperationException(
+          'Local file does not exist: ${file.path}',
+          exp.FileOperationType.upload,
+          context: fileName,
+        );
+      }
 
-    drive.File fileToUpload = drive.File();
-    fileToUpload.name = fileName;
-    fileToUpload.parents = ["appDataFolder"];
+      drive.DriveApi client = await _getAuthenticatedClient();
 
-    if (folderName != null) {
-      String? folderId = await loadFolder(client, folderName);
-      if (folderId == null) return null;
-      fileToUpload.parents = [folderId];
+      drive.File fileToUpload = drive.File();
+      fileToUpload.name = fileName;
+      fileToUpload.parents = ["appDataFolder"];
+
+      if (folderName != null) {
+        String? folderId = await loadFolder(client, folderName);
+        if (folderId == null) {
+          throw exp.FileOperationException(
+            'Failed to create or find folder: $folderName',
+            exp.FileOperationType.upload,
+            context: fileName,
+          );
+        }
+        fileToUpload.parents = [folderId];
+      }
+
+      debugPrint('GoogleDriveService#uploadFile uploading...');
+      drive.File received = await client.files.create(
+        fileToUpload,
+        uploadMedia: drive.Media(
+          file.openRead(),
+          file.lengthSync(),
+        ),
+      );
+
+      if (received.id != null) {
+        debugPrint('GoogleDriveService#uploadFile uploaded: ${received.id}');
+        return CloudFileObject.fromGoogleDrive(received);
+      }
+
+      throw exp.FileOperationException(
+        'Upload succeeded but no file ID returned',
+        exp.FileOperationType.upload,
+        context: fileName,
+      );
+    } catch (e) {
+      _handleApiException(e, 'uploadFile', context: fileName);
+      rethrow;
     }
-
-    debugPrint('GoogleDriveService#uploadFile uploading...');
-    drive.File recieved = await client.files.create(
-      fileToUpload,
-      uploadMedia: drive.Media(
-        file.openRead(),
-        file.lengthSync(),
-      ),
-    );
-
-    if (recieved.id != null) {
-      debugPrint('GoogleDriveService#uploadFile uploaded: ${recieved.id}');
-      return CloudFileObject.fromGoogleDrive(recieved);
-    }
-
-    debugPrint('GoogleDriveService#uploadFile uploading failed!');
-    return null;
   }
 
   Future<bool> deleteFile(String cloudFileId) async {
-    drive.DriveApi? client = await googleDriveClient;
-    if (client == null) return false;
+    try {
+      drive.DriveApi client = await _getAuthenticatedClient();
+      await client.files.delete(cloudFileId);
+      return true;
+    } catch (e) {
+      _handleApiException(e, 'deleteFile', context: cloudFileId);
+      rethrow;
+    }
+  }
 
-    await client.files.delete(cloudFileId);
-    return true;
+  /// Get authenticated Drive API client or throw appropriate exception
+  Future<drive.DriveApi> _getAuthenticatedClient() async {
+    final client = await googleDriveClient;
+    if (client == null) {
+      throw const exp.AuthException(
+        'Failed to get authenticated Google Drive client',
+        exp.AuthExceptionType.signInRequired,
+      );
+    }
+    return client;
+  }
+
+  /// Handle and map API exceptions to appropriate BackupExceptions
+  void _handleApiException(dynamic error, String operation, {String? context}) {
+    if (error is exp.BackupException) return; // Already a BackupException
+
+    // Handle specific HTTP errors from Google APIs
+    if (error.toString().contains('401')) {
+      throw exp.AuthException(
+        'Authentication failed during $operation',
+        exp.AuthExceptionType.tokenExpired,
+        context: context,
+      );
+    }
+
+    if (error.toString().contains('403')) {
+      if (error.toString().toLowerCase().contains('quota') || error.toString().toLowerCase().contains('limit')) {
+        throw exp.QuotaException(
+          'Quota exceeded during $operation',
+          exp.QuotaExceptionType.rateLimitExceeded,
+          context: context,
+        );
+      }
+      throw exp.AuthException(
+        'Access denied during $operation',
+        exp.AuthExceptionType.tokenRevoked,
+        context: context,
+      );
+    }
+
+    if (error.toString().contains('404')) {
+      throw exp.FileOperationException(
+        'File not found during $operation',
+        _getFileOperationType(operation),
+        context: context,
+      );
+    }
+
+    if (error.toString().contains('429')) {
+      throw exp.QuotaException(
+        'Rate limit exceeded during $operation',
+        exp.QuotaExceptionType.rateLimitExceeded,
+        context: context,
+      );
+    }
+
+    // Handle network errors
+    if (error is io.SocketException || error is TimeoutException) {
+      throw exp.NetworkException(
+        'Network error during $operation: $error',
+        context: context,
+      );
+    }
+
+    // Default to service exception for unknown errors
+    throw exp.ServiceException(
+      'Unknown error during $operation: $error',
+      exp.ServiceExceptionType.unexpectedError,
+      context: context,
+    );
+  }
+
+  /// Map operation name to exp.FileOperationType
+  exp.FileOperationType _getFileOperationType(String operation) {
+    switch (operation.toLowerCase()) {
+      case 'uploadfile':
+      case 'upload':
+        return exp.FileOperationType.upload;
+      case 'deletefile':
+      case 'delete':
+        return exp.FileOperationType.delete;
+      case 'downloadfile':
+      case 'download':
+        return exp.FileOperationType.download;
+      default:
+        return exp.FileOperationType.list;
+    }
   }
 
   Future<String?> loadFolder(drive.DriveApi client, String folderName) async {

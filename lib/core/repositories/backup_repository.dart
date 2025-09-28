@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -7,6 +6,7 @@ import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
@@ -19,6 +19,7 @@ import 'package:storypad/core/services/backup_sync_steps/backup_images_uploader_
 import 'package:storypad/core/services/backup_sync_steps/backup_uploader_service.dart';
 import 'package:storypad/core/services/google_drive_client.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
+import 'package:storypad/core/types/backup_result.dart';
 
 class BackupRepository {
   static final List<BaseDbAdapter> databases = [
@@ -60,29 +61,43 @@ class BackupRepository {
   GoogleUserObject? get currentUser => googleDriveClient.currentUser;
   bool get isSignedIn => currentUser != null;
 
-  Future<bool> requestScope() async {
+  Future<BackupResult<bool>> requestScope() async {
     try {
-      return googleDriveClient.requestScope();
-    } catch (e, stackTrace) {
-      debugPrint('$runtimeType#requestScope error: $e $stackTrace');
-      return false;
+      final result = await googleDriveClient.requestScope();
+      return BackupResult.success(result);
+    } on exp.AuthException catch (e) {
+      return BackupResult.failure(BackupError.fromException(e));
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to request scope: $e',
+        context: 'requestScope',
+      ));
     }
   }
 
-  Future<bool> signIn() async {
+  Future<BackupResult<bool>> signIn() async {
     try {
-      return googleDriveClient.signIn();
-    } catch (e, stackTrace) {
-      debugPrint('$runtimeType#signIn error: $e $stackTrace');
-      return false;
+      final result = await googleDriveClient.signIn();
+      return BackupResult.success(result);
+    } on exp.AuthException catch (e) {
+      return BackupResult.failure(BackupError.fromException(e));
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to sign in: $e',
+        context: 'signIn',
+      ));
     }
   }
 
-  Future<void> signOut() async {
+  Future<BackupResult<void>> signOut() async {
     try {
       await googleDriveClient.signOut();
-    } catch (e, stackTrace) {
-      debugPrint('$runtimeType#signOut error: $e $stackTrace');
+      return const BackupResult.success(null);
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to sign out: $e',
+        context: 'signOut',
+      ));
     }
   }
 
@@ -93,48 +108,116 @@ class BackupRepository {
     step4NewBackupUploader.reset();
   }
 
-  Future<bool> startStep1() {
-    return step1ImagesUploader.start(googleDriveClient);
-  }
-
-  Future<BackupLatestCheckerResponse> startStep2(DateTime? lastDbUpdatedAt) async {
-    return step2LatestBackupChecker.start(
-      googleDriveClient,
-      lastDbUpdatedAt,
-    );
-  }
-
-  Future<bool> startStep3(BackupObject? backupContent, DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
-    return step3LatestBackupImporter.start(
-      backupContent,
-      lastSyncedAt,
-      lastDbUpdatedAt,
-    );
-  }
-
-  Future<BackupUploaderResponse> startStep4(DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
-    return step4NewBackupUploader.start(
-      googleDriveClient,
-      lastSyncedAt,
-      lastDbUpdatedAt,
-    );
-  }
-
-  Future<BackupConnectionStatus?> checkConnection() async {
+  Future<BackupResult<bool>> startStep1() async {
     try {
-      if (!isSignedIn) return null;
+      final result = await step1ImagesUploader.start(googleDriveClient);
+      return BackupResult.success(result);
+    } on exp.AuthException catch (e) {
+      if (e.requiresSignOut) {
+        await googleDriveClient.signOut();
+      }
+      return BackupResult.failure(BackupError.fromException(e));
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to upload images: $e',
+        context: 'startStep1',
+      ));
+    }
+  }
+
+  Future<BackupResult<BackupLatestCheckerResponse>> startStep2(DateTime? lastDbUpdatedAt) async {
+    try {
+      final result = await step2LatestBackupChecker.start(
+        googleDriveClient,
+        lastDbUpdatedAt,
+      );
+      return BackupResult.success(result);
+    } on exp.AuthException catch (e) {
+      if (e.requiresSignOut) {
+        await googleDriveClient.signOut();
+      }
+      return BackupResult.failure(BackupError.fromException(e));
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to check latest backup: $e',
+        context: 'startStep2',
+      ));
+    }
+  }
+
+  Future<BackupResult<bool>> startStep3(
+      BackupObject? backupContent, DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
+    try {
+      final result = await step3LatestBackupImporter.start(
+        backupContent,
+        lastSyncedAt,
+        lastDbUpdatedAt,
+      );
+      return BackupResult.success(result);
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to import backup: $e',
+        context: 'startStep3',
+      ));
+    }
+  }
+
+  Future<BackupResult<BackupUploaderResponse>> startStep4(DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
+    try {
+      final result = await step4NewBackupUploader.start(
+        googleDriveClient,
+        lastSyncedAt,
+        lastDbUpdatedAt,
+      );
+      return BackupResult.success(result);
+    } on exp.AuthException catch (e) {
+      if (e.requiresSignOut) {
+        await googleDriveClient.signOut();
+      }
+      return BackupResult.failure(BackupError.fromException(e));
+    } catch (e) {
+      return BackupResult.failure(BackupError.unknown(
+        'Failed to upload backup: $e',
+        context: 'startStep4',
+      ));
+    }
+  }
+
+  Future<BackupResult<BackupConnectionStatus>> checkConnection() async {
+    try {
+      if (!isSignedIn) {
+        return BackupResult.failure(BackupError.authentication(
+          'User not signed in',
+          context: 'checkConnection',
+        ));
+      }
 
       final hasInternet = await internetChecker.check();
-      if (!hasInternet) return BackupConnectionStatus.noInternet;
+      if (!hasInternet) {
+        return const BackupResult.success(BackupConnectionStatus.noInternet);
+      }
 
       await googleDriveClient.reauthenticateIfNeeded();
-      final bool canAccessRequestedScopes = await googleDriveClient.canAccessRequestedScopes();
-      if (!canAccessRequestedScopes) return BackupConnectionStatus.needGoogleDrivePermission;
+      await googleDriveClient.canAccessRequestedScopes();
 
-      return BackupConnectionStatus.readyToSync;
-    } catch (e, stackTrace) {
-      debugPrint('$runtimeType#checkConnection unknownError: $e $stackTrace');
-      return BackupConnectionStatus.unknownError;
+      return const BackupResult.success(BackupConnectionStatus.readyToSync);
+    } on exp.AuthException catch (e) {
+      if (e.requiresSignOut) {
+        await googleDriveClient.signOut();
+      }
+
+      final status = switch (e.type) {
+        exp.AuthExceptionType.tokenExpired => BackupConnectionStatus.needGoogleDrivePermission,
+        exp.AuthExceptionType.tokenRevoked => BackupConnectionStatus.needGoogleDrivePermission,
+        exp.AuthExceptionType.insufficientScopes => BackupConnectionStatus.needGoogleDrivePermission,
+        _ => BackupConnectionStatus.unknownError,
+      };
+
+      return BackupResult.success(status);
+    } on exp.NetworkException {
+      return const BackupResult.success(BackupConnectionStatus.noInternet);
+    } catch (e) {
+      return const BackupResult.success(BackupConnectionStatus.unknownError);
     }
   }
 
