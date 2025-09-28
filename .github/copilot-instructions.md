@@ -189,6 +189,33 @@ StoryPad uses a three-tier state management approach:
 ### Database
 Uses ObjectBox for local storage with model definitions in `lib/core/` and generated code via build_runner.
 
+## MVVM Flow Standard
+StoryPad follows a strict MVVM architecture for consistency and testability:
+
+- Model: raw data structures (entities, DTOs), only serialization/deserialization logic.
+- Repository / Service / Storage (Data Layer):
+  - Repository: combines data from one or more sources (local DB, storage, remote service). Single source of truth.
+  - Service: remote API calls using http. Services may raise exceptions.
+  - Storage: local persistence (databases, shared preferences, files). Should not raise exceptions in normal flow.
+- ViewModel: coordinates between Repository and View. Handles exceptions, exposes UIState (Loading, Success, Error).
+- View: Flutter Widgets only. Listens to ViewModel state. No business logic.
+
+### Exception Handling
+- Services can raise exceptions (network failures, parsing).
+- Repositories should not pass raw exceptions. Convert to safe return types (Result/Either/nullable).
+- ViewModels interpret safe results and decide what to show in the UI.
+- Local databases & storages act like repositories, generally no exceptions in normal flow.
+
+### Testing Guidelines
+- Models: test serialization/deserialization only.
+- Services: test with mocked http responses (using http.MockClient).
+- Repositories: mock Service/Storage, verify combination and exception handling.
+- ViewModels: mock Repository, verify state transitions (Loading → Success → Error).
+- Views: widget tests to ensure UI updates based on ViewModel state.
+
+### Reference
+- https://docs.flutter.dev/app-architecture/guide
+
 ## Common Issues & Solutions
 
 ### Network Requirements
