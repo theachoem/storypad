@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/retry/retry_executor.dart';
+import 'package:storypad/core/services/retry/retry_policy.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
@@ -31,23 +34,49 @@ class BackupLatestCheckerService {
   Future<BackupLatestCheckerResponse> start(GoogleDriveClient client, DateTime? lastDbUpdatedAt) async {
     debugPrint('🚧 $runtimeType#start ...');
 
-    return _start(client, lastDbUpdatedAt).onError((e, s) {
+    try {
+      return await _start(client, lastDbUpdatedAt);
+    } on exp.AuthException catch (e) {
       controller.add(BackupSyncMessage(
         processing: false,
         success: false,
-        message: 'Failed to check backup due to $e',
+        message: e.userFriendlyMessage,
+      ));
+      rethrow; // Let repository handle auth exceptions
+    } on exp.BackupException catch (e) {
+      controller.add(BackupSyncMessage(
+        processing: false,
+        success: false,
+        message: e.userFriendlyMessage,
       ));
       return BackupLatestCheckerResponse(
         hasError: true,
         lastestBackupFile: null,
         backupContent: null,
       );
-    });
+    } catch (e, stackTrace) {
+      debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
+      controller.add(BackupSyncMessage(
+        processing: false,
+        success: false,
+        message: 'Failed to check backup due to unexpected error.',
+      ));
+      return BackupLatestCheckerResponse(
+        hasError: true,
+        lastestBackupFile: null,
+        backupContent: null,
+      );
+    }
   }
 
   Future<BackupLatestCheckerResponse> _start(GoogleDriveClient client, DateTime? lastDbUpdatedAt) async {
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
-    final lastestBackupFile = await client.fetchLatestBackup();
+
+    final lastestBackupFile = await RetryExecutor.execute(
+      () => client.fetchLatestBackup(),
+      policy: RetryPolicy.network,
+      operationName: 'fetch_latest_backup',
+    );
 
     if (lastestBackupFile == null) {
       controller.add(BackupSyncMessage(
@@ -77,7 +106,11 @@ class BackupLatestCheckerService {
       );
     }
 
-    final result = await client.getFileContent(lastestBackupFile);
+    final result = await RetryExecutor.execute(
+      () => client.getFileContent(lastestBackupFile),
+      policy: RetryPolicy.network,
+      operationName: 'download_backup_content',
+    );
     final fileContent = result?.$1;
 
     if (fileContent == null) {
@@ -94,8 +127,18 @@ class BackupLatestCheckerService {
       );
     }
 
-    dynamic decodedContents = jsonDecode(fileContent);
-    final backupContent = BackupObject.fromContents(decodedContents);
+    BackupObject? backupContent;
+    try {
+      dynamic decodedContents = jsonDecode(fileContent);
+      backupContent = BackupObject.fromContents(decodedContents);
+    } catch (e) {
+      debugPrint('$runtimeType#_start cannot parse backup content: $e');
+      throw exp.ServiceException(
+        'Failed to parse backup content: $e',
+        exp.ServiceExceptionType.dataCorrupted,
+        context: lastestBackupFile.id,
+      );
+    }
 
     controller.add(BackupSyncMessage(
       processing: false,

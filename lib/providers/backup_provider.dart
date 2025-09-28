@@ -8,6 +8,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 
 class BackupProvider extends ChangeNotifier {
@@ -79,8 +80,13 @@ class BackupProvider extends ChangeNotifier {
     repository.resetMessages();
     notifyListeners();
 
-    _connectionStatus = await repository.checkConnection();
+    final connectionResult = await repository.checkConnection();
+    _connectionStatus = connectionResult.data;
     notifyListeners();
+
+    if (connectionResult.error != null) {
+      debugPrint('Connection check failed: ${connectionResult.error!.message}');
+    }
 
     if (readyToSynced) {
       await runZonedGuarded(() async {
@@ -95,44 +101,69 @@ class BackupProvider extends ChangeNotifier {
   }
 
   Future<void> signIn(BuildContext context) async {
-    await MessengerService.of(context).showLoading(
+    final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
       debugSource: '$runtimeType#signIn',
       future: () => repository.signIn(),
     );
 
-    if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
-    AnalyticsService.instance.logSignInWithGoogle();
+    if (result?.isSuccess == true) {
+      if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
+      AnalyticsService.instance.logSignInWithGoogle();
 
-    _connectionStatus = BackupConnectionStatus.readyToSync;
-    _lastSyncedAt = null;
-    _lastDbUpdatedAt = null;
+      _connectionStatus = BackupConnectionStatus.readyToSync;
+      _lastSyncedAt = null;
+      _lastDbUpdatedAt = null;
+    } else if (result?.error != null) {
+      // Handle sign-in error - could show user-friendly message
+      debugPrint('Sign-in failed: ${result!.error!.message}');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.error!.message)),
+        );
+      }
+    }
 
     notifyListeners();
   }
 
   Future<void> requestScope(BuildContext context) async {
-    await MessengerService.of(context).showLoading(
+    final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
       debugSource: '$runtimeType#requestScope',
       future: () => repository.requestScope(),
     );
 
-    AnalyticsService.instance.logRequestGoogleDriveScope();
+    if (result?.isSuccess == true) {
+      AnalyticsService.instance.logRequestGoogleDriveScope();
+    } else if (result?.error != null) {
+      debugPrint('Request scope failed: ${result!.error!.message}');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.error!.message)),
+        );
+      }
+    }
+
     notifyListeners();
     await recheckAndSync();
   }
 
   Future<void> signOut(BuildContext context) async {
-    await MessengerService.of(context).showLoading(
+    final result = await MessengerService.of(context).showLoading<BackupResult<void>>(
       debugSource: '$runtimeType#signOut',
       future: () => repository.signOut(),
     );
 
+    // Always update UI state even if sign-out had issues
     if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
     AnalyticsService.instance.logSignOut();
 
     _connectionStatus = null;
     _lastSyncedAt = null;
     _lastDbUpdatedAt = null;
+
+    if (result?.error != null) {
+      debugPrint('Sign-out had issues: ${result!.error!.message}');
+    }
 
     notifyListeners();
   }
@@ -150,35 +181,54 @@ class BackupProvider extends ChangeNotifier {
     _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
     notifyListeners();
 
-    bool step1Success = await repository.startStep1();
-    if (!step1Success) {
-      _connectionStatus = await repository.checkConnection();
+    // Step 1: Upload images
+    final step1Result = await repository.startStep1();
+    if (!step1Result.isSuccess) {
+      if (step1Result.error?.type == BackupErrorType.authentication) {
+        final connectionResult = await repository.checkConnection();
+        _connectionStatus = connectionResult.data;
+      }
       notifyListeners();
       return;
     }
 
-    final step2Response = await repository.startStep2(_lastDbUpdatedAt);
-    _lastSyncedAt = step2Response.lastSyncedAt;
+    // Step 2: Check latest backup
+    final step2Result = await repository.startStep2(_lastDbUpdatedAt);
+    if (step2Result.isSuccess && step2Result.data != null) {
+      _lastSyncedAt = step2Result.data!.lastSyncedAt;
+    }
     notifyListeners();
 
-    if (step2Response.hasError) {
-      _connectionStatus = await repository.checkConnection();
+    if (!step2Result.isSuccess) {
+      if (step2Result.error?.type == BackupErrorType.authentication) {
+        final connectionResult = await repository.checkConnection();
+        _connectionStatus = connectionResult.data;
+      }
       notifyListeners();
       return;
     }
 
-    bool step3Success = await repository.startStep3(step2Response.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
-    if (!step3Success) return;
+    // Step 3: Import backup if needed
+    final step3Result = await repository.startStep3(step2Result.data?.backupContent, _lastSyncedAt, _lastDbUpdatedAt);
+    if (!step3Result.isSuccess) return;
 
     _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
     notifyListeners();
 
-    final backupUploaderResponse = await repository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
-    if (backupUploaderResponse.hasError) return;
+    // Step 4: Upload new backup
+    final step4Result = await repository.startStep4(_lastSyncedAt, _lastDbUpdatedAt);
+    if (!step4Result.isSuccess) {
+      if (step4Result.error?.type == BackupErrorType.authentication) {
+        final connectionResult = await repository.checkConnection();
+        _connectionStatus = connectionResult.data;
+        notifyListeners();
+      }
+      return;
+    }
 
     // once all success, mark both equal to indicate that they are synced.
     _lastDbUpdatedAt = await repository.getLastDbUpdatedAt();
-    _lastSyncedAt = backupUploaderResponse.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
+    _lastSyncedAt = step4Result.data?.uploadedCloudFile?.getFileInfo()?.createdAt ?? _lastDbUpdatedAt;
   }
 
   @override
