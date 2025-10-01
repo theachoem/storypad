@@ -56,7 +56,7 @@ class RelaxSoundsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<RelaxSoundsViewModel>(
-      create: (context) => RelaxSoundsViewModel(params: params),
+      create: (context) => RelaxSoundsViewModel(params: params, provider: context.read<RelaxSoundsProvider>()),
       builder: (context, viewModel, child) {
         return _RelaxSoundsContent(viewModel);
       },

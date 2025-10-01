@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/relax_sound_model.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
@@ -12,13 +13,30 @@ import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/views/relax_sounds/edit_mix/edit_mix_view.dart';
 import 'relax_sounds_view.dart';
 
-class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
+class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final RelaxSoundsRoute params;
+  final RelaxSoundsProvider provider;
 
   RelaxSoundsViewModel({
     required this.params,
+    required this.provider,
   }) {
     load();
+
+    // on state change, some sounds may be downloaded, so we need to check again.
+    provider.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    provider.removeListener(_listener);
+    super.dispose();
+  }
+
+  void _listener() {
+    debouncedCallback(key: '_constructor', () {
+      if (!disposed) loadDownloadSounds();
+    });
   }
 
   List<RelaxSoundMixModel>? _mixes;
