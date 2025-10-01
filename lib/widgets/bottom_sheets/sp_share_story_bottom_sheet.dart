@@ -11,13 +11,14 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/reddit_opener_service.dart';
-import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
+import 'package:storypad/core/storages/redeemed_reward_storage.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_reward_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 
@@ -168,55 +169,37 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
                 onSubmitted: (value) => share(),
               ),
             ),
-            if (kIAPEnabled) buildShareToRedditCard(context),
+            if (kIAPEnabled) buildShareToSocialCard(context),
           ],
         ),
       ),
     );
   }
 
-  Widget buildShareToRedditCard(BuildContext context) {
+  Widget buildShareToSocialCard(BuildContext context) {
     return Visibility(
       visible: MediaQuery.of(context).viewInsets.bottom == 0, // keyboard closed
       child: Container(
         margin: const EdgeInsets.only(top: 16.0),
         child: ListTile(
-          contentPadding: const EdgeInsets.only(left: 12.0, right: 6.0, top: 6.0, bottom: 8.0),
-          leading: Icon(Icons.reddit_outlined, size: 32.0, color: Theme.of(context).colorScheme.primary),
-          trailing: IconButton(
-            onPressed: () => submitRedditPost(),
-            icon: const Icon(SpIcons.share),
-          ),
+          onTap: () async {
+            await SpRewardSheet().show(context: context);
+            RedeemedRewardStorage().availableAddOns().then((addOns) {
+              if (context.mounted && addOns?.isNotEmpty == true) const AddOnsRoute().push(context);
+            });
+          },
+          trailing: const Icon(SpIcons.info),
           tileColor: Theme.of(context).colorScheme.readOnly.surface1,
           shape: RoundedSuperellipseBorder(
             side: BorderSide(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(12.0),
           ),
-          title: SpMarkdownBody(
-            body: "### ${tr(
-              'list_tile.share_to_reddit.title',
-              namedArgs: {'REDDIT_LINK': '[r/StoryPad](${RemoteConfigService.redditUrl.get()})'},
-            )}",
-          ),
+          title: Text(tr('list_tile.share_story_to_social.title')),
           subtitle: SpMarkdownBody(
-            body: tr('list_tile.share_to_reddit.subtitle'),
+            body: tr('list_tile.share_story_to_social.subtitle'),
           ),
         ),
       ),
-    );
-  }
-
-  void submitRedditPost() {
-    // split the text first like except empty lines consider a title, then body is rest
-    final lines = controller.text.split('\n').map((line) => line.trim()).where((line) => line.isNotEmpty).toList();
-
-    String? title = lines.isNotEmpty ? lines.first : null;
-    String body = lines.length > 1 ? lines.skip(1).join('\n') : '';
-
-    RedditOpenerService.submitPost(
-      title: title,
-      body: body,
-      context: context,
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
@@ -28,9 +29,9 @@ class SpRewardSheet extends BaseBottomSheet {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 buildTitle(context),
-                const SizedBox(height: 8),
-                buildBody(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12.0),
+                buildBody(context),
+                const SizedBox(height: 16.0),
                 if (provider.rewardExpiredAt != null) ...[
                   ListTile(
                     shape: RoundedRectangleBorder(
@@ -70,19 +71,39 @@ class SpRewardSheet extends BaseBottomSheet {
     );
   }
 
-  SpMarkdownBody buildBody() {
-    return const SpMarkdownBody(
-      body: '''
-Share your story/diary on any social media in any format: text, photo, or video with the #storypad hashtag and get add-ons as a thank-you for sharing & inspiring others.
+  Widget buildBody(BuildContext context) {
+    const String body = '''
+Help us grow the StoryPad community! 🌱
+- [ ] Post about your StoryPad experience (text, photo, video, or screenshot).
+- [ ] Tag #storypad or mention @storypadapp, or simply include the word StoryPad in your post on any platform.
+- [x] Get **1 FREE add-on** as a thank-you gift! 🎁
+''';
 
-- **1 post** → 1 week free add-on
-- **10+ upvotes/likes** → 1 month free add-on
-- **50+ upvotes/likes** → Lifetime add-on unlock!
+    const String additionalBody = '''
+After posting, DM your link to [u/storypadapp](https://www.reddit.com/user/storypadapp) or [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
+''';
 
-> After posting, message your link to [u/storypadapp](https://www.reddit.com/user/storypadapp) or [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
-
-> Help us grow the StoryPad community while we continue building daily tools for you. Thank you for being part of it! ✌️
-      ''',
+    return Visibility(
+      visible: MediaQuery.of(context).viewInsets.bottom == 0, // keyboard closed
+      child: SpFadeIn.fromBottom(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: ColorScheme.of(context).readOnly.surface1,
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SpMarkdownBody(body: body),
+              SizedBox(height: 12.0),
+              Divider(height: 1.0),
+              SizedBox(height: 8.0),
+              SpMarkdownBody(body: additionalBody),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
