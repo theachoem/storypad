@@ -13,9 +13,8 @@ class ThrowbackViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   });
 
-  final int year = DateTime.now().year;
-  final int month = DateTime.now().month;
-  final int day = DateTime.now().day;
+  late final int month = params.month;
+  late final int day = params.day;
 
   int editedKey = 0;
 
@@ -38,7 +37,7 @@ class ThrowbackViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> goToNewPage(BuildContext context) async {
     await EditStoryRoute(
       id: null,
-      initialYear: year,
+      initialYear: DateTime.now().year,
       initialMonth: month,
       initialDay: day,
     ).push(context);

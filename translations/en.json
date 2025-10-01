@@ -274,6 +274,7 @@
   "list_tile.theme_mode.title": "Theme Mode",
   "list_tile.throwback.a_few_year_ago_title": "A memory from a few years ago.",
   "list_tile.throwback.a_year_ago_title": "A memory from 1 year ago.",
+  "list_tile.throwback.for_selected_date": "A memory from this date.",
   "list_tile.unlock_your_rewards.applied_title": "Reward code applied",
   "list_tile.unlock_your_rewards.unapplied_title": "Unlock your rewards",
   "list_tile.updated_at.title": "Updated",

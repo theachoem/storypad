@@ -106,7 +106,7 @@ class _HomeContent extends StatelessWidget {
         itemCount: itemsCount,
         itemBuilder: (context, itemIndex) {
           if (viewModel.hasThrowback && itemIndex == 0) {
-            return _ThrowbackTile(
+            return SpThrowbackTile(
               throwbackDates: viewModel.throwbackDates,
             );
           }

@@ -5,6 +5,7 @@ import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
+import 'package:storypad/widgets/sp_throwback_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
@@ -12,14 +13,18 @@ import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
 
 class SpStoryList extends StatelessWidget {
   final CollectionDbModel<StoryDbModel>? stories;
+  final List<DateTime>? throwbackDates;
   final void Function(StoryDbModel) onChanged;
   final void Function() onDeleted;
   final bool viewOnly;
   final Future<void> Function()? onRefresh;
 
+  bool get hasThrowback => throwbackDates?.isNotEmpty == true;
+
   const SpStoryList({
     super.key,
     this.stories,
+    this.throwbackDates,
     required this.onChanged,
     required this.onDeleted,
     this.onRefresh,
@@ -67,6 +72,9 @@ class SpStoryList extends StatelessWidget {
   }
 
   Widget buildList(BuildContext listContext) {
+    int itemsCount = stories?.items.length ?? 0;
+    if (hasThrowback) itemsCount += 1;
+
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.only(
@@ -75,9 +83,18 @@ class SpStoryList extends StatelessWidget {
         right: MediaQuery.of(listContext).padding.right,
         bottom: MediaQuery.of(listContext).padding.bottom + 16.0,
       ),
-      itemCount: stories?.items.length ?? 0,
-      itemBuilder: (context, index) {
-        final story = stories!.items[index];
+      itemCount: itemsCount,
+      itemBuilder: (context, itemIndex) {
+        if (hasThrowback && itemIndex == 0) {
+          return SpThrowbackTile(
+            throwbackDates: throwbackDates,
+          );
+        }
+
+        int storyIndex = itemIndex;
+        if (hasThrowback) storyIndex = itemIndex - 1;
+
+        StoryDbModel story = stories!.items[storyIndex];
 
         return SpStoryListenerBuilder(
           story: story,
@@ -89,7 +106,7 @@ class SpStoryList extends StatelessWidget {
             return SpStoryTileListItem(
               showYear: true,
               stories: stories!,
-              index: index,
+              index: storyIndex,
               viewOnly: viewOnly,
               listContext: listContext,
               onTap: () {

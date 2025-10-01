@@ -274,6 +274,7 @@
   "list_tile.theme_mode.title": "主题模式",
   "list_tile.throwback.a_few_year_ago_title": "几年前的记忆。",
   "list_tile.throwback.a_year_ago_title": "一年前的记忆。",
+  "list_tile.throwback.for_selected_date": "这一天的记忆。",
   "list_tile.unlock_your_rewards.applied_title": "已应用奖励代码",
   "list_tile.unlock_your_rewards.unapplied_title": "解锁你的奖励",
   "list_tile.updated_at.title": "已更新",

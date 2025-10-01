@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
@@ -33,6 +34,7 @@ class SpStoryListWithQuery extends StatefulWidget {
 
 class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   CollectionDbModel<StoryDbModel>? stories;
+  List<DateTime>? _throwbackDates;
 
   Future<void> load({
     required String debugSource,
@@ -42,6 +44,22 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     stories = await StoryDbModel.db.where(
       filters: widget.filter?.toDatabaseFilter(query: widget.query) ?? {'query': widget.query},
     );
+
+    if (widget.filter?.years.length == 1 && widget.filter?.month != null && widget.filter?.day != null) {
+      _throwbackDates = await StoryDbModel.db
+          .where(
+            filters: SearchFilterObject(
+              years: {},
+              excludeYears: {widget.filter!.years.first, DateTime.now().year},
+              month: widget.filter?.month,
+              day: widget.filter?.day,
+              types: {PathType.docs, PathType.archives},
+              tagId: widget.filter?.tagId,
+              assetId: null,
+            ).toDatabaseFilter(),
+          )
+          .then((e) => e?.items.map((e) => e.displayPathDate).toSet().toList());
+    }
 
     if (mounted) setState(() {});
 
@@ -95,6 +113,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     return SpStoryList(
       onRefresh: () => load(debugSource: '$runtimeType#onRefresh'),
       stories: stories,
+      throwbackDates: _throwbackDates,
       viewOnly: widget.viewOnly,
       onDeleted: () => load(debugSource: '$runtimeType#onDeleted'),
       onChanged: (updatedStory) {
