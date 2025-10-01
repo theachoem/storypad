@@ -70,7 +70,7 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     feelingClickedNotifier.value = true;
     await Future.delayed(feelingClickDuration);
-    await Future.delayed(const Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   Future<void> selectedFeeling() async {

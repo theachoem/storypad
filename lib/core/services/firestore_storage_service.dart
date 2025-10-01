@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -34,6 +35,8 @@ class FirestoreStorageService {
 
   Map<String, dynamic>? _hash;
   Map<String, String>? _downloadUrlsByUrlPath;
+
+  final Map<String, Completer<FirestoreStorageResponse>> _downloadingFileByUrlPath = {};
 
   Future<Map<String, dynamic>?> get hash async =>
       _hash ??= await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
@@ -85,22 +88,29 @@ class FirestoreStorageService {
     final String hashPath = await getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
 
+    if (File(downloadPath).existsSync()) return FirestoreStorageResponse(file: File(downloadPath));
+    if (!File(downloadPath).parent.existsSync()) await File(downloadPath).parent.create(recursive: true);
+
+    if (_downloadingFileByUrlPath[urlPath] != null && !_downloadingFileByUrlPath[urlPath]!.isCompleted) {
+      return _downloadingFileByUrlPath[urlPath]!.future;
+    }
+
+    _downloadingFileByUrlPath[urlPath] = Completer<FirestoreStorageResponse>();
+
     final childRef = storageRef.child(hashPath);
 
-    if (File(downloadPath).existsSync()) return FirestoreStorageResponse(file: File(downloadPath));
-    if (!File(downloadPath).parent.existsSync()) File(downloadPath).parent.createSync(recursive: true);
-
+    FirestoreStorageResponse? response;
     try {
       final content = await childRef.getData(MAX_DOWNLOAD_SIZE);
 
       if (content != null) {
         await File(downloadPath).writeAsBytes(content);
-        return FirestoreStorageResponse(file: File(downloadPath));
+        response = FirestoreStorageResponse(file: File(downloadPath));
       }
     } on FirebaseException catch (e) {
       debugPrint("🔴 FirestoreStorageService#downloadFile code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}");
       if (e.code == 'unauthorized') {
-        return FirestoreStorageResponse(
+        response = FirestoreStorageResponse(
           file: null,
           state: FirestoreStorageState.unauthorized,
         );
@@ -109,7 +119,9 @@ class FirestoreStorageService {
       debugPrint("🔴 FirestoreStorageService#downloadFile code: $e");
     }
 
-    return FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
+    response ??= FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
+    _downloadingFileByUrlPath[urlPath]?.complete(response);
+    return response;
   }
 
   String constructDeviceDownloadPath(String path) {

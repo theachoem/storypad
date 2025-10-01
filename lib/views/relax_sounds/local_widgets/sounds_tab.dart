@@ -71,10 +71,7 @@ class _SoundsTab extends StatelessWidget {
     return SpTapEffect(
       effects: [SpTapEffectType.touchableOpacity],
       onTap: () async {
-        File? cachedFile = await viewModel.downloadRelaxSound(relaxSound);
-        if (cachedFile != null) {
-          await provider.toggleSound(relaxSound);
-        }
+        await provider.toggleSound(relaxSound);
       },
       child: Column(
         spacing: 8.0,
@@ -86,7 +83,7 @@ class _SoundsTab extends StatelessWidget {
                 relaxSound: relaxSound,
                 selected: selected,
               ),
-              if (!viewModel.downloaded(relaxSound)) buildDownloadIcon(context, relaxSound),
+              if (!viewModel.downloaded(relaxSound)) buildDownloadIcon(provider, context, relaxSound),
             ],
           ),
           Text(
@@ -99,8 +96,11 @@ class _SoundsTab extends StatelessWidget {
     );
   }
 
-  Widget buildDownloadIcon(BuildContext context, RelaxSoundObject relaxSound) {
-    if (viewModel.dowloading(relaxSound)) {
+  Widget buildDownloadIcon(RelaxSoundsProvider provider, BuildContext context, RelaxSoundObject relaxSound) {
+    PlayerState? state = provider.playerStateFor(relaxSound.soundUrlPath);
+
+    if (state != null && state.playing == true) return const SizedBox.shrink();
+    if (provider.isDownloading(state)) {
       return const Positioned(
         top: 8.0,
         right: 8.0,
