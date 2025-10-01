@@ -10,7 +10,13 @@ import 'throwback_view_model.dart';
 part 'throwback_content.dart';
 
 class ThrowbackRoute extends BaseRoute {
-  const ThrowbackRoute();
+  const ThrowbackRoute({
+    required this.day,
+    required this.month,
+  });
+
+  final int day;
+  final int month;
 
   @override
   Widget buildPage(BuildContext context) => ThrowbackView(params: this);

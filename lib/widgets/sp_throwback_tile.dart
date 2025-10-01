@@ -1,17 +1,26 @@
-part of '../home_view.dart';
+import 'package:easy_localization/easy_localization.dart' show BuildContextEasyLocalizationExtension, tr;
+import 'package:flutter/material.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart' show DateFormatHelper;
+import 'package:storypad/core/services/color_from_day_service.dart';
+import 'package:storypad/views/throwback/throwback_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect;
 
-class _ThrowbackTile extends StatelessWidget {
-  const _ThrowbackTile({
+class SpThrowbackTile extends StatelessWidget {
+  const SpThrowbackTile({
+    super.key,
     required this.throwbackDates,
   });
 
   final List<DateTime>? throwbackDates;
+  DateTime get throwbackRepresentDate => throwbackDates?.firstOrNull ?? DateTime.now();
 
   Future<void> view(BuildContext context) {
-    return const ThrowbackRoute().push(context);
+    return ThrowbackRoute(
+      day: throwbackRepresentDate.day,
+      month: throwbackRepresentDate.month,
+    ).push(context);
   }
-
-  DateTime get throwbackRepresentDate => throwbackDates?.firstOrNull ?? DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +29,9 @@ class _ThrowbackTile extends StatelessWidget {
     String title;
     String subtitle = DateFormatHelper.yMEd(throwbackRepresentDate, context.locale);
 
-    if (hasLastYearThrowback) {
+    if (throwbackRepresentDate.year != DateTime.now().year) {
+      title = tr('list_tile.throwback.for_selected_date');
+    } else if (hasLastYearThrowback) {
       title = tr('list_tile.throwback.a_year_ago_title');
     } else {
       title = tr('list_tile.throwback.a_few_year_ago_title');
