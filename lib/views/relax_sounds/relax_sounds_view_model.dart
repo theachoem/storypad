@@ -25,9 +25,6 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
   List<RelaxSoundMixModel>? get mixes => _mixes;
 
   final Set<String> _downloadedSoundUrlPaths = {};
-  final Set<String> _downloadingSoundsUrlPaths = {};
-
-  bool dowloading(RelaxSoundObject relaxSound) => _downloadingSoundsUrlPaths.contains(relaxSound.soundUrlPath);
   bool downloaded(RelaxSoundObject relaxSound) => _downloadedSoundUrlPaths.contains(relaxSound.soundUrlPath);
 
   Future<void> load() async {
@@ -40,28 +37,6 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
     for (final sound in RelaxSoundObject.defaultSoundsList().values) {
       File? cachedFile = await FirestoreStorageService.instance.getCachedFile(sound.soundUrlPath);
       if (cachedFile != null) _downloadedSoundUrlPaths.add(sound.soundUrlPath);
-    }
-  }
-
-  // AudioPlayerService will also download the sound if not cached. But download in view model to show loading state & give user better UX.
-  Future<File?> downloadRelaxSound(RelaxSoundObject relaxSound) async {
-    File? cachedFile = await FirestoreStorageService.instance.getCachedFile(relaxSound.soundUrlPath);
-
-    if (cachedFile != null) {
-      _downloadedSoundUrlPaths.add(relaxSound.soundUrlPath);
-      notifyListeners();
-      return cachedFile;
-    } else {
-      _downloadingSoundsUrlPaths.add(relaxSound.soundUrlPath);
-      notifyListeners();
-
-      cachedFile = await FirestoreStorageService.instance.downloadFile(relaxSound.soundUrlPath).then((e) => e.file);
-
-      if (cachedFile != null) _downloadedSoundUrlPaths.add(relaxSound.soundUrlPath);
-      _downloadingSoundsUrlPaths.remove(relaxSound.soundUrlPath);
-      notifyListeners();
-
-      return cachedFile;
     }
   }
 
@@ -84,7 +59,7 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
     await RelaxSoundMixModel.db.set(
       RelaxSoundMixModel(
         id: existingMix?.id ?? now.millisecondsSinceEpoch,
-        name: provider.selectedSoundsLabel,
+        name: existingMix?.name ?? provider.selectedSoundsLabel,
         sounds: sounds,
         createdAt: now,
         updatedAt: now,
@@ -125,11 +100,6 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin {
     RelaxSoundMixModel mix,
     Iterable<RelaxSoundObject> sounds,
   ) async {
-    for (final sound in sounds) {
-      File? file = await downloadRelaxSound(sound);
-      if (file == null) return;
-    }
-
     if (!context.mounted) return;
     await context.read<RelaxSoundsProvider>().playAll(soundWithInitialVolume: {
       for (var sound in sounds)

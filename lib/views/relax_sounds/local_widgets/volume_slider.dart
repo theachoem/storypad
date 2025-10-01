@@ -20,7 +20,7 @@ class _VolumeSlider extends StatelessWidget {
         thumbColor: Theme.of(context).colorScheme.surface,
         value: provider.getVolume(relaxSound)!,
         padding: EdgeInsets.zero,
-        onChanged: (value) => provider.setVolumn(relaxSound, value),
+        onChanged: (value) => provider.setVolume(relaxSound, value),
       ),
     );
   }

@@ -115,7 +115,11 @@ class _MixesTab extends StatelessWidget {
               Widget child = const SizedBox(height: 40, width: 40);
 
               if (index == sounds.length - 1) {
-                if (sounds.any((e) => viewModel.dowloading(relaxSound))) {
+                if (sounds.any((e) {
+                  PlayerState? state = provider.playerStateFor(e.soundUrlPath);
+                  if (state == null) return false;
+                  return provider.isDownloading(state);
+                })) {
                   child = const SizedBox.square(
                     dimension: 32.0,
                     child: Center(
