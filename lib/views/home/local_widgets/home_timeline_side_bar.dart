@@ -38,6 +38,19 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
       true => [
           SpFadeIn.bound(
             child: IconButton(
+              tooltip: tr('page.add_ons.title'),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              icon: const Icon(SpIcons.addOns),
+              onPressed: () => const AddOnsRoute().push(context),
+            ),
+          ),
+          SpFadeIn.bound(
+            child: IconButton(
               tooltip: tr('add_ons.relax_sounds.title'),
               style: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.surface,

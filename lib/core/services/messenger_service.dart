@@ -81,7 +81,7 @@ class MessengerService {
       context: context,
       builder: (context) {
         Future.delayed(const Duration(seconds: 1)).then((value) {
-          if (context.mounted) Navigator.of(context).pop();
+          if (context.mounted && Navigator.canPop(context)) Navigator.of(context).pop();
         });
 
         return Center(
@@ -109,7 +109,7 @@ class MessengerService {
                     errorMessage,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.error,
+                          color: Colors.white,
                         ),
                   ),
                 ),
@@ -127,7 +127,7 @@ class MessengerService {
       context: context,
       builder: (context) {
         Future.delayed(const Duration(seconds: 1)).then((value) {
-          if (context.mounted) Navigator.of(context).pop();
+          if (context.mounted && Navigator.canPop(context)) Navigator.of(context).pop();
         });
 
         return Center(
