@@ -11,14 +11,16 @@ class _AddOnsTile extends StatelessWidget {
         return ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
           leading: const Icon(SpIcons.addOns),
-          trailing: IconButton(
-            tooltip: tr('list_tile.unlock_your_rewards.unapplied_title'),
-            icon: const Icon(SpIcons.gift),
-            onPressed: () async {
-              await SpRewardSheet().show(context: context);
-              if (context.mounted) const AddOnsRoute().push(context);
-            },
-          ),
+          trailing: kRedeemCodeEnabled && kIAPEnabled
+              ? IconButton(
+                  tooltip: tr('list_tile.unlock_your_rewards.unapplied_title'),
+                  icon: const Icon(SpIcons.gift),
+                  onPressed: () async {
+                    await SpRewardSheet().show(context: context);
+                    if (context.mounted) const AddOnsRoute().push(context);
+                  },
+                )
+              : null,
           title: RichText(
             textScaler: MediaQuery.textScalerOf(context),
             text: TextSpan(

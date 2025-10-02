@@ -169,7 +169,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
                 onSubmitted: (value) => share(),
               ),
             ),
-            if (kIAPEnabled) buildShareToSocialCard(context),
+            if (kIAPEnabled && kRedeemCodeEnabled) buildShareToSocialCard(context),
           ],
         ),
       ),

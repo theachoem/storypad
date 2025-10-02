@@ -51,6 +51,7 @@ class _MixesTab extends StatelessWidget {
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         if (index == viewModel.mixes!.length) {
+          if (!kRedeemCodeEnabled || !kIAPEnabled) return const SizedBox(key: ValueKey('share_to_social'));
           return Padding(
             key: const ValueKey('share_to_social'),
             padding: const EdgeInsets.all(6.0),
