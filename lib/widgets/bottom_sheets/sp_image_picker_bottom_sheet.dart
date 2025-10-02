@@ -147,28 +147,35 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       );
     }
 
-    return MasonryGridView.builder(
+    return Scrollbar(
+      thumbVisibility: true,
+      interactive: true,
       controller: PrimaryScrollController.maybeOf(context),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0)
-          .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
-      itemCount: assets.length,
-      mainAxisSpacing: 8.0,
-      crossAxisSpacing: 8.0,
-      gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
-      itemBuilder: (BuildContext context, int index) {
-        final asset = assets[index];
-        return GestureDetector(
-          onTap: () => Navigator.pop(context, [asset]),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: SpImage(
-              link: asset.link,
-              width: double.infinity,
-              height: 120,
+      child: MasonryGridView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        addAutomaticKeepAlives: false,
+        controller: PrimaryScrollController.maybeOf(context),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0)
+            .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
+        itemCount: assets.length,
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
+        itemBuilder: (BuildContext context, int index) {
+          final asset = assets[index];
+          return GestureDetector(
+            onTap: () => Navigator.pop(context, [asset]),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: SpImage(
+                link: asset.link,
+                width: double.infinity,
+                height: 120,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -1,9 +1,13 @@
 part of 'library_view.dart';
 
 class _LibraryContent extends StatelessWidget {
-  const _LibraryContent(this.viewModel);
+  const _LibraryContent(
+    this.viewModel, {
+    required this.constraints,
+  });
 
   final LibraryViewModel viewModel;
+  final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +33,12 @@ class _LibraryContent extends StatelessWidget {
       return _EmptyBody(context: context);
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return MasonryGridView.builder(
+    return Scrollbar(
+      thumbVisibility: true,
+      interactive: true,
+      child: MasonryGridView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        addAutomaticKeepAlives: false,
         padding: EdgeInsets.only(
           top: 16.0,
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
@@ -45,8 +53,8 @@ class _LibraryContent extends StatelessWidget {
           final asset = viewModel.assets!.items[index];
           return buildItem(asset, provider, context);
         },
-      );
-    });
+      ),
+    );
   }
 
   Widget buildItem(AssetDbModel asset, BackupProvider provider, BuildContext context) {

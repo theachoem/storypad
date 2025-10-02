@@ -38,6 +38,7 @@ class _AddOnsContent extends StatelessWidget {
       itemCount: viewModel.addOns!.length + 1,
       itemBuilder: (context, index) {
         if (index == viewModel.addOns!.length) {
+          if (!kRedeemCodeEnabled || !kIAPEnabled) return const SizedBox.shrink();
           return buildRewardsCard();
         }
 
