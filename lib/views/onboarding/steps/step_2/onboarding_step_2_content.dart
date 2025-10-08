@@ -50,10 +50,11 @@ class _OnboardingStep2Content extends StatelessWidget {
               reverse: true,
               scrollDirection: Axis.horizontal,
               controller: viewModel.toolbarScrollController,
-              child: (isDarkMode
-                      ? Assets.images.onboarding.toolbarDark1690x70
-                      : Assets.images.onboarding.toolbarLight1690x70)
-                  .image(height: 44),
+              child:
+                  (isDarkMode
+                          ? Assets.images.onboarding.toolbarDark1690x70
+                          : Assets.images.onboarding.toolbarLight1690x70)
+                      .image(height: 44),
             ),
           ),
         ),

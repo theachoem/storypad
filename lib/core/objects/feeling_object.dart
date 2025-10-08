@@ -79,7 +79,7 @@ class FeelingObject {
       'drooling',
       'vomiting',
       'nauseated',
-    ]
+    ],
   };
 
   static final Map<String, FeelingObject> feelingsByKey = {

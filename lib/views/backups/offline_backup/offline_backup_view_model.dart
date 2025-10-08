@@ -98,8 +98,12 @@ class OfflineBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
         await SharePlus.instance.share(
           ShareParams(
             title: basename(file.path),
-            sharePositionOrigin:
-                Rect.fromLTWH(0, 0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height / 2),
+            sharePositionOrigin: Rect.fromLTWH(
+              0,
+              0,
+              MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height / 2,
+            ),
             files: [
               XFile(file.path),
             ],

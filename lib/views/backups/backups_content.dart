@@ -11,42 +11,46 @@ class _BackupsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final BackupProvider provider = Provider.of<BackupProvider>(context);
 
-    return SpDefaultScrollController(builder: (context, controller) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(tr('page.backups.title')),
-          actions: [
-            IconButton(
-              tooltip: tr('page.offline_backup.title'),
-              icon: const Icon(SpIcons.folderOpen),
-              onPressed: () {
-                OfflineBackupsRoute().push(context);
-              },
-            ),
-          ],
-        ),
-        body: Stack(children: [
-          if (viewModel.hasData) _TimelineDivider(avatarSize: avatarSize, context: context),
-          RefreshIndicator.adaptive(
-            onRefresh: () => viewModel.load(context),
-            child: CustomScrollView(
-              controller: controller,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                buildSliverProfileTile(provider),
-                if (viewModel.loading) ...[
-                  buildSliverLoading()
-                ] else if (viewModel.hasData) ...[
-                  buildSliverBackupList(context)
-                ] else ...[
-                  buildSliverEmpty()
-                ],
-              ],
-            ),
+    return SpDefaultScrollController(
+      builder: (context, controller) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(tr('page.backups.title')),
+            actions: [
+              IconButton(
+                tooltip: tr('page.offline_backup.title'),
+                icon: const Icon(SpIcons.folderOpen),
+                onPressed: () {
+                  OfflineBackupsRoute().push(context);
+                },
+              ),
+            ],
           ),
-        ]),
-      );
-    });
+          body: Stack(
+            children: [
+              if (viewModel.hasData) _TimelineDivider(avatarSize: avatarSize, context: context),
+              RefreshIndicator.adaptive(
+                onRefresh: () => viewModel.load(context),
+                child: CustomScrollView(
+                  controller: controller,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    buildSliverProfileTile(provider),
+                    if (viewModel.loading) ...[
+                      buildSliverLoading(),
+                    ] else if (viewModel.hasData) ...[
+                      buildSliverBackupList(context),
+                    ] else ...[
+                      buildSliverEmpty(),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   SliverToBoxAdapter buildSliverProfileTile(BackupProvider provider) {
@@ -62,9 +66,11 @@ class _BackupsContent extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.all(16.0),
       sliver: SliverToBoxAdapter(
-        child: Text(viewModel.errorMessage?.contains('Request had insufficient authentication scopes') == true
-            ? tr('list_tile.backup.no_permission_subtitle')
-            : tr("general.no_backup_found")),
+        child: Text(
+          viewModel.errorMessage?.contains('Request had insufficient authentication scopes') == true
+              ? tr('list_tile.backup.no_permission_subtitle')
+              : tr("general.no_backup_found"),
+        ),
       ),
     );
   }

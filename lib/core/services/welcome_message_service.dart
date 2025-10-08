@@ -40,6 +40,7 @@ class WelcomeMessageService {
       "Your diary, your rules.",
       "This is your space, make it yours.",
       "Tell your story, no one else can.",
+      "It's okay not to be perfect.",
     };
 
     _index ??= Random().nextInt(messages.length);

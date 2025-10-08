@@ -13,10 +13,10 @@ void main() {
     );
     final testTables = {
       'users': [
-        {'id': 1, 'name': 'John Doe'}
+        {'id': 1, 'name': 'John Doe'},
       ],
       'entries': [
-        {'id': 101, 'title': 'My First Entry'}
+        {'id': 101, 'title': 'My First Entry'},
       ],
     };
 
@@ -57,7 +57,7 @@ void main() {
           'device_model': 'Test Model',
           'device_id': 'Test ID',
           'created_at': testDateTime.toIso8601String(),
-        }
+        },
       };
       expect(contents, equals(expectedMap));
     });
@@ -71,7 +71,7 @@ void main() {
           'device_model': 'Test Model',
           'device_id': 'Test ID',
           'created_at': testDateTime.toIso8601String(),
-        }
+        },
       };
 
       final backupObject = BackupObject.fromContents(contentMap);
@@ -95,7 +95,7 @@ void main() {
           'device_model': 'Test Model',
           'device_id': 'Test ID',
           'created_at': testDateTime.toIso8601String(),
-        }
+        },
       };
 
       final contentMapWithInvalidVersion = {
@@ -105,7 +105,7 @@ void main() {
           'device_model': 'Test Model',
           'device_id': 'Test ID',
           'created_at': testDateTime.toIso8601String(),
-        }
+        },
       };
 
       final backupObject1 = BackupObject.fromContents(contentMapWithNullVersion);

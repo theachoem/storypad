@@ -12,7 +12,8 @@ abstract class _$AssetDbModelCWProxy {
   AssetDbModel originalSource(String originalSource);
 
   AssetDbModel cloudDestinations(
-      Map<String, Map<String, Map<String, String>>> cloudDestinations);
+    Map<String, Map<String, Map<String, String>>> cloudDestinations,
+  );
 
   AssetDbModel createdAt(DateTime createdAt);
 
@@ -56,8 +57,8 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
 
   @override
   AssetDbModel cloudDestinations(
-          Map<String, Map<String, Map<String, String>>> cloudDestinations) =>
-      call(cloudDestinations: cloudDestinations);
+    Map<String, Map<String, Map<String, String>>> cloudDestinations,
+  ) => call(cloudDestinations: cloudDestinations);
 
   @override
   AssetDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
@@ -74,7 +75,6 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -96,12 +96,14 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as int,
-      originalSource: originalSource == const $CopyWithPlaceholder() ||
+      originalSource:
+          originalSource == const $CopyWithPlaceholder() ||
               originalSource == null
           ? _value.originalSource
           // ignore: cast_nullable_to_non_nullable
           : originalSource as String,
-      cloudDestinations: cloudDestinations == const $CopyWithPlaceholder() ||
+      cloudDestinations:
+          cloudDestinations == const $CopyWithPlaceholder() ||
               cloudDestinations == null
           ? _value.cloudDestinations
           // ignore: cast_nullable_to_non_nullable
@@ -138,32 +140,32 @@ extension $AssetDbModelCopyWith on AssetDbModel {
 // **************************************************************************
 
 AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
-      id: (json['id'] as num).toInt(),
-      originalSource: json['original_source'] as String,
-      cloudDestinations:
-          (json['cloud_destinations'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(
-            k,
-            (e as Map<String, dynamic>).map(
-              (k, e) => MapEntry(k, Map<String, String>.from(e as Map)),
-            )),
+  id: (json['id'] as num).toInt(),
+  originalSource: json['original_source'] as String,
+  cloudDestinations: (json['cloud_destinations'] as Map<String, dynamic>).map(
+    (k, e) => MapEntry(
+      k,
+      (e as Map<String, dynamic>).map(
+        (k, e) => MapEntry(k, Map<String, String>.from(e as Map)),
       ),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      lastSavedDeviceId: json['last_saved_device_id'] as String?,
-      permanentlyDeletedAt: json['permanently_deleted_at'] == null
-          ? null
-          : DateTime.parse(json['permanently_deleted_at'] as String),
-    );
+    ),
+  ),
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  lastSavedDeviceId: json['last_saved_device_id'] as String?,
+  permanentlyDeletedAt: json['permanently_deleted_at'] == null
+      ? null
+      : DateTime.parse(json['permanently_deleted_at'] as String),
+);
 
-Map<String, dynamic> _$AssetDbModelToJson(AssetDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'original_source': instance.originalSource,
-      'cloud_destinations': instance.cloudDestinations,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$AssetDbModelToJson(
+  AssetDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'original_source': instance.originalSource,
+  'cloud_destinations': instance.cloudDestinations,
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+};

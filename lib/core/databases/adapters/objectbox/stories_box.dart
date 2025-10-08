@@ -48,8 +48,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       conditions.and(StoryObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
     }
 
-    Query<StoryObjectBox> query =
-        box.query(conditions).order(StoryObjectBox_.updatedAt, flags: Order.descending).build();
+    Query<StoryObjectBox> query = box
+        .query(conditions)
+        .order(StoryObjectBox_.updatedAt, flags: Order.descending)
+        .build();
     StoryObjectBox? object = await query.findFirstAsync();
 
     return object?.updatedAt;
@@ -58,9 +60,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(StoryObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt.notNull().and(
+      StoryObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 
@@ -88,10 +90,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<PathType, int> storyCountsByType = {};
 
     for (PathType type in PathType.values) {
-      storyCountsByType[type] = buildQuery(filters: {
-        ...filters ?? {},
-        'type': type.name,
-      }).build().count();
+      storyCountsByType[type] = buildQuery(
+        filters: {
+          ...filters ?? {},
+          'type': type.name,
+        },
+      ).build().count();
     }
 
     return storyCountsByType;

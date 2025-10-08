@@ -14,8 +14,8 @@ class _PrivacyPolicyText extends StatelessWidget {
       child: Text(
         tr("general.read_our_privacy_policy"),
         style: TextTheme.of(context).bodyMedium?.copyWith(
-              decoration: TextDecoration.underline,
-            ),
+          decoration: TextDecoration.underline,
+        ),
       ),
     );
   }

@@ -11,13 +11,15 @@ class StoryEndDrawerButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Hero(
       tag: "page.tags.title",
-      child: Builder(builder: (context) {
-        return IconButton(
-          tooltip: tr("page.tags.title"),
-          icon: const Icon(SpIcons.tag),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-      }),
+      child: Builder(
+        builder: (context) {
+          return IconButton(
+            tooltip: tr("page.tags.title"),
+            icon: const Icon(SpIcons.tag),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+          );
+        },
+      ),
     );
   }
 }

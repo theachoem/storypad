@@ -79,7 +79,6 @@ class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
   RelaxSoundMixModel index(int? index) => call(index: index);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundMixModel(...).copyWith.fieldName(value)`.
   ///
@@ -162,15 +161,15 @@ RelaxSoundMixModel _$RelaxSoundMixModelFromJson(Map<String, dynamic> json) =>
       index: (json['index'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$RelaxSoundMixModelToJson(RelaxSoundMixModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'index': instance.index,
-      'name': instance.name,
-      'sounds': instance.sounds.map((e) => e.toJson()).toList(),
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-    };
+Map<String, dynamic> _$RelaxSoundMixModelToJson(
+  RelaxSoundMixModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'index': instance.index,
+  'name': instance.name,
+  'sounds': instance.sounds.map((e) => e.toJson()).toList(),
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+};

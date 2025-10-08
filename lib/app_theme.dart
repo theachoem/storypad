@@ -24,7 +24,8 @@ class AppTheme extends StatelessWidget {
     ThemeData lightTheme,
     ThemeData darkTheme,
     ThemeMode preferencesMode,
-  ) builder;
+  )
+  builder;
 
   // default text direction
   static bool ltr(BuildContext context) => Directionality.of(context) == TextDirection.ltr;
@@ -68,39 +69,41 @@ class AppTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DevicePreferencesProvider>(builder: (context, provider, child) {
-      return buildColorScheme(
-        provider: provider,
-        builder: (ColorScheme lightScheme, ColorScheme darkScheme) {
-          final isDarkMode = provider.isDarkModeBaseOnThemeMode(context);
+    return Consumer<DevicePreferencesProvider>(
+      builder: (context, provider, child) {
+        return buildColorScheme(
+          provider: provider,
+          builder: (ColorScheme lightScheme, ColorScheme darkScheme) {
+            final isDarkMode = provider.isDarkModeBaseOnThemeMode(context);
 
-          final lightTheme = getTheme(
-            colorScheme: lightScheme,
-            fontFamily: provider.preferences.fontFamily,
-            fontWeight: provider.preferences.fontWeight,
-          );
+            final lightTheme = getTheme(
+              colorScheme: lightScheme,
+              fontFamily: provider.preferences.fontFamily,
+              fontWeight: provider.preferences.fontWeight,
+            );
 
-          final darkTheme = getTheme(
-            colorScheme: darkScheme,
-            fontFamily: provider.preferences.fontFamily,
-            fontWeight: provider.preferences.fontWeight,
-          );
+            final darkTheme = getTheme(
+              colorScheme: darkScheme,
+              fontFamily: provider.preferences.fontFamily,
+              fontWeight: provider.preferences.fontWeight,
+            );
 
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-              statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-              systemNavigationBarDividerColor: Colors.transparent,
-              systemNavigationBarContrastEnforced: false,
-            ),
-            child: builder(context, provider.preferences, lightTheme, darkTheme, provider.themeMode),
-          );
-        },
-      );
-    });
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+                statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+                systemNavigationBarColor: Colors.transparent,
+                systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+                systemNavigationBarDividerColor: Colors.transparent,
+                systemNavigationBarContrastEnforced: false,
+              ),
+              child: builder(context, provider.preferences, lightTheme, darkTheme, provider.themeMode),
+            );
+          },
+        );
+      },
+    );
   }
 
   static ThemeData getTheme({
@@ -186,14 +189,16 @@ class AppTheme extends StatelessWidget {
   static PageTransitionsTheme getPageTransitionTheme({
     Color? fillColor,
   }) {
-    final pageTransitionsTheme = PageTransitionsTheme(builders: <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
-      TargetPlatform.android: SharedAxisPageTransitionsBuilder(
-        transitionType: SharedAxisTransitionType.horizontal,
-        fillColor: fillColor,
-      ),
-    });
+    final pageTransitionsTheme = PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
+        TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+          transitionType: SharedAxisTransitionType.horizontal,
+          fillColor: fillColor,
+        ),
+      },
+    );
     return pageTransitionsTheme;
   }
 
@@ -201,7 +206,8 @@ class AppTheme extends StatelessWidget {
   static TargetPlatform getPlatformByDartDefine() {
     TargetPlatform platform = defaultTargetPlatform;
     bool isCupertioByPlatform = platform == TargetPlatform.macOS || platform == TargetPlatform.iOS;
-    bool isMaterialByPlatform = platform == TargetPlatform.android ||
+    bool isMaterialByPlatform =
+        platform == TargetPlatform.android ||
         platform == TargetPlatform.fuchsia ||
         platform == TargetPlatform.linux ||
         platform == TargetPlatform.windows;

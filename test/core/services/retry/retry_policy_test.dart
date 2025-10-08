@@ -12,11 +12,12 @@ void main() {
       expect(policy.maxDelay, equals(const Duration(seconds: 30)));
       expect(policy.backoffMultiplier, equals(2.0));
       expect(
-          policy.retryableExceptions,
-          equals({
-            NetworkException,
-            FileOperationException,
-          }));
+        policy.retryableExceptions,
+        equals({
+          NetworkException,
+          FileOperationException,
+        }),
+      );
     });
 
     test('has predefined network policy', () {

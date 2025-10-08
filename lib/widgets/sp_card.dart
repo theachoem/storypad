@@ -22,53 +22,55 @@ class SpCard extends StatelessWidget {
   }) {
     return SpCard(
       onTap: onTap,
-      child: Builder(builder: (context) {
-        return Stack(
-          children: [
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: SpFadeIn.bound(
-                delay: Durations.medium1,
-                child: Image(
-                  image: logo,
-                  height: logoSize,
-                  width: logoSize,
-                  fit: BoxFit.fitHeight,
+      child: Builder(
+        builder: (context) {
+          return Stack(
+            children: [
+              Positioned(
+                right: 16,
+                bottom: 16,
+                child: SpFadeIn.bound(
+                  delay: Durations.medium1,
+                  child: Image(
+                    image: logo,
+                    height: logoSize,
+                    width: logoSize,
+                    fit: BoxFit.fitHeight,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              margin: EdgeInsets.only(right: logoSize + 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextTheme.of(context)
-                        .titleMedium
-                        ?.copyWith(color: ColorScheme.of(context).secondary, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).secondary),
-                  ),
-                  const SizedBox(height: 12.0),
-                ],
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                margin: EdgeInsets.only(right: logoSize + 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextTheme.of(
+                        context,
+                      ).titleMedium?.copyWith(color: ColorScheme.of(context).secondary, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).secondary),
+                    ),
+                    const SizedBox(height: 12.0),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              top: 16.0,
-              right: 16.0,
-              child: Icon(
-                SpIcons.keyboardRight,
-                color: ColorScheme.of(context).secondary,
+              Positioned(
+                top: 16.0,
+                right: 16.0,
+                child: Icon(
+                  SpIcons.keyboardRight,
+                  color: ColorScheme.of(context).secondary,
+                ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 

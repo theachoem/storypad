@@ -7,42 +7,44 @@ class _PinUnlockContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final double itemSize = MediaQuery.textScalerOf(context).scale(72.0);
-      final double spacing = MediaQuery.textScalerOf(context).scale(16.0);
-      final double pinSize = MediaQuery.textScalerOf(context).scale(16.0);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double itemSize = MediaQuery.textScalerOf(context).scale(72.0);
+        final double spacing = MediaQuery.textScalerOf(context).scale(16.0);
+        final double pinSize = MediaQuery.textScalerOf(context).scale(16.0);
 
-      bool landscape = constraints.maxWidth > constraints.maxHeight;
-      bool displayInRow = landscape && constraints.maxHeight < 700;
+        bool landscape = constraints.maxWidth > constraints.maxHeight;
+        bool displayInRow = landscape && constraints.maxHeight < 700;
 
-      final children = [
-        Flexible(child: buildPinPreview(context, pinSize)),
-        Flexible(
-          child: FittedBox(
-            child: Padding(
-              padding: EdgeInsets.only(top: displayInRow ? 24.0 : 0.0, bottom: displayInRow ? 4.0 : 0.0),
-              child: buildPins(itemSize, spacing, context),
+        final children = [
+          Flexible(child: buildPinPreview(context, pinSize)),
+          Flexible(
+            child: FittedBox(
+              child: Padding(
+                padding: EdgeInsets.only(top: displayInRow ? 24.0 : 0.0, bottom: displayInRow ? 4.0 : 0.0),
+                child: buildPins(itemSize, spacing, context),
+              ),
             ),
           ),
-        ),
-      ];
+        ];
 
-      return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          forceMaterialTransparency: true,
-          automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
-          actions: [
-            if (CupertinoSheetRoute.hasParentSheet(context))
-              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
-          ],
-        ),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
-          child: displayInRow ? Row(children: children) : Column(children: children),
-        ),
-      );
-    });
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            forceMaterialTransparency: true,
+            automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+            actions: [
+              if (CupertinoSheetRoute.hasParentSheet(context))
+                CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
+            ],
+          ),
+          body: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+            child: displayInRow ? Row(children: children) : Column(children: children),
+          ),
+        );
+      },
+    );
   }
 
   Widget buildPinPreview(BuildContext context, double pinSize) {

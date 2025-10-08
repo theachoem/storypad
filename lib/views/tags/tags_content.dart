@@ -92,11 +92,12 @@ class _TagsContent extends StatelessWidget {
           : const EdgeInsets.only(left: 4.0, right: 16.0),
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
-      trailing: [
-        TargetPlatform.linux,
-        TargetPlatform.windows,
-        TargetPlatform.macOS,
-      ].contains(Theme.of(context).platform)
+      trailing:
+          [
+            TargetPlatform.linux,
+            TargetPlatform.windows,
+            TargetPlatform.macOS,
+          ].contains(Theme.of(context).platform)
           ? null
           : const Icon(SpIcons.dragIndicator),
       onTap: () => provider.viewTag(
@@ -118,31 +119,33 @@ class _TagsContent extends StatelessWidget {
   }
 
   Widget buildEmptyBody(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: constraints.maxHeight,
-          width: double.infinity,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(24.0),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 150),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12.0,
-              children: [
-                const Icon(SpIcons.tag, size: 32.0),
-                Text(
-                  tr("page.tags.empty_message"),
-                  textAlign: TextAlign.center,
-                  style: TextTheme.of(context).bodyLarge,
-                ),
-              ],
+            height: constraints.maxHeight,
+            width: double.infinity,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(24.0),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 150),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 12.0,
+                children: [
+                  const Icon(SpIcons.tag, size: 32.0),
+                  Text(
+                    tr("page.tags.empty_message"),
+                    textAlign: TextAlign.center,
+                    style: TextTheme.of(context).bodyLarge,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

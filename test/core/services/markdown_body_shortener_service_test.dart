@@ -11,8 +11,10 @@ void main() {
         String result = MarkdownBodyShortenerService.call(markdown);
 
         expect(markdown.length > 200, true);
-        expect(result,
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. when an unknown printer took a galley of type an...");
+        expect(
+          result,
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. when an unknown printer took a galley of type an...",
+        );
       });
     });
 
@@ -24,8 +26,10 @@ void main() {
         String result = MarkdownBodyShortenerService.call(markdown);
 
         expect(markdown.length < 200, true);
-        expect(result,
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.");
+        expect(
+          result,
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+        );
       });
     });
 
@@ -36,8 +40,10 @@ void main() {
       test('return extract same markdown without ...', () {
         String result = MarkdownBodyShortenerService.call(markdown);
         expect(markdown.length, 200);
-        expect(result,
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. when an unknown printer took a galley of type A.");
+        expect(
+          result,
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. when an unknown printer took a galley of type A.",
+        );
       });
     });
 

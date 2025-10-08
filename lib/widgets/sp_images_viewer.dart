@@ -272,7 +272,9 @@ class _AltText extends StatelessWidget {
           child: AnimatedContainer(
             duration: Durations.medium4,
             curve: Curves.ease,
-            padding: const EdgeInsets.all(16.0).copyWith(bottom: hasAlt ? 24.0 : 20.0).add(
+            padding: const EdgeInsets.all(16.0)
+                .copyWith(bottom: hasAlt ? 24.0 : 20.0)
+                .add(
                   EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                 ),
             decoration: const BoxDecoration(

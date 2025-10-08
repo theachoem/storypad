@@ -42,7 +42,7 @@ class _HomeTabBar extends StatelessWidget {
             return buildMonthTab(context, month);
           }).toList(),
         ),
-        buildIconsButtonsWrapper(context, actionButtons)
+        buildIconsButtonsWrapper(context, actionButtons),
       ],
     );
   }

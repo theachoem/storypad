@@ -64,7 +64,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
   StoryPageDbModel plainText(String? plainText) => call(plainText: plainText);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///

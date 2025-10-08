@@ -110,7 +110,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
       call(layoutType: layoutType);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPreferencesDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -179,9 +178,9 @@ class _$StoryPreferencesDbModelCWProxyImpl
           : titleExpanded as bool?,
       layoutType:
           layoutType == const $CopyWithPlaceholder() || layoutType == null
-              ? _value.layoutType
-              // ignore: cast_nullable_to_non_nullable
-              : layoutType as PageLayoutType,
+          ? _value.layoutType
+          // ignore: cast_nullable_to_non_nullable
+          : layoutType as PageLayoutType,
     );
   }
 }
@@ -199,38 +198,38 @@ extension $StoryPreferencesDbModelCopyWith on StoryPreferencesDbModel {
 // **************************************************************************
 
 StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
-        Map<String, dynamic> json) =>
-    StoryPreferencesDbModel(
-      showDayCount: json['show_day_count'] as bool?,
-      starIcon: json['star_icon'] as String?,
-      showTime: json['show_time'] as bool?,
-      colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
-      colorTone: (json['color_tone'] as num?)?.toInt(),
-      fontFamily: json['font_family'] as String?,
-      fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
-      fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
-      titleFontFamily: json['title_font_family'] as String?,
-      titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
-      titleExpanded: json['title_expanded'] as bool?,
-      layoutType: _layoutTypeFromJson(json['layout_type']),
-    );
+  Map<String, dynamic> json,
+) => StoryPreferencesDbModel(
+  showDayCount: json['show_day_count'] as bool?,
+  starIcon: json['star_icon'] as String?,
+  showTime: json['show_time'] as bool?,
+  colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+  colorTone: (json['color_tone'] as num?)?.toInt(),
+  fontFamily: json['font_family'] as String?,
+  fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
+  fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
+  titleFontFamily: json['title_font_family'] as String?,
+  titleFontWeightIndex: (json['title_font_weight_index'] as num?)?.toInt(),
+  titleExpanded: json['title_expanded'] as bool?,
+  layoutType: _layoutTypeFromJson(json['layout_type']),
+);
 
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
-        StoryPreferencesDbModel instance) =>
-    <String, dynamic>{
-      'star_icon': instance.starIcon,
-      'show_day_count': instance.showDayCount,
-      'show_time': instance.showTime,
-      'color_seed_value': instance.colorSeedValue,
-      'color_tone': instance.colorTone,
-      'font_family': instance.fontFamily,
-      'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
-      'font_weight_index': instance.fontWeightIndex,
-      'title_font_family': instance.titleFontFamily,
-      'title_font_weight_index': instance.titleFontWeightIndex,
-      'title_expanded': instance.titleExpanded,
-      'layout_type': _$PageLayoutTypeEnumMap[instance.layoutType]!,
-    };
+  StoryPreferencesDbModel instance,
+) => <String, dynamic>{
+  'star_icon': instance.starIcon,
+  'show_day_count': instance.showDayCount,
+  'show_time': instance.showTime,
+  'color_seed_value': instance.colorSeedValue,
+  'color_tone': instance.colorTone,
+  'font_family': instance.fontFamily,
+  'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
+  'font_weight_index': instance.fontWeightIndex,
+  'title_font_family': instance.titleFontFamily,
+  'title_font_weight_index': instance.titleFontWeightIndex,
+  'title_expanded': instance.titleExpanded,
+  'layout_type': _$PageLayoutTypeEnumMap[instance.layoutType]!,
+};
 
 const _$FontSizeOptionEnumMap = {
   FontSizeOption.small: 'small',

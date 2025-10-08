@@ -17,12 +17,14 @@ class HomeYearsViewModel extends ChangeNotifier with DisposeAwareMixin {
   Map<int, int>? years;
 
   Future<void> load() async {
-    years = await StoryDbModel.db.getStoryCountsByYear(filters: {
-      'types': [
-        PathType.docs.name,
-        PathType.archives.name,
-      ]
-    });
+    years = await StoryDbModel.db.getStoryCountsByYear(
+      filters: {
+        'types': [
+          PathType.docs.name,
+          PathType.archives.name,
+        ],
+      },
+    );
 
     if (years == null || years?.isEmpty == true) {
       years = {

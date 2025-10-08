@@ -28,8 +28,8 @@ class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void purchase(BuildContext context, String productIdentifier) async {
     await context.read<InAppPurchaseProvider>().purchase(
-          context,
-          productIdentifier,
-        );
+      context,
+      productIdentifier,
+    );
   }
 }

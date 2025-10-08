@@ -21,7 +21,8 @@ class RedeemedRewardStorage extends MapStorage {
 
   Future<List<String>?> availableAddOns() async {
     Map<String, dynamic>? result = await readMap();
-    bool expired = result?['expired_at'] != null &&
+    bool expired =
+        result?['expired_at'] != null &&
         DateTime.tryParse(result?['expired_at'] ?? '')?.isBefore(DateTime.now()) == true;
 
     if (result == null) return null;

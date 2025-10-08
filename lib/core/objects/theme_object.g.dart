@@ -7,11 +7,11 @@ part of 'theme_object.dart';
 // **************************************************************************
 
 ThemeObject _$ThemeObjectFromJson(Map<String, dynamic> json) => ThemeObject(
-      fontFamily: json['font_family'] as String?,
-      fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
-      themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
-      colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
-    );
+  fontFamily: json['font_family'] as String?,
+  fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
+  themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
+  colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+);
 
 Map<String, dynamic> _$ThemeObjectToJson(ThemeObject instance) =>
     <String, dynamic>{

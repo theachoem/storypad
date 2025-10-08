@@ -38,8 +38,9 @@ void main() {
       });
 
       test('should format bold and italic text', () {
-        final doc =
-            _docFromJson('[{"insert":"bold and italic","attributes":{"bold":true,"italic":true}},{"insert":"\\n"}]');
+        final doc = _docFromJson(
+          '[{"insert":"bold and italic","attributes":{"bold":true,"italic":true}},{"insert":"\\n"}]',
+        );
         final result = QuillRootToPlainTextService.call(doc.root);
         expect(result, '***bold and italic***\n');
       });
@@ -60,15 +61,18 @@ void main() {
     group('Lists', () {
       test('should format a bulleted list', () {
         final doc = _docFromJson(
-            '[{"insert":"Item 1"},{"insert":"\\n","attributes":{"list":"bullet"}},{"insert":"Item 2"},{"insert":"\\n","attributes":{"list":"bullet"}}]');
+          '[{"insert":"Item 1"},{"insert":"\\n","attributes":{"list":"bullet"}},{"insert":"Item 2"},{"insert":"\\n","attributes":{"list":"bullet"}}]',
+        );
         final result = QuillRootToPlainTextService.call(doc.root);
         expect(result, '- Item 1\n- Item 2\n');
       });
 
       test('should format a numbered list with different levels', () {
         final doc = _docFromJson(
-            '[{"insert":"First"},{"insert":"\\n","attributes":{"list":"ordered"}},{"insert":"Second"},{"insert":"\\n","attributes":{"list":"ordered"}},{"insert":"Nested A"},{"insert":"\\n","attributes":{"indent":1,"list":"ordered"}},{"insert":"Nested B"},{"insert":"\\n","attributes":{"indent":1,"list":"ordered"}},{"insert":"Deep 1"},{"insert":"\\n","attributes":{"indent":2,"list":"ordered"}},{"insert":"Deep 2"},{"insert":"\\n","attributes":{"indent":2,"list":"ordered"}},{"insert":"Third"},{"insert":"\\n","attributes":{"list":"ordered"}}]');
-        const expected = '1. First\n'
+          '[{"insert":"First"},{"insert":"\\n","attributes":{"list":"ordered"}},{"insert":"Second"},{"insert":"\\n","attributes":{"list":"ordered"}},{"insert":"Nested A"},{"insert":"\\n","attributes":{"indent":1,"list":"ordered"}},{"insert":"Nested B"},{"insert":"\\n","attributes":{"indent":1,"list":"ordered"}},{"insert":"Deep 1"},{"insert":"\\n","attributes":{"indent":2,"list":"ordered"}},{"insert":"Deep 2"},{"insert":"\\n","attributes":{"indent":2,"list":"ordered"}},{"insert":"Third"},{"insert":"\\n","attributes":{"list":"ordered"}}]',
+        );
+        const expected =
+            '1. First\n'
             '2. Second\n'
             '\ta. Nested A\n'
             '\tb. Nested B\n'
@@ -117,7 +121,8 @@ void main() {
 
       test('should format an indented blockquote', () {
         final doc = _docFromJson(
-            '[{"insert":"This is a quote."},{"insert":"\\n","attributes":{"blockquote":true, "indent": 1}}]');
+          '[{"insert":"This is a quote."},{"insert":"\\n","attributes":{"blockquote":true, "indent": 1}}]',
+        );
         final result = QuillRootToPlainTextService.call(doc.root);
         expect(result, '> > This is a quote.\n');
       });
@@ -164,7 +169,8 @@ void main() {
         ]
         ''');
 
-        const expected = 'Title\n'
+        const expected =
+            'Title\n'
             'This is some **bold** text.\n'
             '- An itemized list:\n'
             '- First item\n'

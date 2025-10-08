@@ -69,15 +69,17 @@ class MultiAudioNotificationService {
       });
     }
 
-    _audioHandler?.playbackState.add(PlaybackState(
-      controls: [MediaControl(androidIcon: 'drawable/ic_stop', label: tr("button.stop"), action: MediaAction.stop)],
-      systemActions: const {MediaAction.playPause},
-      processingState: ready ? AudioProcessingState.ready : AudioProcessingState.buffering,
-      repeatMode: AudioServiceRepeatMode.all,
-      playing: true,
-      speed: 1.0,
-      queueIndex: 0,
-    ));
+    _audioHandler?.playbackState.add(
+      PlaybackState(
+        controls: [MediaControl(androidIcon: 'drawable/ic_stop', label: tr("button.stop"), action: MediaAction.stop)],
+        systemActions: const {MediaAction.playPause},
+        processingState: ready ? AudioProcessingState.ready : AudioProcessingState.buffering,
+        repeatMode: AudioServiceRepeatMode.all,
+        playing: true,
+        speed: 1.0,
+        queueIndex: 0,
+      ),
+    );
   }
 
   Future<void> showPause({
@@ -90,15 +92,17 @@ class MultiAudioNotificationService {
     debugPrint('$runtimeType#showPause ready: $ready');
     await initialIfNeed();
 
-    _audioHandler?.playbackState.add(PlaybackState(
-      controls: [MediaControl(androidIcon: 'drawable/ic_stop', label: tr("button.stop"), action: MediaAction.stop)],
-      systemActions: const {MediaAction.playPause},
-      processingState: ready ? AudioProcessingState.ready : AudioProcessingState.buffering,
-      repeatMode: AudioServiceRepeatMode.all,
-      playing: false,
-      speed: 1.0,
-      queueIndex: 0,
-    ));
+    _audioHandler?.playbackState.add(
+      PlaybackState(
+        controls: [MediaControl(androidIcon: 'drawable/ic_stop', label: tr("button.stop"), action: MediaAction.stop)],
+        systemActions: const {MediaAction.playPause},
+        processingState: ready ? AudioProcessingState.ready : AudioProcessingState.buffering,
+        repeatMode: AudioServiceRepeatMode.all,
+        playing: false,
+        speed: 1.0,
+        queueIndex: 0,
+      ),
+    );
   }
 
   Future<void> close() async {

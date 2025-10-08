@@ -43,11 +43,10 @@ class _$AppLockObjectCWProxyImpl implements _$AppLockObjectCWProxy {
 
   @override
   AppLockObject securityAnswers(
-          Map<AppLockQuestion, String>? securityAnswers) =>
-      call(securityAnswers: securityAnswers);
+    Map<AppLockQuestion, String>? securityAnswers,
+  ) => call(securityAnswers: securityAnswers);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppLockObject(...).copyWith.fieldName(value)`.
   ///
@@ -102,8 +101,9 @@ Map<String, dynamic> _$AppLockObjectToJson(AppLockObject instance) =>
     <String, dynamic>{
       'pin': instance.pin,
       'enabled_biometric': instance.enabledBiometric,
-      'security_answers': instance.securityAnswers
-          ?.map((k, e) => MapEntry(_$AppLockQuestionEnumMap[k]!, e)),
+      'security_answers': instance.securityAnswers?.map(
+        (k, e) => MapEntry(_$AppLockQuestionEnumMap[k]!, e),
+      ),
     };
 
 const _$AppLockQuestionEnumMap = {

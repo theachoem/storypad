@@ -9,8 +9,8 @@ class _RoundedIndicator extends Decoration {
   _RoundedIndicator.simple({
     double height = 40,
     Color color = Colors.white,
-  })  : borderSide = BorderSide(width: height, color: color),
-        insets = const EdgeInsets.all(1);
+  }) : borderSide = BorderSide(width: height, color: color),
+       insets = const EdgeInsets.all(1);
 
   final BorderSide borderSide;
   final EdgeInsetsGeometry insets;

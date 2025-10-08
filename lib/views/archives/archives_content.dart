@@ -57,9 +57,9 @@ class _ArchivesContent extends StatelessWidget {
       return Text(
         type.localized,
         style: TextTheme.of(context).titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
-            ),
+          fontWeight: FontWeight.w800,
+          color: type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
+        ),
       );
     }
 
@@ -81,7 +81,7 @@ class _ArchivesContent extends StatelessWidget {
             SpIcons.swapHoriz,
             size: 24.0,
             color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
-          )
+          ),
         ],
       ),
     );
@@ -132,8 +132,9 @@ class _ArchivesContent extends StatelessWidget {
                     title: state.selectedStories.length == state.stories.length
                         ? tr('button.unselect_all')
                         : tr("button.select_all"),
-                    leadingIconData:
-                        state.selectedStories.length == state.stories.length ? SpIcons.checkboxBlank : SpIcons.checkbox,
+                    leadingIconData: state.selectedStories.length == state.stories.length
+                        ? SpIcons.checkboxBlank
+                        : SpIcons.checkbox,
                     onPressed: () => state.toggleSelectAll(context),
                   ),
                   if (state.selectedStories.isNotEmpty)

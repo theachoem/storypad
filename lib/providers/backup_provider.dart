@@ -89,11 +89,14 @@ class BackupProvider extends ChangeNotifier {
     }
 
     if (readyToSynced) {
-      await runZonedGuarded(() async {
-        await _syncBackupAcrossDevices(currentUser!.email).timeout(const Duration(minutes: 3));
-      }, (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, reason: 'Uncaught in zone');
-      });
+      await runZonedGuarded(
+        () async {
+          await _syncBackupAcrossDevices(currentUser!.email).timeout(const Duration(minutes: 3));
+        },
+        (error, stack) {
+          FirebaseCrashlytics.instance.recordError(error, stack, reason: 'Uncaught in zone');
+        },
+      );
     }
 
     _syncing = false;

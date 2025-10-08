@@ -22,15 +22,17 @@ class SpDefaultScrollController extends StatefulWidget {
   static Widget listenToOffet({
     required Widget Function(BuildContext context, double offset, Widget? child) builder,
   }) {
-    return Builder(builder: (context) {
-      final state = context.findAncestorStateOfType<_SpDefaultScrollControllerState>();
-      return ValueListenableBuilder(
-        valueListenable: state!.controllerOffetNotifier,
-        builder: (context, offet, child) {
-          return builder(context, offet, child);
-        },
-      );
-    });
+    return Builder(
+      builder: (context) {
+        final state = context.findAncestorStateOfType<_SpDefaultScrollControllerState>();
+        return ValueListenableBuilder(
+          valueListenable: state!.controllerOffetNotifier,
+          builder: (context, offet, child) {
+            return builder(context, offet, child);
+          },
+        );
+      },
+    );
   }
 }
 

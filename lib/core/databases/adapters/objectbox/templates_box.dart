@@ -22,8 +22,10 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
       conditions.and(TemplateObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
     }
 
-    Query<TemplateObjectBox> query =
-        box.query(conditions).order(TemplateObjectBox_.updatedAt, flags: Order.descending).build();
+    Query<TemplateObjectBox> query = box
+        .query(conditions)
+        .order(TemplateObjectBox_.updatedAt, flags: Order.descending)
+        .build();
     TemplateObjectBox? object = await query.findFirstAsync();
     return object?.updatedAt;
   }
@@ -31,9 +33,9 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(TemplateObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt.notNull().and(
+      TemplateObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 

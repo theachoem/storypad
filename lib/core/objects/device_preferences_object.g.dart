@@ -69,7 +69,6 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(colorSeedValue: colorSeedValue);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -127,27 +126,29 @@ extension $DevicePreferencesObjectCopyWith on DevicePreferencesObject {
 // **************************************************************************
 
 DevicePreferencesObject _$DevicePreferencesObjectFromJson(
-        Map<String, dynamic> json) =>
-    DevicePreferencesObject(
-      fontFamily: json['font_family'] as String?,
-      fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
-      fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
-      themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
-      timeFormat:
-          $enumDecodeNullable(_$TimeFormatOptionEnumMap, json['time_format']),
-      colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
-    );
+  Map<String, dynamic> json,
+) => DevicePreferencesObject(
+  fontFamily: json['font_family'] as String?,
+  fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
+  fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
+  themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
+  timeFormat: $enumDecodeNullable(
+    _$TimeFormatOptionEnumMap,
+    json['time_format'],
+  ),
+  colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+);
 
 Map<String, dynamic> _$DevicePreferencesObjectToJson(
-        DevicePreferencesObject instance) =>
-    <String, dynamic>{
-      'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
-      'font_weight_index': instance.fontWeightIndex,
-      'color_seed_value': instance.colorSeedValue,
-      'font_family': instance.fontFamily,
-      'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
-      'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
-    };
+  DevicePreferencesObject instance,
+) => <String, dynamic>{
+  'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
+  'font_weight_index': instance.fontWeightIndex,
+  'color_seed_value': instance.colorSeedValue,
+  'font_family': instance.fontFamily,
+  'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
+  'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
+};
 
 const _$FontSizeOptionEnumMap = {
   FontSizeOption.small: 'small',

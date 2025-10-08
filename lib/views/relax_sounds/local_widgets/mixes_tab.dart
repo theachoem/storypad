@@ -12,32 +12,34 @@ class _MixesTab extends StatelessWidget {
     final provider = Provider.of<RelaxSoundsProvider>(context);
 
     if (viewModel.mixes?.isEmpty == true) {
-      return LayoutBuilder(builder: (context, constraints) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            height: constraints.maxHeight,
-            width: double.infinity,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(24.0),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 150),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 12.0,
-                children: [
-                  const Icon(SpIcons.musicNote, size: 32.0),
-                  Text(
-                    tr('page.relax_sounds.mixes_empty_message'),
-                    textAlign: TextAlign.center,
-                    style: TextTheme.of(context).bodyLarge,
-                  ),
-                ],
+              height: constraints.maxHeight,
+              width: double.infinity,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 12.0,
+                  children: [
+                    const Icon(SpIcons.musicNote, size: 32.0),
+                    Text(
+                      tr('page.relax_sounds.mixes_empty_message'),
+                      textAlign: TextAlign.center,
+                      style: TextTheme.of(context).bodyLarge,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      });
+          );
+        },
+      );
     }
 
     return ReorderableListView.builder(

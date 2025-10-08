@@ -66,7 +66,6 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   RelaxSoundObject dayColor(int dayColor) => call(dayColor: dayColor);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundObject(...).copyWith.fieldName(value)`.
   ///
@@ -87,26 +86,28 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
           ? _value.artist
           // ignore: cast_nullable_to_non_nullable
           : artist as String,
-      translationKey: translationKey == const $CopyWithPlaceholder() ||
+      translationKey:
+          translationKey == const $CopyWithPlaceholder() ||
               translationKey == null
           ? _value.translationKey
           // ignore: cast_nullable_to_non_nullable
           : translationKey as String,
-      svgIconUrlPath: svgIconUrlPath == const $CopyWithPlaceholder() ||
+      svgIconUrlPath:
+          svgIconUrlPath == const $CopyWithPlaceholder() ||
               svgIconUrlPath == null
           ? _value.svgIconUrlPath
           // ignore: cast_nullable_to_non_nullable
           : svgIconUrlPath as String,
       background:
           background == const $CopyWithPlaceholder() || background == null
-              ? _value.background
-              // ignore: cast_nullable_to_non_nullable
-              : background as FirestoreStorageBackground,
+          ? _value.background
+          // ignore: cast_nullable_to_non_nullable
+          : background as FirestoreStorageBackground,
       soundUrlPath:
           soundUrlPath == const $CopyWithPlaceholder() || soundUrlPath == null
-              ? _value.soundUrlPath
-              // ignore: cast_nullable_to_non_nullable
-              : soundUrlPath as String,
+          ? _value.soundUrlPath
+          // ignore: cast_nullable_to_non_nullable
+          : soundUrlPath as String,
       dayColor: dayColor == const $CopyWithPlaceholder() || dayColor == null
           ? _value.dayColor
           // ignore: cast_nullable_to_non_nullable
@@ -131,8 +132,10 @@ RelaxSoundObject _$RelaxSoundObjectFromJson(Map<String, dynamic> json) =>
       artist: json['artist'] as String,
       translationKey: json['translation_key'] as String,
       svgIconUrlPath: json['svg_icon_url_path'] as String,
-      background:
-          $enumDecode(_$FirestoreStorageBackgroundEnumMap, json['background']),
+      background: $enumDecode(
+        _$FirestoreStorageBackgroundEnumMap,
+        json['background'],
+      ),
       soundUrlPath: json['sound_url_path'] as String,
       dayColor: (json['day_color'] as num?)?.toInt() ?? 3,
     );

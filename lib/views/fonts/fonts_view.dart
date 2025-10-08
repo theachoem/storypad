@@ -46,14 +46,15 @@ class FontsView extends StatelessWidget {
       create: (context) => FontsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return Theme(
-          data: AppTheme.getTheme(
-            colorScheme: ColorScheme.of(context),
-            fontFamily: viewModel.currentFontFamily,
-            fontWeight: viewModel.currentFontWeight,
-          ).copyWith(
-            appBarTheme: AppBarTheme.of(context),
-            scaffoldBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          ),
+          data:
+              AppTheme.getTheme(
+                colorScheme: ColorScheme.of(context),
+                fontFamily: viewModel.currentFontFamily,
+                fontWeight: viewModel.currentFontWeight,
+              ).copyWith(
+                appBarTheme: AppBarTheme.of(context),
+                scaffoldBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              ),
           child: _FontsContent(viewModel),
         );
       },

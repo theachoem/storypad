@@ -6,12 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 
-enum FirestoreStorageState {
-  success,
-  connectionFailed,
-  unauthorized,
-  unknown;
-}
+enum FirestoreStorageState { success, connectionFailed, unauthorized, unknown }
 
 class FirestoreStorageResponse {
   final File? file;

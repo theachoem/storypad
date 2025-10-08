@@ -53,7 +53,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
               buildNicknameField(context, controller),
               const SizedBox(height: 8.0),
               buildSaveButton(context, controller),
-              buildBottomPadding(bottomPadding)
+              buildBottomPadding(bottomPadding),
             ],
           ),
         );

@@ -14,7 +14,8 @@ class _DoneButton extends StatelessWidget {
       builder: (_, lastSavedAt, child) {
         bool disabled = lastSavedAt == null;
         return Visibility(
-          visible: (viewModel.flowType == EditingFlowType.create && lastSavedAt != null) ||
+          visible:
+              (viewModel.flowType == EditingFlowType.create && lastSavedAt != null) ||
               (viewModel.flowType == EditingFlowType.update),
           child: SpFadeIn.bound(
             child: OutlinedButton.icon(

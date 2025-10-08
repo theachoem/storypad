@@ -58,7 +58,7 @@ class SpLayoutTypeSection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Text(layoutType.translatedName)
+                  Text(layoutType.translatedName),
                 ],
               );
             },

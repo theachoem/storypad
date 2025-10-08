@@ -18,10 +18,7 @@ abstract class _$RelaxSoundModelCWProxy {
   /// ```dart
   /// RelaxSoundModel(...).copyWith(id: 12, name: "My name")
   /// ```
-  RelaxSoundModel call({
-    String soundUrlPath,
-    double volume,
-  });
+  RelaxSoundModel call({String soundUrlPath, double volume});
 }
 
 /// Callable proxy for `copyWith` functionality.
@@ -39,7 +36,6 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
   RelaxSoundModel volume(double volume) => call(volume: volume);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundModel(...).copyWith.fieldName(value)`.
   ///
@@ -54,9 +50,9 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
     return RelaxSoundModel(
       soundUrlPath:
           soundUrlPath == const $CopyWithPlaceholder() || soundUrlPath == null
-              ? _value.soundUrlPath
-              // ignore: cast_nullable_to_non_nullable
-              : soundUrlPath as String,
+          ? _value.soundUrlPath
+          // ignore: cast_nullable_to_non_nullable
+          : soundUrlPath as String,
       volume: volume == const $CopyWithPlaceholder() || volume == null
           ? _value.volume
           // ignore: cast_nullable_to_non_nullable

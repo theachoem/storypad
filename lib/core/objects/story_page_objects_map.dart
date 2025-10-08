@@ -78,7 +78,8 @@ class StoryPageObjectsMap {
         titleController: TextEditingController.fromValue(
           TextEditingValue(
             text: richPage.title?.trim() ?? '',
-            selection: initialPagesMap?[richPage.id]?.titleController.selection ??
+            selection:
+                initialPagesMap?[richPage.id]?.titleController.selection ??
                 TextSelection.collapsed(offset: richPage.title?.length ?? 0),
           ),
         ),

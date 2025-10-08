@@ -41,9 +41,9 @@ class DevicePreferencesObject {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
-  })  : _fontFamily = fontFamily,
-        _themeMode = themeMode,
-        _timeFormat = timeFormat;
+  }) : _fontFamily = fontFamily,
+       _themeMode = themeMode,
+       _timeFormat = timeFormat;
 
   factory DevicePreferencesObject.initial() {
     return DevicePreferencesObject();

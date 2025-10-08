@@ -66,7 +66,7 @@ class _StoryPage extends StatelessWidget {
           buildEditor(context),
           if (canMoveUp || canMoveDown || canDeletePage) ...[
             if (!readOnly && preferences?.layoutType == PageLayoutType.list) buildMoreVertButton(context),
-          ]
+          ],
         ],
       ),
     );

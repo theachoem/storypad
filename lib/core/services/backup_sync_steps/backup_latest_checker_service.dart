@@ -37,18 +37,22 @@ class BackupLatestCheckerService {
     try {
       return await _start(client, lastDbUpdatedAt);
     } on exp.AuthException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       rethrow; // Let repository handle auth exceptions
     } on exp.BackupException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       return BackupLatestCheckerResponse(
         hasError: true,
         lastestBackupFile: null,
@@ -56,11 +60,13 @@ class BackupLatestCheckerService {
       );
     } catch (e, stackTrace) {
       debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: 'Failed to check backup due to unexpected error.',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: 'Failed to check backup due to unexpected error.',
+        ),
+      );
       return BackupLatestCheckerResponse(
         hasError: true,
         lastestBackupFile: null,
@@ -79,11 +85,13 @@ class BackupLatestCheckerService {
     );
 
     if (lastestBackupFile == null) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: 'Everything is up to date',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: 'Everything is up to date',
+        ),
+      );
 
       return BackupLatestCheckerResponse(
         hasError: false,
@@ -93,11 +101,13 @@ class BackupLatestCheckerService {
     }
 
     if (lastestBackupFile.getFileInfo()?.createdAt == lastDbUpdatedAt) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: 'Everything is up to date',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: 'Everything is up to date',
+        ),
+      );
 
       return BackupLatestCheckerResponse(
         lastestBackupFile: lastestBackupFile,
@@ -114,11 +124,13 @@ class BackupLatestCheckerService {
     final fileContent = result?.$1;
 
     if (fileContent == null) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: 'Could not fetch file content!',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: 'Could not fetch file content!',
+        ),
+      );
 
       return BackupLatestCheckerResponse(
         lastestBackupFile: lastestBackupFile,
@@ -140,11 +152,13 @@ class BackupLatestCheckerService {
       );
     }
 
-    controller.add(BackupSyncMessage(
-      processing: false,
-      success: true,
-      message: 'Backup found: ${lastestBackupFile.fileName}',
-    ));
+    controller.add(
+      BackupSyncMessage(
+        processing: false,
+        success: true,
+        message: 'Backup found: ${lastestBackupFile.fileName}',
+      ),
+    );
 
     return BackupLatestCheckerResponse(
       lastestBackupFile: lastestBackupFile,

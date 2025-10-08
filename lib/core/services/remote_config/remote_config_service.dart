@@ -98,10 +98,12 @@ class RemoteConfigService {
 
   Future<void> initialize() async {
     try {
-      await remoteConfig.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 5),
-        minimumFetchInterval: kDebugMode ? const Duration(minutes: 1) : const Duration(hours: 12),
-      ));
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 5),
+          minimumFetchInterval: kDebugMode ? const Duration(minutes: 1) : const Duration(hours: 12),
+        ),
+      );
 
       await remoteConfig.setDefaults({
         for (final element in _registeredKeys)
@@ -115,13 +117,16 @@ class RemoteConfigService {
     }
 
     if (!kIsWeb) {
-      remoteConfig.onConfigUpdated.listen((event) async {
-        debugPrint(event.updatedKeys.toString());
-        await remoteConfig.activate();
-        notifyListeners();
-      }, onError: (error) {
-        debugPrint(error.toString());
-      });
+      remoteConfig.onConfigUpdated.listen(
+        (event) async {
+          debugPrint(event.updatedKeys.toString());
+          await remoteConfig.activate();
+          notifyListeners();
+        },
+        onError: (error) {
+          debugPrint(error.toString());
+        },
+      );
     }
   }
 }

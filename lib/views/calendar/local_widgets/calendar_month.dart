@@ -49,8 +49,8 @@ class _CalendarMonth extends StatelessWidget {
                 DateFormatHelper.E(DateTime(2000, 10, index + 1), context.locale),
                 textAlign: TextAlign.center,
                 style: TextTheme.of(context).titleSmall?.copyWith(
-                      color: index == 0 || index == 6 ? ColorScheme.of(context).error : null,
-                    ),
+                  color: index == 0 || index == 6 ? ColorScheme.of(context).error : null,
+                ),
               ),
             ),
           ),

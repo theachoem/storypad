@@ -63,10 +63,10 @@ class SpStoryList extends StatelessWidget {
           RefreshIndicator.adaptive(
             onRefresh: onRefresh!,
             child: buildList(context),
-          )
+          ),
         ] else ...[
           buildList(context),
-        ]
+        ],
       ],
     );
   }

@@ -91,46 +91,48 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   }
 
   Widget buildScaffold(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text("$kAppName Library"),
-          automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
-          actions: [
-            if (CupertinoSheetRoute.hasParentSheet(context))
-              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
-          ],
-        ),
-        body: buildBody(
-          context: context,
-          constraints: constraints,
-        ),
-        bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Divider(height: 1),
-            Container(
-              padding: EdgeInsets.only(
-                left: 8.0,
-                top: 8.0,
-                bottom: MediaQuery.of(context).padding.bottom + 8.0,
-                right: 16.0,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("$kAppName Library"),
+            automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+            actions: [
+              if (CupertinoSheetRoute.hasParentSheet(context))
+                CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
+            ],
+          ),
+          body: buildBody(
+            context: context,
+            constraints: constraints,
+          ),
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(height: 1),
+              Container(
+                padding: EdgeInsets.only(
+                  left: 8.0,
+                  top: 8.0,
+                  bottom: MediaQuery.of(context).padding.bottom + 8.0,
+                  right: 16.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton.icon(
+                      icon: const Icon(SpIcons.addPhoto),
+                      label: const Text("Insert from Device"),
+                      onPressed: () => _insertFromPhotoLibrary(context),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton.icon(
-                    icon: const Icon(SpIcons.addPhoto),
-                    label: const Text("Insert from Device"),
-                    onPressed: () => _insertFromPhotoLibrary(context),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget buildBody({
@@ -155,8 +157,9 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         physics: const AlwaysScrollableScrollPhysics(),
         addAutomaticKeepAlives: false,
         controller: PrimaryScrollController.maybeOf(context),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0)
-            .copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ).copyWith(top: 16.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
         itemCount: assets.length,
         mainAxisSpacing: 8.0,
         crossAxisSpacing: 8.0,

@@ -36,8 +36,8 @@ class StoryPageDbModel {
     int? crossAxisCount,
     int? mainAxisCount,
     this.plainText,
-  })  : crossAxisCount = crossAxisCount ?? 2,
-        mainAxisCount = mainAxisCount ?? 1;
+  }) : crossAxisCount = crossAxisCount ?? 2,
+       mainAxisCount = mainAxisCount ?? 1;
 
   Map<String, dynamic> toJson() => _$StoryPageDbModelToJson(this);
   factory StoryPageDbModel.fromJson(Map<String, dynamic> json) => _$StoryPageDbModelFromJson(json);

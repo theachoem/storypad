@@ -42,7 +42,9 @@ void main() {
       expect(exception.context, equals('restore_process'));
       expect(exception.isRetryable, isFalse);
       expect(
-          exception.userFriendlyMessage, equals('Failed to decompress backup data. The backup file may be corrupted.'));
+        exception.userFriendlyMessage,
+        equals('Failed to decompress backup data. The backup file may be corrupted.'),
+      );
     });
 
     test('creates with correct properties for data corrupted', () {
@@ -70,7 +72,9 @@ void main() {
       expect(exception.context, isNull);
       expect(exception.isRetryable, isFalse);
       expect(
-          exception.userFriendlyMessage, equals('An unexpected error occurred. Please try again or contact support.'));
+        exception.userFriendlyMessage,
+        equals('An unexpected error occurred. Please try again or contact support.'),
+      );
     });
 
     test('is not retryable by default', () {

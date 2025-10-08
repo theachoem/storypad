@@ -41,11 +41,13 @@ class BackupUploaderService {
   ) async {
     try {
       if (lastDbUpdatedAt == null || lastSyncedAt == lastDbUpdatedAt) {
-        controller.add(BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'No new stories to upload.',
-        ));
+        controller.add(
+          BackupSyncMessage(
+            processing: false,
+            success: true,
+            message: 'No new stories to upload.',
+          ),
+        );
 
         return BackupUploaderResponse(
           hasError: false,
@@ -55,29 +57,35 @@ class BackupUploaderService {
 
       return await _start(client, lastDbUpdatedAt);
     } on exp.AuthException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       rethrow; // Let repository handle auth exceptions
     } on exp.BackupException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       return BackupUploaderResponse(
         hasError: true,
         uploadedCloudFile: null,
       );
     } catch (error, stackTrace) {
       debugPrint('$runtimeType#start unexpected error: $error $stackTrace');
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: 'Failed to upload new stories due to unexpected error.',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: 'Failed to upload new stories due to unexpected error.',
+        ),
+      );
 
       return BackupUploaderResponse(
         hasError: true,
@@ -110,11 +118,13 @@ class BackupUploaderService {
       );
 
       if (uploadedFile != null) {
-        controller.add(BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'All new stories uploaded successfully.',
-        ));
+        controller.add(
+          BackupSyncMessage(
+            processing: false,
+            success: true,
+            message: 'All new stories uploaded successfully.',
+          ),
+        );
 
         return BackupUploaderResponse(
           hasError: false,

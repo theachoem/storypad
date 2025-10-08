@@ -50,50 +50,53 @@ class _QuillImageRenderer extends StatelessWidget {
   Widget build(BuildContext context) {
     String link = node.value.data;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      double? width;
-      double? height;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double? width;
+        double? height;
 
-      if (EmbedSizeAttribute.maxSize.hasApplied(node)) {
-        width = double.infinity;
-        height = null;
-      } else {
-        width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
-        height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
-      }
+        if (EmbedSizeAttribute.maxSize.hasApplied(node)) {
+          width = double.infinity;
+          height = null;
+        } else {
+          width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+          height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+        }
 
-      return Container(
-        width: double.infinity,
-        alignment: EmbedAlignmentAttribute.toAlignment(node) ??
-            AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
-        child: Stack(
-          children: [
-            SpTapEffect(
-              effects: [SpTapEffectType.scaleDown],
-              onTap: readOnly ? () => viewImage(context, link) : null,
-              child: Material(
-                clipBehavior: Clip.hardEdge,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
-                child: SpImage(
-                  link: link,
-                  width: width,
-                  height: height,
+        return Container(
+          width: double.infinity,
+          alignment:
+              EmbedAlignmentAttribute.toAlignment(node) ??
+              AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
+          child: Stack(
+            children: [
+              SpTapEffect(
+                effects: [SpTapEffectType.scaleDown],
+                onTap: readOnly ? () => viewImage(context, link) : null,
+                child: Material(
+                  clipBehavior: Clip.hardEdge,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                  child: SpImage(
+                    link: link,
+                    width: width,
+                    height: height,
+                  ),
                 ),
               ),
-            ),
-            if (!readOnly)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: buildMoreVertButton(context),
-              ),
-          ],
-        ),
-      );
-    });
+              if (!readOnly)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: buildMoreVertButton(context),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget buildMoreVertButton(BuildContext context) {

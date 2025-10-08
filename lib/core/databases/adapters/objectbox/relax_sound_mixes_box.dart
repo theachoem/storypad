@@ -21,8 +21,10 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
       conditions.and(RelaxSoundMixBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
     }
 
-    Query<RelaxSoundMixBox> query =
-        box.query(conditions).order(RelaxSoundMixBox_.updatedAt, flags: Order.descending).build();
+    Query<RelaxSoundMixBox> query = box
+        .query(conditions)
+        .order(RelaxSoundMixBox_.updatedAt, flags: Order.descending)
+        .build();
     RelaxSoundMixBox? object = await query.findFirstAsync();
 
     return object?.updatedAt;
@@ -31,9 +33,9 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt
-        .notNull()
-        .and(RelaxSoundMixBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt.notNull().and(
+      RelaxSoundMixBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 

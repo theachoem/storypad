@@ -24,8 +24,10 @@ class ArchivesRoute extends BaseRoute {
     BuildContext context, {
     bool rootNavigator = false,
   }) async {
-    bool authenticated =
-        await context.read<AppLockProvider>().authenticateIfHas(context: context, debugSource: '$runtimeType#push');
+    bool authenticated = await context.read<AppLockProvider>().authenticateIfHas(
+      context: context,
+      debugSource: '$runtimeType#push',
+    );
     if (!authenticated || !context.mounted) return null;
 
     return super.push(

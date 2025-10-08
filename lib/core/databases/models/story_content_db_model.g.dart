@@ -65,7 +65,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
       call(richPages: richPages);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryContentDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -135,12 +134,12 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$StoryContentDbModelToJson(
-        StoryContentDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'title': instance.title,
-      'plain_text': instance.plainText,
-      'created_at': instance.createdAt.toIso8601String(),
-      'pages': instance.pages,
-      'rich_pages': instance.richPages?.map((e) => e.toJson()).toList(),
-    };
+  StoryContentDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'title': instance.title,
+  'plain_text': instance.plainText,
+  'created_at': instance.createdAt.toIso8601String(),
+  'pages': instance.pages,
+  'rich_pages': instance.richPages?.map((e) => e.toJson()).toList(),
+};

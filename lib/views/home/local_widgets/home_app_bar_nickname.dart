@@ -10,9 +10,12 @@ class _HomeAppBarNickname extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      tr("page.home.app_bar.hello_nickname", namedArgs: {
-        "NICKNAME": nickname ?? "",
-      }),
+      tr(
+        "page.home.app_bar.hello_nickname",
+        namedArgs: {
+          "NICKNAME": nickname ?? "",
+        },
+      ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),

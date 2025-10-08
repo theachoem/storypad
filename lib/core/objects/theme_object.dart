@@ -29,8 +29,8 @@ class ThemeObject {
     this.fontWeightIndex,
     ThemeMode? themeMode,
     this.colorSeedValue,
-  })  : _fontFamily = fontFamily,
-        _themeMode = themeMode;
+  }) : _fontFamily = fontFamily,
+       _themeMode = themeMode;
 
   factory ThemeObject.initial() {
     return ThemeObject();

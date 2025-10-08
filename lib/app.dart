@@ -19,44 +19,46 @@ class App extends StatelessWidget {
       path: 'translations',
       supportedLocales: kSupportedLocales,
       fallbackLocale: kFallbackLocale,
-      child: AppTheme(builder: (context, preferences, theme, darkTheme, themeMode) {
-        TextScaler textScaler = switch (preferences.fontSize) {
-          null => MediaQuery.textScalerOf(context),
-          FontSizeOption.small => const TextScaler.linear(0.85),
-          FontSizeOption.normal => const TextScaler.linear(1.0),
-          FontSizeOption.large => const TextScaler.linear(1.15),
-          FontSizeOption.extraLarge => const TextScaler.linear(1.3),
-        };
+      child: AppTheme(
+        builder: (context, preferences, theme, darkTheme, themeMode) {
+          TextScaler textScaler = switch (preferences.fontSize) {
+            null => MediaQuery.textScalerOf(context),
+            FontSizeOption.small => const TextScaler.linear(0.85),
+            FontSizeOption.normal => const TextScaler.linear(1.0),
+            FontSizeOption.large => const TextScaler.linear(1.15),
+            FontSizeOption.extraLarge => const TextScaler.linear(1.3),
+          };
 
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: textScaler,
-            alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24,
-          ),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            themeMode: themeMode,
-            theme: theme,
-            darkTheme: darkTheme,
-            home: const HomeView(),
-            localizationsDelegates: [
-              ...EasyLocalization.of(context)!.delegates,
-              DefaultCupertinoLocalizations.delegate,
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              FlutterQuillLocalizations.delegate,
-            ],
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            builder: (context, child) {
-              return GestureDetector(
-                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                child: child!,
-              );
-            },
-          ),
-        );
-      }),
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: textScaler,
+              alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24,
+            ),
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              themeMode: themeMode,
+              theme: theme,
+              darkTheme: darkTheme,
+              home: const HomeView(),
+              localizationsDelegates: [
+                ...EasyLocalization.of(context)!.delegates,
+                DefaultCupertinoLocalizations.delegate,
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+                FlutterQuillLocalizations.delegate,
+              ],
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              builder: (context, child) {
+                return GestureDetector(
+                  onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                  child: child!,
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

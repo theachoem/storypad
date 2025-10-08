@@ -34,9 +34,9 @@ class RenderStickyHeader extends RenderBox
     bool overlapHeaders = false,
     RenderBox? header,
     RenderBox? content,
-  })  : _scrollPosition = scrollPosition,
-        _callback = callback,
-        _overlapHeaders = overlapHeaders {
+  }) : _scrollPosition = scrollPosition,
+       _callback = callback,
+       _overlapHeaders = overlapHeaders {
     if (content != null) add(content);
     if (header != null) add(header);
   }

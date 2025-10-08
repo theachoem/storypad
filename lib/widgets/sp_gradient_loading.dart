@@ -26,9 +26,15 @@ class SpGradientLoading extends StatelessWidget {
             gradient: LinearGradient(
               colors: [
                 Color.lerp(
-                    ColorScheme.of(context).surface.darken(0.05), ColorScheme.of(context).surface.darken(0.1), value)!,
+                  ColorScheme.of(context).surface.darken(0.05),
+                  ColorScheme.of(context).surface.darken(0.1),
+                  value,
+                )!,
                 Color.lerp(
-                    ColorScheme.of(context).surface.darken(0.1), ColorScheme.of(context).surface.darken(0.05), value)!,
+                  ColorScheme.of(context).surface.darken(0.1),
+                  ColorScheme.of(context).surface.darken(0.05),
+                  value,
+                )!,
               ],
             ),
           ),

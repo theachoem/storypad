@@ -28,9 +28,13 @@ class _SpDefaultTextControllerState extends State<SpDefaultTextController> {
   @override
   Widget build(BuildContext context) {
     if (widget.withForm) {
-      return Form(child: Builder(builder: (context) {
-        return widget.builder(context, controller);
-      }));
+      return Form(
+        child: Builder(
+          builder: (context) {
+            return widget.builder(context, controller);
+          },
+        ),
+      );
     }
     return widget.builder(context, controller);
   }

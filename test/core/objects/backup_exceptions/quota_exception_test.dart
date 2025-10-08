@@ -14,8 +14,10 @@ void main() {
       expect(exception.type, equals(QuotaExceptionType.storageQuotaExceeded));
       expect(exception.context, equals('upload_backup'));
       expect(exception.isRetryable, isFalse);
-      expect(exception.userFriendlyMessage,
-          equals('Google Drive storage is full. Please free up space or upgrade your storage plan.'));
+      expect(
+        exception.userFriendlyMessage,
+        equals('Google Drive storage is full. Please free up space or upgrade your storage plan.'),
+      );
     });
 
     test('creates with correct properties for rate limit exceeded', () {

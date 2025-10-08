@@ -11,12 +11,15 @@ class _FeedbackBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialBanner(
       backgroundColor: Theme.of(context).colorScheme.readOnly.surface2,
-      contentTextStyle:
-          Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
-      padding: const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0).add(EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-      )),
+      contentTextStyle: Theme.of(
+        context,
+      ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
+      padding: const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0).add(
+        EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left,
+          right: MediaQuery.of(context).padding.right,
+        ),
+      ),
       leading: Icon(SpIcons.info, color: Theme.of(context).colorScheme.onSurface),
       content: Text(
         tr('list_tile.ask_for_locale_suggestion.subtitle'),

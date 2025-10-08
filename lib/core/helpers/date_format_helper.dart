@@ -21,22 +21,22 @@ class DateFormatHelper {
   }
 
   static String yMEd_jm(DateTime date, Locale locale) {
-    return DateFormat.yMEd(locale.toLanguageTag())
-        .addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}")
-        .format(date);
+    return DateFormat.yMEd(
+      locale.toLanguageTag(),
+    ).addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}").format(date);
   }
 
   static String yMEd_Hm(DateTime date, Locale locale) {
-    return DateFormat.yMEd(locale.toLanguageTag())
-        .addPattern("- ${DateFormat.Hm(locale.toLanguageTag()).pattern!}")
-        .format(date);
+    return DateFormat.yMEd(
+      locale.toLanguageTag(),
+    ).addPattern("- ${DateFormat.Hm(locale.toLanguageTag()).pattern!}").format(date);
   }
 
   static String? yMEd_jmNullable(DateTime? date, Locale locale) {
     if (date == null) return null;
-    return DateFormat.yMEd(locale.toLanguageTag())
-        .addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}")
-        .format(date);
+    return DateFormat.yMEd(
+      locale.toLanguageTag(),
+    ).addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}").format(date);
   }
 
   static String? yMEdNullable(DateTime? date, Locale locale) {

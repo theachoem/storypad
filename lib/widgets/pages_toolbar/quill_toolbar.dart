@@ -21,11 +21,14 @@ class _QuillToolbar extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Divider(height: 1),
-        buidlToolbar(context),
-        const Divider(height: 1),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Divider(height: 1),
+          buidlToolbar(context),
+          const Divider(height: 1),
+        ],
+      ),
     );
   }
 
@@ -58,22 +61,26 @@ class _QuillToolbar extends StatelessWidget {
             config: QuillSimpleToolbarConfig(
               color: backgroundColor,
               buttonOptions: QuillSimpleToolbarButtonOptions(
-                color: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-                  extraOptions as QuillToolbarColorButtonExtraOptions;
-                  return SpQuillToolbarColorButton(
-                    controller: extraOptions.controller,
-                    isBackground: false,
-                    positionedOnUpper: false,
-                  );
-                }),
-                backgroundColor: QuillToolbarColorButtonOptions(childBuilder: (dynamic options, dynamic extraOptions) {
-                  extraOptions as QuillToolbarColorButtonExtraOptions;
-                  return SpQuillToolbarColorButton(
-                    controller: extraOptions.controller,
-                    isBackground: true,
-                    positionedOnUpper: false,
-                  );
-                }),
+                color: QuillToolbarColorButtonOptions(
+                  childBuilder: (dynamic options, dynamic extraOptions) {
+                    extraOptions as QuillToolbarColorButtonExtraOptions;
+                    return SpQuillToolbarColorButton(
+                      controller: extraOptions.controller,
+                      isBackground: false,
+                      positionedOnUpper: false,
+                    );
+                  },
+                ),
+                backgroundColor: QuillToolbarColorButtonOptions(
+                  childBuilder: (dynamic options, dynamic extraOptions) {
+                    extraOptions as QuillToolbarColorButtonExtraOptions;
+                    return SpQuillToolbarColorButton(
+                      controller: extraOptions.controller,
+                      isBackground: true,
+                      positionedOnUpper: false,
+                    );
+                  },
+                ),
               ),
               multiRowsDisplay: true,
               showDividers: true,

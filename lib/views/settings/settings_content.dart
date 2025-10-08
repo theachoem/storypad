@@ -30,7 +30,7 @@ class _SettingsContent extends StatelessWidget {
                 onPressed: callback,
               );
             },
-          )
+          ),
         ],
       ),
       body: ListView(

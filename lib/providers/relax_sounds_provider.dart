@@ -38,10 +38,12 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     onClosed: () async => audioPlayersService.removeAllAudios(),
   );
 
-  late final RelaxSoundsTimerService timerService = RelaxSoundsTimerService(onEnded: () {
-    debugPrint("🎸 RelaxSoundsTimerService#onEnded");
-    audioPlayersService.pauseAll();
-  });
+  late final RelaxSoundsTimerService timerService = RelaxSoundsTimerService(
+    onEnded: () {
+      debugPrint("🎸 RelaxSoundsTimerService#onEnded");
+      audioPlayersService.pauseAll();
+    },
+  );
 
   bool? _playing;
   bool get playing => _playing ?? false;

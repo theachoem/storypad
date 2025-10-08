@@ -75,18 +75,18 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     _throwbackDates = DateTime.now().year == year
         ? await StoryDbModel.db
-            .where(
-              filters: SearchFilterObject(
-                years: {},
-                excludeYears: {DateTime.now().year},
-                month: DateTime.now().month,
-                day: DateTime.now().day,
-                types: {PathType.docs, PathType.archives},
-                tagId: null,
-                assetId: null,
-              ).toDatabaseFilter(),
-            )
-            .then((e) => e?.items.map((e) => e.displayPathDate).toSet().toList())
+              .where(
+                filters: SearchFilterObject(
+                  years: {},
+                  excludeYears: {DateTime.now().year},
+                  month: DateTime.now().month,
+                  day: DateTime.now().day,
+                  types: {PathType.docs, PathType.archives},
+                  tagId: null,
+                  assetId: null,
+                ).toDatabaseFilter(),
+              )
+              .then((e) => e?.items.map((e) => e.displayPathDate).toSet().toList())
         : null;
 
     setStories(stories);

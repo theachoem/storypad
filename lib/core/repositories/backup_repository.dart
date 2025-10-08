@@ -68,10 +68,12 @@ class BackupRepository {
     } on exp.AuthException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to request scope: $e',
-        context: 'requestScope',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to request scope: $e',
+          context: 'requestScope',
+        ),
+      );
     }
   }
 
@@ -82,10 +84,12 @@ class BackupRepository {
     } on exp.AuthException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to sign in: $e',
-        context: 'signIn',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to sign in: $e',
+          context: 'signIn',
+        ),
+      );
     }
   }
 
@@ -94,10 +98,12 @@ class BackupRepository {
       await googleDriveClient.signOut();
       return const BackupResult.success(null);
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to sign out: $e',
-        context: 'signOut',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to sign out: $e',
+          context: 'signOut',
+        ),
+      );
     }
   }
 
@@ -118,10 +124,12 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to upload images: $e',
-        context: 'startStep1',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to upload images: $e',
+          context: 'startStep1',
+        ),
+      );
     }
   }
 
@@ -138,15 +146,20 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to check latest backup: $e',
-        context: 'startStep2',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to check latest backup: $e',
+          context: 'startStep2',
+        ),
+      );
     }
   }
 
   Future<BackupResult<bool>> startStep3(
-      BackupObject? backupContent, DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
+    BackupObject? backupContent,
+    DateTime? lastSyncedAt,
+    DateTime? lastDbUpdatedAt,
+  ) async {
     try {
       final result = await step3LatestBackupImporter.start(
         backupContent,
@@ -155,10 +168,12 @@ class BackupRepository {
       );
       return BackupResult.success(result);
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to import backup: $e',
-        context: 'startStep3',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to import backup: $e',
+          context: 'startStep3',
+        ),
+      );
     }
   }
 
@@ -176,20 +191,24 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        'Failed to upload backup: $e',
-        context: 'startStep4',
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          'Failed to upload backup: $e',
+          context: 'startStep4',
+        ),
+      );
     }
   }
 
   Future<BackupResult<BackupConnectionStatus>> checkConnection() async {
     try {
       if (!isSignedIn) {
-        return BackupResult.failure(BackupError.authentication(
-          'User not signed in',
-          context: 'checkConnection',
-        ));
+        return BackupResult.failure(
+          BackupError.authentication(
+            'User not signed in',
+            context: 'checkConnection',
+          ),
+        );
       }
 
       final hasInternet = await internetChecker.check();

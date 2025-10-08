@@ -28,40 +28,44 @@ class SpStoryInfoSheet extends BaseBottomSheet {
         ListTile(
           leading: const Icon(SpIcons.edit),
           title: Text(tr('list_tile.story_date.title')),
-          subtitle: Text(context
-              .read<DevicePreferencesProvider>()
-              .preferences
-              .timeFormat
-              .formatDateTime(story.displayPathDate, context.locale)),
+          subtitle: Text(
+            context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+              story.displayPathDate,
+              context.locale,
+            ),
+          ),
         ),
         if (persisted) ...[
           if (story.movedToBinAt != null)
             ListTile(
               leading: const Icon(SpIcons.delete),
               title: Text(tr('list_tile.moved_to_bin_at.title')),
-              subtitle: Text(context
-                  .read<DevicePreferencesProvider>()
-                  .preferences
-                  .timeFormat
-                  .formatDateTime(story.movedToBinAt!, context.locale)),
+              subtitle: Text(
+                context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                  story.movedToBinAt!,
+                  context.locale,
+                ),
+              ),
             ),
           ListTile(
             leading: const Icon(SpIcons.calendar),
             title: Text(tr("list_tile.updated_at.title")),
-            subtitle: Text(context
-                .read<DevicePreferencesProvider>()
-                .preferences
-                .timeFormat
-                .formatDateTime(story.updatedAt, context.locale)),
+            subtitle: Text(
+              context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                story.updatedAt,
+                context.locale,
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(SpIcons.info),
             title: Text(tr("list_tile.created_at.title")),
-            subtitle: Text(context
-                .read<DevicePreferencesProvider>()
-                .preferences
-                .timeFormat
-                .formatDateTime(story.createdAt, context.locale)),
+            subtitle: Text(
+              context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                story.createdAt,
+                context.locale,
+              ),
+            ),
           ),
         ],
         SizedBox(height: MediaQuery.of(context).padding.bottom),

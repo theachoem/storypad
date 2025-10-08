@@ -27,8 +27,10 @@ void main() {
       expect(exception.operation, equals(FileOperationType.download));
       expect(exception.context, isNull);
       expect(exception.isRetryable, isTrue);
-      expect(exception.userFriendlyMessage,
-          equals('Failed to download backup. Please check your connection and try again.'));
+      expect(
+        exception.userFriendlyMessage,
+        equals('Failed to download backup. Please check your connection and try again.'),
+      );
     });
 
     test('creates with correct properties for delete operation', () {
@@ -56,8 +58,10 @@ void main() {
       expect(exception.operation, equals(FileOperationType.list));
       expect(exception.context, equals('backup_folder'));
       expect(exception.isRetryable, isTrue);
-      expect(exception.userFriendlyMessage,
-          equals('Failed to load backup files. Please check your connection and try again.'));
+      expect(
+        exception.userFriendlyMessage,
+        equals('Failed to load backup files. Please check your connection and try again.'),
+      );
     });
 
     test('is retryable by default', () {

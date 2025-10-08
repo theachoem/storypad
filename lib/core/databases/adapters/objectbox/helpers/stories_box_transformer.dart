@@ -70,9 +70,11 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
   StoryDbModel story = map['model'];
 
   final content = story.draftContent ?? story.latestContent;
-  String? searchMetadata = content?.richPages?.map((e) {
-    return [e.title, e.plainText].join("\n");
-  }).join("\n");
+  String? searchMetadata = content?.richPages
+      ?.map((e) {
+        return [e.title, e.plainText].join("\n");
+      })
+      .join("\n");
 
   return StoryObjectBox(
     id: story.id,

@@ -14,7 +14,7 @@ class _SecurityQuestionsContent extends StatelessWidget {
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

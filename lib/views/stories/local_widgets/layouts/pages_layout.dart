@@ -120,9 +120,9 @@ class _PagesLayoutState extends State<_PagesLayout> {
           children: [
             TextSpan(
               text: " / ${widget.builder.storyContent.richPages?.length}",
-              style: TextTheme.of(context)
-                  .bodySmall
-                  ?.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5)),
+              style: TextTheme.of(
+                context,
+              ).bodySmall?.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5)),
             ),
           ],
         ),
