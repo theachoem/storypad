@@ -23,10 +23,12 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).add(EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-      )),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0).add(
+        EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left,
+          right: MediaQuery.of(context).padding.right,
+        ),
+      ),
       child: SizedBox(
         width: wrapWidth,
         child: Wrap(
@@ -60,7 +62,7 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
                             ),
                           ),
                         ),
-                      )
+                      ),
                   ],
                 ),
               ),

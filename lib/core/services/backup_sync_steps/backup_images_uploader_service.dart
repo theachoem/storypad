@@ -24,33 +24,41 @@ class BackupImagesUploaderService {
     try {
       return await _start(client);
     } on exp.AuthException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       rethrow; // Let repository handle auth exceptions
     } on exp.NetworkException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       return false;
     } on exp.BackupException catch (e) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: e.userFriendlyMessage,
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: e.userFriendlyMessage,
+        ),
+      );
       return false;
     } catch (e, stackTrace) {
       debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: false,
-        message: 'Failed to upload images due to unexpected error.',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: false,
+          message: 'Failed to upload images due to unexpected error.',
+        ),
+      );
       return false;
     }
   }
@@ -65,11 +73,13 @@ class BackupImagesUploaderService {
 
     final List<AssetDbModel>? localAssets = await _getLocalAsset(client.currentUser!.email);
     if (localAssets == null || localAssets.isEmpty) {
-      controller.add(BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: 'No images to be uploaded.',
-      ));
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: 'No images to be uploaded.',
+        ),
+      );
       return true;
     }
 
@@ -79,11 +89,13 @@ class BackupImagesUploaderService {
       await _uploadAsset(client, asset);
     }
 
-    controller.add(BackupSyncMessage(
-      processing: false,
-      success: true,
-      message: '${localAssets.length} images uploaded successfully.',
-    ));
+    controller.add(
+      BackupSyncMessage(
+        processing: false,
+        success: true,
+        message: '${localAssets.length} images uploaded successfully.',
+      ),
+    );
 
     return true;
   }

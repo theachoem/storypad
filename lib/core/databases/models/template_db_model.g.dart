@@ -91,7 +91,6 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel index(int? index) => call(index: index);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TemplateDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -176,11 +175,13 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
       content: json['content'] == null
           ? null
           : StoryContentDbModel.fromJson(
-              json['content'] as Map<String, dynamic>),
+              json['content'] as Map<String, dynamic>,
+            ),
       preferences: json['preferences'] == null
           ? null
           : StoryPreferencesDbModel.fromJson(
-              json['preferences'] as Map<String, dynamic>),
+              json['preferences'] as Map<String, dynamic>,
+            ),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       archivedAt: json['archived_at'] == null
@@ -193,18 +194,18 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
       index: (json['index'] as num?)?.toInt(),
     )..storiesCount = (json['stories_count'] as num?)?.toInt();
 
-Map<String, dynamic> _$TemplateDbModelToJson(TemplateDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'index': instance.index,
-      'tags': instance.tags,
-      'preferences': instance.preferences.toJson(),
-      'content': instance.content?.toJson(),
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-      'archived_at': instance.archivedAt?.toIso8601String(),
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-      'stories_count': instance.storiesCount,
-    };
+Map<String, dynamic> _$TemplateDbModelToJson(
+  TemplateDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'index': instance.index,
+  'tags': instance.tags,
+  'preferences': instance.preferences.toJson(),
+  'content': instance.content?.toJson(),
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+  'archived_at': instance.archivedAt?.toIso8601String(),
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+  'stories_count': instance.storiesCount,
+};

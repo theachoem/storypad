@@ -14,7 +14,7 @@ class _SearchFilterContent extends StatelessWidget {
         actions: [
           _RememberSwitcher(viewModel: viewModel),
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
       body: buildBody(context),

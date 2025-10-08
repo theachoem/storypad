@@ -33,9 +33,11 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
     assets = await AssetDbModel.db.where();
 
     for (var asset in assets?.items ?? <AssetDbModel>[]) {
-      storiesCount[asset.id] = await StoryDbModel.db.count(filters: {
-        'asset': asset.id,
-      });
+      storiesCount[asset.id] = await StoryDbModel.db.count(
+        filters: {
+          'asset': asset.id,
+        },
+      );
     }
 
     notifyListeners();

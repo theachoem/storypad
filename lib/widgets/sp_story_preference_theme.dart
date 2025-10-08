@@ -92,15 +92,17 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         return _cacheDarkColorSchemes[seedColor] ??= ColorScheme.fromSeed(
           seedColor: seedColor,
           brightness: Theme.of(context).brightness,
-          dynamicSchemeVariant:
-              isMonochrome(preferences, context) ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+          dynamicSchemeVariant: isMonochrome(preferences, context)
+              ? DynamicSchemeVariant.monochrome
+              : DynamicSchemeVariant.tonalSpot,
         );
       } else {
         return _cacheLightColorSchemes[seedColor] ??= ColorScheme.fromSeed(
           seedColor: seedColor,
           brightness: Theme.of(context).brightness,
-          dynamicSchemeVariant:
-              isMonochrome(preferences, context) ? DynamicSchemeVariant.monochrome : DynamicSchemeVariant.tonalSpot,
+          dynamicSchemeVariant: isMonochrome(preferences, context)
+              ? DynamicSchemeVariant.monochrome
+              : DynamicSchemeVariant.tonalSpot,
         );
       }
     }

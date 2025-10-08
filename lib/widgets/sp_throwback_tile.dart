@@ -71,7 +71,7 @@ class SpThrowbackTile extends StatelessWidget {
                 OutlinedButton(
                   child: Text(tr('button.view')),
                   onPressed: () => view(context),
-                )
+                ),
               ],
             ),
           ),

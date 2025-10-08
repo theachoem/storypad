@@ -59,19 +59,21 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      child: Builder(builder: (context) {
-        return Scaffold(
-          appBar: widget.appBar,
-          body: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
-              const SizedBox(height: 16.0),
-              buildSaveButton(context)
-            ],
-          ),
-        );
-      }),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            appBar: widget.appBar,
+            body: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
+                const SizedBox(height: 16.0),
+                buildSaveButton(context),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -99,24 +101,28 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
       textField = FormField(
         validator: widget.fields[index].validator,
         builder: (state) {
-          return Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 4.0, children: [
-            CupertinoTextField(
-              textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
-              controller: controllers[index],
-              keyboardType: widget.fields[index].keyboardType,
-              placeholder: widget.fields[index].hintText,
-              onSubmitted: (text) => submit(context),
-              onChanged: (value) => state.didChange(value),
-            ),
-            if (state.errorText != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Text(
-                  state.errorText!,
-                  style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).error),
-                ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4.0,
+            children: [
+              CupertinoTextField(
+                textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
+                controller: controllers[index],
+                keyboardType: widget.fields[index].keyboardType,
+                placeholder: widget.fields[index].hintText,
+                onSubmitted: (text) => submit(context),
+                onChanged: (value) => state.didChange(value),
               ),
-          ]);
+              if (state.errorText != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Text(
+                    state.errorText!,
+                    style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).error),
+                  ),
+                ),
+            ],
+          );
         },
       );
     } else {

@@ -178,7 +178,7 @@ class StoryPagesBuilder extends StatelessWidget {
               ],
             ),
           ),
-          Flexible(child: buildPage(thirdPage, context))
+          Flexible(child: buildPage(thirdPage, context)),
         ],
       ),
     );
@@ -209,8 +209,9 @@ class StoryPagesBuilder extends StatelessWidget {
       canDeletePage: actions?.canDeletePage == true,
       onChanged: onPageChanged,
       onFocusChange: actions?.onFocusChange != null ? (a, b) => actions!.onFocusChange(pageIndex, page, a, b) : null,
-      onTitleVisibilityChanged:
-          onTitleVisibilityChanged != null ? (info) => onTitleVisibilityChanged!(pageIndex, page, info) : null,
+      onTitleVisibilityChanged: onTitleVisibilityChanged != null
+          ? (info) => onTitleVisibilityChanged!(pageIndex, page, info)
+          : null,
       onGoToEdit: onGoToEdit,
     );
   }

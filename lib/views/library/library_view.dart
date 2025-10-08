@@ -42,9 +42,11 @@ class LibraryView extends StatelessWidget {
     return ViewModelProvider<LibraryViewModel>(
       create: (context) => LibraryViewModel(params: params),
       builder: (context, viewModel, child) {
-        return LayoutBuilder(builder: (context, constraints) {
-          return _LibraryContent(viewModel, constraints: constraints);
-        });
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return _LibraryContent(viewModel, constraints: constraints);
+          },
+        );
       },
     );
   }

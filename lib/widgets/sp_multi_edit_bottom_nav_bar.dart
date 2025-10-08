@@ -35,8 +35,10 @@ class SpMultiEditBottomNavBar extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0)
-                          .add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 48.0)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 48.0)),
                       scrollDirection: Axis.horizontal,
                       reverse: true,
                       child: Row(mainAxisAlignment: MainAxisAlignment.end, spacing: 8.0, children: buttons),

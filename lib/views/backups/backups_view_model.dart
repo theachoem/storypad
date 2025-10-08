@@ -43,8 +43,12 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     loading = true;
 
     try {
-      files =
-          await context.read<BackupProvider>().repository.googleDriveClient.fetchAllBackups(null).then((e) => e?.files);
+      files = await context
+          .read<BackupProvider>()
+          .repository
+          .googleDriveClient
+          .fetchAllBackups(null)
+          .then((e) => e?.files);
       if (context.mounted) deleteOldBackupsSilently(context);
     } catch (e) {
       errorMessage = e.toString();
@@ -64,8 +68,9 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
       backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")] ??= [];
       backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")]?.add(file);
-      backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")]
-          ?.sort((a, b) => a.getFileInfo()!.createdAt.compareTo(b.getFileInfo()!.createdAt));
+      backupsGroupByDevice[file.getFileInfo()?.device.id ?? tr("general.na")]?.sort(
+        (a, b) => a.getFileInfo()!.createdAt.compareTo(b.getFileInfo()!.createdAt),
+      );
     }
 
     for (final entry in backupsGroupByDevice.entries) {
@@ -85,7 +90,8 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     BuildContext context,
     CloudFileObject cloudFile,
   ) async {
-    BackupObject? backup = loadedBackups[cloudFile.id] ??
+    BackupObject? backup =
+        loadedBackups[cloudFile.id] ??
         await MessengerService.of(context).showLoading(
           debugSource: '$runtimeType#openCloudFile',
           future: () async {

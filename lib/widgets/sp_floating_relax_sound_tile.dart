@@ -31,9 +31,11 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
 
-    bool shouldShow = provider.audioPlayersService.playingStates.keys.isEmpty ||
-        provider.audioPlayersService.playingStates.values
-            .every((p) => p.processingState == ProcessingState.idle || p.processingState == ProcessingState.loading);
+    bool shouldShow =
+        provider.audioPlayersService.playingStates.keys.isEmpty ||
+        provider.audioPlayersService.playingStates.values.every(
+          (p) => p.processingState == ProcessingState.idle || p.processingState == ProcessingState.loading,
+        );
 
     if (shouldShow) return const SizedBox.shrink();
     Color backgroundColor = ColorFromDayService(context: context).get(provider.selectedRelaxSounds.last.dayColor)!;
@@ -197,7 +199,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
                 onPressed: () => showTimerPicker(provider, context),
                 color: foregroundColor,
                 icon: const Icon(SpIcons.timer),
-              )
+              ),
             ],
           ),
       ],

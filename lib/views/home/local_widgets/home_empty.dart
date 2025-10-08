@@ -9,13 +9,17 @@ class _HomeEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String message = tr('page.home.empty_message', namedArgs: {
-      "YEAR": viewModel.year.toString(),
-    });
+    String message = tr(
+      'page.home.empty_message',
+      namedArgs: {
+        "YEAR": viewModel.year.toString(),
+      },
+    );
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: MediaQuery.of(context).size.height -
+        height:
+            MediaQuery.of(context).size.height -
             MediaQuery.of(context).padding.top -
             viewModel.scrollInfo.appBar(context).getExpandedHeight() -
             MediaQuery.of(context).padding.bottom,
@@ -70,8 +74,11 @@ class _HomeEmpty extends StatelessWidget {
                           return Icon(
                             iconData,
                             size: 32.0,
-                            color: Color.lerp(ColorScheme.of(context).bootstrap.info.color,
-                                ColorScheme.of(context).bootstrap.danger.color, value),
+                            color: Color.lerp(
+                              ColorScheme.of(context).bootstrap.info.color,
+                              ColorScheme.of(context).bootstrap.danger.color,
+                              value,
+                            ),
                           );
                         },
                       ),

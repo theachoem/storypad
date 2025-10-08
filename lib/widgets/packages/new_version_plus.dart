@@ -138,7 +138,7 @@ class NewVersionPlus {
     final id = iOSId ?? packageInfo.packageName;
     final Map<String, String> parameters = {
       'bundleId': id,
-      'requested_at': DateTime.now().millisecondsSinceEpoch.toString()
+      'requested_at': DateTime.now().millisecondsSinceEpoch.toString(),
     };
 
     if (iOSAppStoreCountry != null) {
@@ -168,8 +168,10 @@ class NewVersionPlus {
   /// Android info is fetched by parsing the html of the app store page.
   Future<VersionStatus?> _getAndroidStoreVersion(PackageInfo packageInfo) async {
     final id = androidId ?? packageInfo.packageName;
-    final uri = Uri.https(
-        'play.google.com', '/store/apps/details', {'id': id.toString(), 'hl': androidPlayStoreCountry ?? 'en_US'});
+    final uri = Uri.https('play.google.com', '/store/apps/details', {
+      'id': id.toString(),
+      'hl': androidPlayStoreCountry ?? 'en_US',
+    });
     final response = await http.get(uri);
     if (response.statusCode != 200) {
       throw Exception('Invalid response code: ${response.statusCode}');

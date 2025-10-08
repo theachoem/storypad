@@ -34,10 +34,12 @@ class TagsProvider extends ChangeNotifier {
     }
 
     for (TagDbModel tag in tags?.items ?? []) {
-      storiesCountByTagId[tag.id] ??= await StoryDbModel.db.count(filters: {
-        'tag': tag.id,
-        'types': [PathType.docs.name]
-      });
+      storiesCountByTagId[tag.id] ??= await StoryDbModel.db.count(
+        filters: {
+          'tag': tag.id,
+          'types': [PathType.docs.name],
+        },
+      );
     }
 
     notifyListeners();

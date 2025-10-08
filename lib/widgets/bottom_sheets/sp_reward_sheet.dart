@@ -21,52 +21,56 @@ class SpRewardSheet extends BaseBottomSheet {
     return SpSingleStateWidget<String>(
       initialValue: '',
       builder: (context, notifier) {
-        return Consumer<InAppPurchaseProvider>(builder: (context, provider, child) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildTitle(context),
-                const SizedBox(height: 12.0),
-                buildBody(context),
-                const SizedBox(height: 16.0),
-                if (provider.rewardExpiredAt != null) ...[
-                  ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      side: BorderSide(color: Theme.of(context).dividerColor),
+        return Consumer<InAppPurchaseProvider>(
+          builder: (context, provider, child) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildTitle(context),
+                  const SizedBox(height: 12.0),
+                  buildBody(context),
+                  const SizedBox(height: 16.0),
+                  if (provider.rewardExpiredAt != null) ...[
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(color: Theme.of(context).dividerColor),
+                      ),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                      trailing: IconButton(
+                        color: Theme.of(context).colorScheme.error,
+                        icon: const Icon(SpIcons.clear),
+                        onPressed: () => provider.clearReward(context),
+                      ),
+                      title: Text(tr('list_tile.unlock_your_rewards.applied_title')),
+                      subtitle: Text(
+                        tr(
+                          'general.expired_on',
+                          namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
+                        ),
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                    trailing: IconButton(
-                      color: Theme.of(context).colorScheme.error,
-                      icon: const Icon(SpIcons.clear),
-                      onPressed: () => provider.clearReward(context),
+                  ] else ...[
+                    TextFormField(
+                      initialValue: notifier.value,
+                      onChanged: (value) => notifier.value = value.trim(),
+                      decoration: InputDecoration(
+                        hintText: tr('general.reward_code'),
+                        prefixIcon: const Icon(SpIcons.gift),
+                      ),
                     ),
-                    title: Text(tr('list_tile.unlock_your_rewards.applied_title')),
-                    subtitle: Text(tr(
-                      'general.expired_on',
-                      namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
-                    )),
-                  ),
-                ] else ...[
-                  TextFormField(
-                    initialValue: notifier.value,
-                    onChanged: (value) => notifier.value = value.trim(),
-                    decoration: InputDecoration(
-                      hintText: tr('general.reward_code'),
-                      prefixIcon: const Icon(SpIcons.gift),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  buildAdaptiveSubmitButton(context, notifier),
+                    const SizedBox(height: 20),
+                    buildAdaptiveSubmitButton(context, notifier),
+                  ],
+                  buildBottomPadding(bottomPadding),
                 ],
-                buildBottomPadding(bottomPadding),
-              ],
-            ),
-          );
-        });
+              ),
+            );
+          },
+        );
       },
     );
   }

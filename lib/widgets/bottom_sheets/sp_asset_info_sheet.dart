@@ -28,34 +28,41 @@ class SpAssetInfoSheet extends BaseBottomSheet {
         ListTile(
           leading: const Icon(SpIcons.calendar),
           title: Text(tr("list_tile.updated_at.title")),
-          subtitle: Text(context
-              .read<DevicePreferencesProvider>()
-              .preferences
-              .timeFormat
-              .formatDateTime(asset.updatedAt, context.locale)),
+          subtitle: Text(
+            context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+              asset.updatedAt,
+              context.locale,
+            ),
+          ),
         ),
         ListTile(
           leading: const Icon(SpIcons.info),
           title: Text(tr("list_tile.created_at.title")),
-          subtitle: Text(context
-              .read<DevicePreferencesProvider>()
-              .preferences
-              .timeFormat
-              .formatDateTime(asset.createdAt, context.locale)),
+          subtitle: Text(
+            context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+              asset.createdAt,
+              context.locale,
+            ),
+          ),
         ),
         if (context.read<BackupProvider>().currentUser != null)
           ListTile(
             leading: Icon(SpIcons.googleDrive),
             title: Text(
-              tr('general.uploaded_to_args', namedArgs: {
-                'URL':
-                    asset.getGoogleDriveForEmails()?.contains(context.read<BackupProvider>().currentUser!.email) == true
-                        ? context.read<BackupProvider>().currentUser!.email
-                        : tr('general.na'),
-              }),
+              tr(
+                'general.uploaded_to_args',
+                namedArgs: {
+                  'URL':
+                      asset.getGoogleDriveForEmails()?.contains(context.read<BackupProvider>().currentUser!.email) ==
+                          true
+                      ? context.read<BackupProvider>().currentUser!.email
+                      : tr('general.na'),
+                },
+              ),
             ),
             subtitle: Text(
-                asset.getGoogleDriveUrlForEmail(context.read<BackupProvider>().currentUser!.email) ?? tr('general.na')),
+              asset.getGoogleDriveUrlForEmail(context.read<BackupProvider>().currentUser!.email) ?? tr('general.na'),
+            ),
           ),
         SizedBox(height: MediaQuery.of(context).padding.bottom),
       ],

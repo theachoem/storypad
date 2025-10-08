@@ -26,7 +26,7 @@ class SpAppLockWrapper extends StatelessWidget {
             Visibility(
               visible: provider.hasAppLock,
               child: const _LockedBarrier(),
-            )
+            ),
           ],
         );
       },
@@ -102,9 +102,10 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     if (!context.mounted) return;
 
     if (ModalRoute.of(context)?.isCurrent == true) {
-      authenticated = await context
-          .read<AppLockProvider>()
-          .authenticateIfHas(context: context, debugSource: '$runtimeType#authenticate');
+      authenticated = await context.read<AppLockProvider>().authenticateIfHas(
+        context: context,
+        debugSource: '$runtimeType#authenticate',
+      );
       if (authenticated) {
         await animationController.reverse(from: 1.0);
         setState(() => showBarrier = false);

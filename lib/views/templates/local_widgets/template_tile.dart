@@ -29,7 +29,7 @@ class _TemplateTile extends StatelessWidget {
             if (template.content?.displayShortBody?.trim().isNotEmpty == true)
               SpMarkdownBody(body: template.content!.displayShortBody!),
             const SizedBox(height: 8.0),
-            TemplateTagLabels(template: template)
+            TemplateTagLabels(template: template),
           ],
         ),
       ),

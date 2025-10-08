@@ -181,10 +181,12 @@ class StoryDbModel extends BaseDbModel {
   Future<StoryDbModel?> toggleStarred() async {
     if (!editable) return null;
 
-    return db.set(copyWith(
-      starred: !(starred == true),
-      updatedAt: DateTime.now(),
-    ));
+    return db.set(
+      copyWith(
+        starred: !(starred == true),
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<StoryDbModel?> updatePreferences({
@@ -192,10 +194,12 @@ class StoryDbModel extends BaseDbModel {
   }) async {
     if (!editable) return null;
 
-    return db.set(copyWith(
-      preferences: preferences,
-      updatedAt: DateTime.now(),
-    ));
+    return db.set(
+      copyWith(
+        preferences: preferences,
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<StoryDbModel?> archive({
@@ -220,13 +224,15 @@ class StoryDbModel extends BaseDbModel {
   Future<StoryDbModel?> changePathDate(DateTime date) async {
     if (!editable) return null;
 
-    return db.set(copyWith(
-      year: date.year,
-      month: date.month,
-      day: date.day,
-      hour: displayPathDate.hour,
-      minute: displayPathDate.minute,
-    ));
+    return db.set(
+      copyWith(
+        year: date.year,
+        month: date.month,
+        day: date.day,
+        hour: displayPathDate.hour,
+        minute: displayPathDate.minute,
+      ),
+    );
   }
 
   factory StoryDbModel.fromNow() {
@@ -285,7 +291,7 @@ class StoryDbModel extends BaseDbModel {
             id: DateTime.now().millisecondsSinceEpoch,
             title: "Let's Begin: $year ✨",
             body: delta.toJson(),
-          )
+          ),
         ],
       ),
     );

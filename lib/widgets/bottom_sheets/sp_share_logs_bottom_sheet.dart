@@ -87,9 +87,11 @@ class SpShareLogsBottomSheet extends BaseBottomSheet {
               FilledButton.icon(
                 icon: const Icon(SpIcons.share),
                 label: Text(tr("button.share")),
-                onPressed: () => SharePlus.instance.share(ShareParams(
-                  text: notifier.value.trim(),
-                )),
+                onPressed: () => SharePlus.instance.share(
+                  ShareParams(
+                    text: notifier.value.trim(),
+                  ),
+                ),
               ),
               buildBottomPadding(bottomPadding),
             ],

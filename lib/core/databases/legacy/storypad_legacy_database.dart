@@ -89,33 +89,35 @@ class StorypadLegacyDatabase {
               id: DateTime.now().millisecondsSinceEpoch,
               title: storypadStory.title,
               body: document?.toDelta().toJson(),
-            )
+            ),
           ],
         );
 
-        stories.add(StoryDbModel(
-          type: PathType.docs,
-          id: storypadStory.createOn.millisecondsSinceEpoch,
-          starred: storypadStory.isFavorite,
-          feeling: storypadStory.feeling,
-          preferences: null,
-          year: storypadStory.forDate.year,
-          month: storypadStory.forDate.month,
-          day: storypadStory.forDate.day,
-          hour: storypadStory.createOn.hour,
-          minute: storypadStory.forDate.minute,
-          second: storypadStory.forDate.second,
-          updatedAt: storypadStory.updateOn ?? storypadStory.createOn,
-          createdAt: storypadStory.createOn,
-          lastSavedDeviceId: null,
-          templateId: null,
-          tags: [],
-          assets: [],
-          movedToBinAt: null,
-          latestContent: content,
-          draftContent: null,
-          permanentlyDeletedAt: null,
-        ));
+        stories.add(
+          StoryDbModel(
+            type: PathType.docs,
+            id: storypadStory.createOn.millisecondsSinceEpoch,
+            starred: storypadStory.isFavorite,
+            feeling: storypadStory.feeling,
+            preferences: null,
+            year: storypadStory.forDate.year,
+            month: storypadStory.forDate.month,
+            day: storypadStory.forDate.day,
+            hour: storypadStory.createOn.hour,
+            minute: storypadStory.forDate.minute,
+            second: storypadStory.forDate.second,
+            updatedAt: storypadStory.updateOn ?? storypadStory.createOn,
+            createdAt: storypadStory.createOn,
+            lastSavedDeviceId: null,
+            templateId: null,
+            tags: [],
+            assets: [],
+            movedToBinAt: null,
+            latestContent: content,
+            draftContent: null,
+            permanentlyDeletedAt: null,
+          ),
+        );
       }
 
       for (StoryDbModel story in stories) {

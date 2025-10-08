@@ -123,13 +123,15 @@ class SpStoryLabels extends StatelessWidget {
     bool showTime = story.preferredShowTime || !fromStoryTile;
     if (showTime) {
       children.add(
-        Consumer<DevicePreferencesProvider>(builder: (context, provider, child) {
-          return buildPin(
-            context: context,
-            title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
-            onTap: () => showTimePicker(context),
-          );
-        }),
+        Consumer<DevicePreferencesProvider>(
+          builder: (context, provider, child) {
+            return buildPin(
+              context: context,
+              title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
+              onTap: () => showTimePicker(context),
+            );
+          },
+        ),
       );
     }
 

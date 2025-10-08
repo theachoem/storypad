@@ -38,9 +38,9 @@ class _LicenseText extends StatelessWidget {
             TextSpan(
               text: tr("list_tile.licenses.title"),
               style: TextTheme.of(context).titleMedium?.copyWith(
-                    color: foregroundColor,
-                    decorationColor: foregroundColor,
-                  ),
+                color: foregroundColor,
+                decorationColor: foregroundColor,
+              ),
             ),
           ],
         ),
@@ -60,19 +60,23 @@ class _LicenseText extends StatelessWidget {
               listItemCrossAxisAlignment: MarkdownListItemCrossAxisAlignment.start,
               styleSheet: MarkdownStyleSheet(
                 p: TextTheme.of(context).bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 a: TextTheme.of(context).bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      decorationColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                      decoration: TextDecoration.underline,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurface,
+                  decorationColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  decoration: TextDecoration.underline,
+                ),
               ),
-              data: tr("sounds.credits", context: context, namedArgs: {
-                'ALBUM_BACKGROUND_LINK': "[freepik.com](https://freepik.com)",
-                'ORIGINAL_SOUND_LINK': "[freesound.org](https://freesound.org)",
-                'APP_NAME': kAppName,
-              }),
+              data: tr(
+                "sounds.credits",
+                context: context,
+                namedArgs: {
+                  'ALBUM_BACKGROUND_LINK': "[freepik.com](https://freepik.com)",
+                  'ORIGINAL_SOUND_LINK': "[freesound.org](https://freesound.org)",
+                  'APP_NAME': kAppName,
+                },
+              ),
               onTapLink: (text, href, title) => UrlOpenerService.openForMarkdown(
                 context: context,
                 text: text,

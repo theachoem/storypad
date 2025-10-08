@@ -78,7 +78,11 @@ class OnboardingTemplate extends StatelessWidget {
                 child: demo,
               ),
             ),
-            if (demo != null) Hero(tag: "onboarding-divider", child: Divider(height: dividerHeight)),
+            if (demo != null)
+              Hero(
+                tag: "onboarding-divider",
+                child: Divider(height: dividerHeight),
+              ),
             SizedBox(height: spacingBetweenSection),
             Container(
               width: double.infinity,

@@ -91,8 +91,9 @@ class SpIcons {
   static const IconData camera = kIsCupertino ? CupertinoIcons.photo_camera : Icons.photo_camera_outlined;
   static const IconData factCheck = kIsCupertino ? CupertinoIcons.text_badge_checkmark : Icons.fact_check_outlined;
   static const IconData dragIndicator = Icons.drag_indicator;
-  static const IconData imageNotSupported =
-      kIsCupertino ? CupertinoIcons.flag_slash : Icons.image_not_supported_outlined;
+  static const IconData imageNotSupported = kIsCupertino
+      ? CupertinoIcons.flag_slash
+      : Icons.image_not_supported_outlined;
   static const IconData addPhoto = kIsCupertino ? CupertinoIcons.add : Icons.add_a_photo;
   static const IconData hideSource = kIsCupertino ? CupertinoIcons.circle : Icons.hide_source;
   static const IconData playCircle = kIsCupertino ? CupertinoIcons.play_circle_fill : Icons.play_circle;

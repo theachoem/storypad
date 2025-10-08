@@ -55,10 +55,12 @@ class RetryExecutor {
     } on exp.BackupException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
     } on Exception catch (e) {
-      return BackupResult.failure(BackupError.unknown(
-        e.toString(),
-        context: operationName,
-      ));
+      return BackupResult.failure(
+        BackupError.unknown(
+          e.toString(),
+          context: operationName,
+        ),
+      );
     }
   }
 }

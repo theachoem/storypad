@@ -16,8 +16,6 @@ class _HomeTimelineSideBar extends StatefulWidget {
 }
 
 class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
-  bool expanded = false;
-
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
@@ -36,39 +34,26 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
     List<Widget> buttons = switch (kIAPEnabled) {
       false => [],
       true => [
-          SpFadeIn.bound(
-            child: IconButton(
-              tooltip: tr('page.add_ons.title'),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
+        SpFadeIn.bound(
+          child: IconButton(
+            tooltip: tr('add_ons.relax_sounds.title'),
+            style: IconButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
               ),
-              icon: const Icon(SpIcons.addOns),
-              onPressed: () => const AddOnsRoute().push(context),
             ),
+            icon: const Icon(SpIcons.musicNote),
+            onPressed: () {
+              if (provider.relaxSound) {
+                const RelaxSoundsRoute().push(context);
+              } else {
+                const AddOnsRoute().push(context);
+              }
+            },
           ),
-          SpFadeIn.bound(
-            child: IconButton(
-              tooltip: tr('add_ons.relax_sounds.title'),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
-              ),
-              icon: const Icon(SpIcons.musicNote),
-              onPressed: () {
-                if (provider.relaxSound) {
-                  const RelaxSoundsRoute().push(context);
-                } else {
-                  const AddOnsRoute().push(context);
-                }
-              },
-            ),
-          ),
-        ]
+        ),
+      ],
     };
 
     return Container(
@@ -82,24 +67,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         mainAxisSize: MainAxisSize.min,
         spacing: 0.0,
         children: [
-          if (expanded) ...buttons,
-          if (buttons.isNotEmpty)
-            IconButton(
-              tooltip: expanded ? tr('button.dimiss') : tr('page.add_ons.title'),
-              icon: SpAnimatedIcons.fadeScale(
-                showFirst: expanded,
-                firstChild: const Icon(SpIcons.keyboardDown),
-                secondChild: const Icon(SpIcons.addOns),
-              ),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
-              ),
-              onPressed: () {
-                expanded = !expanded;
-                setState(() {});
-              },
-            ),
+          ...buttons,
           IconButton(
             tooltip: tr('page.calendar.title'),
             style: IconButton.styleFrom(

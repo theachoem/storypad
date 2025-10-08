@@ -149,7 +149,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
                   ),
                 );
               },
-            )
+            ),
         ],
       ),
     );

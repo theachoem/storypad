@@ -48,12 +48,12 @@ class MessengerService {
         dismissDirection: DismissDirection.horizontal,
         action: showAction
             ? action != null
-                ? action(foreground)
-                : SnackBarAction(
-                    label: MaterialLocalizations.of(context).okButtonLabel,
-                    textColor: foreground,
-                    onPressed: () {},
-                  )
+                  ? action(foreground)
+                  : SnackBarAction(
+                      label: MaterialLocalizations.of(context).okButtonLabel,
+                      textColor: foreground,
+                      onPressed: () {},
+                    )
             : null,
       ),
     );
@@ -109,8 +109,8 @@ class MessengerService {
                     errorMessage,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                        ),
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

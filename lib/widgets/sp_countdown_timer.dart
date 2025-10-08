@@ -15,7 +15,8 @@ class SpCountdownTimer extends StatefulWidget {
     int hour,
     int minute,
     int second,
-  ) builder;
+  )
+  builder;
 
   @override
   State<SpCountdownTimer> createState() => _SpCountdownTimerState();

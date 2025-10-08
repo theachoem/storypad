@@ -36,9 +36,9 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(TagObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt.notNull().and(
+      TagObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 

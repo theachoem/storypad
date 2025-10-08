@@ -33,8 +33,10 @@ void main() {
       expect(exception.requiresSignOut, isTrue);
       expect(exception.requiresReauth, isFalse);
       expect(exception.requiresScopeRequest, isFalse);
-      expect(exception.userFriendlyMessage,
-          equals('Access has been revoked. Please sign in again to continue using backup.'));
+      expect(
+        exception.userFriendlyMessage,
+        equals('Access has been revoked. Please sign in again to continue using backup.'),
+      );
     });
 
     test('creates with correct properties for insufficient scopes', () {

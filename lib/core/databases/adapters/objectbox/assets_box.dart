@@ -17,8 +17,10 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       conditions = conditions.and(AssetObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
     }
 
-    Query<AssetObjectBox> query =
-        box.query(conditions).order(AssetObjectBox_.updatedAt, flags: Order.descending).build();
+    Query<AssetObjectBox> query = box
+        .query(conditions)
+        .order(AssetObjectBox_.updatedAt, flags: Order.descending)
+        .build();
     AssetObjectBox? object = await query.findFirstAsync();
     return object?.updatedAt;
   }
@@ -26,9 +28,9 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(AssetObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt.notNull().and(
+      AssetObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 

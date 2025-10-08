@@ -37,11 +37,12 @@ void main() {
       var callCount = 0;
 
       expect(
-          () async => await RetryExecutor.execute(() async {
-                callCount++;
-                throw const AuthException('Auth error', AuthExceptionType.signInFailed);
-              }),
-          throwsA(isA<AuthException>()));
+        () async => await RetryExecutor.execute(() async {
+          callCount++;
+          throw const AuthException('Auth error', AuthExceptionType.signInFailed);
+        }),
+        throwsA(isA<AuthException>()),
+      );
 
       expect(callCount, equals(1));
     });
@@ -72,11 +73,12 @@ void main() {
       );
 
       expect(
-          () async => await RetryExecutor.execute(() async {
-                await Future.delayed(const Duration(milliseconds: 200));
-                return 'should not complete';
-              }, policy: policy),
-          throwsA(isA<Exception>()));
+        () async => await RetryExecutor.execute(() async {
+          await Future.delayed(const Duration(milliseconds: 200));
+          return 'should not complete';
+        }, policy: policy),
+        throwsA(isA<Exception>()),
+      );
     });
 
     test('returns success result with executeWithResult', () async {

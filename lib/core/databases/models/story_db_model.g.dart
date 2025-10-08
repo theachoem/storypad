@@ -164,7 +164,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -301,71 +300,74 @@ extension $StoryDbModelCopyWith on StoryDbModel {
 // **************************************************************************
 
 StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
-      version: (json['version'] as num?)?.toInt() ?? 2,
-      type: $enumDecode(_$PathTypeEnumMap, json['type']),
-      id: (json['id'] as num).toInt(),
-      starred: json['starred'] as bool?,
-      feeling: json['feeling'] as String?,
-      year: (json['year'] as num).toInt(),
-      month: (json['month'] as num).toInt(),
-      day: (json['day'] as num).toInt(),
-      hour: (json['hour'] as num?)?.toInt(),
-      minute: (json['minute'] as num?)?.toInt(),
-      second: (json['second'] as num?)?.toInt(),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      preferences: json['preferences'] == null
-          ? null
-          : StoryPreferencesDbModel.fromJson(
-              json['preferences'] as Map<String, dynamic>),
-      tags: tagsFromJson(json['tags']),
-      assets: (json['assets'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList(),
-      movedToBinAt: json['moved_to_bin_at'] == null
-          ? null
-          : DateTime.parse(json['moved_to_bin_at'] as String),
-      latestContent: json['latest_content'] == null
-          ? null
-          : StoryContentDbModel.fromJson(
-              json['latest_content'] as Map<String, dynamic>),
-      draftContent: json['draft_content'] == null
-          ? null
-          : StoryContentDbModel.fromJson(
-              json['draft_content'] as Map<String, dynamic>),
-      templateId: (json['template_id'] as num?)?.toInt(),
-      lastSavedDeviceId: json['last_saved_device_id'] as String?,
-      permanentlyDeletedAt: json['permanently_deleted_at'] == null
-          ? null
-          : DateTime.parse(json['permanently_deleted_at'] as String),
-    );
+  version: (json['version'] as num?)?.toInt() ?? 2,
+  type: $enumDecode(_$PathTypeEnumMap, json['type']),
+  id: (json['id'] as num).toInt(),
+  starred: json['starred'] as bool?,
+  feeling: json['feeling'] as String?,
+  year: (json['year'] as num).toInt(),
+  month: (json['month'] as num).toInt(),
+  day: (json['day'] as num).toInt(),
+  hour: (json['hour'] as num?)?.toInt(),
+  minute: (json['minute'] as num?)?.toInt(),
+  second: (json['second'] as num?)?.toInt(),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  createdAt: DateTime.parse(json['created_at'] as String),
+  preferences: json['preferences'] == null
+      ? null
+      : StoryPreferencesDbModel.fromJson(
+          json['preferences'] as Map<String, dynamic>,
+        ),
+  tags: tagsFromJson(json['tags']),
+  assets: (json['assets'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
+  movedToBinAt: json['moved_to_bin_at'] == null
+      ? null
+      : DateTime.parse(json['moved_to_bin_at'] as String),
+  latestContent: json['latest_content'] == null
+      ? null
+      : StoryContentDbModel.fromJson(
+          json['latest_content'] as Map<String, dynamic>,
+        ),
+  draftContent: json['draft_content'] == null
+      ? null
+      : StoryContentDbModel.fromJson(
+          json['draft_content'] as Map<String, dynamic>,
+        ),
+  templateId: (json['template_id'] as num?)?.toInt(),
+  lastSavedDeviceId: json['last_saved_device_id'] as String?,
+  permanentlyDeletedAt: json['permanently_deleted_at'] == null
+      ? null
+      : DateTime.parse(json['permanently_deleted_at'] as String),
+);
 
-Map<String, dynamic> _$StoryDbModelToJson(StoryDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'version': instance.version,
-      'type': _$PathTypeEnumMap[instance.type]!,
-      'year': instance.year,
-      'month': instance.month,
-      'day': instance.day,
-      'hour': instance.hour,
-      'minute': instance.minute,
-      'second': instance.second,
-      'starred': instance.starred,
-      'feeling': instance.feeling,
-      'tags': instance.tags,
-      'assets': instance.assets,
-      'latest_content': instance.latestContent?.toJson(),
-      'draft_content': instance.draftContent?.toJson(),
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'template_id': instance.templateId,
-      'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-      'preferences': instance.preferences.toJson(),
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$StoryDbModelToJson(
+  StoryDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'version': instance.version,
+  'type': _$PathTypeEnumMap[instance.type]!,
+  'year': instance.year,
+  'month': instance.month,
+  'day': instance.day,
+  'hour': instance.hour,
+  'minute': instance.minute,
+  'second': instance.second,
+  'starred': instance.starred,
+  'feeling': instance.feeling,
+  'tags': instance.tags,
+  'assets': instance.assets,
+  'latest_content': instance.latestContent?.toJson(),
+  'draft_content': instance.draftContent?.toJson(),
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'template_id': instance.templateId,
+  'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+  'preferences': instance.preferences.toJson(),
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+};
 
 const _$PathTypeEnumMap = {
   PathType.docs: 'docs',

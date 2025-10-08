@@ -103,7 +103,7 @@ class SpStoryTile extends StatelessWidget {
         title: tr('button.info'),
         leadingIconData: SpIcons.info,
         onPressed: () => SpStoryInfoSheet(story: story, persisted: true).show(context: context),
-      )
+      ),
     ];
   }
 
@@ -186,7 +186,7 @@ class SpStoryTile extends StatelessWidget {
                   viewOnly: viewOnly,
                   listContext: listContext,
                   multiEditState: multiEditState,
-                )
+                ),
               ],
             ),
           ),

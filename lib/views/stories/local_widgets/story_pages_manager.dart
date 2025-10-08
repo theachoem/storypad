@@ -31,11 +31,13 @@ class StoryPagesManager extends StatelessWidget {
     return Stack(
       children: [
         AlignedGridView.extent(
-          padding: const EdgeInsetsDirectional.all(16.0).add(EdgeInsets.only(
-            left: mediaQueryPadding.left,
-            right: mediaQueryPadding.right,
-            bottom: mediaQueryPadding.bottom,
-          )),
+          padding: const EdgeInsetsDirectional.all(16.0).add(
+            EdgeInsets.only(
+              left: mediaQueryPadding.left,
+              right: mediaQueryPadding.right,
+              bottom: mediaQueryPadding.bottom,
+            ),
+          ),
           maxCrossAxisExtent: 150,
           itemCount: richPages.length + 1,
           mainAxisSpacing: 24.0,
@@ -66,7 +68,7 @@ class StoryPagesManager extends StatelessWidget {
             pagesManager: viewModel.pagesManager,
             onDeletePage: (pageIndex) => viewModel.deleteAPage(context, richPages[pageIndex]),
           ),
-        )
+        ),
       ],
     );
   }
@@ -121,7 +123,7 @@ class StoryPagesManager extends StatelessWidget {
                   child: child!,
                 );
               },
-            )
+            ),
           ],
         ),
         const SizedBox(height: 8.0),

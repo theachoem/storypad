@@ -40,10 +40,12 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
       tags = await TagDbModel.db.where().then((e) => e?.items);
       await _resetTagsCount();
     } else {
-      years = await StoryDbModel.db.getStoryCountsByYear(filters: {
-        'tag': searchFilter.tagId,
-        if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
-      });
+      years = await StoryDbModel.db.getStoryCountsByYear(
+        filters: {
+          'tag': searchFilter.tagId,
+          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+        },
+      );
     }
 
     notifyListeners();
@@ -120,11 +122,13 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> _resetTagsCount() async {
     for (TagDbModel tag in tags ?? []) {
-      tag.storiesCount = await StoryDbModel.db.count(filters: {
-        'tag': tag.id,
-        'years': searchFilter.years.toList(),
-        if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
-      });
+      tag.storiesCount = await StoryDbModel.db.count(
+        filters: {
+          'tag': tag.id,
+          'years': searchFilter.years.toList(),
+          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
+        },
+      );
     }
   }
 }

@@ -24,48 +24,52 @@ sealed class BackupResult<T> {
 
   /// Returns the data if successful, null otherwise
   T? get data => switch (this) {
-        BackupSuccess(data: final data) => data,
-        BackupPartialSuccess(data: final data) => data,
-        BackupFailure() => null,
-      };
+    BackupSuccess(data: final data) => data,
+    BackupPartialSuccess(data: final data) => data,
+    BackupFailure() => null,
+  };
 
   /// Returns the primary error if failed, null otherwise
   BackupError? get error => switch (this) {
-        BackupFailure(error: final error) => error,
-        BackupPartialSuccess(errors: final errors) => errors.firstOrNull,
-        BackupSuccess() => null,
-      };
+    BackupFailure(error: final error) => error,
+    BackupPartialSuccess(errors: final errors) => errors.firstOrNull,
+    BackupSuccess() => null,
+  };
 
   /// Returns all errors for partial success results
   List<BackupError> get errors => switch (this) {
-        BackupPartialSuccess(errors: final errors) => errors,
-        BackupFailure(error: final error) => [error],
-        BackupSuccess() => [],
-      };
+    BackupPartialSuccess(errors: final errors) => errors,
+    BackupFailure(error: final error) => [error],
+    BackupSuccess() => [],
+  };
 
   /// Transform the success data using the provided function
   BackupResult<U> map<U>(U Function(T) transform) => switch (this) {
-        BackupSuccess(data: final data) => BackupResult.success(transform(data)),
-        BackupPartialSuccess(data: final data, errors: final errors) =>
-          BackupResult.partialSuccess(transform(data), errors),
-        BackupFailure(error: final error) => BackupResult.failure(error),
-      };
+    BackupSuccess(data: final data) => BackupResult.success(transform(data)),
+    BackupPartialSuccess(data: final data, errors: final errors) => BackupResult.partialSuccess(
+      transform(data),
+      errors,
+    ),
+    BackupFailure(error: final error) => BackupResult.failure(error),
+  };
 
   /// Chain another operation that returns a BackupResult
   BackupResult<U> flatMap<U>(BackupResult<U> Function(T) transform) => switch (this) {
-        BackupSuccess(data: final data) => transform(data),
-        BackupPartialSuccess(data: final data, errors: final errors) => transform(data).addErrors(errors),
-        BackupFailure(error: final error) => BackupResult.failure(error),
-      };
+    BackupSuccess(data: final data) => transform(data),
+    BackupPartialSuccess(data: final data, errors: final errors) => transform(data).addErrors(errors),
+    BackupFailure(error: final error) => BackupResult.failure(error),
+  };
 
   /// Add additional errors to the result
   BackupResult<T> addErrors(List<BackupError> additionalErrors) => switch (this) {
-        BackupSuccess(data: final data) =>
-          additionalErrors.isEmpty ? this : BackupResult.partialSuccess(data, additionalErrors),
-        BackupPartialSuccess(data: final data, errors: final errors) =>
-          BackupResult.partialSuccess(data, [...errors, ...additionalErrors]),
-        BackupFailure() => this,
-      };
+    BackupSuccess(data: final data) =>
+      additionalErrors.isEmpty ? this : BackupResult.partialSuccess(data, additionalErrors),
+    BackupPartialSuccess(data: final data, errors: final errors) => BackupResult.partialSuccess(data, [
+      ...errors,
+      ...additionalErrors,
+    ]),
+    BackupFailure() => this,
+  };
 }
 
 /// Successful result
@@ -166,57 +170,57 @@ class BackupError {
       metadata: exception is AuthException
           ? {'authType': exception.type.name}
           : exception is QuotaException
-              ? {'quotaType': exception.type.name}
-              : exception is FileOperationException
-                  ? {'operation': exception.operation.name}
-                  : exception is ServiceException
-                      ? {'serviceType': exception.type.name}
-                      : null,
+          ? {'quotaType': exception.type.name}
+          : exception is FileOperationException
+          ? {'operation': exception.operation.name}
+          : exception is ServiceException
+          ? {'serviceType': exception.type.name}
+          : null,
     );
   }
 
   /// Create convenience constructors for common error types
   factory BackupError.network(String message, {String? context, bool isRetryable = true}) => BackupError(
-        type: BackupErrorType.network,
-        message: message,
-        context: context,
-        isRetryable: isRetryable,
-      );
+    type: BackupErrorType.network,
+    message: message,
+    context: context,
+    isRetryable: isRetryable,
+  );
 
   factory BackupError.authentication(String message, {String? context}) => BackupError(
-        type: BackupErrorType.authentication,
-        message: message,
-        context: context,
-        isRetryable: false,
-      );
+    type: BackupErrorType.authentication,
+    message: message,
+    context: context,
+    isRetryable: false,
+  );
 
   factory BackupError.quota(String message, {String? context}) => BackupError(
-        type: BackupErrorType.quota,
-        message: message,
-        context: context,
-        isRetryable: false,
-      );
+    type: BackupErrorType.quota,
+    message: message,
+    context: context,
+    isRetryable: false,
+  );
 
   factory BackupError.fileOperation(String message, {String? context, bool isRetryable = true}) => BackupError(
-        type: BackupErrorType.fileOperation,
-        message: message,
-        context: context,
-        isRetryable: isRetryable,
-      );
+    type: BackupErrorType.fileOperation,
+    message: message,
+    context: context,
+    isRetryable: isRetryable,
+  );
 
   factory BackupError.service(String message, {String? context}) => BackupError(
-        type: BackupErrorType.service,
-        message: message,
-        context: context,
-        isRetryable: false,
-      );
+    type: BackupErrorType.service,
+    message: message,
+    context: context,
+    isRetryable: false,
+  );
 
   factory BackupError.unknown(String message, {String? context, bool isRetryable = true}) => BackupError(
-        type: BackupErrorType.unknown,
-        message: message,
-        context: context,
-        isRetryable: isRetryable,
-      );
+    type: BackupErrorType.unknown,
+    message: message,
+    context: context,
+    isRetryable: isRetryable,
+  );
 
   @override
   String toString() => 'BackupError(${type.name}: $message${context != null ? ' ($context)' : ''})';

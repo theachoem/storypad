@@ -182,30 +182,32 @@ class _StoryHeaderDateSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      InkWell(
-        onTap: readOnly || onChangeDate == null ? null : () => changeDate(context),
-        borderRadius: BorderRadius.circular(4.0),
-        child: Row(
-          children: [
-            buildDay(context),
-            const SizedBox(width: 4.0),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildDaySuffix(context),
-                buildMonthYear(context),
-              ],
-            ),
-            if (!readOnly) ...[
+    return Row(
+      children: [
+        InkWell(
+          onTap: readOnly || onChangeDate == null ? null : () => changeDate(context),
+          borderRadius: BorderRadius.circular(4.0),
+          child: Row(
+            children: [
+              buildDay(context),
               const SizedBox(width: 4.0),
-              const Icon(SpIcons.dropDown),
-            ]
-          ],
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDaySuffix(context),
+                  buildMonthYear(context),
+                ],
+              ),
+              if (!readOnly) ...[
+                const SizedBox(width: 4.0),
+                const Icon(SpIcons.dropDown),
+              ],
+            ],
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Widget buildMonthYear(BuildContext context) {

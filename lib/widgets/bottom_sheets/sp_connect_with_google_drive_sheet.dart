@@ -49,7 +49,7 @@ class SpConnectWithGoogleDriveSheet extends BaseBottomSheet {
               if (context.mounted) Navigator.maybePop(context);
             },
           ),
-          buildBottomPadding(bottomPadding)
+          buildBottomPadding(bottomPadding),
         ],
       ),
     );

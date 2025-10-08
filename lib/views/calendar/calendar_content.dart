@@ -72,8 +72,11 @@ class _CalendarContent extends StatelessWidget {
           : buildTagsTabBar(tags, context),
       title: SpTapEffect(
         onTap: () async {
-          final result =
-              await MonthPickerService(context: context, month: viewModel.month, year: viewModel.year).showPicker();
+          final result = await MonthPickerService(
+            context: context,
+            month: viewModel.month,
+            year: viewModel.year,
+          ).showPicker();
           if (result != null) {
             viewModel.onChanged(
               result.year,
@@ -153,7 +156,7 @@ class _CalendarContent extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
+                  ),
               ],
             ),
           ),

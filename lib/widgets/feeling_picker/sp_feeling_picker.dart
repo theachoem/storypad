@@ -48,15 +48,17 @@ class _SpFeelingPickerState extends State<SpFeelingPicker> {
           children: [
             Navigator(
               onGenerateRoute: (settings) {
-                return MaterialPageRoute(builder: (context) {
-                  return _FeelingGroupPicker(
-                    feeling: widget.feeling,
-                    onPicked: widget.onPicked,
-                    onHeightChanged: (height) async {
-                      setState(() => this.height = height);
-                    },
-                  );
-                });
+                return MaterialPageRoute(
+                  builder: (context) {
+                    return _FeelingGroupPicker(
+                      feeling: widget.feeling,
+                      onPicked: widget.onPicked,
+                      onHeightChanged: (height) async {
+                        setState(() => this.height = height);
+                      },
+                    );
+                  },
+                );
               },
             ),
           ],

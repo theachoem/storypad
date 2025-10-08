@@ -13,8 +13,10 @@ void main() {
       expect(exception.message, equals('Network error'));
       expect(exception.context, equals('test_operation'));
       expect(exception.isRetryable, isTrue);
-      expect(exception.userFriendlyMessage,
-          equals('Network connection error. Please check your internet connection and try again.'));
+      expect(
+        exception.userFriendlyMessage,
+        equals('Network connection error. Please check your internet connection and try again.'),
+      );
     });
 
     test('is retryable by default', () {

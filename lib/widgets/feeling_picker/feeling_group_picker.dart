@@ -72,28 +72,31 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
       showSuffixIcon: true,
       name: group.translatedName,
       selected: selected,
-      icon: (selected ? FeelingObject.feelingsByKey[feeling] : FeelingObject.feelingsByKey[moods.first])!
-          .image64
-          .image(width: 36, height: 36),
+      icon: (selected ? FeelingObject.feelingsByKey[feeling] : FeelingObject.feelingsByKey[moods.first])!.image64.image(
+        width: 36,
+        height: 36,
+      ),
       onTap: () async {
         setState(() => visible = false);
 
-        await Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return _FeelingGroupItemPicker(
-              group: group,
-              feeling: feeling,
-              onPicked: (context, feeling) {
-                if (this.feeling == feeling) feeling = null;
-                setState(() => this.feeling = feeling);
-                return widget.onPicked(feeling);
-              },
-              onHeightChanged: (childHeight) {
-                widget.onHeightChanged(childHeight);
-              },
-            );
-          },
-        ));
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return _FeelingGroupItemPicker(
+                group: group,
+                feeling: feeling,
+                onPicked: (context, feeling) {
+                  if (this.feeling == feeling) feeling = null;
+                  setState(() => this.feeling = feeling);
+                  return widget.onPicked(feeling);
+                },
+                onHeightChanged: (childHeight) {
+                  widget.onHeightChanged(childHeight);
+                },
+              );
+            },
+          ),
+        );
 
         setState(() => visible = true);
         widget.onHeightChanged(gridCardHeight);

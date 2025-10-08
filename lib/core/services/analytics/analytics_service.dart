@@ -626,8 +626,8 @@ class AnalyticsService extends BaseAnalyticsService {
       'day': story.day.toString(),
       'feeling': story.feeling,
       'tags_count': story.tags?.length.toString(),
-      'pages_count':
-          (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length.toString(),
+      'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
+          .toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
       'preferred_star_icon': story.preferences.starIcon,
       'preferred_show_day_count': story.preferences.showDayCount?.toString(),

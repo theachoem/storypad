@@ -34,40 +34,43 @@ class SpColorListSelector extends StatelessWidget {
       clipBehavior: Clip.none,
       scrollDirection: Axis.horizontal,
       padding: padding,
-      child: Row(spacing: 4.0, children: [
-        buildButton(
-          tooltip: tr("button.reset"),
-          context: context,
-          backgroundColor: null,
-          foregroundColor: Theme.of(context).colorScheme.onSurface,
-          onTap: (int colorTone) {
-            HapticFeedback.selectionClick();
-            onChanged(null, colorTone);
-          },
-          selected: selectedColor == null,
-          child: const Icon(SpIcons.hideSource),
-        ),
-        buildButton(
-          context: context,
-          child: null,
-          foregroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.white : Colors.black,
-          backgroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.black : Colors.white,
-          selected: Colors.black.value == selectedColor?.value,
-          onTap: (colorTone) => onChanged(Colors.black, colorTone),
-        ),
-        ...kMaterialColors.map<Widget>(
-          (color) {
-            return buildButton(
-              context: context,
-              child: null,
-              backgroundColor: color,
-              foregroundColor: Colors.black,
-              selected: color.value == selectedColor?.value,
-              onTap: (colorTone) => onChanged(color, colorTone),
-            );
-          },
-        )
-      ]),
+      child: Row(
+        spacing: 4.0,
+        children: [
+          buildButton(
+            tooltip: tr("button.reset"),
+            context: context,
+            backgroundColor: null,
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
+            onTap: (int colorTone) {
+              HapticFeedback.selectionClick();
+              onChanged(null, colorTone);
+            },
+            selected: selectedColor == null,
+            child: const Icon(SpIcons.hideSource),
+          ),
+          buildButton(
+            context: context,
+            child: null,
+            foregroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.white : Colors.black,
+            backgroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.black : Colors.white,
+            selected: Colors.black.value == selectedColor?.value,
+            onTap: (colorTone) => onChanged(Colors.black, colorTone),
+          ),
+          ...kMaterialColors.map<Widget>(
+            (color) {
+              return buildButton(
+                context: context,
+                child: null,
+                backgroundColor: color,
+                foregroundColor: Colors.black,
+                selected: color.value == selectedColor?.value,
+                onTap: (colorTone) => onChanged(color, colorTone),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -145,8 +148,8 @@ class SpColorListSelector extends StatelessWidget {
                       color: backgroundColor == null
                           ? null
                           : ThemeData.estimateBrightnessForColor(backgroundColor) == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   )
                 : child,

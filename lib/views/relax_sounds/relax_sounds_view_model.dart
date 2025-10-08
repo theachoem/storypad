@@ -66,10 +66,12 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
 
     List<RelaxSoundModel> sounds = [];
     for (String soundUrlPath in audioUrlPaths) {
-      sounds.add(RelaxSoundModel(
-        soundUrlPath: soundUrlPath,
-        volume: provider.getVolume(provider.relaxSounds[soundUrlPath]!) ?? 0.5,
-      ));
+      sounds.add(
+        RelaxSoundModel(
+          soundUrlPath: soundUrlPath,
+          volume: provider.getVolume(provider.relaxSounds[soundUrlPath]!) ?? 0.5,
+        ),
+      );
     }
 
     // save to existing mix with different volume when exist.
@@ -119,10 +121,12 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
     Iterable<RelaxSoundObject> sounds,
   ) async {
     if (!context.mounted) return;
-    await context.read<RelaxSoundsProvider>().playAll(soundWithInitialVolume: {
-      for (var sound in sounds)
-        sound: mix.sounds.where((saved) => saved.soundUrlPath == sound.soundUrlPath).firstOrNull?.volume
-    });
+    await context.read<RelaxSoundsProvider>().playAll(
+      soundWithInitialVolume: {
+        for (var sound in sounds)
+          sound: mix.sounds.where((saved) => saved.soundUrlPath == sound.soundUrlPath).firstOrNull?.volume,
+      },
+    );
   }
 
   Future<void> rename(BuildContext context, RelaxSoundMixModel mix) async {

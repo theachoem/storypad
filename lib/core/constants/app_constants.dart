@@ -19,7 +19,8 @@ const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
 const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
-final bool kIAPEnabled = (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
+final bool kIAPEnabled =
+    (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
     (Platform.isIOS && kRevenueCatIosApiKey.trim().isNotEmpty);
 
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';

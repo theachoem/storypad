@@ -20,9 +20,12 @@ class BackupAssetsTableViewer extends StatelessWidget {
         return ListTile(
           title: Text(basename(asset.originalSource)),
           subtitle: Text(
-            tr('general.uploaded_to_args', namedArgs: {
-              'URL': asset.getGoogleDriveForEmails()?.join(", ") ?? tr('general.na'),
-            }),
+            tr(
+              'general.uploaded_to_args',
+              namedArgs: {
+                'URL': asset.getGoogleDriveForEmails()?.join(", ") ?? tr('general.na'),
+              },
+            ),
           ),
         );
       },

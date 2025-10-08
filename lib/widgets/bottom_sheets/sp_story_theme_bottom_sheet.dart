@@ -102,6 +102,7 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
             },
           ),
           const SizedBox(height: 8.0),
+
           // This give more problem on navigation.
           // Let's disable it for now.
           //
@@ -112,7 +113,6 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
           //     onThemeChanged(preferences);
           //   },
           // ),
-
           FontFamilyTile(
             currentFontWeight:
                 preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
@@ -178,9 +178,9 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
           SpPopMenuItem(
             leadingIconData: SpIcons.refresh,
             title: tr("button.reset_theme"),
-            titleStyle: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(color: preferences.allReseted ? Theme.of(context).dividerColor : null),
+            titleStyle: TextTheme.of(
+              context,
+            ).bodyMedium?.copyWith(color: preferences.allReseted ? Theme.of(context).dividerColor : null),
             onPressed: preferences.allReseted
                 ? null
                 : () {
@@ -209,29 +209,32 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
           if (kIsCupertino) {
             context.read<DevicePreferencesProvider>().toggleThemeMode(context);
           } else {
-            context
-                .read<DevicePreferencesProvider>()
-                .toggleThemeMode(context, delay: const Duration(milliseconds: 300));
+            context.read<DevicePreferencesProvider>().toggleThemeMode(
+              context,
+              delay: const Duration(milliseconds: 300),
+            );
             // TODO: fix material modal to dynamic base on theme mode instead of pop
             Navigator.maybePop(context);
           }
         },
         icon: SpThemeModeIcon(parentContext: context),
       ),
-      Builder(builder: (context) {
-        return IconButton(
-          icon: const Icon(SpIcons.share),
-          onPressed: () {
-            if (widget.viewModel.story != null && widget.viewModel.draftContent != null) {
-              SpShareStoryBottomSheet(
-                story: widget.viewModel.story!,
-                draftContent: widget.viewModel.draftContent!,
-                pagesManager: widget.viewModel.pagesManager,
-              ).show(context: context);
-            }
-          },
-        );
-      }),
+      Builder(
+        builder: (context) {
+          return IconButton(
+            icon: const Icon(SpIcons.share),
+            onPressed: () {
+              if (widget.viewModel.story != null && widget.viewModel.draftContent != null) {
+                SpShareStoryBottomSheet(
+                  story: widget.viewModel.story!,
+                  draftContent: widget.viewModel.draftContent!,
+                  pagesManager: widget.viewModel.pagesManager,
+                ).show(context: context);
+              }
+            },
+          );
+        },
+      ),
     ];
 
     if (!kIsCupertino) actions = actions.reversed.toList();

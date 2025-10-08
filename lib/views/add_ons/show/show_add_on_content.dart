@@ -68,18 +68,20 @@ class _ShowAddOnContent extends StatelessWidget {
           const Text(
             "Yes, you need to connect with Google Drive. This helps us restore your purchases later. We don't keep your email, only a secure ID.",
           ),
-          Consumer<BackupProvider>(builder: (context, provider, child) {
-            return Visibility(
-              visible: !provider.isSignedIn,
-              child: Container(
-                margin: const EdgeInsets.only(top: 4.0),
-                child: OutlinedButton(
-                  onPressed: () => provider.signIn(context),
-                  child: const Text('Sign In'),
+          Consumer<BackupProvider>(
+            builder: (context, provider, child) {
+              return Visibility(
+                visible: !provider.isSignedIn,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 4.0),
+                  child: OutlinedButton(
+                    onPressed: () => provider.signIn(context),
+                    child: const Text('Sign In'),
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ],
       ),
     ];
@@ -90,9 +92,9 @@ class _ShowAddOnContent extends StatelessWidget {
       textScaler: MediaQuery.textScalerOf(context),
       text: TextSpan(
         text: 'FAQ',
-        style: TextTheme.of(context)
-            .titleSmall
-            ?.copyWith(fontWeight: AppTheme.getThemeFontWeight(context, FontWeight.bold)),
+        style: TextTheme.of(
+          context,
+        ).titleSmall?.copyWith(fontWeight: AppTheme.getThemeFontWeight(context, FontWeight.bold)),
         children: [
           if (context.locale.languageCode != 'en')
             WidgetSpan(
@@ -145,7 +147,7 @@ class _ShowAddOnContent extends StatelessWidget {
               child: Text(tr('button.try')),
             ),
           ),
-      ]
+      ],
     ];
 
     return Padding(

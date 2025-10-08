@@ -29,8 +29,10 @@ class _ThrowbackContent extends StatelessWidget {
       children: [
         const Divider(height: 1),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0)
-              .add(MediaQuery.of(context).padding.copyWith(top: 0)),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ).add(MediaQuery.of(context).padding.copyWith(top: 0)),
           width: double.infinity,
           child: Row(
             spacing: 8.0,
@@ -41,7 +43,7 @@ class _ThrowbackContent extends StatelessWidget {
                   tr('page.throwback.question'),
                   style: TextTheme.of(context).bodyMedium,
                 ),
-              )
+              ),
             ],
           ),
         ),

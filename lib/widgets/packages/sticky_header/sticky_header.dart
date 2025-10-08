@@ -37,8 +37,8 @@ class StickyHeader extends MultiChildRenderObjectWidget {
     this.controller,
     this.callback,
   }) : super(
-          children: [content, header],
-        );
+         children: [content, header],
+       );
 
   /// Header to be shown at the top of the parent [Scrollable] content.
   final Widget header;

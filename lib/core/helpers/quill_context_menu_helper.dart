@@ -35,8 +35,11 @@ class QuillContextMenuHelper {
           label: action.label,
           onPressed: () async {
             if (text.isNotEmpty) {
-              final String? processedText = await DefaultProcessTextService()
-                  .processTextAction(action.id, text, rawEditorState.controller.readOnly);
+              final String? processedText = await DefaultProcessTextService().processTextAction(
+                action.id,
+                text,
+                rawEditorState.controller.readOnly,
+              );
 
               // If an activity does not return a modified version, just hide the toolbar.
               // Otherwise use the result to replace the selected text.
@@ -44,8 +47,12 @@ class QuillContextMenuHelper {
                 int index = rawEditorState.controller.selection.start;
                 int length = rawEditorState.controller.selection.end - index;
 
-                rawEditorState.controller
-                    .replaceText(index, length, processedText, rawEditorState.controller.selection);
+                rawEditorState.controller.replaceText(
+                  index,
+                  length,
+                  processedText,
+                  rawEditorState.controller.selection,
+                );
 
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   if (rawEditorState.mounted) {
@@ -78,13 +85,21 @@ class QuillContextMenuHelper {
       buttonItems.addAll([
         ContextMenuButtonItem(
           label: "Uppercase",
-          onPressed: () => rawEditorState.controller
-              .replaceText(index, length, text.toUpperCase(), rawEditorState.controller.selection),
+          onPressed: () => rawEditorState.controller.replaceText(
+            index,
+            length,
+            text.toUpperCase(),
+            rawEditorState.controller.selection,
+          ),
         ),
         ContextMenuButtonItem(
           label: "Lowercase",
-          onPressed: () => rawEditorState.controller
-              .replaceText(index, length, text.toLowerCase(), rawEditorState.controller.selection),
+          onPressed: () => rawEditorState.controller.replaceText(
+            index,
+            length,
+            text.toLowerCase(),
+            rawEditorState.controller.selection,
+          ),
         ),
       ]);
     }

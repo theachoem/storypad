@@ -12,7 +12,8 @@ class _TitleToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fontWeight = AppTheme.getThemeFontWeight(context, preferences.titleFontWeight ?? kTitleDefaultFontWeight);
-    final fontFamily = preferences.titleFontFamily ??
+    final fontFamily =
+        preferences.titleFontFamily ??
         preferences.fontFamily ??
         context.read<DevicePreferencesProvider>().preferences.fontFamily;
 
@@ -59,12 +60,14 @@ class _TitleToolbar extends StatelessWidget {
                 icon: const Icon(SpIcons.refresh),
                 onPressed: preferences.titleReseted
                     ? null
-                    : () => onThemeChanged(preferences.copyWith(
+                    : () => onThemeChanged(
+                        preferences.copyWith(
                           titleFontFamily: null,
                           titleFontWeightIndex: null,
                           titleExpanded: null,
-                        )),
-              )
+                        ),
+                      ),
+              ),
             ],
           ),
         ),

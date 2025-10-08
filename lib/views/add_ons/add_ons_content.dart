@@ -52,28 +52,34 @@ class _AddOnsContent extends StatelessWidget {
   }
 
   Widget buildRewardsCard() {
-    return Consumer<InAppPurchaseProvider>(builder: (context, provider, child) {
-      return ListTile(
-        key: ValueKey(provider.rewardExpiredAt != null ? 'appied' : 'not_applied'),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: BorderSide(color: Theme.of(context).dividerColor),
-        ),
-        contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-        leading: const SpGiftAnimatedIcon(),
-        title: Text(provider.rewardExpiredAt != null
-            ? tr('list_tile.unlock_your_rewards.applied_title')
-            : tr('list_tile.unlock_your_rewards.unapplied_title')),
-        trailing: const Icon(SpIcons.keyboardRight),
-        subtitle: provider.rewardExpiredAt != null
-            ? Text(tr(
-                'general.expired_on',
-                namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
-              ))
-            : null,
-        onTap: () => SpRewardSheet().show(context: context),
-      );
-    });
+    return Consumer<InAppPurchaseProvider>(
+      builder: (context, provider, child) {
+        return ListTile(
+          key: ValueKey(provider.rewardExpiredAt != null ? 'appied' : 'not_applied'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+          contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+          leading: const SpGiftAnimatedIcon(),
+          title: Text(
+            provider.rewardExpiredAt != null
+                ? tr('list_tile.unlock_your_rewards.applied_title')
+                : tr('list_tile.unlock_your_rewards.unapplied_title'),
+          ),
+          trailing: const Icon(SpIcons.keyboardRight),
+          subtitle: provider.rewardExpiredAt != null
+              ? Text(
+                  tr(
+                    'general.expired_on',
+                    namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
+                  ),
+                )
+              : null,
+          onTap: () => SpRewardSheet().show(context: context),
+        );
+      },
+    );
   }
 
   Widget buildBottomNavigation(BuildContext context) {
@@ -83,35 +89,36 @@ class _AddOnsContent extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         alignment: WrapAlignment.center,
         runAlignment: WrapAlignment.center,
-        children: [
-          (
-            tr('general.term_of_use'),
-            () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/term-of-use'),
-          ),
-          (
-            tr('general.privacy_policy'),
-            () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/privacy-policy')
-          ),
-          (
-            tr('button.restore_purchase'),
-            () => context.read<InAppPurchaseProvider>().restorePurchase(context),
-          ),
-        ].map((link) {
-          return SpTapEffect(
-            onTap: link.$2,
-            child: Container(
-              padding: const EdgeInsets.all(6.0),
-              child: Text(
-                link.$1,
-                style: TextTheme.of(context).bodyMedium?.copyWith(
+        children:
+            [
+              (
+                tr('general.term_of_use'),
+                () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/term-of-use'),
+              ),
+              (
+                tr('general.privacy_policy'),
+                () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/privacy-policy'),
+              ),
+              (
+                tr('button.restore_purchase'),
+                () => context.read<InAppPurchaseProvider>().restorePurchase(context),
+              ),
+            ].map((link) {
+              return SpTapEffect(
+                onTap: link.$2,
+                child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Text(
+                    link.$1,
+                    style: TextTheme.of(context).bodyMedium?.copyWith(
                       color: ColorScheme.of(context).primary,
                       decoration: TextDecoration.underline,
                       decorationColor: ColorScheme.of(context).primary,
                     ),
-              ),
-            ),
-          );
-        }).toList(),
+                  ),
+                ),
+              );
+            }).toList(),
       ),
     );
   }

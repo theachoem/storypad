@@ -17,12 +17,14 @@ class _RelaxSoundsContent extends StatelessWidget {
           automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
           actions: [
             if (CupertinoSheetRoute.hasParentSheet(context))
-              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+              CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
           ],
-          bottom: TabBar(tabs: [
-            Tab(text: tr('general.sounds')),
-            Tab(text: tr('general.sound_mixes')),
-          ]),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: tr('general.sounds')),
+              Tab(text: tr('general.sound_mixes')),
+            ],
+          ),
         ),
         bottomNavigationBar: SpFloatingRelaxSoundsTile(
           onSaveMix: (context) async {

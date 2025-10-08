@@ -30,29 +30,32 @@ class SpTemplateInfoSheet extends BaseBottomSheet {
             ListTile(
               leading: const Icon(SpIcons.delete),
               title: Text(tr('list_tile.archived_at.title')),
-              subtitle: Text(context
-                  .read<DevicePreferencesProvider>()
-                  .preferences
-                  .timeFormat
-                  .formatDateTime(template.archivedAt!, context.locale)),
+              subtitle: Text(
+                context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                  template.archivedAt!,
+                  context.locale,
+                ),
+              ),
             ),
           ListTile(
             leading: const Icon(SpIcons.calendar),
             title: Text(tr("list_tile.updated_at.title")),
-            subtitle: Text(context
-                .read<DevicePreferencesProvider>()
-                .preferences
-                .timeFormat
-                .formatDateTime(template.updatedAt, context.locale)),
+            subtitle: Text(
+              context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                template.updatedAt,
+                context.locale,
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(SpIcons.info),
             title: Text(tr("list_tile.created_at.title")),
-            subtitle: Text(context
-                .read<DevicePreferencesProvider>()
-                .preferences
-                .timeFormat
-                .formatDateTime(template.createdAt, context.locale)),
+            subtitle: Text(
+              context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                template.createdAt,
+                context.locale,
+              ),
+            ),
           ),
         ],
         SizedBox(height: MediaQuery.of(context).padding.bottom),

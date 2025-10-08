@@ -32,11 +32,13 @@ class BackupImporterService {
 
     controller.add(BackupSyncMessage(processing: true, success: true, message: null));
     final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
-    controller.add(BackupSyncMessage(
-      processing: false,
-      success: true,
-      message: '$changesCount records are imported or updated.',
-    ));
+    controller.add(
+      BackupSyncMessage(
+        processing: false,
+        success: true,
+        message: '$changesCount records are imported or updated.',
+      ),
+    );
 
     return true;
   }

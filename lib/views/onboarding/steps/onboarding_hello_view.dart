@@ -63,29 +63,33 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              tr("page.home.app_bar.hello_nickname", namedArgs: {
-                'NICKNAME': widget.params.nickname,
-              }),
-              style: TextTheme.of(context).titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                tr("page.onboarding_hello.description"),
-                style: TextTheme.of(context).bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ].asMap().entries.map((entry) {
-            return SpFadeIn.fromTop(
-              delay: Durations.medium4 + Durations.medium1 * entry.key,
-              duration: Durations.long3,
-              child: entry.value,
-            );
-          }).toList(),
+          children:
+              [
+                Text(
+                  tr(
+                    "page.home.app_bar.hello_nickname",
+                    namedArgs: {
+                      'NICKNAME': widget.params.nickname,
+                    },
+                  ),
+                  style: TextTheme.of(context).titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    tr("page.onboarding_hello.description"),
+                    style: TextTheme.of(context).bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ].asMap().entries.map((entry) {
+                return SpFadeIn.fromTop(
+                  delay: Durations.medium4 + Durations.medium1 * entry.key,
+                  duration: Durations.long3,
+                  child: entry.value,
+                );
+              }).toList(),
         ),
       ),
     );

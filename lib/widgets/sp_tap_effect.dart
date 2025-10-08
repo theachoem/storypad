@@ -143,7 +143,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
                         shape: widget.borderOption?.shape ?? BoxShape.circle,
                       ),
                     ),
-                  )
+                  ),
                 ],
               );
               break;

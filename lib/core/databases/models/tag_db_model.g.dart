@@ -88,7 +88,6 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
   TagDbModel index(int? index) => call(index: index);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -165,32 +164,32 @@ extension $TagDbModelCopyWith on TagDbModel {
 // **************************************************************************
 
 TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
-      id: (json['id'] as num).toInt(),
-      version: (json['version'] as num).toInt(),
-      title: json['title'] as String,
-      starred: json['starred'] as bool?,
-      emoji: json['emoji'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      lastSavedDeviceId: json['last_saved_device_id'] as String?,
-      permanentlyDeletedAt: json['permanently_deleted_at'] == null
-          ? null
-          : DateTime.parse(json['permanently_deleted_at'] as String),
-      index: (json['index'] as num?)?.toInt(),
-    )..storiesCount = (json['stories_count'] as num?)?.toInt();
+  id: (json['id'] as num).toInt(),
+  version: (json['version'] as num).toInt(),
+  title: json['title'] as String,
+  starred: json['starred'] as bool?,
+  emoji: json['emoji'] as String?,
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  lastSavedDeviceId: json['last_saved_device_id'] as String?,
+  permanentlyDeletedAt: json['permanently_deleted_at'] == null
+      ? null
+      : DateTime.parse(json['permanently_deleted_at'] as String),
+  index: (json['index'] as num?)?.toInt(),
+)..storiesCount = (json['stories_count'] as num?)?.toInt();
 
-Map<String, dynamic> _$TagDbModelToJson(TagDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'index': instance.index,
-      'version': instance.version,
-      'title': instance.title,
-      'starred': instance.starred,
-      'emoji': instance.emoji,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-      'stories_count': instance.storiesCount,
-    };
+Map<String, dynamic> _$TagDbModelToJson(
+  TagDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'index': instance.index,
+  'version': instance.version,
+  'title': instance.title,
+  'starred': instance.starred,
+  'emoji': instance.emoji,
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+  'stories_count': instance.storiesCount,
+};

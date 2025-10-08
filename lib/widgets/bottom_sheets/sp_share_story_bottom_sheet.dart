@@ -95,8 +95,12 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
   _ShareOption option = _ShareOption.txt;
 
   String getShareText(BuildContext context) {
-    final tags =
-        context.read<TagsProvider>().tags?.items.where((e) => widget.story.validTags?.contains(e.id) == true).toList();
+    final tags = context
+        .read<TagsProvider>()
+        .tags
+        ?.items
+        .where((e) => widget.story.validTags?.contains(e.id) == true)
+        .toList();
 
     final feeling = FeelingObject.feelingsByKey[widget.story.feeling];
 
@@ -137,7 +141,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         automaticallyImplyLeading: false,
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
         title: buildOptions(context),
       ),

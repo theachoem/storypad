@@ -10,17 +10,19 @@ class ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BackupProvider>(builder: (context, backupProvider, child) {
-      bool hasImage = backupProvider.currentUser?.photoUrl != null;
+    return Consumer<BackupProvider>(
+      builder: (context, backupProvider, child) {
+        bool hasImage = backupProvider.currentUser?.photoUrl != null;
 
-      return GestureDetector(
-        onTap: () => BackupsRoute().push(context),
-        child: CircleAvatar(
-          radius: 16.0,
-          backgroundImage: hasImage ? CachedNetworkImageProvider(backupProvider.currentUser!.photoUrl!) : null,
-          child: hasImage ? null : const Icon(SpIcons.profile, size: 16),
-        ),
-      );
-    });
+        return GestureDetector(
+          onTap: () => BackupsRoute().push(context),
+          child: CircleAvatar(
+            radius: 16.0,
+            backgroundImage: hasImage ? CachedNetworkImageProvider(backupProvider.currentUser!.photoUrl!) : null,
+            child: hasImage ? null : const Icon(SpIcons.profile, size: 16),
+          ),
+        );
+      },
+    );
   }
 }

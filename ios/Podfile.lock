@@ -1263,22 +1263,22 @@ PODS:
   - Firebase/Storage (12.2.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 12.2.0)
-  - firebase_analytics (12.0.1):
+  - firebase_analytics (12.0.2):
     - firebase_core
     - FirebaseAnalytics (= 12.2.0)
     - Flutter
   - firebase_core (4.1.1):
     - Firebase/CoreOnly (= 12.2.0)
     - Flutter
-  - firebase_crashlytics (5.0.1):
+  - firebase_crashlytics (5.0.2):
     - Firebase/Crashlytics (= 12.2.0)
     - firebase_core
     - Flutter
-  - firebase_remote_config (6.0.1):
+  - firebase_remote_config (6.0.2):
     - Firebase/RemoteConfig (= 12.2.0)
     - firebase_core
     - Flutter
-  - firebase_storage (13.0.1):
+  - firebase_storage (13.0.2):
     - Firebase/Storage (= 12.2.0)
     - firebase_core
     - Flutter
@@ -1565,10 +1565,10 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - ObjectBox (4.4.1)
+  - ObjectBox (5.0.0)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 4.4.1)
+    - ObjectBox (= 5.0.0)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -1577,14 +1577,14 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.6.1):
+  - purchases_flutter (9.7.0):
     - Flutter
-    - PurchasesHybridCommon (= 17.6.0)
-  - PurchasesHybridCommon (17.6.0):
-    - RevenueCat (= 5.38.2)
+    - PurchasesHybridCommon (= 17.8.0)
+  - PurchasesHybridCommon (17.8.0):
+    - RevenueCat (= 5.40.0)
   - quill_native_bridge_ios (0.0.1):
     - Flutter
-  - RevenueCat (5.38.2)
+  - RevenueCat (5.40.0)
   - SDWebImage (5.21.2):
     - SDWebImage/Core (= 5.21.2)
   - SDWebImage/Core (5.21.2)
@@ -1748,11 +1748,11 @@ SPEC CHECKSUMS:
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Firebase: 26f6f8d460603af3df970ad505b16b15f5e2e9a1
-  firebase_analytics: 111ff65791a430356bd6c7e4d7339537fc6a15ae
+  firebase_analytics: 8c78ce6224e0623152379d6cc7ef3d9098477b7e
   firebase_core: dfc4bd142bee4bc53a5d482397ca322c2dd3165d
-  firebase_crashlytics: 3637078b718a52dc9fb4d64e37c969e86b87ff6f
-  firebase_remote_config: e69ab7a8a85ab1bf83d00ba488adffd3cdf9eb0f
-  firebase_storage: b75bbed2ad6014962b80951ab5cd179d6ff3f39a
+  firebase_crashlytics: e55dcf895eed0dd87c447dd5aff8db7f1bb8bbdb
+  firebase_remote_config: 1e152b6bb31376a4c2fb1b9319ced92bfa1aca57
+  firebase_storage: 7d98547fc12ce48731db5abab2ed4e6c1c40b68c
   FirebaseABTesting: 32f3fc079d72c9b93e000b60877c4e4f62ef7031
   FirebaseAnalytics: e04e23bc070e3014aa5cf4980f9df7ce5cd79ec8
   FirebaseAppCheckInterop: a1b2598c64c5a8c42fd6f6a1c3d0938ae4324678
@@ -1788,18 +1788,18 @@ SPEC CHECKSUMS:
   in_app_review: 7dd1ea365263f834b8464673f9df72c80c17c937
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
-  local_auth_darwin: d2e8c53ef0c4f43c646462e3415432c4dab3ae19
+  local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  ObjectBox: 7da4aceb5013d041bfafdbc6d744a26918b09757
-  objectbox_flutter_libs: 09b1dec1b4cd27bf1a5f9bae7ccaa7e43588bf31
+  ObjectBox: a60820ec1c903702350585d8cc99c1268c99e688
+  objectbox_flutter_libs: 9bfa6489919e9191d33d54dc25cec67ca416c13d
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 469dd3b7369b1f1d730ac23fa862442e02292e8b
-  PurchasesHybridCommon: 3e27aec7bccba3d3d34cd66a7033ba9b268caa5e
+  purchases_flutter: ada77ec439ed0505353d89218ce87ea407ce38ae
+  PurchasesHybridCommon: fad1084d9781388e181c8b855caf7a5853cebcb3
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
-  RevenueCat: f6b7c7e55f548a2bf304a3abbed0cc2447364427
+  RevenueCat: 02c8d0082d3373bcbc831faa600943d6ba6cad6e
   SDWebImage: 9f177d83116802728e122410fb25ad88f5c7608a
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7

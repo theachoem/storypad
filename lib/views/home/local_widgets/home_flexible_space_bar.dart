@@ -16,7 +16,8 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
         margin: EdgeInsets.only(
           left: 16.0 + MediaQuery.of(context).padding.left,
           right: 16.0 + MediaQuery.of(context).padding.right,
-          bottom: viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
+          bottom:
+              viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
               viewModel.scrollInfo.appBar(context).contentsMarginBottom,
         ),
         child: Stack(
@@ -60,18 +61,20 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                 });
               }
             },
-            child: Wrap(children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 2.0,
-                children: [
-                  _HomeAppBarNickname(nickname: viewModel.nickname),
-                  const _HomeAppBarMessage(),
-                ],
-              ),
-            ]),
+            child: Wrap(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 2.0,
+                  children: [
+                    _HomeAppBarNickname(nickname: viewModel.nickname),
+                    const _HomeAppBarMessage(),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

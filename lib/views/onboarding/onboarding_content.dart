@@ -43,46 +43,47 @@ class _OnboardingContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 36),
-          width: double.infinity,
-          child: Assets.images.storypadLogo512x512.image(
-            width: 120,
-            height: 120,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 16),
-          child: Text(
-            tr("dialog.what_should_i_call_you.title"),
-            style: TextTheme.of(context).titleLarge,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            tr("dialog.what_should_i_call_you.message"),
-            style: TextTheme.of(context).bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 32),
-          child: _NicknameField(viewModel: viewModel),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 16),
-          child: _NextButton(viewModel: viewModel),
-        ),
-      ].asMap().entries.map((entry) {
-        return SpFadeIn.fromTop(
-          delay: Durations.medium1 * entry.key,
-          duration: Durations.long3,
-          child: entry.value,
-        );
-      }).toList(),
+      children:
+          [
+            Container(
+              margin: const EdgeInsets.only(top: 36),
+              width: double.infinity,
+              child: Assets.images.storypadLogo512x512.image(
+                width: 120,
+                height: 120,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: Text(
+                tr("dialog.what_should_i_call_you.title"),
+                style: TextTheme.of(context).titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(
+                tr("dialog.what_should_i_call_you.message"),
+                style: TextTheme.of(context).bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 32),
+              child: _NicknameField(viewModel: viewModel),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: _NextButton(viewModel: viewModel),
+            ),
+          ].asMap().entries.map((entry) {
+            return SpFadeIn.fromTop(
+              delay: Durations.medium1 * entry.key,
+              duration: Durations.long3,
+              child: entry.value,
+            );
+          }).toList(),
     );
   }
 }

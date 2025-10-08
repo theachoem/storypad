@@ -10,11 +10,11 @@ import 'package:flutter_quill/src/toolbar/base_button/base_value_button.dart';
 import 'package:flutter_quill/src/common/utils/color.dart';
 import 'package:flutter_quill/src/editor_toolbar_shared/color.dart';
 
-typedef QuillToolbarColorBaseButton
-    = QuillToolbarBaseButton<QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions>;
+typedef QuillToolbarColorBaseButton =
+    QuillToolbarBaseButton<QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions>;
 
-typedef QuillToolbarColorBaseButtonState<W extends SpQuillToolbarColorButton>
-    = QuillToolbarCommonButtonState<W, QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions>;
+typedef QuillToolbarColorBaseButtonState<W extends SpQuillToolbarColorButton> =
+    QuillToolbarCommonButtonState<W, QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions>;
 
 /// Controls color styles.
 ///

@@ -70,7 +70,6 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `PreferenceDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -145,14 +144,14 @@ PreferenceDbModel _$PreferenceDbModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['permanently_deleted_at'] as String),
     );
 
-Map<String, dynamic> _$PreferenceDbModelToJson(PreferenceDbModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'key': instance.key,
-      'value': instance.value,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'last_saved_device_id': instance.lastSavedDeviceId,
-      'permanently_deleted_at':
-          instance.permanentlyDeletedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$PreferenceDbModelToJson(
+  PreferenceDbModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'key': instance.key,
+  'value': instance.value,
+  'created_at': instance.createdAt.toIso8601String(),
+  'updated_at': instance.updatedAt.toIso8601String(),
+  'last_saved_device_id': instance.lastSavedDeviceId,
+  'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
+};

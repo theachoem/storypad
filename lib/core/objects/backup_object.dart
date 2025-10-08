@@ -41,7 +41,7 @@ class BackupObject {
         'device_model': fileInfo.device.model,
         'device_id': fileInfo.device.id,
         'created_at': fileInfo.createdAt.toIso8601String(),
-      }
+      },
     };
   }
 }

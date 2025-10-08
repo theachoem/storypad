@@ -42,14 +42,14 @@ class TagDbModel extends BaseDbModel {
   }) : index = index ?? 0;
 
   TagDbModel.fromIDTitle(this.id, this.title)
-      : version = 0,
-        starred = null,
-        emoji = null,
-        index = 0,
-        createdAt = DateTime.now(),
-        updatedAt = DateTime.now(),
-        lastSavedDeviceId = null,
-        permanentlyDeletedAt = null;
+    : version = 0,
+      starred = null,
+      emoji = null,
+      index = 0,
+      createdAt = DateTime.now(),
+      updatedAt = DateTime.now(),
+      lastSavedDeviceId = null,
+      permanentlyDeletedAt = null;
 
   factory TagDbModel.fromNow() {
     return TagDbModel(

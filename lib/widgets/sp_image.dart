@@ -33,29 +33,31 @@ class SpImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (link.startsWith("storypad://")) {
-      return Consumer<BackupProvider>(builder: (context, provider, child) {
-        return Image(
-          key: ValueKey(provider.currentUser?.accessToken),
-          width: width,
-          height: height,
-          fit: BoxFit.cover,
-          image: SpDbImageProvider(assetLink: link, currentUser: provider.currentUser),
-          errorBuilder: (context, error, strackTrace) =>
-              errorWidget?.call(context, link, error) ??
-              buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
-          loadingBuilder: (context, child, loadingProgress) {
-            return Stack(
-              children: [
-                SpGradientLoading(
-                  height: height ?? defaultSize,
-                  width: width ?? defaultSize,
-                ),
-                child
-              ],
-            );
-          },
-        );
-      });
+      return Consumer<BackupProvider>(
+        builder: (context, provider, child) {
+          return Image(
+            key: ValueKey(provider.currentUser?.accessToken),
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+            image: SpDbImageProvider(assetLink: link, currentUser: provider.currentUser),
+            errorBuilder: (context, error, strackTrace) =>
+                errorWidget?.call(context, link, error) ??
+                buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
+            loadingBuilder: (context, child, loadingProgress) {
+              return Stack(
+                children: [
+                  SpGradientLoading(
+                    height: height ?? defaultSize,
+                    width: width ?? defaultSize,
+                  ),
+                  child,
+                ],
+              );
+            },
+          );
+        },
+      );
     } else if (isImageBase64(link)) {
       return Image.memory(
         base64.decode(link),

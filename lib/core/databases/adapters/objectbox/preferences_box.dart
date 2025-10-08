@@ -22,8 +22,10 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
       conditions = conditions.and(PreferenceObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
     }
 
-    Query<PreferenceObjectBox> query =
-        box.query(conditions).order(PreferenceObjectBox_.updatedAt, flags: Order.descending).build();
+    Query<PreferenceObjectBox> query = box
+        .query(conditions)
+        .order(PreferenceObjectBox_.updatedAt, flags: Order.descending)
+        .build();
     PreferenceObjectBox? object = await query.findFirstAsync();
     return object?.updatedAt;
   }
@@ -31,9 +33,9 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   @override
   Future<void> cleanupOldDeletedRecords() async {
     DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt
-        .notNull()
-        .and(PreferenceObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo));
+    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt.notNull().and(
+      PreferenceObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
+    );
     await box.query(conditions).build().removeAsync();
   }
 

@@ -19,7 +19,7 @@ class _FontsContent extends StatelessWidget {
             onPressed: () => UrlOpenerService.openInCustomTab(context, "https://fonts.google.com"),
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
-            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
       body: buildBody(context),
@@ -103,7 +103,7 @@ class _FontsContent extends StatelessWidget {
         spacing: 16.0,
         children: [
           Text(groupLabel, style: TextTheme.of(context).titleLarge),
-          const Expanded(child: Divider(height: 1))
+          const Expanded(child: Divider(height: 1)),
         ],
       ),
     );
@@ -123,7 +123,7 @@ class _FontsContent extends StatelessWidget {
             subtitleStyle: GoogleFonts.getFont(fontFamily),
             trailingIconData: SpIcons.keyboardRight,
             onPressed: () => viewModel.changeFont(fontFamily),
-          )
+          ),
         ];
       },
       builder: (open) {

@@ -16,11 +16,13 @@ class _BottomNav extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0).add(EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: MediaQuery.of(context).padding.left,
-              right: MediaQuery.of(context).padding.right,
-            )),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0).add(
+              EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+              ),
+            ),
             scrollDirection: Axis.horizontal,
             reverse: true,
             child: Row(

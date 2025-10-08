@@ -46,8 +46,8 @@ class TemplateDbModel extends BaseDbModel {
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
     int? index,
-  })  : index = index ?? 0,
-        _preferences = preferences;
+  }) : index = index ?? 0,
+       _preferences = preferences;
 
   bool get archived => archivedAt != null;
 

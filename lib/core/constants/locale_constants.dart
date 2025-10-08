@@ -19,7 +19,7 @@ const kSupportedLocales = [
   Locale("pl", "PL"),
   Locale("pt", "BR"),
   Locale("vi", "VN"),
-  Locale("zh", "CN")
+  Locale("zh", "CN"),
 ];
 
 const kLanguageNames = {
@@ -38,7 +38,7 @@ const kLanguageNames = {
   "pl-PL": "Polish (Poland)",
   "pt-BR": "Portuguese (Brazil)",
   "vi-VN": "Vietnamese (Vietnam)",
-  "zh-CN": "Chinese (Simplified)"
+  "zh-CN": "Chinese (Simplified)",
 };
 
 const kNativeLanguageNames = {
@@ -57,5 +57,5 @@ const kNativeLanguageNames = {
   "pl-PL": "Polski (Polska)",
   "pt-BR": "Português (Brasil)",
   "vi-VN": "Tiếng Việt (Việt Nam)",
-  "zh-CN": "中文 (简体)"
+  "zh-CN": "中文 (简体)",
 };

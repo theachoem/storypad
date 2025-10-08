@@ -17,9 +17,9 @@ class EditStoryViewModel extends BaseStoryViewModel {
   EditStoryViewModel({
     required this.params,
   }) : super(
-          initialPageScrollOffet: params.initialPageScrollOffet,
-          initialPageIndex: params.initialPageIndex,
-        ) {
+         initialPageScrollOffet: params.initialPageScrollOffet,
+         initialPageIndex: params.initialPageIndex,
+       ) {
     init(
       initialStory: params.story,
       initialPagesMap: params.pagesMap,
