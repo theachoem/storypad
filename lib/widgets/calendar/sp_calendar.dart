@@ -1,12 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/calendar_days_generator.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 
-part 'sp_calendar_date_cell.dart';
 part 'sp_calendar_month_grid.dart';
 
 /// A reusable infinite scrollable calendar widget.
@@ -17,15 +13,14 @@ part 'sp_calendar_month_grid.dart';
 /// - Day selection
 /// - Feeling/emotion indicators per day
 /// - Custom styling for selected dates and today's date
+/// - Custom cell builders for different calendar types
 class SpCalendar extends StatefulWidget {
   const SpCalendar({
     super.key,
     required this.initialYear,
     required this.initialMonth,
-    this.selectedDay,
-    this.feelingMapByDay = const {},
+    required this.cellBuilder,
     this.onMonthChanged,
-    this.onDaySelected,
     this.controller,
   });
 
@@ -35,20 +30,14 @@ class SpCalendar extends StatefulWidget {
   /// The initial month to display (1-12)
   final int initialMonth;
 
-  /// The currently selected day (1-31)
-  final int? selectedDay;
-
-  /// Map of day numbers to feeling keys for the current month
-  final Map<int, String?> feelingMapByDay;
-
   /// Callback when the visible month changes
   final void Function(int year, int month)? onMonthChanged;
 
-  /// Callback when a day is selected
-  final void Function(int year, int month, int? day)? onDaySelected;
-
   /// Optional controller to programmatically navigate the calendar
   final SpCalendarController? controller;
+
+  /// Optional custom cell builder. If null, uses default feeling-based cell.
+  final Widget Function(BuildContext context, DateTime date, bool isCurrentMonth) cellBuilder;
 
   @override
   State<SpCalendar> createState() => _SpCalendarState();
@@ -145,11 +134,6 @@ class _SpCalendarState extends State<SpCalendar> {
     }
   }
 
-  void _onDayTapped(int day) {
-    final newDay = widget.selectedDay == day ? null : day;
-    widget.onDaySelected?.call(_currentYear, _currentMonth, newDay);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -173,11 +157,7 @@ class _SpCalendarState extends State<SpCalendar> {
                     return _SpCalendarMonthGrid(
                       year: date.year,
                       month: date.month,
-                      currentYear: _currentYear,
-                      currentMonth: _currentMonth,
-                      selectedDay: widget.selectedDay,
-                      feelingMapByDay: widget.feelingMapByDay,
-                      onDayTapped: _onDayTapped,
+                      cellBuilder: widget.cellBuilder,
                     );
                   },
                 ),

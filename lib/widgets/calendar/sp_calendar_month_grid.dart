@@ -8,20 +8,12 @@ class _SpCalendarMonthGrid extends StatelessWidget {
   const _SpCalendarMonthGrid({
     required this.year,
     required this.month,
-    required this.currentYear,
-    required this.currentMonth,
-    required this.selectedDay,
-    required this.feelingMapByDay,
-    required this.onDayTapped,
+    required this.cellBuilder,
   });
 
   final int year;
   final int month;
-  final int currentYear;
-  final int currentMonth;
-  final int? selectedDay;
-  final Map<int, String?> feelingMapByDay;
-  final void Function(int day) onDayTapped;
+  final Widget Function(BuildContext context, DateTime date, bool isCurrentMonth) cellBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +33,7 @@ class _SpCalendarMonthGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final date = visibleDays[index];
         final isCurrentMonth = date.month == month;
-        final feeling = isCurrentMonth ? feelingMapByDay[date.day] : null;
-
-        return _SpCalendarDateCell(
-          date: date,
-          selectedYear: currentYear,
-          selectedMonth: currentMonth,
-          selectedDay: selectedDay,
-          feeling: feeling,
-          isCurrentMonth: isCurrentMonth,
-          onTap: isCurrentMonth ? () => onDayTapped(date.day) : null,
-        );
+        return cellBuilder(context, date, isCurrentMonth);
       },
     );
   }

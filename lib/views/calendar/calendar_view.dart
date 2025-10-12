@@ -1,16 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/core/services/month_picker_service.dart';
+import 'package:storypad/views/calendar/period_cycle/period_cycle_calendar_view.dart';
+import 'package:storypad/views/calendar/stories/calendar_stories_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
-import 'package:storypad/widgets/calendar/sp_calendar.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
-import 'package:storypad/widgets/story_list/sp_story_list.dart';
+import 'package:storypad/widgets/sp_two_value_listenable_builder.dart';
 
 import 'calendar_view_model.dart';
 
@@ -43,7 +44,7 @@ class CalendarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<CalendarViewModel>(
-      create: (context) => CalendarViewModel(params: params, context: context),
+      create: (context) => CalendarViewModel(params: params),
       builder: (context, viewModel, child) {
         return _CalendarContent(viewModel);
       },

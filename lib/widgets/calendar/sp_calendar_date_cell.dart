@@ -1,10 +1,16 @@
-part of 'sp_calendar.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/feeling_object.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 /// A single date cell in the calendar.
 ///
 /// Displays a date with optional feeling indicator and handles selection state.
-class _SpCalendarDateCell extends StatelessWidget {
-  const _SpCalendarDateCell({
+class SpCalendarDateCell extends StatelessWidget {
+  const SpCalendarDateCell({
+    super.key,
     required this.date,
     required this.selectedYear,
     required this.selectedMonth,
