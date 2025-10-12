@@ -84,7 +84,7 @@ Help us grow the StoryPad community! 🌱
 ''';
 
     const String additionalBody = '''
-After posting, DM your link to [u/storypadapp](https://www.reddit.com/user/storypadapp) or [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
+After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
 ''';
 
     return Visibility(
