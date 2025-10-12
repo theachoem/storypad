@@ -48,13 +48,17 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     Map<String, dynamic>? options,
     bool returnDeleted = false,
   }) async {
-    CollectionDbModel<TagDbModel>? result = await super.where(filters: filters);
+    CollectionDbModel<TagDbModel>? result = await super.where(
+      filters: filters,
+      returnDeleted: returnDeleted,
+    );
+
     List<TagDbModel> items = result?.items ?? [];
 
     for (int i = 0; i < items.length; i++) {
       if (items[i].starred == null) {
         items[i] = items[i].copyWith(starred: true);
-        update(items[i]);
+        update(items[i], runCallbacks: i == items.length - 1);
       }
     }
 
