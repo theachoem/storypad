@@ -39,6 +39,7 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
             final storyCount = storiesCount(choice);
 
             return ChoiceChip(
+              showCheckmark: false,
               label: RichText(
                 text: TextSpan(
                   text: "$label ",
