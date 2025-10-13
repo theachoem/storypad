@@ -73,17 +73,30 @@ StoryPad leverages the MVVM (Model-View-ViewModel) pattern while each view is co
 
 StoryPad uses ObjectBox as the local database solution for persistent data storage. ObjectBox provides fast, efficient, and scalable database operations with rich search capabilities, making it ideal for mobile apps that require high-performance data handling.
 
+## 📚 Documentation
+
+Comprehensive documentation for developers and AI agents:
+
+- **[Architecture](docs/architecture.md)** - State management, MVVM pattern, routing
+- **[File Organization](docs/file-organization.md)** - Project structure, feature placement
+- **[UI Patterns](docs/ui-patterns.md)** - Icons, platform-specific UI, widgets
+- **[Dependencies](docs/dependencies.md)** - Package management, common patterns
+- **[Platform Config](docs/platform-config.md)** - iOS/Android configuration
+- **[Testing](docs/testing.md)** - Test patterns, mocking, coverage
+
+See [docs/](docs/) for complete documentation index.
+
 ## 🤝 Learn & Contribute
 
-Feel free to clone the StoryPad repository and explore the code. It’s a great resource for learning how to build efficient, maintainable mobile apps with Flutter. You can also contribute improvements or new features, helping enhance the project for everyone. Raise an issue if you need any support.
+Feel free to clone the StoryPad repository and explore the code. It's a great resource for learning how to build efficient, maintainable mobile apps with Flutter. You can also contribute improvements or new features, helping enhance the project for everyone. Raise an issue if you need any support.
 
-A big thank you to the maintainers of the packages StoryPad relies on - without their work, StoryPad wouldn’t be possible. You can view all the dependencies in the [pubspec.yaml](pubspec.yaml) file.
+A big thank you to the maintainers of the packages StoryPad relies on - without their work, StoryPad wouldn't be possible. You can view all the dependencies in the [pubspec.yaml](pubspec.yaml) file.
 
 ## 📄 License
 
 StoryPad is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
-We chose the GPL license to ensure that StoryPad’s source code remains free and open. Anyone can use, study, modify, and distribute it - but any modifications must also remain open-source under the same license.
+We chose the GPL license to ensure that StoryPad's source code remains free and open. Anyone can use, study, modify, and distribute it - but any modifications must also remain open-source under the same license.
 
 🌐 **Website:** [StoryPad.me](https://storypad.me) - Explore the official StoryPad website for features, screenshots, and more.  
 💻 **App Source Code:** [github.com/theachoem/storypad](https://github.com/theachoem/storypad)  
