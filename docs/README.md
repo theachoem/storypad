@@ -36,6 +36,20 @@
 - **[Styling](ui/styling.md)** → Theme and responsive design
 - **[Common Widgets](ui/common-widgets.md)** → UI widgets
 
+### Product
+
+- **[Overview](product/overview.md)** → Product identity, mission, platforms
+- **[Metrics](product/metrics.md)** → User base, growth, performance
+- **[Roadmap](product/roadmap.md)** → Features, upcoming development
+- **[Marketing Guide](product/marketing-guide.md)** → Brand positioning, messaging
+- **[User Personas](product/user-personas.md)** → Target audience, use cases
+
+### Add-ons
+
+- **[Add-ons Overview](add-ons/README.md)** → Philosophy, pricing, implementation
+- **[Relaxing Sounds](add-ons/relaxing-sounds.md)** → Ambient audio for writing
+- **[Templates](add-ons/templates.md)** → Reusable writing structures
+
 ## For LLM Agents
 
 This documentation is optimized for token efficiency and context priming:
@@ -60,6 +74,10 @@ This documentation is optimized for token efficiency and context priming:
 | iOS setup             | [iOS Config](development/ios-config.md)                                                 |
 | Android setup         | [Android Config](development/android-config.md)                                         |
 | Backup/sync features  | [Backup System](core/backup-system.md)                                                  |
+| Planning features     | [Roadmap](product/roadmap.md) + [User Personas](product/user-personas.md)               |
+| Marketing content     | [Marketing Guide](product/marketing-guide.md) + [Overview](product/overview.md)         |
+| Growth analysis       | [Metrics](product/metrics.md)                                                           |
+| Add-on development    | [Add-ons Overview](add-ons/README.md)                                                   |
 
 ## Documentation Principles
 
