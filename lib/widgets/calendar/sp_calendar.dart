@@ -37,7 +37,7 @@ class SpCalendar extends StatefulWidget {
   final SpCalendarController? controller;
 
   /// Optional custom cell builder. If null, uses default feeling-based cell.
-  final Widget Function(BuildContext context, DateTime date, bool isCurrentMonth) cellBuilder;
+  final Widget Function(BuildContext context, DateTime date, bool isDisplayMonth) cellBuilder;
 
   @override
   State<SpCalendar> createState() => _SpCalendarState();
@@ -139,31 +139,25 @@ class _SpCalendarState extends State<SpCalendar> {
     return Column(
       children: [
         const SizedBox(height: 8.0),
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).padding.left,
-            right: MediaQuery.of(context).padding.right,
-          ),
-          child: Column(
-            children: [
-              _buildDaysHeader(context),
-              SizedBox(
-                height: _calculateCalendarHeight(),
-                child: PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: _onPageChanged,
-                  itemBuilder: (context, pageIndex) {
-                    final date = _getDateForPage(pageIndex);
-                    return _SpCalendarMonthGrid(
-                      year: date.year,
-                      month: date.month,
-                      cellBuilder: widget.cellBuilder,
-                    );
-                  },
-                ),
+        _buildDaysHeader(context),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return SizedBox(
+              height: _calculateCalendarHeight(constraints),
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                itemBuilder: (context, pageIndex) {
+                  final date = _getDateForPage(pageIndex);
+                  return _SpCalendarMonthGrid(
+                    year: date.year,
+                    month: date.month,
+                    cellBuilder: widget.cellBuilder,
+                  );
+                },
               ),
-            ],
-          ),
+            );
+          },
         ),
         const Divider(height: 1),
       ],
@@ -194,12 +188,12 @@ class _SpCalendarState extends State<SpCalendar> {
   }
 
   /// Calculates the height needed for the calendar grid
-  double _calculateCalendarHeight() {
+  double _calculateCalendarHeight(BoxConstraints constraints) {
     final visibleDays = CalendarDaysGenerator.generate(
       year: _currentYear,
       month: _currentMonth,
     );
     final rows = (visibleDays.length / DateTime.daysPerWeek).ceil();
-    return rows * 56.0; // 56 is the minimum height per row
+    return rows * constraints.maxWidth / DateTime.daysPerWeek; // 56 is the minimum height per row
   }
 }

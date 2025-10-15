@@ -1,18 +1,21 @@
-part of 'calendar_stories_view.dart';
+part of 'mood_calendar_view.dart';
 
 class _CalendarStoriesContent extends StatelessWidget {
   const _CalendarStoriesContent(this.viewModel);
 
-  final CalendarStoriesViewModel viewModel;
+  final MoodCalendarViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        tooltip: tr("button.new_story"),
-        child: const Icon(SpIcons.newStory),
-        onPressed: () => viewModel.goToNewPage(context),
+      floatingActionButton: SpFadeIn.fromBottom(
+        delay: Durations.medium1,
+        child: FloatingActionButton(
+          heroTag: null,
+          tooltip: tr("button.new_story"),
+          child: const Icon(SpIcons.newStory),
+          onPressed: () => viewModel.goToNewPage(context),
+        ),
       ),
       body: NestedScrollView(
         controller: PrimaryScrollController.maybeOf(context),
@@ -34,20 +37,22 @@ class _CalendarStoriesContent extends StatelessWidget {
                 initialMonth: viewModel.month,
                 onMonthChanged: viewModel.onMonthChanged,
                 controller: viewModel.calendarController,
-                cellBuilder: (context, date, isCurrentMonth) {
-                  final feeling = isCurrentMonth ? viewModel.feelingMapByDay[date.day] : null;
+                cellBuilder: (context, date, isDisplayMonth) {
+                  final feeling = isDisplayMonth ? viewModel.feelingMapByDay[date.day] : null;
                   return SpCalendarDateCell(
                     date: date,
                     selectedYear: viewModel.year,
                     selectedMonth: viewModel.month,
                     selectedDay: viewModel.selectedDay,
                     feeling: feeling,
-                    isCurrentMonth: isCurrentMonth,
-                    onTap: () => viewModel.onDaySelected(
-                      viewModel.year,
-                      viewModel.month,
-                      viewModel.selectedDay == date.day ? null : date.day,
-                    ),
+                    isDisplayMonth: isDisplayMonth,
+                    onTap: isDisplayMonth
+                        ? () => viewModel.onDaySelected(
+                            viewModel.year,
+                            viewModel.month,
+                            viewModel.selectedDay == date.day ? null : date.day,
+                          )
+                        : null,
                   );
                 },
               ),

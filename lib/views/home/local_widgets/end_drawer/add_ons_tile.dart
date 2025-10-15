@@ -6,7 +6,7 @@ class _AddOnsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpNewBadgeBuilder(
-      badge: NewBadge.add_on_tile_with_reward,
+      badge: NewBadge.add_on_tile_with_period_calendar,
       builder: (context, newBadge, hideBadge) {
         return ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),

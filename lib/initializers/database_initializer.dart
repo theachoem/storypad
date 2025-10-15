@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -16,6 +17,7 @@ class DatabaseInitializer {
     await PreferenceDbModel.db.initilize();
     await AssetDbModel.db.initilize();
     await RelaxSoundMixModel.db.initilize();
+    await EventDbModel.db.initilize();
 
     await migrateData();
   }

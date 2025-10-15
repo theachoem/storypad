@@ -16,7 +16,7 @@ class SpCalendarDateCell extends StatelessWidget {
     required this.selectedMonth,
     required this.selectedDay,
     required this.feeling,
-    required this.isCurrentMonth,
+    required this.isDisplayMonth,
     required this.onTap,
   });
 
@@ -25,7 +25,7 @@ class SpCalendarDateCell extends StatelessWidget {
   final int selectedMonth;
   final int? selectedDay;
   final String? feeling;
-  final bool isCurrentMonth;
+  final bool isDisplayMonth;
   final VoidCallback? onTap;
 
   @override
@@ -69,15 +69,15 @@ class SpCalendarDateCell extends StatelessWidget {
   }
 
   Widget _buildDateContent(BuildContext context) {
-    final hasFeeling = isCurrentMonth && feeling != null && FeelingObject.feelingsByKey[feeling] != null;
-    final hasStoriesButNoFeeling = isCurrentMonth && feeling != null && FeelingObject.feelingsByKey[feeling] == null;
+    final hasFeeling = isDisplayMonth && feeling != null && FeelingObject.feelingsByKey[feeling] != null;
+    final hasStoriesButNoFeeling = isDisplayMonth && feeling != null && FeelingObject.feelingsByKey[feeling] == null;
 
     final backgroundColor = isSelected ? Theme.of(context).colorScheme.primary : null;
     var foregroundColor = isSelected
         ? Theme.of(context).colorScheme.onPrimary
         : Theme.of(context).colorScheme.onSurface;
 
-    if (!isCurrentMonth) {
+    if (!isDisplayMonth) {
       foregroundColor = foregroundColor.withValues(alpha: 0.5);
     }
 

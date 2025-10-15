@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'calendar_view.dart';
 
 class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -8,22 +10,52 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   CalendarViewModel({
     required this.params,
+    required BuildContext context,
   }) {
-    monthNotifier = ValueNotifier<int>(params.initialMonth ?? DateTime.now().month);
-    yearNotifier = ValueNotifier<int>(params.initialYear ?? DateTime.now().year);
+    monthYearNotifier = ValueNotifier((
+      year: params.initialYear ?? DateTime.now().year,
+      month: params.initialMonth ?? DateTime.now().month,
+    ));
+
+    provider = context.read<InAppPurchaseProvider>()..addListener(_listener);
+    _setSegments();
+
+    selectedSegment = params.initialSegment != null && _segments.contains(params.initialSegment)
+        ? params.initialSegment!
+        : _segments.first;
+  }
+
+  late final InAppPurchaseProvider provider;
+  late final ValueNotifier<({int year, int month})> monthYearNotifier;
+
+  late CalendarSegmentId selectedSegment;
+  late List<CalendarSegmentId> _segments;
+
+  List<CalendarSegmentId> get segments => _segments;
+
+  void _listener() {
+    _setSegments();
+
+    if (!_segments.contains(selectedSegment)) {
+      selectedSegment = _segments.first;
+    }
+
+    notifyListeners();
+  }
+
+  void _setSegments() {
+    _segments = [
+      CalendarSegmentId.mood,
+      if (provider.periodCalendar) CalendarSegmentId.period,
+    ];
   }
 
   @override
   void dispose() {
-    monthNotifier.dispose();
-    yearNotifier.dispose();
+    provider.removeListener(_listener);
+    monthYearNotifier.dispose();
     super.dispose();
   }
-
-  CalendarSegmentId selectedSegment = CalendarSegmentId.stories;
-
-  late final ValueNotifier<int> monthNotifier;
-  late final ValueNotifier<int> yearNotifier;
 
   void onSegmentChanged(CalendarSegmentId segment) {
     selectedSegment = segment;
@@ -31,7 +63,6 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void onMonthYearChanged(int newYear, int newMonth) {
-    yearNotifier.value = newYear;
-    monthNotifier.value = newMonth;
+    monthYearNotifier.value = (year: newYear, month: newMonth);
   }
 }

@@ -8,9 +8,14 @@ class AddOnObject {
   final String? displayPrice;
   final IconData iconData;
   final int weekdayColor;
+
+  // feature specifically design for female user 🙆‍♀️
+  final bool designForFemale;
+
   final List<String> demoImages;
   final Future<void> Function(BuildContext context)? onTry;
   final Future<void> Function(BuildContext context) onOpen;
+  final Future<void> Function()? onPurchased;
 
   AddOnObject({
     required this.type,
@@ -22,5 +27,7 @@ class AddOnObject {
     required this.demoImages,
     required this.onTry,
     required this.onOpen,
+    required this.onPurchased,
+    this.designForFemale = false,
   });
 }

@@ -27,35 +27,35 @@ class _CalendarContent extends StatelessWidget {
 
   Widget buildBody() {
     return switch (viewModel.selectedSegment) {
-      CalendarSegmentId.stories => CalendarStoriesView(
-        monthNotifier: viewModel.monthNotifier,
-        yearNotifier: viewModel.yearNotifier,
+      CalendarSegmentId.mood => MoodCalendarView(
+        monthYearNotifier: viewModel.monthYearNotifier,
       ),
-      CalendarSegmentId.periodCycle => const PeriodCycleCalendarView(),
+      CalendarSegmentId.period => PeriodCalendarView(
+        monthYearNotifier: viewModel.monthYearNotifier,
+      ),
     };
   }
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: SpTwoValueListenableBuilder(
-        valueListenable1: viewModel.monthNotifier,
-        valueListenable2: viewModel.yearNotifier,
-        builder: (context, month, year, child) {
+      title: ValueListenableBuilder(
+        valueListenable: viewModel.monthYearNotifier,
+        builder: (context, monthYear, child) {
           return SpTapEffect(
             onTap: () async {
               final result = await MonthPickerService(
                 context: context,
-                month: month,
-                year: year,
+                month: monthYear.month,
+                year: monthYear.year,
               ).showPicker();
               if (result != null) {
                 viewModel.onMonthYearChanged(result.year, result.month);
               }
             },
             child: Text(
-              DateFormatHelper.yMMMM(DateTime(year, month, 1), context.locale),
-              key: ValueKey("$month-$year"),
+              DateFormatHelper.yMMMM(DateTime(monthYear.year, monthYear.month, 1), context.locale),
+              key: ValueKey("${monthYear.month}-${monthYear.year}"),
               style: Theme.of(context).appBarTheme.titleTextStyle,
             ),
           );
@@ -64,22 +64,30 @@ class _CalendarContent extends StatelessWidget {
       leading: IconButton(
         icon: const Icon(SpIcons.keyboardLeft),
         onPressed: () {
-          final newMonth = viewModel.monthNotifier.value - 1 == 0 ? 12 : viewModel.monthNotifier.value - 1;
-          final newYear = viewModel.monthNotifier.value - 1 == 0
-              ? viewModel.yearNotifier.value - 1
-              : viewModel.yearNotifier.value;
+          final newMonth = viewModel.monthYearNotifier.value.month - 1 == 0
+              ? 12
+              : viewModel.monthYearNotifier.value.month - 1;
+
+          final newYear = viewModel.monthYearNotifier.value.month - 1 == 0
+              ? viewModel.monthYearNotifier.value.year - 1
+              : viewModel.monthYearNotifier.value.year;
+
           viewModel.onMonthYearChanged(newYear, newMonth);
         },
       ),
-      bottom: buildSegmentButtons(context),
+      bottom: viewModel.segments.length > 1 ? buildSegmentButtons(context) : null,
       actions: [
         IconButton(
           icon: const Icon(SpIcons.keyboardRight),
           onPressed: () {
-            final newMonth = viewModel.monthNotifier.value + 1 == 13 ? 1 : viewModel.monthNotifier.value + 1;
-            final newYear = viewModel.monthNotifier.value + 1 == 13
-                ? viewModel.yearNotifier.value + 1
-                : viewModel.yearNotifier.value;
+            final newMonth = viewModel.monthYearNotifier.value.month + 1 == 13
+                ? 1
+                : viewModel.monthYearNotifier.value.month + 1;
+
+            final newYear = viewModel.monthYearNotifier.value.month + 1 == 13
+                ? viewModel.monthYearNotifier.value.year + 1
+                : viewModel.monthYearNotifier.value.year;
+
             viewModel.onMonthYearChanged(newYear, newMonth);
           },
         ),
@@ -99,7 +107,7 @@ class _CalendarContent extends StatelessWidget {
           }
         },
         children: {
-          for (final segment in CalendarSegmentId.values) segment: Text(segment.translatedName(context)),
+          for (final segment in viewModel.segments) segment: Text(segment.translatedName(context)),
         },
       );
     } else {
@@ -113,7 +121,7 @@ class _CalendarContent extends StatelessWidget {
         },
         showSelectedIcon: false,
         segments: [
-          for (final segment in CalendarSegmentId.values)
+          for (final segment in viewModel.segments)
             ButtonSegment<CalendarSegmentId>(
               value: segment,
               label: Text(segment.translatedName(context)),

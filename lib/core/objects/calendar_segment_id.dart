@@ -2,15 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 enum CalendarSegmentId {
-  stories,
-  periodCycle;
+  mood,
+  period;
 
   String translatedName(BuildContext context) {
     switch (this) {
-      case CalendarSegmentId.stories:
-        return tr('general.stories');
-      case CalendarSegmentId.periodCycle:
-        return 'Period Cycle';
+      case CalendarSegmentId.mood:
+        return tr('general.mood');
+      case CalendarSegmentId.period:
+        return tr('add_ons.period_calendar.title');
     }
   }
 }

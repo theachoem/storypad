@@ -5,13 +5,12 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/core/services/month_picker_service.dart';
-import 'package:storypad/views/calendar/period_cycle/period_cycle_calendar_view.dart';
-import 'package:storypad/views/calendar/stories/calendar_stories_view.dart';
+import 'package:storypad/views/calendar/period/period_calendar_view.dart';
+import 'package:storypad/views/calendar/mood/mood_calendar_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
-import 'package:storypad/widgets/sp_two_value_listenable_builder.dart';
 
 import 'calendar_view_model.dart';
 
@@ -21,10 +20,12 @@ class CalendarRoute extends BaseRoute {
   const CalendarRoute({
     required this.initialMonth,
     required this.initialYear,
+    required this.initialSegment,
   });
 
   final int? initialMonth;
   final int? initialYear;
+  final CalendarSegmentId? initialSegment;
 
   @override
   bool get fullscreenDialog => true;
@@ -44,7 +45,7 @@ class CalendarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<CalendarViewModel>(
-      create: (context) => CalendarViewModel(params: params),
+      create: (context) => CalendarViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _CalendarContent(viewModel);
       },

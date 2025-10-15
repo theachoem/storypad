@@ -4,7 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
+import 'package:storypad/core/databases/adapters/objectbox/events_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
+import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
@@ -147,6 +150,35 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
+  Future<CollectionDbModel<StoryDbModel>?> where({
+    Map<String, dynamic>? filters,
+    Map<String, dynamic>? options,
+    bool returnDeleted = false,
+  }) async {
+    debugPrint("Triggering $tableName#where 🍎");
+
+    List<StoryObjectBox> objects;
+    QueryBuilder<StoryObjectBox>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
+
+    Query<StoryObjectBox>? query = queryBuilder.build();
+    objects = await query.findAsync();
+
+    Map<int, EventDbModel> events = await EventsBox()
+        .buildQuery(
+          filters: {'ids': objects.map((e) => e.eventId).whereType<int>().toList()},
+        )
+        .build()
+        .findAsync()
+        .then((query) async => {for (var item in query) item.id: await EventsBox().objectToModel(item)});
+
+    options ??= {};
+    options['events'] = events;
+
+    List<StoryDbModel> docs = await objectsToModels(objects, options);
+    return CollectionDbModel<StoryDbModel>(items: docs);
+  }
+
+  @override
   QueryBuilder<StoryObjectBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
@@ -161,6 +193,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? day = filters?["day"];
     int? tag = filters?["tag"];
     int? template = filters?["template"];
+    int? eventId = filters?["event_id"];
     int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
     int? order = filters?["order"];
@@ -173,6 +206,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
     if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
+    if (eventId != null) conditions = conditions.and(StoryObjectBox_.eventId.equals(eventId));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));

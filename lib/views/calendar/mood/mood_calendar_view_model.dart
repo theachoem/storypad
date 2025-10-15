@@ -11,25 +11,22 @@ import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/widgets/calendar/sp_calendar.dart';
-import 'calendar_stories_view.dart';
+import 'mood_calendar_view.dart';
 
-class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
-  final CalendarStoriesView params;
+class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
+  final MoodCalendarView params;
 
-  CalendarStoriesViewModel({
+  MoodCalendarViewModel({
     required this.params,
     required BuildContext context,
   }) {
-    month = params.monthNotifier.value;
-    year = params.yearNotifier.value;
     feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
 
     _tags = [...context.read<TagsProvider>().tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
     StoryDbModel.db.addGlobalListener(_reloadFeeling);
-    params.monthNotifier.addListener(_onParentMonthYearChanged);
-    params.yearNotifier.addListener(_onParentMonthYearChanged);
+    params.monthYearNotifier.addListener(_onParentMonthYearChanged);
   }
 
   final SpCalendarController calendarController = SpCalendarController();
@@ -37,16 +34,14 @@ class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, De
   List<TagDbModel>? _tags;
   List<TagDbModel>? get tags => _tags;
 
-  late int month;
-  late int year;
+  late int month = params.monthYearNotifier.value.month;
+  late int year = params.monthYearNotifier.value.year;
 
   int? selectedDay;
   int? selectedTagId;
   int? currentFilterStoriesCount;
 
   Map<int, String?> feelingMapByDay = {};
-  int _editedKey = 0;
-  int get editedKey => _editedKey;
 
   bool tagSelected(TagDbModel tag) => (selectedTagId == tag.id) || (tag.id == 0 && selectedTagId == null);
   SearchFilterObject get searchFilter {
@@ -84,7 +79,6 @@ class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, De
       selectedDay = addedStory.day;
     }
 
-    _editedKey += 1;
     notifyListeners();
 
     Future.delayed(const Duration(seconds: 1)).then((_) {
@@ -115,7 +109,6 @@ class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, De
       filters: searchFilter.toDatabaseFilter(),
     );
 
-    _editedKey += 1;
     notifyListeners();
   }
 
@@ -126,14 +119,15 @@ class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, De
   void onMonthChanged(int year, int month) {
     onChanged(year, month, selectedDay, selectedTagId);
 
-    if (params.monthNotifier.value != month) params.monthNotifier.value = month;
-    if (params.yearNotifier.value != year) params.yearNotifier.value = year;
+    if (params.monthYearNotifier.value.month != month || params.monthYearNotifier.value.year != year) {
+      params.monthYearNotifier.value = (year: year, month: month);
+    }
   }
 
+  // this will also trigger onMonthChanged from SpCalendar.
   void _onParentMonthYearChanged() {
-    final newMonth = params.monthNotifier.value;
-    final newYear = params.yearNotifier.value;
-
+    final newMonth = params.monthYearNotifier.value.month;
+    final newYear = params.monthYearNotifier.value.year;
     if (newMonth != month || newYear != year) {
       calendarController.goToMonth(newYear, newMonth);
     }
@@ -149,9 +143,7 @@ class CalendarStoriesViewModel extends ChangeNotifier with DisposeAwareMixin, De
 
   @override
   void dispose() {
-    params.monthNotifier.removeListener(_onParentMonthYearChanged);
-    params.yearNotifier.removeListener(_onParentMonthYearChanged);
-
+    params.monthYearNotifier.removeListener(_onParentMonthYearChanged);
     StoryDbModel.db.removeGlobalListener(_reloadFeeling);
     super.dispose();
   }

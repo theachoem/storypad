@@ -83,16 +83,17 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           widget.viewModel.goToNewPage(context);
         },
       ),
-      IconButton.outlined(
-        tooltip: tr("button.take_photo"),
-        visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
-        icon: const Icon(SpIcons.camera),
-        color: Colors.white,
-        onPressed: () {
-          toggle(context);
-          widget.viewModel.takePhoto();
-        },
-      ),
+      if (kStoryPad)
+        IconButton.outlined(
+          tooltip: tr("button.take_photo"),
+          visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
+          icon: const Icon(SpIcons.camera),
+          color: Colors.white,
+          onPressed: () {
+            toggle(context);
+            widget.viewModel.takePhoto();
+          },
+        ),
       if (kIAPEnabled)
         IconButton.outlined(
           tooltip: tr("add_ons.templates.title"),

@@ -63,6 +63,7 @@ class StoryObjectBox extends BaseObjectBox {
   List<int>? assets;
 
   int? templateId;
+  int? eventId;
 
   // for query
   String? metadata;
@@ -93,6 +94,7 @@ class StoryObjectBox extends BaseObjectBox {
     @Deprecated('deprecated') required this.changes,
     required this.tags,
     required this.assets,
+    required this.eventId,
     required this.metadata,
     required this.preferences,
     required this.permanentlyDeletedAt,
@@ -188,6 +190,54 @@ class AssetObjectBox extends BaseObjectBox {
     required this.id,
     required this.originalSource,
     required this.cloudDestinations,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.permanentlyDeletedAt,
+    this.lastSavedDeviceId,
+  });
+
+  @override
+  void toPermanentlyDeleted({
+    DateTime? deletedAt,
+  }) {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = deletedAt ?? DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}
+
+@Entity()
+class EventObjectBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+  int year;
+  int month;
+  int day;
+  String eventType; // "period"
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  EventObjectBox({
+    required this.id,
+    required this.year,
+    required this.month,
+    required this.day,
+    required this.eventType,
     required this.createdAt,
     required this.updatedAt,
     required this.permanentlyDeletedAt,

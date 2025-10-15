@@ -52,7 +52,7 @@ class _ShowAddOnContent extends StatelessWidget {
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
-            "Absolutely. Once you buy it, you can use the add-on on all your devices where you sign in with the same account, whether it's your phone, tablet, iPad.",
+            "Absolutely. Once you buy it, you can use the add-on on all your devices where you connect with the same Google Drive account, whether it's your phone, tablet, iPad.",
           ),
         ],
       ),
@@ -66,7 +66,7 @@ class _ShowAddOnContent extends StatelessWidget {
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
-            "Yes, you need to connect with Google Drive. This helps us restore your purchases later. We don't keep your email, only a secure ID.",
+            "Yes, you need to connect with Google Drive. This helps us restore your purchases later. For your privacy, we don't save your email, only a secure ID.",
           ),
           Consumer<BackupProvider>(
             builder: (context, provider, child) {
@@ -136,7 +136,9 @@ class _ShowAddOnContent extends StatelessWidget {
           child: FilledButton(
             onPressed: viewModel.params.addOn.displayPrice == null
                 ? null
-                : () => viewModel.purchase(context, viewModel.params.addOn.type.productIdentifier),
+                : () {
+                    viewModel.purchase(context, viewModel.params.addOn.type.productIdentifier);
+                  },
             child: Text(viewModel.params.addOn.displayPrice ?? tr('button.unlock')),
           ),
         ),
@@ -160,10 +162,19 @@ class _ShowAddOnContent extends StatelessWidget {
             child: Icon(viewModel.params.addOn.iconData),
           ),
           const SizedBox(height: 12.0),
-          Text(
-            viewModel.params.addOn.title,
+          Text.rich(
             style: TextTheme.of(context).titleLarge,
             textAlign: TextAlign.center,
+            TextSpan(
+              text: viewModel.params.addOn.title,
+              children: [
+                if (viewModel.params.addOn.designForFemale)
+                  const WidgetSpan(
+                    child: Icon(Icons.female_outlined, size: 22.0),
+                    alignment: PlaceholderAlignment.middle,
+                  ),
+              ],
+            ),
           ),
           Text(
             viewModel.params.addOn.subtitle,

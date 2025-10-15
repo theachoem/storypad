@@ -28,6 +28,8 @@ class _SpCalendarMonthGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: 1.0,
+        mainAxisSpacing: 0.0,
+        crossAxisSpacing: 0.0,
       ),
       itemCount: itemCount,
       itemBuilder: (context, index) {

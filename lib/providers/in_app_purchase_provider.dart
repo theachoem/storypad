@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
+  bool get periodCalendar => kDebugMode || isActive(AppProduct.period_calendar.productIdentifier);
 
   DateTime? _rewardExpiredAt;
   List<String>? _rewardAddOns;
@@ -136,32 +138,47 @@ class InAppPurchaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> purchase(
+  Future<bool> purchase(
     BuildContext context,
     String productIdentifier,
+    Future<void> Function() onPurchased,
   ) async {
-    if (!kIAPEnabled) return;
+    if (!kIAPEnabled) return false;
 
     await _loginIfNot(context);
 
-    if (_customerInfo == null) return;
-    if (isActive(productIdentifier)) return;
+    if (_customerInfo == null) return false;
+    if (isActive(productIdentifier)) return false;
+    if (!context.mounted) return false;
 
-    StoreProduct? storeProduct = await Purchases.getProducts(
-      [productIdentifier],
-      productCategory: ProductCategory.nonSubscription,
-    ).then((e) => e.firstOrNull);
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#_loginIfNot',
+      future: () async {
+        StoreProduct? storeProduct = await Purchases.getProducts(
+          [productIdentifier],
+          productCategory: ProductCategory.nonSubscription,
+        ).then((e) => e.firstOrNull);
 
-    if (storeProduct != null) {
-      try {
-        PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
-        _customerInfo = result.customerInfo;
-        notifyListeners();
-      } on PlatformException catch (e, s) {
-        PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
-        AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
-      }
+        if (storeProduct != null) {
+          try {
+            PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
+            _customerInfo = result.customerInfo;
+            if (isActive(productIdentifier)) await onPurchased();
+            notifyListeners();
+          } on PlatformException catch (e, s) {
+            PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
+            AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
+          }
+        }
+      },
+    );
+
+    if (isActive(productIdentifier)) {
+      if (context.mounted) await MessengerService.of(context).showSuccess();
+      return true;
     }
+
+    return false;
   }
 
   // Restore purchase handle like a refresh.
