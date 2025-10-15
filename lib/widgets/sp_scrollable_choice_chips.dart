@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 
 class SpScrollableChoiceChips<T> extends StatelessWidget {
   const SpScrollableChoiceChips({
@@ -39,6 +38,7 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
             final storyCount = storiesCount(choice);
 
             return ChoiceChip(
+              showCheckmark: false,
               label: RichText(
                 text: TextSpan(
                   text: "$label ",
@@ -50,7 +50,7 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
                           decoration: BoxDecoration(
-                            color: ColorScheme.of(context).readOnly.surface5,
+                            color: ColorScheme.of(context).surface,
                             borderRadius: BorderRadius.circular(48.0),
                           ),
                           child: Text(

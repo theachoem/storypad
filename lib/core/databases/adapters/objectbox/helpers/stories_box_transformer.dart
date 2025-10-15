@@ -2,11 +2,12 @@ part of '../stories_box.dart';
 
 StoryDbModel _objectToModel(Map<String, dynamic> map) {
   StoryObjectBox object = map['object'];
-  // Map<String, dynamic>? options = map['options'];
+  Map<String, dynamic>? options = map['options'];
 
   Iterable<PathType> types = PathType.values.where((e) => e.name == object.type);
+  Map<int, EventDbModel> events = options != null && options.containsKey('events') ? options['events'] : {};
 
-  return StoryDbModel(
+  StoryDbModel story = StoryDbModel(
     version: object.version,
     type: types.isNotEmpty ? types.first : PathType.docs,
     id: object.id,
@@ -29,7 +30,11 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
     templateId: object.templateId,
+    eventId: object.eventId,
   );
+
+  story.includeEvent(events[story.eventId]);
+  return story;
 }
 
 List<StoryDbModel> _objectsToModels(Map<String, dynamic> map) {
@@ -99,6 +104,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
+    eventId: story.eventId,
     permanentlyDeletedAt: story.permanentlyDeletedAt,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );

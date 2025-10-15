@@ -23,6 +23,7 @@ class StoryHeader extends StatelessWidget {
     required this.story,
     required this.draftContent,
     required this.readOnly,
+    required this.dateReadOnly,
     required this.draftActions,
     required this.currentPageIndexNotifier,
     required this.setFeeling,
@@ -46,6 +47,7 @@ class StoryHeader extends StatelessWidget {
   final void Function() onToggleManagingPage;
   final void Function(Size size) onSizeChange;
   final bool readOnly;
+  final bool dateReadOnly;
 
   factory StoryHeader.fromEditStory({
     required StoryPageObject page,
@@ -64,6 +66,7 @@ class StoryHeader extends StatelessWidget {
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       onToggleShowTime: viewModel.toggleShowTime,
       readOnly: false,
+      dateReadOnly: viewModel.story?.event == null,
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: null,
@@ -89,6 +92,7 @@ class StoryHeader extends StatelessWidget {
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       onToggleShowTime: viewModel.toggleShowTime,
       readOnly: true,
+      dateReadOnly: viewModel.story?.event == null,
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: SpStoryLabelsDraftActions(
@@ -137,7 +141,7 @@ class StoryHeader extends StatelessWidget {
               Expanded(
                 child: _StoryHeaderDateSelector(
                   story: story,
-                  readOnly: readOnly,
+                  dateReadOnly: dateReadOnly,
                   onChangeDate: onChangeDate,
                 ),
               ),
@@ -165,12 +169,12 @@ class StoryHeader extends StatelessWidget {
 class _StoryHeaderDateSelector extends StatelessWidget {
   const _StoryHeaderDateSelector({
     required this.story,
-    required this.readOnly,
+    required this.dateReadOnly,
     required this.onChangeDate,
   });
 
   final StoryDbModel story;
-  final bool readOnly;
+  final bool dateReadOnly;
   final Future<void> Function(DateTime)? onChangeDate;
 
   Future<void> changeDate(BuildContext context) async {
@@ -185,7 +189,7 @@ class _StoryHeaderDateSelector extends StatelessWidget {
     return Row(
       children: [
         InkWell(
-          onTap: readOnly || onChangeDate == null ? null : () => changeDate(context),
+          onTap: dateReadOnly || onChangeDate == null ? null : () => changeDate(context),
           borderRadius: BorderRadius.circular(4.0),
           child: Row(
             children: [
@@ -199,7 +203,7 @@ class _StoryHeaderDateSelector extends StatelessWidget {
                   buildMonthYear(context),
                 ],
               ),
-              if (!readOnly) ...[
+              if (!dateReadOnly) ...[
                 const SizedBox(width: 4.0),
                 const Icon(SpIcons.dropDown),
               ],

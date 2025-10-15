@@ -11,4 +11,13 @@ extension Matrix4Extension on Matrix4 {
   ]) {
     return translateByVector3(Vector3(x, y, z));
   }
+
+  void spScale(
+    double scale, [
+    double x = 0.0,
+    double y = 0.0,
+    double z = 0.0,
+  ]) {
+    return scaleByVector3(Vector3.all(scale));
+  }
 }

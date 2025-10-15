@@ -4,6 +4,7 @@ enum NewBadge {
   community_tile_with_donation,
   add_on_tile,
   add_on_tile_with_reward,
+  add_on_tile_with_period_calendar,
   none;
 
   static List<String> get keys => values.map((e) => e.name).toList();

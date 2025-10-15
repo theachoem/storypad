@@ -148,6 +148,16 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    if (story.event?.period == true) {
+      children.add(
+        Icon(
+          SpIcons.waterDrop,
+          color: Theme.of(context).colorScheme.error,
+          size: MediaQuery.textScalerOf(context).scale(16.0),
+        ),
+      );
+    }
+
     if (children.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: margin,
@@ -189,12 +199,13 @@ class SpStoryLabels extends StatelessWidget {
 
   Widget buildPin({
     required BuildContext context,
-    required String title,
+    required String? title,
     required void Function()? onTap,
     String? tooltip,
     IconData? leadingIconData,
+    Color? leadingIconColor,
   }) {
-    Widget text;
+    Widget? text;
 
     if (leadingIconData != null) {
       text = RichText(
@@ -202,12 +213,15 @@ class SpStoryLabels extends StatelessWidget {
         text: TextSpan(
           style: TextTheme.of(context).labelMedium,
           children: [
-            WidgetSpan(child: Icon(leadingIconData, size: 16.0), alignment: PlaceholderAlignment.middle),
-            TextSpan(text: " $title"),
+            WidgetSpan(
+              child: Icon(leadingIconData, size: 16.0, color: leadingIconColor),
+              alignment: PlaceholderAlignment.middle,
+            ),
+            if (title != null) TextSpan(text: " $title"),
           ],
         ),
       );
-    } else {
+    } else if (title != null) {
       text = Text(
         title,
         style: TextTheme.of(context).labelMedium,

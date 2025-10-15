@@ -35,6 +35,7 @@ class EditStoryRoute extends BaseRoute {
   final int? initialDay;
   final AssetDbModel? initialAsset;
   final List<int>? initialTagIds;
+  final int? initialEventId;
   final TemplateDbModel? template;
   final StoryDbModel? story;
   final int? initialPageIndex;
@@ -53,6 +54,7 @@ class EditStoryRoute extends BaseRoute {
     this.initialPageIndex,
     this.initialPageScrollOffet = 0,
     this.template,
+    this.initialEventId,
   }) : assert(initialYear == null || id == null);
 
   @override

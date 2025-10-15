@@ -7,161 +7,145 @@ class _CalendarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TagsProvider tagProvider = Provider.of<TagsProvider>(context);
-
-    final tags = <TagDbModel>[...tagProvider.tags?.items ?? []];
-    tags.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
-
-    return DefaultTabController(
-      length: tags.length,
-      child: CupertinoSheetRoute.hasParentSheet(context)
-          ? Container(
-              padding: const EdgeInsets.only(top: 12.0),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: buildScaffold(tags, context),
-            )
-          : buildScaffold(tags, context),
-    );
+    if (CupertinoSheetRoute.hasParentSheet(context)) {
+      return Container(
+        padding: const EdgeInsets.only(top: 12.0),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: buildScaffold(context),
+      );
+    } else {
+      return buildScaffold(context);
+    }
   }
 
-  Widget buildScaffold(List<TagDbModel> tags, BuildContext context) {
+  Widget buildScaffold(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(tags, context),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        tooltip: tr("button.new_story"),
-        child: const Icon(SpIcons.newStory),
-        onPressed: () => viewModel.goToNewPage(context),
-      ),
-      body: NestedScrollView(
-        controller: PrimaryScrollController.maybeOf(context),
-        headerSliverBuilder: (context, _) {
-          return [
-            SliverToBoxAdapter(
-              child: _CalendarMonth(
-                month: viewModel.month,
-                year: viewModel.year,
-                selectedDay: viewModel.selectedDay,
-                feelingMapByDay: viewModel.feelingMapByDay,
-                onChanged: (year, month, selectedDay) => viewModel.onChanged(
-                  year,
-                  month,
-                  selectedDay,
-                  viewModel.selectedTagId,
-                  viewModel.tabIndex,
-                ),
-              ),
-            ),
-          ];
-        },
-        body: SpStoryList.withQuery(
-          key: ValueKey(viewModel.editedKey),
-          disableMultiEdit: true,
-          filter: viewModel.filter,
-        ),
-      ),
+      appBar: buildAppBar(context),
+      body: buildBody(),
     );
   }
 
-  AppBar buildAppBar(List<TagDbModel> tags, BuildContext context) {
+  Widget buildBody() {
+    return switch (viewModel.selectedSegment) {
+      CalendarSegmentId.mood => MoodCalendarView(
+        monthYearNotifier: viewModel.monthYearNotifier,
+      ),
+      CalendarSegmentId.period => PeriodCalendarView(
+        monthYearNotifier: viewModel.monthYearNotifier,
+      ),
+    };
+  }
+
+  AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 72,
       centerTitle: true,
-      bottom: tags.length == 1
-          ? const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1))
-          : buildTagsTabBar(tags, context),
-      title: SpTapEffect(
-        onTap: () async {
-          final result = await MonthPickerService(
-            context: context,
-            month: viewModel.month,
-            year: viewModel.year,
-          ).showPicker();
-          if (result != null) {
-            viewModel.onChanged(
-              result.year,
-              result.month,
-              viewModel.selectedDay,
-              viewModel.selectedTagId,
-              viewModel.tabIndex,
-            );
-          }
+      title: ValueListenableBuilder(
+        valueListenable: viewModel.monthYearNotifier,
+        builder: (context, monthYear, child) {
+          return SpTapEffect(
+            onTap: () async {
+              final result = await MonthPickerService(
+                context: context,
+                month: monthYear.month,
+                year: monthYear.year,
+              ).showPicker();
+              if (result != null) {
+                viewModel.onMonthYearChanged(result.year, result.month);
+              }
+            },
+            child: Text(
+              DateFormatHelper.yMMMM(DateTime(monthYear.year, monthYear.month, 1), context.locale),
+              key: ValueKey("${monthYear.month}-${monthYear.year}"),
+              style: Theme.of(context).appBarTheme.titleTextStyle,
+            ),
+          );
         },
-        child: Container(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            DateFormatHelper.yMMMM(DateTime(viewModel.year, viewModel.month, 1), context.locale),
-            key: ValueKey("${viewModel.month}-${viewModel.year}"),
-            style: Theme.of(context).appBarTheme.titleTextStyle,
-          ),
-        ),
       ),
       leading: IconButton(
         icon: const Icon(SpIcons.keyboardLeft),
         onPressed: () {
-          viewModel.onChanged(
-            viewModel.month - 1 == 0 ? viewModel.year - 1 : viewModel.year,
-            viewModel.month - 1 == 0 ? 12 : viewModel.month - 1,
-            viewModel.selectedDay,
-            viewModel.selectedTagId,
-            viewModel.tabIndex,
-          );
+          final newMonth = viewModel.monthYearNotifier.value.month - 1 == 0
+              ? 12
+              : viewModel.monthYearNotifier.value.month - 1;
+
+          final newYear = viewModel.monthYearNotifier.value.month - 1 == 0
+              ? viewModel.monthYearNotifier.value.year - 1
+              : viewModel.monthYearNotifier.value.year;
+
+          viewModel.onMonthYearChanged(newYear, newMonth);
         },
       ),
+      bottom: viewModel.segments.length > 1 ? buildSegmentButtons(context) : null,
       actions: [
         IconButton(
           icon: const Icon(SpIcons.keyboardRight),
           onPressed: () {
-            viewModel.onChanged(
-              viewModel.month + 1 == 13 ? viewModel.year + 1 : viewModel.year,
-              viewModel.month + 1 == 13 ? 1 : viewModel.month + 1,
-              viewModel.selectedDay,
-              viewModel.selectedTagId,
-              viewModel.tabIndex,
-            );
+            final newMonth = viewModel.monthYearNotifier.value.month + 1 == 13
+                ? 1
+                : viewModel.monthYearNotifier.value.month + 1;
+
+            final newYear = viewModel.monthYearNotifier.value.month + 1 == 13
+                ? viewModel.monthYearNotifier.value.year + 1
+                : viewModel.monthYearNotifier.value.year;
+
+            viewModel.onMonthYearChanged(newYear, newMonth);
           },
         ),
       ],
     );
   }
 
-  TabBar buildTagsTabBar(List<TagDbModel> tags, BuildContext context) {
-    return TabBar(
-      onTap: (index) {
-        TagDbModel tag = tags[index];
-        viewModel.onChanged(viewModel.year, viewModel.month, null, tag.id == 0 ? null : tag.id, index);
-      },
-      isScrollable: true,
-      tabAlignment: TabAlignment.start,
-      tabs: List.generate(tags.length, (index) {
-        return Tab(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              spacing: 8.0,
-              children: [
-                Text(tags[index].title),
-                if (viewModel.currentStoryCountByTabIndex[index] != null && index == viewModel.tabIndex)
-                  SpFadeIn.bound(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context).primary,
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Text(
-                        viewModel.currentStoryCountByTabIndex[index].toString(),
-                        style: TextStyle(
-                          color: ColorScheme.of(context).onPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+  PreferredSizeWidget buildSegmentButtons(BuildContext context) {
+    Widget segmentButton;
+
+    if (kIsCupertino) {
+      segmentButton = CupertinoSlidingSegmentedControl<CalendarSegmentId>(
+        groupValue: viewModel.selectedSegment,
+        onValueChanged: (segment) {
+          if (segment != null) {
+            viewModel.onSegmentChanged(segment);
+          }
+        },
+        children: {
+          for (final segment in viewModel.segments) segment: Text(segment.translatedName(context)),
+        },
+      );
+    } else {
+      segmentButton = SegmentedButton<CalendarSegmentId>(
+        selected: {viewModel.selectedSegment},
+        multiSelectionEnabled: false,
+        onSelectionChanged: (value) {
+          if (value.isNotEmpty) {
+            viewModel.onSegmentChanged(value.first);
+          }
+        },
+        showSelectedIcon: false,
+        segments: [
+          for (final segment in viewModel.segments)
+            ButtonSegment<CalendarSegmentId>(
+              value: segment,
+              label: Text(segment.translatedName(context)),
             ),
+        ],
+      );
+    }
+
+    return PreferredSize(
+      preferredSize: CupertinoSheetRoute.hasParentSheet(context)
+          ? const Size.fromHeight(32.0)
+          : const Size.fromHeight(48.0),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          margin: EdgeInsets.only(
+            left: MediaQuery.of(context).padding.left,
+            right: MediaQuery.of(context).padding.right,
           ),
-        );
-      }),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          width: double.infinity,
+          child: segmentButton,
+        ),
+      ),
     );
   }
 }

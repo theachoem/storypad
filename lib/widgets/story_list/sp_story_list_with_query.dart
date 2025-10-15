@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
@@ -78,6 +79,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.uniqueness != oldWidget.uniqueness) {
+      stories = null;
       load(debugSource: '$runtimeType#didUpdateWidget');
     }
   }
@@ -101,12 +103,22 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
       return SpStoryListMultiEditWrapper(
         disabled: true,
         builder: (context) {
-          return buildList();
+          return buildFadeInList();
         },
       );
     } else {
-      return buildList();
+      return buildFadeInList();
     }
+  }
+
+  Widget buildFadeInList() {
+    if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+    return KeyedSubtree(
+      key: ValueKey(widget.uniqueness),
+      child: SpFadeIn.fromBottom(
+        child: buildList(),
+      ),
+    );
   }
 
   SpStoryList buildList() {

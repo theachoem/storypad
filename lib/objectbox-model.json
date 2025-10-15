@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "30:5473653846024956989",
+      "lastPropertyId": "31:3376970649560229075",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -132,6 +132,11 @@
         {
           "id": "30:5473653846024956989",
           "name": "templateId",
+          "type": 6
+        },
+        {
+          "id": "31:3376970649560229075",
+          "name": "eventId",
           "type": 6
         }
       ],
@@ -391,9 +396,63 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "8:4141544638649465889",
+      "lastPropertyId": "9:7724360977652119040",
+      "name": "EventObjectBox",
+      "properties": [
+        {
+          "id": "1:7778167802137349235",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:8514330305809733913",
+          "name": "year",
+          "type": 6
+        },
+        {
+          "id": "3:1817316657179753326",
+          "name": "month",
+          "type": 6
+        },
+        {
+          "id": "4:5471026013882178136",
+          "name": "day",
+          "type": 6
+        },
+        {
+          "id": "5:7259485360492887599",
+          "name": "eventType",
+          "type": 9
+        },
+        {
+          "id": "6:4105040820472222305",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "7:6528294432714917018",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "8:6580784597345938449",
+          "name": "permanentlyDeletedAt",
+          "type": 10
+        },
+        {
+          "id": "9:7724360977652119040",
+          "name": "lastSavedDeviceId",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "7:7447837682900434922",
+  "lastEntityId": "8:4141544638649465889",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
+import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
 class SpCalendarSheet extends BaseBottomSheet {
   final int? initialMonth;
   final int? initialYear;
+  final CalendarSegmentId? initialSegment;
 
   SpCalendarSheet({
     required this.initialMonth,
     required this.initialYear,
+    this.initialSegment,
   });
 
   @override
@@ -40,6 +43,7 @@ class SpCalendarSheet extends BaseBottomSheet {
       params: CalendarRoute(
         initialMonth: initialMonth,
         initialYear: initialYear,
+        initialSegment: initialSegment,
       ),
     );
   }

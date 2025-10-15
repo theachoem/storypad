@@ -43,7 +43,18 @@ class _AddOnCard extends StatelessWidget {
         foregroundColor: ColorScheme.of(context).onPrimary,
         child: Icon(addOn.iconData),
       ),
-      title: Text(addOn.title),
+      title: Text.rich(
+        TextSpan(
+          text: addOn.title,
+          children: [
+            if (addOn.designForFemale)
+              const WidgetSpan(
+                child: Icon(Icons.female_outlined, size: 20.0),
+                alignment: PlaceholderAlignment.middle,
+              ),
+          ],
+        ),
+      ),
       subtitle: Text(addOn.subtitle),
     );
   }

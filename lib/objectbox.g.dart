@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(30, 5473653846024956989),
+    lastPropertyId: const obx_int.IdUid(31, 3376970649560229075),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -172,6 +172,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(30, 5473653846024956989),
         name: 'templateId',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(31, 3376970649560229075),
+        name: 'eventId',
         type: 6,
         flags: 0,
       ),
@@ -481,6 +487,70 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(8, 4141544638649465889),
+    name: 'EventObjectBox',
+    lastPropertyId: const obx_int.IdUid(9, 7724360977652119040),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 7778167802137349235),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 8514330305809733913),
+        name: 'year',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 1817316657179753326),
+        name: 'month',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 5471026013882178136),
+        name: 'day',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 7259485360492887599),
+        name: 'eventType',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 4105040820472222305),
+        name: 'createdAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 6528294432714917018),
+        name: 'updatedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 6580784597345938449),
+        name: 'permanentlyDeletedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 7724360977652119040),
+        name: 'lastSavedDeviceId',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -521,7 +591,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(7, 7447837682900434922),
+    lastEntityId: const obx_int.IdUid(8, 4141544638649465889),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -584,7 +654,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final draftContentOffset = object.draftContent == null
             ? null
             : fbb.writeString(object.draftContent!);
-        fbb.startTable(31);
+        fbb.startTable(32);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -610,6 +680,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(27, latestContentOffset);
         fbb.addOffset(28, draftContentOffset);
         fbb.addInt64(29, object.templateId);
+        fbb.addInt64(30, object.eventId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -716,6 +787,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fb.Int64Reader(),
           lazy: false,
         ).vTableGetNullable(buffer, rootOffset, 50);
+        final eventIdParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          64,
+        );
         final metadataParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 36);
@@ -750,6 +826,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           changes: changesParam,
           tags: tagsParam,
           assets: assetsParam,
+          eventId: eventIdParam,
           metadata: metadataParam,
           preferences: preferencesParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
@@ -1159,6 +1236,91 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    EventObjectBox: obx_int.EntityDefinition<EventObjectBox>(
+      model: _entities[6],
+      toOneRelations: (EventObjectBox object) => [],
+      toManyRelations: (EventObjectBox object) => {},
+      getId: (EventObjectBox object) => object.id,
+      setId: (EventObjectBox object, int id) {
+        object.id = id;
+      },
+      objectToFB: (EventObjectBox object, fb.Builder fbb) {
+        final eventTypeOffset = fbb.writeString(object.eventType);
+        final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+            ? null
+            : fbb.writeString(object.lastSavedDeviceId!);
+        fbb.startTable(10);
+        fbb.addInt64(0, object.id);
+        fbb.addInt64(1, object.year);
+        fbb.addInt64(2, object.month);
+        fbb.addInt64(3, object.day);
+        fbb.addOffset(4, eventTypeOffset);
+        fbb.addInt64(5, object.createdAt.millisecondsSinceEpoch);
+        fbb.addInt64(6, object.updatedAt.millisecondsSinceEpoch);
+        fbb.addInt64(7, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+        fbb.addOffset(8, lastSavedDeviceIdOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final permanentlyDeletedAtValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 18);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final yearParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          6,
+          0,
+        );
+        final monthParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          8,
+          0,
+        );
+        final dayParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          10,
+          0,
+        );
+        final eventTypeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 12, '');
+        final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+        );
+        final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
+        );
+        final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 20);
+        final object = EventObjectBox(
+          id: idParam,
+          year: yearParam,
+          month: monthParam,
+          day: dayParam,
+          eventType: eventTypeParam,
+          createdAt: createdAtParam,
+          updatedAt: updatedAtParam,
+          permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1289,6 +1451,11 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.templateId].
   static final templateId = obx.QueryIntegerProperty<StoryObjectBox>(
     _entities[0].properties[24],
+  );
+
+  /// See [StoryObjectBox.eventId].
+  static final eventId = obx.QueryIntegerProperty<StoryObjectBox>(
+    _entities[0].properties[25],
   );
 }
 
@@ -1513,5 +1680,53 @@ class RelaxSoundMixBox_ {
   /// See [RelaxSoundMixBox.index].
   static final index = obx.QueryIntegerProperty<RelaxSoundMixBox>(
     _entities[5].properties[7],
+  );
+}
+
+/// [EventObjectBox] entity fields to define ObjectBox queries.
+class EventObjectBox_ {
+  /// See [EventObjectBox.id].
+  static final id = obx.QueryIntegerProperty<EventObjectBox>(
+    _entities[6].properties[0],
+  );
+
+  /// See [EventObjectBox.year].
+  static final year = obx.QueryIntegerProperty<EventObjectBox>(
+    _entities[6].properties[1],
+  );
+
+  /// See [EventObjectBox.month].
+  static final month = obx.QueryIntegerProperty<EventObjectBox>(
+    _entities[6].properties[2],
+  );
+
+  /// See [EventObjectBox.day].
+  static final day = obx.QueryIntegerProperty<EventObjectBox>(
+    _entities[6].properties[3],
+  );
+
+  /// See [EventObjectBox.eventType].
+  static final eventType = obx.QueryStringProperty<EventObjectBox>(
+    _entities[6].properties[4],
+  );
+
+  /// See [EventObjectBox.createdAt].
+  static final createdAt = obx.QueryDateProperty<EventObjectBox>(
+    _entities[6].properties[5],
+  );
+
+  /// See [EventObjectBox.updatedAt].
+  static final updatedAt = obx.QueryDateProperty<EventObjectBox>(
+    _entities[6].properties[6],
+  );
+
+  /// See [EventObjectBox.permanentlyDeletedAt].
+  static final permanentlyDeletedAt = obx.QueryDateProperty<EventObjectBox>(
+    _entities[6].properties[7],
+  );
+
+  /// See [EventObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId = obx.QueryStringProperty<EventObjectBox>(
+    _entities[6].properties[8],
   );
 }

@@ -5,6 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
@@ -51,6 +52,8 @@ class StoryDbModel extends BaseDbModel {
   @override
   final DateTime updatedAt;
   final int? templateId;
+  final int? eventId;
+
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
 
@@ -96,6 +99,7 @@ class StoryDbModel extends BaseDbModel {
     required this.latestContent,
     required this.draftContent,
     required this.templateId,
+    this.eventId,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
   }) : _preferences = preferences;
@@ -122,7 +126,7 @@ class StoryDbModel extends BaseDbModel {
   bool get archivable => type == PathType.docs && !cloudViewing;
   bool get unarchivable => type == PathType.archives && !cloudViewing;
   bool get canMoveToBin => !permanentlyDeleted && !inBins && !cloudViewing;
-  bool get hardDeletable => !permanentlyDeleted && inBins && !cloudViewing;
+  bool get hardDeletable => !permanentlyDeleted && !cloudViewing;
 
   int? get willBeRemovedInDays {
     if (movedToBinAt != null) {
@@ -247,6 +251,7 @@ class StoryDbModel extends BaseDbModel {
     int? initialMonth,
     int? initialDay,
     List<int>? initialTagIds,
+    int? initialEventId,
     TemplateDbModel? template,
   }) {
     List<int> tags = initialTagIds ?? template?.tags ?? [];
@@ -268,6 +273,7 @@ class StoryDbModel extends BaseDbModel {
       updatedAt: now,
       createdAt: now,
       tags: tags.isNotEmpty == true ? tags.map((e) => e.toString()).toList() : null,
+      eventId: initialEventId,
       assets: [],
       templateId: template?.id,
       movedToBinAt: null,
@@ -307,8 +313,17 @@ class StoryDbModel extends BaseDbModel {
   bool _cloudViewing = false;
   bool get cloudViewing => _cloudViewing;
 
+  // when fetch one/all, we will include this in db level.
+  EventDbModel? _event;
+  EventDbModel? get event => _event;
+
   StoryDbModel markAsCloudViewing() {
     _cloudViewing = true;
+    return this;
+  }
+
+  StoryDbModel includeEvent(EventDbModel? event) {
+    _event = event;
     return this;
   }
 }

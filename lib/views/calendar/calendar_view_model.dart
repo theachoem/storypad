@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/views/home/home_view.dart';
-import 'package:storypad/views/stories/edit/edit_story_view.dart';
+import 'package:storypad/core/objects/calendar_segment_id.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'calendar_view.dart';
 
 class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -12,93 +10,59 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   CalendarViewModel({
     required this.params,
+    required BuildContext context,
   }) {
-    feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
-    currentStoryCountByTabIndex[tabIndex] = StoryDbModel.db.getStoryCountBy(filters: filter.toDatabaseFilter());
+    monthYearNotifier = ValueNotifier((
+      year: params.initialYear ?? DateTime.now().year,
+      month: params.initialMonth ?? DateTime.now().month,
+    ));
 
-    StoryDbModel.db.addGlobalListener(reloadFeeling);
+    provider = context.read<InAppPurchaseProvider>()..addListener(_listener);
+    _setSegments();
+
+    selectedSegment = params.initialSegment != null && _segments.contains(params.initialSegment)
+        ? params.initialSegment!
+        : _segments.first;
   }
 
-  late int month = params.initialMonth ?? DateTime.now().month;
-  late int year = params.initialYear ?? DateTime.now().year;
-  int? selectedDay;
+  late final InAppPurchaseProvider provider;
+  late final ValueNotifier<({int year, int month})> monthYearNotifier;
 
-  int? selectedTagId;
-  Map<int, int> currentStoryCountByTabIndex = {};
-  int tabIndex = 0;
+  late CalendarSegmentId selectedSegment;
+  late List<CalendarSegmentId> _segments;
 
-  Map<int, String?> feelingMapByDay = {};
-  int editedKey = 0;
+  List<CalendarSegmentId> get segments => _segments;
 
-  SearchFilterObject get filter {
-    return SearchFilterObject(
-      years: {year},
-      month: month,
-      day: selectedDay,
-      types: {PathType.docs},
-      tagId: selectedTagId,
-      assetId: null,
-    );
+  void _listener() {
+    _setSegments();
+
+    if (!_segments.contains(selectedSegment)) {
+      selectedSegment = _segments.first;
+    }
+
+    notifyListeners();
+  }
+
+  void _setSegments() {
+    _segments = [
+      CalendarSegmentId.mood,
+      if (provider.periodCalendar) CalendarSegmentId.period,
+    ];
   }
 
   @override
   void dispose() {
-    StoryDbModel.db.removeGlobalListener(reloadFeeling);
+    provider.removeListener(_listener);
+    monthYearNotifier.dispose();
     super.dispose();
   }
 
-  // only reload feeling when listen to DB.
-  // story query list already know how to refresh their own list, so we don't have to refresh for them.
-  Future<void> reloadFeeling() async {
-    feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+  void onSegmentChanged(CalendarSegmentId segment) {
+    selectedSegment = segment;
     notifyListeners();
   }
 
-  Future<void> goToNewPage(BuildContext context) async {
-    final addedStory = await EditStoryRoute(
-      id: null,
-      initialYear: year,
-      initialMonth: month,
-      initialDay: selectedDay,
-      initialTagIds: selectedTagId != null ? [selectedTagId!] : null,
-    ).push(context);
-
-    if (addedStory is StoryDbModel) {
-      month = addedStory.month;
-      year = addedStory.year;
-      selectedDay = addedStory.day;
-    }
-
-    editedKey += 1;
-    notifyListeners();
-
-    Future.delayed(const Duration(seconds: 1)).then((_) {
-      HomeView.reload(debugSource: '$runtimeType#goToNewPage');
-    });
-  }
-
-  void onChanged(
-    int year,
-    int month,
-    int? selectedDay,
-    int? selectedTagId,
-    int tabIndex,
-  ) async {
-    if (year != this.year || month != this.month || selectedTagId != this.selectedTagId) {
-      feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
-        month: month,
-        year: year,
-        tagId: selectedTagId,
-      );
-    }
-
-    this.tabIndex = tabIndex;
-    this.selectedDay = year != this.year || month != this.month ? null : selectedDay;
-    this.year = year;
-    this.month = month;
-    this.selectedTagId = selectedTagId;
-    currentStoryCountByTabIndex[tabIndex] = StoryDbModel.db.getStoryCountBy(filters: filter.toDatabaseFilter());
-
-    notifyListeners();
+  void onMonthYearChanged(int newYear, int newMonth) {
+    monthYearNotifier.value = (year: newYear, month: newMonth);
   }
 }

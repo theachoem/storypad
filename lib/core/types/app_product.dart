@@ -2,7 +2,8 @@
 
 enum AppProduct {
   relax_sounds,
-  templates;
+  templates,
+  period_calendar;
 
   static List<String> get productIdentifiers => values.map((e) => e.name).toList();
 
