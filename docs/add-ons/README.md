@@ -10,6 +10,7 @@ StoryPad doesn't run ads. We don't sell your data. We don't have a subscription 
 
 - **[Relaxing Sounds](./relaxing-sounds.md)** — Set the mood before you write or read. — **$0.99**
 - **[Templates](./templates.md)** — Create your own daily writing templates. — **$0.99**
+- **[Period Calendar](./period-calendar.md)** — Track your period and create related story entries. — **$0.99**
 
 ## Pricing Model
 
