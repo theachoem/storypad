@@ -66,7 +66,7 @@ class StoryHeader extends StatelessWidget {
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       onToggleShowTime: viewModel.toggleShowTime,
       readOnly: false,
-      dateReadOnly: viewModel.story?.event == null,
+      dateReadOnly: viewModel.story?.eventId != null,
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: null,
@@ -92,7 +92,7 @@ class StoryHeader extends StatelessWidget {
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       onToggleShowTime: viewModel.toggleShowTime,
       readOnly: true,
-      dateReadOnly: viewModel.story?.event == null,
+      dateReadOnly: true,
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: SpStoryLabelsDraftActions(
