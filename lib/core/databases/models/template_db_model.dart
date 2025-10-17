@@ -54,4 +54,12 @@ class TemplateDbModel extends BaseDbModel {
   @override
   Map<String, dynamic> toJson() => _$TemplateDbModelToJson(this);
   factory TemplateDbModel.fromJson(Map<String, dynamic> json) => _$TemplateDbModelFromJson(json);
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+
+  TemplateDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }

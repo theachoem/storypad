@@ -77,4 +77,12 @@ class EventDbModel extends BaseDbModel {
 
   @override
   Map<String, dynamic> toJson() => _$EventDbModelToJson(this);
+
+  bool _cloudViewing = false;
+  bool get cloudViewing => _cloudViewing;
+
+  EventDbModel markAsCloudViewing() {
+    _cloudViewing = true;
+    return this;
+  }
 }

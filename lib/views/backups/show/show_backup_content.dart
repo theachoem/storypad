@@ -38,12 +38,27 @@ class _ShowBackupContent extends StatelessWidget {
                 ],
               )
             : Text(backup.fileInfo.device.model),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FilledButton.icon(
-        icon: Icon(SpIcons.restore),
-        label: Text(tr("button.restore")),
-        onPressed: () => viewModel.restore(context),
+
+        actions: [
+          SpPopupMenuButton(
+            items: (context) {
+              return [
+                SpPopMenuItem(
+                  titleStyle: TextStyle(color: ColorScheme.of(context).error),
+                  leadingIconData: SpIcons.refresh,
+                  title: tr('button.restore'),
+                  onPressed: () => viewModel.restore(context),
+                ),
+              ];
+            },
+            builder: (callback) {
+              return IconButton(
+                onPressed: callback,
+                icon: const Icon(SpIcons.moreVert),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: backup.tables.length,
@@ -81,9 +96,13 @@ class _ShowBackupContent extends StatelessWidget {
               leadingIconData = SpIcons.musicNote;
               translateTabledName = tr("general.sound_mixes");
               break;
+            case 'events':
+              leadingIconData = SpIcons.calendar;
+              translateTabledName = table.key.capitalize;
+              break;
             default:
               leadingIconData = SpIcons.table;
-              translateTabledName = table.key;
+              translateTabledName = table.key.capitalize;
               break;
           }
 

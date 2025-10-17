@@ -34,6 +34,18 @@ class _ShowTableContent extends StatelessWidget {
             .toList();
         viewer = BackupAssetsTableViewer(assets: models);
         break;
+      case 'templates':
+        List<TemplateDbModel> models = viewModel.params.tableContents
+            .map((e) => TemplatesBox().modelFromJson(e)..markAsCloudViewing())
+            .toList();
+        viewer = BackupTemplatesTableViewer(templates: models);
+        break;
+      case 'events':
+        List<EventDbModel> models = viewModel.params.tableContents
+            .map((e) => EventsBox().modelFromJson(e)..markAsCloudViewing())
+            .toList();
+        viewer = BackupEventsTableViewer(events: models);
+        break;
       default:
         viewer = BackupDefaultTableViewer(tableContents: viewModel.params.tableContents);
         break;

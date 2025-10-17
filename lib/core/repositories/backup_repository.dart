@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -26,6 +27,7 @@ class BackupRepository {
     PreferenceDbModel.db,
     StoryDbModel.db,
     TagDbModel.db,
+    EventDbModel.db,
     TemplateDbModel.db,
     AssetDbModel.db,
     RelaxSoundMixModel.db,
