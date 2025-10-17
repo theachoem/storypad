@@ -53,6 +53,7 @@
             <string>pt-BR</string>
             <string>vi-VN</string>
             <string>zh-CN</string>
+            <string>ru-RU</string>
         </array>
         <key>GIDClientID</key>
         <string>$(GOOGLE_CLIENT_ID)</string>
