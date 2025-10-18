@@ -12,7 +12,7 @@ if (kIsCupertino) {
   return CupertinoButton(...);
 } else {
   // Android-specific UI
-  return ElevatedButton(...);
+  return FilledButton(...);
 }
 ```
 
@@ -41,9 +41,7 @@ await showOkCancelAlertDialog(
 
 ```dart
 // Use Flutter Navigator 1.0
-Navigator.of(context).push(
-  MaterialPageRoute(builder: (_) => MyView()),
-);
+EditStoryRoute(...).push(context)
 
 // Pop with result
 Navigator.of(context).pop(result);

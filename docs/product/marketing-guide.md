@@ -16,6 +16,7 @@
 **Primary:** General users who write and value minimalism
 
 **Characteristics:**
+
 - Appreciate clean, simple interfaces
 - Want powerful features without complexity
 - Value privacy and data ownership
@@ -23,13 +24,13 @@
 
 ## Competitive Advantages
 
-| Feature | StoryPad | Competitors |
-|---------|----------|-------------|
-| Pricing | Free + optional add-ons | Subscription-based |
-| Privacy | Local-first, optional sync | Cloud-required |
-| Design | Minimalist timeline | Folder/notebook structure |
-| Customization | Extensive editing tools | Limited formatting |
-| Open Source | GPL v3.0 | Closed source |
+| Feature       | StoryPad                   | Competitors               |
+| ------------- | -------------------------- | ------------------------- |
+| Pricing       | Free + optional add-ons    | Subscription-based        |
+| Privacy       | Local-first, optional sync | Cloud-required            |
+| Design        | Minimalist timeline        | Folder/notebook structure |
+| Customization | Extensive editing tools    | Limited formatting        |
+| Open Source   | GPL v3.0                   | Closed source             |
 
 ## Content Strategy
 
@@ -47,6 +48,7 @@
 ### Future Expansion
 
 Planned growth on:
+
 - Facebook
 - TikTok
 - More active X engagement
@@ -54,14 +56,17 @@ Planned growth on:
 ## Messaging Examples
 
 ### App Store Description
+
 "Beautiful, privacy-first journal app. Timeline-based writing with rich customization. No ads, no subscriptions, no data selling."
 
 ### Social Media Posts
+
 - "Your life isn't organized in folders. Why should your journal be?"
 - "1300+ fonts. Unlimited customization. Zero subscriptions."
 - "Privacy-first journaling. Your data never leaves your device (unless you choose to sync)."
 
 ### Feature Highlights
+
 - "Throwback memories: See what you wrote on this day years ago"
 - "45+ emotions to track your feelings over time"
 - "Multi-page entries perfect for novels, prompts, or daily notes"
@@ -69,12 +74,14 @@ Planned growth on:
 ## Press Kit (Future)
 
 ### Key Stats
+
 - 100K+ downloads
 - 4.5-star rating
 - 3-5K monthly active users
 - Open source (GPL v3.0)
 
 ### Story Angles
+
 - "Privacy-first alternative to subscription journal apps"
 - "Open source journaling for transparency"
 - "Minimalist design meets powerful features"

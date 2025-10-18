@@ -21,17 +21,21 @@ Users love StoryPad for:
 ### Community Requests
 
 **Most Requested:**
+
 - Video recording ✓ (planned as "Short Video")
 
 ## Add-on Strategy
 
 ### Current Add-ons
+
 - Relaxing Sounds ($0.99)
 - Templates ($0.99)
 
 ### Planned Add-ons
+
 - Period Cycle Tracker (women's health)
 - Inspiration to Template (writing prompts)
 
 ### Future Consideration
+
 - Premium tier when add-on library grows significantly

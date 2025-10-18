@@ -13,6 +13,12 @@ Track your period cycle with ease, right inside your StoryPad journal. The Perio
 - **Private & Secure**: Your data stays on your device
 - **Beautiful UI**: Enjoy a calendar that's both functional and visually appealing
 
+## Screenshots
+
+|                                                                                               |                                                                                               |                                                                                               |     |
+| :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | --- |
+| ![Screenshot 1](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_1.jpg) | ![Screenshot 2](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_2.jpg) | ![Screenshot 3](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_3.jpg) |
+
 ## Features
 
 ### Calendar View

@@ -13,22 +13,26 @@ Product-focused documentation for marketing, planning, and strategic decisions.
 ## Quick Reference
 
 ### Product Identity
+
 - **Mission:** Simplicity + powerful features + customization
 - **Audience:** General users who write and prefer minimalism
 - **Brand:** Minimalist, creative
 
 ### Key Stats (Oct 2025)
+
 - 100K+ downloads
 - 3-5K monthly active users
 - 4.5-star rating
 - Available on Android & iOS
 
 ### Monetization
+
 - Free core app (no ads, no subscriptions)
 - Optional $0.99 add-ons (Relaxing Sounds, Templates)
 - Future: Premium tier when add-on library grows
 
 ### Community
+
 - [Reddit: r/StoryPad](https://www.reddit.com/r/StoryPad/)
 - [X: @storypadapp](https://x.com/storypadapp)
 - [Website: storypad.me](https://storypad.me)

@@ -6,6 +6,12 @@
 
 Set the mood before you write or read. The Relaxing Sounds add-on provides ambient audio to help you focus and create the perfect atmosphere for your writing sessions.
 
+## Screenshots
+
+|                                      Screenshot 1                                      |                                      Screenshot 2                                      |                                      Screenshot 3                                      |                                      Screenshot 4                                      |
+| :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
+| ![Screenshot 1](../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_1.jpg) | ![Screenshot 2](../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_2.jpg) | ![Screenshot 3](../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_3.jpg) | ![Screenshot 4](../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_4.jpg) |
+
 ## Features
 
 ### Sound Library

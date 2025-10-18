@@ -6,6 +6,12 @@
 
 Create your own daily writing templates. The Templates add-on allows you to design reusable writing structures that help you maintain consistency and establish productive writing habits.
 
+## Screenshots
+
+|                                                                                  |                                                                                  |                                                                                  |                                                                                  |
+| :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
+| ![Screenshot 1](../../firestore_storages/add_ons_demos/templates/template_1.jpg) | ![Screenshot 2](../../firestore_storages/add_ons_demos/templates/template_2.jpg) | ![Screenshot 3](../../firestore_storages/add_ons_demos/templates/template_3.jpg) | ![Screenshot 4](../../firestore_storages/add_ons_demos/templates/template_4.jpg) |
+
 ## Features
 
 ### Template Creation
