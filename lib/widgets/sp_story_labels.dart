@@ -32,12 +32,19 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowTime,
     required this.onChangeDate,
     required this.onToggleManagingPage,
+    this.currentPagesCount,
     this.draftActions,
     this.margin = EdgeInsets.zero,
     this.fromStoryTile = false,
   });
 
   final StoryDbModel story;
+
+  // sometime current pages count from current state & story is different.
+  // example in edit view, there pages are store in seperated state.
+  // in that case, we use this var instead.
+  final int? currentPagesCount;
+
   final EdgeInsets margin;
   final bool fromStoryTile;
   final SpStoryLabelsDraftActions? draftActions;
@@ -93,7 +100,7 @@ class SpStoryLabels extends StatelessWidget {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = buildTags(tagProvider, context);
 
-    int pageCount = (story.draftContent ?? story.latestContent)?.richPages?.length ?? 0;
+    int pageCount = currentPagesCount ?? (story.draftContent ?? story.latestContent)?.richPages?.length ?? 0;
     if (pageCount > 1) {
       children.add(
         buildPin(

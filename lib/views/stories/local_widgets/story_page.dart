@@ -123,7 +123,7 @@ class _StoryPage extends StatelessWidget {
         focusNode1: page.titleFocusNode,
         focusNode2: page.bodyFocusNode,
         onFucusChangeAfterInitialized: onFocusChange,
-        child: _MoreVertActionButtons(
+        child: MoreVertActionButtons(
           pageIndex: pageIndex,
           canMoveUp: canMoveUp,
           canMoveDown: canMoveDown,

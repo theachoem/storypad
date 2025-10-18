@@ -50,6 +50,7 @@ class _EditStoryContent extends StatelessWidget {
         StoryPagesManager(
           viewModel: viewModel,
           mediaQueryPadding: MediaQuery.paddingOf(context),
+          actions: getPageActions(context),
         ),
       ],
     );
@@ -70,19 +71,23 @@ class _EditStoryContent extends StatelessWidget {
       storyContent: viewModel.draftContent!,
       pageController: viewModel.pagesManager.pageController,
       onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
-      actions: StoryPageBuilderAction(
-        onAddPage: () => viewModel.addNewPage(),
-        onSwapPages: (oldIndex, newIndex) => viewModel.reorderPages(oldIndex: oldIndex, newIndex: newIndex),
-        onDelete: (page) => viewModel.deleteAPage(context, page.page),
-        canDeletePage: viewModel.pagesManager.canDeletePage,
-        onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
-          if (titleFocused) {
-            if (viewModel.pagesManager.pageScrollController.hasClients) {
-              viewModel.pagesManager.scrollToPage(page.id);
-            }
+      actions: getPageActions(context),
+    );
+  }
+
+  StoryPageBuilderAction getPageActions(BuildContext context) {
+    return StoryPageBuilderAction(
+      onAddPage: () => viewModel.addNewPage(),
+      onSwapPages: (oldIndex, newIndex) => viewModel.reorderPages(oldIndex: oldIndex, newIndex: newIndex),
+      onDelete: (page) => viewModel.deleteAPage(context, page.page),
+      canDeletePage: viewModel.pagesManager.canDeletePage,
+      onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
+        if (titleFocused) {
+          if (viewModel.pagesManager.pageScrollController.hasClients) {
+            viewModel.pagesManager.scrollToPage(page.id);
           }
-        },
-      ),
+        }
+      },
     );
   }
 

@@ -7,6 +7,8 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
+import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';
+import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_reorderable_item.dart';
@@ -19,10 +21,12 @@ class StoryPagesManager extends StatelessWidget {
     super.key,
     required this.viewModel,
     required this.mediaQueryPadding,
+    required this.actions,
   });
 
   final BaseStoryViewModel viewModel;
   final EdgeInsets mediaQueryPadding;
+  final StoryPageBuilderAction? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +118,21 @@ class StoryPagesManager extends StatelessWidget {
                 }
               },
             ),
+            if (actions != null)
+              Positioned(
+                bottom: -6.0,
+                right: -12.0,
+                child: MoreVertActionButtons(
+                  pageIndex: pageIndex,
+                  onSwap: actions!.onSwapPages,
+                  onDelete: () => actions?.onDelete(page),
+                  canMoveUp: actions!.canMoveUp(pageIndex),
+                  canMoveDown: actions!.canMoveDown(pageIndex, viewModel.pagesManager.pagesCount),
+                  canDeletePage: actions?.canDeletePage == true,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ValueListenableBuilder(
               valueListenable: viewModel.pagesManager.currentPageIndexNotifier,
               child: const _CheckedIcon(),
@@ -157,7 +176,10 @@ class StoryPagesManager extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: 8.0,
+          ).add(actions != null ? const EdgeInsetsGeometry.only(right: 8.0) : EdgeInsetsGeometry.zero),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4.0),
             color: ColorScheme.of(context).surface,

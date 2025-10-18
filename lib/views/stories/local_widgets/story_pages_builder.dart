@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -18,20 +16,18 @@ import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.da
 import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';
 import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_focus_node_builder2.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_page_view_datas.dart';
 import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 part 'story_page.dart';
 part 'add_page_button.dart';
-part 'more_vert_action_buttons.dart';
 part 'title_field.dart';
 part 'quill_editor.dart';
 part 'story_page_builder_action.dart';
@@ -191,9 +187,6 @@ class StoryPagesBuilder extends StatelessWidget {
   }) {
     final pageIndex = pages.indexWhere((p) => page.id == p.id);
 
-    bool canMoveUp = pageIndex > 0;
-    bool canMoveDown = pageIndex < pages.length - 1;
-
     return _StoryPage(
       key: page.key,
       preferences: preferences,
@@ -204,8 +197,8 @@ class StoryPagesBuilder extends StatelessWidget {
       storyContent: storyContent,
       onSwap: actions?.onSwapPages,
       onDelete: actions == null ? null : () => actions?.onDelete(page),
-      canMoveUp: canMoveUp,
-      canMoveDown: canMoveDown,
+      canMoveUp: actions == null ? false : actions!.canMoveUp(pageIndex),
+      canMoveDown: actions == null ? false : actions!.canMoveDown(pageIndex, pages.length),
       canDeletePage: actions?.canDeletePage == true,
       onChanged: onPageChanged,
       onFocusChange: actions?.onFocusChange != null ? (a, b) => actions!.onFocusChange(pageIndex, page, a, b) : null,

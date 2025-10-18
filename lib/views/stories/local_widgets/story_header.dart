@@ -154,6 +154,7 @@ class StoryHeader extends StatelessWidget {
         ),
         SpStoryLabels(
           story: story,
+          currentPagesCount: draftContent.richPages?.length,
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           onToggleShowDayCount: onToggleShowDayCount,
           onToggleShowTime: onToggleShowTime,

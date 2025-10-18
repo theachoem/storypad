@@ -1,13 +1,21 @@
-part of 'story_pages_builder.dart';
+import 'dart:math';
+import 'package:animated_clipper/animated_clipper.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
-class _MoreVertActionButtons extends StatelessWidget {
-  const _MoreVertActionButtons({
+class MoreVertActionButtons extends StatelessWidget {
+  const MoreVertActionButtons({
+    super.key,
     required this.pageIndex,
     required this.canMoveUp,
     required this.canMoveDown,
     required this.canDeletePage,
     required this.onSwap,
     required this.onDelete,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   final int pageIndex;
@@ -18,6 +26,9 @@ class _MoreVertActionButtons extends StatelessWidget {
 
   final void Function(int oldIndex, int newIndex) onSwap;
   final void Function() onDelete;
+
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +48,14 @@ class _MoreVertActionButtons extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: ColorScheme.of(context).primary,
+              color: backgroundColor ?? ColorScheme.of(context).primary,
             ),
             child: Transform.scale(
               scale: 1.2,
               child: Icon(
                 SpIcons.moreVert,
                 size: 16,
-                color: ColorScheme.of(context).onPrimary,
+                color: foregroundColor ?? ColorScheme.of(context).onPrimary,
               ),
             ),
           ),

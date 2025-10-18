@@ -38,6 +38,7 @@ class _ShowStoryContent extends StatelessWidget {
         StoryPagesManager(
           viewModel: viewModel,
           mediaQueryPadding: MediaQuery.paddingOf(context),
+          actions: null,
         ),
       ],
     );
