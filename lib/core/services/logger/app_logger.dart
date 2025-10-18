@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart';
 
 enum AppLogLevel { debug, info, warning, error, critical }
 
@@ -28,7 +28,7 @@ class AppLogger {
     if (_logBuffer.length >= _maxLogs) _logBuffer.removeAt(0);
     _logBuffer.add(formattedMessage);
 
-    developer.log(formattedMessage);
+    if (kDebugMode) print(formattedMessage);
   }
 
   static void debug(String message, {String? tag}) => _instance.log(message, level: AppLogLevel.debug, tag: tag);

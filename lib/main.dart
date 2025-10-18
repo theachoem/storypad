@@ -9,6 +9,7 @@ import 'package:storypad/initializers/constants_initializer.dart' show Constants
 import 'package:storypad/initializers/database_initializer.dart' show DatabaseInitializer;
 import 'package:storypad/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
 import 'package:storypad/initializers/firebase_remote_config_initializer.dart' show FirebaseRemoteConfigInitializer;
+import 'package:storypad/initializers/firestore_storage_cleanup_initializer.dart';
 import 'package:storypad/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/initializers/onboarding_initializer.dart' show OnboardingInitializer;
@@ -22,6 +23,7 @@ void main({
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // firebase initialize
   await Firebase.initializeApp(options: firebaseOptions);
   FirebaseCrashlyticsInitializer.call();
   FirebaseRemoteConfigInitializer.call();
@@ -38,6 +40,9 @@ void main({
   await LegacyStoryPadInitializer.call();
   await OnboardingInitializer.call();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  // cleanup
+  FirestoreStorageCleanupInitializer.call();
 
   LicensesInitializer.call();
 

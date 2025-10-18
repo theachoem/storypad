@@ -2,7 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 
 class FirebaseCrashlyticsInitializer {
-  static Future<void> call() async {
+  static void call() {
     _listenToErrors();
     _listenToNonFlutterErrors();
   }

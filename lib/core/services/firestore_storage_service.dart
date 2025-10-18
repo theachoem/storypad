@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
+import 'package:storypad/core/services/logger/app_logger.dart';
 
 enum FirestoreStorageState { success, connectionFailed, unauthorized, unknown }
 
@@ -64,12 +67,15 @@ class FirestoreStorageService {
       final childRef = storageRef.child(hashPath);
 
       return _downloadUrlsByUrlPath?[urlPath] = await childRef.getDownloadURL();
-    } on FirebaseException catch (e) {
+    } on FirebaseException catch (e, s) {
       // https://firebase.google.com/docs/storage/flutter/handle-errors
-      debugPrint("FirestoreStorageService#getDownloadURL code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}");
+      AppLogger.error(
+        "FirestoreStorageService#getDownloadURL code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}",
+        stackTrace: s,
+      );
       return null;
-    } catch (e) {
-      debugPrint(e.toString());
+    } catch (e, s) {
+      AppLogger.error(e.toString(), stackTrace: s);
       return null;
     }
   }
@@ -102,16 +108,19 @@ class FirestoreStorageService {
         await File(downloadPath).writeAsBytes(content);
         response = FirestoreStorageResponse(file: File(downloadPath));
       }
-    } on FirebaseException catch (e) {
-      debugPrint("🔴 FirestoreStorageService#downloadFile code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}");
+    } on FirebaseException catch (e, s) {
+      AppLogger.error(
+        "🔴 FirestoreStorageService#downloadFile code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}",
+        stackTrace: s,
+      );
       if (e.code == 'unauthorized') {
         response = FirestoreStorageResponse(
           file: null,
           state: FirestoreStorageState.unauthorized,
         );
       }
-    } catch (e) {
-      debugPrint("🔴 FirestoreStorageService#downloadFile code: $e");
+    } catch (e, s) {
+      AppLogger.error("🔴 FirestoreStorageService#downloadFile code: $e", stackTrace: s);
     }
 
     response ??= FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
@@ -121,5 +130,49 @@ class FirestoreStorageService {
 
   String constructDeviceDownloadPath(String path) {
     return '${kSupportDirectory.path}/downloaded_from_firestore$path';
+  }
+
+  /// Cleans up any downloaded files that are no longer referenced in the assets map.
+  /// Returns a list of paths that were deleted.
+  Future<List<String>> cleanupUnusedFiles() async {
+    try {
+      final downloadDir = Directory('${kSupportDirectory.path}/downloaded_from_firestore');
+      if (!await downloadDir.exists()) return [];
+
+      // {
+      //   "/relax_sounds/water/ocean_waves-130d1d326a06fe0f21d4650a4f7065b7.txt",
+      //   "/relax_sounds/water/droplets-ec36e00209a8cece33eef6f5c3f80e61.txt",
+      // };
+      final validPaths = (await hash ?? {}).values.map((e) => path.normalize(e.toString())).toSet();
+
+      final files = await downloadDir.list(recursive: true).where((entity) => entity is File).toList();
+      final deletedFiles = <String>[];
+
+      for (final fileEntity in files) {
+        // Converts absolute path to relative path (e.g., '/full/path/to/app/relax_sounds/rainy.txt' -> 'relax_sounds/rainy.txt')
+        final relativePath = path.relative(fileEntity.path, from: downloadDir.path);
+
+        // Normalizes path separators (e.g., 'relax_sounds\\rainy.txt' -> 'relax_sounds/rainy.txt')
+        final normalizedPath = path.normalize(relativePath);
+
+        if (validPaths.contains(normalizedPath)) continue;
+
+        try {
+          await fileEntity.delete();
+          deletedFiles.add(relativePath);
+        } catch (e, s) {
+          AppLogger.error(
+            '$runtimeType#cleanupUnusedFiles failed to delete file ${fileEntity.path}: $e',
+            stackTrace: s,
+          );
+        }
+      }
+
+      AppLogger.info('$runtimeType#cleanupUnusedFiles ${deletedFiles.length} unused files removed');
+      return deletedFiles;
+    } catch (e, s) {
+      AppLogger.error('$runtimeType#cleanupUnusedFiles error: $e', stackTrace: s);
+      return [];
+    }
   }
 }
