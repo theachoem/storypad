@@ -51,6 +51,7 @@ class RelaxSoundObject {
       ...fireSounds(),
       ...bodySounds(),
       ...activitySounds(),
+      ...musicSounds(),
     ];
   }
 
@@ -200,14 +201,6 @@ class RelaxSoundObject {
         dayColor: 1,
       ),
       RelaxSoundObject(
-        artist: '@voyouz',
-        translationKey: 'sounds.music_box',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
-        svgIconUrlPath: '/relax_sounds/melody/music_box.svg',
-        soundUrlPath: '/relax_sounds/melody/music_box.wav',
-        dayColor: 1,
-      ),
-      RelaxSoundObject(
         artist: 'mhuxley@marianst.com.au',
         translationKey: 'sounds.ticking_clock',
         background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
@@ -261,6 +254,44 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/activity/typing.svg',
         soundUrlPath: '/relax_sounds/activity/typing.wav',
         dayColor: 7,
+      ),
+    ];
+  }
+
+  static List<RelaxSoundObject> musicSounds() {
+    return [
+      RelaxSoundObject(
+        artist: '@voyouz',
+        translationKey: 'sounds.music_box',
+        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
+        soundUrlPath: '/relax_sounds/musics/music_box.wav',
+        dayColor: 1,
+      ),
+      RelaxSoundObject(
+        artist: '@graham_makes',
+        translationKey: 'sounds.acoustic_guitar_duet',
+        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
+        soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
+        dayColor: 3,
+      ),
+
+      RelaxSoundObject(
+        artist: '@Matio888',
+        translationKey: 'sounds.serene_piano_reflections',
+        background: FirestoreStorageBackground.two_cloudy_tags_on_color_background,
+        svgIconUrlPath: '/relax_sounds/musics/serene_piano_reflections.svg',
+        soundUrlPath: '/relax_sounds/musics/serene_piano_reflections.mp3',
+        dayColor: 2,
+      ),
+      RelaxSoundObject(
+        artist: '@Gustavo_Alivera',
+        translationKey: 'sounds.serene_moments',
+        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
+        soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
+        dayColor: 1,
       ),
     ];
   }
