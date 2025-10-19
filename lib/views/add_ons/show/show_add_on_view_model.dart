@@ -30,7 +30,7 @@ class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
     await context.read<InAppPurchaseProvider>().purchase(
       context,
       productIdentifier,
-      params.addOn.onPurchased!,
+      params.addOn.onPurchased,
     );
   }
 }

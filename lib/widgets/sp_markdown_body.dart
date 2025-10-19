@@ -7,9 +7,11 @@ class SpMarkdownBody extends StatelessWidget {
   const SpMarkdownBody({
     super.key,
     required this.body,
+    this.align = WrapAlignment.start,
   });
 
   final String body;
+  final WrapAlignment align;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class SpMarkdownBody extends StatelessWidget {
         title: title,
       ),
       styleSheet: MarkdownStyleSheet(
+        textAlign: align,
         blockquoteDecoration: BoxDecoration(
           color: Colors.transparent,
           border: Border(

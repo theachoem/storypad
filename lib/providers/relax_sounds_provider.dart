@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/multi_audio_notification_service.dart';
 import 'package:storypad/core/services/multi_audio_player_service.dart';
 import 'package:storypad/core/services/relax_sound_timer_service.dart';
+import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_unlock_relax_sounds_sheet.dart';
 
 class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
   Map<String, RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
@@ -83,8 +89,14 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
 
   Future<void> toggleSound(
     RelaxSoundObject sound, {
+    required BuildContext context,
     double? initialVolume,
   }) async {
+    Feedback.forTap(context);
+
+    final iapProvider = context.read<InAppPurchaseProvider>();
+    if (!sound.free && !iapProvider.relaxSound) return showUnlockSheet(context);
+
     if (isSoundSelected(sound)) {
       await audioPlayersService.removeAnAudio(sound.soundUrlPath);
     } else {
@@ -95,6 +107,34 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     notifyListeners();
 
     refreshCanSaveMix();
+  }
+
+  Future<void> showUnlockSheet(BuildContext context) async {
+    final iapProvider = context.read<InAppPurchaseProvider>();
+
+    if (iapProvider.storeProducts == null) {
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#toggleSound',
+        future: () => iapProvider.fetchAndCacheProducts(debugSource: '$runtimeType#toggleSound'),
+      );
+    }
+
+    if (!context.mounted) return;
+    String? displayPrice = iapProvider.getProduct(AppProduct.relax_sounds.productIdentifier)?.priceString;
+
+    return SpUnlockRelaxSoundsSheet(
+      displayPrice: displayPrice ?? '\$1',
+      onUnlock: (sheetContext) async {
+        await Navigator.maybePop(sheetContext);
+        if (!context.mounted) return;
+
+        AddOnsRoute.pushAndNavigateTo(
+          product: AppProduct.relax_sounds,
+          context: context,
+          fullscreenDialog: true,
+        );
+      },
+    ).show(context: context);
   }
 
   Future<void> playAll({

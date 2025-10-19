@@ -106,4 +106,5 @@ class SpIcons {
   static const IconData verifiedFilled = !kIsCupertino ? CupertinoIcons.checkmark_seal_fill : Icons.verified;
   static const IconData gift = kIsCupertino ? CupertinoIcons.gift : Icons.card_giftcard_outlined;
   static const IconData waterDrop = Icons.water_drop;
+  static const IconData download = kIsCupertino ? CupertinoIcons.cloud_download : Icons.download_outlined;
 }

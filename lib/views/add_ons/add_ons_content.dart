@@ -11,6 +11,11 @@ class _AddOnsContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr('page.add_ons.title')),
         centerTitle: kIsCupertino,
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
+        ],
       ),
       body: buildBody(context),
       bottomNavigationBar: buildBottomNavigation(context),
@@ -45,7 +50,10 @@ class _AddOnsContent extends StatelessWidget {
         final addOn = viewModel.addOns![index];
         return _AddOnCard(
           addOn: addOn,
-          onTap: () => ShowAddOnRoute(addOn: addOn).push(context),
+          onTap: () => ShowAddOnRoute(
+            addOn: addOn,
+            fullscreenDialog: viewModel.params.fullscreenDialog,
+          ).push(context),
         );
       },
     );

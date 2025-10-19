@@ -1,14 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
-import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
@@ -17,33 +16,24 @@ import 'add_ons_view.dart';
 
 class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final AddOnsRoute params;
+  final BuildContext context;
 
   AddOnsViewModel({
     required this.params,
+    required this.context,
   }) {
-    load();
+    load(context).then((_) {
+      if (context.mounted) params.onLoaded?.call(context, this);
+    });
   }
 
   List<AddOnObject>? addOns;
-  List<StoreProduct>? storeProducts;
 
-  StoreProduct? getProduct(String productIdentifier) {
-    return storeProducts?.where((storeProduct) => storeProduct.identifier == productIdentifier).firstOrNull;
-  }
+  StoreProduct? getProduct(String productIdentifier) =>
+      context.read<InAppPurchaseProvider>().getProduct(productIdentifier);
 
-  Future<void> load() async {
-    try {
-      storeProducts = kIAPEnabled
-          ? await Purchases.getProducts(AppProduct.productIdentifiers, productCategory: ProductCategory.nonSubscription)
-          : [];
-    } on PlatformException catch (e, s) {
-      AppLogger.error(
-        '$runtimeType#load PlatformException - code: ${e.code}, message: ${e.message}, details: ${e.details}',
-        stackTrace: s,
-      );
-    } catch (e, s) {
-      AppLogger.error('$runtimeType#load error: ${e.toString()}', stackTrace: s);
-    }
+  Future<void> load(BuildContext context) async {
+    await context.read<InAppPurchaseProvider>().fetchAndCacheProducts(debugSource: '$runtimeType#load');
 
     addOns = [
       AddOnObject(
@@ -95,7 +85,6 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onTry: null,
         designForFemale: true,
-
         onPurchased: () async {
           var eventCount = await EventDbModel.db.count(filters: {'event_type': 'period'});
           if (eventCount == 0) {

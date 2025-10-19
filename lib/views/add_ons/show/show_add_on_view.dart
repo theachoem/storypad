@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
@@ -21,8 +22,11 @@ part '../local_widgets/demo_images.dart';
 class ShowAddOnRoute extends BaseRoute {
   const ShowAddOnRoute({
     required this.addOn,
+    this.fullscreenDialog = false,
   });
 
+  @override
+  final bool fullscreenDialog;
   final AddOnObject addOn;
 
   @override

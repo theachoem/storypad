@@ -94,7 +94,7 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.0),
-            color: ColorScheme.of(context).readOnly.surface1,
+            color: ColorScheme.of(context).readOnly.surface2,
           ),
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,

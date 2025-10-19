@@ -28,7 +28,6 @@ class _RelaxSoundsContent extends StatelessWidget {
         ),
         bottomNavigationBar: SpFloatingRelaxSoundsTile(
           onSaveMix: (context) async {
-            DefaultTabController.maybeOf(context)?.animateTo(1);
             viewModel.saveMix(context);
           },
         ),
