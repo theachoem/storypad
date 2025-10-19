@@ -44,13 +44,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               ),
             ),
             icon: const Icon(SpIcons.musicNote),
-            onPressed: () {
-              if (provider.relaxSound) {
-                const RelaxSoundsRoute().push(context);
-              } else {
-                const AddOnsRoute().push(context);
-              }
-            },
+            onPressed: () => const RelaxSoundsRoute().push(context),
           ),
         ),
       ],

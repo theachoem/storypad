@@ -106,7 +106,11 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             if (context.read<InAppPurchaseProvider>().template) {
               widget.viewModel.goToTemplatePage(context);
             } else {
-              const AddOnsRoute().push(context);
+              AddOnsRoute.pushAndNavigateTo(
+                product: AppProduct.templates,
+                context: context,
+                fullscreenDialog: true,
+              );
             }
           },
         ),

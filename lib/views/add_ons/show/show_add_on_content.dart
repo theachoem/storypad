@@ -12,6 +12,11 @@ class _ShowAddOnContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
+        automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        actions: [
+          if (CupertinoSheetRoute.hasParentSheet(context))
+            CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
+        ],
       ),
       body: ListView(
         children: [

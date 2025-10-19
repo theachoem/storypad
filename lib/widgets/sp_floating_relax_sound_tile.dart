@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -132,7 +133,17 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           color: foregroundColor,
           icon: SpAnimatedIcons.fadeScale(
             duration: Durations.long1,
-            firstChild: const Icon(SpIcons.pauseCircle),
+            firstChild: SpLoopAnimationBuilder(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.ease,
+              child: const Icon(SpIcons.pauseCircle),
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: lerpDouble(1, 0.9, value),
+                  child: child,
+                );
+              },
+            ),
             secondChild: const Icon(SpIcons.playCircle),
             showFirst: provider.playing,
           ),

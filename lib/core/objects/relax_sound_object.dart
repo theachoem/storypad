@@ -12,6 +12,7 @@ class RelaxSoundObject {
   final String artist;
   final String svgIconUrlPath;
   final FirestoreStorageBackground background;
+  final bool free;
 
   // mp3 or wave
   final String soundUrlPath;
@@ -25,6 +26,7 @@ class RelaxSoundObject {
     required this.svgIconUrlPath,
     required this.background,
     required this.soundUrlPath,
+    this.free = false,
     this.dayColor = 3,
   }) : assert(dayColor >= 1 && dayColor <= 7);
 
@@ -64,6 +66,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/light_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/light_rain.wav',
         dayColor: 3,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@InspectorJ',
@@ -101,6 +104,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/ocean_waves.svg',
         soundUrlPath: '/relax_sounds/water/ocean_waves.wav',
         dayColor: 5,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@felix.blume',
@@ -138,6 +142,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/animal/night_crickets.svg',
         soundUrlPath: '/relax_sounds/animal/night_crickets.wav',
         dayColor: 2,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@sacred_steel',
@@ -183,6 +188,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/melody/wind_chime.svg',
         soundUrlPath: '/relax_sounds/melody/wind_chime.wav',
         dayColor: 5,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@LoopUdu',
@@ -220,6 +226,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/fire/campfire.svg',
         soundUrlPath: '/relax_sounds/fire/campfire.wav',
         dayColor: 1,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@eclectic-kitty',
@@ -241,6 +248,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/body/heartbeat.svg',
         soundUrlPath: '/relax_sounds/body/heartbeat.wav',
         dayColor: 7,
+        free: true,
       ),
     ];
   }
@@ -254,6 +262,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/activity/typing.svg',
         soundUrlPath: '/relax_sounds/activity/typing.wav',
         dayColor: 7,
+        free: true,
       ),
     ];
   }
@@ -261,22 +270,14 @@ class RelaxSoundObject {
   static List<RelaxSoundObject> musicSounds() {
     return [
       RelaxSoundObject(
-        artist: '@voyouz',
-        translationKey: 'sounds.music_box',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
-        svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
-        soundUrlPath: '/relax_sounds/musics/music_box.wav',
-        dayColor: 1,
-      ),
-      RelaxSoundObject(
         artist: '@graham_makes',
         translationKey: 'sounds.acoustic_guitar_duet',
         background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
         svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
         soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
         dayColor: 3,
+        free: true,
       ),
-
       RelaxSoundObject(
         artist: '@Matio888',
         translationKey: 'sounds.serene_piano_reflections',
@@ -291,6 +292,14 @@ class RelaxSoundObject {
         background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
         svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
         soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
+        dayColor: 1,
+      ),
+      RelaxSoundObject(
+        artist: '@voyouz',
+        translationKey: 'sounds.music_box',
+        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
+        soundUrlPath: '/relax_sounds/musics/music_box.wav',
         dayColor: 1,
       ),
     ];

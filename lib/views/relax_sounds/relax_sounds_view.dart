@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/storages/redeemed_reward_storage.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';

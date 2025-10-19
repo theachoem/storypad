@@ -19,6 +19,7 @@ class App extends StatelessWidget {
       path: 'translations',
       supportedLocales: kSupportedLocales,
       fallbackLocale: kFallbackLocale,
+      startLocale: kFallbackLocale,
       child: AppTheme(
         builder: (context, preferences, theme, darkTheme, themeMode) {
           TextScaler textScaler = switch (preferences.fontSize) {

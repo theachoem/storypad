@@ -143,23 +143,19 @@ class FirestoreStorageService {
       //   "/relax_sounds/water/ocean_waves-130d1d326a06fe0f21d4650a4f7065b7.txt",
       //   "/relax_sounds/water/droplets-ec36e00209a8cece33eef6f5c3f80e61.txt",
       // };
-      final validPaths = (await hash ?? {}).values.map((e) => path.normalize(e.toString())).toSet();
+      final validBasenames = (await hash ?? {}).values.map((e) => path.basename(e.toString())).toSet();
 
       final files = await downloadDir.list(recursive: true).where((entity) => entity is File).toList();
       final deletedFiles = <String>[];
 
       for (final fileEntity in files) {
-        // Converts absolute path to relative path (e.g., '/full/path/to/app/relax_sounds/rainy.txt' -> 'relax_sounds/rainy.txt')
-        final relativePath = path.relative(fileEntity.path, from: downloadDir.path);
+        final filename = path.basename(fileEntity.path);
 
-        // Normalizes path separators (e.g., 'relax_sounds\\rainy.txt' -> 'relax_sounds/rainy.txt')
-        final normalizedPath = path.normalize(relativePath);
-
-        if (validPaths.contains(normalizedPath)) continue;
+        if (validBasenames.contains(filename)) continue;
 
         try {
           await fileEntity.delete();
-          deletedFiles.add(relativePath);
+          deletedFiles.add(filename);
         } catch (e, s) {
           AppLogger.error(
             '$runtimeType#cleanupUnusedFiles failed to delete file ${fileEntity.path}: $e',

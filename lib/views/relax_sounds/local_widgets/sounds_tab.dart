@@ -10,7 +10,13 @@ class _SoundsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
-    final relaxSounds = provider.relaxSounds.values;
+
+    // split into 2 section for now.
+    Iterable<RelaxSoundObject> musicSounds = RelaxSoundObject.musicSounds();
+    Iterable<String> musicSoundUrls = musicSounds.map((e) => e.soundUrlPath);
+
+    Iterable<RelaxSoundObject> relaxSounds = provider.relaxSounds.values;
+    relaxSounds = relaxSounds.where((sound) => !musicSoundUrls.contains(sound.soundUrlPath));
 
     return CustomScrollView(
       controller: PrimaryScrollController.maybeOf(context),
@@ -18,6 +24,27 @@ class _SoundsTab extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.only(
             top: 16.0,
+            left: MediaQuery.of(context).padding.left + 16.0,
+            right: MediaQuery.of(context).padding.right + 16.0,
+            bottom: 24.0,
+          ),
+          sliver: SliverAlignedGrid.count(
+            crossAxisCount: MediaQuery.of(context).size.width ~/ 115,
+            itemCount: musicSounds.length,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 16.0,
+            itemBuilder: (context, index) {
+              return buildSoundItem(
+                context: context,
+                relaxSounds: musicSounds,
+                index: index,
+                provider: provider,
+              );
+            },
+          ),
+        ),
+        SliverPadding(
+          padding: EdgeInsets.only(
             left: MediaQuery.of(context).padding.left + 16.0,
             right: MediaQuery.of(context).padding.right + 16.0,
             bottom: 32.0,
@@ -69,10 +96,9 @@ class _SoundsTab extends StatelessWidget {
     BuildContext context,
   ) {
     return SpTapEffect(
-      effects: [SpTapEffectType.touchableOpacity],
-      onTap: () async {
-        await provider.toggleSound(relaxSound);
-      },
+      scaleActive: 0.95,
+      effects: [SpTapEffectType.scaleDown],
+      onTap: () => provider.toggleSound(relaxSound, context: context),
       child: Column(
         spacing: 8.0,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,7 +109,11 @@ class _SoundsTab extends StatelessWidget {
                 relaxSound: relaxSound,
                 selected: selected,
               ),
-              if (!viewModel.downloaded(relaxSound)) buildDownloadIcon(provider, context, relaxSound),
+              Consumer<InAppPurchaseProvider>(
+                builder: (context, iapProvider, child) {
+                  return buildStatusIcon(iapProvider, provider, context, relaxSound);
+                },
+              ),
             ],
           ),
           Text(
@@ -96,9 +126,27 @@ class _SoundsTab extends StatelessWidget {
     );
   }
 
-  Widget buildDownloadIcon(RelaxSoundsProvider provider, BuildContext context, RelaxSoundObject relaxSound) {
+  Widget buildStatusIcon(
+    InAppPurchaseProvider iapProvider,
+    RelaxSoundsProvider provider,
+    BuildContext context,
+    RelaxSoundObject relaxSound,
+  ) {
     PlayerState? state = provider.playerStateFor(relaxSound.soundUrlPath);
 
+    if (!relaxSound.free && !iapProvider.relaxSound) {
+      return Positioned(
+        top: 8.0,
+        right: 8.0,
+        child: Icon(
+          SpIcons.lock,
+          color: ColorScheme.of(context).primary,
+          size: 16.0,
+        ),
+      );
+    }
+
+    if (viewModel.downloaded(relaxSound)) return const SizedBox.shrink();
     if (state != null && state.playing == true) return const SizedBox.shrink();
     if (provider.isDownloading(state)) {
       return const Positioned(
@@ -114,7 +162,7 @@ class _SoundsTab extends StatelessWidget {
         top: 8.0,
         right: 8.0,
         child: Icon(
-          Icons.download,
+          SpIcons.download,
           color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
           size: 16.0,
         ),

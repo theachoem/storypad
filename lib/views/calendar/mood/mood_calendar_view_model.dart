@@ -25,6 +25,8 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     _tags = [...context.read<TagsProvider>().tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
+    currentFilterStoriesCount = StoryDbModel.db.getStoryCountBy(filters: searchFilter.toDatabaseFilter());
+
     StoryDbModel.db.addGlobalListener(_reloadFeeling);
     params.monthYearNotifier.addListener(_onParentMonthYearChanged);
   }

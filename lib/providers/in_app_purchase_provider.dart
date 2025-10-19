@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +28,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
-  bool get periodCalendar => kDebugMode || isActive(AppProduct.period_calendar.productIdentifier);
+  bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
 
   DateTime? _rewardExpiredAt;
   List<String>? _rewardAddOns;
@@ -38,6 +37,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   List<String> get rewardAddOns => _rewardAddOns ?? [];
 
   CustomerInfo? _customerInfo;
+  List<StoreProduct>? storeProducts;
 
   InAppPurchaseProvider(BuildContext context) {
     _initialize(context).then((_) async {
@@ -61,6 +61,29 @@ class InAppPurchaseProvider extends ChangeNotifier {
     if (configuration != null) {
       await Purchases.configure(configuration);
     }
+  }
+
+  StoreProduct? getProduct(String productIdentifier) {
+    return storeProducts?.where((storeProduct) => storeProduct.identifier == productIdentifier).firstOrNull;
+  }
+
+  Future<List<StoreProduct>?> fetchAndCacheProducts({
+    required String debugSource,
+  }) async {
+    try {
+      storeProducts = kIAPEnabled
+          ? await Purchases.getProducts(AppProduct.productIdentifiers, productCategory: ProductCategory.nonSubscription)
+          : [];
+    } on PlatformException catch (e, s) {
+      AppLogger.error(
+        '$runtimeType#fetchProducts($debugSource) PlatformException - code: ${e.code}, message: ${e.message}, details: ${e.details}',
+        stackTrace: s,
+      );
+    } catch (e, s) {
+      AppLogger.error('$runtimeType#fetchProducts($debugSource) error: ${e.toString()}', stackTrace: s);
+    }
+
+    return storeProducts;
   }
 
   Future<void> revalidateCustomerInfo(BuildContext context) async {
@@ -141,7 +164,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   Future<bool> purchase(
     BuildContext context,
     String productIdentifier,
-    Future<void> Function() onPurchased,
+    Future<void> Function()? onPurchased,
   ) async {
     if (!kIAPEnabled) return false;
 
@@ -163,7 +186,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
           try {
             PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
             _customerInfo = result.customerInfo;
-            if (isActive(productIdentifier)) await onPurchased();
+            if (isActive(productIdentifier)) await onPurchased?.call();
             notifyListeners();
           } on PlatformException catch (e, s) {
             PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
