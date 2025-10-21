@@ -96,7 +96,7 @@ class SpImage extends StatelessWidget {
     }
   }
 
-  Widget buildImageError(double width, double height, BuildContext context, Object? error) {
+  static Widget buildImageError(double width, double height, BuildContext context, Object? error) {
     String? message = error is StateError ? error.message : error?.toString();
     return Material(
       color: ColorScheme.of(context).readOnly.surface3,

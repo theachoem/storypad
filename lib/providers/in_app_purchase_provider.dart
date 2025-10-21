@@ -1,18 +1,13 @@
 import 'dart:io';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/core/services/rewards/reward_applier_service.dart';
-import 'package:storypad/core/storages/redeemed_reward_storage.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_sheet.dart';
@@ -105,61 +100,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
       }
     }
 
-    await _loadReward();
     notifyListeners();
-  }
-
-  Future<void> clearReward(BuildContext context) async {
-    OkCancelResult userAction = await showOkCancelAlertDialog(
-      context: context,
-      isDestructiveAction: true,
-      title: tr('dialog.are_you_sure.title'),
-      message: tr('dialog.are_you_sure.you_cant_undo_message'),
-      okLabel: tr('button.clear'),
-      cancelLabel: tr('button.cancel'),
-    );
-
-    if (userAction == OkCancelResult.ok && context.mounted) {
-      await RewardApplierService.clearReward();
-
-      AnalyticsService.instance.logClearReward();
-      if (context.mounted) await MessengerService.of(context).showSuccess();
-
-      await _loadReward();
-      notifyListeners();
-    }
-  }
-
-  @Deprecated('Use native instead')
-  Future<bool> applyReward(BuildContext context, String code) async {
-    if (!kIAPEnabled) return false;
-
-    String? errorMessage = await MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#applyReward',
-      future: () async {
-        try {
-          await RewardApplierService.applyReward(code);
-          return null;
-        } catch (e, s) {
-          AppLogger.error('$runtimeType#applyReward error: $e', stackTrace: s);
-          return e.toString();
-        }
-      },
-    );
-
-    if (!context.mounted) return false;
-    if (errorMessage != null) {
-      await MessengerService.of(context).showError(errorMessage);
-      return false;
-    } else {
-      AnalyticsService.instance.logApplyReward(code: code);
-      await MessengerService.of(context).showSuccess();
-
-      await _loadReward();
-      notifyListeners();
-
-      return true;
-    }
   }
 
   Future<bool> purchase(
@@ -274,11 +215,6 @@ class InAppPurchaseProvider extends ChangeNotifier {
       _customerInfo = null;
       notifyListeners();
     }
-  }
-
-  Future<void> _loadReward() async {
-    _rewardExpiredAt = await RedeemedRewardStorage().getExpiredAt();
-    _rewardAddOns = await RedeemedRewardStorage().availableAddOns();
   }
 
   Future<void> presentCodeRedemptionSheet() async {
