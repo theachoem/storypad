@@ -178,26 +178,6 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
-  Future<void> logClearReward() {
-    debug('logClearReward', {});
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('clear_reward'),
-    );
-  }
-
-  Future<void> logApplyReward({
-    required String code,
-  }) {
-    final parameters = sanitizeParameters({'code': code});
-    debug('logApplyReward', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('apply_reward'),
-      parameters: parameters,
-    );
-  }
-
   Future<void> logDeleteCloudBackup({
     required CloudFileObject file,
   }) {

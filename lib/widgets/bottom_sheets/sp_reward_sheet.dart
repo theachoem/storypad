@@ -1,14 +1,15 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_android_redemption_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 
 class SpRewardSheet extends BaseBottomSheet {
@@ -29,29 +30,10 @@ class SpRewardSheet extends BaseBottomSheet {
               const SizedBox(height: 12.0),
               buildBody(context),
               const SizedBox(height: 16.0),
-              if (provider.rewardExpiredAt != null) ...[
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    side: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                  contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                  trailing: IconButton(
-                    color: Theme.of(context).colorScheme.error,
-                    icon: const Icon(SpIcons.clear),
-                    onPressed: () => provider.clearReward(context),
-                  ),
-                  title: Text(tr('list_tile.unlock_your_rewards.applied_title')),
-                  subtitle: Text(
-                    tr(
-                      'general.expired_on',
-                      namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
-                    ),
-                  ),
-                ),
-              ] else ...[
-                buildAdaptiveSubmitButton(context),
-              ],
+              if (Platform.isIOS)
+                buildIOSRedemptionButton(context)
+              else if (Platform.isAndroid)
+                buildAndroidHowToRedeemSheet(context),
               buildBottomPadding(bottomPadding),
             ],
           ),
@@ -124,7 +106,7 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
     );
   }
 
-  Widget buildAdaptiveSubmitButton(BuildContext context) {
+  Widget buildIOSRedemptionButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: Builder(
@@ -133,16 +115,26 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
             return CupertinoButton.filled(
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
-              child: Text(tr('button.unlock')),
+              child: const Text('Redeem Code'),
               onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
             );
           } else {
             return FilledButton.icon(
-              label: Text(tr('button.unlock')),
+              label: const Text('Redeem Code'),
               onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget buildAndroidHowToRedeemSheet(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        label: const Text("How to Redeem?"),
+        onPressed: () => SpAndroidRedemptionSheet().show(context: context),
       ),
     );
   }

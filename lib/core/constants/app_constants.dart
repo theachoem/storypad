@@ -10,7 +10,6 @@ const String kRevenueCatIosApiKey = String.fromEnvironment('REVENUE_CAT_IOS_API_
 const String kEmailHasherSecreyKey = String.fromEnvironment('EMAIL_HASHER_SECRET_KEY');
 
 const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
-final bool kRedeemCodeEnabled = Platform.isAndroid;
 
 const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;

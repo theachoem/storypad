@@ -6,7 +6,6 @@ Product-focused documentation for marketing, planning, and strategic decisions.
 
 - **[Overview](overview.md)** – Product identity, mission, platforms, monetization
 - **[Metrics](metrics.md)** – User base, growth, app store performance
-- **[Roadmap](roadmap.md)** – Popular features, upcoming features, add-on strategy
 - **[Marketing Guide](marketing-guide.md)** – Brand positioning, messaging, content strategy
 - **[User Personas](user-personas.md)** – Target audience, use cases, pain points
 

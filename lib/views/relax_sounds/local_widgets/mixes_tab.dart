@@ -53,17 +53,12 @@ class _MixesTab extends StatelessWidget {
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         if (index == viewModel.mixes!.length) {
-          if (!kRedeemCodeEnabled || !kIAPEnabled) return const SizedBox(key: ValueKey('share_to_social'));
+          if (!kIAPEnabled) return const SizedBox(key: ValueKey('share_to_social'));
           return Padding(
             key: const ValueKey('share_to_social'),
             padding: const EdgeInsets.all(6.0),
             child: ListTile(
-              onTap: () async {
-                await SpRewardSheet().show(context: context);
-                RedeemedRewardStorage().availableAddOns().then((addOns) {
-                  if (context.mounted && addOns?.isNotEmpty == true) const AddOnsRoute().push(context);
-                });
-              },
+              onTap: () => SpRewardSheet().show(context: context),
               trailing: const Icon(SpIcons.info),
               tileColor: Theme.of(context).colorScheme.readOnly.surface1,
               shape: RoundedSuperellipseBorder(
