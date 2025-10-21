@@ -9,18 +9,9 @@ class _AddOnsTile extends StatelessWidget {
       badge: NewBadge.add_on_tile_with_period_calendar,
       builder: (context, newBadge, hideBadge) {
         return ListTile(
-          contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+          contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
           leading: const Icon(SpIcons.addOns),
-          trailing: kRedeemCodeEnabled && kIAPEnabled
-              ? IconButton(
-                  tooltip: tr('list_tile.unlock_your_rewards.unapplied_title'),
-                  icon: const Icon(SpIcons.gift),
-                  onPressed: () async {
-                    await SpRewardSheet().show(context: context);
-                    if (context.mounted) const AddOnsRoute().push(context);
-                  },
-                )
-              : null,
+          trailing: const SpGiftAnimatedIcon(),
           title: RichText(
             textScaler: MediaQuery.textScalerOf(context),
             text: TextSpan(
