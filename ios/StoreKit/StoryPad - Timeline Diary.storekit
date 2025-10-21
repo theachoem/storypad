@@ -17,6 +17,21 @@
     {
       "displayPrice" : "0.99",
       "familyShareable" : true,
+      "internalID" : "6754039959",
+      "localizations" : [
+        {
+          "description" : "Track your cycle and feelings",
+          "displayName" : "Period Calendar",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "period_calendar",
+      "referenceName" : "period_calendar",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : true,
       "internalID" : "6748109452",
       "localizations" : [
         {
@@ -27,21 +42,6 @@
       ],
       "productID" : "relax_sounds",
       "referenceName" : "relax_sounds",
-      "type" : "NonConsumable"
-    },
-    {
-      "displayPrice" : "0.99",
-      "familyShareable" : true,
-      "internalID" : "6747943661",
-      "localizations" : [
-        {
-          "description" : "Set the mood before you write or read.",
-          "displayName" : "Relaxing Sounds",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "com.tc.writestory.relax_sounds",
-      "referenceName" : "relax_sounds_deprecated",
       "type" : "NonConsumable"
     },
     {
@@ -58,21 +58,6 @@
       "productID" : "templates",
       "referenceName" : "templates",
       "type" : "NonConsumable"
-    },
-    {
-      "displayPrice" : "0.99",
-      "familyShareable" : true,
-      "internalID" : "6747943532",
-      "localizations" : [
-        {
-          "description" : "Create your own daily writing templates.",
-          "displayName" : "Templates",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "com.tc.writestory.templates",
-      "referenceName" : "templates_deprecated",
-      "type" : "NonConsumable"
     }
   ],
   "settings" : {
@@ -80,7 +65,7 @@
     "_askToBuyEnabled" : false,
     "_developerTeamID" : "XF9U464CCP",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776111304.02624404,
+    "_lastSynchronizedDate" : 782721261.71000695,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [

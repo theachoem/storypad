@@ -10,7 +10,6 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
-import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class SpRewardSheet extends BaseBottomSheet {
   @override
@@ -18,58 +17,44 @@ class SpRewardSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return SpSingleStateWidget<String>(
-      initialValue: '',
-      builder: (context, notifier) {
-        return Consumer<InAppPurchaseProvider>(
-          builder: (context, provider, child) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildTitle(context),
-                  const SizedBox(height: 12.0),
-                  buildBody(context),
-                  const SizedBox(height: 16.0),
-                  if (provider.rewardExpiredAt != null) ...[
-                    ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(color: Theme.of(context).dividerColor),
-                      ),
-                      contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                      trailing: IconButton(
-                        color: Theme.of(context).colorScheme.error,
-                        icon: const Icon(SpIcons.clear),
-                        onPressed: () => provider.clearReward(context),
-                      ),
-                      title: Text(tr('list_tile.unlock_your_rewards.applied_title')),
-                      subtitle: Text(
-                        tr(
-                          'general.expired_on',
-                          namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
-                        ),
-                      ),
+    return Consumer<InAppPurchaseProvider>(
+      builder: (context, provider, child) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildTitle(context),
+              const SizedBox(height: 12.0),
+              buildBody(context),
+              const SizedBox(height: 16.0),
+              if (provider.rewardExpiredAt != null) ...[
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    side: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                  contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                  trailing: IconButton(
+                    color: Theme.of(context).colorScheme.error,
+                    icon: const Icon(SpIcons.clear),
+                    onPressed: () => provider.clearReward(context),
+                  ),
+                  title: Text(tr('list_tile.unlock_your_rewards.applied_title')),
+                  subtitle: Text(
+                    tr(
+                      'general.expired_on',
+                      namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
                     ),
-                  ] else ...[
-                    TextFormField(
-                      initialValue: notifier.value,
-                      onChanged: (value) => notifier.value = value.trim(),
-                      decoration: InputDecoration(
-                        hintText: tr('general.reward_code'),
-                        prefixIcon: const Icon(SpIcons.gift),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    buildAdaptiveSubmitButton(context, notifier),
-                  ],
-                  buildBottomPadding(bottomPadding),
-                ],
-              ),
-            );
-          },
+                  ),
+                ),
+              ] else ...[
+                buildAdaptiveSubmitButton(context),
+              ],
+              buildBottomPadding(bottomPadding),
+            ],
+          ),
         );
       },
     );
@@ -139,27 +124,22 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
     );
   }
 
-  Widget buildAdaptiveSubmitButton(BuildContext context, ValueNotifier<String> notifier) {
+  Widget buildAdaptiveSubmitButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ValueListenableBuilder(
-        valueListenable: notifier,
-        builder: (context, text, _) {
+      child: Builder(
+        builder: (context) {
           if (kIsCupertino) {
             return CupertinoButton.filled(
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
-              onPressed: text.isNotEmpty == true
-                  ? () => context.read<InAppPurchaseProvider>().applyReward(context, text)
-                  : null,
               child: Text(tr('button.unlock')),
+              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
             );
           } else {
             return FilledButton.icon(
               label: Text(tr('button.unlock')),
-              onPressed: text.isNotEmpty == true
-                  ? () => context.read<InAppPurchaseProvider>().applyReward(context, text)
-                  : null,
+              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
             );
           }
         },

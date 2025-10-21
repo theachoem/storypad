@@ -21,11 +21,6 @@ class _CommunityTile extends StatelessWidget {
             ),
           ),
           contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-          trailing: IconButton(
-            tooltip: 'StoryPad Reddit',
-            onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
-            icon: const Icon(Icons.reddit),
-          ),
           onTap: () async {
             await CommunityRoute().push(context);
             hideBadge();

@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart";
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
-import 'package:storypad/core/services/remote_config/remote_config_service.dart';
-import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -25,8 +23,8 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart' show Color
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_reward_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
 

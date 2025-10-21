@@ -94,7 +94,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             widget.viewModel.takePhoto();
           },
         ),
-      if (kIAPEnabled)
+      if (kIAPEnabled && context.read<InAppPurchaseProvider>().template)
         IconButton.outlined(
           tooltip: tr("add_ons.templates.title"),
           visualDensity: const VisualDensity(horizontal: 1, vertical: 1),

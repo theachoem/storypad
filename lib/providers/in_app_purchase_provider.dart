@@ -130,6 +130,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     }
   }
 
+  @Deprecated('Use native instead')
   Future<bool> applyReward(BuildContext context, String code) async {
     if (!kIAPEnabled) return false;
 
@@ -278,5 +279,11 @@ class InAppPurchaseProvider extends ChangeNotifier {
   Future<void> _loadReward() async {
     _rewardExpiredAt = await RedeemedRewardStorage().getExpiredAt();
     _rewardAddOns = await RedeemedRewardStorage().availableAddOns();
+  }
+
+  Future<void> presentCodeRedemptionSheet() async {
+    if (kIAPEnabled && Platform.isIOS) {
+      await Purchases.presentCodeRedemptionSheet();
+    }
   }
 }
