@@ -14,6 +14,13 @@ Create your own daily writing templates. The Templates add-on allows you to desi
 
 ## Features
 
+### Template Gallery
+
+- **Browse Categories:** Explore pre-built template collections organized by purpose
+- **Template Preview:** View full template content before saving or using
+- **Save as Custom:** Save gallery templates as your own custom templates for editing
+- **Instant Use:** Apply gallery templates directly to create new stories
+
 ### Template Creation
 
 - **Custom Content:** Design your template with any text, formatting, or structure
@@ -80,6 +87,12 @@ Maintain story structure:
 ```
 lib/
 ├── core/
+│   ├── objects/
+│   │   ├── gallery_template_object.dart
+│   │   ├── gallery_template_category_object.dart
+│   │   └── gallery_template_page_object.dart
+│   ├── services/
+│   │   └── gallery_template_service.dart
 │   └── databases/
 │       └── models/
 │           ├── template_db_model.dart
@@ -90,6 +103,11 @@ lib/
         ├── templates_view.dart
         ├── templates_view_model.dart
         ├── templates_content.dart
+        ├── gallery/
+        │   └── show/
+        │       ├── show_template_gallery_view.dart
+        │       ├── show_template_gallery_view_model.dart
+        │       └── show_template_gallery_content.dart
         ├── edit/
         │   ├── edit_template_view.dart
         │   └── edit_template_view_model.dart
@@ -99,6 +117,8 @@ lib/
         └── local_widgets/
             ├── template_tile.dart
             ├── template_tag_labels.dart
+            ├── gallery_tab.dart
+            ├── gallery_template_card.dart
             └── empty_body.dart
 ```
 
@@ -125,6 +145,33 @@ lib/
   - `lastSavedDeviceId`: Sync tracking
   - `storiesCount`: Usage tracking
 
+### Gallery Template Structure
+
+**GalleryTemplateObject** (`lib/core/objects/gallery_template_object.dart`)
+
+- Pre-built template data loaded from YAML files
+- Properties:
+  - `id`: Unique identifier
+  - `name`: Display name
+  - `purpose`: Brief description
+  - `note`: Optional usage note
+  - `pages`: List of template pages
+  - `iconUrlPath`: Icon asset path
+
+**GalleryTemplateCategoryObject** (`lib/core/objects/gallery_template_category_object.dart`)
+
+- Groups related gallery templates
+- Properties:
+  - `name`: Category name
+  - `description`: Category description
+  - `templates`: List of templates in this category
+
+**GalleryTemplateService** (`lib/core/services/gallery_template_service.dart`)
+
+- Loads gallery templates from bundled YAML assets
+- Organizes templates by category
+- Supports localization (EN-only currently)
+
 ### Database
 
 **Storage:** ObjectBox local database
@@ -147,12 +194,21 @@ Templates reuse the same content and preferences models as stories:
 - Visual settings (font, colors, etc.)
 - Applied when creating stories from template
 
+### Gallery Assets
+
+Gallery templates are stored as YAML files:
+
+- Path: `/templates/`
+- Files: `1_daily_reflection.yaml`, `2_reflection_and_gratitude.yaml`, etc.
+- Structure: Categories containing multiple template examples
+- Icons: Referenced from `/icons/hand_drawn/` directory
+
 ### Demo Assets
 
 Template screenshots for the add-on showcase:
 
 - Path: `/add_ons_demos/templates/`
-- Files: `1.png`, `2.png`, `3.png`, `4.png`
+- Files: `template_1.jpg`, `template_2.jpg`, `template_3.jpg`, `template_4.jpg`, `template_5.jpg`
 
 ### Translations
 
@@ -165,18 +221,27 @@ UI text is localized:
 
 ## User Flow
 
+### Browsing Gallery Templates
+
+1. Navigate to Add-ons → Templates
+2. Switch to "Gallery" tab
+3. Browse template categories (Daily Reflection, Creative Writing, etc.)
+4. Tap any template card to preview full content
+5. Choose to "Use Template" or "Save as Custom Template"
+
 ### Creating a Template
 
 1. Navigate to Add-ons → Templates
-2. Tap "New Template" button
-3. Design your template content
-4. Add tags (optional)
-5. Set preferences (optional)
-6. Save the template
+2. Switch to "My Templates" tab
+3. Tap "New Template" button
+4. Design your template content
+5. Add tags (optional)
+6. Set preferences (optional)
+7. Save the template
 
 ### Using a Template
 
-1. Browse your template library
+1. Browse your template library or gallery
 2. Tap on a template to preview
 3. Tap "Use this template"
 4. Template content is copied to a new story

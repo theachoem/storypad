@@ -1,0 +1,28 @@
+category: "Travel"
+description: "Plan and document your journeys."
+templates:
+  - id: "trip_planner"
+    name: "Trip Planner"
+    purpose: "Organize plans, destinations, and checklists for your next trip."
+    icon_url_path: "/icons/hand_drawn/hand_drawn_compass_56x56.png"
+    pages:
+      - title: "Destination"
+        content: ""
+      - title: "Dates"
+        content: ""
+      - title: "Must-visit places"
+        content: ""
+      - title: "Packing list"
+        content: ""
+
+  - id: "travel_journal"
+    name: "Travel Journal"
+    purpose: "Document your experiences, feelings, and discoveries while traveling."
+    icon_url_path: "/icons/hand_drawn/hand_drawn_photographer_56x56.png"
+    pages:
+      - title: "What I did today"
+        content: ""
+      - title: "Favorite moment"
+        content: ""
+      - title: "Something unexpected I experienced"
+        content: ""

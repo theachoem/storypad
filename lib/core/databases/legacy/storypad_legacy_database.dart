@@ -109,6 +109,7 @@ class StorypadLegacyDatabase {
             updatedAt: storypadStory.updateOn ?? storypadStory.createOn,
             createdAt: storypadStory.createOn,
             lastSavedDeviceId: null,
+            galleryTemplateId: null,
             templateId: null,
             tags: [],
             assets: [],

@@ -1,4 +1,4 @@
-part of '../templates_view.dart';
+part of 'templates_tab.dart';
 
 class _EmptyBody extends StatelessWidget {
   const _EmptyBody();

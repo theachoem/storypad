@@ -10,6 +10,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/types/path_type.dart';
 
 part 'story_db_model.g.dart';
@@ -51,6 +52,7 @@ class StoryDbModel extends BaseDbModel {
 
   @override
   final DateTime updatedAt;
+  final String? galleryTemplateId;
   final int? templateId;
   final int? eventId;
 
@@ -98,6 +100,7 @@ class StoryDbModel extends BaseDbModel {
     required this.movedToBinAt,
     required this.latestContent,
     required this.draftContent,
+    required this.galleryTemplateId,
     required this.templateId,
     this.eventId,
     required this.lastSavedDeviceId,
@@ -252,9 +255,14 @@ class StoryDbModel extends BaseDbModel {
     int? initialDay,
     List<int>? initialTagIds,
     int? initialEventId,
+    GalleryTemplateObject? galleryTemplate,
     TemplateDbModel? template,
   }) {
     List<int> tags = initialTagIds ?? template?.tags ?? [];
+
+    // for gallery template, must load draft content beforehand.
+    final templateContent = galleryTemplate?.lazyDraftContent ?? template?.content;
+
     final now = DateTime.now();
     return StoryDbModel(
       year: initialYear ?? date.year,
@@ -268,13 +276,14 @@ class StoryDbModel extends BaseDbModel {
       starred: false,
       feeling: null,
       preferences: template?.preferences ?? StoryPreferencesDbModel.create(),
-      latestContent: template?.content ?? StoryContentDbModel.create(),
-      draftContent: null,
+      latestContent: templateContent ?? StoryContentDbModel.create(),
+      draftContent: templateContent,
       updatedAt: now,
       createdAt: now,
       tags: tags.isNotEmpty == true ? tags.map((e) => e.toString()).toList() : null,
       eventId: initialEventId,
       assets: [],
+      galleryTemplateId: galleryTemplate?.id,
       templateId: template?.id,
       movedToBinAt: null,
       permanentlyDeletedAt: null,

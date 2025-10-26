@@ -20,6 +20,7 @@ class _ShowTemplateContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
+        title: viewModel.template.name != null ? Text(viewModel.template.name!) : null,
         actions: [
           if (!viewModel.template.archived)
             IconButton(
@@ -96,10 +97,7 @@ class _ShowTemplateContent extends StatelessWidget {
       preferences: viewModel.template.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
-      headerBuilder: (_) => TemplateTagLabels(
-        template: viewModel.template,
-        margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
-      ),
+      headerBuilder: (_) => buildPageHeader(context),
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
@@ -110,6 +108,13 @@ class _ShowTemplateContent extends StatelessWidget {
       onGoToEdit: () => viewModel.goToEditPage(context),
       onPageChanged: null,
       actions: null,
+    );
+  }
+
+  Widget buildPageHeader(BuildContext context) {
+    return TemplateTagLabels(
+      template: viewModel.template,
+      margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 12.0),
     );
   }
 }

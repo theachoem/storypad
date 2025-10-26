@@ -78,7 +78,10 @@ class _TagsContent extends StatelessWidget {
               ),
             ],
           ),
-          child: buildTile(tag, storyCount, provider, context),
+          child: Material(
+            color: Colors.transparent,
+            child: buildTile(tag, storyCount, provider, context),
+          ),
         );
       },
     );

@@ -13,6 +13,7 @@ class SearchFilterObject {
   final int? day;
   final Set<PathType> types;
   final int? tagId;
+  final String? galleryTemplateId;
   final int? templateId;
   final int? eventId;
   final int? assetId;
@@ -23,6 +24,7 @@ class SearchFilterObject {
     required this.types,
     required this.tagId,
     required this.assetId,
+    this.galleryTemplateId,
     this.templateId,
     this.eventId,
     this.excludeYears,
@@ -42,6 +44,7 @@ class SearchFilterObject {
     if (day != null) filters['day'] = day;
     if (tagId != null) filters['tag'] = tagId;
     if (excludeYears != null) filters['exclude_years'] = excludeYears?.toList();
+    if (galleryTemplateId != null) filters['gallery_template_id'] = galleryTemplateId;
     if (templateId != null) filters['template'] = templateId;
     if (eventId != null) filters['event_id'] = eventId;
     if (assetId != null) filters['asset'] = assetId;

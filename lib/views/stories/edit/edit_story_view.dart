@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
@@ -36,6 +37,7 @@ class EditStoryRoute extends BaseRoute {
   final AssetDbModel? initialAsset;
   final List<int>? initialTagIds;
   final int? initialEventId;
+  final GalleryTemplateObject? galleryTemplate;
   final TemplateDbModel? template;
   final StoryDbModel? story;
   final int? initialPageIndex;
@@ -53,6 +55,7 @@ class EditStoryRoute extends BaseRoute {
     this.initialTagIds,
     this.initialPageIndex,
     this.initialPageScrollOffet = 0,
+    this.galleryTemplate,
     this.template,
     this.initialEventId,
   }) : assert(initialYear == null || id == null);

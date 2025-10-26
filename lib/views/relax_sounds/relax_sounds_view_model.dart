@@ -9,8 +9,10 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/relax_sounds/edit_mix/edit_mix_view.dart';
 import 'relax_sounds_view.dart';
 
@@ -61,7 +63,11 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
 
   void saveMix(BuildContext context) async {
     if (!context.read<InAppPurchaseProvider>().relaxSound) {
-      context.read<RelaxSoundsProvider>().showUnlockSheet(context);
+      AddOnsRoute.pushAndNavigateTo(
+        product: AppProduct.relax_sounds,
+        context: context,
+        fullscreenDialog: true,
+      );
       return;
     }
 
@@ -128,7 +134,11 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
     Iterable<RelaxSoundObject> sounds,
   ) async {
     if (!context.read<InAppPurchaseProvider>().relaxSound) {
-      context.read<RelaxSoundsProvider>().showUnlockSheet(context);
+      AddOnsRoute.pushAndNavigateTo(
+        product: AppProduct.relax_sounds,
+        context: context,
+        fullscreenDialog: true,
+      );
       return;
     }
 

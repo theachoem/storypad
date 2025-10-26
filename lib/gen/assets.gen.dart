@@ -11,6 +11,40 @@
 
 import 'package:flutter/widgets.dart';
 
+class $TemplatesGen {
+  const $TemplatesGen();
+
+  /// File path: templates/1_daily_reflection.yaml
+  String get a1DailyReflection => 'templates/1_daily_reflection.yaml';
+
+  /// File path: templates/2_reflection_and_gratitude.yaml
+  String get a2ReflectionAndGratitude =>
+      'templates/2_reflection_and_gratitude.yaml';
+
+  /// File path: templates/3_growth_and_productivity.yaml
+  String get a3GrowthAndProductivity =>
+      'templates/3_growth_and_productivity.yaml';
+
+  /// File path: templates/4_health_and_wellness.yaml
+  String get a4HealthAndWellness => 'templates/4_health_and_wellness.yaml';
+
+  /// File path: templates/5_creative_and_writing.yaml
+  String get a5CreativeAndWriting => 'templates/5_creative_and_writing.yaml';
+
+  /// File path: templates/6_travel.yaml
+  String get a6Travel => 'templates/6_travel.yaml';
+
+  /// List of all assets
+  List<String> get values => [
+    a1DailyReflection,
+    a2ReflectionAndGratitude,
+    a3GrowthAndProductivity,
+    a4HealthAndWellness,
+    a5CreativeAndWriting,
+    a6Travel,
+  ];
+}
+
 class $TranslationsGen {
   const $TranslationsGen();
 
@@ -56,6 +90,9 @@ class $TranslationsGen {
   /// File path: translations/pt-BR.json
   String get ptBR => 'translations/pt-BR.json';
 
+  /// File path: translations/ru-RU.json
+  String get ruRU => 'translations/ru-RU.json';
+
   /// File path: translations/vi-VN.json
   String get viVN => 'translations/vi-VN.json';
 
@@ -78,6 +115,7 @@ class $TranslationsGen {
     koKR,
     plPL,
     ptBR,
+    ruRU,
     viVN,
     zhCN,
   ];
@@ -482,6 +520,7 @@ class Assets {
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const String firestoreStorageMap = 'assets/firestore_storage_map.json';
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $TemplatesGen templates = $TemplatesGen();
   static const $TranslationsGen translations = $TranslationsGen();
 
   /// List of all assets

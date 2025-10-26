@@ -48,7 +48,6 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/add_ons_demos/templates/template_2.jpg',
           '/add_ons_demos/templates/template_3.jpg',
           '/add_ons_demos/templates/template_4.jpg',
-          '/add_ons_demos/templates/template_5.jpg',
         ],
         onTry: null,
         onPurchased: null,

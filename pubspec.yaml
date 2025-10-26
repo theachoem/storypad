@@ -1,5 +1,5 @@
 name: storypad
-version: 2.18.3+477
+version: 2.19.0+480
 publish_to: none
 environment:
   sdk: ^3.8.0
@@ -63,6 +63,7 @@ dependencies:
   visibility_detector: ^0.4.0+2
   purchases_flutter: ^9.6.1
   image_picker: ^1.1.2
+  yaml: ^3.1.2
 
 dev_dependencies:
   build_runner: ^2.4.15
@@ -81,6 +82,7 @@ flutter:
   assets:
     - assets/firestore_storage_map.json
     - translations/
+    - templates/
     - assets/images/
     - assets/images/onboarding/
     - assets/emoji-64/

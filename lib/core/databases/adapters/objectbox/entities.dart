@@ -63,6 +63,7 @@ class StoryObjectBox extends BaseObjectBox {
   List<int>? assets;
 
   int? templateId;
+  String? galleryTemplateId;
   int? eventId;
 
   // for query
@@ -88,6 +89,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,
+    required this.galleryTemplateId,
     required this.templateId,
     required this.latestContent,
     required this.draftContent,
@@ -308,7 +310,10 @@ class TemplateObjectBox extends BaseObjectBox {
   int id;
   int index;
   List<int>? tags;
+  String? name;
   String? content;
+  String? note;
+  String? galleryTemplateId;
   String? preferences;
 
   @Property(type: PropertyType.date)
@@ -330,7 +335,10 @@ class TemplateObjectBox extends BaseObjectBox {
   TemplateObjectBox({
     required this.id,
     required this.index,
+    required this.name,
     required this.content,
+    required this.note,
+    required this.galleryTemplateId,
     required this.preferences,
     required this.tags,
     required this.createdAt,

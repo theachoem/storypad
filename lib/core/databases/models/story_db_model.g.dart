@@ -45,6 +45,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel draftContent(StoryContentDbModel? draftContent);
 
+  StoryDbModel galleryTemplateId(String? galleryTemplateId);
+
   StoryDbModel templateId(int? templateId);
 
   StoryDbModel eventId(int? eventId);
@@ -80,6 +82,7 @@ abstract class _$StoryDbModelCWProxy {
     DateTime? movedToBinAt,
     StoryContentDbModel? latestContent,
     StoryContentDbModel? draftContent,
+    String? galleryTemplateId,
     int? templateId,
     int? eventId,
     String? lastSavedDeviceId,
@@ -156,6 +159,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       call(draftContent: draftContent);
 
   @override
+  StoryDbModel galleryTemplateId(String? galleryTemplateId) =>
+      call(galleryTemplateId: galleryTemplateId);
+
+  @override
   StoryDbModel templateId(int? templateId) => call(templateId: templateId);
 
   @override
@@ -197,6 +204,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? movedToBinAt = const $CopyWithPlaceholder(),
     Object? latestContent = const $CopyWithPlaceholder(),
     Object? draftContent = const $CopyWithPlaceholder(),
+    Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
     Object? eventId = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
@@ -279,6 +287,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.draftContent
           // ignore: cast_nullable_to_non_nullable
           : draftContent as StoryContentDbModel?,
+      galleryTemplateId: galleryTemplateId == const $CopyWithPlaceholder()
+          ? _value.galleryTemplateId
+          // ignore: cast_nullable_to_non_nullable
+          : galleryTemplateId as String?,
       templateId: templateId == const $CopyWithPlaceholder()
           ? _value.templateId
           // ignore: cast_nullable_to_non_nullable
@@ -346,6 +358,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       : StoryContentDbModel.fromJson(
           json['draft_content'] as Map<String, dynamic>,
         ),
+  galleryTemplateId: json['gallery_template_id'] as String?,
   templateId: (json['template_id'] as num?)?.toInt(),
   eventId: (json['event_id'] as num?)?.toInt(),
   lastSavedDeviceId: json['last_saved_device_id'] as String?,
@@ -374,6 +387,7 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'draft_content': instance.draftContent?.toJson(),
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
+  'gallery_template_id': instance.galleryTemplateId,
   'template_id': instance.templateId,
   'event_id': instance.eventId,
   'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),

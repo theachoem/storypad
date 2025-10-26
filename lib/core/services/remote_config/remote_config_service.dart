@@ -18,7 +18,6 @@ class RemoteConfigService {
     surveyUrl,
     twitterUrl,
     websiteUrl,
-    relaxSoundUnlockSheetVariant,
   ];
 
   FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
@@ -95,14 +94,6 @@ class RemoteConfigService {
     'WEBSITE_URL',
     _RemoteConfigValueType.string,
     'https://storypad.me',
-  );
-
-  // A/B Testing
-
-  static const relaxSoundUnlockSheetVariant = _RemoteConfigObject<String>(
-    'RELAX_SOUND_UNLOCK_SHEET_VARIANT',
-    _RemoteConfigValueType.string,
-    'variant_1',
   );
 
   Future<void> initialize() async {

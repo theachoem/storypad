@@ -1,4 +1,5 @@
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -10,11 +11,13 @@ import 'template_stories_view_model.dart';
 part 'template_stories_content.dart';
 
 class TemplateStoriesRoute extends BaseRoute {
-  const TemplateStoriesRoute({
+  TemplateStoriesRoute({
     required this.template,
-  });
+    required this.galleryTemplate,
+  }) : assert(template?.id != null || galleryTemplate?.id != null);
 
-  final TemplateDbModel template;
+  final TemplateDbModel? template;
+  final GalleryTemplateObject? galleryTemplate;
 
   @override
   bool get fullscreenDialog => true;
