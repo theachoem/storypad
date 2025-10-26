@@ -46,6 +46,7 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   }) {
     int? order = filters?["order"];
     bool? archived = filters?["archived"] == true;
+    String? galleryTemplateId = filters?["gallery_template_id"];
 
     Condition<TemplateObjectBox> conditions = TemplateObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(TemplateObjectBox_.permanentlyDeletedAt.isNull());
@@ -54,6 +55,10 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
       conditions = conditions.and(TemplateObjectBox_.archivedAt.notNull());
     } else {
       conditions = conditions.and(TemplateObjectBox_.archivedAt.isNull());
+    }
+
+    if (galleryTemplateId != null) {
+      conditions = conditions.and(TemplateObjectBox_.galleryTemplateId.equals(galleryTemplateId));
     }
 
     QueryBuilder<TemplateObjectBox> queryBuilder = box.query(conditions);

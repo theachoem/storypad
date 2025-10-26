@@ -192,6 +192,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    String? galleryTemplateId = filters?["gallery_template_id"];
     int? template = filters?["template"];
     int? eventId = filters?["event_id"];
     int? asset = filters?["asset"];
@@ -205,6 +206,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+    if (galleryTemplateId != null) {
+      conditions = conditions.and(StoryObjectBox_.galleryTemplateId.equals(galleryTemplateId));
+    }
     if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
     if (eventId != null) conditions = conditions.and(StoryObjectBox_.eventId.equals(eventId));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));

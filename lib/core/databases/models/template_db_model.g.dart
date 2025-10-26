@@ -11,7 +11,13 @@ abstract class _$TemplateDbModelCWProxy {
 
   TemplateDbModel tags(List<int>? tags);
 
+  TemplateDbModel name(String? name);
+
   TemplateDbModel content(StoryContentDbModel? content);
+
+  TemplateDbModel galleryTemplateId(String? galleryTemplateId);
+
+  TemplateDbModel note(String? note);
 
   TemplateDbModel preferences(StoryPreferencesDbModel? preferences);
 
@@ -37,7 +43,10 @@ abstract class _$TemplateDbModelCWProxy {
   TemplateDbModel call({
     int id,
     List<int>? tags,
+    String? name,
     StoryContentDbModel? content,
+    String? galleryTemplateId,
+    String? note,
     StoryPreferencesDbModel? preferences,
     DateTime createdAt,
     DateTime updatedAt,
@@ -62,8 +71,18 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel tags(List<int>? tags) => call(tags: tags);
 
   @override
+  TemplateDbModel name(String? name) => call(name: name);
+
+  @override
   TemplateDbModel content(StoryContentDbModel? content) =>
       call(content: content);
+
+  @override
+  TemplateDbModel galleryTemplateId(String? galleryTemplateId) =>
+      call(galleryTemplateId: galleryTemplateId);
+
+  @override
+  TemplateDbModel note(String? note) => call(note: note);
 
   @override
   TemplateDbModel preferences(StoryPreferencesDbModel? preferences) =>
@@ -101,7 +120,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
+    Object? name = const $CopyWithPlaceholder(),
     Object? content = const $CopyWithPlaceholder(),
+    Object? galleryTemplateId = const $CopyWithPlaceholder(),
+    Object? note = const $CopyWithPlaceholder(),
     Object? preferences = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
@@ -119,10 +141,22 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
           : tags as List<int>?,
+      name: name == const $CopyWithPlaceholder()
+          ? _value.name
+          // ignore: cast_nullable_to_non_nullable
+          : name as String?,
       content: content == const $CopyWithPlaceholder()
           ? _value.content
           // ignore: cast_nullable_to_non_nullable
           : content as StoryContentDbModel?,
+      galleryTemplateId: galleryTemplateId == const $CopyWithPlaceholder()
+          ? _value.galleryTemplateId
+          // ignore: cast_nullable_to_non_nullable
+          : galleryTemplateId as String?,
+      note: note == const $CopyWithPlaceholder()
+          ? _value.note
+          // ignore: cast_nullable_to_non_nullable
+          : note as String?,
       preferences: preferences == const $CopyWithPlaceholder()
           ? _value.preferences
           // ignore: cast_nullable_to_non_nullable
@@ -172,11 +206,14 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
       tags: (json['tags'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
+      name: json['name'] as String?,
       content: json['content'] == null
           ? null
           : StoryContentDbModel.fromJson(
               json['content'] as Map<String, dynamic>,
             ),
+      galleryTemplateId: json['gallery_template_id'] as String?,
+      note: json['note'] as String?,
       preferences: json['preferences'] == null
           ? null
           : StoryPreferencesDbModel.fromJson(
@@ -201,7 +238,10 @@ Map<String, dynamic> _$TemplateDbModelToJson(
   'index': instance.index,
   'tags': instance.tags,
   'preferences': instance.preferences.toJson(),
+  'name': instance.name,
   'content': instance.content?.toJson(),
+  'gallery_template_id': instance.galleryTemplateId,
+  'note': instance.note,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,

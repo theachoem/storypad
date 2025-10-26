@@ -15,7 +15,10 @@ TemplateObjectBox _modelToObject(Map<String, dynamic> options) {
 
   return TemplateObjectBox(
     id: model.id,
+    name: model.name,
     content: model.content != null ? StoryContentHelper.contentToString(model.content!) : null,
+    galleryTemplateId: model.galleryTemplateId,
+    note: model.note,
     index: model.index,
     tags: model.tags?.isNotEmpty == true ? model.tags : null,
     createdAt: model.createdAt,
@@ -32,7 +35,10 @@ TemplateDbModel _objectToModel(Map<String, dynamic> options) {
 
   return TemplateDbModel(
     id: object.id,
+    name: object.name,
     content: object.content != null ? StoryContentHelper.stringToContent(object.content!) : null,
+    galleryTemplateId: object.galleryTemplateId,
+    note: object.note,
     index: object.index,
     tags: object.tags?.isNotEmpty == true ? object.tags : null,
     createdAt: object.createdAt,

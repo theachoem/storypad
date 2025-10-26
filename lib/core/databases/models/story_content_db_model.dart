@@ -42,6 +42,16 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   List<String>? get includeCompareKeys => ['title', 'rich_pages'];
 
   @override
+  List<String> get excludeCompareKeys {
+    return [
+      'id',
+      'plain_text',
+      'created_at',
+      'metadata',
+    ];
+  }
+
+  @override
   DateTime get updatedAt => createdAt;
 
   // @Deprecated('use richPages instead')
@@ -60,14 +70,14 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.richPages,
   });
 
-  String? generatePlainText(List<StoryPageDbModel>? newRichPages) {
+  static String? generatePlainText(List<StoryPageDbModel>? newRichPages) {
     if (newRichPages == null || newRichPages.isEmpty) return null;
     return [
-      newRichPages.first.plainText ?? '',
+      newRichPages.first.memoryPlainText ?? '',
       if (newRichPages.length > 1)
         for (final p in newRichPages.getRange(1, newRichPages.length)) ...[
           p.title ?? '',
-          p.plainText ?? '',
+          p.memoryPlainText ?? '',
         ],
     ].join('\n').trim();
   }
@@ -97,7 +107,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
         StoryPageDbModel(
           id: DateTime.now().millisecondsSinceEpoch,
           title: null,
-          plainText: null,
+          memoryPlainText: null,
           body: null,
           crossAxisCount: crossAxisCount,
           mainAxisCount: mainAxisCount,
@@ -161,14 +171,4 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @override
   Map<String, dynamic> toJson() => _$StoryContentDbModelToJson(this);
   factory StoryContentDbModel.fromJson(Map<String, dynamic> json) => _$StoryContentDbModelFromJson(json);
-
-  @override
-  List<String> get excludeCompareKeys {
-    return [
-      'id',
-      'plain_text',
-      'created_at',
-      'metadata',
-    ];
-  }
 }

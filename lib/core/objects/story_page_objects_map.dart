@@ -74,7 +74,7 @@ class StoryPageObjectsMap {
 
       map[richPage.id] = StoryPageObject(
         key: GlobalKey(),
-        page: richPage.copyWith(plainText: QuillRootToPlainTextService.call(quillController.document.root)),
+        page: richPage.copyWith(memoryPlainText: QuillRootToPlainTextService.call(quillController.document.root)),
         titleController: TextEditingController.fromValue(
           TextEditingValue(
             text: richPage.title?.trim() ?? '',

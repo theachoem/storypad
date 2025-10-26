@@ -9,7 +9,7 @@ mixin Comparable<T extends BaseDbModel> on BaseDbModel {
   String keepComparableKeys(Map<String, dynamic> json) {
     json.removeWhere((key, value) {
       if (includeCompareKeys != null) {
-        return excludeCompareKeys.contains(key) && !includeCompareKeys!.contains(key);
+        return !includeCompareKeys!.contains(key);
       } else {
         return excludeCompareKeys.contains(key);
       }

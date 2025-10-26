@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(31, 3376970649560229075),
+    lastPropertyId: const obx_int.IdUid(32, 5877908410429539901),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -179,6 +179,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(31, 3376970649560229075),
         name: 'eventId',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(32, 5877908410429539901),
+        name: 'galleryTemplateId',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -362,7 +368,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(6, 4197752153260494722),
     name: 'TemplateObjectBox',
-    lastPropertyId: const obx_int.IdUid(10, 3267732544409712890),
+    lastPropertyId: const obx_int.IdUid(13, 7711936533008164879),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -423,6 +429,24 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(10, 3267732544409712890),
         name: 'archivedAt',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 9213761210184601049),
+        name: 'note',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 7449546806323438363),
+        name: 'name',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 7711936533008164879),
+        name: 'galleryTemplateId',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -654,7 +678,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final draftContentOffset = object.draftContent == null
             ? null
             : fbb.writeString(object.draftContent!);
-        fbb.startTable(32);
+        final galleryTemplateIdOffset = object.galleryTemplateId == null
+            ? null
+            : fbb.writeString(object.galleryTemplateId!);
+        fbb.startTable(33);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -681,6 +708,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(28, draftContentOffset);
         fbb.addInt64(29, object.templateId);
         fbb.addInt64(30, object.eventId);
+        fbb.addOffset(31, galleryTemplateIdOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -764,6 +792,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final movedToBinAtParam = movedToBinAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(movedToBinAtValue);
+        final galleryTemplateIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 66);
         final templateIdParam = const fb.Int64Reader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -820,6 +851,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           movedToBinAt: movedToBinAtParam,
+          galleryTemplateId: galleryTemplateIdParam,
           templateId: templateIdParam,
           latestContent: latestContentParam,
           draftContent: draftContentParam,
@@ -1084,7 +1116,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final preferencesOffset = object.preferences == null
             ? null
             : fbb.writeString(object.preferences!);
-        fbb.startTable(11);
+        final noteOffset = object.note == null
+            ? null
+            : fbb.writeString(object.note!);
+        final nameOffset = object.name == null
+            ? null
+            : fbb.writeString(object.name!);
+        final galleryTemplateIdOffset = object.galleryTemplateId == null
+            ? null
+            : fbb.writeString(object.galleryTemplateId!);
+        fbb.startTable(14);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.index);
         fbb.addOffset(2, tagsOffset);
@@ -1095,6 +1136,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(7, lastSavedDeviceIdOffset);
         fbb.addOffset(8, preferencesOffset);
         fbb.addInt64(9, object.archivedAt?.millisecondsSinceEpoch);
+        fbb.addOffset(10, noteOffset);
+        fbb.addOffset(11, nameOffset);
+        fbb.addOffset(12, galleryTemplateIdOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1120,9 +1164,18 @@ obx_int.ModelDefinition getObjectBoxModel() {
           6,
           0,
         );
+        final nameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 26);
         final contentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 10);
+        final noteParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 24);
+        final galleryTemplateIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 28);
         final preferencesParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 20);
@@ -1148,7 +1201,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = TemplateObjectBox(
           id: idParam,
           index: indexParam,
+          name: nameParam,
           content: contentParam,
+          note: noteParam,
+          galleryTemplateId: galleryTemplateIdParam,
           preferences: preferencesParam,
           tags: tagsParam,
           createdAt: createdAtParam,
@@ -1457,6 +1513,11 @@ class StoryObjectBox_ {
   static final eventId = obx.QueryIntegerProperty<StoryObjectBox>(
     _entities[0].properties[25],
   );
+
+  /// See [StoryObjectBox.galleryTemplateId].
+  static final galleryTemplateId = obx.QueryStringProperty<StoryObjectBox>(
+    _entities[0].properties[26],
+  );
 }
 
 /// [TagObjectBox] entity fields to define ObjectBox queries.
@@ -1637,6 +1698,21 @@ class TemplateObjectBox_ {
   /// See [TemplateObjectBox.archivedAt].
   static final archivedAt = obx.QueryDateProperty<TemplateObjectBox>(
     _entities[4].properties[9],
+  );
+
+  /// See [TemplateObjectBox.note].
+  static final note = obx.QueryStringProperty<TemplateObjectBox>(
+    _entities[4].properties[10],
+  );
+
+  /// See [TemplateObjectBox.name].
+  static final name = obx.QueryStringProperty<TemplateObjectBox>(
+    _entities[4].properties[11],
+  );
+
+  /// See [TemplateObjectBox.galleryTemplateId].
+  static final galleryTemplateId = obx.QueryStringProperty<TemplateObjectBox>(
+    _entities[4].properties[12],
   );
 }
 

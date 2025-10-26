@@ -29,6 +29,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     movedToBinAt: object.movedToBinAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
+    galleryTemplateId: object.galleryTemplateId,
     templateId: object.templateId,
     eventId: object.eventId,
   );
@@ -77,7 +78,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
   final content = story.draftContent ?? story.latestContent;
   String? searchMetadata = content?.richPages
       ?.map((e) {
-        return [e.title, e.plainText].join("\n");
+        return [e.title, e.memoryPlainText].join("\n");
       })
       .join("\n");
 
@@ -96,6 +97,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     starred: story.starred,
     feeling: story.feeling,
     showDayCount: null,
+    galleryTemplateId: story.galleryTemplateId,
     templateId: story.templateId,
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,

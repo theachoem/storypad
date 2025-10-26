@@ -15,7 +15,11 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject assetId(int? assetId);
 
+  SearchFilterObject galleryTemplateId(String? galleryTemplateId);
+
   SearchFilterObject templateId(int? templateId);
+
+  SearchFilterObject eventId(int? eventId);
 
   SearchFilterObject excludeYears(Set<int>? excludeYears);
 
@@ -37,7 +41,9 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<PathType> types,
     int? tagId,
     int? assetId,
+    String? galleryTemplateId,
     int? templateId,
+    int? eventId,
     Set<int>? excludeYears,
     int? month,
     int? day,
@@ -65,8 +71,15 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject assetId(int? assetId) => call(assetId: assetId);
 
   @override
+  SearchFilterObject galleryTemplateId(String? galleryTemplateId) =>
+      call(galleryTemplateId: galleryTemplateId);
+
+  @override
   SearchFilterObject templateId(int? templateId) =>
       call(templateId: templateId);
+
+  @override
+  SearchFilterObject eventId(int? eventId) => call(eventId: eventId);
 
   @override
   SearchFilterObject excludeYears(Set<int>? excludeYears) =>
@@ -94,7 +107,9 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? types = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
+    Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
+    Object? eventId = const $CopyWithPlaceholder(),
     Object? excludeYears = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
@@ -117,10 +132,18 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
           : assetId as int?,
+      galleryTemplateId: galleryTemplateId == const $CopyWithPlaceholder()
+          ? _value.galleryTemplateId
+          // ignore: cast_nullable_to_non_nullable
+          : galleryTemplateId as String?,
       templateId: templateId == const $CopyWithPlaceholder()
           ? _value.templateId
           // ignore: cast_nullable_to_non_nullable
           : templateId as int?,
+      eventId: eventId == const $CopyWithPlaceholder()
+          ? _value.eventId
+          // ignore: cast_nullable_to_non_nullable
+          : eventId as int?,
       excludeYears: excludeYears == const $CopyWithPlaceholder()
           ? _value.excludeYears
           // ignore: cast_nullable_to_non_nullable
@@ -163,7 +186,9 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
           .toSet(),
       tagId: (json['tag_id'] as num?)?.toInt(),
       assetId: (json['asset_id'] as num?)?.toInt(),
+      galleryTemplateId: json['gallery_template_id'] as String?,
       templateId: (json['template_id'] as num?)?.toInt(),
+      eventId: (json['event_id'] as num?)?.toInt(),
       excludeYears: (json['exclude_years'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toSet(),
@@ -180,7 +205,9 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
       'tag_id': instance.tagId,
+      'gallery_template_id': instance.galleryTemplateId,
       'template_id': instance.templateId,
+      'event_id': instance.eventId,
       'asset_id': instance.assetId,
       'starred': instance.starred,
     };

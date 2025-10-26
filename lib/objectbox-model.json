@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "31:3376970649560229075",
+      "lastPropertyId": "32:5877908410429539901",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -138,6 +138,11 @@
           "id": "31:3376970649560229075",
           "name": "eventId",
           "type": 6
+        },
+        {
+          "id": "32:5877908410429539901",
+          "name": "galleryTemplateId",
+          "type": 9
         }
       ],
       "relations": []
@@ -291,7 +296,7 @@
     },
     {
       "id": "6:4197752153260494722",
-      "lastPropertyId": "10:3267732544409712890",
+      "lastPropertyId": "13:7711936533008164879",
       "name": "TemplateObjectBox",
       "properties": [
         {
@@ -344,6 +349,21 @@
           "id": "10:3267732544409712890",
           "name": "archivedAt",
           "type": 10
+        },
+        {
+          "id": "11:9213761210184601049",
+          "name": "note",
+          "type": 9
+        },
+        {
+          "id": "12:7449546806323438363",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "13:7711936533008164879",
+          "name": "galleryTemplateId",
+          "type": 9
         }
       ],
       "relations": []

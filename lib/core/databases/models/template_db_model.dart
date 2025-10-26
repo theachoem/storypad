@@ -21,7 +21,13 @@ class TemplateDbModel extends BaseDbModel {
   final StoryPreferencesDbModel? _preferences;
   StoryPreferencesDbModel get preferences => _preferences ?? StoryPreferencesDbModel.create();
 
+  final String? name;
   final StoryContentDbModel? content;
+
+  // Keep original reference to gallery template when save gallery template to DB.
+  final String? galleryTemplateId;
+
+  final String? note;
   final DateTime createdAt;
 
   @override
@@ -38,7 +44,10 @@ class TemplateDbModel extends BaseDbModel {
   TemplateDbModel({
     required this.id,
     required this.tags,
+    required this.name,
     required this.content,
+    required this.galleryTemplateId,
+    required this.note,
     StoryPreferencesDbModel? preferences,
     required this.createdAt,
     required this.updatedAt,

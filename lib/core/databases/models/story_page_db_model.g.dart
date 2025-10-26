@@ -17,7 +17,7 @@ abstract class _$StoryPageDbModelCWProxy {
 
   StoryPageDbModel mainAxisCount(int? mainAxisCount);
 
-  StoryPageDbModel plainText(String? plainText);
+  StoryPageDbModel memoryPlainText(String? memoryPlainText);
 
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
@@ -32,7 +32,7 @@ abstract class _$StoryPageDbModelCWProxy {
     List<dynamic>? body,
     int? crossAxisCount,
     int? mainAxisCount,
-    String? plainText,
+    String? memoryPlainText,
   });
 }
 
@@ -61,7 +61,8 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
       call(mainAxisCount: mainAxisCount);
 
   @override
-  StoryPageDbModel plainText(String? plainText) => call(plainText: plainText);
+  StoryPageDbModel memoryPlainText(String? memoryPlainText) =>
+      call(memoryPlainText: memoryPlainText);
 
   @override
   /// Creates a new instance with the provided field values.
@@ -77,7 +78,7 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
     Object? body = const $CopyWithPlaceholder(),
     Object? crossAxisCount = const $CopyWithPlaceholder(),
     Object? mainAxisCount = const $CopyWithPlaceholder(),
-    Object? plainText = const $CopyWithPlaceholder(),
+    Object? memoryPlainText = const $CopyWithPlaceholder(),
   }) {
     return StoryPageDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -100,10 +101,10 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
           ? _value.mainAxisCount
           // ignore: cast_nullable_to_non_nullable
           : mainAxisCount as int?,
-      plainText: plainText == const $CopyWithPlaceholder()
-          ? _value.plainText
+      memoryPlainText: memoryPlainText == const $CopyWithPlaceholder()
+          ? _value.memoryPlainText
           // ignore: cast_nullable_to_non_nullable
-          : plainText as String?,
+          : memoryPlainText as String?,
     );
   }
 }
