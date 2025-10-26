@@ -21,6 +21,7 @@ class _TemplatesContent extends StatelessWidget {
 
     return DefaultTabController(
       length: 2,
+      initialIndex: context.read<InAppPurchaseProvider>().template ? 0 : 1,
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -42,8 +43,8 @@ class _TemplatesContent extends StatelessWidget {
       ],
       bottom: TabBar(
         onTap: (index) {
-          if (index == 1 && !context.read<InAppPurchaseProvider>().template) {
-            DefaultTabController.of(context).animateTo(0);
+          if (index == 0 && !context.read<InAppPurchaseProvider>().template) {
+            DefaultTabController.of(context).animateTo(1);
             AddOnsRoute.pushAndNavigateTo(
               product: AppProduct.templates,
               context: context,
@@ -52,7 +53,6 @@ class _TemplatesContent extends StatelessWidget {
           }
         },
         tabs: [
-          Tab(text: tr('general.gallery')),
           Tab(
             child: Consumer<InAppPurchaseProvider>(
               builder: (context, iapProvider, child) {
@@ -74,6 +74,7 @@ class _TemplatesContent extends StatelessWidget {
               },
             ),
           ),
+          Tab(text: tr('general.gallery')),
         ],
       ),
     );
@@ -93,13 +94,13 @@ class _TemplatesContent extends StatelessWidget {
   Widget buildBody(BuildContext context) {
     return TabBarView(
       children: [
-        GalleryTab(
+        TemplatesTab(
           params: viewModel.params,
           appBarActionsLoaderCallback: (List<IconButton> icons) {
             viewModel.appBarActionsNotifier.value = icons;
           },
         ),
-        TemplatesTab(
+        GalleryTab(
           params: viewModel.params,
           appBarActionsLoaderCallback: (List<IconButton> icons) {
             viewModel.appBarActionsNotifier.value = icons;

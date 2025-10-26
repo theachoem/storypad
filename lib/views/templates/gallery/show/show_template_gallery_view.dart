@@ -28,6 +28,13 @@ class ShowTemplateGalleryRoute extends BaseRoute {
   final GalleryTemplateObject galleryTemplate;
 
   @override
+  Map<String, String?>? get analyticsParameters {
+    return {
+      'templateId': galleryTemplate.id,
+    };
+  }
+
+  @override
   bool get fullscreenDialog => true;
 
   @override

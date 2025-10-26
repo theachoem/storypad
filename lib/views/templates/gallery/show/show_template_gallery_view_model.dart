@@ -9,8 +9,10 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/markdown_to_quill_delta_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/gallery_template_usage_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -112,6 +114,9 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
   }
 
   void useTemplate(BuildContext context) async {
+    AnalyticsService.instance.logUseGalleryTemplate(templateId: galleryTemplate.id, source: 'gallery');
+    GalleryTemplateUsageService.instance.recordTemplateUsage(templateId: galleryTemplate.id);
+
     final result = await EditStoryRoute(
       galleryTemplate: galleryTemplate,
     ).push(context, rootNavigator: true);

@@ -7,7 +7,9 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/gallery_template_usage_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -51,6 +53,9 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   void useTemplate(BuildContext context) async {
+    AnalyticsService.instance.logUseGalleryTemplate(templateId: template.id.toString(), source: 'my_templates');
+    GalleryTemplateUsageService.instance.recordTemplateUsage(templateId: template.id.toString());
+
     final result = await EditStoryRoute(
       initialYear: params.initialYear,
       initialMonth: params.initialMonth,

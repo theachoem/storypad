@@ -596,6 +596,21 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logUseGalleryTemplate({
+    required String templateId,
+    required String source,
+  }) {
+    final parameters = sanitizeParameters({
+      'template_id': templateId,
+      'source': source,
+    });
+    debug('logUseGalleryTemplate', parameters);
+    return FirebaseAnalytics.instance.logEvent(
+      name: 'use_gallery_template',
+      parameters: parameters,
+    );
+  }
+
   Map<String, Object>? storyAnalyticParameters(StoryDbModel story) {
     return sanitizeParameters({
       'version': story.version.toString(),

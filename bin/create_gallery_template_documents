@@ -1,0 +1,8 @@
+#!/bin/bash
+# Creates template documents in Firestore from YAML files in /templates directory.
+# This pre-populates the templates collection so device usage subcollections can be created.
+# Run this once after adding new gallery templates or before deploying analytics.
+
+export GOOGLE_APPLICATION_CREDENTIALS="firestore_service_account.json"
+
+cd bin/firebase_admin && node create_gallery_template_documents.js
