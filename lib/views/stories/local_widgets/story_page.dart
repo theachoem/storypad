@@ -43,7 +43,7 @@ class _StoryPage extends StatelessWidget {
   void onChange() {
     StoryPageDbModel richPage = page.page.copyWith(
       title: page.titleController.text.trim().isNotEmpty == true ? page.titleController.text.trim() : null,
-      plainText: QuillRootToPlainTextService.call(page.bodyController.document.root),
+      memoryPlainText: QuillRootToPlainTextService.call(page.bodyController.document.root),
       body: page.bodyController.document.toDelta().toJson(),
     );
 

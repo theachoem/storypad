@@ -41,8 +41,8 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
     // Save if detect data is invalid mostly from previous version before 2.12.3
     // No need to do following in edit story view.
-    if (draftContent?.plainText != draftContent?.generatePlainText(draftContent?.richPages)) {
-      draftContent = draftContent?.copyWith(plainText: draftContent?.generatePlainText(draftContent?.richPages));
+    if (draftContent?.plainText != StoryContentDbModel.generatePlainText(draftContent?.richPages)) {
+      draftContent = draftContent?.copyWith(plainText: StoryContentDbModel.generatePlainText(draftContent?.richPages));
       story = buildStory(draft: false);
       StoryDbModel.db.set(story!);
     }
@@ -95,7 +95,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     draftContent = draftContent!.replacePage(richPage);
     pagesManager.pagesMap[richPage.id]?.page = richPage;
 
-    await saveDraft();
+    await saveDraft(debugSource: '$runtimeType#onPageChanged');
     notifyListeners();
   }
 

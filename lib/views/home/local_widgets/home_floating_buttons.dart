@@ -94,24 +94,18 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             widget.viewModel.takePhoto();
           },
         ),
-      if (kIAPEnabled && context.read<InAppPurchaseProvider>().template)
+      if (kIAPEnabled)
         IconButton.outlined(
           tooltip: tr("add_ons.templates.title"),
           visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
-          icon: const Icon(Icons.lightbulb_outlined),
+          icon: SpFadeIn.fromBottom(
+            duration: Durations.long1,
+            child: Icon(SpIcons.lightBulb, color: ColorScheme.of(context).bootstrap.warning.color),
+          ),
           color: Colors.white,
           onPressed: () {
             toggle(context);
-
-            if (context.read<InAppPurchaseProvider>().template) {
-              widget.viewModel.goToTemplatePage(context);
-            } else {
-              AddOnsRoute.pushAndNavigateTo(
-                product: AppProduct.templates,
-                context: context,
-                fullscreenDialog: true,
-              );
-            }
+            widget.viewModel.goToTemplatePage(context);
           },
         ),
     ];

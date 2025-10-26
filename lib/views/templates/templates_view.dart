@@ -1,18 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:storypad/core/databases/models/template_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/templates/local_widgets/gallery_tab.dart';
+import 'package:storypad/views/templates/local_widgets/templates_tab.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_markdown_body.dart';
-
 import 'templates_view_model.dart';
 
 part 'templates_content.dart';
-part 'local_widgets/template_tile.dart';
-part 'local_widgets/empty_body.dart';
 
 class TemplatesRoute extends BaseRoute {
   const TemplatesRoute({

@@ -67,7 +67,10 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   void goToPreviousStories(BuildContext context) async {
-    TemplateStoriesRoute(template: template).push(context);
+    TemplateStoriesRoute(
+      template: template,
+      galleryTemplate: null,
+    ).push(context);
   }
 
   Future<void> goToEditPage(BuildContext context) async {

@@ -28,7 +28,10 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     template ??= TemplateDbModel(
       id: openedOn.millisecondsSinceEpoch,
       tags: [],
+      name: null,
       content: null,
+      note: null,
+      galleryTemplateId: null,
       createdAt: openedOn,
       updatedAt: openedOn,
       archivedAt: null,
@@ -104,8 +107,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     ].swap(oldIndex: oldIndex, newIndex: newIndex);
 
     draftContent = draftContent!.copyWith(
-      title: pages.first.title,
-      plainText: pages.first.plainText,
+      plainText: StoryContentDbModel.generatePlainText(draftContent?.richPages),
       richPages: pages,
     );
 
@@ -148,6 +150,17 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
       notifyListeners();
     }
+  }
+
+  Future<void> onNameChanged(String newTemplateName) async {
+    return debouncedCallback(() async {
+      template = template!.copyWith(
+        name: newTemplateName.trim(),
+        updatedAt: DateTime.now(),
+      );
+      lastSavedAtNotifier.value = DateTime.now();
+      await TemplateDbModel.db.set(template!);
+    });
   }
 
   Future<void> onPageChanged(StoryPageDbModel richPage) async {

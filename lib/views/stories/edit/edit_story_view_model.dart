@@ -48,6 +48,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialDay: params.initialDay,
       initialTagIds: params.initialTagIds,
       initialEventId: params.initialEventId,
+      galleryTemplate: params.galleryTemplate,
       template: params.template,
     );
 

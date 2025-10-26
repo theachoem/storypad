@@ -16,6 +16,7 @@ class TemplateStoriesViewModel extends ChangeNotifier with DisposeAwareMixin {
     types: {PathType.docs},
     tagId: null,
     assetId: null,
-    templateId: params.template.id,
+    templateId: params.template?.id,
+    galleryTemplateId: params.galleryTemplate?.id,
   );
 }

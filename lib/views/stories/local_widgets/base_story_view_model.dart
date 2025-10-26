@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -172,7 +173,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
     draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
     pagesManager.pagesMap.add(richPage: draftContent!.richPages!.last, readOnly: false);
-    await saveDraft();
+    await saveDraft(debugSource: '$runtimeType#addNewPage');
     notifyListeners();
 
     if (pagesManager.pageScrollController.hasClients) {
@@ -203,7 +204,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     if (result == OkCancelResult.ok) {
       draftContent = draftContent!.removeRichPage(richPage.id);
       pagesManager.pagesMap.remove(richPage.id);
-      await saveDraft();
+      await saveDraft(debugSource: '$runtimeType#deleteAPage');
       notifyListeners();
 
       AnalyticsService.instance.logDeleteStoryPage(
@@ -218,7 +219,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   }) async {
     draftContent = draftContent?.reorder(oldIndex: oldIndex, newIndex: newIndex);
 
-    await saveDraft();
+    await saveDraft(debugSource: '$runtimeType#reorderPages');
     notifyListeners();
 
     AnalyticsService.instance.logReorderStoryPages(
@@ -239,12 +240,15 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     pagesManager.pagesMap[richPage.id]?.page = richPage;
 
     return debouncedCallback(() async {
-      await saveDraft();
+      await saveDraft(debugSource: '$runtimeType#onPageChanged');
     });
   }
 
-  Future<void> saveDraft() async {
+  Future<void> saveDraft({
+    required String debugSource,
+  }) async {
     if (hasChange) {
+      if (kDebugMode) print('$runtimeType#saveDraft called from $debugSource');
       story = buildStory(draft: true);
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story!.updatedAt;

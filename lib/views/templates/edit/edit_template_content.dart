@@ -23,7 +23,16 @@ class _EditTemplateContent extends StatelessWidget {
         initialTags: viewModel.template?.tags ?? [],
       ),
       appBar: AppBar(
-        title: viewModel.flowType == EditingFlowType.create ? Text(tr('button.new_template')) : null,
+        title: TextFormField(
+          autofocus: true,
+          style: TextTheme.of(context).titleLarge,
+          initialValue: viewModel.template?.name,
+          onChanged: (value) => viewModel.onNameChanged(value),
+          decoration: const InputDecoration(
+            hintText: "Name...",
+            border: InputBorder.none,
+          ),
+        ),
         leading: const CloseButton(),
         actions: [
           const SizedBox(width: 8.0),
@@ -54,10 +63,7 @@ class _EditTemplateContent extends StatelessWidget {
       preferences: viewModel.template?.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
-      headerBuilder: (_) => TemplateTagLabels(
-        template: viewModel.template!,
-        margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
-      ),
+      headerBuilder: (_) => buildPageHeader(context),
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
@@ -73,6 +79,19 @@ class _EditTemplateContent extends StatelessWidget {
         onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {},
         canDeletePage: viewModel.pagesManager.canDeletePage,
       ),
+    );
+  }
+
+  Widget buildPageHeader(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12.0,
+      children: [
+        TemplateTagLabels(
+          template: viewModel.template!,
+          margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
+        ),
+      ],
     );
   }
 }

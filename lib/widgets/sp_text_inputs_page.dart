@@ -9,6 +9,7 @@ class SpTextInputField {
     this.initialText,
     this.hintText,
     this.labelText,
+    this.maxLines,
     this.keyboardType,
     this.validator,
   });
@@ -16,6 +17,7 @@ class SpTextInputField {
   final String? initialText;
   final String? hintText;
   final String? labelText;
+  final int? maxLines;
   final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
 }
@@ -106,6 +108,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
             spacing: 4.0,
             children: [
               CupertinoTextField(
+                maxLines: widget.fields[index].maxLines,
                 textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
                 controller: controllers[index],
                 keyboardType: widget.fields[index].keyboardType,

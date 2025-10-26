@@ -1,9 +1,9 @@
-part of 'show_template_view.dart';
+part of 'show_template_gallery_view.dart';
 
-class _ShowTemplateContent extends StatelessWidget {
-  const _ShowTemplateContent(this.viewModel);
+class _ShowTemplateGalleryContent extends StatelessWidget {
+  const _ShowTemplateGalleryContent(this.viewModel);
 
-  final ShowTemplateViewModel viewModel;
+  final ShowTemplateGalleryViewModel viewModel;
 
   List<StoryPageObject> constructPages() {
     if (viewModel.pagesManager.pagesMap.keys.isEmpty) return <StoryPageObject>[];
@@ -20,14 +20,8 @@ class _ShowTemplateContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
-        title: viewModel.template.name != null ? Text(viewModel.template.name!) : null,
+        title: Text(viewModel.galleryTemplate.name),
         actions: [
-          if (!viewModel.template.archived)
-            IconButton(
-              tooltip: tr("button.edit"),
-              icon: const Icon(SpIcons.edit),
-              onPressed: () => viewModel.goToEditPage(context),
-            ),
           SpPopupMenuButton(
             dyGetter: (dy) => dy + 72,
             items: (context) {
@@ -37,28 +31,21 @@ class _ShowTemplateContent extends StatelessWidget {
                   title: tr("general.previous_stories"),
                   onPressed: () => viewModel.goToPreviousStories(context),
                 ),
-                if (viewModel.template.archived)
-                  SpPopMenuItem(
-                    leadingIconData: SpIcons.putBack,
-                    title: tr("button.put_back"),
-                    onPressed: () => viewModel.putBack(context),
-                  )
-                else
-                  SpPopMenuItem(
-                    leadingIconData: SpIcons.archive,
-                    title: tr("button.archive"),
-                    onPressed: () => viewModel.archive(context),
-                  ),
                 SpPopMenuItem(
-                  titleStyle: TextStyle(color: ColorScheme.of(context).error),
-                  leadingIconData: SpIcons.delete,
-                  title: tr("button.delete"),
-                  onPressed: () => viewModel.delete(context),
-                ),
-                SpPopMenuItem(
-                  leadingIconData: SpIcons.info,
-                  title: tr("button.info"),
-                  onPressed: () => viewModel.showInfo(context),
+                  leadingIconData: SpIcons.save,
+                  trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
+                  title: tr('button.save_template'),
+                  titleStyle: TextStyle(color: Theme.of(context).disabledColor),
+                  onPressed: () {
+                    if (context.read<InAppPurchaseProvider>().template) {
+                      viewModel.saveTemplate(context);
+                    } else {
+                      AddOnsRoute.pushAndNavigateTo(
+                        product: AppProduct.templates,
+                        context: context,
+                      );
+                    }
+                  },
                 ),
               ];
             },
@@ -76,15 +63,13 @@ class _ShowTemplateContent extends StatelessWidget {
       ),
       body: buildBody(context, pages),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: viewModel.template.archived
-          ? null
-          : FloatingActionButton.extended(
-              heroTag: null,
-              onPressed: () => viewModel.useTemplate(context),
-              shape: const StadiumBorder(),
-              label: Text(tr('button.use_template')),
-              icon: const Icon(SpIcons.newStory),
-            ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: null,
+        onPressed: () => viewModel.useTemplate(context),
+        shape: const StadiumBorder(),
+        label: Text(tr('button.use_template')),
+        icon: const Icon(SpIcons.newStory),
+      ),
     );
   }
 
@@ -93,11 +78,13 @@ class _ShowTemplateContent extends StatelessWidget {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
+    final note = viewModel.galleryTemplate.note;
+
     return StoryPagesBuilder(
-      preferences: viewModel.template.preferences,
+      preferences: StoryPreferencesDbModel.create().copyWith(layoutType: PageLayoutType.list),
       pages: pages,
       storyContent: viewModel.draftContent!,
-      headerBuilder: (_) => buildPageHeader(context),
+      headerBuilder: note != null ? (_) => TemplateNote(note: note) : null,
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
@@ -105,16 +92,9 @@ class _ShowTemplateContent extends StatelessWidget {
       ),
       pageScrollController: viewModel.pagesManager.pageScrollController,
       viewInsets: MediaQuery.viewInsetsOf(context),
-      onGoToEdit: () => viewModel.goToEditPage(context),
+      onGoToEdit: null,
       onPageChanged: null,
       actions: null,
-    );
-  }
-
-  Widget buildPageHeader(BuildContext context) {
-    return TemplateTagLabels(
-      template: viewModel.template,
-      margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 12.0),
     );
   }
 }

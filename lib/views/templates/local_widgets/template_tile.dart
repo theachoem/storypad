@@ -1,34 +1,41 @@
-part of '../templates_view.dart';
+part of 'templates_tab.dart';
 
 class _TemplateTile extends StatelessWidget {
   const _TemplateTile({
-    required this.viewModel,
+    required this.onTap,
     required this.template,
   });
 
-  final TemplatesViewModel viewModel;
+  final void Function() onTap;
   final TemplateDbModel template;
 
   @override
   Widget build(BuildContext context) {
+    String? body = template.content?.richPages
+        ?.map((e) => e.title?.trim().isNotEmpty == true ? "- ${e.title}" : null)
+        .whereType<String>()
+        .join("\n");
+
     return MediaQuery.removePadding(
       context: context,
       removeLeft: true,
       removeRight: true,
       child: ListTile(
-        onTap: () => viewModel.goToShowPage(context, template),
+        onTap: onTap,
         tileColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(8.0)),
-        title: Text(template.content?.richPages?.firstOrNull?.title ?? tr('general.na')),
+        title: Text(template.name ?? tr('general.na')),
         contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         isThreeLine: true,
         subtitle: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (template.content?.displayShortBody?.trim().isNotEmpty == true)
-              SpMarkdownBody(body: template.content!.displayShortBody!),
-            const SizedBox(height: 8.0),
+            if (body?.trim().isNotEmpty == true) ...[
+              const SizedBox(height: 8.0),
+              SpMarkdownBody(body: body!),
+              const SizedBox(height: 8.0),
+            ],
             TemplateTagLabels(template: template),
           ],
         ),
