@@ -46,7 +46,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
-      readOnly: false,
+      readOnly: true,
       initialPagesMap: null,
     );
 

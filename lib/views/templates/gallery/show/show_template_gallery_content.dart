@@ -35,7 +35,9 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
                   leadingIconData: SpIcons.save,
                   trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
                   title: tr('button.save_template'),
-                  titleStyle: TextStyle(color: Theme.of(context).disabledColor),
+                  titleStyle: context.read<InAppPurchaseProvider>().template
+                      ? null
+                      : TextStyle(color: Theme.of(context).disabledColor),
                   onPressed: () {
                     if (context.read<InAppPurchaseProvider>().template) {
                       viewModel.saveTemplate(context);
@@ -84,7 +86,12 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
       preferences: StoryPreferencesDbModel.create().copyWith(layoutType: PageLayoutType.list),
       pages: pages,
       storyContent: viewModel.draftContent!,
-      headerBuilder: note != null ? (_) => TemplateNote(note: note) : null,
+      headerBuilder: note != null
+          ? (_) => Padding(
+              padding: CupertinoSheetRoute.hasParentSheet(context) ? EdgeInsets.zero : const EdgeInsets.only(top: 12.0),
+              child: TemplateNote(note: note),
+            )
+          : null,
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,

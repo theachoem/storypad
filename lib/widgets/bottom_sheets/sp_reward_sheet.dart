@@ -116,12 +116,12 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
               child: const Text('Redeem Code'),
-              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
+              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(context),
             );
           } else {
             return FilledButton.icon(
               label: const Text('Redeem Code'),
-              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(),
+              onPressed: () => context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(context),
             );
           }
         },

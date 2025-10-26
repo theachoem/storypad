@@ -217,9 +217,10 @@ class InAppPurchaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> presentCodeRedemptionSheet() async {
+  Future<void> presentCodeRedemptionSheet(BuildContext context) async {
     if (kIAPEnabled && Platform.isIOS) {
       await Purchases.presentCodeRedemptionSheet();
+      if (context.mounted) restorePurchase(context);
     }
   }
 }

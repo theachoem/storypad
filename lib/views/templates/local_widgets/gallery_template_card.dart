@@ -33,7 +33,7 @@ class _GalleryTemplateCard extends StatelessWidget {
               filePath: template.iconUrlPath,
               builder: (context, file, failed) {
                 if (failed) return const SizedBox(width: 36, height: 36);
-                if (file == null) return const SpGradientLoading(height: 36, width: 26);
+                if (file == null) return const SpGradientLoading(height: 36, width: 26, shape: BoxShape.circle);
 
                 return Image.file(
                   file,

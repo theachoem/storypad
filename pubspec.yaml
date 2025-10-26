@@ -1,5 +1,5 @@
 name: storypad
-version: 2.18.3+477
+version: 2.19.0+480
 publish_to: none
 environment:
   sdk: ^3.8.0

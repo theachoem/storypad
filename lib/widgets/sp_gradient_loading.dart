@@ -8,10 +8,12 @@ class SpGradientLoading extends StatelessWidget {
     super.key,
     required this.height,
     required this.width,
+    this.shape = BoxShape.rectangle,
   });
 
   final double? height;
   final double? width;
+  final BoxShape shape;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class SpGradientLoading extends StatelessWidget {
         return Container(
           height: height ?? 56,
           width: height ?? 56,
+
           decoration: BoxDecoration(
+            shape: shape,
             gradient: LinearGradient(
               colors: [
                 Color.lerp(

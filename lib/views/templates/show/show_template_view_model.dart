@@ -45,7 +45,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   Future<void> load() async {
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: draftContent!,
-      readOnly: false,
+      readOnly: true,
       initialPagesMap: null,
     );
 
