@@ -64,6 +64,7 @@ class _RelaxSoundsContent extends StatelessWidget {
               },
             ),
             body: TabBarView(
+              physics: context.read<InAppPurchaseProvider>().relaxSound ? null : const NeverScrollableScrollPhysics(),
               children: [
                 _SoundsTab(viewModel: viewModel),
                 _MixesTab(viewModel: viewModel),

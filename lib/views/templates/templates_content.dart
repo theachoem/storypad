@@ -93,6 +93,7 @@ class _TemplatesContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return TabBarView(
+      physics: context.read<InAppPurchaseProvider>().template ? null : const NeverScrollableScrollPhysics(),
       children: [
         TemplatesTab(
           params: viewModel.params,
