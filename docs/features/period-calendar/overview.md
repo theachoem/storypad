@@ -1,6 +1,6 @@
 # Period Calendar Add-on
 
-**Price:** $0.99 (one-time purchase, lifetime access)
+**Price:** $1.99 (one-time purchase, lifetime access)
 
 ## Description
 

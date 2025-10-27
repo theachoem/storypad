@@ -21,7 +21,7 @@ Keep simplicity for a diary app & journal app while having more features & custo
 ## Monetization
 
 - **Free Core App:** No ads, no data selling, no subscriptions
-- **Optional Add-ons:** One-time purchases ($0.99 each)
+- **Optional Add-ons:** One-time purchases ($1.99 each)
   - Relaxing Sounds
   - Templates
 - **Future:** Premium tier planned when more add-ons are available
