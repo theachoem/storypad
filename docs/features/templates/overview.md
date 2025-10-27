@@ -1,6 +1,6 @@
 # Templates Add-on
 
-**Price:** $0.99 (one-time purchase)
+**Price:** $1.99 (one-time purchase)
 
 ## Description
 

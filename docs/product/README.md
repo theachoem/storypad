@@ -27,7 +27,7 @@ Product-focused documentation for marketing, planning, and strategic decisions.
 ### Monetization
 
 - Free core app (no ads, no subscriptions)
-- Optional $0.99 add-ons (Relaxing Sounds, Templates)
+- Optional $1.99 add-ons (Relaxing Sounds, Templates)
 - Future: Premium tier when add-on library grows
 
 ### Community

@@ -2,7 +2,7 @@
 
 ## Overview
 
-A simple calendar feature for tracking period dates and creating related story entries. Available as a paid add-on ($0.99).
+A simple calendar feature for tracking period dates and creating related story entries. Available as a paid add-on ($1.99).
 
 **Key Principles:**
 
@@ -97,7 +97,7 @@ AddOnObject(
   type: AppProduct.period_calendar,
   title: 'Period Calendar',
   subtitle: 'Understand your cycle and feelings',
-  displayPrice: '\$0.99',
+  displayPrice: '\$1.99',
   iconData: SpIcons.calendar,
   weekdayColor: 5,
 )

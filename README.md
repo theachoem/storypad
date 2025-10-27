@@ -19,7 +19,7 @@
 - **Backup & sync** – private Google Drive sync & offline local export
 - **Themes & customization** – 20+ color themes, dark/light mode, fonts & layouts
 - **Export & share** – text, markdown, or full backups
-- **Add-ons** – enhance your writing experience (all $0.99 one-time purchase):
+- **Add-ons** – enhance your writing experience (all $1.99 one-time purchase):
   - **[Templates](docs/features/templates/overview.md)** – Create your own daily writing templates
   - **[Relaxing Sounds](docs/features/relaxing-sounds/overview.md)** – Set the mood before you write or read
   - **[Period Calendar](docs/features/period-calendar/overview.md)** – Track your period and create related story entries
