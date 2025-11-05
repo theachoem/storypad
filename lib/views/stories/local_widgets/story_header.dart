@@ -11,7 +11,6 @@ import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
-import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_measure_size.dart';
@@ -187,6 +186,7 @@ class _StoryHeaderDateSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? daySuffix = DateFormatHelper.getDaySuffix(story.displayPathDate.day, context.locale);
     return Row(
       children: [
         InkWell(
@@ -196,14 +196,7 @@ class _StoryHeaderDateSelector extends StatelessWidget {
             children: [
               buildDay(context),
               const SizedBox(width: 4.0),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildDaySuffix(context),
-                  buildMonthYear(context),
-                ],
-              ),
+              if (daySuffix != null) buildDaySuffixMonthYear(context, daySuffix) else buildMonthYear(context),
               if (!dateReadOnly) ...[
                 const SizedBox(width: 4.0),
                 const Icon(SpIcons.dropDown),
@@ -215,17 +208,37 @@ class _StoryHeaderDateSelector extends StatelessWidget {
     );
   }
 
-  Widget buildMonthYear(BuildContext context) {
-    return Text(
-      DateFormatHelper.yMMMM(story.displayPathDate, context.locale),
-      style: TextTheme.of(context).labelMedium,
+  Widget buildDaySuffixMonthYear(BuildContext context, String daySuffix) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          daySuffix,
+          style: TextTheme.of(context).labelSmall,
+        ),
+        Text(
+          DateFormatHelper.yMMMM(story.displayPathDate, context.locale),
+          style: TextTheme.of(context).labelMedium,
+        ),
+      ],
     );
   }
 
-  Widget buildDaySuffix(BuildContext context) {
-    return Text(
-      SpDateBlockEmbed.getDayOfMonthSuffix(story.day).toLowerCase(),
-      style: TextTheme.of(context).labelSmall,
+  Widget buildMonthYear(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          DateFormatHelper.MMM(story.displayPathDate, context.locale),
+          style: TextTheme.of(context).labelSmall,
+        ),
+        Text(
+          DateFormatHelper.y(story.displayPathDate, context.locale),
+          style: TextTheme.of(context).labelSmall,
+        ),
+      ],
     );
   }
 

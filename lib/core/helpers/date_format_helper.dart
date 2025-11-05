@@ -71,4 +71,24 @@ class DateFormatHelper {
   static String yMMMM(DateTime date, Locale locale) {
     return DateFormat.yMMMM(locale.toLanguageTag()).format(date);
   }
+
+  static String y(DateTime date, Locale locale) {
+    return DateFormat.y(locale.toLanguageTag()).format(date);
+  }
+
+  static String? getDaySuffix(int day, Locale locale) {
+    if (locale.languageCode != 'en') return null;
+    if (day >= 11 && day <= 13) return 'th';
+
+    switch (day % 10) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  }
 }
