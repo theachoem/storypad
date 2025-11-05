@@ -29,9 +29,12 @@ class SpDateBlockEmbed extends EmbedBuilder {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(getDayOfMonthSuffix(date.day).toLowerCase(), style: TextTheme.of(context).labelSmall),
                 Text(
-                  DateFormatHelper.yMMMM(date, context.locale),
+                  DateFormatHelper.MMM(date, context.locale),
+                  style: TextTheme.of(context).labelMedium,
+                ),
+                Text(
+                  DateFormatHelper.y(date, context.locale),
                   style: TextTheme.of(context).labelMedium,
                 ),
               ],
@@ -57,26 +60,5 @@ class SpDateBlockEmbed extends EmbedBuilder {
     }
 
     return date;
-  }
-
-  static String getDayOfMonthSuffix(int dayNum) {
-    if (!(dayNum >= 1 && dayNum <= 31)) {
-      throw Exception('invalid_day_of_month');
-    }
-
-    if (dayNum >= 11 && dayNum <= 13) {
-      return 'th';
-    }
-
-    switch (dayNum % 10) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
   }
 }
