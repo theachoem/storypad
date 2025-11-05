@@ -17,7 +17,7 @@ Track your period cycle with ease, right inside your StoryPad journal. The Perio
 
 |                                                                                               |                                                                                               |                                                                                               |     |
 | :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | --- |
-| ![Screenshot 1](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_1.jpg) | ![Screenshot 2](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_2.jpg) | ![Screenshot 3](../../firestore_storages/add_ons_demos/period_calendar/period_calendar_3.jpg) |
+| ![Screenshot 1](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_3.jpg) |
 
 ## Features
 
