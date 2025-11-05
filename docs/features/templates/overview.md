@@ -10,7 +10,7 @@ Create your own daily writing templates. The Templates add-on allows you to desi
 
 |                                                                                  |                                                                                  |                                                                                  |                                                                                  |
 | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
-| ![Screenshot 1](../../firestore_storages/add_ons_demos/templates/template_1.jpg) | ![Screenshot 2](../../firestore_storages/add_ons_demos/templates/template_2.jpg) | ![Screenshot 3](../../firestore_storages/add_ons_demos/templates/template_3.jpg) | ![Screenshot 4](../../firestore_storages/add_ons_demos/templates/template_4.jpg) |
+| ![Screenshot 1](../../../firestore_storages/add_ons_demos/templates/template_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/templates/template_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/templates/template_3.jpg) | ![Screenshot 4](../../../firestore_storages/add_ons_demos/templates/template_4.jpg) |
 
 ## Features
 
