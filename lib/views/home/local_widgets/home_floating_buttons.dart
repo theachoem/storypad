@@ -100,7 +100,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
           icon: SpFadeIn.fromBottom(
             duration: Durations.long1,
-            child: Icon(SpIcons.lightBulb, color: ColorScheme.of(context).bootstrap.warning.color),
+            child: const Icon(SpIcons.lightBulb, color: Colors.yellow),
           ),
           color: Colors.white,
           onPressed: () {
