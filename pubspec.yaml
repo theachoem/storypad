@@ -17,7 +17,7 @@ dependencies:
   audio_service: ^0.18.18
   cached_network_image: ^3.4.1
   cloud_firestore: ^6.0.2
-  copy_with_extension: ^9.1.1
+  copy_with_extension: ^10.0.1
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.1.0
   dismissible_page: ^1.0.2
@@ -35,14 +35,14 @@ dependencies:
   flutter_quill:
     git:
       url: https://github.com/theachoem/flutter-quill.git
-      ref: 7e89a3e878700ff61b85c1aaa20ebb5e01ee307a
+      ref: 6f4f645ad6d3a5d0759ab3b52177a33162e452c9
   flutter_secure_storage: ^10.0.0-beta.4
   flutter_slidable: ^4.0.0
   flutter_staggered_grid_view: ^0.7.0
   flutter_svg: ^2.1.0
   fuzzy: ^0.5.1
   google_fonts: ^6.2.1
-  google_sign_in: ^6.3.0
+  google_sign_in: ^7.2.0
   googleapis: ^15.0.0
   html_character_entities: ^1.0.0+1
   in_app_review: ^2.0.10
@@ -50,7 +50,7 @@ dependencies:
   json_annotation: ^4.9.0
   json_serializable: ^6.9.5
   just_audio: ^0.10.4
-  local_auth: ^2.3.0
+  local_auth: ^3.0.0
   material_design_icons_flutter: ^7.0.7296
   objectbox: ^5.0.0
   objectbox_flutter_libs: any
@@ -67,7 +67,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.4.15
-  copy_with_extension_gen: ^9.1.1
+  copy_with_extension_gen: ^10.0.1
   csv: ^6.0.0
   flutter_gen_runner: ^5.8.0
   flutter_launcher_icons: ^0.14.3

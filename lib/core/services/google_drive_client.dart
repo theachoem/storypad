@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
@@ -33,15 +33,36 @@ class GoogleDriveClient {
   bool get isSignedIn => _currentUser != null;
 
   final Map<String, String> _folderDriveIdByFolderName = {};
+  final List<String> _requestedScopes = [drive.DriveApi.driveAppdataScope];
 
-  final GoogleSignIn googleSignIn = GoogleSignIn.standard(
-    scopes: [drive.DriveApi.driveAppdataScope],
-  );
+  gsi.GoogleSignInAccount? _currentGoogleAccount;
 
   Future<drive.DriveApi?> get googleDriveClient async {
-    if (googleSignIn.currentUser == null) return null;
-    final _GoogleAuthClient client = _GoogleAuthClient(await googleSignIn.currentUser!.authHeaders);
+    if (_currentGoogleAccount == null) return null;
+    final authHeaders = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
+      _requestedScopes,
+      promptIfNecessary: false,
+    );
+    if (authHeaders == null) return null;
+    final _GoogleAuthClient client = _GoogleAuthClient(authHeaders);
     return drive.DriveApi(client);
+  }
+
+  Completer<gsi.GoogleSignIn>? googleServiceCompleter;
+  Future<gsi.GoogleSignIn> get googleServiceInstance async {
+    if (googleServiceCompleter != null) return googleServiceCompleter!.future;
+
+    googleServiceCompleter = Completer<gsi.GoogleSignIn>();
+
+    try {
+      await gsi.GoogleSignIn.instance.initialize();
+      googleServiceCompleter!.complete(gsi.GoogleSignIn.instance);
+    } catch (e) {
+      googleServiceCompleter!.completeError(e);
+      googleServiceCompleter = null;
+    }
+
+    return googleServiceCompleter!.future;
   }
 
   Future<void> loadUserLocally() async {
@@ -58,27 +79,21 @@ class GoogleDriveClient {
         );
       }
 
-      if (!await googleSignIn.isSignedIn()) {
-        _currentUser = null;
-        await GoogleUserStorage().remove();
-        throw const exp.AuthException(
-          'Not signed in to Google',
-          exp.AuthExceptionType.signInRequired,
-        );
-      }
-
-      final account = await googleSignIn.signInSilently(
-        reAuthenticate: currentUser == null || !currentUser!.isRefreshedRecently(),
-        suppressErrors: false,
+      // Try lightweight authentication first
+      final lightweightResult = await (await googleServiceInstance).attemptLightweightAuthentication();
+      final authorization = await lightweightResult?.authorizationClient.authorizationHeaders(
+        _requestedScopes,
+        promptIfNecessary: false,
       );
 
-      if (account != null) {
+      if (lightweightResult != null && authorization != null) {
+        _currentGoogleAccount = lightweightResult;
         _currentUser = GoogleUserObject(
-          id: account.id,
-          email: account.email,
-          displayName: account.displayName,
-          photoUrl: account.photoUrl,
-          accessToken: await account.authentication.then((e) => e.accessToken),
+          id: lightweightResult.id,
+          email: lightweightResult.email,
+          displayName: lightweightResult.displayName,
+          photoUrl: lightweightResult.photoUrl,
+          accessToken: authorization['Authorization']?.replaceFirst('Bearer ', ''),
           refreshedAt: DateTime.now(),
         );
 
@@ -103,28 +118,26 @@ class GoogleDriveClient {
 
   Future<bool> signIn() async {
     try {
-      final GoogleSignInAccount? account = await googleSignIn.signIn();
-      if (account == null) {
+      if (!(await googleServiceInstance).supportsAuthenticate()) {
         throw const exp.AuthException(
-          'Sign-in was cancelled by user',
+          'Platform does not support authentication',
           exp.AuthExceptionType.signInFailed,
         );
       }
 
-      final authentication = await account.authentication;
-      if (authentication.accessToken == null) {
-        throw const exp.AuthException(
-          'Failed to obtain access token',
-          exp.AuthExceptionType.signInFailed,
-        );
-      }
+      final account = await (await googleServiceInstance).authenticate();
+      final authorization = await account.authorizationClient.authorizationHeaders(
+        _requestedScopes,
+        promptIfNecessary: true,
+      );
 
+      _currentGoogleAccount = account;
       _currentUser = GoogleUserObject(
         id: account.id,
         email: account.email,
         displayName: account.displayName,
         photoUrl: account.photoUrl,
-        accessToken: authentication.accessToken,
+        accessToken: authorization?['Authorization']?.replaceFirst('Bearer ', ''),
         refreshedAt: DateTime.now(),
       );
 
@@ -132,6 +145,14 @@ class GoogleDriveClient {
       return true;
     } catch (e) {
       if (e is exp.AuthException) rethrow;
+
+      if (e is gsi.GoogleSignInException) {
+        throw exp.AuthException(
+          e.description ?? e.toString(),
+          exp.AuthExceptionType.signInRequired,
+          context: 'signIn',
+        );
+      }
 
       throw exp.AuthException(
         'Sign-in failed: $e',
@@ -142,78 +163,28 @@ class GoogleDriveClient {
   }
 
   Future<void> signOut() async {
-    await googleSignIn.signOut();
+    await (await googleServiceInstance).signOut();
     await GoogleUserStorage().remove();
     _currentUser = null;
+    _currentGoogleAccount = null;
   }
 
   Future<bool> canAccessRequestedScopes() async {
     try {
-      final user = googleSignIn.currentUser;
-      if (user == null) {
+      if (_currentGoogleAccount == null) {
         throw const exp.AuthException(
           'No current user',
           exp.AuthExceptionType.signInRequired,
         );
       }
 
-      final authentication = await user.authentication;
-      final accessToken = authentication.accessToken;
-      if (accessToken == null) {
-        throw const exp.AuthException(
-          'No access token available',
-          exp.AuthExceptionType.tokenExpired,
-        );
-      }
+      // Check if we have authorization for the scopes
+      final authorization = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
+        _requestedScopes,
+        promptIfNecessary: false,
+      );
 
-      String? accessedScopes;
-      try {
-        http.Response response = await http
-            .get(
-              Uri.parse('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=$accessToken'),
-            )
-            .timeout(const Duration(seconds: 10));
-
-        if (response.statusCode == 401) {
-          throw const exp.AuthException(
-            'Access token is invalid or expired',
-            exp.AuthExceptionType.tokenExpired,
-          );
-        }
-
-        if (response.statusCode == 403) {
-          throw const exp.AuthException(
-            'Access token has been revoked',
-            exp.AuthExceptionType.tokenRevoked,
-          );
-        }
-
-        if (response.statusCode != 200) {
-          throw exp.NetworkException(
-            'Failed to validate token: HTTP ${response.statusCode}',
-            context: 'token validation',
-          );
-        }
-
-        final Map<String, dynamic> tokenInfo = json.decode(response.body);
-        accessedScopes = tokenInfo['scope'] as String?;
-      } on io.SocketException catch (e) {
-        throw exp.NetworkException(
-          'Network error during token validation: $e',
-          context: 'canAccessRequestedScopes',
-        );
-      } on TimeoutException catch (e) {
-        throw exp.NetworkException(
-          'Timeout during token validation: $e',
-          context: 'canAccessRequestedScopes',
-        );
-      }
-
-      final hasRequiredScopes = googleSignIn.scopes.every((requestedScope) {
-        return accessedScopes?.contains(requestedScope) ?? false;
-      });
-
-      if (!hasRequiredScopes) {
+      if (authorization == null) {
         throw const exp.AuthException(
           'Insufficient scopes granted',
           exp.AuthExceptionType.insufficientScopes,
@@ -222,8 +193,6 @@ class GoogleDriveClient {
 
       return true;
     } on exp.AuthException {
-      rethrow;
-    } on exp.NetworkException {
       rethrow;
     } catch (e) {
       throw exp.AuthException(
@@ -235,33 +204,37 @@ class GoogleDriveClient {
   }
 
   Future<bool> requestScope() async {
-    if (!isSignedIn) return false;
+    if (!isSignedIn || _currentGoogleAccount == null) return false;
 
-    bool requested = await googleSignIn.requestScopes(googleSignIn.scopes);
-    bool authorized = await canAccessRequestedScopes();
+    try {
+      final authorization = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
+        _requestedScopes,
+        promptIfNecessary: true,
+      );
 
-    // in case we request scope success but still unauthorize, it mean user can disconnect app from Google app directly.
-    if (requested && !authorized) {
-      await googleSignIn.disconnect();
-      _currentUser = null;
-      await GoogleUserStorage().remove();
-    }
+      if (authorization == null) {
+        await (await googleServiceInstance).disconnect();
+        _currentUser = null;
+        _currentGoogleAccount = null;
+        await GoogleUserStorage().remove();
+        return false;
+      }
 
-    // after request, access token might be renew.
-    final account = googleSignIn.currentUser;
-    if (authorized && account != null) {
       _currentUser = GoogleUserObject(
-        id: account.id,
-        email: account.email,
-        displayName: account.displayName,
-        photoUrl: account.photoUrl,
-        accessToken: await account.authentication.then((e) => e.accessToken),
+        id: _currentGoogleAccount!.id,
+        email: _currentGoogleAccount!.email,
+        displayName: _currentGoogleAccount!.displayName,
+        photoUrl: _currentGoogleAccount!.photoUrl,
+        accessToken: authorization['Authorization']?.replaceFirst('Bearer ', ''),
         refreshedAt: DateTime.now(),
       );
-      await GoogleUserStorage().writeObject(_currentUser!);
-    }
 
-    return authorized;
+      await GoogleUserStorage().writeObject(_currentUser!);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<(String, int)?> getFileContent(CloudFileObject file) async {
