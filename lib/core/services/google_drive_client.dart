@@ -35,23 +35,20 @@ class GoogleDriveClient {
   final Map<String, String> _folderDriveIdByFolderName = {};
   final List<String> _requestedScopes = [drive.DriveApi.driveAppdataScope];
 
-  gsi.GoogleSignInAccount? _currentGoogleAccount;
-
   Future<drive.DriveApi?> get googleDriveClient async {
-    if (_currentGoogleAccount == null) return null;
-    final authHeaders = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
-      _requestedScopes,
-      promptIfNecessary: false,
-    );
-    if (authHeaders == null) return null;
-    final _GoogleAuthClient client = _GoogleAuthClient(authHeaders);
+    if (_currentUser == null || _currentUser?.accessToken == null) return null;
+    final _GoogleAuthClient client = _GoogleAuthClient(_currentUser!.authHeaders);
     return drive.DriveApi(client);
+  }
+
+  // load data locally
+  Future<void> initialize() async {
+    _currentUser = await GoogleUserStorage().readObject();
   }
 
   Completer<gsi.GoogleSignIn>? googleServiceCompleter;
   Future<gsi.GoogleSignIn> get googleServiceInstance async {
     if (googleServiceCompleter != null) return googleServiceCompleter!.future;
-
     googleServiceCompleter = Completer<gsi.GoogleSignIn>();
 
     try {
@@ -65,13 +62,10 @@ class GoogleDriveClient {
     return googleServiceCompleter!.future;
   }
 
-  Future<void> loadUserLocally() async {
-    _currentUser = await GoogleUserStorage().readObject();
-  }
-
   Future<bool> reauthenticateIfNeeded() async {
+    await googleServiceInstance; // ensure initialized
+
     try {
-      _currentUser = await GoogleUserStorage().readObject();
       if (currentUser == null) {
         throw const exp.AuthException(
           'No stored user found',
@@ -79,21 +73,18 @@ class GoogleDriveClient {
         );
       }
 
-      // Try lightweight authentication first
-      final lightweightResult = await (await googleServiceInstance).attemptLightweightAuthentication();
-      final authorization = await lightweightResult?.authorizationClient.authorizationHeaders(
+      final authHeaders = await (await googleServiceInstance).authorizationClient.authorizationHeaders(
         _requestedScopes,
-        promptIfNecessary: false,
+        promptIfNecessary: true,
       );
 
-      if (lightweightResult != null && authorization != null) {
-        _currentGoogleAccount = lightweightResult;
+      if (authHeaders != null) {
         _currentUser = GoogleUserObject(
-          id: lightweightResult.id,
-          email: lightweightResult.email,
-          displayName: lightweightResult.displayName,
-          photoUrl: lightweightResult.photoUrl,
-          accessToken: authorization['Authorization']?.replaceFirst('Bearer ', ''),
+          id: _currentUser!.id,
+          email: _currentUser!.email,
+          displayName: _currentUser!.displayName,
+          photoUrl: _currentUser!.photoUrl,
+          accessToken: authHeaders['Authorization']?.replaceFirst('Bearer ', ''),
           refreshedAt: DateTime.now(),
         );
 
@@ -102,7 +93,7 @@ class GoogleDriveClient {
       }
 
       throw const exp.AuthException(
-        'Silent sign-in failed',
+        'Failed to get auth headers',
         exp.AuthExceptionType.tokenExpired,
       );
     } on exp.AuthException {
@@ -125,19 +116,18 @@ class GoogleDriveClient {
         );
       }
 
-      final account = await (await googleServiceInstance).authenticate();
-      final authorization = await account.authorizationClient.authorizationHeaders(
+      final account = await (await googleServiceInstance).authenticate(scopeHint: _requestedScopes);
+      final authHeaders = await account.authorizationClient.authorizationHeaders(
         _requestedScopes,
         promptIfNecessary: true,
       );
 
-      _currentGoogleAccount = account;
       _currentUser = GoogleUserObject(
         id: account.id,
         email: account.email,
         displayName: account.displayName,
         photoUrl: account.photoUrl,
-        accessToken: authorization?['Authorization']?.replaceFirst('Bearer ', ''),
+        accessToken: authHeaders?['Authorization']?.replaceFirst('Bearer ', ''),
         refreshedAt: DateTime.now(),
       );
 
@@ -166,32 +156,20 @@ class GoogleDriveClient {
     await (await googleServiceInstance).signOut();
     await GoogleUserStorage().remove();
     _currentUser = null;
-    _currentGoogleAccount = null;
   }
 
   Future<bool> canAccessRequestedScopes() async {
     try {
-      if (_currentGoogleAccount == null) {
+      if (_currentUser == null || _currentUser!.accessToken == null) {
         throw const exp.AuthException(
-          'No current user',
+          'No current user or missing access token',
           exp.AuthExceptionType.signInRequired,
         );
       }
 
-      // Check if we have authorization for the scopes
-      final authorization = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
-        _requestedScopes,
-        promptIfNecessary: false,
-      );
-
-      if (authorization == null) {
-        throw const exp.AuthException(
-          'Insufficient scopes granted',
-          exp.AuthExceptionType.insufficientScopes,
-        );
-      }
-
-      return true;
+      // If we have a non-null access token and it was recently refreshed, we have the scopes
+      // Google's authenticate() method requests all necessary scopes upfront
+      return _currentUser!.isRefreshedRecently();
     } on exp.AuthException {
       rethrow;
     } catch (e) {
@@ -204,28 +182,28 @@ class GoogleDriveClient {
   }
 
   Future<bool> requestScope() async {
-    if (!isSignedIn || _currentGoogleAccount == null) return false;
+    if (!isSignedIn) return false;
 
     try {
-      final authorization = await _currentGoogleAccount!.authorizationClient.authorizationHeaders(
+      final account = await (await googleServiceInstance).authenticate(scopeHint: _requestedScopes);
+      final authHeaders = await account.authorizationClient.authorizationHeaders(
         _requestedScopes,
         promptIfNecessary: true,
       );
 
-      if (authorization == null) {
+      if (authHeaders == null) {
         await (await googleServiceInstance).disconnect();
         _currentUser = null;
-        _currentGoogleAccount = null;
         await GoogleUserStorage().remove();
         return false;
       }
 
       _currentUser = GoogleUserObject(
-        id: _currentGoogleAccount!.id,
-        email: _currentGoogleAccount!.email,
-        displayName: _currentGoogleAccount!.displayName,
-        photoUrl: _currentGoogleAccount!.photoUrl,
-        accessToken: authorization['Authorization']?.replaceFirst('Bearer ', ''),
+        id: account.id,
+        email: account.email,
+        displayName: account.displayName,
+        photoUrl: account.photoUrl,
+        accessToken: authHeaders['Authorization']?.replaceFirst('Bearer ', ''),
         refreshedAt: DateTime.now(),
       );
 
