@@ -11,11 +11,13 @@ class RemoteConfigService {
     bugReportUrl,
     faqUrl,
     featureFlags,
+    latestRewardMessage,
     localizationSupportUrl,
     policyPrivacyUrl,
     redditUrl,
     sourceCodeUrl,
     surveyUrl,
+    tiktokUsername,
     twitterUrl,
     websiteUrl,
   ];
@@ -54,6 +56,12 @@ class RemoteConfigService {
     {},
   );
 
+  // eg. Last reward: Nov 5 — [@abc_user](https://www.tiktok.com/@abc_user/video/123456)
+  static const latestRewardMessage = _RemoteConfigObject<String>(
+    'LATEST_REWARD_MESSAGE',
+    _RemoteConfigValueType.string,
+    '',
+  );
   static const localizationSupportUrl = _RemoteConfigObject<String>(
     'LOCALIZATION_SUPPORT_URL',
     _RemoteConfigValueType.string,
@@ -82,6 +90,12 @@ class RemoteConfigService {
     'SURVEY_URL',
     _RemoteConfigValueType.string,
     '',
+  );
+
+  static const tiktokUsername = _RemoteConfigObject<String>(
+    'TIKTOK_USERNAME',
+    _RemoteConfigValueType.string,
+    'storypad_timelinediary',
   );
 
   static const twitterUrl = _RemoteConfigObject<String>(

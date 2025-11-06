@@ -28,12 +28,23 @@ class _CommunityCard extends StatelessWidget {
                   delay: Durations.medium1,
                   duration: Durations.medium4,
                   child: IconButton.filled(
+                    icon: const Icon(Icons.tiktok_outlined),
+                    onPressed: () => UrlOpenerService.openInCustomTab(
+                      context,
+                      "https://www.tiktok.com/@${RemoteConfigService.tiktokUsername.get()}",
+                    ),
+                  ),
+                ),
+                SpFadeIn.fromBottom(
+                  delay: Durations.medium1 * 1.2,
+                  duration: Durations.medium4,
+                  child: IconButton.filledTonal(
                     icon: Icon(MdiIcons.reddit),
                     onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
                   ),
                 ),
                 SpFadeIn.fromBottom(
-                  delay: Durations.medium2,
+                  delay: Durations.medium1 * 1.4,
                   duration: Durations.medium4,
                   child: IconButton.filledTonal(
                     icon: Icon(MdiIcons.twitter),
@@ -41,7 +52,7 @@ class _CommunityCard extends StatelessWidget {
                   ),
                 ),
                 SpFadeIn.fromBottom(
-                  delay: Durations.medium3,
+                  delay: Durations.medium1 * 1.6,
                   duration: Durations.medium4,
                   child: IconButton.filledTonal(
                     icon: Icon(MdiIcons.bug),
