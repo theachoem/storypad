@@ -6,7 +6,7 @@ class _CommunityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpNewBadgeBuilder(
-      badge: NewBadge.none,
+      badge: NewBadge.community_tile_with_tiktok,
       builder: (context, newBadge, hideBadge) {
         return ListTile(
           leading: const Icon(SpIcons.forum),

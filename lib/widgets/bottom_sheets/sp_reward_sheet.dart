@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_android_redemption_sheet.dart';
@@ -46,12 +47,13 @@ class SpRewardSheet extends BaseBottomSheet {
     const String body = '''
 Help us grow the StoryPad community! 🌱
 - [ ] Post about your StoryPad experience (text, photo, video, or screenshot).
-- [ ] Tag #storypad or mention @storypadapp, or simply include the word StoryPad in your post on any platform.
+- [ ] Tag #storypad or mention us or simply include the word StoryPad in your post on any platform (TikTok, Instagram, etc.).
 - [x] Get **1 FREE add-on** as a thank-you gift! 🎁
 ''';
 
-    const String additionalBody = '''
-After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we'll send you a reward code.
+    String additionalBody =
+        '''
+After posting, DM your link to [@${RemoteConfigService.tiktokUsername.get()}](https://www.tiktok.com/@${RemoteConfigService.tiktokUsername.get()}), and we'll send you a reward code.
 ''';
 
     return Visibility(
@@ -63,14 +65,20 @@ After posting, DM your link to [@StoryPadApp](https://x.com/StoryPadApp), and we
             borderRadius: BorderRadius.circular(12.0),
             color: ColorScheme.of(context).readOnly.surface2,
           ),
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SpMarkdownBody(body: body),
-              SizedBox(height: 12.0),
-              Divider(height: 1.0),
-              SizedBox(height: 8.0),
+              const SpMarkdownBody(body: body),
+              const SizedBox(height: 12.0),
+              const Divider(height: 1.0),
+              const SizedBox(height: 8.0),
               SpMarkdownBody(body: additionalBody),
+              if (RemoteConfigService.latestRewardMessage.get().trim().isNotEmpty) ...[
+                const SizedBox(height: 8.0),
+                const Divider(height: 1.0),
+                const SizedBox(height: 8.0),
+                SpMarkdownBody(body: RemoteConfigService.latestRewardMessage.get().trim()),
+              ],
             ],
           ),
         ),

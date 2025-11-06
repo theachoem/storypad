@@ -56,6 +56,9 @@ class HomeEndDrawer extends StatelessWidget {
       appBar: AppBar(
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
+        actions: [
+          const CloseButton(),
+        ],
       ),
       body: ListView(
         controller: PrimaryScrollController.maybeOf(context),
