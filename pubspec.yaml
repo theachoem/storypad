@@ -70,7 +70,7 @@ dev_dependencies:
   copy_with_extension_gen: ^10.0.1
   csv: ^6.0.0
   flutter_gen_runner: ^5.8.0
-  flutter_launcher_icons: ^0.14.3
+  flutter_launcher_icons: ^0.14.4
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter

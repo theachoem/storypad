@@ -1,15 +1,15 @@
 flutter_launcher_icons:
-  image_path: "configs/flutter_launcher_icons/spooky/filled_no_pad.png"
+  image_path: "configs/flutter_launcher_icons/storypad/filled_no_pad.png"
 
   android: "ic_launcher"
   # image_path_android: "assets/icon/icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "configs/flutter_launcher_icons/spooky/android_adaptive_pad.png"
+  adaptive_icon_foreground: "configs/flutter_launcher_icons/storypad/android_adaptive_pad.png"
   # adaptive_icon_monochrome: "assets/icon/monochrome.png"
 
   ios: true
-  image_path_ios: "configs/flutter_launcher_icons/spooky/filled_no_pad.png"
+  image_path_ios: "configs/flutter_launcher_icons/storypad/filled_no_pad.png"
   remove_alpha_channel_ios: true
   # image_path_ios_dark_transparent: "assets/icon/icon_dark.png"
   # image_path_ios_tinted_grayscale: "assets/icon/icon_tinted.png"
