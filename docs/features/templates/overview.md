@@ -8,8 +8,8 @@ Create your own daily writing templates. The Templates add-on allows you to desi
 
 ## Screenshots
 
-|                                                                                  |                                                                                  |                                                                                  |                                                                                  |
-| :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
+|                                                                                     |                                                                                     |                                                                                     |                                                                                     |
+| :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: |
 | ![Screenshot 1](../../../firestore_storages/add_ons_demos/templates/template_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/templates/template_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/templates/template_3.jpg) | ![Screenshot 4](../../../firestore_storages/add_ons_demos/templates/template_4.jpg) |
 
 ## Features
@@ -256,6 +256,78 @@ UI text is localized:
 4. **View Archives:** Access archived templates separately
 5. **Delete:** Permanently remove templates
 
+## Analytics & Usage Tracking
+
+### Template Usage Recording
+
+When users click "Use Template" (either from gallery or custom templates), the app records usage to Firestore:
+
+**Service:** `GalleryTemplateUsageService` (`lib/core/services/gallery_template_usage_service.dart`)
+
+- Tracks template usage per device
+- Records to: `templates/{templateId}/devices/{deviceId}`
+- Deduplicates calls to avoid excessive Firestore writes
+
+**Data Recorded:**
+
+```
+Device Usage Document:
+├── device_id: string (device identifier)
+├── last_used_at: timestamp (server time)
+├── usage_count: integer (incremented on each use)
+├── first_used_at: timestamp (server time)
+└── model: string (device model)
+```
+
+**Flow:**
+
+1. User clicks "Use Template"
+2. `AnalyticsService.logUseGalleryTemplate()` logs event to Firebase Analytics
+3. `GalleryTemplateUsageService.recordTemplateUsage()` records to Firestore
+4. If device entry exists: increment `usage_count` and update `last_used_at`
+5. If device entry doesn't exist: create new entry with `usage_count: 1`
+
+**Gallery Template Setup & Usage Sync:**
+
+The `populateGalleryTemplateStats` script manages template documents and aggregates usage:
+
+- **Script:** `bin/populate_gallery_template_stats`
+- **Implementation:** `bin/firebase_admin/populate_gallery_template_stats.js`
+- **Purpose:**
+  - Creates template documents from YAML files
+  - Fetches all device usage records
+  - Calculates total usage count per template
+  - Stores aggregated `total_usage` on template documents
+- **Fields Updated:**
+  - `total_usage`: Sum of all device usage counts (integer)
+  - `last_usage_sync_at`: Timestamp of last aggregation (server time)
+- **Run:** Execute after adding new gallery templates or periodically to sync usage statistics
+
+### Analytics Events
+
+**Event:** `use_gallery_template`
+
+- Parameter `template_id`: ID of the template used
+- Parameter `source`: Origin of the use (`gallery` or `my_templates`)
+
+Example from `ShowTemplateGalleryViewModel`:
+
+```dart
+AnalyticsService.instance.logUseGalleryTemplate(
+  templateId: galleryTemplate.id,
+  source: 'gallery',
+);
+```
+
+Example from `ShowTemplateViewModel`:
+
+```dart
+AnalyticsService.instance.logUseGalleryTemplate(
+  templateId: template.id.toString(),
+  source: 'my_templates',
+);
+```
+
 ## Purchase Verification
 
 The add-on checks purchase status via:
@@ -273,4 +345,5 @@ When a template is used:
 3. Template tags can be inherited
 4. Story is created with current date (or specified date)
 5. Original template remains unchanged
-6. Template usage count can be tracked
+6. **Usage is recorded to Firestore** (via `GalleryTemplateUsageService`)
+7. Analytics event is logged (via `AnalyticsService`)

@@ -1,0 +1,14 @@
+#!/bin/bash
+# Populates gallery template statistics by aggregating device usage.
+# 
+# This script:
+# 1. Creates template documents from YAML files in /templates directory
+# 2. Fetches all device usage records from Firestore
+# 3. Calculates total usage count for each template
+# 4. Stores aggregated usage on template documents
+#
+# Run this after deploying new gallery templates or periodically to sync usage statistics.
+
+export GOOGLE_APPLICATION_CREDENTIALS="firestore_service_account.json"
+
+cd bin/firebase_admin && node populate_gallery_template_stats.js
