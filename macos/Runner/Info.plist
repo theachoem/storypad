@@ -31,6 +31,8 @@
                 </array>
             </dict>
         </array>
+        <key>GIDClientID</key>
+        <string>$(GOOGLE_CLIENT_ID)</string>
         <key>LSMinimumSystemVersion</key>
         <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
         <key>NSHumanReadableCopyright</key>

@@ -33,27 +33,33 @@ class _LibraryContent extends StatelessWidget {
       return _EmptyBody(context: context);
     }
 
-    return Scrollbar(
-      thumbVisibility: true,
-      interactive: true,
-      child: MasonryGridView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        addAutomaticKeepAlives: false,
-        padding: EdgeInsets.only(
-          top: 16.0,
-          bottom: MediaQuery.of(context).padding.bottom + 16.0,
-          left: MediaQuery.of(context).padding.left + 16.0,
-          right: MediaQuery.of(context).padding.right + 16.0,
-        ),
-        itemCount: viewModel.assets?.items.length ?? 0,
-        mainAxisSpacing: 8.0,
-        crossAxisSpacing: 8.0,
-        gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
-        itemBuilder: (context, index) {
-          final asset = viewModel.assets!.items[index];
-          return buildItem(asset, provider, context);
-        },
-      ),
+    return SpDefaultScrollController(
+      builder: (context, scrollController) {
+        return Scrollbar(
+          controller: scrollController,
+          thumbVisibility: true,
+          interactive: true,
+          child: MasonryGridView.builder(
+            controller: scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            addAutomaticKeepAlives: false,
+            padding: EdgeInsets.only(
+              top: 16.0,
+              bottom: MediaQuery.of(context).padding.bottom + 16.0,
+              left: MediaQuery.of(context).padding.left + 16.0,
+              right: MediaQuery.of(context).padding.right + 16.0,
+            ),
+            itemCount: viewModel.assets?.items.length ?? 0,
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+            gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
+            itemBuilder: (context, index) {
+              final asset = viewModel.assets!.items[index];
+              return buildItem(asset, provider, context);
+            },
+          ),
+        );
+      },
     );
   }
 

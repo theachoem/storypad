@@ -24,7 +24,7 @@ class LocalAuthService {
     required String title,
   }) async {
     await auth.stopAuthentication();
-    return auth.authenticate(localizedReason: title, options: const AuthenticationOptions(stickyAuth: true)).catchError(
+    return auth.authenticate(localizedReason: title, persistAcrossBackgrounding: true).catchError(
       (e) {
         debugPrint('$runtimeType#authenticate failed: ${e.toString()}');
         return false;
