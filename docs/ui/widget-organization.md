@@ -101,5 +101,5 @@ class StoryCard extends StatelessWidget {
 
 ## See Also
 
-- [Architecture](../core/architecture.md) - MVVM pattern and state management
-- [File Organization](../core/file-organization.md) - Project structure
+- [Architecture](../architecture/architecture.md) - MVVM pattern and state management
+- [File Organization](../architecture/file-organization.md) - Project structure

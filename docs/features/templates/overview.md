@@ -208,7 +208,7 @@ Gallery templates are stored as YAML files:
 Template screenshots for the add-on showcase:
 
 - Path: `/add_ons_demos/templates/`
-- Files: `template_1.jpg`, `template_2.jpg`, `template_3.jpg`, `template_4.jpg`, `template_5.jpg`
+- Files: `template_1.jpg`, `template_2.jpg`, `template_3.jpg`, `template_4.jpg`
 
 ### Translations
 

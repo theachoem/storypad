@@ -6,14 +6,14 @@ StoryPad uses **Provider + ChangeNotifier** with 3-level state hierarchy:
 
 ### 1. App State (Global)
 
-- **Scope**: [ProviderScope](../lib/provider_scope.dart)
+- **Scope**: ProviderScope (`lib/provider_scope.dart`)
 - **Lifecycle**: Disposed when app closes
 - **Usage**: Theme, auth, app-wide settings
 - **Example**: `ThemeProvider`, `BackupProvider`
 
 ### 2. View State
 
-- **Scope**: [ViewModelProvider](../lib/widgets/view/view_model_provider.dart)
+- **Scope**: ViewModelProvider (`lib/widgets/base_view/view_model_provider.dart`)
 - **Lifecycle**: Disposed when page closes
 - **Usage**: Screen-specific business logic
 - **Pattern**: Each screen has its own ViewModel (ChangeNotifier)

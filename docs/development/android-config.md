@@ -113,5 +113,4 @@ flutter build appbundle --flavor storypad --dart-define-from-file=configs/storyp
 ## See Also
 
 - [iOS Config](ios-config.md) - iOS-specific configuration
-- [Platform Patterns](platform-patterns.md) - Platform-adaptive code
-- [Commands](../guides/commands.md) - Build commands
+- [Platform-Specific UI](../ui/platform-specific.md) - Platform-adaptive code

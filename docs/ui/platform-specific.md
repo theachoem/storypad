@@ -59,4 +59,4 @@ const bool kIsCupertino = Platform.isIOS || Platform.isMacOS;
 ## See Also
 
 - [Icons](icons.md) - Platform-adaptive icons with SpIcons
-- [Common Components](common-components.md) - Adaptive UI components
+- [Widget Organization](widget-organization.md) - Widget structure and organization

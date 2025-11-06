@@ -39,9 +39,6 @@ Product-focused documentation for marketing, planning, and strategic decisions.
 
 ## Use Cases
 
-**When planning new features:**
-→ Check [Roadmap](roadmap.md) for upcoming features and community requests
-
 **When creating marketing content:**
 → Use [Marketing Guide](marketing-guide.md) for messaging and positioning
 

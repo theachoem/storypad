@@ -1,6 +1,6 @@
 # Setup ASDF
 
-StoryPad uses **asdf** to manage versions for Flutter, Java, and Ruby. If you are using a different version manager, you can ignore this documentation & install the tools based on the versions specified in the [.tool-versions](../.tool-versions) file.
+StoryPad uses **asdf** to manage versions for Flutter, Java, and Ruby. If you are using a different version manager, you can ignore this documentation & install the tools based on the versions specified in the `.tool-versions` file in the project root.
 
 Follow the steps below to install the tools in the correct order.
 

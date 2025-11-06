@@ -59,18 +59,6 @@ Required by `flutter_secure_storage` for secure credential storage.
 
 **Reference**: [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage)
 
-## Firebase Configuration
-
-Location: `ios/Firebase/[flavor]/GoogleService-Info.plist`
-
-Flavors:
-
-- `community/` → Community version
-- `spooky/` → Spooky version
-- `storypad/` → StoryPad version
-
-**Setup**: Download from Firebase Console for each flavor.
-
 ## Signing Configuration
 
 Location: `ios/Runner.xcodeproj/`
@@ -108,5 +96,4 @@ flutter build ios --flavor storypad --dart-define-from-file=configs/storypad.jso
 ## See Also
 
 - [Android Config](android-config.md) - Android-specific configuration
-- [Platform Patterns](platform-patterns.md) - Platform-adaptive code
-- [Commands](../guides/commands.md) - Build commands
+- [Platform-Specific UI](../ui/platform-specific.md) - Platform-adaptive code
