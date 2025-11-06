@@ -8,6 +8,7 @@ import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/backups/backups_view.dart';
@@ -27,6 +28,7 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
+import 'package:storypad/widgets/sp_theme_mode_icon.dart';
 
 part 'home_end_drawer_header.dart';
 part 'community_tile.dart';
@@ -57,7 +59,14 @@ class HomeEndDrawer extends StatelessWidget {
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
-          const CloseButton(),
+          IconButton(
+            icon: SpThemeModeIcon(
+              parentContext: context,
+            ),
+            onPressed: () {
+              context.read<DevicePreferencesProvider>().toggleThemeMode(context);
+            },
+          ),
         ],
       ),
       body: ListView(
