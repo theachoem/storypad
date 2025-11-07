@@ -19,7 +19,12 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final assetLinks = content != null ? StoryExtractAssetsFromContentService.all(content) : null;
+    // display only images for now.
+    final assetLinks = content != null ? StoryExtractAssetsFromContentService.images(content) : null;
+
+    final audioEmbedLinks = (story.draftContent ?? story.latestContent) != null
+        ? StoryExtractAssetsFromContentService.audio(story.draftContent ?? story.latestContent)
+        : null;
 
     return Expanded(
       child: Column(
@@ -50,6 +55,7 @@ class _StoryTileContents extends StatelessWidget {
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
+            voicesCount: audioEmbedLinks?.length,
             margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
             onToggleShowDayCount: viewOnly
                 ? null

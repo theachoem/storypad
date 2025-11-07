@@ -9,7 +9,7 @@ const String kRevenueCatAndroidApiKey = String.fromEnvironment('REVENUE_CAT_ANDR
 const String kRevenueCatIosApiKey = String.fromEnvironment('REVENUE_CAT_IOS_API_KEY');
 const String kEmailHasherSecreyKey = String.fromEnvironment('EMAIL_HASHER_SECRET_KEY');
 
-const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
+const bool kIsCupertino = String.fromEnvironment('CUPERTINO') != 'yes';
 
 const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;

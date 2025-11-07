@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_audio_player.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 /// Sheet for recording voice notes
@@ -77,11 +80,11 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
 
   bool recording = false;
   int durationInMs = 0;
+  VoiceRecordingResult? recordingResult;
 
   @override
   void initState() {
     super.initState();
-
     recorder = VoiceRecorderService();
   }
 
@@ -118,8 +121,10 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
       final result = await recorder.stopRecording();
 
       if (mounted) {
-        setState(() => recording = false);
-        if (result != null) Navigator.of(context).pop(result);
+        setState(() {
+          recording = false;
+          recordingResult = result;
+        });
       }
     } catch (e) {
       if (mounted) MessengerService.of(context).showSnackBar(e.toString(), success: false);
@@ -136,27 +141,109 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16.0,
-        right: 16.0,
-        top: 24.0,
-        bottom: widget.bottomPadding + 24.0,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            DurationFormatService.formatMs(durationInMs),
-            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontFeatures: const [FontFeature.tabularFigures()],
+    final hasRecording = recordingResult != null;
+
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 16.0,
+            bottom: widget.bottomPadding + 16.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              hasRecording ? buildPlaybackUI(context) : buildRecordingUI(context),
+            ],
+          ),
+        ),
+        if (kIsCupertino && !hasRecording)
+          Positioned(
+            right: 8,
+            top: 0,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: recording ? cancelRecording : () => Navigator.of(context).pop(),
+              child: const Icon(CupertinoIcons.xmark),
             ),
           ),
-          const SizedBox(height: 12.0),
-          if (recording) buildRecordingStatus(context),
-          const SizedBox(height: 24.0),
-          buildActions(context),
+      ],
+    );
+  }
+
+  Widget buildRecordingUI(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          DurationFormatService.formatMs(durationInMs),
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        buildRecordingStatus(context),
+        const SizedBox(height: 24.0),
+        SizedBox(
+          width: double.infinity,
+          child: buildRecordingAction(context),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPlaybackUI(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (recordingResult != null) SpAudioPlayer(filePath: recordingResult!.filePath),
+        const SizedBox(height: 32.0),
+        buildPlaybackActions(context),
+      ],
+    );
+  }
+
+  Widget buildPlaybackActions(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        children: [
+          Expanded(
+            child: kIsCupertino
+                ? CupertinoButton(
+                    child: Text(tr('button.delete')),
+                    onPressed: () {
+                      setState(() {
+                        recordingResult = null;
+                      });
+                    },
+                  )
+                : OutlinedButton.icon(
+                    icon: const Icon(SpIcons.delete),
+                    onPressed: () {
+                      setState(() {
+                        recordingResult = null;
+                      });
+                    },
+                    label: Text(tr('button.delete')),
+                  ),
+          ),
+          const SizedBox(width: 12.0),
+          Expanded(
+            child: kIsCupertino
+                ? CupertinoButton.filled(
+                    onPressed: recordingResult != null ? () => Navigator.of(context).pop(recordingResult) : null,
+                    child: Text(tr('button.done')),
+                  )
+                : FilledButton.icon(
+                    icon: const Icon(SpIcons.save),
+                    onPressed: recordingResult != null ? () => Navigator.of(context).pop(recordingResult) : null,
+                    label: Text(tr('button.done')),
+                  ),
+          ),
         ],
       ),
     );
@@ -166,17 +253,18 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
+        AnimatedContainer(
+          duration: Durations.medium1,
           width: 6,
           height: 6,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.error,
+            color: !recording ? Colors.transparent : Theme.of(context).colorScheme.error,
             shape: BoxShape.circle,
           ),
         ),
         const SizedBox(width: 8.0),
         Text(
-          tr('general.recording'),
+          recording ? tr('general.recording') : '',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: Theme.of(context).colorScheme.error,
           ),
@@ -185,26 +273,18 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
     );
   }
 
-  Widget buildActions(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: recording ? cancelRecording : () => Navigator.of(context).pop(),
-            child: Text(recording ? tr('button.discard') : tr('button.cancel')),
-          ),
-        ),
-        const SizedBox(width: 12.0),
-        Expanded(
-          child: FilledButton.icon(
-            onPressed: recording ? stopRecording : startRecording,
-            icon: Icon(
-              recording ? SpIcons.pauseCircle : SpIcons.voice,
-            ),
-            label: Text(recording ? tr('button.stop') : tr('button.record_voice')),
-          ),
-        ),
-      ],
-    );
+  Widget buildRecordingAction(BuildContext context) {
+    if (kIsCupertino) {
+      return CupertinoButton.filled(
+        onPressed: recording ? stopRecording : startRecording,
+        child: Text(recording ? tr('button.stop') : tr('button.record_voice')),
+      );
+    } else {
+      return FilledButton.icon(
+        onPressed: recording ? stopRecording : startRecording,
+        icon: recording ? null : const Icon(SpIcons.voice),
+        label: Text(recording ? tr('button.stop') : tr('button.record_voice')),
+      );
+    }
   }
 }

@@ -33,6 +33,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onChangeDate,
     required this.onToggleManagingPage,
     this.currentPagesCount,
+    this.voicesCount,
     this.draftActions,
     this.margin = EdgeInsets.zero,
     this.fromStoryTile = false,
@@ -44,6 +45,11 @@ class SpStoryLabels extends StatelessWidget {
   // example in edit view, there pages are store in seperated state.
   // in that case, we use this var instead.
   final int? currentPagesCount;
+
+  // this count UI should only show in story tile.
+  // when user open show/edit page, no need to show it because when user click on it,
+  // we don't have any action yet.
+  final int? voicesCount;
 
   final EdgeInsets margin;
   final bool fromStoryTile;
@@ -99,6 +105,17 @@ class SpStoryLabels extends StatelessWidget {
   Widget build(BuildContext context) {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = buildTags(tagProvider, context);
+
+    if (voicesCount != null && voicesCount! > 0) {
+      children.add(
+        buildPin(
+          leadingIconData: SpIcons.voice,
+          context: context,
+          title: "$voicesCount voices",
+          onTap: null,
+        ),
+      );
+    }
 
     int pageCount = currentPagesCount ?? (story.draftContent ?? story.latestContent)?.richPages?.length ?? 0;
     if (pageCount > 1) {
