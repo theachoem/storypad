@@ -315,7 +315,7 @@
   "page.home.empty_message": "Bitte klicken Sie auf {EDIT_BUTTON}, um die Geschichte zu {YEAR} hinzuzufügen.",
   "page.image_picker.empty_message": "Hinzugefügte Fotos werden hier angezeigt.",
   "page.language.title": "Sprache",
-  "page.library.empty_message": "Fotos werden hier angezeigt.",
+  "page.library.empty_message": "página.biblioteca.mensaje_vacío",
   "page.library.title": "Bibliothek",
   "page.library.title_with_app_name": "StoryPad-Bibliothek",
   "page.new_tag.title": "Neuer Tag",

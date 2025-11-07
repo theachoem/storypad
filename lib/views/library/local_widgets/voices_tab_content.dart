@@ -186,7 +186,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
                   WidgetSpan(
                     alignment: PlaceholderAlignment.middle,
                     child: Icon(
-                      SpIcons.delete,
+                      SpIcons.archive,
                       size: 12.0,
                       color: ColorScheme.of(context).error,
                     ),

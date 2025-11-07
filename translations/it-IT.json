@@ -315,7 +315,7 @@
   "page.home.empty_message": "Fai clic su {EDIT_BUTTON} per aggiungere una storia a {YEAR}.",
   "page.image_picker.empty_message": "Le foto aggiunte appariranno qui.",
   "page.language.title": "Lingua",
-  "page.library.empty_message": "Le foto appariranno qui.",
+  "page.library.empty_message": "page.library.empty_message",
   "page.library.title": "Biblioteca",
   "page.library.title_with_app_name": "Libreria StoryPad",
   "page.new_tag.title": "Nuova etichetta",

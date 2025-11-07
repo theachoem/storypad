@@ -265,7 +265,24 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
       bottom: 4.0,
       child: IgnorePointer(
         ignoring: true,
-        child: Text(plural("plural.story", storiesCount[asset.id] ?? 0)),
+        child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: plural("plural.story", storiesCount[asset.id] ?? 0)),
+              if ((storiesCount[asset.id] ?? 0) == 0) ...[
+                const TextSpan(text: ' '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Icon(
+                    SpIcons.archive,
+                    size: 12.0,
+                    color: ColorScheme.of(context).error,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

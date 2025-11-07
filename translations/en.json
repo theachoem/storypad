@@ -315,7 +315,7 @@
   "page.home.empty_message": "Please click on {EDIT_BUTTON} to add story to {YEAR}.",
   "page.image_picker.empty_message": "Added photos will appear here.",
   "page.language.title": "Language",
-  "page.library.empty_message": "Photos will appear here.",
+  "page.library.empty_message": "Items will appear here.",
   "page.library.title": "Library",
   "page.library.title_with_app_name": "StoryPad Library",
   "page.new_tag.title": "New Tag",

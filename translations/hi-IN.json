@@ -315,7 +315,7 @@
   "page.home.empty_message": "कृपया {YEAR} में कहानी जोड़ने के लिए {EDIT_BUTTON} पर क्लिक करें।",
   "page.image_picker.empty_message": "जोड़ी गई तस्वीरें यहां दिखाई देंगी.",
   "page.language.title": "भाषा",
-  "page.library.empty_message": "तस्वीरें यहां दिखाई देंगी.",
+  "page.library.empty_message": "halaman.perpustakaan.pesan_kosong",
   "page.library.title": "पुस्तकालय",
   "page.library.title_with_app_name": "स्टोरीपैड लाइब्रेरी",
   "page.new_tag.title": "नया टैग",

@@ -315,7 +315,7 @@
   "page.home.empty_message": "请点击 {EDIT_BUTTON} 将故事添加到 {YEAR}。",
   "page.image_picker.empty_message": "添加的照片将显示在这里。",
   "page.language.title": "语言",
-  "page.library.empty_message": "照片将在这里显示。",
+  "page.library.empty_message": "страница.библиотека.пустое_сообщение",
   "page.library.title": "图库",
   "page.library.title_with_app_name": "StoryPad 图库",
   "page.new_tag.title": "新标签",

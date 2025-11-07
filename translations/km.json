@@ -315,7 +315,7 @@
   "page.home.empty_message": "សូមចុចលើ {EDIT_BUTTON} ដើម្បីបន្ថែមរឿងទៅ {YEAR}។",
   "page.image_picker.empty_message": "រូបថតដែលបានបន្ថែមនឹងបង្ហាញនៅទីនេះ។",
   "page.language.title": "ភាសា",
-  "page.library.empty_message": "រូបថតនឹងបង្ហាញនៅទីនេះ។",
+  "page.library.empty_message": "페이지.라이브러리.빈_메시지",
   "page.library.title": "បណ្ណាល័យ",
   "page.library.title_with_app_name": "បណ្ណាល័យ StoryPad",
   "page.new_tag.title": "ស្លាកថ្មី",

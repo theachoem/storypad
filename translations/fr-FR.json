@@ -315,7 +315,7 @@
   "page.home.empty_message": "Veuillez cliquer sur {EDIT_BUTTON} pour ajouter une histoire à {YEAR}.",
   "page.image_picker.empty_message": "Les photos ajoutées apparaîtront ici.",
   "page.language.title": "Langue",
-  "page.library.empty_message": "Les photos apparaîtront ici.",
+  "page.library.empty_message": "पृष्ठ.लाइब्रेरी.खाली_संदेश",
   "page.library.title": "Bibliothèque",
   "page.library.title_with_app_name": "Bibliothèque StoryPad",
   "page.new_tag.title": "Nouvelle balise",

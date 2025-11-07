@@ -315,7 +315,7 @@
   "page.home.empty_message": "{EDIT_BUTTON} を押して、{YEAR} にストーリーを追加しましょう。",
   "page.image_picker.empty_message": "追加した写真はここに表示されます。",
   "page.language.title": "言語",
-  "page.library.empty_message": "ここに写真が表示されます。",
+  "page.library.empty_message": "page.library.empty_message",
   "page.library.title": "ライブラリ",
   "page.library.title_with_app_name": "StoryPad ライブラリ",
   "page.new_tag.title": "新しいタグ",

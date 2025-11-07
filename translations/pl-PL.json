@@ -315,7 +315,7 @@
   "page.home.empty_message": "Kliknij {EDIT_BUTTON}, aby dodać historię do roku {YEAR}.",
   "page.image_picker.empty_message": "Dodane zdjęcia pojawią się tutaj.",
   "page.language.title": "Język",
-  "page.library.empty_message": "Tutaj pojawią się zdjęcia.",
+  "page.library.empty_message": "página.biblioteca.mensagem_vazia",
   "page.library.title": "Biblioteka",
   "page.library.title_with_app_name": "Biblioteka StoryPad'a",
   "page.new_tag.title": "Nowy znacznik",

@@ -315,7 +315,7 @@
   "page.home.empty_message": "Vui lòng nhấp vào {EDIT_BUTTON} để thêm câu chuyện vào {YEAR}.",
   "page.image_picker.empty_message": "Ảnh đã thêm sẽ xuất hiện ở đây.",
   "page.language.title": "Ngôn ngữ",
-  "page.library.empty_message": "Hình ảnh sẽ xuất hiện ở đây.",
+  "page.library.empty_message": "page.library.empty_message",
   "page.library.title": "Thư viện",
   "page.library.title_with_app_name": "Thư viện StoryPad",
   "page.new_tag.title": "Thẻ mới",

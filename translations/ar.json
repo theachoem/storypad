@@ -315,7 +315,7 @@
   "page.home.empty_message": "برجاء النقر على {EDIT_BUTTON} لإضافة قصة إلى {YEAR}.",
   "page.image_picker.empty_message": "ستظهر الصور المضافة هنا.",
   "page.language.title": "لغة",
-  "page.library.empty_message": "سوف تظهر الصور هنا.",
+  "page.library.empty_message": "page.library.empty_message",
   "page.library.title": "مكتبة",
   "page.library.title_with_app_name": "مكتبة ستوري باد",
   "page.new_tag.title": "علامة جديدة",
