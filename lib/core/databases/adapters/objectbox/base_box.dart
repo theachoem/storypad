@@ -73,8 +73,9 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<int> count({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
+    required String? debugSource,
   }) async {
-    debugPrint("Triggering $tableName#count 🍎");
+    debugPrint("Triggering $tableName#count from $debugSource 🍎");
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
     Query<B>? query = queryBuilder.build();
     return query.count();

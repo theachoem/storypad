@@ -24,12 +24,12 @@ import 'package:storypad/core/services/asset_link_parser.dart';
 /// // ["storypad://audio/1762500783747"]
 /// ```
 class StoryExtractAssetsFromContentService {
-  static List<String> images(StoryContentDbModel? content) => _extractByScheme(
+  static List<String> images(StoryContentDbModel? content) => _extractByEmbedLinkPrefix(
     content,
     AssetType.image.embedLinkPrefix,
   );
 
-  static List<String> audio(StoryContentDbModel? content) => _extractByScheme(
+  static List<String> audio(StoryContentDbModel? content) => _extractByEmbedLinkPrefix(
     content,
     AssetType.audio.embedLinkPrefix,
   );
@@ -39,7 +39,7 @@ class StoryExtractAssetsFromContentService {
     ...audio(content),
   ];
 
-  static List<String> _extractByScheme(StoryContentDbModel? content, String scheme) {
+  static List<String> _extractByEmbedLinkPrefix(StoryContentDbModel? content, String scheme) {
     final links = <String>[];
     final pages = content?.richPages ?? [];
 

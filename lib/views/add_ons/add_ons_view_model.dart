@@ -85,7 +85,10 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         onTry: null,
         designForFemale: true,
         onPurchased: () async {
-          var eventCount = await EventDbModel.db.count(filters: {'event_type': 'period'});
+          var eventCount = await EventDbModel.db.count(
+            filters: {'event_type': 'period'},
+            debugSource: '$runtimeType#onPurchased',
+          );
           if (eventCount == 0) {
             await EventDbModel.period(date: DateTime.now().subtract(const Duration(days: 2))).createIfNotExist();
             await EventDbModel.period(date: DateTime.now().subtract(const Duration(days: 1))).createIfNotExist();

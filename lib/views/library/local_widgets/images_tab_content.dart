@@ -1,17 +1,17 @@
 part of '../library_view.dart';
 
-class _ImageTabContent extends StatefulWidget {
-  const _ImageTabContent({
+class _ImagesTabContent extends StatefulWidget {
+  const _ImagesTabContent({
     required this.constraints,
   });
 
   final BoxConstraints constraints;
 
   @override
-  State<_ImageTabContent> createState() => _ImageTabContentState();
+  State<_ImagesTabContent> createState() => _ImagesTabContentState();
 }
 
-class _ImageTabContentState extends State<_ImageTabContent> with AutomaticKeepAliveClientMixin {
+class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeepAliveClientMixin {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
 
@@ -26,28 +26,28 @@ class _ImageTabContentState extends State<_ImageTabContent> with AutomaticKeepAl
     super.initState();
     _load();
 
-    StoryDbModel.db.addGlobalListener(() async {
-      if (mounted) {
-        selectedTagId = null;
-        _load();
-      }
-    });
+    StoryDbModel.db.addGlobalListener(_listener);
+  }
+
+  Future<void> _listener() async {
+    if (mounted) _load();
   }
 
   Future<void> _load() async {
     assets = await AssetDbModel.db.where(filters: filters);
-
-    for (var asset in assets?.items ?? <AssetDbModel>[]) {
-      storiesCount[asset.id] = await StoryDbModel.db.count(
-        filters: {
-          'asset': asset.id,
-        },
-      );
-    }
+    storiesCount = StoryDbModel.db.getStoryCountByAssets(
+      assetIds: assets?.items.map((e) => e.id).toList() ?? [],
+    );
 
     if (mounted) {
       setState(() {});
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    StoryDbModel.db.removeGlobalListener(_listener);
   }
 
   @override

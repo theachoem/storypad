@@ -26,28 +26,28 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
     super.initState();
     _load();
 
-    StoryDbModel.db.addGlobalListener(() async {
-      if (mounted) {
-        selectedTagId = null;
-        _load();
-      }
-    });
+    StoryDbModel.db.addGlobalListener(_listener);
+  }
+
+  Future<void> _listener() async {
+    if (mounted) _load();
   }
 
   Future<void> _load() async {
     assets = await AssetDbModel.db.where(filters: filters);
-
-    for (var asset in assets?.items ?? <AssetDbModel>[]) {
-      storiesCount[asset.id] = await StoryDbModel.db.count(
-        filters: {
-          'asset': asset.id,
-        },
-      );
-    }
+    storiesCount = StoryDbModel.db.getStoryCountByAssets(
+      assetIds: assets?.items.map((e) => e.id).toList() ?? [],
+    );
 
     if (mounted) {
       setState(() {});
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    StoryDbModel.db.removeGlobalListener(_listener);
   }
 
   @override
@@ -166,7 +166,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
             SpVoicePlaybackSheet(asset: asset).show(context: context);
           },
           leading: const Icon(SpIcons.voice),
-          contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+          contentPadding: const EdgeInsets.only(left: 16.0, right: 4.0),
           title: Text.rich(
             TextSpan(
               text: '$createdTimeString ',

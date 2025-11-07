@@ -86,9 +86,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return SplayTreeMap<int, int>.from(storyCountsByYear, (a, b) => b.compareTo(a));
   }
 
-  Future<Map<PathType, int>> getStoryCountsByType({
+  Map<PathType, int> getStoryCountsByType({
     Map<String, dynamic>? filters,
-  }) async {
+  }) {
     debugPrint("Triggering $tableName#getStoryCountsByType 🍎");
 
     Map<PathType, int> storyCountsByType = {};
@@ -103,6 +103,44 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     return storyCountsByType;
+  }
+
+  Map<int, int> getStoryCountByAssets({
+    required List<int> assetIds,
+  }) {
+    debugPrint("Triggering $tableName#getStoryCountByAssets 🍊");
+
+    Map<int, int> storyCountsByAssetIds = {};
+
+    for (final assetId in assetIds) {
+      storyCountsByAssetIds[assetId] = buildQuery(
+        filters: {'asset': assetId},
+      ).build().count();
+    }
+
+    return storyCountsByAssetIds;
+  }
+
+  Map<int, int> getStoryCountByTags({
+    required List<int> tagIds,
+    List<int>? years,
+    List<String>? types,
+  }) {
+    debugPrint("Triggering $tableName#getStoryCountByTags 🍐");
+
+    Map<int, int> storyCountsByTagIds = {};
+
+    for (final tagId in tagIds) {
+      storyCountsByTagIds[tagId] = buildQuery(
+        filters: {
+          'tag': tagId,
+          if (years != null) 'years': years,
+          if (types != null) 'types': types,
+        },
+      ).build().count();
+    }
+
+    return storyCountsByTagIds;
   }
 
   int getStoryCountBy({

@@ -31,7 +31,7 @@ part 'library_content.dart';
 part 'local_widgets/empty_body.dart';
 part 'local_widgets/black_overlay.dart';
 part 'local_widgets/image_status.dart';
-part 'local_widgets/image_tab_content.dart';
+part 'local_widgets/images_tab_content.dart';
 part 'local_widgets/voices_tab_content.dart';
 
 class LibraryRoute extends BaseRoute {

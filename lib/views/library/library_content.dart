@@ -32,7 +32,7 @@ class _LibraryContent extends StatelessWidget {
     return TabBarView(
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        _ImageTabContent(constraints: constraints),
+        _ImagesTabContent(constraints: constraints),
         _VoicesTabContent(constraints: constraints),
       ],
     );

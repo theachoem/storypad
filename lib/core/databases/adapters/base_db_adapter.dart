@@ -12,7 +12,11 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly});
   Future<T?> find(int id, {bool returnDeleted = false});
 
-  Future<int> count({Map<String, dynamic>? filters});
+  Future<int> count({
+    Map<String, dynamic>? filters,
+    required String? debugSource,
+  });
+
   Future<CollectionDbModel<T>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
