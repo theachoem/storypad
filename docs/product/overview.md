@@ -24,7 +24,23 @@ Keep simplicity for a diary app & journal app while having more features & custo
 - **Optional Add-ons:** One-time purchases ($1.99 each)
   - Relaxing Sounds
   - Templates
+  - Period Calendar
 - **Future:** Premium tier planned when more add-ons are available
+
+### Why Individual Add-ons (NOT a Single Purchase) ⚠️
+
+**Decision:** Keep individual $1.99 add-ons instead of bundling them into one purchase.
+
+**Reasoning:**
+
+- **Lower friction** – $1.99 feels less risky than larger upfront cost
+- **User choice** – Customers only pay for features they actually want
+- **Aligns with brand** – Matches minimalist philosophy over aggressive monetization
+- **Scalable** – Revenue grows organically as add-on catalog expands
+- **Higher conversion** – Impulse-buy rate is better at lower price point
+- **Flexible future** – Can add bundle option once 4-5+ add-ons exist (~$4.99 for ~25% savings)
+
+**Do not change this lightly** – it's a core part of StoryPad's positioning as a trust-first, user-friendly alternative to subscription-based apps.
 
 ## Key Differentiators
 
