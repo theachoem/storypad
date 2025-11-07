@@ -70,11 +70,11 @@ class _AssetTile extends StatelessWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: Icon(
                   SpIcons.imageNotSupported,
-                  color: Theme.of(context).colorScheme.error,
+                  color: Theme.of(context).disabledColor,
                 ),
               );
             },
