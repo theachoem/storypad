@@ -25,6 +25,7 @@ class AssetDbModel extends BaseDbModel {
   @override
   final int id;
   final String originalSource;
+  final List<int>? tags;
   final Map<String, Map<String, Map<String, String>>> cloudDestinations;
 
   @JsonKey(fromJson: _assetTypeFromJson, toJson: _assetTypeToJson)
@@ -51,6 +52,7 @@ class AssetDbModel extends BaseDbModel {
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
     required this.type,
+    required this.tags,
     this.metadata,
   });
 
@@ -106,6 +108,7 @@ class AssetDbModel extends BaseDbModel {
     required String localPath,
     required AssetType type,
     int? durationInMs,
+    List<int>? tags,
   }) {
     final now = DateTime.now();
 
@@ -124,6 +127,7 @@ class AssetDbModel extends BaseDbModel {
       lastSavedDeviceId: null,
       type: type,
       metadata: metadata,
+      tags: tags,
     );
   }
 
@@ -158,8 +162,16 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[cloudId]?[email]?['file_id'];
   }
 
-  Future<AssetDbModel?> save() async => db.set(this);
-  Future<void> delete() async => db.delete(id);
+  Future<AssetDbModel?> save({
+    bool runCallbacks = true,
+  }) async => db.set(this, runCallbacks: runCallbacks);
+
+  Future<void> delete({
+    bool runCallbacks = true,
+  }) async => db.delete(
+    id,
+    runCallbacks: runCallbacks,
+  );
 
   /// Find an asset by its URI link
   ///

@@ -181,6 +181,8 @@ class AssetObjectBox extends BaseObjectBox {
   // JSON metadata for flexible storage (duration, transcription, etc.)
   String? metadata;
 
+  List<int>? tags;
+
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
@@ -202,8 +204,9 @@ class AssetObjectBox extends BaseObjectBox {
     required this.updatedAt,
     required this.permanentlyDeletedAt,
     required this.type,
+    required this.metadata,
+    required this.tags,
     this.lastSavedDeviceId,
-    this.metadata,
   });
 
   @override

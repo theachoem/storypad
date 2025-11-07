@@ -1,19 +1,25 @@
 part of '../library_view.dart';
 
-class _AudioTabContent extends StatefulWidget {
-  const _AudioTabContent({
+class _VoicesTabContent extends StatefulWidget {
+  const _VoicesTabContent({
     required this.constraints,
   });
 
   final BoxConstraints constraints;
 
   @override
-  State<_AudioTabContent> createState() => _AudioTabContentState();
+  State<_VoicesTabContent> createState() => _VoicesTabContentState();
 }
 
-class _AudioTabContentState extends State<_AudioTabContent> {
+class _VoicesTabContentState extends State<_VoicesTabContent> {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
+
+  int? selectedTagId;
+  Map<String, dynamic> get filters => {
+    'type': AssetType.audio,
+    'tag': selectedTagId,
+  };
 
   @override
   void initState() {
@@ -21,15 +27,22 @@ class _AudioTabContentState extends State<_AudioTabContent> {
     _load();
 
     StoryDbModel.db.addGlobalListener(() async {
-      if (mounted) _load();
+      if (mounted) {
+        selectedTagId = null;
+        _load();
+      }
     });
   }
 
   Future<void> _load() async {
-    assets = await AssetDbModel.db.where(filters: {'type': AssetType.audio});
+    assets = await AssetDbModel.db.where(filters: filters);
 
     for (var asset in assets?.items ?? <AssetDbModel>[]) {
-      storiesCount[asset.id] = await StoryDbModel.db.count(filters: {'asset': asset.id});
+      storiesCount[asset.id] = await StoryDbModel.db.count(
+        filters: {
+          'asset': asset.id,
+        },
+      );
     }
 
     if (mounted) {
@@ -41,54 +54,74 @@ class _AudioTabContentState extends State<_AudioTabContent> {
   Widget build(BuildContext context) {
     final provider = Provider.of<BackupProvider>(context);
 
-    if (assets == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (assets?.items.isEmpty == true) return _EmptyBody(context: context);
-
-    // Group assets by day
-    final groupedAssets = _groupAssetsByDay(assets!.items);
-
     return SpDefaultScrollController(
       builder: (context, scrollController) {
         return Scrollbar(
           controller: scrollController,
           interactive: true,
-          child: ListView.separated(
+          child: NestedScrollView(
             controller: scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.only(
-              top: 16.0,
-              bottom: MediaQuery.of(context).padding.bottom + 16.0,
-              left: MediaQuery.of(context).padding.left,
-              right: MediaQuery.of(context).padding.right,
-            ),
-            separatorBuilder: (context, index) => const SizedBox(height: 12.0),
-            itemCount: groupedAssets.length,
-            itemBuilder: (context, dayIndex) {
-              final dayEntry = groupedAssets[dayIndex];
-              final dayLabel = dayEntry['label'] as String;
-              final dayAssets = dayEntry['assets'] as List<AssetDbModel>;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                    child: Text(
-                      dayLabel,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ),
-                  ...dayAssets.map((asset) {
-                    return _buildListTile(asset, provider, context);
-                  }),
-                ],
-              );
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverToBoxAdapter(
+                  child: buildFilterableTags(),
+                ),
+              ];
             },
+            body: buildBody(context, provider),
           ),
         );
       },
+    );
+  }
+
+  Widget buildBody(
+    BuildContext context,
+    BackupProvider provider,
+  ) {
+    if (assets == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (assets?.items.isEmpty == true) return _EmptyBody(context: context);
+
+    // Group assets by day
+    final groupedAssets = _groupAssetsByDay(assets!.items);
+    return KeyedSubtree(
+      key: ValueKey(filters.values.join("-")),
+      child: SpFadeIn.fromBottom(
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.only(
+            top: 16.0,
+            bottom: MediaQuery.of(context).padding.bottom + 16.0,
+            left: MediaQuery.of(context).padding.left,
+            right: MediaQuery.of(context).padding.right,
+          ),
+          separatorBuilder: (context, index) => const SizedBox(height: 12.0),
+          itemCount: groupedAssets.length,
+          itemBuilder: (context, dayIndex) {
+            final dayEntry = groupedAssets[dayIndex];
+            final dayLabel = dayEntry['label'] as String;
+            final dayAssets = dayEntry['assets'] as List<AssetDbModel>;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                  child: Text(
+                    dayLabel,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                ),
+                ...dayAssets.map((asset) {
+                  return _buildListTile(asset, provider, context);
+                }),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -171,6 +204,26 @@ class _AudioTabContentState extends State<_AudioTabContent> {
           trailing: IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: callback,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildFilterableTags() {
+    return Consumer<TagsProvider>(
+      builder: (context, tagsProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: SpScrollableChoiceChips<TagDbModel>(
+            choices: tagsProvider.tags?.items ?? [],
+            storiesCount: (TagDbModel tag) => tag.id == selectedTagId ? assets?.items.length : null,
+            toLabel: (TagDbModel tag) => tag.title,
+            selected: (TagDbModel tag) => selectedTagId == tag.id,
+            onToggle: (TagDbModel tag) {
+              selectedTagId = selectedTagId == tag.id ? null : tag.id;
+              _load();
+            },
           ),
         );
       },

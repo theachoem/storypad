@@ -18,8 +18,6 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   });
 
-  // Tab management can be added here if needed in the future
-
   Future<void> deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
     final bool hasInternet = await InternetCheckerService().check();
     if (!context.mounted) return;

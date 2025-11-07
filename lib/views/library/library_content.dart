@@ -23,13 +23,18 @@ class _LibraryContent extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            _ImageTabContent(constraints: constraints),
-            _AudioTabContent(constraints: constraints),
-          ],
-        ),
+        body: buildBody(),
       ),
+    );
+  }
+
+  Widget buildBody() {
+    return TabBarView(
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _ImageTabContent(constraints: constraints),
+        _VoicesTabContent(constraints: constraints),
+      ],
     );
   }
 }

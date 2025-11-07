@@ -6,6 +6,7 @@ import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/events_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -145,8 +146,36 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     bool runCallbacks = true,
   }) async {
     StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks);
+
+    // Only rebuild asset tags when story is published (not draft).
+    // Draft stories auto-save frequently, so we skip this expensive operation.
+    // Tag computation happens once when user click "Done".
+    if (saved != null && !saved.draftStory) {
+      List<AssetDbModel> assets = await AssetDbModel.db
+          .where(filters: {'ids': saved.assets})
+          .then((e) => e?.items ?? []);
+      for (int i = 0; i < assets.length; i++) {
+        Set<int> tags = await computeStoriesTagsForAsset(assets[i]);
+        final isLastAsset = i == assets.length - 1;
+        await assets[i].copyWith(tags: tags.toList()).save(runCallbacks: isLastAsset);
+      }
+      debugPrint("🏷️ StoryBox#set: computing tags for asset");
+    }
+
     debugPrint("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
+
     return saved;
+  }
+
+  Future<Set<int>> computeStoriesTagsForAsset(AssetDbModel asset) async {
+    Set<int> tags =
+        await buildQuery(filters: {'asset': asset.id}, returnDeleted: false)
+            .build()
+            .findAsync()
+            .then((e) => e.map((e) => e.tags))
+            .then((e) => e.expand((e) => e?.map((e) => int.tryParse(e) ?? 0) ?? <int>[]).toSet()) ??
+        {};
+    return tags;
   }
 
   @override

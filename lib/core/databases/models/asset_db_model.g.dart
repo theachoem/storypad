@@ -25,6 +25,8 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel type(AssetType type);
 
+  AssetDbModel tags(List<int>? tags);
+
   AssetDbModel metadata(Map<String, dynamic>? metadata);
 
   /// Creates a new instance with the provided field values.
@@ -43,6 +45,7 @@ abstract class _$AssetDbModelCWProxy {
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
     AssetType type,
+    List<int>? tags,
     Map<String, dynamic>? metadata,
   });
 }
@@ -84,6 +87,9 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
   AssetDbModel type(AssetType type) => call(type: type);
 
   @override
+  AssetDbModel tags(List<int>? tags) => call(tags: tags);
+
+  @override
   AssetDbModel metadata(Map<String, dynamic>? metadata) =>
       call(metadata: metadata);
 
@@ -104,6 +110,7 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),
+    Object? tags = const $CopyWithPlaceholder(),
     Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
@@ -143,6 +150,10 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as AssetType,
+      tags: tags == const $CopyWithPlaceholder()
+          ? _value.tags
+          // ignore: cast_nullable_to_non_nullable
+          : tags as List<int>?,
       metadata: metadata == const $CopyWithPlaceholder()
           ? _value.metadata
           // ignore: cast_nullable_to_non_nullable
@@ -180,6 +191,9 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
       ? null
       : DateTime.parse(json['permanently_deleted_at'] as String),
   type: _assetTypeFromJson(json['type'] as String?),
+  tags: (json['tags'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
   metadata: json['metadata'] as Map<String, dynamic>?,
 );
 
@@ -188,6 +202,7 @@ Map<String, dynamic> _$AssetDbModelToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'original_source': instance.originalSource,
+  'tags': instance.tags,
   'cloud_destinations': instance.cloudDestinations,
   'type': _assetTypeToJson(instance.type),
   'metadata': instance.metadata,

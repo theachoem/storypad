@@ -42,6 +42,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }) {
     AssetType? type = filters?["type"];
     List<int>? ids = filters?["ids"]?.cast<int>();
+    int? tag = filters?["tag"];
 
     Condition<AssetObjectBox> conditions = AssetObjectBox_.id.notNull();
 
@@ -52,6 +53,10 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       );
     } else if (type != null) {
       conditions = conditions.and(AssetObjectBox_.type.equals(type.name));
+    }
+
+    if (tag != null) {
+      conditions = conditions.and(AssetObjectBox_.tags.equals(tag));
     }
 
     if (ids != null && ids.isNotEmpty) {
@@ -74,6 +79,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       originalSource: model.originalSource,
       cloudDestinations: jsonEncode(model.cloudDestinations),
       type: model.type.name,
+      tags: model.tags,
       metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
@@ -92,6 +98,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         originalSource: model.originalSource,
         cloudDestinations: jsonEncode(model.cloudDestinations),
         type: model.type.name,
+        tags: model.tags,
         metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
@@ -107,6 +114,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       originalSource: object.originalSource,
       cloudDestinations: decodeCloudDestinations(object),
       type: AssetType.fromValue(object.type),
+      tags: object.tags,
       metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
@@ -149,6 +157,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         originalSource: object.originalSource,
         cloudDestinations: decodeCloudDestinations(object),
         type: AssetType.fromValue(object.type),
+        tags: object.tags,
         metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,

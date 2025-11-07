@@ -15,22 +15,27 @@ class _ImageTabContentState extends State<_ImageTabContent> {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
 
+  int? selectedTagId;
+  Map<String, dynamic> get filters => {
+    'type': AssetType.image,
+    'tag': selectedTagId,
+  };
+
   @override
   void initState() {
     super.initState();
     _load();
 
     StoryDbModel.db.addGlobalListener(() async {
-      if (mounted) _load();
+      if (mounted) {
+        selectedTagId = null;
+        _load();
+      }
     });
   }
 
   Future<void> _load() async {
-    assets = await AssetDbModel.db.where(
-      filters: {
-        'type': AssetType.image,
-      },
-    );
+    assets = await AssetDbModel.db.where(filters: filters);
 
     for (var asset in assets?.items ?? <AssetDbModel>[]) {
       storiesCount[asset.id] = await StoryDbModel.db.count(
@@ -49,71 +54,106 @@ class _ImageTabContentState extends State<_ImageTabContent> {
   Widget build(BuildContext context) {
     final provider = Provider.of<BackupProvider>(context);
 
+    return SpDefaultScrollController(
+      builder: (context, scrollController) {
+        return Scrollbar(
+          controller: scrollController,
+          interactive: true,
+          child: NestedScrollView(
+            controller: scrollController,
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverToBoxAdapter(
+                  child: buildFilterableTags(),
+                ),
+              ];
+            },
+            body: buildBody(context, provider),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildFilterableTags() {
+    return Consumer<TagsProvider>(
+      builder: (context, tagsProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: SpScrollableChoiceChips<TagDbModel>(
+            choices: tagsProvider.tags?.items ?? [],
+            storiesCount: (TagDbModel tag) => tag.id == selectedTagId ? assets?.items.length : null,
+            toLabel: (TagDbModel tag) => tag.title,
+            selected: (TagDbModel tag) => selectedTagId == tag.id,
+            onToggle: (TagDbModel tag) {
+              selectedTagId = selectedTagId == tag.id ? null : tag.id;
+              _load();
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildBody(BuildContext context, BackupProvider provider) {
     if (assets == null) return const Center(child: CircularProgressIndicator.adaptive());
     if (assets?.items.isEmpty == true) return _EmptyBody(context: context);
 
     // Group assets by day
     final groupedAssets = _groupAssetsByDay(assets!.items);
-
-    return SpDefaultScrollController(
-      builder: (context, scrollController) {
-        return Scrollbar(
-          controller: scrollController,
-          thumbVisibility: true,
-          interactive: true,
-          child: ListView.separated(
-            controller: scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.only(
-              top: 16.0,
-              bottom: MediaQuery.of(context).padding.bottom + 16.0,
-              left: MediaQuery.of(context).padding.left + 16.0,
-              right: MediaQuery.of(context).padding.right + 16.0,
-            ),
-            separatorBuilder: (context, index) => const SizedBox(height: 12.0),
-            itemCount: groupedAssets.length,
-            itemBuilder: (context, dayIndex) {
-              final dayEntry = groupedAssets[dayIndex];
-              final dayLabel = dayEntry['label'] as String;
-              final dayAssets = dayEntry['assets'] as List<AssetDbModel>;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
-                    child: Text(
-                      dayLabel,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ),
-                  MasonryGridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    addAutomaticKeepAlives: false,
-                    itemCount: dayAssets.length,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                    padding: EdgeInsets.zero,
-                    gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: widget.constraints.maxWidth ~/ 120,
-                    ),
-                    itemBuilder: (context, assetIndex) {
-                      return _buildItem(
-                        dayAssets[assetIndex],
-                        provider,
-                        context,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
+    return KeyedSubtree(
+      key: ValueKey(filters.values.join("-")),
+      child: SpFadeIn.fromBottom(
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + 16.0,
+            left: MediaQuery.of(context).padding.left + 16.0,
+            right: MediaQuery.of(context).padding.right + 16.0,
           ),
-        );
-      },
+          separatorBuilder: (context, index) => const SizedBox(height: 12.0),
+          itemCount: groupedAssets.length,
+          itemBuilder: (context, dayIndex) {
+            final dayEntry = groupedAssets[dayIndex];
+            final dayLabel = dayEntry['label'] as String;
+            final dayAssets = dayEntry['assets'] as List<AssetDbModel>;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
+                  child: Text(
+                    dayLabel,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                ),
+                MasonryGridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  addAutomaticKeepAlives: false,
+                  itemCount: dayAssets.length,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  padding: EdgeInsets.zero,
+                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: widget.constraints.maxWidth ~/ 120,
+                  ),
+                  itemBuilder: (context, assetIndex) {
+                    return _buildItem(
+                      dayAssets[assetIndex],
+                      provider,
+                      context,
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 

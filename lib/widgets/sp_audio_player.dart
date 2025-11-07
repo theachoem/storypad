@@ -189,6 +189,10 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
         return SpTapEffect(
           effects: [SpTapEffectType.scaleDown],
           onTap: downloading ? null : () => _togglePlayPause(),
+          onLongPressed: () {
+            _audioPlayer.stop();
+            _audioPlayer.seek(Duration.zero);
+          },
           child: Material(
             color: Theme.of(context).colorScheme.surfaceContainer,
             clipBehavior: Clip.hardEdge,
