@@ -43,6 +43,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
         localPath: result.filePath,
         type: AssetType.audio,
         durationInMs: result.durationInMs,
+        createdAt: result.recordedAt,
       );
 
       final savedAsset = await asset.save();

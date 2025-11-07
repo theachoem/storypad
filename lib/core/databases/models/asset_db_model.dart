@@ -109,8 +109,9 @@ class AssetDbModel extends BaseDbModel {
     required AssetType type,
     int? durationInMs,
     List<int>? tags,
+    DateTime? createdAt,
   }) {
-    final now = DateTime.now();
+    final now = createdAt ?? DateTime.now();
 
     Map<String, dynamic>? metadata;
     if (durationInMs != null) {

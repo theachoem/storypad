@@ -69,7 +69,11 @@ class VoiceRecorderService {
       await _recorder.stop();
       _isRecording = false;
 
-      return VoiceRecordingResult(filePath: _recordingPath!, durationInMs: duration);
+      return VoiceRecordingResult(
+        filePath: _recordingPath!,
+        durationInMs: duration,
+        recordedAt: _recordingStartTime ?? DateTime.now(),
+      );
     } catch (e) {
       return null;
     } finally {
@@ -111,10 +115,12 @@ class VoiceRecorderService {
 class VoiceRecordingResult {
   final String filePath;
   final int durationInMs;
+  final DateTime recordedAt;
 
   VoiceRecordingResult({
     required this.filePath,
     required this.durationInMs,
+    required this.recordedAt,
   });
 
   String get formattedDuration {
@@ -124,5 +130,5 @@ class VoiceRecordingResult {
   }
 
   @override
-  String toString() => 'VoiceRecordingResult(path: $filePath, duration: $formattedDuration)';
+  String toString() => 'VoiceRecordingResult(path: $filePath, duration: $formattedDuration, recordedAt: $recordedAt)';
 }

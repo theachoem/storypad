@@ -54,16 +54,16 @@ class _LibraryContent extends StatelessWidget {
                 ],
               ),
             ),
-            body: buildBody(),
+            body: buildBody(context),
           );
         },
       ),
     );
   }
 
-  Widget buildBody() {
+  Widget buildBody(BuildContext context) {
     return TabBarView(
-      physics: const NeverScrollableScrollPhysics(),
+      physics: context.read<InAppPurchaseProvider>().voiceJournal ? null : const NeverScrollableScrollPhysics(),
       children: [
         _ImagesTabContent(constraints: constraints),
         _VoicesTabContent(constraints: constraints),

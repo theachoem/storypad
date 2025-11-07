@@ -9,7 +9,6 @@ class _AddOnsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         title: Text(tr('page.add_ons.title')),
         centerTitle: kIsCupertino,
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
@@ -34,7 +33,7 @@ class _AddOnsContent extends StatelessWidget {
 
     return ListView(
       padding: EdgeInsets.only(
-        top: 0.0,
+        top: 16.0,
         bottom: padding.bottom + 16.0,
         left: padding.left + 16.0,
         right: padding.right + 16.0,
