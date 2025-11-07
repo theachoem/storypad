@@ -169,7 +169,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       if (lastSavedAtNotifier.value != null && story?.id != null) {
         OkCancelResult userAction = await showDiscardConfirmation(context);
         if (userAction == OkCancelResult.ok) {
-          await StoryDbModel.db.delete(story!.id);
+          await StoryDbModel.db.delete(story!.id, softDelete: false);
           story = null;
           if (context.mounted) return Navigator.of(context).pop(null);
         } else {

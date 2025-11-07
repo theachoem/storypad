@@ -18,6 +18,7 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   @override
   Future<BaseDbModel?> delete(
     int id, {
+    bool softDelete = true,
     bool runCallbacks = true,
     DateTime? deletedAt,
   }) {

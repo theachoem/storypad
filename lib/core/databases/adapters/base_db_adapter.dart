@@ -46,6 +46,7 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   Future<T?> delete(
     int id, {
+    bool softDelete = true,
     bool runCallbacks = true,
     DateTime? deletedAt,
   });

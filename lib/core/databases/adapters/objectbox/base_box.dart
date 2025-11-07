@@ -175,21 +175,33 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
+  /// By default, records are soft-deleted. Soft-deleted records remain in the database
+  /// for up to 7 days and are later permanently removed by a cleanup job.
+  ///
+  /// Soft deletion helps synchronize deletions across devices (e.g., when data is restored
+  /// from a backup). However, if the data hasn’t been backed up yet, you can set
+  /// `softDelete = false` to delete it immediately.
   Future<T?> delete(
     int id, {
+    bool softDelete = true,
     bool runCallbacks = true,
     DateTime? deletedAt,
   }) async {
     debugPrint("Triggering $tableName#delete 🍎");
     B? object = box.get(id);
 
-    if (object != null) {
-      object.setDeviceId();
-      object.toPermanentlyDeleted(deletedAt: deletedAt);
-      await box.putAsync(object);
-    }
+    if (softDelete) {
+      if (object != null) {
+        object.setDeviceId();
+        object.toPermanentlyDeleted(deletedAt: deletedAt);
+        await box.putAsync(object);
+      }
 
-    if (runCallbacks) await afterCommit(null);
-    return null;
+      if (runCallbacks) await afterCommit(null);
+      return null;
+    } else {
+      await box.removeAsync(id);
+      return null;
+    }
   }
 }
