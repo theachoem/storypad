@@ -199,7 +199,11 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (recordingResult != null) SpAudioPlayer(filePath: recordingResult!.filePath),
+        if (recordingResult != null)
+          SpAudioPlayer(
+            filePath: recordingResult!.filePath,
+            initialDuration: Duration(seconds: durationInMs),
+          ),
         const SizedBox(height: 32.0),
         buildPlaybackActions(context),
       ],

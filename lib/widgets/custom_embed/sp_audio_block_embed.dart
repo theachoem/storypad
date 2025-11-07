@@ -39,7 +39,6 @@ class _QuillAudioRenderer extends StatefulWidget {
 
 class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
   AssetDbModel? _asset;
-  late BuildContext _builderContext;
 
   @override
   void initState() {
@@ -69,7 +68,7 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
       throw StateError('Asset metadata not loaded');
     }
 
-    final currentUser = _builderContext.read<BackupProvider>().currentUser;
+    final currentUser = context.read<BackupProvider>().currentUser;
     final downloader = GoogleDriveAssetDownloaderService();
 
     return downloader.downloadAsset(
@@ -82,9 +81,9 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
   @override
   Widget build(BuildContext context) {
     if (_asset == null) return const SizedBox.shrink();
-    _builderContext = context;
 
     return SpAudioPlayer(
+      initialDuration: _asset?.durationInMs != null ? Duration(milliseconds: _asset!.durationInMs!) : null,
       onDownloadRequested: _downloadAudio,
     );
   }

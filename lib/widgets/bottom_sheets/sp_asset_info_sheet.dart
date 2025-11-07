@@ -20,6 +20,8 @@ class SpAssetInfoSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
+    final fileSize = _getFileSizeString();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -45,6 +47,12 @@ class SpAssetInfoSheet extends BaseBottomSheet {
             ),
           ),
         ),
+        if (fileSize != null)
+          ListTile(
+            leading: const Icon(SpIcons.info),
+            title: Text(tr("list_tile.file_size.title")),
+            subtitle: Text(fileSize),
+          ),
         if (context.read<BackupProvider>().currentUser != null)
           ListTile(
             leading: Icon(SpIcons.googleDrive),
@@ -67,5 +75,26 @@ class SpAssetInfoSheet extends BaseBottomSheet {
         SizedBox(height: MediaQuery.of(context).padding.bottom),
       ],
     );
+  }
+
+  String? _getFileSizeString() {
+    final file = asset.localFile;
+    if (file == null || !file.existsSync()) return null;
+
+    final sizeInBytes = file.lengthSync();
+    return _formatBytes(sizeInBytes);
+  }
+
+  String _formatBytes(int bytes) {
+    const List<String> units = ['B', 'KB', 'MB', 'GB'];
+    double size = bytes.toDouble();
+    int unitIndex = 0;
+
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
   }
 }

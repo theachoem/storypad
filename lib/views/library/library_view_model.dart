@@ -2,11 +2,8 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/databases/models/collection_db_model.dart';
-import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -19,34 +16,9 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   LibraryViewModel({
     required this.params,
-  }) {
-    load();
+  });
 
-    StoryDbModel.db.addGlobalListener(() async {
-      load();
-    });
-  }
-
-  Map<int, int> storiesCount = {};
-  CollectionDbModel<AssetDbModel>? assets;
-
-  Future<void> load() async {
-    assets = await AssetDbModel.db.where(
-      filters: {
-        'type': AssetType.image,
-      },
-    );
-
-    for (var asset in assets?.items ?? <AssetDbModel>[]) {
-      storiesCount[asset.id] = await StoryDbModel.db.count(
-        filters: {
-          'asset': asset.id,
-        },
-      );
-    }
-
-    notifyListeners();
-  }
+  // Tab management can be added here if needed in the future
 
   Future<void> deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
     final bool hasInternet = await InternetCheckerService().check();
@@ -83,8 +55,6 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
     // when image is not yet upload, allow delete locally.
     if (uploadedEmails.isEmpty) {
       await asset.delete();
-      assets = assets?.removeElement(asset);
-      notifyListeners();
       return true;
     }
 
@@ -105,15 +75,11 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
 
       if (statusCode == 404 || deleted == true) {
         await asset.delete();
-        assets = assets?.removeElement(asset);
-        notifyListeners();
         return true;
       }
     } else {
       // Allow delete db asset when no file ID for current email found.
       await asset.delete();
-      assets = assets?.removeElement(asset);
-      notifyListeners();
       return true;
     }
 

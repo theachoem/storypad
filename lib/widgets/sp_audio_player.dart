@@ -32,6 +32,7 @@ class SpAudioPlayer extends StatefulWidget {
     super.key,
     this.filePath,
     this.onDownloadRequested,
+    required this.initialDuration,
   }) : assert(
          filePath != null || onDownloadRequested != null,
          'Either filePath or onDownloadRequested must be provided',
@@ -39,6 +40,7 @@ class SpAudioPlayer extends StatefulWidget {
 
   /// Direct path to audio file. Use when file is already available locally.
   final String? filePath;
+  final Duration? initialDuration;
 
   /// Callback to get/download audio file on play. Called when user clicks play.
   /// Should return the path to the audio file.
@@ -53,7 +55,8 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
 
   bool playing = false;
   bool downloading = false;
-  Duration _duration = Duration.zero;
+
+  late Duration _duration = widget.initialDuration ?? Duration.zero;
   Duration _position = Duration.zero;
   String? _currentFilePath;
 
@@ -103,7 +106,7 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
     _audioPlayer.durationStream.listen((duration) {
       if (mounted) {
         setState(() {
-          _duration = duration ?? Duration.zero;
+          _duration = duration ?? _duration;
         });
       }
     });
