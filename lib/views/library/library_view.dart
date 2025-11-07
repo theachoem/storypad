@@ -2,7 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +38,11 @@ part 'local_widgets/images_tab_content.dart';
 part 'local_widgets/voices_tab_content.dart';
 
 class LibraryRoute extends BaseRoute {
-  LibraryRoute();
+  LibraryRoute({
+    this.initialTabIndex = 0,
+  });
+
+  final int initialTabIndex;
 
   @override
   Widget buildPage(BuildContext context) => LibraryView(params: this);

@@ -21,6 +21,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
       _rewardAddOns?.contains(productIdentifier) == true ||
       _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
+  bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);

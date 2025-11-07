@@ -8,6 +8,7 @@ import 'package:storypad/core/objects/add_on_object.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
@@ -36,6 +37,24 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
     await context.read<InAppPurchaseProvider>().fetchAndCacheProducts(debugSource: '$runtimeType#load');
 
     addOns = [
+      AddOnObject(
+        type: AppProduct.voice_journal,
+        title: tr('add_ons.voice_journal.title'),
+        subtitle: tr('add_ons.voice_journal.subtitle'),
+        displayPrice: getProduct('voice_journal')?.priceString,
+        iconData: SpIcons.voice,
+        weekdayColor: 5,
+        demoImages: [
+          '/add_ons_demos/voice_journal/voice_journal_1.jpg',
+          '/add_ons_demos/voice_journal/voice_journal_2.jpg',
+          '/add_ons_demos/voice_journal/voice_journal_3.jpg',
+        ],
+        onTry: null,
+        onPurchased: null,
+        onOpen: (BuildContext context) => LibraryRoute(
+          initialTabIndex: 1,
+        ).push(context, rootNavigator: true),
+      ),
       AddOnObject(
         type: AppProduct.templates,
         title: tr('add_ons.templates.title'),

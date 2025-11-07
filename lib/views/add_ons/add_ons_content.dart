@@ -9,6 +9,7 @@ class _AddOnsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(tr('page.add_ons.title')),
         centerTitle: kIsCupertino,
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
@@ -31,24 +32,38 @@ class _AddOnsContent extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16.0).add(
-        EdgeInsets.only(
-          bottom: padding.bottom,
-          left: padding.left,
-          right: padding.right,
-        ),
+    return ListView(
+      padding: EdgeInsets.only(
+        top: 0.0,
+        bottom: padding.bottom + 16.0,
+        left: padding.left + 16.0,
+        right: padding.right + 16.0,
       ),
-      separatorBuilder: (context, index) => const SizedBox(height: 16.0),
-      itemCount: viewModel.addOns!.length + 1,
-      itemBuilder: (context, index) {
-        if (index == viewModel.addOns!.length) {
-          if (!kIAPEnabled) return const SizedBox.shrink();
-          return buildRewardsCard();
-        }
+      children: [
+        buildAddOnsGrid(context),
+        const SizedBox(height: 12.0),
+        if (kIAPEnabled) buildRewardsCard(),
+      ],
+    );
+  }
 
+  Widget buildAddOnsGrid(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth > 900;
+    final isMediumScreen = screenWidth > 600;
+
+    int crossAxisCount = isLargeScreen ? 4 : (isMediumScreen ? 3 : 2);
+
+    return AlignedGridView.count(
+      crossAxisCount: crossAxisCount,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 12.0,
+      crossAxisSpacing: 12.0,
+      itemCount: viewModel.addOns!.length,
+      itemBuilder: (context, index) {
         final addOn = viewModel.addOns![index];
-        return _AddOnCard(
+        return _AddOnGridItem(
           addOn: addOn,
           onTap: () => ShowAddOnRoute(
             addOn: addOn,
@@ -92,7 +107,7 @@ class _AddOnsContent extends StatelessWidget {
 
   Widget buildBottomNavigation(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
+      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0, bottom: MediaQuery.of(context).padding.bottom + 16.0),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         alignment: WrapAlignment.center,
