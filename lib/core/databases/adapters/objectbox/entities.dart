@@ -175,6 +175,12 @@ class AssetObjectBox extends BaseObjectBox {
   String originalSource;
   String cloudDestinations;
 
+  // 'image', 'audio', etc.
+  String? type;
+
+  // JSON metadata for flexible storage (duration, transcription, etc.)
+  String? metadata;
+
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
@@ -195,7 +201,9 @@ class AssetObjectBox extends BaseObjectBox {
     required this.createdAt,
     required this.updatedAt,
     required this.permanentlyDeletedAt,
+    required this.type,
     this.lastSavedDeviceId,
+    this.metadata,
   });
 
   @override

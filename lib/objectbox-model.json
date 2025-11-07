@@ -252,7 +252,7 @@
     },
     {
       "id": "5:4094713120589114734",
-      "lastPropertyId": "9:7601477478707634423",
+      "lastPropertyId": "11:3385039821200523280",
       "name": "AssetObjectBox",
       "properties": [
         {
@@ -289,6 +289,16 @@
         {
           "id": "8:1856515659629711057",
           "name": "originalSource",
+          "type": 9
+        },
+        {
+          "id": "10:3842512515517858228",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "11:3385039821200523280",
+          "name": "metadata",
           "type": 9
         }
       ],

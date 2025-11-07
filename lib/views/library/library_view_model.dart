@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -30,7 +31,11 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   CollectionDbModel<AssetDbModel>? assets;
 
   Future<void> load() async {
-    assets = await AssetDbModel.db.where();
+    assets = await AssetDbModel.db.where(
+      filters: {
+        'type': AssetType.image,
+      },
+    );
 
     for (var asset in assets?.items ?? <AssetDbModel>[]) {
       storiesCount[asset.id] = await StoryDbModel.db.count(

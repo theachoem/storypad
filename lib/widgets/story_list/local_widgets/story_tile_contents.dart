@@ -19,7 +19,7 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = content != null ? StoryExtractImageFromContentService.call(content) : null;
+    final assetLinks = content != null ? StoryExtractAssetsFromContentService.all(content) : null;
 
     return Expanded(
       child: Column(
@@ -71,9 +71,9 @@ class _StoryTileContents extends StatelessWidget {
                   },
             onToggleManagingPage: null,
           ),
-          if (images?.isNotEmpty == true) ...[
+          if (assetLinks?.isNotEmpty == true) ...[
             SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
-            _StoryTileImages(images: images!),
+            _StoryTileAssets(assetLinks: assetLinks!),
             if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
           ],
           if (story.inArchives) ...[

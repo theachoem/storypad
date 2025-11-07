@@ -11,6 +11,7 @@ import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 

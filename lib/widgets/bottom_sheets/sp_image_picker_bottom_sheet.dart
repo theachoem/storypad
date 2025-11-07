@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/services/retrieve_lost_photo_service.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
@@ -26,7 +28,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     required BuildContext context,
     required QuillController controller,
   }) async {
-    final assets = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);
+    await RetrieveLostPhotoService.call();
+
+    final assets = await AssetDbModel.db
+        .where(filters: {'type': AssetType.image})
+        .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return;
 
     final pickAssets = await SpImagePickerBottomSheet(
@@ -61,7 +67,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       for (var file in result!.files) {
         if (file.bytes == null) continue;
 
-        final savedAsset = await InsertFileToDbService.insert(file.xFile, file.bytes!);
+        final savedAsset = await InsertFileToDbService.insertImage(file.xFile, file.bytes!);
         if (savedAsset != null) saveAssets.add(savedAsset);
       }
 

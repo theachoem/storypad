@@ -4,6 +4,10 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
+    <!-- https://github.com/llfbandit/record/blob/master/record_android/README.md#record-android -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <!-- https://pub.dev/packages/audio_service#android-setup -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />

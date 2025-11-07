@@ -96,8 +96,9 @@ class _QuillEditorState extends State<_QuillEditor> {
         placeholder: "...",
         embedBuilders: [
           SpImageBlockEmbed(
-            fetchAllImages: () => StoryExtractImageFromContentService.call(widget.storyContent),
+            fetchAllImages: () => StoryExtractAssetsFromContentService.images(widget.storyContent),
           ),
+          SpAudioBlockEmbed(),
           SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),

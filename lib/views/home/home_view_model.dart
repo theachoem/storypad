@@ -143,7 +143,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     final XFile? photo = await picker.pickImage(source: ImageSource.camera);
     if (photo == null) return;
 
-    AssetDbModel? asset = await InsertFileToDbService.insert(photo, await photo.readAsBytes());
+    AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
     if (asset == null) return;
 
     final addedStory = await EditStoryRoute(

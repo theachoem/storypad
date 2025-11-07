@@ -16,5 +16,7 @@
         <array>
             <string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
         </array>
+        <key>com.apple.security.device.audio-input</key>
+        <true />
     </dict>
 </plist>

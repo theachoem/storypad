@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -13,6 +12,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 
@@ -258,20 +258,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   StoryDbModel buildStory({
     bool draft = true,
   }) {
-    Set<int> assets = {};
-
-    for (StoryPageDbModel page in draftContent?.richPages ?? []) {
-      for (var node in page.body ?? []) {
-        if (node is Map &&
-            node['insert'] is Map &&
-            node['insert']['image'] is String &&
-            node['insert']['image'].toString().startsWith("storypad://")) {
-          String image = node['insert']['image'];
-          int? assetId = int.tryParse(image.split("storypad://assets/").lastOrNull ?? '');
-          if (assetId != null) assets.add(assetId);
-        }
-      }
-    }
+    final assets = StoryExtractAssetsFromPagesService.call(draftContent?.richPages);
 
     debugPrint("Found assets: $assets in ${story?.id}");
     if (draft) {

@@ -23,6 +23,10 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
+  AssetDbModel type(AssetType type);
+
+  AssetDbModel metadata(Map<String, dynamic>? metadata);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -38,6 +42,8 @@ abstract class _$AssetDbModelCWProxy {
     DateTime updatedAt,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
+    AssetType type,
+    Map<String, dynamic>? metadata,
   });
 }
 
@@ -75,6 +81,13 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
+  AssetDbModel type(AssetType type) => call(type: type);
+
+  @override
+  AssetDbModel metadata(Map<String, dynamic>? metadata) =>
+      call(metadata: metadata);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -90,6 +103,8 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
+    Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -124,6 +139,14 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.permanentlyDeletedAt
           // ignore: cast_nullable_to_non_nullable
           : permanentlyDeletedAt as DateTime?,
+      type: type == const $CopyWithPlaceholder() || type == null
+          ? _value.type
+          // ignore: cast_nullable_to_non_nullable
+          : type as AssetType,
+      metadata: metadata == const $CopyWithPlaceholder()
+          ? _value.metadata
+          // ignore: cast_nullable_to_non_nullable
+          : metadata as Map<String, dynamic>?,
     );
   }
 }
@@ -156,6 +179,8 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
       : DateTime.parse(json['permanently_deleted_at'] as String),
+  type: $enumDecode(_$AssetTypeEnumMap, json['type']),
+  metadata: json['metadata'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$AssetDbModelToJson(
@@ -164,8 +189,12 @@ Map<String, dynamic> _$AssetDbModelToJson(
   'id': instance.id,
   'original_source': instance.originalSource,
   'cloud_destinations': instance.cloudDestinations,
+  'type': _$AssetTypeEnumMap[instance.type]!,
+  'metadata': instance.metadata,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
 };
+
+const _$AssetTypeEnumMap = {AssetType.image: 'image', AssetType.audio: 'audio'};

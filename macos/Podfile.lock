@@ -1547,6 +1547,8 @@ PODS:
     - RevenueCat (= 5.46.0)
   - quill_native_bridge_macos (0.0.1):
     - FlutterMacOS
+  - record_macos (1.1.0):
+    - FlutterMacOS
   - RevenueCat (5.46.0)
   - share_plus (0.0.1):
     - FlutterMacOS
@@ -1583,6 +1585,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - purchases_flutter (from `Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos`)
   - quill_native_bridge_macos (from `Flutter/ephemeral/.symlinks/plugins/quill_native_bridge_macos/macos`)
+  - record_macos (from `Flutter/ephemeral/.symlinks/plugins/record_macos/macos`)
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `Flutter/ephemeral/.symlinks/plugins/sqflite_darwin/darwin`)
@@ -1674,6 +1677,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos
   quill_native_bridge_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/quill_native_bridge_macos/macos
+  record_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/record_macos/macos
   share_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/share_plus/macos
   shared_preferences_foundation:
@@ -1742,6 +1747,7 @@ SPEC CHECKSUMS:
   purchases_flutter: 57c50cbb3c716d8a820fcf09cfcec9c94f99ef1b
   PurchasesHybridCommon: b1313c42e226555618514daa35c3ff1f582cb10d
   quill_native_bridge_macos: 2b005cb56902bb740e0cd9620aa399dfac6b4882
+  record_macos: 43194b6c06ca6f8fa132e2acea72b202b92a0f5b
   RevenueCat: 0423a85e1f2ef06f1002b18cae53fe856f60ea53
   share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb

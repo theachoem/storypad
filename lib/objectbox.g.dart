@@ -316,7 +316,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4094713120589114734),
     name: 'AssetObjectBox',
-    lastPropertyId: const obx_int.IdUid(9, 7601477478707634423),
+    lastPropertyId: const obx_int.IdUid(11, 3385039821200523280),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -358,6 +358,18 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(8, 1856515659629711057),
         name: 'originalSource',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 3842512515517858228),
+        name: 'type',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 3385039821200523280),
+        name: 'metadata',
         type: 9,
         flags: 0,
       ),
@@ -1042,7 +1054,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ? null
             : fbb.writeString(object.lastSavedDeviceId!);
         final originalSourceOffset = fbb.writeString(object.originalSource);
-        fbb.startTable(10);
+        final typeOffset = object.type == null
+            ? null
+            : fbb.writeString(object.type!);
+        final metadataOffset = object.metadata == null
+            ? null
+            : fbb.writeString(object.metadata!);
+        fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addOffset(2, cloudDestinationsOffset);
         fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
@@ -1050,6 +1068,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(5, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
         fbb.addOffset(6, lastSavedDeviceIdOffset);
         fbb.addOffset(7, originalSourceOffset);
+        fbb.addOffset(9, typeOffset);
+        fbb.addOffset(10, metadataOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1079,9 +1099,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final typeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 22);
         final lastSavedDeviceIdParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 16);
+        final metadataParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 24);
         final object = AssetObjectBox(
           id: idParam,
           originalSource: originalSourceParam,
@@ -1089,7 +1115,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          type: typeParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
+          metadata: metadataParam,
         );
 
         return object;
@@ -1645,6 +1673,16 @@ class AssetObjectBox_ {
   /// See [AssetObjectBox.originalSource].
   static final originalSource = obx.QueryStringProperty<AssetObjectBox>(
     _entities[3].properties[6],
+  );
+
+  /// See [AssetObjectBox.type].
+  static final type = obx.QueryStringProperty<AssetObjectBox>(
+    _entities[3].properties[7],
+  );
+
+  /// See [AssetObjectBox.metadata].
+  static final metadata = obx.QueryStringProperty<AssetObjectBox>(
+    _entities[3].properties[8],
   );
 }
 
