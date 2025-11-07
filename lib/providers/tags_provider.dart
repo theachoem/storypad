@@ -32,8 +32,8 @@ class TagsProvider extends ChangeNotifier {
       }
     }
 
-    storiesCountByTagId = StoryDbModel.db.getStoryCountByAssets(
-      assetIds: tags?.items.map((e) => e.id).toList() ?? [],
+    storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
+      tagIds: tags?.items.map((e) => e.id).toList() ?? [],
     );
 
     notifyListeners();

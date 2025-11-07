@@ -348,6 +348,8 @@
   "plural.row.other": "{} rows",
   "plural.story.one": "1 story",
   "plural.story.other": "{} stories",
+  "plural.voice.one": "1 voice",
+  "plural.voices.other": "{} voices",
   "snack_bar.archive_success": "Archived!",
   "snack_bar.at_least_one_answer_required_to_reset_your_pin": "Clear unsuccessful. At least one answer is required to protect your PIN.",
   "snack_bar.copy_error_to_clipboard_success": "Error code copied to your clipboard!",

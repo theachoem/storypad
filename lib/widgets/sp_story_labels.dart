@@ -111,7 +111,7 @@ class SpStoryLabels extends StatelessWidget {
         buildPin(
           leadingIconData: SpIcons.voice,
           context: context,
-          title: "$voicesCount voices",
+          title: plural('plural.voice', voicesCount!),
           onTap: null,
         ),
       );
