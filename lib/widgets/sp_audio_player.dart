@@ -12,18 +12,37 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 /// - Clean stadium-shaped design
 /// - Responds to app lifecycle changes
 /// - Manages AudioPlayer internally
+/// - Supports lazy-loading audio files via callback
 ///
 /// Usage:
 /// ```dart
+/// // Direct file path (no download needed)
 /// SpAudioPlayer(filePath: '/path/to/audio.m4a')
+///
+/// // With lazy-loading callback (download on play)
+/// SpAudioPlayer(
+///   onDownloadRequested: () async {
+///     // Download logic here
+///     return downloadedFilePath;
+///   },
+/// )
 /// ```
 class SpAudioPlayer extends StatefulWidget {
   const SpAudioPlayer({
     super.key,
-    required this.filePath,
-  });
+    this.filePath,
+    this.onDownloadRequested,
+  }) : assert(
+         filePath != null || onDownloadRequested != null,
+         'Either filePath or onDownloadRequested must be provided',
+       );
 
-  final String filePath;
+  /// Direct path to audio file. Use when file is already available locally.
+  final String? filePath;
+
+  /// Callback to get/download audio file on play. Called when user clicks play.
+  /// Should return the path to the audio file.
+  final Future<String> Function()? onDownloadRequested;
 
   @override
   State<SpAudioPlayer> createState() => _SpAudioPlayerState();
@@ -33,15 +52,22 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool playing = false;
+  bool downloading = false;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
+  String? _currentFilePath;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _setupAudioPlayer();
-    _loadAudio();
+
+    // If filePath is provided directly, load it immediately
+    if (widget.filePath != null) {
+      _currentFilePath = widget.filePath;
+      _loadAudio(_currentFilePath!);
+    }
   }
 
   @override
@@ -91,25 +117,58 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
     });
   }
 
-  Future<void> _loadAudio() async {
+  Future<void> _loadAudio(String filePath) async {
     try {
-      // Give the system a moment to finalize the file
       await Future.delayed(const Duration(milliseconds: 100));
-      await _audioPlayer.setFilePath(widget.filePath);
+      await _audioPlayer.setFilePath(filePath);
     } catch (e) {
       debugPrint('❌ Error loading audio: $e');
-      // Retry once
       try {
         await Future.delayed(const Duration(milliseconds: 500));
-        await _audioPlayer.setFilePath(widget.filePath);
+        await _audioPlayer.setFilePath(filePath);
       } catch (retryError) {
         debugPrint('❌ Error loading audio (retry): $retryError');
       }
     }
   }
 
+  Future<void> _ensureAudioLoaded() async {
+    // If file is already loaded or loading, skip
+    if (_currentFilePath != null) return;
+
+    // If no onDownloadRequested callback, file must be provided directly
+    if (widget.onDownloadRequested == null) {
+      debugPrint('❌ No file path or download callback provided');
+      return;
+    }
+
+    try {
+      if (mounted) setState(() => downloading = true);
+      final filePath = await widget.onDownloadRequested!();
+
+      if (mounted) {
+        setState(() {
+          _currentFilePath = filePath;
+          downloading = false;
+        });
+      }
+
+      await _loadAudio(filePath);
+    } catch (e) {
+      debugPrint('❌ Error preparing audio: $e');
+      if (mounted) setState(() => downloading = false);
+    }
+  }
+
   Future<void> _togglePlayPause() async {
     try {
+      // Ensure audio is loaded first (handles lazy loading)
+      await _ensureAudioLoaded();
+
+      if (downloading) {
+        return; // Don't toggle while loading
+      }
+
       if (playing) {
         await _audioPlayer.pause();
       } else {
@@ -126,7 +185,7 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
       builder: (context, constraints) {
         return SpTapEffect(
           effects: [SpTapEffectType.scaleDown],
-          onTap: () => _togglePlayPause(),
+          onTap: downloading ? null : () => _togglePlayPause(),
           child: Material(
             color: Theme.of(context).colorScheme.surfaceContainer,
             clipBehavior: Clip.hardEdge,
@@ -152,11 +211,22 @@ class _SpAudioPlayerState extends State<SpAudioPlayer> with WidgetsBindingObserv
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(
-                        playing ? SpIcons.pauseCircle : SpIcons.playCircle,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 18.0,
-                      ),
+                      child: downloading
+                          ? SizedBox(
+                              width: 18.0,
+                              height: 18.0,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              playing ? SpIcons.pauseCircle : SpIcons.playCircle,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 18.0,
+                            ),
                     ),
                     Text(
                       DurationFormatService.formatDuration(_position),

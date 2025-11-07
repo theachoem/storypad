@@ -179,7 +179,7 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
       : DateTime.parse(json['permanently_deleted_at'] as String),
-  type: $enumDecode(_$AssetTypeEnumMap, json['type']),
+  type: _assetTypeFromJson(json['type'] as String?),
   metadata: json['metadata'] as Map<String, dynamic>?,
 );
 
@@ -189,12 +189,10 @@ Map<String, dynamic> _$AssetDbModelToJson(
   'id': instance.id,
   'original_source': instance.originalSource,
   'cloud_destinations': instance.cloudDestinations,
-  'type': _$AssetTypeEnumMap[instance.type]!,
+  'type': _assetTypeToJson(instance.type),
   'metadata': instance.metadata,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
 };
-
-const _$AssetTypeEnumMap = {AssetType.image: 'image', AssetType.audio: 'audio'};

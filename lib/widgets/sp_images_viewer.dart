@@ -44,7 +44,7 @@ class SpImagesViewer extends StatefulWidget {
       ImageProvider? imageProvider;
 
       if (imageUrl.startsWith('storypad://')) {
-        imageProvider = SpDbImageProvider(assetLink: imageUrl, currentUser: null);
+        imageProvider = SpDbImageProvider(embedLink: imageUrl, currentUser: null);
       } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);
       } else if (File(imageUrl).existsSync()) {

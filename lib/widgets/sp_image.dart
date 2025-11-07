@@ -40,7 +40,7 @@ class SpImage extends StatelessWidget {
             width: width,
             height: height,
             fit: BoxFit.cover,
-            image: SpDbImageProvider(assetLink: link, currentUser: provider.currentUser),
+            image: SpDbImageProvider(embedLink: link, currentUser: provider.currentUser),
             errorBuilder: (context, error, strackTrace) =>
                 errorWidget?.call(context, link, error) ??
                 buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),

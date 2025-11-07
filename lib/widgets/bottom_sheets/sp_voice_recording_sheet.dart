@@ -50,7 +50,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
         final index = controller.selection.baseOffset;
         final length = controller.selection.extentOffset - index;
 
-        final audioEmbed = BlockEmbed('audio', savedAsset.link);
+        final audioEmbed = BlockEmbed('audio', savedAsset.embedLink);
 
         controller.replaceText(index, length, audioEmbed, null);
         controller.moveCursorToPosition(index + 1);

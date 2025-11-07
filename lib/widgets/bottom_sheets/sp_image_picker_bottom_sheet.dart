@@ -44,7 +44,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         final index = controller.selection.baseOffset;
         final length = controller.selection.extentOffset - index;
 
-        controller.replaceText(index, length, BlockEmbed.image(pickAsset.link), null);
+        controller.replaceText(index, length, BlockEmbed.image(pickAsset.embedLink), null);
         controller.moveCursorToPosition(index + 1);
       }
 
@@ -177,7 +177,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: SpImage(
-                link: asset.link,
+                link: asset.embedLink,
                 width: double.infinity,
                 height: 120,
               ),

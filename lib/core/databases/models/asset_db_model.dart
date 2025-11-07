@@ -10,7 +10,7 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 part 'asset_db_model.g.dart';
 
 String _assetTypeToJson(AssetType type) => type.name;
-AssetType _assetTypeFromJson(String json) => AssetType.fromValue(json);
+AssetType _assetTypeFromJson(String? json) => AssetType.fromValue(json);
 
 @CopyWith()
 @JsonSerializable()
@@ -63,7 +63,7 @@ class AssetDbModel extends BaseDbModel {
   /// Automatically routes to correct scheme based on asset type:
   /// - Audio: storypad://audio/{id}
   /// - Image (or null): storypad://assets/{id}
-  String get link => type.buildEmbedLink(id);
+  String get embedLink => type.buildEmbedLink(id);
 
   bool get isAudio => type == AssetType.audio;
   bool get isImage => type == AssetType.image;
@@ -83,7 +83,7 @@ class AssetDbModel extends BaseDbModel {
     final file = File(originalSource);
     if (file.existsSync()) return file;
 
-    final possibleFile = File(downloadFilePath);
+    final possibleFile = File(localFilePath);
     if (possibleFile.existsSync()) return possibleFile;
 
     return null;
@@ -94,7 +94,7 @@ class AssetDbModel extends BaseDbModel {
   /// Example output:
   /// - Image: `/support/dir/images/1762500783746.jpg`
   /// - Audio: `/support/dir/audio/1762500783746.m4a`
-  String get downloadFilePath {
+  String get localFilePath {
     return type.getStoragePath(
       id: id,
       extension: extension(originalSource),
@@ -167,9 +167,9 @@ class AssetDbModel extends BaseDbModel {
   /// - storypad://assets/{id}
   /// - storypad://audio/{id}
   static Future<AssetDbModel?> findBy({
-    required String assetLink,
+    required String embedLink,
   }) async {
-    final id = AssetType.parseAssetId(assetLink);
+    final id = AssetType.parseAssetId(embedLink);
     return id != null ? AssetDbModel.db.find(id) : null;
   }
 

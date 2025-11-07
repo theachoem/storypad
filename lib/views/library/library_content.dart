@@ -80,10 +80,10 @@ class _LibraryContent extends StatelessWidget {
             leadingIconData: SpIcons.photo,
             title: tr("button.view"),
             onPressed: () {
-              final assetLinks = viewModel.assets?.items.map((e) => e.link).toList() ?? [];
+              final embedLinks = viewModel.assets?.items.map((e) => e.embedLink).toList() ?? [];
               SpImagesViewer.fromString(
-                images: assetLinks,
-                initialIndex: assetLinks.indexOf(asset.link),
+                images: embedLinks,
+                initialIndex: embedLinks.indexOf(asset.embedLink),
               ).show(context);
             },
           ),
@@ -106,7 +106,7 @@ class _LibraryContent extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: SpImage(
-                      link: asset.link,
+                      link: asset.embedLink,
                       width: double.infinity,
                       height: 120,
                     ),
