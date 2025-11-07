@@ -18,8 +18,8 @@ class _LibraryContent extends StatelessWidget {
           title: Text(tr("page.library.title_with_app_name")),
           bottom: const TabBar(
             tabs: [
-              Tab(text: "Photos", icon: Icon(SpIcons.photo)),
-              Tab(text: "Voices", icon: Icon(SpIcons.voice)),
+              Tab(icon: Icon(SpIcons.photo)),
+              Tab(icon: Icon(SpIcons.voice)),
             ],
           ),
         ),

@@ -11,7 +11,7 @@ class _VoicesTabContent extends StatefulWidget {
   State<_VoicesTabContent> createState() => _VoicesTabContentState();
 }
 
-class _VoicesTabContentState extends State<_VoicesTabContent> {
+class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeepAliveClientMixin {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
 
@@ -52,26 +52,18 @@ class _VoicesTabContentState extends State<_VoicesTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<BackupProvider>(context);
+    super.build(context);
 
-    return SpDefaultScrollController(
-      builder: (context, scrollController) {
-        return Scrollbar(
-          controller: scrollController,
-          interactive: true,
-          child: NestedScrollView(
-            controller: scrollController,
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                SliverToBoxAdapter(
-                  child: buildFilterableTags(),
-                ),
-              ];
-            },
-            body: buildBody(context, provider),
+    final provider = Provider.of<BackupProvider>(context);
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return [
+          SliverToBoxAdapter(
+            child: buildFilterableTags(),
           ),
-        );
+        ];
       },
+      body: buildBody(context, provider),
     );
   }
 
@@ -170,7 +162,9 @@ class _VoicesTabContentState extends State<_VoicesTabContent> {
         final durationText = asset.formattedDuration ?? tr('general.unknown');
 
         return ListTile(
-          onTap: callback,
+          onTap: () {
+            SpVoicePlaybackSheet(asset: asset).show(context: context);
+          },
           leading: const Icon(SpIcons.voice),
           contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
           title: Text.rich(
@@ -345,4 +339,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> {
       return DateTime.parse(key);
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

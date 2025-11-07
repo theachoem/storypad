@@ -11,7 +11,7 @@ class _ImageTabContent extends StatefulWidget {
   State<_ImageTabContent> createState() => _ImageTabContentState();
 }
 
-class _ImageTabContentState extends State<_ImageTabContent> {
+class _ImageTabContentState extends State<_ImageTabContent> with AutomaticKeepAliveClientMixin {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
 
@@ -52,26 +52,19 @@ class _ImageTabContentState extends State<_ImageTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final provider = Provider.of<BackupProvider>(context);
 
-    return SpDefaultScrollController(
-      builder: (context, scrollController) {
-        return Scrollbar(
-          controller: scrollController,
-          interactive: true,
-          child: NestedScrollView(
-            controller: scrollController,
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                SliverToBoxAdapter(
-                  child: buildFilterableTags(),
-                ),
-              ];
-            },
-            body: buildBody(context, provider),
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return [
+          SliverToBoxAdapter(
+            child: buildFilterableTags(),
           ),
-        );
+        ];
       },
+      body: buildBody(context, provider),
     );
   }
 
@@ -105,7 +98,6 @@ class _ImageTabContentState extends State<_ImageTabContent> {
       key: ValueKey(filters.values.join("-")),
       child: SpFadeIn.fromBottom(
         child: ListView.separated(
-          physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).padding.bottom + 16.0,
             left: MediaQuery.of(context).padding.left + 16.0,
@@ -240,26 +232,26 @@ class _ImageTabContentState extends State<_ImageTabContent> {
       builder: (callback) {
         return SpTapEffect(
           onTap: callback,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4.0,
-            children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: SpImage(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4.0,
+              children: [
+                Stack(
+                  children: [
+                    SpImage(
                       link: asset.embedLink,
                       width: double.infinity,
                       height: 120,
                     ),
-                  ),
-                  _ImageStatus(context: context, asset: asset, provider: provider),
-                  const _BlackOverlay(),
-                  _buildStoryCount(asset),
-                ],
-              ),
-            ],
+                    _ImageStatus(context: context, asset: asset, provider: provider),
+                    const _BlackOverlay(),
+                    _buildStoryCount(asset),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -308,4 +300,7 @@ class _ImageTabContentState extends State<_ImageTabContent> {
       await _load();
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

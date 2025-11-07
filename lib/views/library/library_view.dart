@@ -16,7 +16,7 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/library/show/show_asset_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
-import 'package:storypad/widgets/sp_default_scroll_controller.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_playback_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
