@@ -34,19 +34,31 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
     List<Widget> buttons = switch (kIAPEnabled) {
       false => [],
       true => [
-        if (!provider.hasAnyPurchases && provider.hasOffers)
-          SpFadeIn.bound(
-            child: IconButton(
-              tooltip: tr('add_ons.relax_sounds.title'),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
+        if (provider.hasActiveDeals)
+          SpNewBadgeBuilder(
+            badgeKey: provider.activeDeals.map((e) => e.startDate).join(","),
+            builder: (context, newBadge, hideBadge) {
+              // if no new badge which mean user already click on active deals & user has any purchases,
+              // hide the button for them. While normal user still can see the button to explore deals.
+              if (newBadge == null && provider.hasAnyPurchases) return const SizedBox.shrink();
+
+              return SpFadeIn.bound(
+                child: IconButton(
+                  tooltip: tr('page.add_ons.title'),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    shape: CircleBorder(
+                      side: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  icon: Icon(SpIcons.gift, color: ColorScheme.of(context).bootstrap.info.color),
+                  onPressed: () async {
+                    await const AddOnsRoute().push(context);
+                    hideBadge();
+                  },
                 ),
-              ),
-              icon: Icon(SpIcons.gift, color: ColorScheme.of(context).bootstrap.info.color),
-              onPressed: () => const AddOnsRoute().push(context),
-            ),
+              );
+            },
           ),
         SpFadeIn.bound(
           child: IconButton(

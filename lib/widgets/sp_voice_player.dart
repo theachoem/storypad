@@ -158,6 +158,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   // for android only, https://github.com/ryanheise/just_audio/issues/1267
   // position is wrong for about 300ms, so we ignore updates during initial play.
   bool _listenToPositionStream = true;
+  bool _usedToStartPlaying = false;
 
   @override
   void initState() {
@@ -289,11 +290,12 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       if (playing) {
         player.pause();
       } else {
-        if (Platform.isAndroid) {
+        if (Platform.isAndroid && !_usedToStartPlaying) {
           _listenToPositionStream = false;
           Future.delayed(const Duration(milliseconds: 300), () => _listenToPositionStream = true);
         }
 
+        _usedToStartPlaying = true;
         player.play();
       }
     } catch (e) {

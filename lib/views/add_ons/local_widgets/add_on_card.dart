@@ -145,17 +145,19 @@ class _AddOnGridItem extends StatelessWidget {
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (addOn.displayComparePrice != null)
-                  Text(
-                    addOn.displayComparePrice!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                    textAlign: TextAlign.end,
+                // display compare price even if it's null to keep height consistency
+                Text(
+                  addOn.displayComparePrice ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+                    decoration: TextDecoration.lineThrough,
                   ),
+                  maxLines: 1,
+                  textAlign: TextAlign.end,
+                ),
                 Text(
                   addOn.displayPrice!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

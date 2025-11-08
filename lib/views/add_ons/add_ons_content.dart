@@ -47,15 +47,15 @@ class _AddOnsContent extends StatelessWidget {
     MaterialColor? baseColor;
 
     if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 7)))) {
-      message = 'Limited-time offers until ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      message = 'Limited-time offers until ${DateFormatHelper.yMMMd(dealEndDate, context.locale)}';
       leadingIcon = SpIcons.tag;
       baseColor = Colors.orange;
     } else if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 3)))) {
-      message = 'Hurry! Offers ending ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      message = 'Hurry! Offers ending ${DateFormatHelper.yMMMd(dealEndDate, context.locale)}';
       leadingIcon = SpIcons.tag;
       baseColor = Colors.deepOrange;
     } else if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 1)))) {
-      message = 'Final call! Deals expire ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      message = 'Final call! Deals expire ${DateFormatHelper.yMMMd(dealEndDate, context.locale)}';
       leadingIcon = SpIcons.alarm;
       baseColor = Colors.red;
     } else if (dealEndDate.isAfter(DateTime.now())) {
@@ -98,10 +98,20 @@ class _AddOnsContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 8.0,
             children: [
-              Icon(
-                leadingIcon,
-                size: 16.0,
-                color: !AppTheme.isDarkMode(context) ? baseColor.shade900 : baseColor.shade300,
+              SpLoopAnimationBuilder(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.ease,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: lerpDouble(1, 0.9, value),
+                    child: child!,
+                  );
+                },
+                child: Icon(
+                  leadingIcon,
+                  size: 16.0,
+                  color: !AppTheme.isDarkMode(context) ? baseColor.shade900 : baseColor.shade300,
+                ),
               ),
               Expanded(
                 child: Text(

@@ -28,7 +28,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
 
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
-  bool get hasOffers => ProductDealObject.getActiveDeals().isNotEmpty;
+  bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
+  List<ProductDealObject> get activeDeals => ProductDealObject.getActiveDeals().values.toList();
 
   DateTime? _rewardExpiredAt;
   List<String>? _rewardAddOns;
