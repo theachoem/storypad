@@ -34,6 +34,20 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
     List<Widget> buttons = switch (kIAPEnabled) {
       false => [],
       true => [
+        if (!provider.hasAnyPurchases && provider.hasOffers)
+          SpFadeIn.bound(
+            child: IconButton(
+              tooltip: tr('add_ons.relax_sounds.title'),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              icon: Icon(SpIcons.gift, color: ColorScheme.of(context).bootstrap.info.color),
+              onPressed: () => const AddOnsRoute().push(context),
+            ),
+          ),
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr('add_ons.relax_sounds.title'),

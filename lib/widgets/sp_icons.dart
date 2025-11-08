@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:storypad/core/constants/app_constants.dart';
 
 class SpIcons {
+  static const IconData alarm = kIsCupertino ? CupertinoIcons.alarm : Icons.alarm_outlined;
   static const IconData newStory = kIsCupertino ? CupertinoIcons.pencil_outline : Icons.edit;
   static const IconData edit = kIsCupertino ? CupertinoIcons.square_pencil : Icons.edit_outlined;
   static const IconData question = kIsCupertino ? CupertinoIcons.question : Icons.question_mark_outlined;

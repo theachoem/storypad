@@ -25,12 +25,36 @@ class _AddOnGridItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            buildIconHeader(context, backgroundColor, isActive),
-            buildContent(context, isActive),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildIconHeader(context, backgroundColor, isActive),
+                buildContent(context, isActive),
+              ],
+            ),
+            if (addOn.badgeLabel != null)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(8.0),
+                    ),
+                  ),
+                  child: Text(
+                    addOn.badgeLabel!,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppTheme.isDarkMode(context) ? backgroundColor.darken(0.6) : backgroundColor.lighten(0.9),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -99,8 +123,8 @@ class _AddOnGridItem extends StatelessWidget {
 
   Widget buildFooter(BuildContext context, bool isActive) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: isActive ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         if (isActive)
           Flexible(
@@ -119,13 +143,28 @@ class _AddOnGridItem extends StatelessWidget {
           ),
         if (addOn.displayPrice != null)
           Flexible(
-            child: Text(
-              addOn.displayPrice!,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: ColorScheme.of(context).primary,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.end,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (addOn.displayComparePrice != null)
+                  Text(
+                    addOn.displayComparePrice!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                    textAlign: TextAlign.end,
+                  ),
+                Text(
+                  addOn.displayPrice!,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: ColorScheme.of(context).primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ],
             ),
           ),
       ],

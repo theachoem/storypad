@@ -9,6 +9,7 @@ part './remote_config_object.dart';
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     bugReportUrl,
+    productDeals,
     faqUrl,
     featureFlags,
     latestRewardMessage,
@@ -42,6 +43,12 @@ class RemoteConfigService {
     'BUG_REPORT_URL',
     _RemoteConfigValueType.string,
     'https://storypad.me#footer',
+  );
+
+  static const productDeals = _RemoteConfigObject<Map>(
+    'PRODUCT_DEALS',
+    _RemoteConfigValueType.json,
+    {},
   );
 
   static const faqUrl = _RemoteConfigObject<String>(

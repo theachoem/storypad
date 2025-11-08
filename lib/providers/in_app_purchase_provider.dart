@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/objects/product_deal_object.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -25,6 +26,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
+
+  bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
+  bool get hasOffers => ProductDealObject.getActiveDeals().isNotEmpty;
 
   DateTime? _rewardExpiredAt;
   List<String>? _rewardAddOns;

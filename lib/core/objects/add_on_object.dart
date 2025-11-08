@@ -6,6 +6,8 @@ class AddOnObject {
   final String title;
   final String subtitle;
   final String? displayPrice;
+  final String? displayComparePrice;
+  final String? badgeLabel;
   final IconData iconData;
   final int weekdayColor;
 
@@ -22,6 +24,8 @@ class AddOnObject {
     required this.title,
     required this.subtitle,
     required this.displayPrice,
+    required this.displayComparePrice,
+    required this.badgeLabel,
     required this.iconData,
     required this.weekdayColor,
     required this.demoImages,

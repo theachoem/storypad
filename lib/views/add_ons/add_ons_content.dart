@@ -31,6 +31,94 @@ class _AddOnsContent extends StatelessWidget {
       );
     }
 
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        const SizedBox(height: 12.0),
+        if (viewModel.dealEndDate != null) buildOfferDealCard(viewModel.dealEndDate!, padding, context),
+        buildAddOnsGrid(context, padding),
+      ],
+    );
+  }
+
+  Widget buildOfferDealCard(DateTime dealEndDate, EdgeInsets padding, BuildContext context) {
+    String? message;
+    IconData? leadingIcon;
+    MaterialColor? baseColor;
+
+    if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 7)))) {
+      message = 'Limited-time offers until ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      leadingIcon = SpIcons.tag;
+      baseColor = Colors.orange;
+    } else if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 3)))) {
+      message = 'Hurry! Offers ending ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      leadingIcon = SpIcons.tag;
+      baseColor = Colors.deepOrange;
+    } else if (dealEndDate.isAfter(DateTime.now().add(const Duration(days: 1)))) {
+      message = 'Final call! Deals expire ${DateFormatHelper.yMd(dealEndDate, context.locale)}';
+      leadingIcon = SpIcons.alarm;
+      baseColor = Colors.red;
+    } else if (dealEndDate.isAfter(DateTime.now())) {
+      message = 'Last chance! Offers end TODAY';
+      leadingIcon = SpIcons.alarm;
+      baseColor = Colors.red;
+    } else {
+      message = null;
+      leadingIcon = null;
+      baseColor = null;
+    }
+
+    if (message == null || leadingIcon == null || baseColor == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: EdgeInsets.only(
+        left: padding.left + 16.0,
+        right: padding.right + 16.0,
+        bottom: 12.0,
+      ),
+      padding: const EdgeInsets.only(top: 1),
+      child: CustomPaint(
+        painter: _DashedBorderPainter(
+          color: !AppTheme.isDarkMode(context) ? baseColor.shade700 : baseColor.shade300,
+          radius: 11.0,
+          dashWidth: 6.0,
+          dashSpace: 3.0,
+          strokeWidth: 1,
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: baseColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 8.0,
+            children: [
+              Icon(
+                leadingIcon,
+                size: 16.0,
+                color: !AppTheme.isDarkMode(context) ? baseColor.shade900 : baseColor.shade300,
+              ),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    color: !AppTheme.isDarkMode(context) ? baseColor.shade900 : baseColor.shade300,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildAddOnsGrid(BuildContext context, EdgeInsets screenPadding) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
     final isMediumScreen = screenWidth > 600;
@@ -38,16 +126,18 @@ class _AddOnsContent extends StatelessWidget {
     int crossAxisCount = isLargeScreen ? 4 : (isMediumScreen ? 3 : 2);
 
     return AlignedGridView.count(
+      padding: EdgeInsets.only(
+        left: screenPadding.left + 16.0,
+        right: screenPadding.right + 16.0,
+        bottom: 0,
+        top: 0,
+      ),
       crossAxisCount: crossAxisCount,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12.0,
       crossAxisSpacing: 12.0,
       itemCount: viewModel.addOns!.length,
-      padding: EdgeInsets.only(
-        top: 16.0,
-        bottom: padding.bottom + 16.0,
-        left: padding.left + 16.0,
-        right: padding.right + 16.0,
-      ),
       itemBuilder: (context, index) {
         final addOn = viewModel.addOns![index];
         return _AddOnGridItem(
@@ -150,5 +240,76 @@ class _AddOnsContent extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double radius;
+  final double dashWidth;
+  final double dashSpace;
+  final double strokeWidth;
+
+  _DashedBorderPainter({
+    required this.color,
+    required this.radius,
+    required this.dashWidth,
+    required this.dashSpace,
+    required this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final path = _createDashedRRect(size, radius, dashWidth, dashSpace);
+    canvas.drawPath(path, paint);
+  }
+
+  Path _createDashedRRect(Size size, double radius, double dashW, double dashS) {
+    final path = Path();
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    final rrectPath = Path()..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
+
+    final metrics = rrectPath.computeMetrics();
+    double distance = 0;
+    bool isDash = true;
+
+    for (final metric in metrics) {
+      distance = 0;
+      isDash = true;
+
+      while (distance < metric.length) {
+        final segmentLength = isDash ? dashW : dashS;
+        final nextDistance = (distance + segmentLength).clamp(0.0, metric.length);
+        final tangent = metric.getTangentForOffset(distance);
+
+        if (tangent != null) {
+          path.moveTo(tangent.position.dx, tangent.position.dy);
+        }
+
+        final nextTangent = metric.getTangentForOffset(nextDistance);
+        if (nextTangent != null && isDash) {
+          path.lineTo(nextTangent.position.dx, nextTangent.position.dy);
+        }
+
+        distance = nextDistance;
+        isDash = !isDash;
+      }
+    }
+
+    return path;
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorderPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.radius != radius ||
+        oldDelegate.dashWidth != dashWidth ||
+        oldDelegate.dashSpace != dashSpace ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }

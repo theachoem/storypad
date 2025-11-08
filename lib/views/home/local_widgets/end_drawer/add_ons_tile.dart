@@ -11,7 +11,6 @@ class _AddOnsTile extends StatelessWidget {
         return ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
           leading: const Icon(SpIcons.addOns),
-          trailing: const SpGiftAnimatedIcon(),
           title: RichText(
             textScaler: MediaQuery.textScalerOf(context),
             text: TextSpan(

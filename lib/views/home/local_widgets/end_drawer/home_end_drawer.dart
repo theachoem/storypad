@@ -25,7 +25,6 @@ import 'package:storypad/views/community/community_view.dart' show CommunityRout
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
 import 'package:storypad/widgets/sp_theme_mode_icon.dart';
