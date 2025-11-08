@@ -95,6 +95,10 @@ class QuillRootToPlainTextService {
           return '';
         }
 
+        if (embed.type == 'audio') {
+          return '';
+        }
+
         return node.toPlainText();
       } else {
         return node.toPlainText();

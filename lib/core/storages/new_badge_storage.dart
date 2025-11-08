@@ -4,14 +4,14 @@ import 'package:storypad/core/storages/base_object_storages/map_storage.dart';
 import 'package:storypad/core/types/new_badge.dart';
 
 class NewBadgeStorage extends MapStorage {
-  Future<bool> clicked(NewBadge badge) async {
-    return readMap().then((e) => e?[badge.name] == true);
+  Future<bool> clicked(String badge) async {
+    return readMap().then((e) => e?[badge] == true);
   }
 
-  Future<void> click(NewBadge badge) async {
+  Future<void> click(String badge) async {
     Map<String, dynamic> result = await readMap() ?? {};
     result.removeWhere((e, value) => !NewBadge.keys.contains((e)));
-    result[badge.name] = true;
+    result[badge] = true;
     return writeMap(result);
   }
 }

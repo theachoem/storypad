@@ -63,6 +63,8 @@
         <true />
         <key>NSFaceIDUsageDescription</key>
         <string>This app uses FaceID to access your stories</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>This app needs access to your microphone to record voice notes for your stories.</string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>This app needs to access to the Photos library to add photo to your stories.</string>
         <key>NSCameraUsageDescription</key>

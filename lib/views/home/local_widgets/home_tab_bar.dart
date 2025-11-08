@@ -32,7 +32,6 @@ class _HomeTabBar extends StatelessWidget {
           ),
           onTap: (index) {
             viewModel.scrollInfo.moveToMonthIndex(
-              months: viewModel.months,
               targetMonthIndex: index,
               context: context,
             );

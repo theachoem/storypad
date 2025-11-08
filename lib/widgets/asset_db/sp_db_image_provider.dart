@@ -5,16 +5,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
-  final String assetLink;
+  final String embedLink;
   final double scale;
   final GoogleUserObject? currentUser;
 
   SpDbImageProvider({
-    required this.assetLink,
+    required this.embedLink,
     required this.currentUser,
     this.scale = 1,
   });
@@ -29,9 +29,9 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode: decode),
       scale: key.scale,
-      debugLabel: key.assetLink,
+      debugLabel: key.embedLink,
       informationCollector: () => <DiagnosticsNode>[
-        ErrorDescription('AssetLink: $assetLink'),
+        ErrorDescription('AssetLink: $embedLink'),
       ],
     );
   }
@@ -40,61 +40,55 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     SpDbImageProvider key, {
     required ImageDecoderCallback decode,
   }) async {
-    AssetDbModel? asset = await AssetDbModel.findBy(assetLink: assetLink);
+    AssetDbModel? asset = await AssetDbModel.findBy(embedLink: embedLink);
     File? localFile = asset?.localFile;
 
     try {
       assert(key == this);
 
-      var uploadedEmails = asset?.getGoogleDriveForEmails() ?? [];
-      if (localFile == null && uploadedEmails.isNotEmpty == true && !uploadedEmails.contains(currentUser?.email)) {
-        throw StateError('Login with ${asset?.getGoogleDriveForEmails()?.join(" or ")} to see the image.');
+      // Download asset if needed
+      if (asset != null && localFile == null) {
+        final downloader = GoogleDriveAssetDownloaderService();
+        localFile = File(
+          await downloader.downloadAsset(
+            asset: asset,
+            currentUser: currentUser,
+            localFile: localFile,
+          ),
+        );
       }
 
-      if (currentUser?.email != null && asset?.getGoogleDriveIdForEmail(currentUser!.email) != null) {
-        final imageUrl = asset!.getGoogleDriveUrlForEmail(currentUser!.email);
-        if (imageUrl == null) throw StateError('$assetLink with $imageUrl cannot be loaded');
-
-        final downloadedFile = File(asset.downloadFilePath);
-        if (!downloadedFile.existsSync()) {
-          http.Response? response;
-          response = await http.get(
-            Uri.parse(imageUrl),
-            headers: currentUser?.authHeaders,
-          );
-
-          if (response.statusCode == 403) {
-            throw StateError('Sign in with ${currentUser?.email} to see image.');
-          }
-
-          if (response.statusCode != 200) {
-            throw StateError('Failed to fetch image. Status: ${response.statusCode}');
-          }
-
-          final contentType = response.headers['content-type'];
-          if (contentType == null || !contentType.startsWith('image/')) {
-            throw StateError('Invalid content type: $contentType');
-          }
-
-          final downloadedFile = File(asset.downloadFilePath);
-          await downloadedFile.create(recursive: true);
-          await downloadedFile.writeAsBytes(response.bodyBytes);
-          localFile = downloadedFile;
+      // Validate content type for images
+      if (localFile != null && localFile.existsSync()) {
+        final contentType = _getContentType(localFile);
+        if (contentType != null && !contentType.startsWith('image/')) {
+          throw StateError('Invalid content type: $contentType');
         }
-      }
-
-      if (localFile != null) {
         return decode(await ui.ImmutableBuffer.fromFilePath(localFile.path));
       } else {
-        throw StateError('$assetLink cannot be loaded.');
+        throw StateError('$embedLink cannot be loaded.');
       }
     } catch (e) {
-      if (asset != null && File(asset.downloadFilePath).existsSync()) {
-        File(asset.downloadFilePath).deleteSync();
+      if (asset != null && File(asset.localFilePath).existsSync()) {
+        File(asset.localFilePath).deleteSync();
       }
 
       rethrow;
     }
+  }
+
+  /// Get content type from file extension
+  String? _getContentType(File file) {
+    final extension = file.path.split('.').last.toLowerCase();
+    const imageExtensions = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'bmp': 'image/bmp',
+    };
+    return imageExtensions[extension];
   }
 
   @override
@@ -104,15 +98,15 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     }
 
     return other is SpDbImageProvider &&
-        other.assetLink == assetLink &&
+        other.embedLink == embedLink &&
         currentUser?.accessToken == other.currentUser?.accessToken &&
         other.scale == scale;
   }
 
   @override
-  int get hashCode => Object.hash(assetLink, currentUser?.email, scale);
+  int get hashCode => Object.hash(embedLink, currentUser?.email, scale);
 
   @override
   String toString() =>
-      '${objectRuntimeType(this, 'SpDbImageProvider')}("$assetLink", scale: ${scale.toStringAsFixed(1)})';
+      '${objectRuntimeType(this, 'SpDbImageProvider')}("$embedLink", scale: ${scale.toStringAsFixed(1)})';
 }

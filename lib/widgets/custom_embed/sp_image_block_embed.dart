@@ -4,13 +4,14 @@ import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/quill/custom_attributes/embed_alignment_attribute.dart';
 import 'package:storypad/widgets/quill/custom_attributes/embed_size_attribute.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpImageBlockEmbed extends quill.EmbedBuilder {
   final List<String> Function() fetchAllImages;
@@ -46,6 +47,17 @@ class _QuillImageRenderer extends StatelessWidget {
   final bool readOnly;
   final List<String> Function() fetchAllImages;
 
+  void remove() {
+    if (readOnly) return;
+
+    controller.replaceText(
+      node.documentOffset,
+      node.length,
+      '',
+      controller.selection,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String link = node.value.data;
@@ -70,9 +82,18 @@ class _QuillImageRenderer extends StatelessWidget {
               AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
           child: Stack(
             children: [
-              SpTapEffect(
-                effects: [SpTapEffectType.scaleDown],
+              GestureDetector(
                 onTap: readOnly ? () => viewImage(context, link) : null,
+                onLongPress: () async {
+                  Feedback.forLongPress(context);
+                  final embedLink = node.value.data;
+                  final asset = await AssetDbModel.findBy(embedLink: embedLink);
+                  if (!context.mounted || asset == null) return;
+                  SpAssetInfoSheet(
+                    asset: asset,
+                    onRemoveAssetEmbed: readOnly ? null : () => remove(),
+                  ).show(context: context);
+                },
                 child: Material(
                   clipBehavior: Clip.hardEdge,
                   shape: RoundedRectangleBorder(
@@ -129,7 +150,7 @@ class _QuillImageRenderer extends StatelessWidget {
       IconButton(
         color: ColorScheme.of(context).error,
         icon: const Icon(SpIcons.delete),
-        onPressed: () => controller.replaceText(node.documentOffset, node.length, '', controller.selection),
+        onPressed: () => remove(),
       ),
     ];
 
@@ -201,6 +222,7 @@ class _QuillImageRenderer extends StatelessWidget {
   }
 
   Future<void> viewImage(BuildContext context, String link) async {
+    Feedback.forTap(context);
     List<String> images = fetchAllImages();
 
     if (images.contains(link)) {

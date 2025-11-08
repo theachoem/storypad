@@ -19,12 +19,23 @@ class StoryThemeButton extends StatelessWidget {
       child: IconButton(
         tooltip: tr("page.theme.title"),
         icon: const Icon(SpIcons.moreVert),
-        onPressed: () => SpStoryThemeBottomSheet(
-          story: viewModel.story!,
-          onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-          draftContent: viewModel.draftContent,
-          viewModel: viewModel,
-        ).show(context: context),
+        onPressed: () async {
+          var nextAction = await SpStoryThemeBottomSheet(
+            story: viewModel.story!,
+            onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+            draftContent: viewModel.draftContent,
+            viewModel: viewModel,
+          ).show(context: context);
+
+          if (!context.mounted) return;
+          if (nextAction is SpStoryThemeBottomSheetPopAction) {
+            switch (nextAction) {
+              case SpStoryThemeBottomSheetPopAction.backToStoryList:
+                Navigator.maybePop(context);
+                break;
+            }
+          }
+        },
       ),
     );
   }

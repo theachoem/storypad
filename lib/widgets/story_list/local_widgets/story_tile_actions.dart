@@ -1,12 +1,20 @@
-part of '../sp_story_tile.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/views/home/home_view.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 
-class _StoryTileActions {
+class StoryTileActions {
   final StoryDbModel story;
-  final BuildContext listContext;
+  final BuildContext? storyListReloaderContext;
 
-  _StoryTileActions({
+  StoryTileActions({
     required this.story,
-    required this.listContext,
+    required this.storyListReloaderContext,
   });
 
   Future<void> hardDelete(BuildContext context) async {
@@ -34,7 +42,9 @@ class _StoryTileActions {
 
         /// In all case, delete button only show inside [SpStoryListWithQuery],
         /// So after undo, we should reload the list.
-        if (listContext.mounted) SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoHardDelete');
+        if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
+          SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#undoHardDelete');
+        }
 
         AnalyticsService.instance.logUndoHardDeleteStory(
           story: updatedStory,
@@ -86,8 +96,8 @@ class _StoryTileActions {
       );
 
       // sometime, it move to bin from archive page, so need to reload story list which in archives view as well.
-      if (listContext.mounted) {
-        await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoMoveToBin');
+      if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
+        await SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#undoMoveToBin');
       }
 
       return reloadHome('$runtimeType#undoMoveToBin');
@@ -152,7 +162,7 @@ class _StoryTileActions {
       story: updatedStory,
     );
 
-    if (listContext.mounted) {
+    if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
       Future<void> undoPutBack(StoryDbModel originalStory) async {
         StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
         if (updatedStory == null) return;
@@ -161,13 +171,13 @@ class _StoryTileActions {
           story: updatedStory,
         );
 
-        if (listContext.mounted) {
-          await SpStoryListWithQuery.of(listContext)?.load(debugSource: '$runtimeType#undoPutBack');
+        if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
+          await SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#undoPutBack');
           await reloadHome('$runtimeType#undoPutBack');
         }
       }
 
-      MessengerService.of(listContext).showSnackBar(
+      MessengerService.of(storyListReloaderContext!).showSnackBar(
         tr("snack_bar.put_back_success"),
         showAction: true,
         action: (foreground) {

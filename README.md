@@ -23,6 +23,7 @@
   - **[Templates](docs/features/templates/overview.md)** – Create your own daily writing templates
   - **[Relaxing Sounds](docs/features/relaxing-sounds/overview.md)** – Set the mood before you write or read
   - **[Period Calendar](docs/features/period-calendar/overview.md)** – Track your period and create related story entries
+  - **[Voice Journal](docs/features/voice-journal/overview.md)** – Record and organize voice notes
 - **Available in 20+ languages** – and fully open source for transparency
 
 ## 📸 Screenshots

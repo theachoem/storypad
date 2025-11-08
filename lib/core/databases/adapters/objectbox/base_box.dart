@@ -73,8 +73,9 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<int> count({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
+    required String? debugSource,
   }) async {
-    debugPrint("Triggering $tableName#count 🍎");
+    debugPrint("Triggering $tableName#count from $debugSource 🍎");
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
     Query<B>? query = queryBuilder.build();
     return query.count();
@@ -109,7 +110,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.touch();
     await box.putAsync(constructed, mode: PutMode.put);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -124,7 +125,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.put);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -155,7 +156,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.update);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -170,7 +171,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.insert);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -197,7 +198,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
         await box.putAsync(object);
       }
 
-      if (runCallbacks) await afterCommit(null);
+      if (runCallbacks) await afterCommit(id, null);
       return null;
     } else {
       await box.removeAsync(id);

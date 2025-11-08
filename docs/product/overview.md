@@ -27,18 +27,22 @@ Keep simplicity for a diary app & journal app while having more features & custo
   - Period Calendar
 - **Future:** Premium tier planned when more add-ons are available
 
-### Why Individual Add-ons (NOT a Single Purchase) ⚠️
+### Why Individual Add-ons (NOT Bundles) ⚠️
 
-**Decision:** Keep individual $1.99 add-ons instead of bundling them into one purchase.
+**Decision:** Keep individual $1.99 add-ons with promotional deals instead of bundling.
 
 **Reasoning:**
 
 - **Lower friction** – $1.99 feels less risky than larger upfront cost
 - **User choice** – Customers only pay for features they actually want
 - **Aligns with brand** – Matches minimalist philosophy over aggressive monetization
-- **Scalable** – Revenue grows organically as add-on catalog expands
+- **Infinitely scalable** – Works with 4 add-ons or 40 add-ons equally well
 - **Higher conversion** – Impulse-buy rate is better at lower price point
-- **Flexible future** – Can add bundle option once 4-5+ add-ons exist (~$4.99 for ~25% savings)
+- **Flexible promotions** – Use product deals (30-50% off) instead of complex bundles
+
+**Why NOT bundles?** Adding more add-ons makes bundle pricing confusing and hard to maintain. Instead, we use rotating promotional deals on individual items—this scales infinitely without pricing chaos.
+
+**See:** [Deals Strategy](./deals-strategy.md) for implementation details.
 
 **Do not change this lightly** – it's a core part of StoryPad's positioning as a trust-first, user-friendly alternative to subscription-based apps.
 

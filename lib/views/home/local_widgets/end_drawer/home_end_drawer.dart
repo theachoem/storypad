@@ -9,6 +9,7 @@ import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/backups/backups_view.dart';

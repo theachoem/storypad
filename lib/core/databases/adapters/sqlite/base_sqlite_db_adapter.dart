@@ -44,7 +44,10 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<int> count({Map<String, dynamic>? filters}) {
+  Future<int> count({
+    Map<String, dynamic>? filters,
+    required String? debugSource,
+  }) {
     throw UnimplementedError();
   }
 

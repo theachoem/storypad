@@ -48,6 +48,37 @@ class _QuillToolbar extends StatelessWidget {
             icon: const Icon(SpIcons.photo),
             onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
           ),
+          Consumer<InAppPurchaseProvider>(
+            builder: (context, provider, child) {
+              return IconButton(
+                tooltip: tr('button.record_voice'),
+                icon: provider.voiceJournal
+                    ? const Icon(SpIcons.voice)
+                    : const Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(SpIcons.voice),
+                          Positioned(
+                            top: 0,
+                            right: -8,
+                            child: Icon(SpIcons.lock, size: 12.0),
+                          ),
+                        ],
+                      ),
+                onPressed: () {
+                  if (provider.voiceJournal) {
+                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
+                  } else {
+                    AddOnsRoute.pushAndNavigateTo(
+                      product: AppProduct.voice_journal,
+                      context: context,
+                      fullscreenDialog: true,
+                    );
+                  }
+                },
+              );
+            },
+          ),
           Container(
             width: 1,
             height: 16,

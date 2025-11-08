@@ -130,18 +130,35 @@ class _HomeContent extends StatelessWidget {
     required BuildContext listContext,
   }) {
     StoryDbModel story = viewModel.stories!.items[index];
+
     return SpStoryListenerBuilder(
       key: viewModel.scrollInfo.storyKeys[index],
       story: story,
       onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
-      onDeleted: () => viewModel.reload(debugSource: '$runtimeType#onDeleted ${story.id}'),
+      onDeleted: () => viewModel.onAStoryDeleted(story),
       builder: (_) {
-        return SpStoryTileListItem(
-          showYear: false,
-          index: index,
-          stories: viewModel.stories!,
-          onTap: () => viewModel.goToViewPage(context, story),
-          listContext: listContext,
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: ValueListenableBuilder(
+                valueListenable: viewModel.scrollInfo.scrollingToStoryIdNotifier,
+                builder: (context, storyId, child) {
+                  return AnimatedContainer(
+                    duration: Durations.long4,
+                    color: storyId == story.id ? ColorScheme.of(context).readOnly.surface5 : Colors.transparent,
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+            SpStoryTileListItem(
+              showYear: false,
+              index: index,
+              stories: viewModel.stories!,
+              onTap: () => viewModel.goToViewPage(context, story),
+              listContext: listContext,
+            ),
+          ],
         );
       },
     );

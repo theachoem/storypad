@@ -11,6 +11,7 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 
 // ignore: depend_on_referenced_packages
@@ -126,6 +127,13 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
+      if (e is ArgumentError) {
+        AppLogger.critical(e.message.toString(), stackTrace: e.stackTrace);
+      } else if (e is TypeError) {
+        AppLogger.critical(e.toString(), stackTrace: e.stackTrace);
+      } else {
+        AppLogger.error("${e.runtimeType} error: ${e.toString()}");
+      }
       return BackupResult.failure(
         BackupError.unknown(
           'Failed to upload images: $e',
@@ -148,6 +156,14 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
+      if (e is ArgumentError) {
+        AppLogger.critical(e.message.toString(), stackTrace: e.stackTrace);
+      } else if (e is TypeError) {
+        AppLogger.critical(e.toString(), stackTrace: e.stackTrace);
+      } else {
+        AppLogger.error("${e.runtimeType} error: ${e.toString()}");
+      }
+
       return BackupResult.failure(
         BackupError.unknown(
           'Failed to check latest backup: $e',
@@ -170,6 +186,14 @@ class BackupRepository {
       );
       return BackupResult.success(result);
     } catch (e) {
+      if (e is ArgumentError) {
+        AppLogger.critical(e.message.toString(), stackTrace: e.stackTrace);
+      } else if (e is TypeError) {
+        AppLogger.critical(e.toString(), stackTrace: e.stackTrace);
+      } else {
+        AppLogger.error("${e.runtimeType} error: ${e.toString()}");
+      }
+
       return BackupResult.failure(
         BackupError.unknown(
           'Failed to import backup: $e',
@@ -193,6 +217,14 @@ class BackupRepository {
       }
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
+      if (e is ArgumentError) {
+        AppLogger.critical(e.message.toString(), stackTrace: e.stackTrace);
+      } else if (e is TypeError) {
+        AppLogger.critical(e.toString(), stackTrace: e.stackTrace);
+      } else {
+        AppLogger.error("${e.runtimeType} error: ${e.toString()}");
+      }
+
       return BackupResult.failure(
         BackupError.unknown(
           'Failed to upload backup: $e',

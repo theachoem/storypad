@@ -13,10 +13,8 @@ import 'package:storypad/initializers/firestore_storage_cleanup_initializer.dart
 import 'package:storypad/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/initializers/onboarding_initializer.dart' show OnboardingInitializer;
-import 'package:storypad/initializers/retrieve_lost_photo_initializer.dart' show RetrieveLostPhotoInitializer;
 import 'package:storypad/initializers/theme_initializer.dart' show ThemeInitializer;
 import 'package:storypad/provider_scope.dart' show ProviderScope;
-import 'package:storypad/widgets/sp_app_initializer.dart' show SpAppInitializer;
 
 void main({
   FirebaseOptions? firebaseOptions,
@@ -47,13 +45,8 @@ void main({
   LicensesInitializer.call();
 
   runApp(
-    SpAppInitializer(
-      onPlatformInitialized: () async {
-        await RetrieveLostPhotoInitializer.call();
-      },
-      child: const ProviderScope(
-        child: App(),
-      ),
+    const ProviderScope(
+      child: App(),
     ),
   );
 }

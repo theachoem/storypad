@@ -12,7 +12,11 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly});
   Future<T?> find(int id, {bool returnDeleted = false});
 
-  Future<int> count({Map<String, dynamic>? filters});
+  Future<int> count({
+    Map<String, dynamic>? filters,
+    required String? debugSource,
+  });
+
   Future<CollectionDbModel<T>?> where({
     Map<String, dynamic>? filters,
     Map<String, dynamic>? options,
@@ -55,14 +59,14 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   T modelFromJson(Map<String, dynamic> json);
 
-  Future<void> afterCommit([T? model]) async {
+  Future<void> afterCommit([int? id, T? model]) async {
     debugPrint("BaseDbAdapter#afterCommit ${model?.id}");
 
     for (FutureOr<void> Function() globalCallback in _globalListeners) {
       await globalCallback();
     }
 
-    for (FutureOr<void> Function(T?) callback in _listeners[model?.id] ?? []) {
+    for (FutureOr<void> Function(T?) callback in _listeners[id] ?? []) {
       await callback(model);
     }
   }

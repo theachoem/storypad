@@ -4,9 +4,13 @@ class _HomeScrollInfo {
   final HomeViewModel Function() viewModel;
   final ScrollController scrollController = ScrollController();
 
+  ValueNotifier<int?> scrollingToStoryIdNotifier = ValueNotifier(null);
+
   bool _scrolling = false;
   double extraExpandedHeight = 0;
   List<GlobalKey> storyKeys = [];
+
+  List<int> get months => viewModel().months;
 
   _HomeScrollAppBarInfo appBar(BuildContext context) =>
       _HomeScrollAppBarInfo(context: context, extraExpandedHeight: extraExpandedHeight);
@@ -19,6 +23,7 @@ class _HomeScrollInfo {
 
   void dispose() {
     scrollController.dispose();
+    scrollingToStoryIdNotifier.dispose();
   }
 
   void setupStoryKeys(List<StoryDbModel> stories) {
@@ -57,17 +62,35 @@ class _HomeScrollInfo {
 
     if (visibleIndex != null) {
       int? month = stories.elementAt(visibleIndex).month;
-      int monthIndex = viewModel().months.indexWhere((e) => month == e);
+      int monthIndex = months.indexWhere((e) => month == e);
       DefaultTabController.of(storyKeys[visibleIndex].currentContext!).animateTo(monthIndex);
     }
   }
 
+  Future<void> moveToStory({
+    required int targetStoryId,
+  }) async {
+    List<StoryDbModel> stories = viewModel().stories?.items ?? [];
+    int targetStoryIndex = stories.indexWhere((e) => e.id == targetStoryId);
+    if (targetStoryIndex == -1) return;
+
+    scrollingToStoryIdNotifier.value = targetStoryId;
+
+    await moveToStoryIndex(targetStoryIndex: targetStoryIndex);
+
+    int? month = stories.elementAt(targetStoryIndex).month;
+    int monthIndex = months.indexWhere((e) => month == e);
+    DefaultTabController.of(storyKeys[targetStoryIndex].currentContext!).animateTo(monthIndex);
+
+    await Future.delayed(Durations.medium2, () {
+      scrollingToStoryIdNotifier.value = null;
+    });
+  }
+
   Future<void> moveToMonthIndex({
-    required List<int> months,
     required int targetMonthIndex,
     required BuildContext context,
   }) async {
-    _scrolling = true;
     List<StoryDbModel> stories = viewModel().stories?.items ?? [];
 
     int targetStoryIndex = -1;
@@ -75,7 +98,20 @@ class _HomeScrollInfo {
       targetStoryIndex = stories.indexWhere((e) => e.month == months[targetMonthIndex]);
     }
 
-    if (targetStoryIndex == -1) {
+    if (targetStoryIndex == -1) return;
+
+    await moveToStoryIndex(
+      targetStoryIndex: targetStoryIndex,
+    );
+  }
+
+  Future<void> moveToStoryIndex({
+    required int targetStoryIndex,
+  }) async {
+    _scrolling = true;
+    List<StoryDbModel> stories = viewModel().stories?.items ?? [];
+
+    if (targetStoryIndex < 0 || targetStoryIndex >= storyKeys.length) {
       _scrolling = false;
       return;
     }
@@ -87,7 +123,7 @@ class _HomeScrollInfo {
     }
 
     final targetStoryKey = storyKeys.elementAt(targetStoryIndex);
-    (bool, int) result = _getScrollInfo(storyKeys, months, stories, targetMonthIndex);
+    (bool, int) result = _getScrollInfo(storyKeys, months, stories, targetStoryIndex);
 
     bool isMovingRight = result.$1;
     int nearestToTargetStoryIndex = result.$2;
@@ -137,7 +173,7 @@ class _HomeScrollInfo {
     List<GlobalKey<State<StatefulWidget>>> storyKeys,
     List<int> months,
     List<StoryDbModel> stories,
-    int targetMonthIndex,
+    int targetStoryIndex,
   ) {
     List<int> visibleStoryIndexes = [];
 
@@ -145,11 +181,7 @@ class _HomeScrollInfo {
       if (storyKeys[i].currentContext != null) visibleStoryIndexes.add(i);
     }
 
-    Set<int> visibleMonthIndexs = visibleStoryIndexes.map((index) {
-      return months.indexWhere((month) => month == stories[index].month);
-    }).toSet();
-
-    bool isMovingRight = visibleMonthIndexs.every((monthIndex) => targetMonthIndex > monthIndex);
+    bool isMovingRight = visibleStoryIndexes.every((index) => targetStoryIndex > index);
     return (isMovingRight, isMovingRight ? visibleStoryIndexes.last : visibleStoryIndexes.first);
   }
 }

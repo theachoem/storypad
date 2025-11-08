@@ -5,7 +5,6 @@ import 'package:storypad/core/databases/models/collection_db_model.dart' show Co
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
-import 'package:storypad/core/types/path_type.dart' show PathType;
 import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagRoute;
 import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
@@ -33,14 +32,9 @@ class TagsProvider extends ChangeNotifier {
       }
     }
 
-    for (TagDbModel tag in tags?.items ?? []) {
-      storiesCountByTagId[tag.id] ??= await StoryDbModel.db.count(
-        filters: {
-          'tag': tag.id,
-          'types': [PathType.docs.name],
-        },
-      );
-    }
+    storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
+      tagIds: tags?.items.map((e) => e.id).toList() ?? [],
+    );
 
     notifyListeners();
   }

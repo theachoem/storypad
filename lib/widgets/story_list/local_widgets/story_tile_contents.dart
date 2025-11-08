@@ -19,7 +19,12 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = content != null ? StoryExtractImageFromContentService.call(content) : null;
+    // display only images for now.
+    final assetLinks = content != null ? StoryExtractAssetsFromContentService.images(content) : null;
+
+    final audioEmbedLinks = (story.draftContent ?? story.latestContent) != null
+        ? StoryExtractAssetsFromContentService.audio(story.draftContent ?? story.latestContent)
+        : null;
 
     return Expanded(
       child: Column(
@@ -50,30 +55,31 @@ class _StoryTileContents extends StatelessWidget {
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
+            voicesCount: audioEmbedLinks?.length,
             margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
             onToggleShowDayCount: viewOnly
                 ? null
                 : () async {
-                    await _StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).toggleShowDayCount();
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onToggleShowTime: viewOnly
                 ? null
                 : () async {
-                    await _StoryTileActions(story: story, listContext: listContext).toggleShowTime();
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).toggleShowTime();
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onChangeDate: viewOnly
                 ? null
                 : (newDateTime) async {
-                    await _StoryTileActions(story: story, listContext: listContext).changeDate(newDateTime);
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).changeDate(newDateTime);
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onToggleManagingPage: null,
           ),
-          if (images?.isNotEmpty == true) ...[
+          if (assetLinks?.isNotEmpty == true) ...[
             SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
-            _StoryTileImages(images: images!),
+            _StoryTileAssets(assetLinks: assetLinks!),
             if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
           ],
           if (story.inArchives) ...[

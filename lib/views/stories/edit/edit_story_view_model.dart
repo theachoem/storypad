@@ -14,6 +14,9 @@ import 'edit_story_view.dart';
 class EditStoryViewModel extends BaseStoryViewModel {
   final EditStoryRoute params;
 
+  @override
+  bool get readOnly => false;
+
   EditStoryViewModel({
     required this.params,
   }) : super(
@@ -58,7 +61,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
-      readOnly: false,
+      readOnly: readOnly,
       initialPagesMap: initialPagesMap,
     );
 
@@ -68,13 +71,13 @@ class EditStoryViewModel extends BaseStoryViewModel {
       richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
     );
 
-    if (params.initialAsset?.link != null) {
+    if (params.initialAsset?.embedLink != null) {
       final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
       final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
       pagesManager.pagesMap.first.bodyController.replaceText(
         index,
         length,
-        BlockEmbed.image(params.initialAsset!.link),
+        BlockEmbed.image(params.initialAsset!.embedLink),
         null,
       );
     }

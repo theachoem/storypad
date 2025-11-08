@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -39,8 +40,28 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    AssetType? type = filters?["type"];
+    List<int>? ids = filters?["ids"]?.cast<int>();
+    int? tag = filters?["tag"];
+
     Condition<AssetObjectBox> conditions = AssetObjectBox_.id.notNull();
+
     if (!returnDeleted) conditions = conditions.and(AssetObjectBox_.permanentlyDeletedAt.isNull());
+    if (type == AssetType.image) {
+      conditions = conditions.and(
+        AssetObjectBox_.type.equals(AssetType.image.name).or(AssetObjectBox_.type.isNull()),
+      );
+    } else if (type != null) {
+      conditions = conditions.and(AssetObjectBox_.type.equals(type.name));
+    }
+
+    if (tag != null) {
+      conditions = conditions.and(AssetObjectBox_.tags.equals(tag));
+    }
+
+    if (ids != null && ids.isNotEmpty) {
+      conditions = conditions.and(AssetObjectBox_.id.oneOf(ids));
+    }
 
     QueryBuilder<AssetObjectBox> queryBuilder = box.query(conditions);
     queryBuilder = queryBuilder.order(AssetObjectBox_.id, flags: Order.descending);
@@ -57,6 +78,9 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       id: model.id,
       originalSource: model.originalSource,
       cloudDestinations: jsonEncode(model.cloudDestinations),
+      type: model.type.name,
+      tags: model.tags,
+      metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
       permanentlyDeletedAt: model.permanentlyDeletedAt,
@@ -73,6 +97,9 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         id: model.id,
         originalSource: model.originalSource,
         cloudDestinations: jsonEncode(model.cloudDestinations),
+        type: model.type.name,
+        tags: model.tags,
+        metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
         permanentlyDeletedAt: model.permanentlyDeletedAt,
@@ -86,6 +113,9 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       id: object.id,
       originalSource: object.originalSource,
       cloudDestinations: decodeCloudDestinations(object),
+      type: AssetType.fromValue(object.type),
+      tags: object.tags,
+      metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
@@ -126,6 +156,9 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         id: object.id,
         originalSource: object.originalSource,
         cloudDestinations: decodeCloudDestinations(object),
+        type: AssetType.fromValue(object.type),
+        tags: object.tags,
+        metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,
         lastSavedDeviceId: object.lastSavedDeviceId,

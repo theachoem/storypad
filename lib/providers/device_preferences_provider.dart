@@ -14,6 +14,8 @@ class DevicePreferencesProvider extends ChangeNotifier {
   DevicePreferencesObject get preferences => _preferences;
   ThemeMode get themeMode => preferences.themeMode;
 
+  final Map<String, List<void Function()>> _listeners = {};
+
   // Sometimes reading `ColorScheme.of(context).brightness` may not reflect the correct dark mode state,
   // especially if the widget hasn't rebuilt yet after a system theme change.
   // In such cases, we determine dark mode based directly on ThemeMode and platform brightness.
@@ -100,6 +102,24 @@ class DevicePreferencesProvider extends ChangeNotifier {
     AnalyticsUserProperyService.instance.logSetTimeFormat(
       timeFormat: timeFormat,
     );
+  }
+
+  void addListenerForVoicePlaybackSpeed(void Function() listener) {
+    _listeners['voice_playback_speed'] ??= [];
+    _listeners['voice_playback_speed']!.add(listener);
+  }
+
+  void removeListenerForVoicePlaybackSpeed(void Function() listener) {
+    _listeners['voice_playback_speed']?.remove(listener);
+  }
+
+  // no need to notifyListeners as it will refresh the whole app UI
+  // but we do need to notify specific listeners for voice playback speed changes
+  void setVoicePlaybackSpeed(double speed) {
+    _preferences = _preferences.copyWith(voicePlaybackSpeed: speed);
+    storage.writeObject(_preferences);
+
+    _listeners['voice_playback_speed']?.forEach((listener) => listener());
   }
 
   void toggleThemeMode(

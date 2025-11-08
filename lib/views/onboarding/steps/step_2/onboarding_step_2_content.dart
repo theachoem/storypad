@@ -67,8 +67,8 @@ class _OnboardingStep2Content extends StatelessWidget {
       notifier: viewModel.feelingClickedNotifier,
       child: ClickAnimation(
         clickDuration: viewModel.feelingClickDuration,
-        top: 49,
-        right: 1,
+        top: 43,
+        right: -8.5,
       ),
     );
   }
@@ -83,8 +83,8 @@ class _OnboardingStep2Content extends StatelessWidget {
           duration: viewModel.feelingButtonFadeInDuration,
           child: Transform(
             transform: Matrix4.identity()
-              ..spTranslate(9.0, 0.0)
-              ..scaleAdjoint(0.74),
+              ..spScale(0.74)
+              ..spTranslate(9.0, 0.0),
             child: ValueListenableBuilder(
               valueListenable: viewModel.selectedFeelingNotifier,
               builder: (context, feeling, child) {

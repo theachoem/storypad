@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:storypad/core/constants/app_constants.dart';
 
 class SpIcons {
+  static const IconData alarm = kIsCupertino ? CupertinoIcons.alarm : Icons.alarm_outlined;
   static const IconData newStory = kIsCupertino ? CupertinoIcons.pencil_outline : Icons.edit;
   static const IconData edit = kIsCupertino ? CupertinoIcons.square_pencil : Icons.edit_outlined;
   static const IconData question = kIsCupertino ? CupertinoIcons.question : Icons.question_mark_outlined;
@@ -21,7 +22,7 @@ class SpIcons {
   static const IconData theme = kIsCupertino ? CupertinoIcons.paintbrush : Icons.color_lens_outlined;
   static const IconData lock = kIsCupertino ? CupertinoIcons.lock : Icons.lock_outline;
   static const IconData photo = kIsCupertino ? CupertinoIcons.photo : Icons.photo_library_outlined;
-  static const IconData voice = kIsCupertino ? CupertinoIcons.mic : Icons.mic_rounded;
+  static const IconData voice = kIsCupertino ? CupertinoIcons.mic : Icons.mic_none_sharp;
   static const IconData cloudUpload = kIsCupertino ? CupertinoIcons.cloud_upload : Icons.backup_outlined;
   static final IconData googleDrive = MdiIcons.googleDrive;
   static const IconData cloudDone = Icons.cloud_done_outlined;

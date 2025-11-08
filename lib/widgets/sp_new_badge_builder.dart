@@ -7,11 +7,11 @@ import 'package:storypad/core/types/new_badge.dart';
 class SpNewBadgeBuilder extends StatefulWidget {
   const SpNewBadgeBuilder({
     super.key,
-    required this.badge,
+    required this.badgeKey,
     required this.builder,
   });
 
-  final NewBadge badge;
+  final String badgeKey;
   final Widget Function(BuildContext context, Widget? newBadge, void Function() hideBadge) builder;
 
   @override
@@ -28,7 +28,7 @@ class _SpNewBadgeBuilderState extends State<SpNewBadgeBuilder> {
   }
 
   Future<void> load() async {
-    await NewBadgeStorage().clicked(widget.badge).then((clicked) {
+    await NewBadgeStorage().clicked(widget.badgeKey).then((clicked) {
       showNewBadge = !clicked;
       setState(() {});
     });
@@ -37,13 +37,13 @@ class _SpNewBadgeBuilderState extends State<SpNewBadgeBuilder> {
   @override
   Widget build(BuildContext context) {
     return widget.builder(context, buildNewBadge(context), () async {
-      await NewBadgeStorage().click(widget.badge);
+      await NewBadgeStorage().click(widget.badgeKey);
       await load();
     });
   }
 
   Widget? buildNewBadge(BuildContext context) {
-    if (widget.badge == NewBadge.none) return null;
+    if (widget.badgeKey == NewBadge.none.name) return null;
     if (!showNewBadge) return null;
 
     return Material(

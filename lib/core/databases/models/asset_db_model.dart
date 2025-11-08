@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
@@ -9,17 +9,30 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 
 part 'asset_db_model.g.dart';
 
+String _assetTypeToJson(AssetType type) => type.name;
+AssetType _assetTypeFromJson(String? json) => AssetType.fromValue(json);
+
 @CopyWith()
 @JsonSerializable()
 class AssetDbModel extends BaseDbModel {
   static const String cloudId = "google_drive";
+
+  // ignore: constant_identifier_names
+  static const String DURATION_KEY = "duration_in_ms";
 
   static final AssetsBox db = AssetsBox();
 
   @override
   final int id;
   final String originalSource;
+  final List<int>? tags;
   final Map<String, Map<String, Map<String, String>>> cloudDestinations;
+
+  @JsonKey(fromJson: _assetTypeFromJson, toJson: _assetTypeToJson)
+  final AssetType type;
+
+  // Flexible metadata storage (duration, transcription, etc.)
+  final Map<String, dynamic>? metadata;
 
   final DateTime createdAt;
 
@@ -38,35 +51,72 @@ class AssetDbModel extends BaseDbModel {
     required this.updatedAt,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
+    required this.type,
+    required this.tags,
+    this.metadata,
   });
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;
 
   String? get cloudFileName => localFile != null ? "$id${extension(localFile!.path)}" : null;
 
-  // This link is to put inside embed block.
-  String get link => "storypad://assets/$id";
+  /// URI link for embedding in Quill editor
+  ///
+  /// Automatically routes to correct scheme based on asset type:
+  /// - Audio: storypad://audio/{id}
+  /// - Image (or null): storypad://assets/{id}
+  String get embedLink => type.buildEmbedLink(id);
+
+  bool get isAudio => type == AssetType.audio;
+  bool get isImage => type == AssetType.image;
+  int? get durationInMs => (metadata?[DURATION_KEY] is int) ? metadata![DURATION_KEY] as int : null;
+
+  /// Format duration to readable string (MM:SS)
+  String? get formattedDuration {
+    final duration = durationInMs;
+    if (duration == null) return null;
+
+    final seconds = (duration ~/ 1000) % 60;
+    final minutes = (duration ~/ (1000 * 60)) % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
 
   File? get localFile {
     final file = File(originalSource);
     if (file.existsSync()) return file;
 
-    final possibleFile = File(downloadFilePath);
+    final possibleFile = File(localFilePath);
     if (possibleFile.existsSync()) return possibleFile;
 
     return null;
   }
 
-  String get downloadFilePath {
-    final fileName = basename(originalSource);
-    return "${kSupportDirectory.path}/images/$fileName";
+  /// Get the storage path for this asset.
+  ///
+  /// Example output:
+  /// - Image: `/support/dir/images/1762500783746.jpg`
+  /// - Audio: `/support/dir/audio/1762500783746.m4a`
+  String get localFilePath {
+    return type.getStoragePath(
+      id: id,
+      extension: extension(originalSource),
+    );
   }
 
   factory AssetDbModel.fromLocalPath({
     required int id,
     required String localPath,
+    required AssetType type,
+    int? durationInMs,
+    List<int>? tags,
+    DateTime? createdAt,
   }) {
-    final now = DateTime.now();
+    final now = createdAt ?? DateTime.now();
+
+    Map<String, dynamic>? metadata;
+    if (durationInMs != null) {
+      metadata = {DURATION_KEY: durationInMs};
+    }
 
     return AssetDbModel(
       id: id,
@@ -76,6 +126,20 @@ class AssetDbModel extends BaseDbModel {
       updatedAt: now,
       permanentlyDeletedAt: null,
       lastSavedDeviceId: null,
+      type: type,
+      metadata: metadata,
+      tags: tags,
+    );
+  }
+
+  /// Create a copy with updated duration metadata
+  AssetDbModel copyWithDuration(int durationInMs) {
+    final newMetadata = {...(metadata ?? {})};
+    newMetadata[DURATION_KEY] = durationInMs;
+
+    return copyWith(
+      metadata: newMetadata,
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -99,13 +163,26 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[cloudId]?[email]?['file_id'];
   }
 
-  Future<AssetDbModel?> save() async => db.set(this);
-  Future<void> delete() async => db.delete(id);
+  Future<AssetDbModel?> save({
+    bool runCallbacks = true,
+  }) async => db.set(this, runCallbacks: runCallbacks);
 
+  Future<void> delete({
+    bool runCallbacks = true,
+  }) async => db.delete(
+    id,
+    runCallbacks: runCallbacks,
+  );
+
+  /// Find an asset by its URI link
+  ///
+  /// Supports both image and audio schemes:
+  /// - storypad://assets/{id}
+  /// - storypad://audio/{id}
   static Future<AssetDbModel?> findBy({
-    required String assetLink,
+    required String embedLink,
   }) async {
-    int? id = int.tryParse(assetLink.split("storypad://assets/").lastOrNull ?? '');
+    final id = AssetType.parseAssetId(embedLink);
     return id != null ? AssetDbModel.db.find(id) : null;
   }
 

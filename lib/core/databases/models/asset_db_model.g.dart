@@ -23,6 +23,12 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
+  AssetDbModel type(AssetType type);
+
+  AssetDbModel tags(List<int>? tags);
+
+  AssetDbModel metadata(Map<String, dynamic>? metadata);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -38,6 +44,9 @@ abstract class _$AssetDbModelCWProxy {
     DateTime updatedAt,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
+    AssetType type,
+    List<int>? tags,
+    Map<String, dynamic>? metadata,
   });
 }
 
@@ -75,6 +84,16 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
+  AssetDbModel type(AssetType type) => call(type: type);
+
+  @override
+  AssetDbModel tags(List<int>? tags) => call(tags: tags);
+
+  @override
+  AssetDbModel metadata(Map<String, dynamic>? metadata) =>
+      call(metadata: metadata);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -90,6 +109,9 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
+    Object? tags = const $CopyWithPlaceholder(),
+    Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -124,6 +146,18 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.permanentlyDeletedAt
           // ignore: cast_nullable_to_non_nullable
           : permanentlyDeletedAt as DateTime?,
+      type: type == const $CopyWithPlaceholder() || type == null
+          ? _value.type
+          // ignore: cast_nullable_to_non_nullable
+          : type as AssetType,
+      tags: tags == const $CopyWithPlaceholder()
+          ? _value.tags
+          // ignore: cast_nullable_to_non_nullable
+          : tags as List<int>?,
+      metadata: metadata == const $CopyWithPlaceholder()
+          ? _value.metadata
+          // ignore: cast_nullable_to_non_nullable
+          : metadata as Map<String, dynamic>?,
     );
   }
 }
@@ -156,6 +190,11 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
       : DateTime.parse(json['permanently_deleted_at'] as String),
+  type: _assetTypeFromJson(json['type'] as String?),
+  tags: (json['tags'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
+  metadata: json['metadata'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$AssetDbModelToJson(
@@ -163,7 +202,10 @@ Map<String, dynamic> _$AssetDbModelToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'original_source': instance.originalSource,
+  'tags': instance.tags,
   'cloud_destinations': instance.cloudDestinations,
+  'type': _assetTypeToJson(instance.type),
+  'metadata': instance.metadata,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,

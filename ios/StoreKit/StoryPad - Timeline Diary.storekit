@@ -58,6 +58,21 @@
       "productID" : "templates",
       "referenceName" : "templates",
       "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : true,
+      "internalID" : "6755052252",
+      "localizations" : [
+        {
+          "description" : "Record voice notes for your stories",
+          "displayName" : "Voice Journal",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "voice_journal",
+      "referenceName" : "voice_journal",
+      "type" : "NonConsumable"
     }
   ],
   "settings" : {
@@ -65,7 +80,7 @@
     "_askToBuyEnabled" : false,
     "_developerTeamID" : "XF9U464CCP",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 782721261.71000695,
+    "_lastSynchronizedDate" : 784304090.04646897,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [

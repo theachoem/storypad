@@ -6,12 +6,12 @@ class _AddOnsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpNewBadgeBuilder(
-      badge: NewBadge.add_on_tile_with_period_calendar,
+      badgeKey: NewBadge.add_on_tile_with_period_calendar.name,
       builder: (context, newBadge, hideBadge) {
         return ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
           leading: const Icon(SpIcons.addOns),
-          trailing: const SpGiftAnimatedIcon(),
+          trailing: context.read<InAppPurchaseProvider>().hasActiveDeals ? const SpGiftAnimatedIcon() : null,
           title: RichText(
             textScaler: MediaQuery.textScalerOf(context),
             text: TextSpan(

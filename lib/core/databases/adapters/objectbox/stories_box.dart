@@ -6,6 +6,7 @@ import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/events_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -85,9 +86,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return SplayTreeMap<int, int>.from(storyCountsByYear, (a, b) => b.compareTo(a));
   }
 
-  Future<Map<PathType, int>> getStoryCountsByType({
+  Map<PathType, int> getStoryCountsByType({
     Map<String, dynamic>? filters,
-  }) async {
+  }) {
     debugPrint("Triggering $tableName#getStoryCountsByType 🍎");
 
     Map<PathType, int> storyCountsByType = {};
@@ -102,6 +103,44 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     return storyCountsByType;
+  }
+
+  Map<int, int> getStoryCountByAssets({
+    required List<int> assetIds,
+  }) {
+    debugPrint("Triggering $tableName#getStoryCountByAssets 🍊");
+
+    Map<int, int> storyCountsByAssetIds = {};
+
+    for (final assetId in assetIds) {
+      storyCountsByAssetIds[assetId] = buildQuery(
+        filters: {'asset': assetId},
+      ).build().count();
+    }
+
+    return storyCountsByAssetIds;
+  }
+
+  Map<int, int> getStoryCountByTags({
+    required List<int> tagIds,
+    List<int>? years,
+    List<String>? types,
+  }) {
+    debugPrint("Triggering $tableName#getStoryCountByTags 🍐");
+
+    Map<int, int> storyCountsByTagIds = {};
+
+    for (final tagId in tagIds) {
+      storyCountsByTagIds[tagId] = buildQuery(
+        filters: {
+          'tag': tagId,
+          if (years != null) 'years': years,
+          if (types != null) 'types': types,
+        },
+      ).build().count();
+    }
+
+    return storyCountsByTagIds;
   }
 
   int getStoryCountBy({
@@ -145,8 +184,36 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     bool runCallbacks = true,
   }) async {
     StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks);
+
+    // Only rebuild asset tags when story is published (not draft).
+    // Draft stories auto-save frequently, so we skip this expensive operation.
+    // Tag computation happens once when user click "Done".
+    if (saved != null && !saved.draftStory) {
+      List<AssetDbModel> assets = await AssetDbModel.db
+          .where(filters: {'ids': saved.assets})
+          .then((e) => e?.items ?? []);
+      for (int i = 0; i < assets.length; i++) {
+        Set<int> tags = await computeStoriesTagsForAsset(assets[i]);
+        final isLastAsset = i == assets.length - 1;
+        await assets[i].copyWith(tags: tags.toList()).save(runCallbacks: isLastAsset);
+      }
+      debugPrint("🏷️ StoryBox#set: computing tags for asset");
+    }
+
     debugPrint("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
+
     return saved;
+  }
+
+  Future<Set<int>> computeStoriesTagsForAsset(AssetDbModel asset) async {
+    Set<int> tags =
+        await buildQuery(filters: {'asset': asset.id}, returnDeleted: false)
+            .build()
+            .findAsync()
+            .then((e) => e.map((e) => e.tags))
+            .then((e) => e.expand((e) => e?.map((e) => int.tryParse(e) ?? 0) ?? <int>[]).toSet()) ??
+        {};
+    return tags;
   }
 
   @override

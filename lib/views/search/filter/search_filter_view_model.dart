@@ -121,14 +121,14 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> _resetTagsCount() async {
+    var result = StoryDbModel.db.getStoryCountByTags(
+      tagIds: tags?.map((e) => e.id).toList() ?? [],
+      years: searchFilter.years.toList(),
+      types: searchFilter.types.isNotEmpty ? searchFilter.types.map((e) => e.name).toList() : null,
+    );
+
     for (TagDbModel tag in tags ?? []) {
-      tag.storiesCount = await StoryDbModel.db.count(
-        filters: {
-          'tag': tag.id,
-          'years': searchFilter.years.toList(),
-          if (searchFilter.types.isNotEmpty) 'types': searchFilter.types.map((e) => e.name).toList(),
-        },
-      );
+      tag.storiesCount = result[tag.id];
     }
   }
 }

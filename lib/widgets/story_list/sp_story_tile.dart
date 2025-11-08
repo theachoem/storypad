@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/objects/story_icon_object.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
+import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/core/services/stories/story_extract_image_from_content_service.dart';
-import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
@@ -23,18 +22,13 @@ import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_tile_actions.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 
-part 'local_widgets/story_tile_images.dart';
+part 'local_widgets/story_tile_assets.dart';
 part 'local_widgets/story_tile_monogram.dart';
 part 'local_widgets/story_tile_favorite_button.dart';
 part 'local_widgets/story_tile_contents.dart';
-part 'local_widgets/story_tile_actions.dart';
 part 'local_widgets/story_tile_starred_button.dart';
 
 class SpStoryTile extends StatelessWidget {
@@ -70,34 +64,49 @@ class SpStoryTile extends StatelessWidget {
         SpPopMenuItem(
           title: tr('button.put_back'),
           leadingIconData: SpIcons.putBack,
-          onPressed: () => _StoryTileActions(story: story, listContext: listContext).putBack(context),
+          onPressed: () => StoryTileActions(
+            story: story,
+            storyListReloaderContext: listContext,
+          ).putBack(context),
         ),
       if (story.archivable)
         SpPopMenuItem(
           title: tr('button.archive'),
           leadingIconData: SpIcons.archive,
-          onPressed: () => _StoryTileActions(story: story, listContext: listContext).archive(context),
+          onPressed: () => StoryTileActions(
+            story: story,
+            storyListReloaderContext: listContext,
+          ).archive(context),
         ),
       if (story.canMoveToBin)
         SpPopMenuItem(
           title: tr('button.move_to_bin'),
           leadingIconData: SpIcons.delete,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => _StoryTileActions(story: story, listContext: listContext).moveToBin(context),
+          onPressed: () => StoryTileActions(
+            story: story,
+            storyListReloaderContext: listContext,
+          ).moveToBin(context),
         ),
       if (story.hardDeletable)
         SpPopMenuItem(
           title: tr('button.permanent_delete'),
           leadingIconData: SpIcons.deleteForever,
           titleStyle: TextStyle(color: ColorScheme.of(context).error),
-          onPressed: () => _StoryTileActions(story: story, listContext: listContext).hardDelete(context),
+          onPressed: () => StoryTileActions(
+            story: story,
+            storyListReloaderContext: listContext,
+          ).hardDelete(context),
         ),
       if (story.cloudViewing)
         SpPopMenuItem(
           title: tr('button.import'),
           leadingIconData: SpIcons.import,
           titleStyle: TextStyle(color: ColorScheme.of(context).primary),
-          onPressed: () => _StoryTileActions(story: story, listContext: listContext).importIndividualStory(context),
+          onPressed: () => StoryTileActions(
+            story: story,
+            storyListReloaderContext: listContext,
+          ).importIndividualStory(context),
         ),
       SpPopMenuItem(
         title: tr('button.info'),

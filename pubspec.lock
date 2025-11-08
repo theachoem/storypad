@@ -1621,6 +1621,70 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+  record:
+    dependency: "direct main"
+    description:
+      name: record
+      sha256: "6bad72fb3ea6708d724cf8b6c97c4e236cf9f43a52259b654efeb6fd9b737f1f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
+  record_android:
+    dependency: transitive
+    description:
+      name: record_android
+      sha256: fb54ee4e28f6829b8c580252a9ef49d9c549cfd263b0660ad7eeac0908658e9f
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.4"
+  record_ios:
+    dependency: transitive
+    description:
+      name: record_ios
+      sha256: "765b42ac1be019b1674ddd809b811fc721fe5a93f7bb1da7803f0d16772fd6d7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
+  record_linux:
+    dependency: transitive
+    description:
+      name: record_linux
+      sha256: "235b1f1fb84e810f8149cc0c2c731d7d697f8d1c333b32cb820c449bf7bb72d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
+  record_macos:
+    dependency: transitive
+    description:
+      name: record_macos
+      sha256: "842ea4b7e95f4dd237aacffc686d1b0ff4277e3e5357865f8d28cd28bc18ed95"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
+  record_platform_interface:
+    dependency: transitive
+    description:
+      name: record_platform_interface
+      sha256: b0065fdf1ec28f5a634d676724d388a77e43ce7646fb049949f58c69f3fcb4ed
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
+  record_web:
+    dependency: transitive
+    description:
+      name: record_web
+      sha256: "20ac10d56514cb9f8cecc8f3579383084fdfb43b0d04e05a95244d0d76091d90"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
+  record_windows:
+    dependency: transitive
+    description:
+      name: record_windows
+      sha256: "223258060a1d25c62bae18282c16783f28581ec19401d17e56b5205b9f039d78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7"
   rxdart:
     dependency: transitive
     description:

@@ -11,6 +11,9 @@ import 'show_story_view.dart';
 class ShowStoryViewModel extends BaseStoryViewModel {
   final ShowStoryRoute params;
 
+  @override
+  bool get readOnly => true;
+
   ShowStoryViewModel({
     required this.params,
   }) {
@@ -30,7 +33,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
-      readOnly: true,
+      readOnly: readOnly,
     );
 
     // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.

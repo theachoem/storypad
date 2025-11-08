@@ -68,6 +68,10 @@ class DateFormatHelper {
     return DateFormat.yMd(locale.toLanguageTag()).format(date);
   }
 
+  static String yMMMd(DateTime date, Locale locale) {
+    return DateFormat.yMMMd(locale.toLanguageTag()).format(date);
+  }
+
   static String yMMMM(DateTime date, Locale locale) {
     return DateFormat.yMMMM(locale.toLanguageTag()).format(date);
   }

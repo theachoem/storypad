@@ -6,11 +6,15 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 

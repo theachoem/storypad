@@ -19,6 +19,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
+  DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -33,6 +35,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     int? colorSeedValue,
+    double? voicePlaybackSpeed,
   });
 }
 
@@ -69,6 +72,10 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(colorSeedValue: colorSeedValue);
 
   @override
+  DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed) =>
+      call(voicePlaybackSpeed: voicePlaybackSpeed);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -83,6 +90,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
+    Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
       fontFamily: fontFamily == const $CopyWithPlaceholder()
@@ -109,6 +117,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
           : colorSeedValue as int?,
+      voicePlaybackSpeed: voicePlaybackSpeed == const $CopyWithPlaceholder()
+          ? _value.voicePlaybackSpeed
+          // ignore: cast_nullable_to_non_nullable
+          : voicePlaybackSpeed as double?,
     );
   }
 }
@@ -137,6 +149,7 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     json['time_format'],
   ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+  voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$DevicePreferencesObjectToJson(
@@ -148,6 +161,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'font_family': instance.fontFamily,
   'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
+  'voice_playback_speed': instance.voicePlaybackSpeed,
 };
 
 const _$FontSizeOptionEnumMap = {

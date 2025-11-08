@@ -1,7 +1,7 @@
 part of '../add_ons_view.dart';
 
-class _AddOnCard extends StatelessWidget {
-  const _AddOnCard({
+class _AddOnGridItem extends StatelessWidget {
+  const _AddOnGridItem({
     required this.addOn,
     required this.onTap,
   });
@@ -12,6 +12,9 @@ class _AddOnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+    final backgroundColor =
+        ColorFromDayService(context: context).get(addOn.weekdayColor) ?? ColorScheme.of(context).primary;
+    final isActive = iapProvider.isActive(addOn.type.productIdentifier);
 
     return Material(
       color: ColorScheme.of(context).surface,
@@ -22,69 +25,151 @@ class _AddOnCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            buildTextContents(context),
-            buildActionAndPrice(context, iapProvider),
-            const SizedBox(height: 8.0),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextContents(BuildContext context) {
-    return ListTile(
-      isThreeLine: true,
-      contentPadding: const EdgeInsets.only(left: 12.0, right: 14.0, top: 8.0),
-      trailing: CircleAvatar(
-        backgroundColor: ColorFromDayService(context: context).get(addOn.weekdayColor),
-        foregroundColor: ColorScheme.of(context).onPrimary,
-        child: Icon(addOn.iconData),
-      ),
-      title: Text.rich(
-        TextSpan(
-          text: addOn.title,
-          children: [
-            if (addOn.designForFemale)
-              const WidgetSpan(
-                child: Icon(Icons.female_outlined, size: 20.0),
-                alignment: PlaceholderAlignment.middle,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildIconHeader(context, backgroundColor, isActive),
+                buildContent(context, isActive),
+              ],
+            ),
+            if (addOn.badgeLabel != null)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(8.0),
+                    ),
+                  ),
+                  child: Text(
+                    addOn.badgeLabel!,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppTheme.isDarkMode(context) ? backgroundColor.darken(0.6) : backgroundColor.lighten(0.9),
+                    ),
+                  ),
+                ),
               ),
           ],
         ),
       ),
-      subtitle: Text(addOn.subtitle),
     );
   }
 
-  Widget buildActionAndPrice(BuildContext context, InAppPurchaseProvider iapProvider) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 16.0),
-      child: Row(
+  Widget buildIconHeader(BuildContext context, Color backgroundColor, bool isActive) {
+    return Container(
+      color: backgroundColor.withValues(alpha: 0.1),
+      padding: const EdgeInsets.all(12.0),
+      width: double.infinity,
+      alignment: Alignment.centerLeft,
+      child: Icon(
+        addOn.iconData,
+        size: 32.0,
+        color: backgroundColor,
+      ),
+    );
+  }
+
+  Widget buildContent(BuildContext context, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (iapProvider.isActive(addOn.type.productIdentifier))
-            OutlinedButton.icon(
-              onPressed: onTap,
-              icon: const Icon(SpIcons.verifiedFilled),
-              label: Text(tr('button.view')),
-            )
-          else
-            OutlinedButton(
-              onPressed: onTap,
-              child: Text(tr('button.view')),
+          Text.rich(
+            TextSpan(
+              text: addOn.title,
+              children: [
+                if (addOn.designForFemale) ...[
+                  const TextSpan(text: ' '),
+                  const WidgetSpan(
+                    child: Icon(Icons.female_outlined, size: 16.0),
+                    alignment: PlaceholderAlignment.middle,
+                  ),
+                ],
+              ],
             ),
-          if (addOn.displayPrice != null)
-            Expanded(
-              child: Text(
-                addOn.displayPrice!,
-                style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
-                textAlign: TextAlign.end,
+            style: Theme.of(context).textTheme.titleMedium,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8.0),
+          Stack(
+            children: [
+              // reserved 2 line.
+              Text("\n\n", style: Theme.of(context).textTheme.bodySmall, maxLines: 2),
+              Text(
+                addOn.subtitle,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
+            ],
+          ),
+          const SizedBox(height: 24.0),
+          buildFooter(context, isActive),
         ],
       ),
+    );
+  }
+
+  Widget buildFooter(BuildContext context, bool isActive) {
+    return Row(
+      mainAxisAlignment: isActive ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (isActive)
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Icon(
+                SpIcons.verifiedFilled,
+                size: 18.0,
+                color: ColorScheme.of(context).primary,
+              ),
+            ),
+          ),
+        if (addOn.displayPrice != null)
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // display compare price even if it's null to keep height consistency
+                Text(
+                  addOn.displayComparePrice ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                  maxLines: 1,
+                  textAlign: TextAlign.end,
+                ),
+                Text(
+                  addOn.displayPrice!,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: ColorScheme.of(context).primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
