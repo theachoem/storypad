@@ -40,6 +40,8 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   EditingFlowType get flowType => EditingFlowType.update;
 
+  bool get readOnly;
+
   bool get hasDataWritten =>
       flowType == EditingFlowType.update || StoryHasDataWrittenService.callByContent(draftContent!);
 

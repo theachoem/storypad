@@ -30,9 +30,19 @@ class _StoryTileStarredButton extends StatelessWidget {
         transform: Matrix4.identity()..spTranslate(x, y),
         child: _StoryTileFavoriteButton(
           story: story,
-          toggleStarred: viewOnly ? null : _StoryTileActions(story: story, listContext: listContext).toggleStarred,
+          toggleStarred: viewOnly
+              ? null
+              : StoryTileActions(
+                  story: story,
+                  storyListReloaderContext: listContext,
+                ).toggleStarred,
           multiEditState: multiEditState,
-          updateStarIcon: viewOnly ? null : _StoryTileActions(story: story, listContext: listContext).updateStarIcon,
+          updateStarIcon: viewOnly
+              ? null
+              : StoryTileActions(
+                  story: story,
+                  storyListReloaderContext: listContext,
+                ).updateStarIcon,
         ),
       ),
     );

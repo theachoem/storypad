@@ -47,6 +47,7 @@ class SpVoicePlayer extends StatefulWidget {
     this.filePath,
     this.onDownloadRequested,
     required this.initialDuration,
+    this.onLongPress,
     this.autoplay = false,
   }) : assert(
          filePath != null || onDownloadRequested != null,
@@ -68,18 +69,22 @@ class SpVoicePlayer extends StatefulWidget {
   /// Should return the path to the audio file.
   final Future<String> Function()? onDownloadRequested;
 
+  final void Function()? onLongPress;
+
   /// Factory constructor for local file playback
   factory SpVoicePlayer.file({
+    Key? key,
     required String filePath,
     Duration? initialDuration,
     bool autoplay = false,
-    Key? key,
+    void Function()? onLongPress,
   }) {
     return SpVoicePlayer._(
       key: key,
       filePath: filePath,
       initialDuration: initialDuration,
       autoplay: autoplay,
+      onLongPress: onLongPress,
     );
   }
 
@@ -88,16 +93,18 @@ class SpVoicePlayer extends StatefulWidget {
   ///   onDownloadRequested: () => googleDriveDownloadAudio(assetId),
   /// )
   factory SpVoicePlayer.network({
+    Key? key,
     required Future<String> Function() onDownloadRequested,
     Duration? initialDuration,
     bool autoplay = false,
-    Key? key,
+    void Function()? onLongPress,
   }) {
     return SpVoicePlayer._(
       key: key,
       onDownloadRequested: onDownloadRequested,
       initialDuration: initialDuration,
       autoplay: autoplay,
+      onLongPress: onLongPress,
     );
   }
 
@@ -262,9 +269,10 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   /// Toggle between play and pause states.
   /// Inspired by Telegram: single tap on center toggles playback.
   Future<void> togglePlayPause() async {
+    Feedback.forTap(context);
+
     try {
       await _ensureAudioLoaded();
-
       if (downloading) return;
       if (player.speed != _playbackSpeed) await player.setSpeed(_playbackSpeed);
       if (playing) {
@@ -346,11 +354,12 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       builder: (context, constraints) {
         return GestureDetector(
           onTap: downloading ? null : () => togglePlayPause(),
-          onLongPress: () {
-            player.stop();
-            player.seek(Duration.zero);
-            Feedback.forLongPress(context);
-          },
+          onLongPress: widget.onLongPress != null
+              ? () {
+                  Feedback.forLongPress(context);
+                  widget.onLongPress!();
+                }
+              : null,
           onHorizontalDragUpdate: downloading ? null : (details) => handleHorizontalDrag(details, constraints.maxWidth),
           onHorizontalDragEnd: downloading ? null : (_) => handleHorizontalDragEnd(),
           child: Material(

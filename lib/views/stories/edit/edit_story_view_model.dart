@@ -14,6 +14,9 @@ import 'edit_story_view.dart';
 class EditStoryViewModel extends BaseStoryViewModel {
   final EditStoryRoute params;
 
+  @override
+  bool get readOnly => false;
+
   EditStoryViewModel({
     required this.params,
   }) : super(
@@ -58,7 +61,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
-      readOnly: false,
+      readOnly: readOnly,
       initialPagesMap: initialPagesMap,
     );
 

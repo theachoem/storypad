@@ -22,6 +22,11 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_theme_mode_icon.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_tile_actions.dart';
+
+enum SpStoryThemeBottomSheetPopAction {
+  backToStoryList,
+}
 
 class SpStoryThemeBottomSheet extends BaseBottomSheet {
   final StoryDbModel story;
@@ -166,21 +171,18 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
     return SpPopupMenuButton(
       dyGetter: (dy) => dy + 56,
       items: (context) {
+        final story = widget.viewModel.story;
+        if (story == null) return [];
+
+        // Actions: move to bin/archive/put back are only available in read-only mode.
+        // After completing an action, the page can be popped once to home/story list page.
+        // If enabling these actions in edit mode, when popped, it pop to show story view which is not desired.
+        // So disable these actions in edit mode for now. It's also make sense to not allow these actions during editing.
         return [
-          SpPopMenuItem(
-            leadingIconData: SpIcons.info,
-            title: tr("button.info"),
-            onPressed: () => SpStoryInfoSheet(
-              story: widget.viewModel.story!,
-              persisted: widget.viewModel.flowType == EditingFlowType.update,
-            ).show(context: context),
-          ),
           SpPopMenuItem(
             leadingIconData: SpIcons.refresh,
             title: tr("button.reset_theme"),
-            titleStyle: TextTheme.of(
-              context,
-            ).bodyMedium?.copyWith(color: preferences.allReseted ? Theme.of(context).dividerColor : null),
+            titleStyle: TextStyle(color: preferences.allReseted ? Theme.of(context).disabledColor : null),
             onPressed: preferences.allReseted
                 ? null
                 : () {
@@ -189,6 +191,60 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
 
                     widget.onThemeChanged(preferences);
                   },
+          ),
+          if (widget.viewModel.readOnly && story.putBackAble)
+            SpPopMenuItem(
+              title: tr('button.put_back'),
+              leadingIconData: SpIcons.putBack,
+              onPressed: widget.viewModel.readOnly
+                  ? () {
+                      StoryTileActions(story: story, storyListReloaderContext: null).putBack(context);
+                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                    }
+                  : null,
+            ),
+          if (widget.viewModel.readOnly && story.archivable)
+            SpPopMenuItem(
+              title: tr('button.archive'),
+              leadingIconData: SpIcons.archive,
+              onPressed: widget.viewModel.readOnly
+                  ? () {
+                      StoryTileActions(story: story, storyListReloaderContext: null).archive(context);
+                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                    }
+                  : null,
+            ),
+          if (widget.viewModel.readOnly && story.canMoveToBin)
+            SpPopMenuItem(
+              title: tr('button.move_to_bin'),
+              leadingIconData: SpIcons.delete,
+              titleStyle: TextStyle(color: ColorScheme.of(context).error),
+              onPressed: widget.viewModel.readOnly
+                  ? () {
+                      StoryTileActions(story: story, storyListReloaderContext: null).moveToBin(context);
+                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                    }
+                  : null,
+            ),
+          if (widget.viewModel.readOnly && story.hardDeletable)
+            SpPopMenuItem(
+              title: tr('button.permanent_delete'),
+              leadingIconData: SpIcons.deleteForever,
+              titleStyle: TextStyle(color: ColorScheme.of(context).error),
+              onPressed: widget.viewModel.readOnly
+                  ? () async {
+                      await StoryTileActions(story: story, storyListReloaderContext: null).hardDelete(context);
+                      if (context.mounted) Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                    }
+                  : null,
+            ),
+          SpPopMenuItem(
+            leadingIconData: SpIcons.info,
+            title: tr("button.info"),
+            onPressed: () => SpStoryInfoSheet(
+              story: widget.viewModel.story!,
+              persisted: widget.viewModel.flowType == EditingFlowType.update,
+            ).show(context: context),
           ),
         ];
       },

@@ -59,14 +59,14 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   T modelFromJson(Map<String, dynamic> json);
 
-  Future<void> afterCommit([T? model]) async {
+  Future<void> afterCommit([int? id, T? model]) async {
     debugPrint("BaseDbAdapter#afterCommit ${model?.id}");
 
     for (FutureOr<void> Function() globalCallback in _globalListeners) {
       await globalCallback();
     }
 
-    for (FutureOr<void> Function(T?) callback in _listeners[model?.id] ?? []) {
+    for (FutureOr<void> Function(T?) callback in _listeners[id] ?? []) {
       await callback(model);
     }
   }

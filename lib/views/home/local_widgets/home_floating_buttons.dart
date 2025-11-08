@@ -91,7 +91,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           color: Colors.white,
           onPressed: () {
             toggle(context);
-            widget.viewModel.takePhoto();
+            widget.viewModel.takePhoto(context);
           },
         ),
       if (kIAPEnabled)

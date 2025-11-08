@@ -60,19 +60,19 @@ class _StoryTileContents extends StatelessWidget {
             onToggleShowDayCount: viewOnly
                 ? null
                 : () async {
-                    await _StoryTileActions(story: story, listContext: listContext).toggleShowDayCount();
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).toggleShowDayCount();
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onToggleShowTime: viewOnly
                 ? null
                 : () async {
-                    await _StoryTileActions(story: story, listContext: listContext).toggleShowTime();
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).toggleShowTime();
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onChangeDate: viewOnly
                 ? null
                 : (newDateTime) async {
-                    await _StoryTileActions(story: story, listContext: listContext).changeDate(newDateTime);
+                    await StoryTileActions(story: story, storyListReloaderContext: listContext).changeDate(newDateTime);
                     if (context.mounted) Navigator.maybePop(context);
                   },
             onToggleManagingPage: null,

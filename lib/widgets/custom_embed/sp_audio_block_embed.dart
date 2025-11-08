@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/sp_voice_player.dart';
 
 class SpAudioBlockEmbed extends quill.EmbedBuilder {
@@ -78,6 +79,17 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
     );
   }
 
+  void remove() {
+    if (widget.readOnly) return;
+
+    widget.controller.replaceText(
+      widget.node.documentOffset,
+      widget.node.length,
+      '',
+      widget.controller.selection,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_asset == null) return const SizedBox.shrink();
@@ -85,6 +97,12 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
     return SpVoicePlayer.network(
       initialDuration: _asset?.durationInMs != null ? Duration(milliseconds: _asset!.durationInMs!) : null,
       onDownloadRequested: _downloadAudio,
+      onLongPress: () {
+        SpAssetInfoSheet(
+          asset: _asset!,
+          onRemoveAssetEmbed: widget.readOnly ? null : () => remove(),
+        ).show(context: context);
+      },
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -134,11 +135,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       id: null,
       initialYear: year,
     ).push(context);
-
     await _checkNewStoryResult(addedStory);
   }
 
-  void takePhoto() async {
+  void takePhoto(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(source: ImageSource.camera);
     if (photo == null) return;
@@ -184,16 +184,20 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
+  void onAStoryDeleted(StoryDbModel story) {
+    debugPrint('🚧 Removed ${story.id}:${story.type.name} by $runtimeType#onAStoryDeleted');
+    setStories(stories?.removeElement(story));
+    notifyListeners();
+  }
+
   void onAStoryReloaded(StoryDbModel updatedStory) {
     if (updatedStory.type != PathType.docs) {
       setStories(stories?.removeElement(updatedStory));
-      debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onChanged');
+      debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onAStoryReloaded');
     } else {
       setStories(stories?.replaceElement(updatedStory));
-      debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onChanged');
+      debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onAStoryReloaded');
     }
-
-    scrollInfo.setupStoryKeys(stories?.items ?? []);
     notifyListeners();
   }
 
@@ -214,13 +218,25 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         index = max(index, 0);
 
         setStories(stories!.addElement(addedStory, index));
+        notifyListeners();
+      } else {
+        await MessengerService.of(HomeView.homeContext!).showLoading(
+          debugSource: '$runtimeType#_checkNewStoryResult',
+          future: () async {
+            year = addedStory.year;
+            await reload(debugSource: '$runtimeType#_checkNewStoryResult');
+          },
+        );
       }
 
-      year = addedStory.year;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollInfo.moveToStory(targetStoryId: addedStory.id);
+      });
+    } else {
+      // reload all time ensure data consistency.
+      // inconsistent data may occur when adding story from different year.
+      await reload(debugSource: '$runtimeType#_checkNewStoryResult');
     }
-
-    await reload(debugSource: '$runtimeType#goToNewPage');
   }
 
   @override

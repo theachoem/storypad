@@ -110,7 +110,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.touch();
     await box.putAsync(constructed, mode: PutMode.put);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -125,7 +125,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.put);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -156,7 +156,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.update);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -171,7 +171,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     constructed.setDeviceId();
     await box.putAsync(constructed, mode: PutMode.insert);
 
-    if (runCallbacks) await afterCommit(record);
+    if (runCallbacks) await afterCommit(record.id, record);
     return record;
   }
 
@@ -198,7 +198,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
         await box.putAsync(object);
       }
 
-      if (runCallbacks) await afterCommit(null);
+      if (runCallbacks) await afterCommit(id, null);
       return null;
     } else {
       await box.removeAsync(id);
