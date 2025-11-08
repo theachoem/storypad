@@ -31,13 +31,17 @@ class _AddOnsContent extends StatelessWidget {
       );
     }
 
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const SizedBox(height: 12.0),
-        if (viewModel.dealEndDate != null) buildOfferDealCard(viewModel.dealEndDate!, padding, context),
-        buildAddOnsGrid(context, padding),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const SizedBox(height: 12.0),
+            if (viewModel.dealEndDate != null) buildOfferDealCard(viewModel.dealEndDate!, padding, context),
+            buildAddOnsGrid(context, padding, constraints),
+          ],
+        );
+      },
     );
   }
 
@@ -128,8 +132,8 @@ class _AddOnsContent extends StatelessWidget {
     );
   }
 
-  Widget buildAddOnsGrid(BuildContext context, EdgeInsets screenPadding) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  Widget buildAddOnsGrid(BuildContext context, EdgeInsets screenPadding, BoxConstraints constraints) {
+    final screenWidth = constraints.maxWidth;
     final isLargeScreen = screenWidth > 900;
     final isMediumScreen = screenWidth > 600;
 

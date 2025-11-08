@@ -157,8 +157,8 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
 
   // for android only, https://github.com/ryanheise/just_audio/issues/1267
   // position is wrong for about 300ms, so we ignore updates during initial play.
-  bool _listenToPositionStream = true;
-  bool _usedToStartPlaying = false;
+  // this value should be reset to null when audio is played to the end or when user drags.
+  bool? _listenToPositionStream;
 
   @override
   void initState() {
@@ -220,6 +220,8 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       if (state.processingState == ProcessingState.completed) {
         player.pause();
         player.seek(Duration.zero);
+
+        _listenToPositionStream = null;
       }
     });
 
@@ -290,12 +292,11 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       if (playing) {
         player.pause();
       } else {
-        if (Platform.isAndroid && !_usedToStartPlaying) {
+        if (Platform.isAndroid && _listenToPositionStream == null) {
           _listenToPositionStream = false;
           Future.delayed(const Duration(milliseconds: 300), () => _listenToPositionStream = true);
         }
 
-        _usedToStartPlaying = true;
         player.play();
       }
     } catch (e) {
@@ -360,6 +361,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
     _isDragging = false;
 
     try {
+      _listenToPositionStream = null;
       await player.seek(_draggedPosition);
     } catch (e) {
       debugPrint('❌ Error seeking to position: $e');
