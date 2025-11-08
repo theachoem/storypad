@@ -496,7 +496,7 @@ class SpVoicePlaybackSheet extends BaseBottomSheet {
   final AssetDbModel asset;
 
   Widget build(BuildContext context) {
-    return SpAudioPlayer(
+    return SpVoicePlayer(
       autoplay: true,
       initialDuration: Duration(milliseconds: asset.durationInMs),
       onDownloadRequested: () => _downloadFromGoogleDrive(asset),
@@ -505,26 +505,83 @@ class SpVoicePlaybackSheet extends BaseBottomSheet {
 }
 ```
 
-### Audio Player Widget (`sp_audio_player.dart`)
+### Audio Player Widget (`sp_voice_player.dart`)
 
-**Reusable player with lifecycle management:**
+**Reusable player with lifecycle management, inspired by Telegram's audio player UX.**
 
 ```dart
-class SpAudioPlayer extends StatefulWidget {
+class SpVoicePlayer extends StatefulWidget {
   final String? filePath;  // Local path
   final Duration? initialDuration;
   final Future<String> Function()? onDownloadRequested;  // Lazy-load callback
   final bool autoplay;
 
-  // Features:
-  // ✅ Play/pause with progress slider
+  // Core Features:
+  // ✅ Play/pause with visual feedback
   // ✅ Current time / total duration display
-  // ✅ Stadium-shaped clean design
+  // ✅ Stadium-shaped clean design (minimal, uncluttered)
   // ✅ Auto-pause on app background
   // ✅ Supports lazy-loading (download on play)
   // ✅ AudioPlayer lifecycle management
+
+  // Telegram-inspired Interactions:
+  // ✅ Horizontal drag to scrub audio (seek while paused)
+  // ✅ Tap to play/pause (center of widget)
+  // ✅ Long-press to reset to beginning
+  // ✅ Speed cycling (1x → 1.5x → 2x → 1x) with tap
+  // ✅ Smooth progress bar animation
+  // ✅ Real-time position feedback during drag
 }
 ```
+
+#### Interaction Model (Telegram-Inspired)
+
+| Action               | Behavior                                                  |
+| -------------------- | --------------------------------------------------------- |
+| **Tap**              | Play/pause toggle                                         |
+| **Long Press**       | Reset to beginning (seek to 0:00)                         |
+| **Horizontal Drag**  | Scrub through audio (pause + seek on release)             |
+| **Tap Speed** (1x)   | Cycle to next speed: 1x → 1.5x → 2x → 1x (loops)          |
+| **Drag Constraints** | Only available when position > 0 (after playback started) |
+
+#### Implementation Details
+
+**Speed Control:**
+
+```dart
+// Cycling through predefined speeds
+final List<double> _speedOptions = [1.0, 1.5, 2.0];
+
+void cycleToNextSpeed() {
+  final currentIndex = _speedOptions.indexOf(_playbackSpeed);
+  final nextIndex = (currentIndex + 1) % _speedOptions.length;
+  final nextSpeed = _speedOptions[nextIndex];
+  setPlaybackSpeed(nextSpeed);
+}
+```
+
+**Horizontal Drag Scrubbing:**
+
+```dart
+// Only allow drag when audio has started playing
+if (_position == Duration.zero || _duration == Duration.zero) {
+  return;  // Don't allow drag at start
+}
+
+// Calculate time delta from horizontal movement
+final dragDelta = details.delta.dx;
+final percentageChange = dragDelta / maxWidth;
+final timeChange = Duration(milliseconds: (_duration.inMilliseconds * percentageChange).toInt());
+
+// Apply bounds checking
+final clampedPosition = newPosition.clamp(Duration.zero, _duration);
+```
+
+**Visual Feedback:**
+
+- Progress bar shows dragged position in real-time during drag
+- Current time display updates with dragged position
+- Haptic feedback on tap/long-press for tactile confirmation
 
 ### Asset Deletion (`library_view_model.dart`)
 
@@ -594,7 +651,7 @@ User taps voice item in Library → Voices tab
   ↓
 SpVoicePlaybackSheet opens (bottom sheet)
   ↓
-SpAudioPlayer widget renders
+SpVoicePlayer widget renders
   ↓
 If file exists locally:
   → Load from asset.localFilePath
@@ -734,15 +791,24 @@ Tap voice item
   ↓
 Bottom sheet slides up
   ↓
-Audio player appears:
-  ┌─────────────────────────────┐
-  │   ▶  ━━━━●━━━━━━━━  02:34  │
-  │      00:34        Total     │
-  └─────────────────────────────┘
+Audio player appears (Telegram-style minimal UI):
+  ┌─────────────────────────────────────────┐
+  │  ▶ ━━━━━●━━━━━━━━━  [02:34]  [1.5x]   │
+  │      [0:34]                             │
+  │                                         │
+  │  Interactions:                          │
+  │  • Tap play/pause                       │
+  │  • Drag left/right to seek              │
+  │  • Tap "1.5x" to cycle speeds           │
+  │  • Long-press to reset                  │
+  └─────────────────────────────────────────┘
   ↓
 Auto-plays immediately
   ↓
-Drag slider to seek
+During playback:
+  • Progress bar animates smoothly
+  • Current time updates in real-time
+  • Drag to pause and seek simultaneously
   ↓
 Dismiss sheet anytime (playback stops)
 ```
@@ -773,7 +839,7 @@ Later: Filter Library by "Work" → See all work-related voices
 
 - ✅ `VoiceRecorderService` wrapper around `record` package
 - ✅ `SpAudioBlockEmbed` widget for inline playback in stories
-- ✅ `SpAudioPlayer` reusable audio player widget
+- ✅ `SpVoicePlayer` reusable audio player widget
 - ✅ Recording button in Quill toolbar
 - ✅ Start/stop/save recording flow
 - ✅ End-to-end: record → embed → play → backup
@@ -820,7 +886,7 @@ Later: Filter Library by "Work" → See all work-related voices
 | `library_view.dart`                              | Main library with Images/Voice tabs            |
 | `voices_tab_content.dart`                        | Voice recordings list with tag filters         |
 | `sp_voice_playback_sheet.dart`                   | Modal bottom sheet for playback                |
-| `sp_audio_player.dart`                           | Reusable audio player widget                   |
+| `sp_voice_player.dart`                           | Telegram-inspired audio player widget          |
 | `library_view_model.dart`                        | Delete asset logic (local + cloud)             |
 | `sp_scrollable_choice_chips.dart`                | Tag filter chips with counts                   |
 | `ios/Runner/Info.plist`                          | Microphone permission                          |

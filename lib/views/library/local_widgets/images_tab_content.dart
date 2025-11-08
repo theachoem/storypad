@@ -267,6 +267,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
         ignoring: true,
         child: Text.rich(
           TextSpan(
+            style: const TextStyle(color: Colors.white),
             children: [
               TextSpan(text: plural("plural.story", storiesCount[asset.id] ?? 0)),
               if ((storiesCount[asset.id] ?? 0) == 0) ...[

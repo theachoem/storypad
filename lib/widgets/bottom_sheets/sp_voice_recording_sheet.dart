@@ -9,7 +9,7 @@ import 'package:storypad/core/services/duration_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_audio_player.dart';
+import 'package:storypad/widgets/sp_voice_player.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 /// Sheet for recording voice notes
@@ -87,6 +87,7 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
   void initState() {
     super.initState();
     recorder = VoiceRecorderService();
+    startRecording();
   }
 
   @override
@@ -201,7 +202,7 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (recordingResult != null)
-          SpAudioPlayer(
+          SpVoicePlayer.file(
             filePath: recordingResult!.filePath,
             initialDuration: Duration(seconds: durationInMs),
           ),

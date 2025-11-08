@@ -5,7 +5,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_audio_player.dart';
+import 'package:storypad/widgets/sp_voice_player.dart';
 
 /// Sheet for playing voice notes
 ///
@@ -64,7 +64,7 @@ class _VoicePlaybackContent extends StatelessWidget {
         top: 16.0,
         bottom: bottomPadding + 16.0,
       ),
-      child: SpAudioPlayer(
+      child: SpVoicePlayer.network(
         autoplay: true,
         onDownloadRequested: () => _downloadAudio(context),
         initialDuration: asset.durationInMs != null ? Duration(milliseconds: asset.durationInMs!) : null,

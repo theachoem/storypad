@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/widgets/sp_audio_player.dart';
+import 'package:storypad/widgets/sp_voice_player.dart';
 
 class SpAudioBlockEmbed extends quill.EmbedBuilder {
   SpAudioBlockEmbed();
@@ -82,7 +82,7 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
   Widget build(BuildContext context) {
     if (_asset == null) return const SizedBox.shrink();
 
-    return SpAudioPlayer(
+    return SpVoicePlayer.network(
       initialDuration: _asset?.durationInMs != null ? Duration(milliseconds: _asset!.durationInMs!) : null,
       onDownloadRequested: _downloadAudio,
     );

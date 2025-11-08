@@ -22,12 +22,16 @@ class DevicePreferencesObject {
   final ThemeMode? _themeMode;
   final int? colorSeedValue;
 
+  @JsonKey(name: 'voice_playback_speed')
+  final double? _voicePlaybackSpeed;
+
   @JsonKey(name: 'time_format')
   final TimeFormatOption? _timeFormat;
 
   String get fontFamily => _fontFamily ?? kDefaultFontFamily;
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
   TimeFormatOption get timeFormat => _timeFormat ?? TimeFormatOption.h12;
+  double get voicePlaybackSpeed => _voicePlaybackSpeed ?? 1.0;
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
@@ -41,9 +45,11 @@ class DevicePreferencesObject {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
+    double? voicePlaybackSpeed,
   }) : _fontFamily = fontFamily,
        _themeMode = themeMode,
-       _timeFormat = timeFormat;
+       _timeFormat = timeFormat,
+       _voicePlaybackSpeed = voicePlaybackSpeed;
 
   factory DevicePreferencesObject.initial() {
     return DevicePreferencesObject();
