@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 
 enum SpTapEffectType {
   touchableOpacity,
@@ -129,7 +130,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
                   result,
                   Positioned.fill(
                     child: Container(
-                      transform: Matrix4.identity()..scaleAdjoint(widget.borderOption?.scale ?? 1.25),
+                      transform: Matrix4.identity()..spScale(widget.borderOption?.scale ?? 1.25),
                       transformAlignment: Alignment.center,
                       decoration: BoxDecoration(
                         border: Border.all(

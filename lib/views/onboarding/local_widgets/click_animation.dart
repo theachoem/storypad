@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 
 class ClickAnimation extends StatefulWidget {
@@ -90,7 +91,7 @@ class _ClickAnimationState extends State<ClickAnimation> {
             return Container(
               width: 64,
               height: 64,
-              transform: Matrix4.identity()..scaleAdjoint(lerpDouble(0.3, 1, animation.value)!),
+              transform: Matrix4.identity()..spScale(lerpDouble(0.3, 1, animation.value)!),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -120,7 +121,7 @@ class _ClickAnimationState extends State<ClickAnimation> {
             return Container(
               width: 30,
               height: 30,
-              transform: Matrix4.identity()..scaleAdjoint(lerpDouble(0.3, 1, animation.value)!),
+              transform: Matrix4.identity()..spScale(lerpDouble(0.3, 1, animation.value)!),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,

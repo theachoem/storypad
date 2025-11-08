@@ -162,7 +162,7 @@ class SpFadeIn extends StatelessWidget {
             builder: (context, child) {
               return AnimatedContainer(
                 duration: Durations.medium1,
-                transform: Matrix4.identity()..scaleAdjoint(animation.value > 0.2 ? 1.0 : 0.9),
+                transform: Matrix4.identity()..spScale(animation.value > 0.2 ? 1.0 : 0.9),
                 transformAlignment: Alignment.center,
                 curve: Curves.ease,
                 child: child,

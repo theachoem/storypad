@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'privacy_policy_text.dart';
@@ -18,6 +19,7 @@ class OnboardingTemplate extends StatelessWidget {
     required this.currentStep,
     required this.maxStep,
     required this.onSkip,
+    this.fadeInContent = false,
   });
 
   final String title;
@@ -26,6 +28,7 @@ class OnboardingTemplate extends StatelessWidget {
   final Widget actionButton;
   final int currentStep;
   final int maxStep;
+  final bool fadeInContent;
   final void Function()? onSkip;
 
   @override
@@ -104,25 +107,36 @@ class OnboardingTemplate extends StatelessWidget {
   }
 
   Widget buildTextPresentation(BuildContext context) {
+    Widget titleText = Text(
+      title,
+      style: TextTheme.of(context).titleLarge,
+      textAlign: TextAlign.center,
+    );
+
+    Widget descriptionText = Container(
+      constraints: const BoxConstraints(maxWidth: 250),
+      child: Text(
+        description,
+        style: TextTheme.of(context).bodyLarge,
+        textAlign: TextAlign.center,
+      ),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          style: TextTheme.of(context).titleLarge,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Container(
-          constraints: const BoxConstraints(maxWidth: 250),
-          child: Text(
-            description,
-            style: TextTheme.of(context).bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
+      children:
+          [
+            titleText,
+            const SizedBox(height: 8),
+            descriptionText,
+          ].asMap().entries.map((entry) {
+            return SpFadeIn.fromTop(
+              delay: Durations.medium4 + Durations.medium1 * entry.key,
+              duration: Durations.long3,
+              child: entry.value,
+            );
+          }).toList(),
     );
   }
 
