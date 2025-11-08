@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
@@ -153,20 +155,28 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
 
   late final DevicePreferencesProvider _preferencesProvider;
 
+  // for android only, https://github.com/ryanheise/just_audio/issues/1267
+  // position is wrong for about 300ms, so we ignore updates during initial play.
+  bool _listenToPositionStream = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _setupAudioPlayer();
 
     // setup to read voicePlaybackSpeed from provider
     _preferencesProvider = context.read<DevicePreferencesProvider>();
     _playbackSpeed = _preferencesProvider.preferences.voicePlaybackSpeed;
     _preferencesProvider.addListenerForVoicePlaybackSpeed(_onPreferencesChanged);
 
+    setupListeners();
+    load();
+  }
+
+  void load() async {
     if (widget.filePath != null) {
       _currentFilePath = widget.filePath;
-      _loadAudio(_currentFilePath!);
+      await _loadAudio(_currentFilePath!);
     }
 
     if (widget.autoplay) togglePlayPause();
@@ -199,7 +209,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   }
 
   /// Sets up listeners for AudioPlayer state changes.
-  void _setupAudioPlayer() {
+  void setupListeners() {
     player.playerStateStream.listen((state) {
       if (!mounted) return;
 
@@ -219,6 +229,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
 
     player.positionStream.listen((position) {
       if (!mounted) return;
+      if (_listenToPositionStream == false) return;
       setState(() => _position = position);
     });
   }
@@ -276,9 +287,14 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       if (downloading) return;
       if (player.speed != _playbackSpeed) await player.setSpeed(_playbackSpeed);
       if (playing) {
-        await player.pause();
+        player.pause();
       } else {
-        await player.play();
+        if (Platform.isAndroid) {
+          _listenToPositionStream = false;
+          Future.delayed(const Duration(milliseconds: 300), () => _listenToPositionStream = true);
+        }
+
+        player.play();
       }
     } catch (e) {
       debugPrint('❌ Error toggling playback: $e');
