@@ -15,3 +15,4 @@ features/
 - [Period Calendar](./period-calendar/overview.md) - Track and manage menstrual cycles
 - [Relaxing Sounds](./relaxing-sounds/overview.md) - Audio content for relaxation
 - [Templates](./templates/overview.md) - Predefined templates for entries
+- [Voice Journal](./voice-journal/overview.md) - Record and organize voice notes ($1.99)

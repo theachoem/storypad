@@ -11,7 +11,7 @@ class OnboardingViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   });
 
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController controller = TextEditingController(text: PreferenceDbModel.db.nickname.get());
 
   void next(BuildContext context) {
     if (Form.of(context).validate()) {
