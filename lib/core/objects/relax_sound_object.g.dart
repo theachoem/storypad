@@ -17,8 +17,6 @@ abstract class _$RelaxSoundObjectCWProxy {
 
   RelaxSoundObject soundUrlPath(String soundUrlPath);
 
-  RelaxSoundObject free(bool free);
-
   RelaxSoundObject dayColor(int dayColor);
 
   /// Creates a new instance with the provided field values.
@@ -34,7 +32,6 @@ abstract class _$RelaxSoundObjectCWProxy {
     String svgIconUrlPath,
     FirestoreStorageBackground background,
     String soundUrlPath,
-    bool free,
     int dayColor,
   });
 }
@@ -66,9 +63,6 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
       call(soundUrlPath: soundUrlPath);
 
   @override
-  RelaxSoundObject free(bool free) => call(free: free);
-
-  @override
   RelaxSoundObject dayColor(int dayColor) => call(dayColor: dayColor);
 
   @override
@@ -85,7 +79,6 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
     Object? svgIconUrlPath = const $CopyWithPlaceholder(),
     Object? background = const $CopyWithPlaceholder(),
     Object? soundUrlPath = const $CopyWithPlaceholder(),
-    Object? free = const $CopyWithPlaceholder(),
     Object? dayColor = const $CopyWithPlaceholder(),
   }) {
     return RelaxSoundObject(
@@ -115,10 +108,6 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
           ? _value.soundUrlPath
           // ignore: cast_nullable_to_non_nullable
           : soundUrlPath as String,
-      free: free == const $CopyWithPlaceholder() || free == null
-          ? _value.free
-          // ignore: cast_nullable_to_non_nullable
-          : free as bool,
       dayColor: dayColor == const $CopyWithPlaceholder() || dayColor == null
           ? _value.dayColor
           // ignore: cast_nullable_to_non_nullable
@@ -148,7 +137,6 @@ RelaxSoundObject _$RelaxSoundObjectFromJson(Map<String, dynamic> json) =>
         json['background'],
       ),
       soundUrlPath: json['sound_url_path'] as String,
-      free: json['free'] as bool? ?? false,
       dayColor: (json['day_color'] as num?)?.toInt() ?? 3,
     );
 
@@ -158,7 +146,6 @@ Map<String, dynamic> _$RelaxSoundObjectToJson(RelaxSoundObject instance) =>
       'artist': instance.artist,
       'svg_icon_url_path': instance.svgIconUrlPath,
       'background': _$FirestoreStorageBackgroundEnumMap[instance.background]!,
-      'free': instance.free,
       'sound_url_path': instance.soundUrlPath,
       'day_color': instance.dayColor,
     };

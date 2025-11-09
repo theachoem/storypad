@@ -1,6 +1,7 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/types/firestore_storage_background.dart';
 
 part 'relax_sound_object.g.dart';
@@ -12,7 +13,6 @@ class RelaxSoundObject {
   final String artist;
   final String svgIconUrlPath;
   final FirestoreStorageBackground background;
-  final bool free;
 
   // mp3 or wave
   final String soundUrlPath;
@@ -26,11 +26,60 @@ class RelaxSoundObject {
     required this.svgIconUrlPath,
     required this.background,
     required this.soundUrlPath,
-    this.free = false,
     this.dayColor = 3,
   }) : assert(dayColor >= 1 && dayColor <= 7);
 
   String get label => tr(translationKey);
+
+  /// Determines which sound group this sound belongs to based on its URL path
+  String _getSoundGroup() {
+    if (soundUrlPath.contains('/musics/')) return 'music';
+    if (soundUrlPath.contains('/rainy/')) return 'rainy';
+    if (soundUrlPath.contains('/water/')) return 'water';
+    if (soundUrlPath.contains('/animal/')) return 'animal';
+    if (soundUrlPath.contains('/melody/')) return 'melody';
+    if (soundUrlPath.contains('/fire/')) return 'fire';
+    if (soundUrlPath.contains('/body/')) return 'body';
+    if (soundUrlPath.contains('/activity/')) return 'activity';
+    return '';
+  }
+
+  /// Checks if this sound should be free based on the current variant
+  ///
+  /// **Variants:**
+  /// - variant_1: All sounds in Music, Rainy, Water groups are free
+  /// - variant_2: All sounds in Music, Rainy, Water + first 2 from Animal & Melody are free
+  /// - variant_3: Only first sound from each group is free
+  bool get free {
+    final group = _getSoundGroup();
+    final variant = RemoteConfigService.relaxSoundFreeSetVariant.get();
+
+    switch (variant) {
+      case 'variant_3':
+        // Full groups: Music, Rainy, Water
+        return ['music', 'rainy', 'water', 'body'].contains(group);
+      case 'variant_2':
+        // Hybrid: Full Music, Rainy, Water + 2 from Animal/Melody
+        if (['music', 'rainy', 'water', 'body'].contains(group)) return true;
+        // First 2 animal sounds: night_crickets, cicada
+        if (group == 'animal') return soundUrlPath.contains('night_crickets') || soundUrlPath.contains('cicada');
+        // First 2 melody sounds: wind_chime, bamboo_windchime
+        if (group == 'melody') return soundUrlPath.contains('wind_chime') || soundUrlPath.contains('bamboo_windchime');
+        return false;
+      case 'variant_1':
+      default:
+        // Minimal: 1 sound per group
+        if (group == 'music') return soundUrlPath.contains('acoustic_guitar_duet');
+        if (group == 'rainy') return soundUrlPath.contains('light_rain');
+        if (group == 'water') return soundUrlPath.contains('ocean_waves');
+        if (group == 'animal') return soundUrlPath.contains('night_crickets');
+        if (group == 'melody') return soundUrlPath.contains('wind_chime');
+        if (group == 'fire') return soundUrlPath.contains('campfire');
+        if (group == 'body') return soundUrlPath.contains('heartbeat');
+        if (group == 'activity') return soundUrlPath.contains('typing');
+        return false;
+    }
+  }
 
   static Map<String, RelaxSoundObject>? _defaultSoundsList;
   static Map<String, RelaxSoundObject> defaultSoundsList() {
@@ -66,7 +115,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
         soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
         dayColor: 3,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@Matio888',
@@ -75,7 +123,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/musics/serene_piano_reflections.svg',
         soundUrlPath: '/relax_sounds/musics/serene_piano_reflections.mp3',
         dayColor: 2,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@Gustavo_Alivera',
@@ -84,7 +131,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
         soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
         dayColor: 1,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@voyouz',
@@ -93,7 +139,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
         soundUrlPath: '/relax_sounds/musics/music_box.wav',
         dayColor: 1,
-        free: true,
       ),
     ];
   }
@@ -107,7 +152,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/light_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/light_rain.wav',
         dayColor: 3,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@InspectorJ',
@@ -116,7 +160,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/rain_on_window.svg',
         soundUrlPath: '/relax_sounds/rainy/rain_on_window.wav',
         dayColor: 4,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@lebaston100',
@@ -125,7 +168,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/heavy_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/heavy_rain.wav',
         dayColor: 6,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@laribum',
@@ -134,7 +176,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/thunder.svg',
         soundUrlPath: '/relax_sounds/rainy/thunder.wav',
         dayColor: 6,
-        free: true,
       ),
     ];
   }
@@ -148,7 +189,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/ocean_waves.svg',
         soundUrlPath: '/relax_sounds/water/ocean_waves.wav',
         dayColor: 5,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@felix.blume',
@@ -157,7 +197,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/river_stream.svg',
         soundUrlPath: '/relax_sounds/water/river_stream.wav',
         dayColor: 5,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@Lydmakeren',
@@ -166,7 +205,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/droplets.svg',
         soundUrlPath: '/relax_sounds/water/droplets.wav',
         dayColor: 5,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@brunoboselli',
@@ -175,7 +213,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/bubbles.svg',
         soundUrlPath: '/relax_sounds/water/bubbles.wav',
         dayColor: 5,
-        free: true,
       ),
     ];
   }
@@ -292,7 +329,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/body/heartbeat.svg',
         soundUrlPath: '/relax_sounds/body/heartbeat.wav',
         dayColor: 7,
-        free: true,
       ),
     ];
   }
