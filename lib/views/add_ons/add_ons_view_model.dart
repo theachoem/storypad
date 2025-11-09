@@ -54,7 +54,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
     } else {
       return (
-        displayPrice: storeProduct.priceString,
+        displayPrice: '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}',
         displayComparePrice: null,
         badgeLabel: null,
       );
