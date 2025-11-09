@@ -46,6 +46,7 @@ class RelaxSoundObject {
 
   static List<RelaxSoundObject> defaultSounds() {
     return [
+      ...musicSounds(),
       ...rainySounds(),
       ...waterSounds(),
       ...animalSounds(),
@@ -53,7 +54,47 @@ class RelaxSoundObject {
       ...fireSounds(),
       ...bodySounds(),
       ...activitySounds(),
-      ...musicSounds(),
+    ];
+  }
+
+  static List<RelaxSoundObject> musicSounds() {
+    return [
+      RelaxSoundObject(
+        artist: '@graham_makes',
+        translationKey: 'sounds.acoustic_guitar_duet',
+        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
+        soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
+        dayColor: 3,
+        free: true,
+      ),
+      RelaxSoundObject(
+        artist: '@Matio888',
+        translationKey: 'sounds.serene_piano_reflections',
+        background: FirestoreStorageBackground.two_cloudy_tags_on_color_background,
+        svgIconUrlPath: '/relax_sounds/musics/serene_piano_reflections.svg',
+        soundUrlPath: '/relax_sounds/musics/serene_piano_reflections.mp3',
+        dayColor: 2,
+        free: true,
+      ),
+      RelaxSoundObject(
+        artist: '@Gustavo_Alivera',
+        translationKey: 'sounds.serene_moments',
+        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
+        soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
+        dayColor: 1,
+        free: true,
+      ),
+      RelaxSoundObject(
+        artist: '@voyouz',
+        translationKey: 'sounds.music_box',
+        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
+        soundUrlPath: '/relax_sounds/musics/music_box.wav',
+        dayColor: 1,
+        free: true,
+      ),
     ];
   }
 
@@ -75,6 +116,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/rain_on_window.svg',
         soundUrlPath: '/relax_sounds/rainy/rain_on_window.wav',
         dayColor: 4,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@lebaston100',
@@ -83,6 +125,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/heavy_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/heavy_rain.wav',
         dayColor: 6,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@laribum',
@@ -91,6 +134,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/rainy/thunder.svg',
         soundUrlPath: '/relax_sounds/rainy/thunder.wav',
         dayColor: 6,
+        free: true,
       ),
     ];
   }
@@ -113,6 +157,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/river_stream.svg',
         soundUrlPath: '/relax_sounds/water/river_stream.wav',
         dayColor: 5,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@Lydmakeren',
@@ -121,6 +166,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/droplets.svg',
         soundUrlPath: '/relax_sounds/water/droplets.wav',
         dayColor: 5,
+        free: true,
       ),
       RelaxSoundObject(
         artist: '@brunoboselli',
@@ -129,6 +175,7 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/water/bubbles.svg',
         soundUrlPath: '/relax_sounds/water/bubbles.wav',
         dayColor: 5,
+        free: true,
       ),
     ];
   }
@@ -142,7 +189,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/animal/night_crickets.svg',
         soundUrlPath: '/relax_sounds/animal/night_crickets.wav',
         dayColor: 2,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@sacred_steel',
@@ -188,7 +234,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/melody/wind_chime.svg',
         soundUrlPath: '/relax_sounds/melody/wind_chime.wav',
         dayColor: 5,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@LoopUdu',
@@ -226,7 +271,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/fire/campfire.svg',
         soundUrlPath: '/relax_sounds/fire/campfire.wav',
         dayColor: 1,
-        free: true,
       ),
       RelaxSoundObject(
         artist: '@eclectic-kitty',
@@ -262,45 +306,6 @@ class RelaxSoundObject {
         svgIconUrlPath: '/relax_sounds/activity/typing.svg',
         soundUrlPath: '/relax_sounds/activity/typing.wav',
         dayColor: 7,
-        free: true,
-      ),
-    ];
-  }
-
-  static List<RelaxSoundObject> musicSounds() {
-    return [
-      RelaxSoundObject(
-        artist: '@graham_makes',
-        translationKey: 'sounds.acoustic_guitar_duet',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
-        svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
-        soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
-        dayColor: 3,
-        free: true,
-      ),
-      RelaxSoundObject(
-        artist: '@Matio888',
-        translationKey: 'sounds.serene_piano_reflections',
-        background: FirestoreStorageBackground.two_cloudy_tags_on_color_background,
-        svgIconUrlPath: '/relax_sounds/musics/serene_piano_reflections.svg',
-        soundUrlPath: '/relax_sounds/musics/serene_piano_reflections.mp3',
-        dayColor: 2,
-      ),
-      RelaxSoundObject(
-        artist: '@Gustavo_Alivera',
-        translationKey: 'sounds.serene_moments',
-        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
-        svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
-        soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
-        dayColor: 1,
-      ),
-      RelaxSoundObject(
-        artist: '@voyouz',
-        translationKey: 'sounds.music_box',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
-        svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
-        soundUrlPath: '/relax_sounds/musics/music_box.wav',
-        dayColor: 1,
       ),
     ];
   }

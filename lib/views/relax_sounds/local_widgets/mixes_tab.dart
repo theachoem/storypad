@@ -43,7 +43,7 @@ class _MixesTab extends StatelessWidget {
     }
 
     return ReorderableListView.builder(
-      itemCount: (viewModel.mixes?.length ?? 0) + 1,
+      itemCount: viewModel.mixes?.length ?? 0,
       padding: EdgeInsets.only(
         top: 10.0,
         left: MediaQuery.of(context).padding.left + 10.0,
@@ -52,27 +52,6 @@ class _MixesTab extends StatelessWidget {
       ),
       onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
-        if (index == viewModel.mixes!.length) {
-          if (!kIAPEnabled) return const SizedBox(key: ValueKey('share_to_social'));
-          return Padding(
-            key: const ValueKey('share_to_social'),
-            padding: const EdgeInsets.all(6.0),
-            child: ListTile(
-              onTap: () => SpRewardSheet().show(context: context),
-              trailing: const Icon(SpIcons.info),
-              tileColor: Theme.of(context).colorScheme.readOnly.surface1,
-              shape: RoundedSuperellipseBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              title: Text(tr('list_tile.share_relax_sound_to_social.title')),
-              subtitle: SpMarkdownBody(
-                body: tr('list_tile.share_relax_sound_to_social.subtitle'),
-              ),
-            ),
-          );
-        }
-
         final mix = viewModel.mixes![index];
         return buildMixTile(
           mix: mix,
