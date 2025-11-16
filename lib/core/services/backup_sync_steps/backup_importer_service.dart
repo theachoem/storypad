@@ -19,24 +19,54 @@ class BackupImporterService {
   }
 
   Future<bool> start(
-    BackupObject? backup,
-    DateTime? lastSyncedAt,
-    DateTime? lastDbUpdatedAt,
+    Map<int, BackupObject>? yearlyBackupContents,
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
     debugPrint('🚧 $runtimeType#start ...');
 
-    if (lastSyncedAt == null || backup == null || (lastSyncedAt == lastDbUpdatedAt)) {
+    if (yearlyBackupContents == null || yearlyBackupContents.isEmpty) {
+      controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
+      return true;
+    }
+
+    // Defensive validation: Check if any year needs importing
+    // Note: Step 2 already filtered downloads by timestamp, but we validate again for robustness
+    // and to support independent testing of this service
+    bool hasChanges = false;
+    for (var entry in yearlyBackupContents.entries) {
+      final year = entry.key;
+      final remoteSyncedAt = lastSyncedAtByYear?[year];
+      final localUpdatedAt = lastDbUpdatedAtByYear?[year];
+
+      if (remoteSyncedAt == null || localUpdatedAt == null || remoteSyncedAt.isAfter(localUpdatedAt)) {
+        hasChanges = true;
+        break;
+      }
+    }
+
+    if (!hasChanges) {
       controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
       return true;
     }
 
     controller.add(BackupSyncMessage(processing: true, success: true, message: null));
-    final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
+
+    int totalChangesCount = 0;
+    for (var entry in yearlyBackupContents.entries) {
+      final year = entry.key;
+      final backup = entry.value;
+
+      debugPrint('BackupImporter: Importing year $year');
+      final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
+      totalChangesCount += changesCount;
+    }
+
     controller.add(
       BackupSyncMessage(
         processing: false,
         success: true,
-        message: '$changesCount records are imported or updated.',
+        message: '$totalChangesCount records are imported or updated.',
       ),
     );
 

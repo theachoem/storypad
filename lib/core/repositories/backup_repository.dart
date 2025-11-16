@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -143,11 +144,11 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<BackupLatestCheckerResponse>> startStep2(DateTime? lastDbUpdatedAt) async {
+  Future<BackupResult<BackupLatestCheckerResponse>> startStep2(Map<int, DateTime?>? lastDbUpdatedAtByYear) async {
     try {
       final result = await step2LatestBackupChecker.start(
         googleDriveClient,
-        lastDbUpdatedAt,
+        lastDbUpdatedAtByYear,
       );
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
@@ -174,15 +175,15 @@ class BackupRepository {
   }
 
   Future<BackupResult<bool>> startStep3(
-    BackupObject? backupContent,
-    DateTime? lastSyncedAt,
-    DateTime? lastDbUpdatedAt,
+    Map<int, BackupObject>? yearlyBackupContents,
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
     try {
       final result = await step3LatestBackupImporter.start(
-        backupContent,
-        lastSyncedAt,
-        lastDbUpdatedAt,
+        yearlyBackupContents,
+        lastSyncedAtByYear,
+        lastDbUpdatedAtByYear,
       );
       return BackupResult.success(result);
     } catch (e) {
@@ -203,12 +204,17 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<BackupUploaderResponse>> startStep4(DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
+  Future<BackupResult<BackupUploaderResponse>> startStep4(
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
+    Map<int, CloudFileObject>? existingYearlyBackups,
+  ) async {
     try {
       final result = await step4NewBackupUploader.start(
         googleDriveClient,
-        lastSyncedAt,
-        lastDbUpdatedAt,
+        lastSyncedAtByYear,
+        lastDbUpdatedAtByYear,
+        existingYearlyBackups,
       );
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {

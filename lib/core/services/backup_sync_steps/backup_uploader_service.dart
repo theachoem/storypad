@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -18,11 +17,11 @@ import 'package:storypad/core/services/retry/retry_policy.dart';
 
 class BackupUploaderResponse {
   final bool hasError;
-  final CloudFileObject? uploadedCloudFile;
+  final Map<int, CloudFileObject>? uploadedYearlyFiles;
 
   BackupUploaderResponse({
     required this.hasError,
-    required this.uploadedCloudFile,
+    this.uploadedYearlyFiles,
   });
 }
 
@@ -36,11 +35,12 @@ class BackupUploaderService {
 
   Future<BackupUploaderResponse> start(
     GoogleDriveClient client,
-    DateTime? lastSyncedAt,
-    DateTime? lastDbUpdatedAt,
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
+    Map<int, CloudFileObject>? existingYearlyBackups,
   ) async {
     try {
-      if (lastDbUpdatedAt == null || lastSyncedAt == lastDbUpdatedAt) {
+      if (lastDbUpdatedAtByYear == null || lastDbUpdatedAtByYear.isEmpty) {
         controller.add(
           BackupSyncMessage(
             processing: false,
@@ -51,11 +51,44 @@ class BackupUploaderService {
 
         return BackupUploaderResponse(
           hasError: false,
-          uploadedCloudFile: null,
+          uploadedYearlyFiles: {},
         );
       }
 
-      return await _start(client, lastDbUpdatedAt);
+      // Determine which years need uploading
+      Map<int, DateTime> yearsToUpload = {};
+
+      for (var entry in lastDbUpdatedAtByYear.entries) {
+        final year = entry.key;
+        final localTimestamp = entry.value;
+        final remoteTimestamp = lastSyncedAtByYear?[year];
+
+        if (localTimestamp == null) continue;
+
+        // Upload if:
+        // 1. No remote backup exists for this year, OR
+        // 2. Local timestamp is newer than remote timestamp
+        if (remoteTimestamp == null || localTimestamp.isAfter(remoteTimestamp)) {
+          yearsToUpload[year] = localTimestamp;
+        }
+      }
+
+      if (yearsToUpload.isEmpty) {
+        controller.add(
+          BackupSyncMessage(
+            processing: false,
+            success: true,
+            message: 'No new stories to upload.',
+          ),
+        );
+
+        return BackupUploaderResponse(
+          hasError: false,
+          uploadedYearlyFiles: existingYearlyBackups,
+        );
+      }
+
+      return await _start(client, yearsToUpload, existingYearlyBackups ?? {});
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -75,7 +108,6 @@ class BackupUploaderService {
       );
       return BackupUploaderResponse(
         hasError: true,
-        uploadedCloudFile: null,
       );
     } catch (error, stackTrace) {
       debugPrint('$runtimeType#start unexpected error: $error $stackTrace');
@@ -89,53 +121,90 @@ class BackupUploaderService {
 
       return BackupUploaderResponse(
         hasError: true,
-        uploadedCloudFile: null,
       );
     }
   }
 
-  Future<BackupUploaderResponse> _start(GoogleDriveClient client, DateTime lastDbUpdatedAt) async {
+  Future<BackupUploaderResponse> _start(
+    GoogleDriveClient client,
+    Map<int, DateTime> yearsToUpload,
+    Map<int, CloudFileObject> existingBackups,
+  ) async {
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
 
     try {
-      final backup = await BackupDatabasesToBackupObjectService.call(
-        databases: BackupRepository.databases,
-        lastUpdatedAt: lastDbUpdatedAt,
-      );
+      Map<int, CloudFileObject> uploadedYearlyFiles = {};
 
-      final file = await constructBackupFile(
-        AssetDbModel.cloudId,
-        backup,
-      );
+      for (var entry in yearsToUpload.entries) {
+        final year = entry.key;
+        final lastUpdatedAt = entry.value;
 
-      final uploadedFile = await RetryExecutor.execute(
-        () => client.uploadFile(
-          backup.fileInfo.fileNameWithExtention,
-          file,
-        ),
-        policy: RetryPolicy.network,
-        operationName: 'upload_backup_${backup.fileInfo.fileNameWithExtention}',
-      );
+        debugPrint('BackupUploader: Uploading year $year');
 
-      if (uploadedFile != null) {
-        controller.add(
-          BackupSyncMessage(
-            processing: false,
-            success: true,
-            message: 'All new stories uploaded successfully.',
-          ),
+        // Generate backup for this year only
+        final backup = await BackupDatabasesToBackupObjectService.call(
+          databases: BackupRepository.databases,
+          lastUpdatedAt: lastUpdatedAt,
+          year: year, // Filter by year
         );
 
-        return BackupUploaderResponse(
-          hasError: false,
-          uploadedCloudFile: uploadedFile,
+        final file = await constructBackupFile(
+          'year_$year',
+          backup,
+        );
+
+        CloudFileObject? uploadedFile;
+        final existingFile = existingBackups[year];
+
+        if (existingFile != null) {
+          // Update existing file atomically
+          uploadedFile = await RetryExecutor.execute(
+            () => client.updateYearlyBackup(
+              fileId: existingFile.id,
+              fileName: backup.fileInfo.fileNameWithExtention,
+              file: file,
+            ),
+            policy: RetryPolicy.network,
+            operationName: 'update_backup_year_$year',
+          );
+        } else {
+          // Upload new file
+          uploadedFile = await RetryExecutor.execute(
+            () => client.uploadYearlyBackup(
+              fileName: backup.fileInfo.fileNameWithExtention,
+              file: file,
+            ),
+            policy: RetryPolicy.network,
+            operationName: 'upload_backup_year_$year',
+          );
+        }
+
+        if (uploadedFile != null) {
+          uploadedYearlyFiles[year] = uploadedFile;
+        } else {
+          debugPrint('BackupUploader: Failed to upload year $year');
+        }
+      }
+
+      if (uploadedYearlyFiles.isEmpty) {
+        throw const exp.ServiceException(
+          'Failed to upload any yearly backups',
+          exp.ServiceExceptionType.unexpectedError,
+          context: 'backup_upload',
         );
       }
 
-      throw exp.FileOperationException(
-        'Upload completed but no file object returned',
-        exp.FileOperationType.upload,
-        context: backup.fileInfo.fileNameWithExtention,
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: 'Uploaded ${uploadedYearlyFiles.length} year(s) successfully.',
+        ),
+      );
+
+      return BackupUploaderResponse(
+        hasError: false,
+        uploadedYearlyFiles: uploadedYearlyFiles,
       );
     } catch (e) {
       if (e is exp.BackupException) rethrow;

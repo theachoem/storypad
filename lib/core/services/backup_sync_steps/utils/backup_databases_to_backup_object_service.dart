@@ -10,25 +10,36 @@ class BackupDatabasesToBackupObjectService {
   static Future<BackupObject> call({
     required List<BaseDbAdapter<BaseDbModel>> databases,
     required DateTime lastUpdatedAt,
+    int? year, // Optional: filter records by createdAt.year for v3 yearly backups
   }) async {
-    debugPrint('BackupDatabasesToBackupObjectService#constructBackup');
-    Map<String, dynamic> tables = await _constructTables(databases);
+    debugPrint('BackupDatabasesToBackupObjectService#constructBackup year=$year');
+    Map<String, dynamic> tables = await _constructTables(databases, year: year);
     debugPrint('BackupDatabasesToBackupObjectService#constructBackup ${tables.keys}');
 
     return BackupObject(
       tables: tables,
+      year: year,
       fileInfo: BackupFileObject(
         createdAt: lastUpdatedAt,
         device: kDeviceInfo,
+        version: year != null ? '3' : '2', // v3 for yearly, v2 for legacy
+        year: year,
       ),
     );
   }
 
-  static Future<Map<String, dynamic>> _constructTables(List<BaseDbAdapter> databases) async {
+  static Future<Map<String, dynamic>> _constructTables(
+    List<BaseDbAdapter> databases, {
+    int? year,
+  }) async {
     Map<String, CollectionDbModel<BaseDbModel>> tables = {};
 
     for (BaseDbAdapter db in databases) {
-      CollectionDbModel<BaseDbModel>? items = await db.where(returnDeleted: true);
+      final filters = year != null ? {'created_year': year} : null;
+      CollectionDbModel<BaseDbModel>? items = await db.where(
+        filters: filters,
+        returnDeleted: true,
+      );
       tables[db.tableName] = items ?? CollectionDbModel(items: []);
     }
 

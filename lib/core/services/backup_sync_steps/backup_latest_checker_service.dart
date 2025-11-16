@@ -11,15 +11,22 @@ import 'package:storypad/core/services/retry/retry_policy.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
-  final CloudFileObject? lastestBackupFile;
-  final BackupObject? backupContent;
+  final CloudFileObject? lastestBackupFile; // Deprecated: kept for legacy compatibility
+  final BackupObject? backupContent; // Deprecated: kept for legacy compatibility
+  final Map<int, CloudFileObject>? yearlyBackupFiles; // v3: map of year -> CloudFileObject
+  final Map<int, BackupObject>? yearlyBackupContents; // v3: map of year -> BackupObject
 
   DateTime? get lastSyncedAt => lastestBackupFile?.getFileInfo()?.createdAt;
+  Map<int, DateTime?>? get lastSyncedAtByYear {
+    return yearlyBackupFiles?.map((year, file) => MapEntry(year, file.lastUpdatedAt));
+  }
 
   BackupLatestCheckerResponse({
     required this.hasError,
-    required this.lastestBackupFile,
-    required this.backupContent,
+    this.lastestBackupFile,
+    this.backupContent,
+    this.yearlyBackupFiles,
+    this.yearlyBackupContents,
   });
 }
 
@@ -31,11 +38,14 @@ class BackupLatestCheckerService {
     controller.add(null);
   }
 
-  Future<BackupLatestCheckerResponse> start(GoogleDriveClient client, DateTime? lastDbUpdatedAt) async {
+  Future<BackupLatestCheckerResponse> start(
+    GoogleDriveClient client,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
+  ) async {
     debugPrint('🚧 $runtimeType#start ...');
 
     try {
-      return await _start(client, lastDbUpdatedAt);
+      return await _start(client, lastDbUpdatedAtByYear);
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -55,8 +65,6 @@ class BackupLatestCheckerService {
       );
       return BackupLatestCheckerResponse(
         hasError: true,
-        lastestBackupFile: null,
-        backupContent: null,
       );
     } catch (e, stackTrace) {
       debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
@@ -69,22 +77,59 @@ class BackupLatestCheckerService {
       );
       return BackupLatestCheckerResponse(
         hasError: true,
-        lastestBackupFile: null,
-        backupContent: null,
       );
     }
   }
 
-  Future<BackupLatestCheckerResponse> _start(GoogleDriveClient client, DateTime? lastDbUpdatedAt) async {
+  Future<BackupLatestCheckerResponse> _start(
+    GoogleDriveClient client,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
+  ) async {
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
 
-    final lastestBackupFile = await RetryExecutor.execute(
-      () => client.fetchLatestBackup(),
+    // Fetch all yearly backups from Google Drive
+    final yearlyBackupFiles = await RetryExecutor.execute(
+      () => client.fetchYearlyBackups(),
       policy: RetryPolicy.network,
-      operationName: 'fetch_latest_backup',
+      operationName: 'fetch_yearly_backups',
     );
 
-    if (lastestBackupFile == null) {
+    if (yearlyBackupFiles.isEmpty) {
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: 'No backups found',
+        ),
+      );
+
+      return BackupLatestCheckerResponse(
+        hasError: false,
+        yearlyBackupFiles: {},
+        yearlyBackupContents: {},
+      );
+    }
+
+    // Determine which years need to be downloaded
+    Map<int, CloudFileObject> yearsToDownload = {};
+
+    for (var entry in yearlyBackupFiles.entries) {
+      final year = entry.key;
+      final remoteFile = entry.value;
+      final remoteTimestamp = remoteFile.lastUpdatedAt;
+      final localTimestamp = lastDbUpdatedAtByYear?[year];
+
+      debugPrint('BackupLatestChecker: Year $year - Remote: $remoteTimestamp, Local: $localTimestamp');
+
+      // Download if:
+      // 1. We have no local data for this year, OR
+      // 2. Remote timestamp is newer than local timestamp
+      if (localTimestamp == null || (remoteTimestamp != null && remoteTimestamp.isAfter(localTimestamp))) {
+        yearsToDownload[year] = remoteFile;
+      }
+    }
+
+    if (yearsToDownload.isEmpty) {
       controller.add(
         BackupSyncMessage(
           processing: false,
@@ -95,75 +140,56 @@ class BackupLatestCheckerService {
 
       return BackupLatestCheckerResponse(
         hasError: false,
-        lastestBackupFile: lastestBackupFile,
-        backupContent: null,
+        yearlyBackupFiles: yearlyBackupFiles,
+        yearlyBackupContents: {},
       );
     }
 
-    if (lastestBackupFile.getFileInfo()?.createdAt == lastDbUpdatedAt) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'Everything is up to date',
-        ),
-      );
+    // Download and parse backup contents for years that need syncing
+    Map<int, BackupObject> yearlyBackupContents = {};
 
-      return BackupLatestCheckerResponse(
-        lastestBackupFile: lastestBackupFile,
-        backupContent: null,
-        hasError: false,
-      );
-    }
+    for (var entry in yearsToDownload.entries) {
+      final year = entry.key;
+      final cloudFile = entry.value;
 
-    final result = await RetryExecutor.execute(
-      () => client.getFileContent(lastestBackupFile),
-      policy: RetryPolicy.network,
-      operationName: 'download_backup_content',
-    );
-    final fileContent = result?.$1;
+      debugPrint('BackupLatestChecker: Downloading backup for year $year');
 
-    if (fileContent == null) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: 'Could not fetch file content!',
-        ),
+      final result = await RetryExecutor.execute(
+        () => client.getFileContent(cloudFile),
+        policy: RetryPolicy.network,
+        operationName: 'download_backup_year_$year',
       );
+      final fileContent = result?.$1;
 
-      return BackupLatestCheckerResponse(
-        lastestBackupFile: lastestBackupFile,
-        backupContent: null,
-        hasError: true,
-      );
-    }
+      if (fileContent == null) {
+        debugPrint('BackupLatestChecker: Failed to download year $year');
+        continue; // Skip this year, try others
+      }
 
-    BackupObject? backupContent;
-    try {
-      dynamic decodedContents = jsonDecode(fileContent);
-      backupContent = BackupObject.fromContents(decodedContents);
-    } catch (e) {
-      debugPrint('$runtimeType#_start cannot parse backup content: $e');
-      throw exp.ServiceException(
-        'Failed to parse backup content: $e',
-        exp.ServiceExceptionType.dataCorrupted,
-        context: lastestBackupFile.id,
-      );
+      BackupObject? backupContent;
+      try {
+        dynamic decodedContents = jsonDecode(fileContent);
+        backupContent = BackupObject.fromContents(decodedContents);
+        yearlyBackupContents[year] = backupContent;
+      } catch (e) {
+        debugPrint('$runtimeType#_start cannot parse backup for year $year: $e');
+        // Continue with other years instead of throwing
+        continue;
+      }
     }
 
     controller.add(
       BackupSyncMessage(
         processing: false,
         success: true,
-        message: 'Backup found: ${lastestBackupFile.fileName}',
+        message: 'Found ${yearlyBackupContents.length} year(s) to sync',
       ),
     );
 
     return BackupLatestCheckerResponse(
-      lastestBackupFile: lastestBackupFile,
-      backupContent: backupContent,
       hasError: false,
+      yearlyBackupFiles: yearlyBackupFiles,
+      yearlyBackupContents: yearlyBackupContents,
     );
   }
 }

@@ -45,6 +45,7 @@ class StoryObjectBox extends BaseObjectBox {
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
