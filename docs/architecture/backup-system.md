@@ -10,14 +10,12 @@ The backup system provides automatic cloud backup and sync for StoryPad data acr
 
 - **Automatic Sync**: Background synchronization on app start and data changes
 - **Multi-Device Support**: Conflict resolution based on timestamps across devices
-- **Yearly Partitioning**: Separate backup files per year for faster sync (v3 format) 🆕
+- **Yearly Partitioning**: Separate backup files per year for faster sync (v3 format)
 - **Asset Backup**: Images and audio files uploaded separately to Google Drive
 - **Compression**: GZIP compression for backup files
 - **Offline Support**: Works offline, syncs when connection restored
 - **Error Recovery**: Automatic retry with exponential backoff
 - **Type-Safe**: No exceptions thrown to UI, uses `BackupResult<T>` pattern
-
-> **Note**: Version 3 introduces yearly backup partitioning for improved performance and scalability. See [Yearly Backup Migration](./yearly-backup-migration.md) for details.
 
 ### 4-Step Sync Process
 
@@ -123,23 +121,24 @@ Local DB Changes → BackupProvider → BackupRepository → [4 Steps] → Googl
 
 **`BackupLatestCheckerService`** (Step 2)
 
-- Fetches latest backup file from Google Drive
-- Downloads and decompresses backup content (GZIP)
+- Fetches yearly backup files from Google Drive `backups/` folder
+- Downloads and decompresses backup content for years that need syncing (GZIP)
 - Validates backup structure
-- Returns `BackupLatestCheckerResponse` with file info and content
+- Returns `BackupLatestCheckerResponse` with yearly file info and content
 
 **`BackupImporterService`** (Step 3)
 
-- Compares remote backup with local database
+- Compares remote yearly backups with local database
 - Only applies records with newer `updatedAt` timestamps
 - Uses `RestoreBackupService` for actual data insertion
 - Prevents overwriting newer local changes
 
 **`BackupUploaderService`** (Step 4)
 
-- Converts local databases to `BackupObject`
-- Compresses data with GZIP (v2 format)
-- Uploads to Google Drive with timestamped filename
+- Converts local databases to `BackupObject` per year
+- Compresses data with GZIP (v3 yearly format)
+- Uploads to Google Drive `backups/` folder with year-based filename
+- Uses atomic update for existing files, creates new files for new years
 - Returns uploaded file metadata
 
 **`RestoreBackupService`** (`utils/`)
@@ -151,8 +150,9 @@ Local DB Changes → BackupProvider → BackupRepository → [4 Steps] → Googl
 
 **`BackupDatabasesToBackupObjectService`** (`utils/`)
 
-- Serializes all database tables to JSON
-- Creates `BackupObject` with metadata (device info, timestamps)
+- Serializes database tables to JSON (optionally filtered by year)
+- Creates `BackupObject` with metadata (device info, timestamps, year)
+- Supports v3 yearly backups (when year provided) and legacy v2 format (for manual export)
 - Excludes sensitive data from backup
 
 **`JsonTablesToModelService`** (`utils/`)
@@ -172,7 +172,7 @@ Local DB Changes → BackupProvider → BackupRepository → [4 Steps] → Googl
 - `signIn()` / `signOut()` / `requestScope()`: Authentication management
 - `startStep1()` to `startStep4()`: Execute sync steps
 - `checkConnection()`: Verify internet and auth status
-- `getLastDbUpdatedAt()`: Track local changes timestamp
+- `getLastDbUpdatedAtByYear()`: Track local changes timestamp per year (v3)
 
 ### Provider (`lib/providers/backup_provider.dart`)
 
@@ -183,9 +183,11 @@ Local DB Changes → BackupProvider → BackupRepository → [4 Steps] → Googl
 **State Properties:**
 
 - `connectionStatus`: Current connection state (enum)
-- `lastSyncedAt`: When last successful sync occurred
-- `lastDbUpdatedAt`: When local data last changed
-- `synced`: Boolean indicating if local == remote
+- `lastSyncedAtByYear`: Map of year → last sync timestamp (v3)
+- `lastDbUpdatedAtByYear`: Map of year → last DB update timestamp (v3)
+- `lastSyncedAt`: Latest timestamp across all years (computed)
+- `lastDbUpdatedAt`: Latest timestamp across all years (computed)
+- `synced`: Boolean indicating if local == remote (all years)
 - `step1Message` to `step4Message`: Progress for each step
 
 **Key Methods:**
@@ -231,16 +233,32 @@ The system ensures data consistency across devices through timestamp-based confl
 
 ## Backup File Format
 
-### Version 3 (Yearly Partitioning) 🆕 _Planned_
+### Version 3 (Yearly Partitioning)
 
-Version 3 introduces yearly backup files for better performance and scalability.
+The current backup system uses yearly partitioning for better performance and scalability.
+
+**Google Drive Structure:**
+
+```
+appDataFolder/
+  ├── images/                    ← Image assets
+  ├── audio/                     ← Audio assets
+  └── backups/                   ← v3 yearly backups folder
+      ├── Backup::3::2025::1734350000000::iPhone 15 Pro::ABC123.zip
+      ├── Backup::3::2024::1704067200000::iPad Pro::DEF456.zip
+      └── Backup::3::2023::1672531200000::iPhone 15 Pro::ABC123.zip
+```
+
+**Filename Format**: `Backup::3::{year}::{timestamp}::{device_model}::{device_id}.zip`
+
+**Example**: `Backup::3::2025::1734350000000::iPhone 15 Pro::ABC123.zip`
 
 ```json
 {
   "version": 1,
+  "year": 2025,
   "meta_data": {
     "created_at": "2025-11-15T10:30:00.000Z",
-    "year": 2025,
     "device_model": "iPhone 15 Pro",
     "device_id": "ABC123DEF456"
   },
@@ -277,10 +295,10 @@ Version 3 introduces yearly backup files for better performance and scalability.
 
 **Key Changes**:
 
-- **Filename Format**: `Backup::3::{year}::{device_id}.zip` (removed device model, added year)
 - **Per-Year Files**: Separate backup file for each year (2025, 2024, 2023, etc.)
 - **Smart Sync**: Only upload/download years with changes since last sync
 - **Smaller Files**: Each file contains only one year's data (~2-3 MB vs 15+ MB)
+- **Year in Filename**: Year is explicitly part of the filename for easy identification
 
 **Benefits**:
 
@@ -289,9 +307,7 @@ Version 3 introduces yearly backup files for better performance and scalability.
 - 🔄 **Better Scalability**: Performance doesn't degrade with years of usage
 - 📊 **Easier Management**: View/restore specific years independently
 
-**Migration**: Automatic migration from v2 to v3 on first sync after upgrade. See [Yearly Backup Migration Guide](./yearly-backup-migration.md).
-
-### Version 2 (Current - Legacy)
+### Legacy Format (v1/v2)
 
 ```json
 {
@@ -313,10 +329,11 @@ Version 3 introduces yearly backup files for better performance and scalability.
 }
 ```
 
-**Filename Format**: `Backup::2::{timestamp}::{device_model}::{device_id}`
-**Compression**: GZIP compressed before upload
+**Filename Format (v2)**: `Backup::2::{timestamp}::{device_model}::{device_id}`
+**Filename Format (v1)**: `Backup::v1::{timestamp}::{device_model}.json`
+**Compression**: GZIP compressed (v2) or uncompressed JSON (v1)
 **Location**: Google Drive App Data folder (hidden from user)
-**Note**: Contains ALL records from ALL years in single file
+**Note**: Legacy format - contains ALL records from ALL years in single file. No longer created by current app versions.
 
 ### Asset Backup
 
@@ -475,7 +492,6 @@ When adding new features that need backup:
 
 ## Related Documentation
 
-- [Yearly Backup Migration](./yearly-backup-migration.md) - Migration from v2 to v3 yearly backups 🆕
 - [File Organization](./file-organization.md) - Project structure
 - [Architecture](./architecture.md) - Overall app architecture
 - [iOS Config](../development/ios-config.md) - Platform setup

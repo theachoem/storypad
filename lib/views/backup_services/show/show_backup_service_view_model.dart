@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -27,6 +29,14 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
   }) {
     backupProvider = context.read<BackupProvider>();
     load();
+  }
+  String? getLastSyncAt(BuildContext context) {
+    if (yearlyBackups == null || yearlyBackups!.isEmpty) return null;
+    final latest = yearlyBackups!.values
+        .map((e) => e.lastUpdatedAt)
+        .whereType<DateTime>()
+        .fold<DateTime?>(null, (prev, curr) => prev == null || curr.isAfter(prev) ? curr : prev);
+    return latest != null ? DateFormatHelper.yMEd_jmNullable(latest, context.locale) ?? '...' : null;
   }
 
   Future<void> load() async {

@@ -18,13 +18,13 @@ class BackupFileObject {
   BackupFileObject({
     required this.createdAt,
     required this.device,
-    this.version = '3',
+    String? version,
     this.year,
-  });
+  }) : version = version ?? (year != null ? '3' : '2');
 
   bool? get hasCompression => version == '2' || version == '3';
 
-  // v3: Backup::3::2025::1734350000000::iPhone123.zip (year-based)
+  // v3: Backup::3::2025::1734350000000::iPhone 15 Pro::iPhone123.zip (year-based)
   // v2: Backup::2::1731680400000::iPhone 15 Pro::ABC123.zip (legacy)
   // v1: Backup::v1::2022-06-14T17:44:47.097469::Pixel 5.json (legacy)
   String get fileName {
@@ -38,6 +38,7 @@ class BackupFileObject {
         version,
         year.toString(),
         createdAt.millisecondsSinceEpoch.toString(),
+        device.model,
         device.id,
       ].join(splitBy);
     }
@@ -71,16 +72,17 @@ class BackupFileObject {
 
       switch (version) {
         case "3":
-          // v3: Backup::3::2025::1734350000000::iPhone123
+          // v3: Backup::3::2025::1734350000000::iPhone 15 Pro::iPhone123
           try {
             int year = int.parse(value[2]);
             int millisecondsEpoch = int.parse(value[3]);
             DateTime createdAt = DateTime.fromMillisecondsSinceEpoch(millisecondsEpoch);
-            String deviceId = value[4];
+            String deviceModel = value[4];
+            String deviceId = value[5];
 
             return BackupFileObject(
               createdAt: createdAt,
-              device: DeviceInfoObject('', deviceId), // v3 doesn't store device model
+              device: DeviceInfoObject(deviceModel, deviceId),
               version: version!,
               year: year,
             );

@@ -11,20 +11,15 @@ import 'package:storypad/core/services/retry/retry_policy.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
-  final CloudFileObject? lastestBackupFile; // Deprecated: kept for legacy compatibility
-  final BackupObject? backupContent; // Deprecated: kept for legacy compatibility
   final Map<int, CloudFileObject>? yearlyBackupFiles; // v3: map of year -> CloudFileObject
   final Map<int, BackupObject>? yearlyBackupContents; // v3: map of year -> BackupObject
 
-  DateTime? get lastSyncedAt => lastestBackupFile?.getFileInfo()?.createdAt;
   Map<int, DateTime?>? get lastSyncedAtByYear {
     return yearlyBackupFiles?.map((year, file) => MapEntry(year, file.lastUpdatedAt));
   }
 
   BackupLatestCheckerResponse({
     required this.hasError,
-    this.lastestBackupFile,
-    this.backupContent,
     this.yearlyBackupFiles,
     this.yearlyBackupContents,
   });
