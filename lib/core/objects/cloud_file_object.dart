@@ -30,6 +30,8 @@ class CloudFileObject {
   }
 
   bool? get hasCompression => getFileInfo()?.hasCompression;
+  int? get year => getFileInfo()?.year;
+  DateTime? get lastUpdatedAt => getFileInfo()?.createdAt; // For v3, createdAt is actually the lastUpdatedAt timestamp
 
   // story2025-01-20 21:31:05.234761.zip
   BackupFileObject? getFileInfo() {

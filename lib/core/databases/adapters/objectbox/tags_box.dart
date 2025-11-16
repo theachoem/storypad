@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -12,34 +11,21 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   String get tableName => "tags";
 
+  @override
+  QueryIntegerProperty<TagObjectBox> get idProperty => TagObjectBox_.id;
+
+  @override
+  QueryStringProperty<TagObjectBox> get lastSavedDeviceIdProperty => TagObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<TagObjectBox> get permanentlyDeletedAtProperty => TagObjectBox_.permanentlyDeletedAt;
+
   CollectionDbModel<TagDbModel>? initialTags;
 
   @override
   Future<void> initilize() async {
     await super.initilize();
     initialTags = await where();
-  }
-
-  @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<TagObjectBox>? conditions = TagObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions.and(TagObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<TagObjectBox> query = box.query(conditions).order(TagObjectBox_.updatedAt, flags: Order.descending).build();
-    TagObjectBox? object = await query.findFirstAsync();
-    return object?.updatedAt;
-  }
-
-  @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<TagObjectBox> conditions = TagObjectBox_.permanentlyDeletedAt.notNull().and(
-      TagObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
   }
 
   @override
@@ -72,10 +58,19 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
 
     Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(TagObjectBox_.permanentlyDeletedAt.isNull());
+    if (createdYear != null) {
+      conditions = conditions.and(
+        TagObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
 

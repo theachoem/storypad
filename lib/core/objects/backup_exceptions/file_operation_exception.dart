@@ -16,6 +16,7 @@ class FileOperationException extends BackupException {
     this.operation, {
     super.context,
     super.isRetryable = true,
+    super.serviceType,
   });
 
   @override

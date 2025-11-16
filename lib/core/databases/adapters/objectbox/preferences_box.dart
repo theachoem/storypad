@@ -1,6 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
@@ -15,37 +14,32 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   String get tableName => "preferences";
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<PreferenceObjectBox>? conditions = PreferenceObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions = conditions.and(PreferenceObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<PreferenceObjectBox> query = box
-        .query(conditions)
-        .order(PreferenceObjectBox_.updatedAt, flags: Order.descending)
-        .build();
-    PreferenceObjectBox? object = await query.findFirstAsync();
-    return object?.updatedAt;
-  }
+  QueryIntegerProperty<PreferenceObjectBox> get idProperty => PreferenceObjectBox_.id;
 
   @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.permanentlyDeletedAt.notNull().and(
-      PreferenceObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
-  }
+  QueryStringProperty<PreferenceObjectBox> get lastSavedDeviceIdProperty => PreferenceObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<PreferenceObjectBox> get permanentlyDeletedAtProperty => PreferenceObjectBox_.permanentlyDeletedAt;
 
   @override
   QueryBuilder<PreferenceObjectBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
+
     Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(PreferenceObjectBox_.permanentlyDeletedAt.isNull());
+    if (createdYear != null) {
+      conditions = conditions.and(
+        PreferenceObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
+
     return box.query(conditions);
   }
 

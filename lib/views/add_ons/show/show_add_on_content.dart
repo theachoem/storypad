@@ -80,7 +80,7 @@ class _ShowAddOnContent extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.only(top: 4.0),
                   child: OutlinedButton(
-                    onPressed: () => provider.signIn(context),
+                    onPressed: () => provider.signIn(context, BackupServiceType.google_drive),
                     child: const Text('Sign In'),
                   ),
                 ),

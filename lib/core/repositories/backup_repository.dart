@@ -9,17 +9,20 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:storypad/core/services/backup_sync_steps/backup_importer_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_latest_checker_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_images_uploader_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_uploader_service.dart';
-import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
+import 'package:storypad/core/services/backups/google_drive_client.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 
@@ -64,6 +67,14 @@ class BackupRepository {
   GoogleUserObject? get currentUser => googleDriveClient.currentUser;
   bool get isSignedIn => currentUser != null;
 
+  List<BackupCloudService> get services => [
+    googleDriveClient,
+  ];
+
+  BackupCloudService getService(BackupServiceType serviceType) {
+    return services.where((service) => service.serviceType == serviceType).first;
+  }
+
   Future<BackupResult<bool>> requestScope() async {
     try {
       final result = await googleDriveClient.requestScope();
@@ -80,9 +91,9 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<bool>> signIn() async {
+  Future<BackupResult<bool>> signIn(BackupServiceType serviceType) async {
     try {
-      final result = await googleDriveClient.signIn();
+      final result = await getService(serviceType).signIn();
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
@@ -96,9 +107,9 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<void>> signOut() async {
+  Future<BackupResult<void>> signOut(BackupServiceType serviceType) async {
     try {
-      await googleDriveClient.signOut();
+      await getService(serviceType).signOut();
       return const BackupResult.success(null);
     } catch (e) {
       return BackupResult.failure(
@@ -119,12 +130,10 @@ class BackupRepository {
 
   Future<BackupResult<bool>> startStep1() async {
     try {
-      final result = await step1ImagesUploader.start(googleDriveClient);
+      final result = await step1ImagesUploader.start(services);
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
-      if (e.requiresSignOut) {
-        await googleDriveClient.signOut();
-      }
+      if (e.requiresSignOut && e.serviceType != null) await signOut(e.serviceType!);
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
       if (e is ArgumentError) {
@@ -143,17 +152,15 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<BackupLatestCheckerResponse>> startStep2(DateTime? lastDbUpdatedAt) async {
+  Future<BackupResult<BackupLatestCheckerResponse>> startStep2(Map<int, DateTime?>? lastDbUpdatedAtByYear) async {
     try {
       final result = await step2LatestBackupChecker.start(
-        googleDriveClient,
-        lastDbUpdatedAt,
+        services,
+        lastDbUpdatedAtByYear,
       );
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
-      if (e.requiresSignOut) {
-        await googleDriveClient.signOut();
-      }
+      if (e.requiresSignOut && e.serviceType != null) await signOut(e.serviceType!);
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
       if (e is ArgumentError) {
@@ -174,15 +181,15 @@ class BackupRepository {
   }
 
   Future<BackupResult<bool>> startStep3(
-    BackupObject? backupContent,
-    DateTime? lastSyncedAt,
-    DateTime? lastDbUpdatedAt,
+    Map<int, BackupObject>? yearlyBackupContents,
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
     try {
       final result = await step3LatestBackupImporter.start(
-        backupContent,
-        lastSyncedAt,
-        lastDbUpdatedAt,
+        yearlyBackupContents,
+        lastSyncedAtByYear,
+        lastDbUpdatedAtByYear,
       );
       return BackupResult.success(result);
     } catch (e) {
@@ -203,18 +210,21 @@ class BackupRepository {
     }
   }
 
-  Future<BackupResult<BackupUploaderResponse>> startStep4(DateTime? lastSyncedAt, DateTime? lastDbUpdatedAt) async {
+  Future<BackupResult<BackupUploaderResponse>> startStep4(
+    Map<int, DateTime?>? lastSyncedAtByYear,
+    Map<int, DateTime?>? lastDbUpdatedAtByYear,
+    Map<int, CloudFileObject>? existingYearlyBackups,
+  ) async {
     try {
       final result = await step4NewBackupUploader.start(
-        googleDriveClient,
-        lastSyncedAt,
-        lastDbUpdatedAt,
+        services,
+        lastSyncedAtByYear,
+        lastDbUpdatedAtByYear,
+        existingYearlyBackups,
       );
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
-      if (e.requiresSignOut) {
-        await googleDriveClient.signOut();
-      }
+      if (e.requiresSignOut && e.serviceType != null) await signOut(e.serviceType!);
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
       if (e is ArgumentError) {
@@ -250,23 +260,28 @@ class BackupRepository {
         return const BackupResult.success(BackupConnectionStatus.noInternet);
       }
 
-      await googleDriveClient.reauthenticateIfNeeded();
-      await googleDriveClient.canAccessRequestedScopes();
+      // Check connection for all services
+      for (final service in services) {
+        if (!service.isSignedIn) continue;
 
-      return const BackupResult.success(BackupConnectionStatus.readyToSync);
-    } on exp.AuthException catch (e) {
-      if (e.requiresSignOut) {
-        await googleDriveClient.signOut();
+        try {
+          await service.reauthenticateIfNeeded();
+          await service.canAccessRequestedScopes();
+        } on exp.AuthException catch (e) {
+          if (e.requiresSignOut && e.serviceType != null) await signOut(e.serviceType!);
+
+          final status = switch (e.type) {
+            exp.AuthExceptionType.tokenExpired => BackupConnectionStatus.needGoogleDrivePermission,
+            exp.AuthExceptionType.tokenRevoked => BackupConnectionStatus.needGoogleDrivePermission,
+            exp.AuthExceptionType.insufficientScopes => BackupConnectionStatus.needGoogleDrivePermission,
+            _ => BackupConnectionStatus.unknownError,
+          };
+
+          return BackupResult.success(status);
+        }
       }
 
-      final status = switch (e.type) {
-        exp.AuthExceptionType.tokenExpired => BackupConnectionStatus.needGoogleDrivePermission,
-        exp.AuthExceptionType.tokenRevoked => BackupConnectionStatus.needGoogleDrivePermission,
-        exp.AuthExceptionType.insufficientScopes => BackupConnectionStatus.needGoogleDrivePermission,
-        _ => BackupConnectionStatus.unknownError,
-      };
-
-      return BackupResult.success(status);
+      return const BackupResult.success(BackupConnectionStatus.readyToSync);
     } on exp.NetworkException {
       return const BackupResult.success(BackupConnectionStatus.noInternet);
     } catch (e) {
@@ -274,22 +289,25 @@ class BackupRepository {
     }
   }
 
-  Future<DateTime?> getLastDbUpdatedAt() async {
-    DateTime? updatedAt;
+  Future<Map<int, DateTime?>> getLastDbUpdatedAtByYear() async {
+    final Map<int, DateTime?> result = {};
 
     for (var db in BackupRepository.databases) {
-      DateTime? newUpdatedAt = await db.getLastUpdatedAt();
-      if (newUpdatedAt == null) continue;
+      final Map<int, DateTime?> yearUpdates = await db.getLastUpdatedAtByYear();
 
-      if (updatedAt != null) {
-        if (newUpdatedAt.isBefore(updatedAt)) continue;
-        updatedAt = newUpdatedAt;
-      } else {
-        updatedAt = newUpdatedAt;
+      for (var entry in yearUpdates.entries) {
+        final year = entry.key;
+        final dateTime = entry.value;
+
+        if (dateTime == null) continue;
+
+        if (result[year] == null || dateTime.isAfter(result[year]!)) {
+          result[year] = dateTime;
+        }
       }
     }
 
-    return updatedAt;
+    return result;
   }
 
   void dispose() {

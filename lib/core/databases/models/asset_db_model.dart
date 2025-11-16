@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
@@ -15,8 +16,6 @@ AssetType _assetTypeFromJson(String? json) => AssetType.fromValue(json);
 @CopyWith()
 @JsonSerializable()
 class AssetDbModel extends BaseDbModel {
-  static const String cloudId = "google_drive";
-
   // ignore: constant_identifier_names
   static const String DURATION_KEY = "duration_in_ms";
 
@@ -148,7 +147,7 @@ class AssetDbModel extends BaseDbModel {
   }
 
   List<String>? getGoogleDriveForEmails() {
-    return cloudDestinations[cloudId]?.keys.toList();
+    return cloudDestinations[BackupServiceType.google_drive.id]?.keys.toList();
   }
 
   String? getGoogleDriveUrlForEmail(String email) {
@@ -160,7 +159,7 @@ class AssetDbModel extends BaseDbModel {
   }
 
   String? getGoogleDriveIdForEmail(String email) {
-    return cloudDestinations[cloudId]?[email]?['file_id'];
+    return cloudDestinations[BackupServiceType.google_drive.id]?[email]?['file_id'];
   }
 
   Future<AssetDbModel?> save({
@@ -186,14 +185,15 @@ class AssetDbModel extends BaseDbModel {
     return id != null ? AssetDbModel.db.find(id) : null;
   }
 
-  AssetDbModel copyWithGoogleDriveCloudFile({
+  AssetDbModel copyWithCloudFile({
+    required BackupServiceType serviceType,
     required CloudFileObject cloudFile,
     required String email,
   }) {
     Map<String, Map<String, Map<String, String>>> newCloudDestinations = {...cloudDestinations};
 
-    newCloudDestinations[cloudId] ??= {};
-    newCloudDestinations[cloudId]![email] = {
+    newCloudDestinations[serviceType.id] ??= {};
+    newCloudDestinations[serviceType.id]![email] = {
       'file_id': cloudFile.id,
       'file_name': cloudFile.fileName!,
     };

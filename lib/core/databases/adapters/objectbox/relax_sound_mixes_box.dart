@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/relax_sound_model.dart';
@@ -14,38 +13,31 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
   String get tableName => "relax_sound_mixes";
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<RelaxSoundMixBox>? conditions = RelaxSoundMixBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions.and(RelaxSoundMixBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<RelaxSoundMixBox> query = box
-        .query(conditions)
-        .order(RelaxSoundMixBox_.updatedAt, flags: Order.descending)
-        .build();
-    RelaxSoundMixBox? object = await query.findFirstAsync();
-
-    return object?.updatedAt;
-  }
+  QueryIntegerProperty<RelaxSoundMixBox> get idProperty => RelaxSoundMixBox_.id;
 
   @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.permanentlyDeletedAt.notNull().and(
-      RelaxSoundMixBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
-  }
+  QueryStringProperty<RelaxSoundMixBox> get lastSavedDeviceIdProperty => RelaxSoundMixBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<RelaxSoundMixBox> get permanentlyDeletedAtProperty => RelaxSoundMixBox_.permanentlyDeletedAt;
 
   @override
   QueryBuilder<RelaxSoundMixBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
+
     Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(RelaxSoundMixBox_.permanentlyDeletedAt.isNull());
+    if (createdYear != null) {
+      conditions = conditions.and(
+        RelaxSoundMixBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     QueryBuilder<RelaxSoundMixBox> queryBuilder = box.query(conditions);
     queryBuilder.order(RelaxSoundMixBox_.index);

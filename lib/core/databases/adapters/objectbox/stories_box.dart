@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/events_box.dart';
@@ -18,6 +17,15 @@ part 'helpers/stories_box_transformer.dart';
 class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   @override
   String get tableName => "stories";
+
+  @override
+  QueryIntegerProperty<StoryObjectBox> get idProperty => StoryObjectBox_.id;
+
+  @override
+  QueryStringProperty<StoryObjectBox> get lastSavedDeviceIdProperty => StoryObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<StoryObjectBox> get permanentlyDeletedAtProperty => StoryObjectBox_.permanentlyDeletedAt;
 
   Future<void> migrateDataToV2() async {
     final conditions = StoryObjectBox_.id
@@ -40,34 +48,6 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     debugPrint('🤾‍♀️ Migrated Stories: $count');
-  }
-
-  @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    debugPrint("Triggering $tableName#getLastUpdatedAt 🍎");
-
-    Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions.and(StoryObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<StoryObjectBox> query = box
-        .query(conditions)
-        .order(StoryObjectBox_.updatedAt, flags: Order.descending)
-        .build();
-    StoryObjectBox? object = await query.findFirstAsync();
-
-    return object?.updatedAt;
-  }
-
-  @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<StoryObjectBox> conditions = StoryObjectBox_.permanentlyDeletedAt.notNull().and(
-      StoryObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
   }
 
   Future<Map<int, int>> getStoryCountsByYear({
@@ -250,6 +230,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     String? query = filters?["query"];
     String? type = filters?["type"];
     List<String>? types = filters?["types"];
@@ -287,6 +268,14 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (excludeYears != null) conditions = conditions.and(StoryObjectBox_.year.notOneOf(excludeYears));
     if (month != null) conditions = conditions.and(StoryObjectBox_.month.equals(month));
     if (day != null) conditions = conditions.and(StoryObjectBox_.day.equals(day));
+    if (createdYear != null) {
+      conditions = conditions.and(
+        StoryObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     if (query != null) {
       conditions = conditions.and(

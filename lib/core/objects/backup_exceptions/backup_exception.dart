@@ -1,3 +1,5 @@
+import 'package:storypad/core/services/backups/backup_service_type.dart';
+
 part 'auth_exception.dart';
 part 'configuration_exception.dart';
 part 'file_operation_exception.dart';
@@ -10,11 +12,13 @@ abstract class BackupException implements Exception {
   final String message;
   final String? context;
   final bool isRetryable;
+  final BackupServiceType? serviceType;
 
   const BackupException(
     this.message, {
     this.context,
     this.isRetryable = false,
+    required this.serviceType,
   });
 
   @override

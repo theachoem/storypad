@@ -7,6 +7,7 @@ class TestBackupException extends BackupException {
     super.message, {
     super.context,
     super.isRetryable = false,
+    super.serviceType,
   });
 }
 

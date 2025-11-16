@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_connect_google_drive_button.dart';
@@ -45,7 +46,7 @@ class SpConnectWithGoogleDriveSheet extends BaseBottomSheet {
           const SizedBox(height: 16.0),
           SpConnectGoogleDriveButton(
             onPressed: () async {
-              await context.read<BackupProvider>().signIn(context);
+              await context.read<BackupProvider>().signIn(context, BackupServiceType.google_drive);
               if (context.mounted) Navigator.maybePop(context);
             },
           ),

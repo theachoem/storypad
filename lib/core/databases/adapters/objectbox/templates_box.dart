@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
@@ -15,35 +14,20 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   String get tableName => "templates";
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<TemplateObjectBox>? conditions = TemplateObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions.and(TemplateObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<TemplateObjectBox> query = box
-        .query(conditions)
-        .order(TemplateObjectBox_.updatedAt, flags: Order.descending)
-        .build();
-    TemplateObjectBox? object = await query.findFirstAsync();
-    return object?.updatedAt;
-  }
+  QueryIntegerProperty<TemplateObjectBox> get idProperty => TemplateObjectBox_.id;
 
   @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<TemplateObjectBox> conditions = TemplateObjectBox_.permanentlyDeletedAt.notNull().and(
-      TemplateObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
-  }
+  QueryStringProperty<TemplateObjectBox> get lastSavedDeviceIdProperty => TemplateObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<TemplateObjectBox> get permanentlyDeletedAtProperty => TemplateObjectBox_.permanentlyDeletedAt;
 
   @override
   QueryBuilder<TemplateObjectBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
     bool? archived = filters?["archived"] == true;
     String? galleryTemplateId = filters?["gallery_template_id"];
@@ -59,6 +43,15 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
 
     if (galleryTemplateId != null) {
       conditions = conditions.and(TemplateObjectBox_.galleryTemplateId.equals(galleryTemplateId));
+    }
+
+    if (createdYear != null) {
+      conditions = conditions.and(
+        TemplateObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
     }
 
     QueryBuilder<TemplateObjectBox> queryBuilder = box.query(conditions);

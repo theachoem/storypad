@@ -19,7 +19,7 @@ class _BackupTile extends StatelessWidget {
       action = FilledButton.icon(
         icon: Icon(SpIcons.googleDrive),
         label: Text(tr('button.connect')),
-        onPressed: () => provider.signIn(context),
+        onPressed: () => provider.signIn(context, BackupServiceType.google_drive),
       );
     } else {
       switch (provider.connectionStatus) {
@@ -50,7 +50,7 @@ class _BackupTile extends StatelessWidget {
           action = FilledButton.icon(
             icon: Icon(SpIcons.googleDrive),
             label: Text(tr('button.grant_permission')),
-            onPressed: () => provider.requestScope(context),
+            onPressed: () => provider.requestScope(context, BackupServiceType.google_drive),
           );
           break;
         case BackupConnectionStatus.readyToSync:
@@ -136,7 +136,7 @@ class _BackupTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          onTap: () => BackupsRoute().push(context),
+          onTap: () => const BackupServicesRoute().push(context, rootNavigator: true),
           leading: leading,
           title: title,
           subtitle: subtitle,

@@ -15,6 +15,7 @@ class QuotaException extends BackupException {
     this.type, {
     super.context,
     super.isRetryable = false,
+    super.serviceType,
   });
 
   @override

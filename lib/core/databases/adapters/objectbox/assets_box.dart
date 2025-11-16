@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
@@ -11,35 +10,20 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   String get tableName => "assets";
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<AssetObjectBox>? conditions = AssetObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions = conditions.and(AssetObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<AssetObjectBox> query = box
-        .query(conditions)
-        .order(AssetObjectBox_.updatedAt, flags: Order.descending)
-        .build();
-    AssetObjectBox? object = await query.findFirstAsync();
-    return object?.updatedAt;
-  }
+  QueryIntegerProperty<AssetObjectBox> get idProperty => AssetObjectBox_.id;
 
   @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<AssetObjectBox> conditions = AssetObjectBox_.permanentlyDeletedAt.notNull().and(
-      AssetObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
-  }
+  QueryStringProperty<AssetObjectBox> get lastSavedDeviceIdProperty => AssetObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<AssetObjectBox> get permanentlyDeletedAtProperty => AssetObjectBox_.permanentlyDeletedAt;
 
   @override
   QueryBuilder<AssetObjectBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     AssetType? type = filters?["type"];
     List<int>? ids = filters?["ids"]?.cast<int>();
     int? tag = filters?["tag"];
@@ -61,6 +45,15 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
 
     if (ids != null && ids.isNotEmpty) {
       conditions = conditions.and(AssetObjectBox_.id.oneOf(ids));
+    }
+
+    if (createdYear != null) {
+      conditions = conditions.and(
+        AssetObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
     }
 
     QueryBuilder<AssetObjectBox> queryBuilder = box.query(conditions);

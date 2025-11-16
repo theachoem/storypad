@@ -6,6 +6,7 @@ class BackupObject {
   final BackupFileObject fileInfo;
 
   final int version;
+  final int? year; // For v3 yearly backups - indicates which year this backup contains
 
   int? originalFileSize;
 
@@ -17,24 +18,27 @@ class BackupObject {
     required this.tables,
     required this.fileInfo,
     this.version = currentVersion,
+    this.year,
   });
 
   static BackupObject fromContents(Map<String, dynamic> contents) {
     return BackupObject(
       version: int.tryParse(contents['version'].toString()) ?? currentVersion,
       tables: contents['tables'],
+      year: contents['year'] != null ? int.tryParse(contents['year'].toString()) : null,
       fileInfo: BackupFileObject(
         createdAt: DateTime.parse(contents['meta_data']['created_at']),
         device: DeviceInfoObject(
           contents['meta_data']['device_model'],
           contents['meta_data']['device_id'],
         ),
+        year: contents['year'] != null ? int.tryParse(contents['year'].toString()) : null,
       ),
     );
   }
 
   Map<String, dynamic> toContents() {
-    return {
+    final contents = {
       'version': version,
       'tables': tables,
       'meta_data': {
@@ -43,5 +47,11 @@ class BackupObject {
         'created_at': fileInfo.createdAt.toIso8601String(),
       },
     };
+
+    if (year != null) {
+      contents['year'] = year!;
+    }
+
+    return contents;
   }
 }

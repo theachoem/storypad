@@ -9,7 +9,17 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   String get tableName;
 
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly});
+  /// Returns a map where each key is a year (as an integer) and the value is the
+  /// last updated timestamp (`DateTime?`) for records in that year.
+  ///
+  /// The [fromThisDeviceOnly] parameter, if true, restricts the results to records
+  /// that were last updated from the current device only. If false or null, results
+  /// include updates from all devices.
+  ///
+  /// This method is used in the backup flow to determine which records have been
+  /// updated in each year, and to help identify which records need to be backed up
+  /// or synchronized based on their last update time.
+  Future<Map<int, DateTime?>> getLastUpdatedAtByYear({bool? fromThisDeviceOnly});
   Future<T?> find(int id, {bool returnDeleted = false});
 
   Future<int> count({
