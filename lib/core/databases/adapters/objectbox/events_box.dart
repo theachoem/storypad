@@ -10,30 +10,13 @@ class EventsBox extends BaseBox<EventObjectBox, EventDbModel> {
   String get tableName => "events";
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) async {
-    Condition<EventObjectBox>? conditions = EventObjectBox_.id.notNull();
-
-    if (fromThisDeviceOnly == true) {
-      conditions.and(EventObjectBox_.lastSavedDeviceId.equals(kDeviceInfo.id));
-    }
-
-    Query<EventObjectBox> query = box
-        .query(conditions)
-        .order(EventObjectBox_.updatedAt, flags: Order.descending)
-        .build();
-    EventObjectBox? object = await query.findFirstAsync();
-
-    return object?.updatedAt;
-  }
+  QueryIntegerProperty<EventObjectBox> get idProperty => EventObjectBox_.id;
 
   @override
-  Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    Condition<EventObjectBox> conditions = EventObjectBox_.permanentlyDeletedAt.notNull().and(
-      EventObjectBox_.permanentlyDeletedAt.lessOrEqualDate(sevenDaysAgo),
-    );
-    await box.query(conditions).build().removeAsync();
-  }
+  QueryStringProperty<EventObjectBox> get lastSavedDeviceIdProperty => EventObjectBox_.lastSavedDeviceId;
+
+  @override
+  QueryDateProperty<EventObjectBox> get permanentlyDeletedAtProperty => EventObjectBox_.permanentlyDeletedAt;
 
   @override
   QueryBuilder<EventObjectBox> buildQuery({

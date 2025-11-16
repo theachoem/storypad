@@ -14,6 +14,8 @@ abstract class BaseObjectBox<T> {
 
   void touch();
 
+  DateTime get createdAt;
+  DateTime get updatedAt;
   DateTime? permanentlyDeletedAt;
   String? lastSavedDeviceId;
 }
@@ -39,6 +41,7 @@ class StoryObjectBox extends BaseObjectBox {
   // TODO: removed after May 2025
   bool? showDayCount;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
@@ -128,9 +131,11 @@ class TagObjectBox extends BaseObjectBox {
   bool? starred;
   String? emoji;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
@@ -183,9 +188,11 @@ class AssetObjectBox extends BaseObjectBox {
 
   List<int>? tags;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
@@ -232,9 +239,11 @@ class EventObjectBox extends BaseObjectBox {
   int day;
   String eventType; // "period"
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
@@ -278,9 +287,11 @@ class PreferenceObjectBox extends BaseObjectBox {
   String key;
   String value;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
@@ -327,9 +338,11 @@ class TemplateObjectBox extends BaseObjectBox {
   String? galleryTemplateId;
   String? preferences;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
@@ -382,9 +395,11 @@ class RelaxSoundMixBox extends BaseObjectBox {
   String name;
   String sounds;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
+  @override
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 

@@ -274,22 +274,25 @@ class BackupRepository {
     }
   }
 
-  Future<DateTime?> getLastDbUpdatedAt() async {
-    DateTime? updatedAt;
+  Future<Map<int, DateTime?>> getLastDbUpdatedAtByYear() async {
+    final Map<int, DateTime?> result = {};
 
     for (var db in BackupRepository.databases) {
-      DateTime? newUpdatedAt = await db.getLastUpdatedAt();
-      if (newUpdatedAt == null) continue;
+      final Map<int, DateTime?> yearUpdates = await db.getLastUpdatedAtByYear();
 
-      if (updatedAt != null) {
-        if (newUpdatedAt.isBefore(updatedAt)) continue;
-        updatedAt = newUpdatedAt;
-      } else {
-        updatedAt = newUpdatedAt;
+      for (var entry in yearUpdates.entries) {
+        final year = entry.key;
+        final dateTime = entry.value;
+
+        if (dateTime == null) continue;
+
+        if (result[year] == null || dateTime.isAfter(result[year]!)) {
+          result[year] = dateTime;
+        }
       }
     }
 
-    return updatedAt;
+    return result;
   }
 
   void dispose() {

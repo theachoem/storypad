@@ -21,7 +21,41 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     return _box!;
   }
 
-  Future<void> cleanupOldDeletedRecords();
+  QueryIntegerProperty<B> get idProperty;
+  QueryStringProperty<B> get lastSavedDeviceIdProperty;
+  QueryDateProperty<B> get permanentlyDeletedAtProperty;
+
+  Future<void> cleanupOldDeletedRecords() async {
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
+      permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
+    );
+    await box.query(conditions).build().removeAsync();
+  }
+
+  @override
+  Future<Map<int, DateTime?>> getLastUpdatedAtByYear({bool? fromThisDeviceOnly}) async {
+    Condition<B>? conditions = idProperty.notNull();
+
+    if (fromThisDeviceOnly == true) {
+      conditions = conditions.and(lastSavedDeviceIdProperty.equals(kDeviceInfo.id));
+    }
+
+    conditions = conditions.and(permanentlyDeletedAtProperty.isNull());
+
+    final objects = await box.query(conditions).build().findAsync();
+
+    Map<int, DateTime?> lastUpdatedByYear = {};
+    for (var obj in objects) {
+      int year = obj.createdAt.year;
+      if (lastUpdatedByYear[year] == null || obj.updatedAt.isAfter(lastUpdatedByYear[year]!)) {
+        lastUpdatedByYear[year] = obj.updatedAt;
+      }
+    }
+
+    return lastUpdatedByYear;
+  }
+
   Future<B> modelToObject(T model, [Map<String, dynamic>? options]);
   Future<List<B>> modelsToObjects(List<T> models, [Map<String, dynamic>? options]);
 

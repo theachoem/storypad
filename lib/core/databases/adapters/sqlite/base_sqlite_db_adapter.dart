@@ -77,11 +77,6 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
   }
 
   @override
-  Future<DateTime?> getLastUpdatedAt({bool? fromThisDeviceOnly}) {
-    throw UnimplementedError();
-  }
-
-  @override
   BaseDbModel modelFromJson(Map<String, dynamic> json) {
     throw UnimplementedError();
   }
@@ -91,6 +86,11 @@ class BaseSqliteDbAdapter extends BaseDbAdapter {
     List<BaseDbModel> records, {
     bool runCallbacks = true,
   }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<int, DateTime?>> getLastUpdatedAtByYear({bool? fromThisDeviceOnly}) {
     throw UnimplementedError();
   }
 }
