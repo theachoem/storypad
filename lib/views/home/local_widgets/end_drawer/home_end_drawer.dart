@@ -12,7 +12,7 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
-import 'package:storypad/views/backups/backups_view.dart';
+import 'package:storypad/views/backup_services/backup_services_view.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
