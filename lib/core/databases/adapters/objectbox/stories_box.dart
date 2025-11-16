@@ -250,6 +250,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     String? query = filters?["query"];
     String? type = filters?["type"];
     List<String>? types = filters?["types"];
@@ -287,6 +288,14 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (excludeYears != null) conditions = conditions.and(StoryObjectBox_.year.notOneOf(excludeYears));
     if (month != null) conditions = conditions.and(StoryObjectBox_.month.equals(month));
     if (day != null) conditions = conditions.and(StoryObjectBox_.day.equals(day));
+    if (createdYear != null) {
+      conditions = conditions.and(
+        StoryObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     if (query != null) {
       conditions = conditions.and(

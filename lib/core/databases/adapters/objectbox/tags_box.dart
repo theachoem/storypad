@@ -72,10 +72,19 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
 
     Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(TagObjectBox_.permanentlyDeletedAt.isNull());
+    if (createdYear != null) {
+      conditions = conditions.and(
+        TagObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
 

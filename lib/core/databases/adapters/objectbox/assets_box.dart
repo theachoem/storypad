@@ -40,6 +40,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     AssetType? type = filters?["type"];
     List<int>? ids = filters?["ids"]?.cast<int>();
     int? tag = filters?["tag"];
@@ -61,6 +62,15 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
 
     if (ids != null && ids.isNotEmpty) {
       conditions = conditions.and(AssetObjectBox_.id.oneOf(ids));
+    }
+
+    if (createdYear != null) {
+      conditions = conditions.and(
+        AssetObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
     }
 
     QueryBuilder<AssetObjectBox> queryBuilder = box.query(conditions);

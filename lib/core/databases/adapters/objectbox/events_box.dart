@@ -40,6 +40,7 @@ class EventsBox extends BaseBox<EventObjectBox, EventDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
     int? month = filters?["month"];
     int? day = filters?["day"];
@@ -53,6 +54,14 @@ class EventsBox extends BaseBox<EventObjectBox, EventDbModel> {
     if (month != null) conditions = conditions.and(EventObjectBox_.month.equals(month));
     if (day != null) conditions = conditions.and(EventObjectBox_.day.equals(day));
     if (eventType != null) conditions = conditions.and(EventObjectBox_.eventType.equals(eventType));
+    if (createdYear != null) {
+      conditions = conditions.and(
+        EventObjectBox_.createdAt.betweenDate(
+          DateTime(createdYear, 1, 1),
+          DateTime(createdYear, 12, 31, 23, 59, 59),
+        ),
+      );
+    }
 
     QueryBuilder<EventObjectBox> queryBuilder = box.query(conditions);
 
