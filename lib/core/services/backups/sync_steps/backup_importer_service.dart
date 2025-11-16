@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/backup_object.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 
 class BackupImporterService {
   final RestoreBackupService restoreService;

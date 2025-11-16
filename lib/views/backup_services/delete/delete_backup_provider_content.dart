@@ -30,7 +30,7 @@ class _DeleteBackupProviderContent extends StatelessWidget {
             icon: const Icon(SpIcons.deleteForever),
             label: const Text("Permanent Delete"),
             onPressed: () {},
-          )
+          ),
         ],
       ),
     );

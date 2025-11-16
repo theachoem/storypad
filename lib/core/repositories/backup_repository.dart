@@ -11,16 +11,17 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:storypad/core/services/backup_sync_steps/backup_importer_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_latest_checker_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_images_uploader_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_uploader_service.dart';
-import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
+import 'package:storypad/core/services/backups/google_drive_client.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 
@@ -64,6 +65,10 @@ class BackupRepository {
   // currentUser & isSignedIn are load in initializer - before rendering UI.
   GoogleUserObject? get currentUser => googleDriveClient.currentUser;
   bool get isSignedIn => currentUser != null;
+
+  List<BackupCloudService> get services => [
+    googleDriveClient,
+  ];
 
   Future<BackupResult<bool>> requestScope() async {
     try {

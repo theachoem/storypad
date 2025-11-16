@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/constants/app_constants.dart';

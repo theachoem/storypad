@@ -14,7 +14,7 @@ class _BackupServicesContent extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 8.0),
-          const GoogleDriveTile(),
+          ..._buildCloudServiceTiles(context),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
@@ -24,5 +24,18 @@ class _BackupServicesContent extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildCloudServiceTiles(BuildContext context) {
+    final tiles = <Widget>[];
+
+    for (int i = 0; i < viewModel.services.length; i++) {
+      tiles.add(
+        BackupServiceTile(service: viewModel.services[i]),
+      );
+      if (i < viewModel.services.length - 1) tiles.add(const Divider());
+    }
+
+    return tiles;
   }
 }

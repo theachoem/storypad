@@ -1,4 +1,4 @@
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/views/backup_services/delete/delete_backup_provider_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,11 @@ import 'show_backup_service_view_model.dart';
 part 'show_backup_service_content.dart';
 
 class ShowBackupServiceRoute extends BaseRoute {
-  const ShowBackupServiceRoute();
+  final BackupCloudService service;
+
+  const ShowBackupServiceRoute({
+    required this.service,
+  });
 
   @override
   Widget buildPage(BuildContext context) => ShowBackupServiceView(params: this);

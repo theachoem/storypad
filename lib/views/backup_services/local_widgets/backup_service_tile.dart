@@ -4,35 +4,43 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/show/show_backup_service_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
-class GoogleDriveTile extends StatelessWidget {
-  const GoogleDriveTile({
+/// Generic backup service tile that displays a cloud service status
+/// Works with any BackupCloudService implementation
+class BackupServiceTile extends StatelessWidget {
+  final BackupCloudService service;
+  final VoidCallback? onManagePressed;
+
+  const BackupServiceTile({
     super.key,
+    required this.service,
+    this.onManagePressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BackupProvider>(context);
-    final service = provider.repository.googleDriveClient;
+    final metadata = service.serviceType;
 
-    Widget leading = Icon(SpIcons.googleDrive);
+    Widget leading = Icon(metadata.icon);
     Widget? trailing;
     Widget title = RichText(
       textScaler: MediaQuery.textScalerOf(context),
       text: TextSpan(
-        text: 'Google Drive ',
+        text: '${metadata.displayName} ',
         style: TextTheme.of(context).bodyLarge,
         children: [
-          if (provider.currentUser?.photoUrl != null)
+          if (service.currentUser?.photoUrl != null)
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  provider.currentUser!.photoUrl!,
+                  service.currentUser!.photoUrl!,
                 ),
                 radius: 8.0,
               ),
@@ -44,10 +52,11 @@ class GoogleDriveTile extends StatelessWidget {
     Widget subtitle = const Text("...");
     VoidCallback? onPressed;
 
-    if (!provider.isSignedIn) {
+    if (!service.isSignedIn) {
       trailing = Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
-      onPressed = () => provider.signIn(context);
+      // TODO: implement service-specific sign in
+      // onPressed = () => provider.signIn(context, service: service);
     } else {
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
@@ -63,7 +72,8 @@ class GoogleDriveTile extends StatelessWidget {
         case BackupConnectionStatus.needGoogleDrivePermission:
           trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
-          onPressed = () => provider.requestScope(context);
+          // TODO: implement service-specific scope request
+          // onPressed = () => provider.requestScope(context, service: service);
           break;
         case BackupConnectionStatus.readyToSync:
           trailing = Icon(
@@ -93,7 +103,7 @@ class GoogleDriveTile extends StatelessWidget {
             ) ??
             '...',
       );
-      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
+      onPressed = onManagePressed ?? () => ShowBackupServiceRoute(service: service).push(context);
       trailing = Icon(
         SpIcons.cloudDone,
         color: ColorScheme.of(context).bootstrap.success.color,
@@ -106,7 +116,7 @@ class GoogleDriveTile extends StatelessWidget {
         child: CircularProgressIndicator.adaptive(),
       );
       subtitle = Text(tr("general.syncing"));
-      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
+      onPressed = onManagePressed ?? () => ShowBackupServiceRoute(service: service).push(context);
 
       if (provider.step1Message != null) subtitle = Text("${tr("general.syncing")} 1/4");
       if (provider.step2Message != null) subtitle = Text("${tr("general.syncing")} 2/4");

@@ -8,6 +8,8 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/storages/google_user_storage.dart';
 
 // ignore: depend_on_referenced_packages
@@ -25,11 +27,18 @@ class _GoogleAuthClient extends http.BaseClient {
   }
 }
 
-// These class aren responsible for call google drive APIs.
+// These class are responsible for calling google drive APIs.
 // Exception should not catch here. Let repository handle it.
-class GoogleDriveClient {
+class GoogleDriveClient implements BackupCloudService {
+  @override
+  BackupServiceType get serviceType => BackupServiceType.google_drive;
+
   GoogleUserObject? _currentUser;
+
+  @override
   GoogleUserObject? get currentUser => _currentUser;
+
+  @override
   bool get isSignedIn => _currentUser != null;
 
   final Map<String, String> _folderDriveIdByFolderName = {};
@@ -37,11 +46,14 @@ class GoogleDriveClient {
 
   Future<drive.DriveApi?> get googleDriveClient async {
     if (_currentUser == null || _currentUser?.accessToken == null) return null;
-    final _GoogleAuthClient client = _GoogleAuthClient(_currentUser!.authHeaders);
+    final _GoogleAuthClient client = _GoogleAuthClient(
+      _currentUser!.authHeaders,
+    );
     return drive.DriveApi(client);
   }
 
   // load data locally
+  @override
   Future<void> initialize() async {
     _currentUser = await GoogleUserStorage().readObject();
   }
@@ -62,6 +74,7 @@ class GoogleDriveClient {
     return googleServiceCompleter!.future;
   }
 
+  @override
   Future<bool> reauthenticateIfNeeded() async {
     await googleServiceInstance; // ensure initialized
 
@@ -84,7 +97,10 @@ class GoogleDriveClient {
           email: _currentUser!.email,
           displayName: _currentUser!.displayName,
           photoUrl: _currentUser!.photoUrl,
-          accessToken: authHeaders['Authorization']?.replaceFirst('Bearer ', ''),
+          accessToken: authHeaders['Authorization']?.replaceFirst(
+            'Bearer ',
+            '',
+          ),
           refreshedAt: DateTime.now(),
         );
 
@@ -107,6 +123,7 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<bool> signIn() async {
     try {
       if (!(await googleServiceInstance).supportsAuthenticate()) {
@@ -116,7 +133,9 @@ class GoogleDriveClient {
         );
       }
 
-      final account = await (await googleServiceInstance).authenticate(scopeHint: _requestedScopes);
+      final account = await (await googleServiceInstance).authenticate(
+        scopeHint: _requestedScopes,
+      );
       final authHeaders = await account.authorizationClient.authorizationHeaders(
         _requestedScopes,
         promptIfNecessary: true,
@@ -152,12 +171,14 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<void> signOut() async {
     await (await googleServiceInstance).signOut();
     await GoogleUserStorage().remove();
     _currentUser = null;
   }
 
+  @override
   Future<bool> canAccessRequestedScopes() async {
     try {
       if (_currentUser == null || _currentUser!.accessToken == null) {
@@ -181,11 +202,14 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<bool> requestScope() async {
     if (!isSignedIn) return false;
 
     try {
-      final account = await (await googleServiceInstance).authenticate(scopeHint: _requestedScopes);
+      final account = await (await googleServiceInstance).authenticate(
+        scopeHint: _requestedScopes,
+      );
       final authHeaders = await account.authorizationClient.authorizationHeaders(
         _requestedScopes,
         promptIfNecessary: true,
@@ -215,6 +239,7 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<(String, int)?> getFileContent(CloudFileObject file) async {
     drive.DriveApi? client = await googleDriveClient;
     if (client == null) return null;
@@ -222,7 +247,10 @@ class GoogleDriveClient {
     CloudFileObject? fileInfo = await findFileById(file.id);
     if (fileInfo == null) return null;
 
-    Object? media = await client.files.get(fileInfo.id, downloadOptions: drive.DownloadOptions.fullMedia);
+    Object? media = await client.files.get(
+      fileInfo.id,
+      downloadOptions: drive.DownloadOptions.fullMedia,
+    );
     if (media is! drive.Media) return null;
 
     if (file.getFileInfo()?.hasCompression == true) {
@@ -270,6 +298,7 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<CloudFileObject?> findFileById(String fileId) async {
     drive.DriveApi? client = await googleDriveClient;
     if (client == null) return null;
@@ -301,6 +330,7 @@ class GoogleDriveClient {
 
   /// Fetch all yearly backups (v3) from the backups/ folder
   /// Returns a map of year -> CloudFileObject
+  @override
   Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
     try {
       drive.DriveApi client = await _getAuthenticatedClient();
@@ -338,12 +368,15 @@ class GoogleDriveClient {
 
   /// Update an existing yearly backup file atomically using file ID
   /// This prevents race conditions when multiple devices sync simultaneously
+  @override
   Future<CloudFileObject?> updateYearlyBackup({
     required String fileId,
     required String fileName,
     required io.File file,
   }) async {
-    debugPrint('GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName');
+    debugPrint(
+      'GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName',
+    );
 
     try {
       if (!file.existsSync()) {
@@ -371,7 +404,9 @@ class GoogleDriveClient {
       );
 
       if (received.id != null) {
-        debugPrint('GoogleDriveService#updateYearlyBackup updated: ${received.id}');
+        debugPrint(
+          'GoogleDriveService#updateYearlyBackup updated: ${received.id}',
+        );
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -387,6 +422,7 @@ class GoogleDriveClient {
   }
 
   /// Upload a new yearly backup file to the backups/ folder
+  @override
   Future<CloudFileObject?> uploadYearlyBackup({
     required String fileName,
     required io.File file,
@@ -428,7 +464,9 @@ class GoogleDriveClient {
       );
 
       if (received.id != null) {
-        debugPrint('GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}');
+        debugPrint(
+          'GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}',
+        );
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -502,6 +540,7 @@ class GoogleDriveClient {
     }
   }
 
+  @override
   Future<bool> deleteFile(String cloudFileId) async {
     try {
       drive.DriveApi client = await _getAuthenticatedClient();
@@ -611,7 +650,9 @@ class GoogleDriveClient {
     );
 
     if (response.files?.firstOrNull?.id != null) {
-      debugPrint("Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}");
+      debugPrint(
+        "Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}",
+      );
       return _folderDriveIdByFolderName[folderName] = response.files!.first.id!;
     }
 
@@ -621,7 +662,9 @@ class GoogleDriveClient {
     folderToCreate.mimeType = "application/vnd.google-apps.folder";
 
     final createdFolder = await client.files.create(folderToCreate);
-    debugPrint("Drive folder ${createdFolder.name} created: ${createdFolder.id}");
+    debugPrint(
+      "Drive folder ${createdFolder.name} created: ${createdFolder.id}",
+    );
 
     return _folderDriveIdByFolderName[folderName] = createdFolder.id!;
   }

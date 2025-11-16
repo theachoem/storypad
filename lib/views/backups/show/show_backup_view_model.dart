@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/backups/tables/show/show_table_view.dart';

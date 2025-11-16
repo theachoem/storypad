@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -83,6 +84,8 @@ class BackupProvider extends ChangeNotifier {
 
   bool _syncing = false;
   bool get syncing => _syncing;
+
+  List<BackupCloudService> get services => repository.services;
 
   Future<void> recheckAndSync() async {
     _syncing = true;

@@ -1,9 +1,9 @@
 part of 'show_backup_service_view.dart';
 
 class _ShowBackupServiceContent extends StatelessWidget {
-  const _ShowBackupServiceContent(this.viewModel);
-
   final ShowBackupServiceViewModel viewModel;
+
+  const _ShowBackupServiceContent(this.viewModel);
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +15,8 @@ class _ShowBackupServiceContent extends StatelessWidget {
           text: TextSpan(
             style: TextTheme.of(context).titleLarge,
             children: [
-              const TextSpan(text: "Google Drive "),
-              WidgetSpan(
-                child: Icon(MdiIcons.googleDrive),
-              ),
+              TextSpan(text: "${viewModel.metadata.displayName} "),
+              WidgetSpan(child: Icon(viewModel.metadata.icon)),
             ],
           ),
         ),
@@ -30,8 +28,14 @@ class _ShowBackupServiceContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("theacheng.g6@gmail.com", style: TextTheme.of(context).titleMedium),
-                Text("Last synced: August 12, 2025 11:00 AM", style: TextTheme.of(context).bodyMedium),
+                Text(
+                  viewModel.params.service.currentUser?.email ?? "Not signed in",
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                Text(
+                  "Last synced: ${viewModel.params.service.currentUser?.refreshedAt ?? 'Never'}",
+                  style: TextTheme.of(context).bodyMedium,
+                ),
               ],
             ),
           ),
@@ -56,7 +60,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
             child: OutlinedButton.icon(
               label: const Text("Sign Out"),
               icon: const Icon(Icons.logout),
-              onPressed: () {},
+              onPressed: () => viewModel.params.service.signOut(),
             ),
           ),
           const SizedBox(height: 8.0),
@@ -65,7 +69,9 @@ class _ShowBackupServiceContent extends StatelessWidget {
             iconColor: ColorScheme.of(context).error,
             leading: const Icon(SpIcons.deleteForever),
             title: const Text("Delete"),
-            subtitle: const Text("Permanent Delete from Google Drive"),
+            subtitle: Text(
+              "Permanent Delete from ${viewModel.metadata.displayName}",
+            ),
             trailing: const Icon(SpIcons.keyboardRight),
             onTap: () => const DeleteBackupProviderRoute().push(context),
           ),

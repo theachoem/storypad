@@ -7,9 +7,9 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
-import 'package:storypad/core/services/backup_sync_steps/utils/backup_databases_to_backup_object_service.dart';
-import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
-import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/google_drive_client.dart';
 import 'package:storypad/core/services/gzip_service.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/types/file_path_type.dart';

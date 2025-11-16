@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
-import 'package:storypad/core/services/backup_sync_steps/backup_sync_message.dart';
-import 'package:storypad/core/services/google_drive_client.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/google_drive_client.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 
