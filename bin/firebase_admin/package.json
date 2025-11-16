@@ -11,6 +11,6 @@
   "description": "Manage Firestore",
   "dependencies": {
     "firebase-admin": "^13.2.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.1"
   }
 }
