@@ -5,7 +5,7 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
-import 'package:storypad/core/services/backups/google_drive_client.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 
@@ -39,13 +39,13 @@ class BackupLatestCheckerService {
   }
 
   Future<BackupLatestCheckerResponse> start(
-    GoogleDriveClient client,
+    List<BackupCloudService> services,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
     debugPrint('🚧 $runtimeType#start ...');
 
     try {
-      return await _start(client, lastDbUpdatedAtByYear);
+      return await _start(services, lastDbUpdatedAtByYear);
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -82,19 +82,57 @@ class BackupLatestCheckerService {
   }
 
   Future<BackupLatestCheckerResponse> _start(
-    GoogleDriveClient client,
+    List<BackupCloudService> services,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
+    if (services.isEmpty) {
+      throw const exp.AuthException(
+        'No backup services available for checking backups',
+        exp.AuthExceptionType.signInRequired,
+        serviceType: null,
+      );
+    }
+
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
 
-    // Fetch all yearly backups from Google Drive
-    final yearlyBackupFiles = await RetryExecutor.execute(
-      () => client.fetchYearlyBackups(),
-      policy: RetryPolicy.network,
-      operationName: 'fetch_yearly_backups',
-    );
+    // Aggregate yearly backups from all services
+    final Map<int, CloudFileObject> allYearlyBackupFiles = {};
+    final Map<int, BackupObject> allYearlyBackupContents = {};
 
-    if (yearlyBackupFiles.isEmpty) {
+    for (final service in services) {
+      if (!service.isSignedIn) {
+        debugPrint('Skipping service ${service.serviceType.displayName}: not signed in');
+        continue;
+      }
+
+      // Fetch all yearly backups from this service
+      final yearlyBackupFiles = await RetryExecutor.execute(
+        () => service.fetchYearlyBackups(),
+        policy: RetryPolicy.network,
+        operationName: 'fetch_yearly_backups_${service.serviceType.id}',
+      );
+
+      if (yearlyBackupFiles.isEmpty) {
+        debugPrint('No backups found in ${service.serviceType.displayName}');
+        continue;
+      }
+
+      // Merge into aggregate map (newer files win)
+      for (var entry in yearlyBackupFiles.entries) {
+        final year = entry.key;
+        final remoteFile = entry.value;
+        final existing = allYearlyBackupFiles[year];
+
+        // Keep the newer file
+        if (existing == null ||
+            (remoteFile.lastUpdatedAt != null &&
+                (existing.lastUpdatedAt == null || remoteFile.lastUpdatedAt!.isAfter(existing.lastUpdatedAt!)))) {
+          allYearlyBackupFiles[year] = remoteFile;
+        }
+      }
+    }
+
+    if (allYearlyBackupFiles.isEmpty) {
       controller.add(
         BackupSyncMessage(
           processing: false,
@@ -113,7 +151,7 @@ class BackupLatestCheckerService {
     // Determine which years need to be downloaded
     Map<int, CloudFileObject> yearsToDownload = {};
 
-    for (var entry in yearlyBackupFiles.entries) {
+    for (var entry in allYearlyBackupFiles.entries) {
       final year = entry.key;
       final remoteFile = entry.value;
       final remoteTimestamp = remoteFile.lastUpdatedAt;
@@ -140,22 +178,40 @@ class BackupLatestCheckerService {
 
       return BackupLatestCheckerResponse(
         hasError: false,
-        yearlyBackupFiles: yearlyBackupFiles,
+        yearlyBackupFiles: allYearlyBackupFiles,
         yearlyBackupContents: {},
       );
     }
 
     // Download and parse backup contents for years that need syncing
-    Map<int, BackupObject> yearlyBackupContents = {};
-
     for (var entry in yearsToDownload.entries) {
       final year = entry.key;
       final cloudFile = entry.value;
 
       debugPrint('BackupLatestChecker: Downloading backup for year $year');
 
+      // Find the service that has this file and download from it
+      BackupCloudService? targetService;
+      for (final service in services) {
+        if (!service.isSignedIn) continue;
+        final serviceBackups = await RetryExecutor.execute(
+          () => service.fetchYearlyBackups(),
+          policy: RetryPolicy.network,
+          operationName: 'check_service_backups_${service.serviceType.id}',
+        );
+        if (serviceBackups.containsKey(year)) {
+          targetService = service;
+          break;
+        }
+      }
+
+      if (targetService == null) {
+        debugPrint('BackupLatestChecker: No service has backup for year $year');
+        continue;
+      }
+
       final result = await RetryExecutor.execute(
-        () => client.getFileContent(cloudFile),
+        () => targetService!.getFileContent(cloudFile),
         policy: RetryPolicy.network,
         operationName: 'download_backup_year_$year',
       );
@@ -170,7 +226,7 @@ class BackupLatestCheckerService {
       try {
         dynamic decodedContents = jsonDecode(fileContent);
         backupContent = BackupObject.fromContents(decodedContents);
-        yearlyBackupContents[year] = backupContent;
+        allYearlyBackupContents[year] = backupContent;
       } catch (e) {
         debugPrint('$runtimeType#_start cannot parse backup for year $year: $e');
         // Continue with other years instead of throwing
@@ -182,14 +238,14 @@ class BackupLatestCheckerService {
       BackupSyncMessage(
         processing: false,
         success: true,
-        message: 'Found ${yearlyBackupContents.length} year(s) to sync',
+        message: 'Found ${allYearlyBackupContents.length} year(s) to sync',
       ),
     );
 
     return BackupLatestCheckerResponse(
       hasError: false,
-      yearlyBackupFiles: yearlyBackupFiles,
-      yearlyBackupContents: yearlyBackupContents,
+      yearlyBackupFiles: allYearlyBackupFiles,
+      yearlyBackupContents: allYearlyBackupContents,
     );
   }
 }

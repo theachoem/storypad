@@ -3,14 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
-import 'package:storypad/core/services/backups/google_drive_client.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 
 class BackupImagesUploaderService {
-  String get cloudId => AssetDbModel.cloudId;
-
   final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
   Stream<BackupSyncMessage?> get message => controller.stream;
 
@@ -18,11 +17,11 @@ class BackupImagesUploaderService {
     controller.add(null);
   }
 
-  Future<bool> start(GoogleDriveClient client) async {
+  Future<bool> start(List<BackupCloudService> services) async {
     debugPrint('🚧 $runtimeType#start ...');
 
     try {
-      return await _start(client);
+      return await _start(services);
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -63,16 +62,42 @@ class BackupImagesUploaderService {
     }
   }
 
-  Future<bool> _start(GoogleDriveClient client) async {
-    if (client.currentUser?.email == null) {
-      throw const exp.AuthException(
-        'No authenticated user for image upload',
+  Future<bool> _start(List<BackupCloudService> services) async {
+    if (services.isEmpty) {
+      throw exp.AuthException(
+        'No backup services available for image upload',
         exp.AuthExceptionType.signInRequired,
+        serviceType: null,
       );
     }
 
-    final List<AssetDbModel>? localAssets = await _getLocalAsset(client.currentUser!.email);
-    if (localAssets == null || localAssets.isEmpty) {
+    // Collect uploads from all services
+    bool allSuccess = true;
+    int totalUploaded = 0;
+
+    for (final service in services) {
+      if (!service.isSignedIn || service.currentUser?.email == null) {
+        debugPrint('Skipping service ${service.serviceType.displayName}: not signed in');
+        continue;
+      }
+
+      final uploadedCount = await _uploadAssetsForService(service);
+      totalUploaded += uploadedCount;
+
+      if (uploadedCount < 0) {
+        allSuccess = false;
+      }
+    }
+
+    if (totalUploaded > 0) {
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: '$totalUploaded images uploaded successfully across all services.',
+        ),
+      );
+    } else {
       controller.add(
         BackupSyncMessage(
           processing: false,
@@ -80,38 +105,43 @@ class BackupImagesUploaderService {
           message: 'No images to be uploaded.',
         ),
       );
-      return true;
+    }
+
+    return allSuccess;
+  }
+
+  Future<int> _uploadAssetsForService(BackupCloudService service) async {
+    final email = service.currentUser!.email;
+    final List<AssetDbModel>? localAssets = await _getLocalAsset(email, service.serviceType);
+
+    if (localAssets == null || localAssets.isEmpty) {
+      return 0;
     }
 
     controller.add(BackupSyncMessage(processing: true, success: null, message: null));
+
+    int uploadedCount = 0;
     for (AssetDbModel asset in localAssets) {
       if (asset.localFile == null) continue;
-      await _uploadAsset(client, asset);
+      final uploaded = await _uploadAsset(service, asset);
+      if (uploaded) uploadedCount++;
     }
 
-    controller.add(
-      BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: '${localAssets.length} images uploaded successfully.',
-      ),
-    );
-
-    return true;
+    return uploadedCount;
   }
 
-  Future<AssetDbModel?> _uploadAsset(GoogleDriveClient client, AssetDbModel asset) async {
+  Future<bool> _uploadAsset(BackupCloudService service, AssetDbModel asset) async {
     final cloudFileName = asset.cloudFileName;
-    final String? email = client.currentUser?.email;
+    final String? email = service.currentUser?.email;
 
     if (cloudFileName == null || asset.localFile == null || email == null) {
       debugPrint('Skipping asset upload: missing required data');
-      return null;
+      return false;
     }
 
     try {
       final cloudFile = await RetryExecutor.execute(
-        () => client.uploadFile(
+        () => service.uploadFile(
           cloudFileName,
           asset.localFile!,
           folderName: asset.type.subDirectory,
@@ -121,22 +151,37 @@ class BackupImagesUploaderService {
       );
 
       if (cloudFile != null) {
-        asset = asset.copyWithGoogleDriveCloudFile(cloudFile: cloudFile, email: email);
-        return AssetDbModel.db.set(asset);
+        final updated = asset.copyWithCloudFile(
+          serviceType: service.serviceType,
+          cloudFile: cloudFile,
+          email: email,
+        );
+        await AssetDbModel.db.set(updated);
+        return true;
       }
 
-      return null;
+      return false;
+    } on exp.AuthException catch (e) {
+      // Add service type to auth exception
+      throw exp.AuthException(
+        e.message,
+        e.type,
+        serviceType: service.serviceType,
+        context: e.context,
+      );
     } catch (e) {
       debugPrint('Failed to upload asset $cloudFileName: $e');
       // Don't rethrow - continue with other assets
-      return null;
+      return false;
     }
   }
 
-  Future<List<AssetDbModel>?> _getLocalAsset(String email) async {
+  Future<List<AssetDbModel>?> _getLocalAsset(String email, BackupServiceType serviceType) async {
     CollectionDbModel<AssetDbModel>? assets = await AssetDbModel.db.where();
     return assets?.items
-        .where((e) => e.cloudDestinations[cloudId] == null || e.cloudDestinations[cloudId]?[email] == null)
+        .where(
+          (e) => e.cloudDestinations[serviceType.id] == null || e.cloudDestinations[serviceType.id]?[email] == null,
+        )
         .toList()
         .where((e) => e.localFile?.existsSync() == true)
         .toList();

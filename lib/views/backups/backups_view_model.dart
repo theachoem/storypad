@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/views/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_object.dart';
@@ -128,13 +129,15 @@ class BackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
   }
 
+  // old
   Future<void> signOut(BuildContext context) async {
-    await context.read<BackupProvider>().signOut(context);
+    await context.read<BackupProvider>().signOut(context, BackupServiceType.google_drive);
     if (context.mounted) await load(context);
   }
 
+  // old
   Future<void> signIn(BuildContext context) async {
-    await context.read<BackupProvider>().signIn(context);
+    await context.read<BackupProvider>().signIn(context, BackupServiceType.google_drive);
     if (context.mounted) await load(context);
   }
 }

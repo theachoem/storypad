@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/show/show_backup_service_view.dart';
@@ -47,7 +48,7 @@ class GoogleDriveTile extends StatelessWidget {
     if (!provider.isSignedIn) {
       trailing = Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
-      onPressed = () => provider.signIn(context);
+      onPressed = () => provider.signIn(context, BackupServiceType.google_drive);
     } else {
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
@@ -63,7 +64,7 @@ class GoogleDriveTile extends StatelessWidget {
         case BackupConnectionStatus.needGoogleDrivePermission:
           trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
-          onPressed = () => provider.requestScope(context);
+          onPressed = () => provider.requestScope(context, BackupServiceType.google_drive);
           break;
         case BackupConnectionStatus.readyToSync:
           trailing = Icon(

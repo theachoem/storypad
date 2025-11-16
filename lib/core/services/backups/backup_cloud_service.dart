@@ -58,4 +58,12 @@ abstract class BackupCloudService {
 
   /// Delete a file from cloud storage
   Future<bool> deleteFile(String cloudFileId);
+
+  /// Upload a file (asset) to cloud storage
+  /// Returns: CloudFileObject metadata if successful
+  Future<CloudFileObject?> uploadFile(
+    String fileName,
+    io.File file, {
+    String? folderName,
+  });
 }

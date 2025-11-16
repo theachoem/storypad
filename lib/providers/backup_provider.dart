@@ -5,6 +5,7 @@ import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -108,10 +109,13 @@ class BackupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signIn(BuildContext context) async {
+  Future<void> signIn(
+    BuildContext context,
+    BackupServiceType serviceType,
+  ) async {
     final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
       debugSource: '$runtimeType#signIn',
-      future: () => repository.signIn(),
+      future: () => repository.signIn(serviceType),
     );
 
     if (result?.isSuccess == true) {
@@ -134,7 +138,10 @@ class BackupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> requestScope(BuildContext context) async {
+  Future<void> requestScope(
+    BuildContext context,
+    BackupServiceType serviceType,
+  ) async {
     final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
       debugSource: '$runtimeType#requestScope',
       future: () => repository.requestScope(),
@@ -155,10 +162,13 @@ class BackupProvider extends ChangeNotifier {
     await recheckAndSync();
   }
 
-  Future<void> signOut(BuildContext context) async {
+  Future<void> signOut(
+    BuildContext context,
+    BackupServiceType serviceType,
+  ) async {
     final result = await MessengerService.of(context).showLoading<BackupResult<void>>(
       debugSource: '$runtimeType#signOut',
-      future: () => repository.signOut(),
+      future: () => repository.signOut(serviceType),
     );
 
     // Always update UI state even if sign-out had issues

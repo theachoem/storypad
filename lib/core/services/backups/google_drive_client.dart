@@ -80,9 +80,10 @@ class GoogleDriveClient implements BackupCloudService {
 
     try {
       if (currentUser == null) {
-        throw const exp.AuthException(
+        throw exp.AuthException(
           'No stored user found',
           exp.AuthExceptionType.signInRequired,
+          serviceType: serviceType,
         );
       }
 
@@ -108,9 +109,10 @@ class GoogleDriveClient implements BackupCloudService {
         return true;
       }
 
-      throw const exp.AuthException(
+      throw exp.AuthException(
         'Failed to get auth headers',
         exp.AuthExceptionType.tokenExpired,
+        serviceType: serviceType,
       );
     } on exp.AuthException {
       rethrow;
@@ -119,6 +121,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Reauthentication failed: $e',
         exp.AuthExceptionType.signInFailed,
         context: 'reauthenticateIfNeeded',
+        serviceType: serviceType,
       );
     }
   }
@@ -127,9 +130,10 @@ class GoogleDriveClient implements BackupCloudService {
   Future<bool> signIn() async {
     try {
       if (!(await googleServiceInstance).supportsAuthenticate()) {
-        throw const exp.AuthException(
+        throw exp.AuthException(
           'Platform does not support authentication',
           exp.AuthExceptionType.signInFailed,
+          serviceType: serviceType,
         );
       }
 
@@ -160,6 +164,7 @@ class GoogleDriveClient implements BackupCloudService {
           e.description ?? e.toString(),
           exp.AuthExceptionType.signInRequired,
           context: 'signIn',
+          serviceType: serviceType,
         );
       }
 
@@ -167,6 +172,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Sign-in failed: $e',
         exp.AuthExceptionType.signInFailed,
         context: 'signIn',
+        serviceType: serviceType,
       );
     }
   }
@@ -182,9 +188,10 @@ class GoogleDriveClient implements BackupCloudService {
   Future<bool> canAccessRequestedScopes() async {
     try {
       if (_currentUser == null || _currentUser!.accessToken == null) {
-        throw const exp.AuthException(
+        throw exp.AuthException(
           'No current user or missing access token',
           exp.AuthExceptionType.signInRequired,
+          serviceType: serviceType,
         );
       }
 
@@ -198,6 +205,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Scope validation failed: $e',
         exp.AuthExceptionType.signInFailed,
         context: 'canAccessRequestedScopes',
+        serviceType: serviceType,
       );
     }
   }
@@ -384,6 +392,7 @@ class GoogleDriveClient implements BackupCloudService {
           'Local file does not exist: ${file.path}',
           exp.FileOperationType.upload,
           context: fileName,
+          serviceType: serviceType,
         );
       }
 
@@ -414,6 +423,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Update succeeded but no file ID returned',
         exp.FileOperationType.upload,
         context: fileName,
+        serviceType: serviceType,
       );
     } catch (e) {
       _handleApiException(e, 'updateYearlyBackup', context: fileName);
@@ -435,6 +445,7 @@ class GoogleDriveClient implements BackupCloudService {
           'Local file does not exist: ${file.path}',
           exp.FileOperationType.upload,
           context: fileName,
+          serviceType: serviceType,
         );
       }
 
@@ -447,6 +458,7 @@ class GoogleDriveClient implements BackupCloudService {
           'Failed to create or find backups folder',
           exp.FileOperationType.upload,
           context: fileName,
+          serviceType: serviceType,
         );
       }
 
@@ -474,6 +486,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Upload succeeded but no file ID returned',
         exp.FileOperationType.upload,
         context: fileName,
+        serviceType: serviceType,
       );
     } catch (e) {
       _handleApiException(e, 'uploadYearlyBackup', context: fileName);
@@ -494,6 +507,7 @@ class GoogleDriveClient implements BackupCloudService {
           'Local file does not exist: ${file.path}',
           exp.FileOperationType.upload,
           context: fileName,
+          serviceType: serviceType,
         );
       }
 
@@ -510,6 +524,7 @@ class GoogleDriveClient implements BackupCloudService {
             'Failed to create or find folder: $folderName',
             exp.FileOperationType.upload,
             context: fileName,
+            serviceType: serviceType,
           );
         }
         fileToUpload.parents = [folderId];
@@ -533,6 +548,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Upload succeeded but no file ID returned',
         exp.FileOperationType.upload,
         context: fileName,
+        serviceType: serviceType,
       );
     } catch (e) {
       _handleApiException(e, 'uploadFile', context: fileName);
@@ -556,9 +572,10 @@ class GoogleDriveClient implements BackupCloudService {
   Future<drive.DriveApi> _getAuthenticatedClient() async {
     final client = await googleDriveClient;
     if (client == null) {
-      throw const exp.AuthException(
+      throw exp.AuthException(
         'Failed to get authenticated Google Drive client',
         exp.AuthExceptionType.signInRequired,
+        serviceType: serviceType,
       );
     }
     return client;
@@ -574,6 +591,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Authentication failed during $operation',
         exp.AuthExceptionType.tokenExpired,
         context: context,
+        serviceType: serviceType,
       );
     }
 
@@ -583,12 +601,14 @@ class GoogleDriveClient implements BackupCloudService {
           'Quota exceeded during $operation',
           exp.QuotaExceptionType.rateLimitExceeded,
           context: context,
+          serviceType: serviceType,
         );
       }
       throw exp.AuthException(
         'Access denied during $operation',
         exp.AuthExceptionType.tokenRevoked,
         context: context,
+        serviceType: serviceType,
       );
     }
 
@@ -597,6 +617,7 @@ class GoogleDriveClient implements BackupCloudService {
         'File not found during $operation',
         _getFileOperationType(operation),
         context: context,
+        serviceType: serviceType,
       );
     }
 
@@ -605,6 +626,7 @@ class GoogleDriveClient implements BackupCloudService {
         'Rate limit exceeded during $operation',
         exp.QuotaExceptionType.rateLimitExceeded,
         context: context,
+        serviceType: serviceType,
       );
     }
 
@@ -613,6 +635,7 @@ class GoogleDriveClient implements BackupCloudService {
       throw exp.NetworkException(
         'Network error during $operation: $error',
         context: context,
+        serviceType: serviceType,
       );
     }
 
@@ -621,6 +644,7 @@ class GoogleDriveClient implements BackupCloudService {
       'Unknown error during $operation: $error',
       exp.ServiceExceptionType.unexpectedError,
       context: context,
+      serviceType: serviceType,
     );
   }
 
