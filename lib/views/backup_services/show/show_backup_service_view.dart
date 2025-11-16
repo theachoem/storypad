@@ -1,9 +1,13 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
-import 'package:storypad/views/backup_services/delete/delete_backup_provider_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
 
 import 'show_backup_service_view_model.dart';
@@ -32,7 +36,7 @@ class ShowBackupServiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<ShowBackupServiceViewModel>(
-      create: (context) => ShowBackupServiceViewModel(params: params),
+      create: (context) => ShowBackupServiceViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _ShowBackupServiceContent(viewModel);
       },

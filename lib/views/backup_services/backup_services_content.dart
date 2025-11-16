@@ -30,9 +30,7 @@ class _BackupServicesContent extends StatelessWidget {
     final tiles = <Widget>[];
 
     for (int i = 0; i < viewModel.services.length; i++) {
-      tiles.add(
-        BackupServiceTile(service: viewModel.services[i]),
-      );
+      tiles.add(BackupServiceTile(service: viewModel.services[i]));
       if (i < viewModel.services.length - 1) tiles.add(const Divider());
     }
 

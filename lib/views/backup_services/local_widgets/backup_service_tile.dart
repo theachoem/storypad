@@ -14,12 +14,10 @@ import 'package:storypad/widgets/sp_icons.dart';
 /// Works with any BackupCloudService implementation
 class BackupServiceTile extends StatelessWidget {
   final BackupCloudService service;
-  final VoidCallback? onManagePressed;
 
   const BackupServiceTile({
     super.key,
     required this.service,
-    this.onManagePressed,
   });
 
   @override
@@ -55,8 +53,7 @@ class BackupServiceTile extends StatelessWidget {
     if (!service.isSignedIn) {
       trailing = Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
-      // TODO: implement service-specific sign in
-      // onPressed = () => provider.signIn(context, service: service);
+      onPressed = () => provider.signIn(context, service.serviceType);
     } else {
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
@@ -72,8 +69,7 @@ class BackupServiceTile extends StatelessWidget {
         case BackupConnectionStatus.needGoogleDrivePermission:
           trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
-          // TODO: implement service-specific scope request
-          // onPressed = () => provider.requestScope(context, service: service);
+          onPressed = () => provider.requestScope(context, service.serviceType);
           break;
         case BackupConnectionStatus.readyToSync:
           trailing = Icon(
@@ -103,7 +99,9 @@ class BackupServiceTile extends StatelessWidget {
             ) ??
             '...',
       );
-      onPressed = onManagePressed ?? () => ShowBackupServiceRoute(service: service).push(context);
+
+      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
+
       trailing = Icon(
         SpIcons.cloudDone,
         color: ColorScheme.of(context).bootstrap.success.color,
@@ -116,7 +114,7 @@ class BackupServiceTile extends StatelessWidget {
         child: CircularProgressIndicator.adaptive(),
       );
       subtitle = Text(tr("general.syncing"));
-      onPressed = onManagePressed ?? () => ShowBackupServiceRoute(service: service).push(context);
+      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
 
       if (provider.step1Message != null) subtitle = Text("${tr("general.syncing")} 1/4");
       if (provider.step2Message != null) subtitle = Text("${tr("general.syncing")} 2/4");

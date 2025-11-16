@@ -64,7 +64,7 @@ class BackupImagesUploaderService {
 
   Future<bool> _start(List<BackupCloudService> services) async {
     if (services.isEmpty) {
-      throw exp.AuthException(
+      throw const exp.AuthException(
         'No backup services available for image upload',
         exp.AuthExceptionType.signInRequired,
         serviceType: null,

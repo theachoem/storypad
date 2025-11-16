@@ -216,6 +216,7 @@ class BackupProvider extends ChangeNotifier {
     if (step2Result.isSuccess && step2Result.data != null) {
       _lastSyncedAtByYear = step2Result.data!.lastSyncedAtByYear;
     }
+
     notifyListeners();
 
     if (!step2Result.isSuccess) {
@@ -233,6 +234,7 @@ class BackupProvider extends ChangeNotifier {
       _lastSyncedAtByYear,
       _lastDbUpdatedAtByYear,
     );
+
     if (!step3Result.isSuccess) return;
 
     // Re-fetch local timestamps after import (Step 3 may have updated DB with remote data)

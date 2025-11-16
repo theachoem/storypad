@@ -5,7 +5,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
-import 'package:storypad/views/backups/tables/show/show_table_view.dart';
+import 'package:storypad/views/backup_services/backups/tables/show/show_table_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'show_backup_view.dart';

@@ -9,6 +9,8 @@ enum BackupServiceType {
   final String id;
   final String displayName;
 
+  bool get googleDrive => this == google_drive;
+
   const BackupServiceType({
     required this.id,
     required this.displayName,

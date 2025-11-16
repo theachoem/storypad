@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
-import 'package:storypad/core/objects/cloud_file_list_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
@@ -289,23 +288,6 @@ class GoogleDriveClient implements BackupCloudService {
     }
   }
 
-  Future<CloudFileListObject?> fetchAllBackups(String? nextToken) async {
-    try {
-      drive.DriveApi client = await _getAuthenticatedClient();
-
-      drive.FileList fileList = await client.files.list(
-        q: "name contains '.json' or name contains '.zip'",
-        spaces: "appDataFolder",
-        pageToken: nextToken,
-      );
-
-      return CloudFileListObject.fromGoogleDrive(fileList);
-    } catch (e) {
-      _handleApiException(e, 'fetchAllBackups');
-      rethrow;
-    }
-  }
-
   @override
   Future<CloudFileObject?> findFileById(String fileId) async {
     drive.DriveApi? client = await googleDriveClient;
@@ -317,25 +299,6 @@ class GoogleDriveClient implements BackupCloudService {
     return null;
   }
 
-  Future<CloudFileObject?> fetchLatestBackup() async {
-    try {
-      drive.DriveApi? client = await _getAuthenticatedClient();
-
-      drive.FileList fileList = await client.files.list(
-        spaces: "appDataFolder",
-        q: "name contains '.json' or name contains '.zip'",
-        orderBy: "createdTime desc",
-        pageSize: 1,
-      );
-
-      if (fileList.files?.firstOrNull == null) return null;
-      return CloudFileObject.fromGoogleDrive(fileList.files!.first);
-    } catch (e) {
-      _handleApiException(e, 'fetchLatestBackup');
-      rethrow;
-    }
-  }
-
   /// Fetch all yearly backups (v3) from the backups/ folder
   /// Returns a map of year -> CloudFileObject
   @override
@@ -345,9 +308,9 @@ class GoogleDriveClient implements BackupCloudService {
 
       // First, ensure backups/ folder exists
       final backupsFolderId = await loadFolder(client, 'backups');
-      if (backupsFolderId == null) {
-        return {}; // No backups folder means no yearly backups yet
-      }
+
+      // No backups folder means no yearly backups yet
+      if (backupsFolderId == null) return {};
 
       drive.FileList fileList = await client.files.list(
         spaces: "appDataFolder",
@@ -494,6 +457,7 @@ class GoogleDriveClient implements BackupCloudService {
     }
   }
 
+  @override
   Future<CloudFileObject?> uploadFile(
     String fileName,
     io.File file, {
