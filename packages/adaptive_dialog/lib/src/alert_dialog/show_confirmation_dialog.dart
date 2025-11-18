@@ -39,9 +39,9 @@ Future<T?> showConfirmationDialog<T>({
   bool toggleable = true,
 }) {
   void pop({required BuildContext context, required T? key}) => Navigator.of(
-        context,
-        rootNavigator: useRootNavigator,
-      ).pop(key);
+    context,
+    rootNavigator: useRootNavigator,
+  ).pop(key);
 
   final theme = Theme.of(context);
   final adaptiveStyle = style ?? AdaptiveDialog.instance.defaultStyle;
@@ -90,12 +90,12 @@ class _ConfirmationMaterialDialog<T> extends StatefulWidget {
     super.key,
     required this.title,
     required this.onSelect,
-    @required this.message,
-    @required this.okLabel,
-    @required this.cancelLabel,
+    required this.message,
+    required this.okLabel,
+    required this.cancelLabel,
     required this.actions,
-    @required this.initialSelectedActionKey,
-    @required this.contentMaxHeight,
+    required this.initialSelectedActionKey,
+    required this.contentMaxHeight,
     required this.shrinkWrap,
     required this.fullyCapitalized,
     required this.canPop,

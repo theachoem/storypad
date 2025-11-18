@@ -3,7 +3,8 @@ import 'package:storypad/core/helpers/date_format_helper.dart';
 
 enum TimeFormatOption {
   h12,
-  h24;
+  h24
+  ;
 
   String get label {
     switch (this) {

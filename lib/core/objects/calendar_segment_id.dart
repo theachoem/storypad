@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 enum CalendarSegmentId {
   mood,
-  period;
+  period
+  ;
 
   String translatedName(BuildContext context) {
     switch (this) {

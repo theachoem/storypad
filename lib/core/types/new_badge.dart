@@ -7,7 +7,8 @@ enum NewBadge {
   add_on_tile_with_reward,
   add_on_tile_with_period_calendar,
 
-  none;
+  none
+  ;
 
   static List<String> get keys => values.map((e) => e.name).toList();
 }

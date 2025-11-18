@@ -6,8 +6,7 @@ funding:
   - https://github.com/sponsors/mono0926
 
 environment:
-  sdk: ^3.5.4
-  flutter: ">=3.35.1"
+  sdk: ^3.10.0
 
 dependencies:
   flutter:

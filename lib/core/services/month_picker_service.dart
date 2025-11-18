@@ -45,7 +45,7 @@ class MonthPickerService {
           initialValue: initialMonth,
           builder: (context, notifier) {
             return Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 SizedBox(
                   height: 216,

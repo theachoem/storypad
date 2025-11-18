@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 enum PageLayoutType {
   list,
-  pages;
+  pages
+  ;
 
   String get translatedName {
     switch (this) {

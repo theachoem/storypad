@@ -3,7 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 enum PathType {
   docs,
   bins,
-  archives;
+  archives
+  ;
 
   String get localized {
     switch (this) {
