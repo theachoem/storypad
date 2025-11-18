@@ -1243,12 +1243,12 @@ PODS:
   - firebase_core (4.2.1):
     - Firebase/CoreOnly (~> 12.4.0)
     - FlutterMacOS
-  - firebase_crashlytics (5.0.4):
+  - firebase_crashlytics (5.0.5):
     - Firebase/CoreOnly (~> 12.4.0)
     - Firebase/Crashlytics (~> 12.4.0)
     - firebase_core
     - FlutterMacOS
-  - firebase_remote_config (6.1.1):
+  - firebase_remote_config (6.1.2):
     - Firebase/CoreOnly (~> 12.4.0)
     - Firebase/RemoteConfig (~> 12.4.0)
     - firebase_core
@@ -1540,16 +1540,16 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.9.3):
+  - purchases_flutter (9.9.7):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 17.15.1)
-  - PurchasesHybridCommon (17.15.1):
-    - RevenueCat (= 5.46.0)
+    - PurchasesHybridCommon (= 17.18.0)
+  - PurchasesHybridCommon (17.18.0):
+    - RevenueCat (= 5.48.0)
   - quill_native_bridge_macos (0.0.1):
     - FlutterMacOS
   - record_macos (1.1.0):
     - FlutterMacOS
-  - RevenueCat (5.46.0)
+  - RevenueCat (5.48.0)
   - share_plus (0.0.1):
     - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
@@ -1703,8 +1703,8 @@ SPEC CHECKSUMS:
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
   firebase_analytics: 09241c4796c1c42a02349ef8bf30025f5b640f0e
   firebase_core: e054894ab56033ef9bcbe2d9eac9395e5306e2fc
-  firebase_crashlytics: c2438b5f5bdcacf59d0eaee5852c6b0ab09dab77
-  firebase_remote_config: cf52e31c7bdca0f12a88ea8371e6df9940265221
+  firebase_crashlytics: add6934cf4413d6c1307ca5251dbdbfe580e4caf
+  firebase_remote_config: e1f5c2d965a445d4b8b0f38a983ddb5e1f3e3d15
   firebase_storage: 9389f37875a8daf7684bfbbb13081092ee5660ec
   FirebaseABTesting: c05b5ec9f1d9f21a65909525de301d375032d9a4
   FirebaseAnalytics: 0fc2b20091f0ddd21bf73397cf8f0eb5346dc24f
@@ -1744,11 +1744,11 @@ SPEC CHECKSUMS:
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 57c50cbb3c716d8a820fcf09cfcec9c94f99ef1b
-  PurchasesHybridCommon: b1313c42e226555618514daa35c3ff1f582cb10d
+  purchases_flutter: d123a9a4c47859d5faf8aef20b8342f69b2f681d
+  PurchasesHybridCommon: 31ec0e6adbe08e27e9b5eead7b4b2337b5baa849
   quill_native_bridge_macos: 2b005cb56902bb740e0cd9620aa399dfac6b4882
   record_macos: 43194b6c06ca6f8fa132e2acea72b202b92a0f5b
-  RevenueCat: 0423a85e1f2ef06f1002b18cae53fe856f60ea53
+  RevenueCat: 1e61140a343a77dc286f171b3ffab99ca09a4b57
   share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
