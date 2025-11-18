@@ -43,7 +43,7 @@ class CloudFileObject {
 
       return BackupFileObject(
         createdAt: createdAt!,
-        device: DeviceInfoObject('StoryPad', 'legacy-model-id'),
+        device: DeviceInfoObject(model: 'StoryPad', id: 'legacy-model-id'),
       );
     } else {
       return BackupFileObject.fromFileName(fileName!);

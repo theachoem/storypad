@@ -189,7 +189,7 @@ class AppTheme extends StatelessWidget {
   static PageTransitionsTheme getPageTransitionTheme({
     Color? fillColor,
   }) {
-    final pageTransitionsTheme = PageTransitionsTheme(
+    return PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
         TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
         TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
@@ -199,7 +199,6 @@ class AppTheme extends StatelessWidget {
         ),
       },
     );
-    return pageTransitionsTheme;
   }
 
   /// follow dart-define [kIsCupertino].
