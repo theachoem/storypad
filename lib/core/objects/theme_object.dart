@@ -1,6 +1,3 @@
-// TODO: tix deprecation
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -46,7 +43,7 @@ class ThemeObject {
       fontFamily: fontFamily ?? this.fontFamily,
       fontWeightIndex: fontWeight?.index ?? fontWeightIndex,
       themeMode: themeMode ?? this.themeMode,
-      colorSeedValue: colorSeed?.value ?? colorSeedValue,
+      colorSeedValue: colorSeed?.toARGB32() ?? colorSeedValue,
     );
   }
 
@@ -55,12 +52,12 @@ class ThemeObject {
     bool removeIfSame = true,
   }) {
     Color? newColorSeed = colorSeed;
-    if (removeIfSame) newColorSeed = colorSeed.value != colorSeedValue ? colorSeed : null;
+    if (removeIfSame) newColorSeed = colorSeed.toARGB32() != colorSeedValue ? colorSeed : null;
     return ThemeObject(
       fontFamily: fontFamily,
       fontWeightIndex: fontWeight.index,
       themeMode: themeMode,
-      colorSeedValue: newColorSeed?.value,
+      colorSeedValue: newColorSeed?.toARGB32(),
     );
   }
 

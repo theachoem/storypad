@@ -26,9 +26,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     debug('logSetColorSeedTheme', {'value': newColor.toString()});
 
     return FirebaseAnalytics.instance.setUserProperty(
-      // TODO: fix deprecated_member_use
-      // ignore: deprecated_member_use
-      value: newColor?.value.toString() ?? 'default',
+      value: newColor?.toARGB32().toString() ?? 'default',
       name: 'color_seed',
     );
   }
