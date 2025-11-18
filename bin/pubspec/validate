@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# Installation:
+# dart pub global activate dependency_validator
+# 
+# Usage:
+# bin/pubspec/validate
+
+dart pub global run dependency_validator
