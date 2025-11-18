@@ -6,7 +6,8 @@ enum FeelingGroup {
   fear,
   anger,
   neutral,
-  other;
+  other
+  ;
 
   String get translatedName {
     switch (this) {

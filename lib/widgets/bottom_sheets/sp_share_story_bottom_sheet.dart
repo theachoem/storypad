@@ -152,7 +152,6 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         child: FilledButton.icon(
           icon: const Icon(SpIcons.share),
           label: Text(tr("button.share")),
-          // TODO: on ios it does not show share logo well.
           onPressed: () => share(),
         ),
       ),
@@ -232,6 +231,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
     );
   }
 
+  // TODO: on ios it does not show share logo well.
   Future<void> share() async {
     AnalyticsService.instance.logShareStory(option: option.name);
     SharePlus.instance.share(ShareParams(text: controller.text.trim()));

@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# Use this [bin/format] to format all dart files in lib/ and test/ folders.
+# It excludes generated files and firebase_options folder.
+# 
+# Commands:
+# bin/format
+
+find lib test -name "*.dart" -not -name "*.g.dart" -not -name "*.gen.dart" -not -name "*.mocks.dart" -not -path "*/firebase_options/*" | xargs dart format --line-length=120

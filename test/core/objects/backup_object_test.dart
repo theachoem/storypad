@@ -6,7 +6,7 @@ import 'package:storypad/core/objects/device_info_object.dart';
 void main() {
   group('BackupObject Tests', () {
     final testDateTime = DateTime.now();
-    final testDeviceInfo = DeviceInfoObject('Test Model', 'Test ID');
+    final testDeviceInfo = DeviceInfoObject(model: 'Test Model', id: 'Test ID');
     final testFileInfo = BackupFileObject(
       createdAt: testDateTime,
       device: testDeviceInfo,

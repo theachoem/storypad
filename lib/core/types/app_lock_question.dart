@@ -9,7 +9,8 @@ enum AppLockQuestion {
   favorite_color,
   name_of_elementary_school,
   city_or_town_your_parent_met,
-  name_of_your_first_teacher;
+  name_of_your_first_teacher
+  ;
 
   String get translatedQuestion {
     switch (this) {

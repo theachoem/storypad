@@ -44,10 +44,7 @@ class StoryContentHelper {
     return content;
   }
 
-  static StoryPreferencesDbModel decodePreferences(
-    String? preferences, {
-    bool? showDayCount,
-  }) {
+  static StoryPreferencesDbModel decodePreferences(String? preferences) {
     StoryPreferencesDbModel? decodedDreferences;
 
     if (preferences != null) {
@@ -59,7 +56,6 @@ class StoryContentHelper {
     }
 
     decodedDreferences ??= StoryPreferencesDbModel.create();
-    if (showDayCount != null) decodedDreferences = decodedDreferences.copyWith(showDayCount: showDayCount);
     return decodedDreferences;
   }
 }

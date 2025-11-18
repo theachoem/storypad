@@ -20,7 +20,8 @@ enum AssetType {
   /// Recently added asset type for audio files (voice notes, etc.).
   ///
   /// Uses 'audio' for both URI scheme and storage subdirectory.
-  audio(embedLinkPath: 'audio', subDirectory: 'audio');
+  audio(embedLinkPath: 'audio', subDirectory: 'audio')
+  ;
 
   final String embedLinkPath;
   final String subDirectory;

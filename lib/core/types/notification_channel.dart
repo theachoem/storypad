@@ -1,5 +1,6 @@
 enum NotificationChannel {
-  relaxingSound;
+  relaxingSound
+  ;
 
   String get channelID {
     switch (this) {

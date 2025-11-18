@@ -29,8 +29,8 @@ class BackupObject {
       fileInfo: BackupFileObject(
         createdAt: DateTime.parse(contents['meta_data']['created_at']),
         device: DeviceInfoObject(
-          contents['meta_data']['device_model'],
-          contents['meta_data']['device_id'],
+          model: contents['meta_data']['device_model'],
+          id: contents['meta_data']['device_id'],
         ),
         year: contents['year'] != null ? int.tryParse(contents['year'].toString()) : null,
       ),

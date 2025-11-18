@@ -17,7 +17,8 @@ enum PinUnlockTitle {
   enter_your_pin,
   confirm_your_pin,
   must_be_4_or_6_digits,
-  incorrect_pin;
+  incorrect_pin
+  ;
 
   String get translatedTitle {
     switch (this) {

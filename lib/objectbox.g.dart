@@ -140,12 +140,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(23, 4928182202971877211),
-        name: 'showDayCount',
-        type: 1,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(24, 7561688432028578210),
         name: 'assets',
         type: 27,
@@ -649,6 +643,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       7601477478707634423,
       5301328484806180063,
       8536407145733065373,
+      4928182202971877211,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -719,7 +714,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(19, object.second);
         fbb.addInt64(20, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
         fbb.addOffset(21, lastSavedDeviceIdOffset);
-        fbb.addBool(22, object.showDayCount);
         fbb.addOffset(23, assetsOffset);
         fbb.addOffset(24, preferencesOffset);
         fbb.addOffset(27, latestContentOffset);
@@ -796,11 +790,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final feelingParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 18);
-        final showDayCountParam = const fb.BoolReader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          48,
-        );
         final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0),
         );
@@ -865,7 +854,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           second: secondParam,
           starred: starredParam,
           feeling: feelingParam,
-          showDayCount: showDayCountParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           movedToBinAt: movedToBinAtParam,
@@ -1522,44 +1510,39 @@ class StoryObjectBox_ {
     _entities[0].properties[18],
   );
 
-  /// See [StoryObjectBox.showDayCount].
-  static final showDayCount = obx.QueryBooleanProperty<StoryObjectBox>(
-    _entities[0].properties[19],
-  );
-
   /// See [StoryObjectBox.assets].
   static final assets = obx.QueryIntegerVectorProperty<StoryObjectBox>(
-    _entities[0].properties[20],
+    _entities[0].properties[19],
   );
 
   /// See [StoryObjectBox.preferences].
   static final preferences = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[21],
+    _entities[0].properties[20],
   );
 
   /// See [StoryObjectBox.latestContent].
   static final latestContent = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[22],
+    _entities[0].properties[21],
   );
 
   /// See [StoryObjectBox.draftContent].
   static final draftContent = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[23],
+    _entities[0].properties[22],
   );
 
   /// See [StoryObjectBox.templateId].
   static final templateId = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[24],
+    _entities[0].properties[23],
   );
 
   /// See [StoryObjectBox.eventId].
   static final eventId = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[25],
+    _entities[0].properties[24],
   );
 
   /// See [StoryObjectBox.galleryTemplateId].
   static final galleryTemplateId = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[26],
+    _entities[0].properties[25],
   );
 }
 

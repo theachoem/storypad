@@ -37,10 +37,6 @@ class StoryObjectBox extends BaseObjectBox {
   bool? starred;
   String? feeling;
 
-  // deprecated
-  // TODO: removed after May 2025
-  bool? showDayCount;
-
   @override
   @Property(type: PropertyType.date)
   DateTime createdAt;
@@ -60,7 +56,7 @@ class StoryObjectBox extends BaseObjectBox {
   String? draftContent;
 
   // deprecated
-  // TODO: remove when possible
+  // this is for v1 data. We keep it for migration purpose only.
   List<String> changes;
 
   List<String>? tags;
@@ -89,7 +85,6 @@ class StoryObjectBox extends BaseObjectBox {
     required this.second,
     required this.starred,
     required this.feeling,
-    required this.showDayCount,
     required this.createdAt,
     required this.updatedAt,
     required this.movedToBinAt,

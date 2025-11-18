@@ -1,11 +1,9 @@
-// TODO: fix color.value deprecation
-// ignore_for_file: deprecated_member_use
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -54,7 +52,7 @@ class SpColorListSelector extends StatelessWidget {
             child: null,
             foregroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.white : Colors.black,
             backgroundColor: Theme.brightnessOf(context) == Brightness.dark ? Colors.black : Colors.white,
-            selected: Colors.black.value == selectedColor?.value,
+            selected: Colors.black.toARGB32() == selectedColor?.toARGB32(),
             onTap: (colorTone) => onChanged(Colors.black, colorTone),
           ),
           ...kMaterialColors.map<Widget>(
@@ -64,7 +62,7 @@ class SpColorListSelector extends StatelessWidget {
                 child: null,
                 backgroundColor: color,
                 foregroundColor: Colors.black,
-                selected: color.value == selectedColor?.value,
+                selected: color.toARGB32() == selectedColor?.toARGB32(),
                 onTap: (colorTone) => onChanged(color, colorTone),
               );
             },
@@ -132,7 +130,7 @@ class SpColorListSelector extends StatelessWidget {
             height: 40,
             transformAlignment: Alignment.center,
             transform: Matrix4.identity()
-              ..scale(
+              ..spScale(
                 // black / white color look smaller with eye even they has same size. Scale a little bit.
                 selected ? 0.8 : (backgroundColor == Colors.black || backgroundColor == Colors.white ? 1.03 : 1.0),
               ),

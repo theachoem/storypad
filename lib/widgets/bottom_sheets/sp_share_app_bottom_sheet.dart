@@ -39,7 +39,6 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
               FilledButton.icon(
                 icon: const Icon(SpIcons.share),
                 label: Text(tr("button.share")),
-                // TODO: on ios it does not show share logo well.
                 onPressed: () => shareApp(notifier),
               ),
               buildBottomPadding(bottomPadding),
@@ -50,6 +49,7 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
     );
   }
 
+  // TODO: on ios it does not show share logo well.
   void shareApp(ValueNotifier<String> notifier) {
     AnalyticsService.instance.logShareApp();
     SharePlus.instance.share(ShareParams(text: notifier.value.trim()));

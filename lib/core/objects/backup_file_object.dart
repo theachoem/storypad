@@ -82,7 +82,7 @@ class BackupFileObject {
 
             return BackupFileObject(
               createdAt: createdAt,
-              device: DeviceInfoObject(deviceModel, deviceId),
+              device: DeviceInfoObject(model: deviceModel, id: deviceId),
               version: version!,
               year: year,
             );
@@ -101,7 +101,7 @@ class BackupFileObject {
             String deviceId = value[4];
             return BackupFileObject(
               createdAt: createdAt,
-              device: DeviceInfoObject(deviceModel, deviceId),
+              device: DeviceInfoObject(model: deviceModel, id: deviceId),
               version: version!,
             );
           } catch (e) {
