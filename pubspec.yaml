@@ -30,7 +30,7 @@ dependencies:
   firebase_remote_config: 6.1.2
   firebase_storage: 13.0.4
   flutter_custom_tabs: 2.4.0
-  flutter_markdown: 0.7.7+1
+  flutter_markdown_plus: 1.0.5
   flutter_native_splash: 2.4.7
   flutter_quill:
     git:

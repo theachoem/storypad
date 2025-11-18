@@ -12,7 +12,7 @@ import 'package:storypad/widgets/base_view/base_route.dart';
 import 'dart:io';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
