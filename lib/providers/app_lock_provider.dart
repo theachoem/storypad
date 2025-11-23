@@ -10,7 +10,7 @@ import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/core/services/local_auth_service.dart' show LocalAuthService;
 import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorage;
 import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
-import 'package:storypad/initializers/app_lock_initializer.dart' show AppLockInitializer;
+import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLockInitializer;
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart' show SecurityQuestionsRoute;
 import 'package:storypad/views/pin_unlock/pin_unlock_view.dart' show PinUnlockRoute, PinUnlockTitle;
 

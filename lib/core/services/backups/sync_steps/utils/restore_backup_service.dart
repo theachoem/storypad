@@ -8,12 +8,14 @@ import 'package:storypad/core/objects/backup_object.dart';
 class RestoreBackupService {
   final List<FutureOr<void> Function()> _listeners = [];
 
-  static final RestoreBackupService appInstance = RestoreBackupService();
-
   void addListener(
     Future<void> Function() callback,
   ) {
     _listeners.add(callback);
+  }
+
+  void removeListener(Future<void> Function() callback) {
+    _listeners.remove(callback);
   }
 
   Future<int> restoreOnlyNewData({

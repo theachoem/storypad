@@ -31,6 +31,7 @@ class AppLogger {
     if (kDebugMode) print(formattedMessage);
   }
 
+  static void d(String message, {String? tag}) => _instance.log(message, level: AppLogLevel.debug, tag: tag);
   static void debug(String message, {String? tag}) => _instance.log(message, level: AppLogLevel.debug, tag: tag);
   static void info(String message, {String? tag}) => _instance.log(message, level: AppLogLevel.info, tag: tag);
   static void warning(String message, {String? tag}) => _instance.log(message, level: AppLogLevel.warning, tag: tag);

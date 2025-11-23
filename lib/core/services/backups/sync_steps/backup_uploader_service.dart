@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'package:flutter/foundation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
@@ -12,7 +11,9 @@ import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/gzip_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
+import 'package:storypad/core/storages/backup_import_history_storage.dart';
 import 'package:storypad/core/types/file_path_type.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 
@@ -28,14 +29,16 @@ class BackupUploaderResponse {
 
 class BackupUploaderService {
   final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
+
   Stream<BackupSyncMessage?> get message => controller.stream;
 
   void reset() {
     controller.add(null);
   }
 
-  Future<BackupUploaderResponse> start(
-    List<BackupCloudService> services,
+  Future<BackupUploaderResponse> startStep4(
+    BackupCloudService service,
+    BackupImportHistoryStorage importHistoryStorage,
     Map<int, DateTime?>? lastSyncedAtByYear,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
     Map<int, CloudFileObject>? existingYearlyBackups,
@@ -57,7 +60,8 @@ class BackupUploaderService {
       }
 
       return await _start(
-        services,
+        service,
+        importHistoryStorage,
         lastSyncedAtByYear,
         lastDbUpdatedAtByYear,
         existingYearlyBackups,
@@ -81,7 +85,7 @@ class BackupUploaderService {
       );
       return BackupUploaderResponse(hasError: true);
     } catch (e, stackTrace) {
-      debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
+      AppLogger.d('$runtimeType#start unexpected error: $e $stackTrace');
       controller.add(
         BackupSyncMessage(
           processing: false,
@@ -94,27 +98,26 @@ class BackupUploaderService {
   }
 
   Future<BackupUploaderResponse> _start(
-    List<BackupCloudService> services,
+    BackupCloudService cloudService,
+    BackupImportHistoryStorage importHistoryStorage,
     Map<int, DateTime?>? lastSyncedAtByYear,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
     Map<int, CloudFileObject>? existingYearlyBackups,
   ) async {
-    if (services.isEmpty) {
-      throw const exp.AuthException(
-        'No backup services available for uploading backups',
+    if (!cloudService.isSignedIn) {
+      throw exp.AuthException(
+        'Service ${cloudService.serviceType.displayName} is not signed in',
         exp.AuthExceptionType.signInRequired,
-        serviceType: null,
+        serviceType: cloudService.serviceType,
       );
     }
 
     // Determine which years need uploading
     Map<int, DateTime> yearsToUpload = {};
-
     for (var entry in lastDbUpdatedAtByYear!.entries) {
       final year = entry.key;
       final localTimestamp = entry.value;
       final remoteTimestamp = lastSyncedAtByYear?[year];
-
       if (localTimestamp == null) continue;
 
       // Upload if:
@@ -136,7 +139,7 @@ class BackupUploaderService {
 
       return BackupUploaderResponse(
         hasError: false,
-        uploadedYearlyFiles: existingYearlyBackups,
+        uploadedYearlyFiles: {},
       );
     }
 
@@ -145,62 +148,64 @@ class BackupUploaderService {
     try {
       Map<int, CloudFileObject> uploadedYearlyFiles = {};
 
-      // Upload to all services
-      for (final service in services) {
-        if (!service.isSignedIn) {
-          debugPrint('Skipping service ${service.serviceType.displayName}: not signed in');
-          continue;
+      for (var entry in yearsToUpload.entries) {
+        final year = entry.key;
+        final lastUpdatedAt = entry.value;
+
+        AppLogger.d('BackupUploader: Uploading year $year to ${cloudService.serviceType.displayName}');
+
+        // Generate backup for this year only
+        final backup = await BackupDatabasesToBackupObjectService.call(
+          databases: BackupRepository.databases,
+          lastUpdatedAt: lastUpdatedAt,
+          year: year, // Filter by year
+        );
+
+        final file = await constructBackupFile(
+          cloudService.serviceType,
+          year,
+          backup,
+        );
+
+        CloudFileObject? uploadedFile;
+
+        // Get existing backups for this service (fetched during Step 2)
+        final existingFile = existingYearlyBackups?[year];
+
+        // Update existing file atomically
+        if (existingFile != null) {
+          uploadedFile = await RetryExecutor.execute(
+            () => cloudService.updateYearlyBackup(
+              fileId: existingFile.id,
+              fileName: backup.fileInfo.fileNameWithExtention,
+              file: file,
+            ),
+            policy: RetryPolicy.network,
+            operationName: 'update_backup_year_${year}_${cloudService.serviceType.id}',
+          );
+        } else {
+          uploadedFile = await RetryExecutor.execute(
+            () => cloudService.uploadYearlyBackup(fileName: backup.fileInfo.fileNameWithExtention, file: file),
+            policy: RetryPolicy.network,
+            operationName: 'upload_backup_year_${year}_${cloudService.serviceType.id}',
+          );
         }
 
-        for (var entry in yearsToUpload.entries) {
+        if (uploadedFile != null) {
+          uploadedYearlyFiles[year] = uploadedFile;
+        } else {
+          AppLogger.d('BackupUploader: Failed to upload year $year to ${cloudService.serviceType.displayName}');
+        }
+      }
+
+      // Mark this service's uploads as imported
+      if (uploadedYearlyFiles.isNotEmpty) {
+        for (final entry in uploadedYearlyFiles.entries) {
           final year = entry.key;
-          final lastUpdatedAt = entry.value;
+          final file = entry.value;
 
-          debugPrint('BackupUploader: Uploading year $year to ${service.serviceType.displayName}');
-
-          // Generate backup for this year only
-          final backup = await BackupDatabasesToBackupObjectService.call(
-            databases: BackupRepository.databases,
-            lastUpdatedAt: lastUpdatedAt,
-            year: year, // Filter by year
-          );
-
-          final file = await constructBackupFile(
-            service.serviceType,
-            year,
-            backup,
-          );
-
-          CloudFileObject? uploadedFile;
-          final existingFile = existingYearlyBackups?[year];
-
-          if (existingFile != null) {
-            // Update existing file atomically
-            uploadedFile = await RetryExecutor.execute(
-              () => service.updateYearlyBackup(
-                fileId: existingFile.id,
-                fileName: backup.fileInfo.fileNameWithExtention,
-                file: file,
-              ),
-              policy: RetryPolicy.network,
-              operationName: 'update_backup_year_${year}_${service.serviceType.id}',
-            );
-          } else {
-            // Upload new file
-            uploadedFile = await RetryExecutor.execute(
-              () => service.uploadYearlyBackup(
-                fileName: backup.fileInfo.fileNameWithExtention,
-                file: file,
-              ),
-              policy: RetryPolicy.network,
-              operationName: 'upload_backup_year_${year}_${service.serviceType.id}',
-            );
-          }
-
-          if (uploadedFile != null) {
-            uploadedYearlyFiles[year] = uploadedFile;
-          } else {
-            debugPrint('BackupUploader: Failed to upload year $year to ${service.serviceType.displayName}');
+          if (file.lastUpdatedAt != null) {
+            await importHistoryStorage.markAsImported(cloudService.serviceType, year, file.lastUpdatedAt!);
           }
         }
       }
@@ -218,7 +223,8 @@ class BackupUploaderService {
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: 'Uploaded ${uploadedYearlyFiles.length} year(s) successfully across ${services.length} service(s).',
+          message:
+              'Uploaded ${uploadedYearlyFiles.length} year(s) successfully to ${cloudService.serviceType.displayName}.',
         ),
       );
 
@@ -238,6 +244,12 @@ class BackupUploaderService {
     }
   }
 
+  /// Construct a local backup file from BackupObject
+  ///
+  /// Creates a temporary file with JSON content (optionally compressed with GZIP).
+  /// File is stored in support directory under backups/ folder.
+  ///
+  /// Returns: File handle to the created backup file
   Future<io.File> constructBackupFile(
     BackupServiceType serviceType,
     int year,
@@ -249,12 +261,12 @@ class BackupUploaderService {
 
       if (!file.existsSync()) {
         await file.create(recursive: true);
-        debugPrint('BackupFileConstructor#constructFile createdFile: ${file.path.replaceAll(' ', '%20')}');
+        AppLogger.d('BackupFileConstructor#constructFile createdFile: ${file.path.replaceAll(' ', '%20')}');
       }
 
-      debugPrint('BackupFileConstructor#constructFile encodingJson');
+      AppLogger.d('BackupFileConstructor#constructFile encodingJson');
       final encodedJson = jsonEncode(backup.toContents());
-      debugPrint('BackupFileConstructor#constructFile encodedJson');
+      AppLogger.d('BackupFileConstructor#constructFile encodedJson');
 
       if (backup.fileInfo.hasCompression == true) {
         try {

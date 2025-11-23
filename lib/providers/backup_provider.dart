@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
@@ -6,6 +5,7 @@ import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -17,21 +17,33 @@ class BackupProvider extends ChangeNotifier {
     recheckAndSync();
 
     step1MessageStream.listen((message) {
+      AppLogger.d(
+        '$runtimeType: step1 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
+      );
       step1Message = message;
       notifyListeners();
     });
 
     step2MessageStream.listen((message) {
+      AppLogger.d(
+        '$runtimeType: step2 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
+      );
       step2Message = message;
       notifyListeners();
     });
 
     step3MessageStream.listen((message) {
+      AppLogger.d(
+        '$runtimeType: step3 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
+      );
       step3Message = message;
       notifyListeners();
     });
 
     step4MessageStream.listen((message) {
+      AppLogger.d(
+        '$runtimeType: step4 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
+      );
       step4Message = message;
       notifyListeners();
     });
@@ -51,10 +63,10 @@ class BackupProvider extends ChangeNotifier {
   GoogleUserObject? get currentUser => repository.currentUser;
   bool get isSignedIn => repository.isSignedIn;
 
-  Stream<BackupSyncMessage?> get step1MessageStream => repository.step1ImagesUploader.message;
-  Stream<BackupSyncMessage?> get step2MessageStream => repository.step2LatestBackupChecker.message;
-  Stream<BackupSyncMessage?> get step3MessageStream => repository.step3LatestBackupImporter.message;
-  Stream<BackupSyncMessage?> get step4MessageStream => repository.step4NewBackupUploader.message;
+  Stream<BackupSyncMessage?> get step1MessageStream => repository.step1MessageStream;
+  Stream<BackupSyncMessage?> get step2MessageStream => repository.step2MessageStream;
+  Stream<BackupSyncMessage?> get step3MessageStream => repository.step3MessageStream;
+  Stream<BackupSyncMessage?> get step4MessageStream => repository.step4MessageStream;
 
   BackupSyncMessage? step1Message;
   BackupSyncMessage? step2Message;
@@ -64,7 +76,12 @@ class BackupProvider extends ChangeNotifier {
   BackupConnectionStatus? _connectionStatus;
   BackupConnectionStatus? get connectionStatus => _connectionStatus;
 
-  bool get synced => lastSyncedAt != null && lastSyncedAt == lastDbUpdatedAt;
+  bool get allYearSynced =>
+      _lastDbUpdatedAtByYear?.entries.every(
+        (entry) => entry.value != null && entry.value == _lastSyncedAtByYear?[entry.key],
+      ) ==
+      true;
+
   bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentUser?.email != null;
 
   DateTime? get lastSyncedAt => _lastSyncedAtByYear?.values.whereType<DateTime>().fold<DateTime?>(
@@ -77,10 +94,10 @@ class BackupProvider extends ChangeNotifier {
     (latest, current) => latest == null || current.isAfter(latest) ? current : latest,
   );
 
-  Map<int, DateTime?>? _lastSyncedAtByYear; // v3: tracks last sync timestamp per year
+  Map<int, DateTime?>? _lastSyncedAtByYear;
   Map<int, DateTime?>? get lastSyncedAtByYear => _lastSyncedAtByYear;
 
-  Map<int, DateTime?>? _lastDbUpdatedAtByYear; // v3: tracks last DB update timestamp per year
+  Map<int, DateTime?>? _lastDbUpdatedAtByYear;
   Map<int, DateTime?>? get lastDbUpdatedAtByYear => _lastDbUpdatedAtByYear;
 
   bool _syncing = false;
@@ -98,7 +115,7 @@ class BackupProvider extends ChangeNotifier {
     notifyListeners();
 
     if (connectionResult.error != null) {
-      debugPrint('Connection check failed: ${connectionResult.error!.message}');
+      AppLogger.d('Connection check failed: ${connectionResult.error!.message}');
     }
 
     if (readyToSynced) {
@@ -127,7 +144,7 @@ class BackupProvider extends ChangeNotifier {
       _lastDbUpdatedAtByYear = null;
     } else if (result?.error != null) {
       // Handle sign-in error - could show user-friendly message
-      debugPrint('Sign-in failed: ${result!.error!.message}');
+      AppLogger.d('Sign-in failed: ${result!.error!.message}');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result.error!.message)),
@@ -150,7 +167,7 @@ class BackupProvider extends ChangeNotifier {
     if (result?.isSuccess == true) {
       AnalyticsService.instance.logRequestGoogleDriveScope();
     } else if (result?.error != null) {
-      debugPrint('Request scope failed: ${result!.error!.message}');
+      AppLogger.d('Request scope failed: ${result!.error!.message}');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result.error!.message)),
@@ -180,95 +197,87 @@ class BackupProvider extends ChangeNotifier {
     _lastDbUpdatedAtByYear = null;
 
     if (result?.error != null) {
-      debugPrint('Sign-out had issues: ${result!.error!.message}');
+      AppLogger.d('Sign-out had issues: ${result!.error!.message}');
     }
 
     notifyListeners();
   }
 
-  // Synchronization flow for multiple devices (v3 yearly backups):
-  //
-  // 1. Device A writes a new story at 12 PM and backs up the data to google drive (year-specific file).
-  // 2. Device B writes a new story at 3 PM. Before backing up, it retrieves the latest backup for that year.
-  //    - It compares each document from the backup with the local data.
-  //    - If a document from the backup has a newer `updatedAt` timestamp than the local version, the backup data is applied.
-  // 3. Device A opens the app again and retrieves the latest data from 3 PM for affected years.
-  //    - It repeats the comparison process and updates the local data if the retrieved data is newer.
-  //
+  /// Synchronization flow for multiple devices (v3 yearly backups)
+  ///
+  /// Per-service sync flow:
+  /// 1. For each signed-in service, execute Steps 1-4 sequentially:
+  ///    - Step 1: Upload local images/audio assets to this service
+  ///    - Step 2: Fetch and download yearly backups from this service if remote is newer
+  ///    - Step 3: Import downloaded data (only records with newer timestamps)
+  ///    - Step 4: Upload new/updated yearly backups to this service
+  ///
+  /// 2. Update global sync status using "Latest Wins" strategy:
+  ///    - Track the most recent timestamp across all services per year
+  ///    - UI shows "Synced" when local DB matches the latest remote timestamp
+  ///
+  /// 3. Handle failures gracefully:
+  ///    - Service failures don't affect other services
+  ///    - Auth failures trigger connection status update
+  ///    - Failed services retry on next sync
+  ///
   Future<void> _syncBackupAcrossDevices(String email) async {
     // Get current state of all years in local database
     _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
     notifyListeners();
 
-    // Step 1: Upload images
-    final step1Result = await repository.startStep1();
-    if (!step1Result.isSuccess) {
-      if (step1Result.error?.type == BackupErrorType.authentication) {
-        final connectionResult = await repository.checkConnection();
-        _connectionStatus = connectionResult.data;
+    // Process each service individually
+    for (final service in services) {
+      if (!service.isSignedIn) {
+        AppLogger.d('Skipping service ${service.serviceType.displayName}: not signed in');
+        continue;
       }
-      notifyListeners();
-      return;
-    }
 
-    // Step 2: Check latest backups for all years
-    final step2Result = await repository.startStep2(_lastDbUpdatedAtByYear);
-    if (step2Result.isSuccess && step2Result.data != null) {
-      _lastSyncedAtByYear = step2Result.data!.lastSyncedAtByYear;
+      final result = await repository.sync(service);
+      if (!result.isSuccess) {
+        if (result.error?.type == BackupErrorType.authentication) {
+          final connectionResult = await repository.checkConnection();
+          _connectionStatus = connectionResult.data;
+        }
+
+        // Skip to next service on failure
+        continue;
+      }
+
+      // Update local DB timestamps after successful sync (in case import happened)
+      _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
+
+      // Build sync timestamps map for this service:
+      // 1. Start with remote timestamps from Step 2 (always available)
+      // 2. Override with uploaded file timestamps from Step 4 (fresher, reflects actual upload)
+      final uploadedYearlyFilesPerService = result.data?.uploadedYearlyFiles;
+      final lastSyncedAtByYearPerService = result.data?.lastSyncedAtByYear ?? {};
+
+      // Merge uploaded files (Step 4) over remote timestamps (Step 2)
+      // Uploaded timestamps are more accurate as they reflect the actual state after upload
+      if (uploadedYearlyFilesPerService != null) {
+        for (var entry in uploadedYearlyFilesPerService.entries) {
+          lastSyncedAtByYearPerService[entry.key] = entry.value.lastUpdatedAt;
+        }
+      }
+
+      // Update global sync status using "Latest Wins" strategy:
+      // - Compare timestamps across all services per year
+      // - Keep the most recent timestamp (latest wins)
+      // - This ensures UI reflects the true latest state across all backup services
+      for (var entry in lastSyncedAtByYearPerService.entries) {
+        final year = entry.key;
+        final syncedAt = entry.value;
+        final current = _lastSyncedAtByYear?[year];
+
+        if (syncedAt != null && (current == null || syncedAt.isAfter(current))) {
+          _lastSyncedAtByYear ??= {};
+          _lastSyncedAtByYear?[year] = syncedAt;
+        }
+      }
     }
 
     notifyListeners();
-
-    if (!step2Result.isSuccess) {
-      if (step2Result.error?.type == BackupErrorType.authentication) {
-        final connectionResult = await repository.checkConnection();
-        _connectionStatus = connectionResult.data;
-      }
-      notifyListeners();
-      return;
-    }
-
-    // Step 3: Import yearly backups if needed
-    final step3Result = await repository.startStep3(
-      step2Result.data?.yearlyBackupContents,
-      _lastSyncedAtByYear,
-      _lastDbUpdatedAtByYear,
-    );
-
-    if (!step3Result.isSuccess) return;
-
-    // Re-fetch local timestamps after import (Step 3 may have updated DB with remote data)
-    // This ensures Step 4 correctly identifies which years need uploading
-    _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
-    notifyListeners();
-
-    // Step 4: Upload new yearly backups
-    final step4Result = await repository.startStep4(
-      _lastSyncedAtByYear,
-      _lastDbUpdatedAtByYear,
-      step2Result.data?.yearlyBackupFiles, // Pass already-fetched backups
-    );
-
-    if (!step4Result.isSuccess) {
-      if (step4Result.error?.type == BackupErrorType.authentication) {
-        final connectionResult = await repository.checkConnection();
-        _connectionStatus = connectionResult.data;
-        notifyListeners();
-      }
-      return;
-    }
-
-    // Once all success, update sync timestamps
-    _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
-
-    // Update _lastSyncedAtByYear from uploaded files
-    if (step4Result.data?.uploadedYearlyFiles != null) {
-      _lastSyncedAtByYear = step4Result.data!.uploadedYearlyFiles!.map(
-        (year, file) => MapEntry(year, file.lastUpdatedAt),
-      );
-    } else {
-      _lastSyncedAtByYear = _lastDbUpdatedAtByYear;
-    }
   }
 
   @override

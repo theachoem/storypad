@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
@@ -9,6 +8,7 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/google_user_storage.dart';
 
 // ignore: depend_on_referenced_packages
@@ -28,7 +28,7 @@ class _GoogleAuthClient extends http.BaseClient {
 
 // These class are responsible for calling google drive APIs.
 // Exception should not catch here. Let repository handle it.
-class GoogleDriveClient implements BackupCloudService {
+class GoogleDriveCloudService implements BackupCloudService {
   @override
   BackupServiceType get serviceType => BackupServiceType.google_drive;
 
@@ -300,41 +300,66 @@ class GoogleDriveClient implements BackupCloudService {
   }
 
   /// Fetch all yearly backups (v3) from the backups/ folder
+  /// Falls back to legacy backups (v2/v1) from root if no v3 backups exist
   /// Returns a map of year -> CloudFileObject
   @override
   Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
     try {
       drive.DriveApi client = await _getAuthenticatedClient();
 
-      // First, ensure backups/ folder exists
+      // First, try to fetch v3 yearly backups from backups/ folder
       final backupsFolderId = await loadFolder(client, 'backups');
 
-      // No backups folder means no yearly backups yet
-      if (backupsFolderId == null) return {};
+      if (backupsFolderId != null) {
+        drive.FileList fileList = await client.files.list(
+          spaces: "appDataFolder",
+          q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
+        );
 
-      drive.FileList fileList = await client.files.list(
-        spaces: "appDataFolder",
-        q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
-      );
-
-      if (fileList.files == null || fileList.files!.isEmpty) {
-        return {};
-      }
-
-      Map<int, CloudFileObject> yearlyBackups = {};
-      for (var file in fileList.files!) {
-        final cloudFile = CloudFileObject.fromGoogleDrive(file);
-        final year = cloudFile.year;
-        if (year != null) {
-          yearlyBackups[year] = cloudFile;
+        if (fileList.files != null && fileList.files!.isNotEmpty) {
+          Map<int, CloudFileObject> yearlyBackups = {};
+          for (var file in fileList.files!) {
+            final cloudFile = CloudFileObject.fromGoogleDrive(file);
+            final year = cloudFile.year;
+            if (year != null) {
+              yearlyBackups[year] = cloudFile;
+            }
+          }
+          return yearlyBackups;
         }
       }
 
-      return yearlyBackups;
+      // Should be removed after all users have migrated to v3 backups.
+      // Only for backward compatibility.
+      return _fetchLegacyBackups(client);
     } catch (e) {
       _handleApiException(e, 'fetchYearlyBackups');
       rethrow;
     }
+  }
+
+  // Fallback: Fetch legacy backups (v2/v1) from root folder
+  /// NOTE: Legacy backups are NOT yearly backups. They're stored with a sentinel year (-1)
+  /// to indicate they should be treated specially and not as part of normal yearly sync logic.
+  /// This prevents accidental misuse if code tries to interpret them as real yearly backups.
+  Future<Map<int, CloudFileObject>> _fetchLegacyBackups(drive.DriveApi client) async {
+    AppLogger.d('No v3 backups found, fetching legacy backups...');
+
+    drive.FileList legacyFileList = await client.files.list(
+      spaces: "appDataFolder",
+      q: "name contains '.json' or name contains '.zip'",
+      orderBy: "createdTime desc",
+      pageSize: 1, // Only fetch the most recent legacy backup
+    );
+
+    if (legacyFileList.files == null || legacyFileList.files!.isEmpty) {
+      return {};
+    }
+
+    // Legacy backups are monolithic (contain all years), so we use a sentinel year (-1)
+    // to indicate this is a legacy backup, not a yearly backup
+    final cloudFile = CloudFileObject.fromLegacyStoryPad(legacyFileList.files!.first);
+    return {-1: cloudFile};
   }
 
   /// Update an existing yearly backup file atomically using file ID
@@ -345,9 +370,7 @@ class GoogleDriveClient implements BackupCloudService {
     required String fileName,
     required io.File file,
   }) async {
-    debugPrint(
-      'GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName',
-    );
+    AppLogger.d('GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName');
 
     try {
       if (!file.existsSync()) {
@@ -365,7 +388,7 @@ class GoogleDriveClient implements BackupCloudService {
       drive.File fileToUpdate = drive.File();
       fileToUpdate.name = fileName;
 
-      debugPrint('GoogleDriveService#updateYearlyBackup uploading...');
+      AppLogger.d('GoogleDriveService#updateYearlyBackup uploading...');
       drive.File received = await client.files.update(
         fileToUpdate,
         fileId,
@@ -376,9 +399,7 @@ class GoogleDriveClient implements BackupCloudService {
       );
 
       if (received.id != null) {
-        debugPrint(
-          'GoogleDriveService#updateYearlyBackup updated: ${received.id}',
-        );
+        AppLogger.d('GoogleDriveService#updateYearlyBackup updated: ${received.id}');
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -400,7 +421,7 @@ class GoogleDriveClient implements BackupCloudService {
     required String fileName,
     required io.File file,
   }) async {
-    debugPrint('GoogleDriveService#uploadYearlyBackup $fileName');
+    AppLogger.d('GoogleDriveService#uploadYearlyBackup $fileName');
 
     try {
       if (!file.existsSync()) {
@@ -429,7 +450,7 @@ class GoogleDriveClient implements BackupCloudService {
       fileToUpload.name = fileName;
       fileToUpload.parents = [folderId];
 
-      debugPrint('GoogleDriveService#uploadYearlyBackup uploading...');
+      AppLogger.d('GoogleDriveService#uploadYearlyBackup uploading...');
       drive.File received = await client.files.create(
         fileToUpload,
         uploadMedia: drive.Media(
@@ -439,9 +460,7 @@ class GoogleDriveClient implements BackupCloudService {
       );
 
       if (received.id != null) {
-        debugPrint(
-          'GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}',
-        );
+        AppLogger.d('GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}');
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -463,7 +482,7 @@ class GoogleDriveClient implements BackupCloudService {
     io.File file, {
     String? folderName,
   }) async {
-    debugPrint('GoogleDriveService#uploadFile $fileName');
+    AppLogger.d('GoogleDriveService#uploadFile $fileName');
 
     try {
       if (!file.existsSync()) {
@@ -494,7 +513,7 @@ class GoogleDriveClient implements BackupCloudService {
         fileToUpload.parents = [folderId];
       }
 
-      debugPrint('GoogleDriveService#uploadFile uploading...');
+      AppLogger.d('GoogleDriveService#uploadFile uploading...');
       drive.File received = await client.files.create(
         fileToUpload,
         uploadMedia: drive.Media(
@@ -504,7 +523,7 @@ class GoogleDriveClient implements BackupCloudService {
       );
 
       if (received.id != null) {
-        debugPrint('GoogleDriveService#uploadFile uploaded: ${received.id}');
+        AppLogger.d('GoogleDriveService#uploadFile uploaded: ${received.id}');
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -638,7 +657,7 @@ class GoogleDriveClient implements BackupCloudService {
     );
 
     if (response.files?.firstOrNull?.id != null) {
-      debugPrint(
+      AppLogger.d(
         "Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}",
       );
       return _folderDriveIdByFolderName[folderName] = response.files!.first.id!;
@@ -650,7 +669,7 @@ class GoogleDriveClient implements BackupCloudService {
     folderToCreate.mimeType = "application/vnd.google-apps.folder";
 
     final createdFolder = await client.files.create(folderToCreate);
-    debugPrint(
+    AppLogger.d(
       "Drive folder ${createdFolder.name} created: ${createdFolder.id}",
     );
 

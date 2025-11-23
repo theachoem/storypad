@@ -30,6 +30,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
       permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
     );
+
     await box.query(conditions).build().removeAsync();
   }
 
@@ -66,6 +67,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   ]);
 
   Future<void> initilize() async {
+    await _initializeStore();
+    await cleanupOldDeletedRecords();
+  }
+
+  Future<void> _initializeStore() async {
     if (_store != null) return;
 
     Directory directory = Directory("${kSupportDirectory.path}/database/objectbox");
@@ -75,8 +81,6 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
       directory: directory.path,
       macosApplicationGroup: '24KJ877SZ9',
     );
-
-    await cleanupOldDeletedRecords();
   }
 
   @override

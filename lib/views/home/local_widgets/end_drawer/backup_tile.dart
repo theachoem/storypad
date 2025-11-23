@@ -71,7 +71,7 @@ class _BackupTile extends StatelessWidget {
       }
     }
 
-    if (provider.synced) {
+    if (provider.allYearSynced) {
       leading = Icon(SpIcons.googleDrive);
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;

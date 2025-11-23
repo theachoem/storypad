@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/backup_services/backups/tables/show/show_table_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -20,7 +20,7 @@ class ShowBackupsViewModel extends ChangeNotifier with DisposeAwareMixin {
   void restore(BuildContext context) async {
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#forceRestore',
-      future: () => RestoreBackupService.appInstance.forceRestore(backup: params.backup),
+      future: () => context.read<BackupProvider>().repository.restoreService.forceRestore(backup: params.backup),
     );
 
     if (!context.mounted) return;

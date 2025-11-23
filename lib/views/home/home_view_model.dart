@@ -8,8 +8,8 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
@@ -34,9 +34,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');
 
-    RestoreBackupService.appInstance.addListener(() async {
-      reload(debugSource: '$runtimeType#_listenToRestoreService');
-    });
+    BackupRepository.appInstance.restoreService.addListener(_restoreServiceListener);
   }
 
   String? nickname;
@@ -239,9 +237,14 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
+  Future<void> _restoreServiceListener() async {
+    reload(debugSource: '$runtimeType#_listenToRestoreService');
+  }
+
   @override
   void dispose() {
     scrollInfo.dispose();
+    BackupRepository.appInstance.restoreService.removeListener(_restoreServiceListener);
     super.dispose();
   }
 }

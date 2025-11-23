@@ -64,7 +64,7 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
       int? statusCode;
 
       try {
-        deleted = await provider.repository.googleDriveClient.deleteFile(fileId);
+        deleted = await provider.repository.googleDriveService.deleteFile(fileId);
       } catch (e) {
         if (e is drive.DetailedApiRequestError) {
           statusCode = e.status;
