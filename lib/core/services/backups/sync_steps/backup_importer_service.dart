@@ -1,51 +1,32 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/backup_object.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/storages/backup_import_history_storage.dart';
 
 class BackupImporterService {
-  final RestoreBackupService restoreService;
   final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
 
   Stream<BackupSyncMessage?> get message => controller.stream;
-
-  BackupImporterService({
-    required this.restoreService,
-  });
 
   void reset() {
     controller.add(null);
   }
 
   Future<bool> start(
-    Map<int, BackupObject>? yearlyBackupContents,
+    RestoreBackupService restoreService,
+    BackupCloudService cloudService,
+    BackupImportHistoryStorage importHistoryStorage,
+    Map<int, BackupObject>? backupContentsByYear,
     Map<int, DateTime?>? lastSyncedAtByYear,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
   ) async {
-    debugPrint('🚧 $runtimeType#start ...');
+    AppLogger.d('🚧 $runtimeType#start ...');
 
-    if (yearlyBackupContents == null || yearlyBackupContents.isEmpty) {
-      controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
-      return true;
-    }
-
-    // Defensive validation: Check if any year needs importing
-    // Note: Step 2 already filtered downloads by timestamp, but we validate again for robustness
-    // and to support independent testing of this service
-    bool hasChanges = false;
-    for (var entry in yearlyBackupContents.entries) {
-      final year = entry.key;
-      final remoteSyncedAt = lastSyncedAtByYear?[year];
-      final localUpdatedAt = lastDbUpdatedAtByYear?[year];
-
-      if (remoteSyncedAt == null || localUpdatedAt == null || remoteSyncedAt.isAfter(localUpdatedAt)) {
-        hasChanges = true;
-        break;
-      }
-    }
-
-    if (!hasChanges) {
+    if (backupContentsByYear == null || backupContentsByYear.isEmpty) {
+      AppLogger.d('$runtimeType#start completed: No backup contents to import.');
       controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
       return true;
     }
@@ -53,12 +34,13 @@ class BackupImporterService {
     controller.add(BackupSyncMessage(processing: true, success: true, message: null));
 
     int totalChangesCount = 0;
-    for (var entry in yearlyBackupContents.entries) {
+    for (var entry in backupContentsByYear.entries) {
       final year = entry.key;
       final backup = entry.value;
 
-      debugPrint('BackupImporter: Importing year $year');
+      AppLogger.d('BackupImporter: Importing year $year');
       final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
+      await importHistoryStorage.markAsImported(cloudService.serviceType, year, backup.fileInfo.createdAt);
       totalChangesCount += changesCount;
     }
 

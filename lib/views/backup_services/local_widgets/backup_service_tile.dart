@@ -91,7 +91,7 @@ class BackupServiceTile extends StatelessWidget {
       }
     }
 
-    if (provider.synced) {
+    if (provider.allYearSynced) {
       subtitle = Text(
         DateFormatHelper.yMEd_jmNullable(
               provider.lastSyncedAt,

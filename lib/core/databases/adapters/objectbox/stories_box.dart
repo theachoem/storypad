@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
 
@@ -47,13 +48,13 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       }
     }
 
-    debugPrint('🤾‍♀️ Migrated Stories: $count');
+    AppLogger.info('🤾‍♀️ Migrated Stories: $count');
   }
 
   Future<Map<int, int>> getStoryCountsByYear({
     Map<String, dynamic>? filters,
   }) async {
-    debugPrint("Triggering $tableName#getStoryCountsByYear 🍎");
+    AppLogger.info("Triggering $tableName#getStoryCountsByYear 🍎");
 
     List<StoryObjectBox>? stories = await buildQuery(filters: filters).build().findAsync();
 
@@ -69,7 +70,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Map<PathType, int> getStoryCountsByType({
     Map<String, dynamic>? filters,
   }) {
-    debugPrint("Triggering $tableName#getStoryCountsByType 🍎");
+    AppLogger.info("Triggering $tableName#getStoryCountsByType 🍎");
 
     Map<PathType, int> storyCountsByType = {};
 
@@ -88,7 +89,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Map<int, int> getStoryCountByAssets({
     required List<int> assetIds,
   }) {
-    debugPrint("Triggering $tableName#getStoryCountByAssets 🍊");
+    AppLogger.info("Triggering $tableName#getStoryCountByAssets 🍊");
 
     Map<int, int> storyCountsByAssetIds = {};
 
@@ -106,7 +107,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? years,
     List<String>? types,
   }) {
-    debugPrint("Triggering $tableName#getStoryCountByTags 🍐");
+    AppLogger.info("Triggering $tableName#getStoryCountByTags 🍐");
 
     Map<int, int> storyCountsByTagIds = {};
 
@@ -134,7 +135,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     required int year,
     int? tagId,
   }) {
-    debugPrint("Triggering $tableName#getStoryFeelingByMonth 🍎");
+    AppLogger.info("Triggering $tableName#getStoryFeelingByMonth 🍎");
 
     Map<int, String?> storyFeelingByMonth = {};
 
@@ -177,10 +178,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
         final isLastAsset = i == assets.length - 1;
         await assets[i].copyWith(tags: tags.toList()).save(runCallbacks: isLastAsset);
       }
-      debugPrint("🏷️ StoryBox#set: computing tags for asset");
+      AppLogger.info("🏷️ StoryBox#set: computing tags for asset");
     }
 
-    debugPrint("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
+    AppLogger.info("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
 
     return saved;
   }
@@ -202,7 +203,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<String, dynamic>? options,
     bool returnDeleted = false,
   }) async {
-    debugPrint("Triggering $tableName#where 🍎");
+    AppLogger.info("Triggering $tableName#where 🍎");
 
     List<StoryObjectBox> objects;
     QueryBuilder<StoryObjectBox>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);

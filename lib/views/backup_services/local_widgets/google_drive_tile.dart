@@ -18,7 +18,7 @@ class GoogleDriveTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BackupProvider>(context);
-    final service = provider.repository.googleDriveClient;
+    final service = provider.repository.googleDriveService;
 
     Widget leading = Icon(SpIcons.googleDrive);
     Widget? trailing;
@@ -86,7 +86,7 @@ class GoogleDriveTile extends StatelessWidget {
       }
     }
 
-    if (provider.synced) {
+    if (provider.allYearSynced) {
       subtitle = Text(
         DateFormatHelper.yMEd_jmNullable(
               provider.lastSyncedAt,

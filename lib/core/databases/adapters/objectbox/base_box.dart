@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/objectbox.g.dart';
 
 abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends BaseDbAdapter<T> {
@@ -30,6 +30,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
       permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
     );
+
     await box.query(conditions).build().removeAsync();
   }
 
@@ -66,6 +67,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   ]);
 
   Future<void> initilize() async {
+    await _initializeStore();
+    await cleanupOldDeletedRecords();
+  }
+
+  Future<void> _initializeStore() async {
     if (_store != null) return;
 
     Directory directory = Directory("${kSupportDirectory.path}/database/objectbox");
@@ -75,13 +81,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
       directory: directory.path,
       macosApplicationGroup: '24KJ877SZ9',
     );
-
-    await cleanupOldDeletedRecords();
   }
 
   @override
   Future<T?> find(int id, {bool returnDeleted = false}) async {
-    debugPrint("Triggering $tableName#find $id 🍎");
+    AppLogger.info("Triggering $tableName#find $id 🍎");
 
     B? object = box.get(id);
     if (object?.permanentlyDeletedAt != null && !returnDeleted) return null;
@@ -109,7 +113,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     bool returnDeleted = false,
     required String? debugSource,
   }) async {
-    debugPrint("Triggering $tableName#count from $debugSource 🍎");
+    AppLogger.info("Triggering $tableName#count from $debugSource 🍎");
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
     Query<B>? query = queryBuilder.build();
     return query.count();
@@ -121,7 +125,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     Map<String, dynamic>? options,
     bool returnDeleted = false,
   }) async {
-    debugPrint("Triggering $tableName#where 🍎");
+    AppLogger.info("Triggering $tableName#where 🍎");
 
     List<B> objects;
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
@@ -138,7 +142,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
-    debugPrint("Triggering $tableName#touch 🍎🍎");
+    AppLogger.info("Triggering $tableName#touch 🍎🍎");
     B constructed = await modelToObject(record);
 
     constructed.touch();
@@ -153,7 +157,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
-    debugPrint("Triggering $tableName#set 🍎");
+    AppLogger.info("Triggering $tableName#set 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -168,7 +172,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     List<T> records, {
     bool runCallbacks = true,
   }) async {
-    debugPrint("Triggering $tableName#setAll 🍎");
+    AppLogger.info("Triggering $tableName#setAll 🍎");
     List<B> objects = await modelsToObjects(records.whereType<T>().toList());
 
     for (B obj in objects) {
@@ -184,7 +188,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
-    debugPrint("Triggering $tableName#update 🍎");
+    AppLogger.info("Triggering $tableName#update 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -199,7 +203,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     T record, {
     bool runCallbacks = true,
   }) async {
-    debugPrint("Triggering $tableName#create 🍎");
+    AppLogger.info("Triggering $tableName#create 🍎");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();
@@ -222,7 +226,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     bool runCallbacks = true,
     DateTime? deletedAt,
   }) async {
-    debugPrint("Triggering $tableName#delete 🍎");
+    AppLogger.info("Triggering $tableName#delete 🍎");
     B? object = box.get(id);
 
     if (softDelete) {

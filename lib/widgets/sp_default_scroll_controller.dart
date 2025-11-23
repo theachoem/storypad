@@ -42,17 +42,20 @@ class _SpDefaultScrollControllerState extends State<SpDefaultScrollController> {
 
   @override
   void initState() {
-    controller.addListener(() {
-      controllerOffetNotifier.value = controller.offset;
-    });
+    controller.addListener(_listener);
     super.initState();
   }
 
   @override
   void dispose() {
+    controller.removeListener(_listener);
     controller.dispose();
     controllerOffetNotifier.dispose();
     super.dispose();
+  }
+
+  void _listener() {
+    controllerOffetNotifier.value = controller.offset;
   }
 
   @override

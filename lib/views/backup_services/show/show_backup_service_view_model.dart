@@ -30,6 +30,19 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     backupProvider = context.read<BackupProvider>();
     load();
   }
+
+  /// Example output:
+  /// [
+  ///   MapEntry(2022, CloudFileObject(id: '123', year: 2022, lastUpdatedAt: DateTime(2022, 1, 1))),
+  ///   MapEntry(2021, CloudFileObject(id: '456', year: 2021, lastUpdatedAt: DateTime(2021, 1, 1))),
+  /// ]
+  List<MapEntry<int, CloudFileObject>> getSortedYearlyBackups() {
+    if (yearlyBackups == null) return [];
+    final entries = yearlyBackups!.entries.toList();
+    entries.sort((a, b) => b.key.compareTo(a.key)); // Descending order (newest first)
+    return entries;
+  }
+
   String? getLastSyncAt(BuildContext context) {
     if (yearlyBackups == null || yearlyBackups!.isEmpty) return null;
     final latest = yearlyBackups!.values
@@ -60,7 +73,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
         await MessengerService.of(context).showLoading(
           debugSource: '$runtimeType#openCloudFile',
           future: () async {
-            final result = await context.read<BackupProvider>().repository.googleDriveClient.getFileContent(cloudFile);
+            final result = await context.read<BackupProvider>().repository.googleDriveService.getFileContent(cloudFile);
 
             final fileContent = result?.$1;
 
@@ -86,7 +99,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#deleteCloudFile',
       future: () async {
-        bool? success = await context.read<BackupProvider>().repository.googleDriveClient.deleteFile(file.id);
+        bool? success = await context.read<BackupProvider>().repository.googleDriveService.deleteFile(file.id);
         if (success == true) yearlyBackups?.remove(file.year);
         notifyListeners();
       },

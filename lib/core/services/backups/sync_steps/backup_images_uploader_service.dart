@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 
@@ -17,11 +17,11 @@ class BackupImagesUploaderService {
     controller.add(null);
   }
 
-  Future<bool> start(List<BackupCloudService> services) async {
-    debugPrint('🚧 $runtimeType#start ...');
+  Future<bool> start(BackupCloudService cloudService) async {
+    AppLogger.d('🚧 $runtimeType#start ...');
 
     try {
-      return await _start(services);
+      return await _start(cloudService);
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -50,7 +50,7 @@ class BackupImagesUploaderService {
       );
       return false;
     } catch (e, stackTrace) {
-      debugPrint('$runtimeType#start unexpected error: $e $stackTrace');
+      AppLogger.d('$runtimeType#start unexpected error: $e $stackTrace');
       controller.add(
         BackupSyncMessage(
           processing: false,
@@ -62,39 +62,23 @@ class BackupImagesUploaderService {
     }
   }
 
-  Future<bool> _start(List<BackupCloudService> services) async {
-    if (services.isEmpty) {
-      throw const exp.AuthException(
-        'No backup services available for image upload',
+  Future<bool> _start(BackupCloudService cloudService) async {
+    if (!cloudService.isSignedIn || cloudService.currentUser?.email == null) {
+      throw exp.AuthException(
+        'Service ${cloudService.serviceType.displayName} is not signed in',
         exp.AuthExceptionType.signInRequired,
-        serviceType: null,
+        serviceType: cloudService.serviceType,
       );
     }
 
-    // Collect uploads from all services
-    bool allSuccess = true;
-    int totalUploaded = 0;
+    final uploadedCount = await _uploadAssetsForService(cloudService);
 
-    for (final service in services) {
-      if (!service.isSignedIn || service.currentUser?.email == null) {
-        debugPrint('Skipping service ${service.serviceType.displayName}: not signed in');
-        continue;
-      }
-
-      final uploadedCount = await _uploadAssetsForService(service);
-      totalUploaded += uploadedCount;
-
-      if (uploadedCount < 0) {
-        allSuccess = false;
-      }
-    }
-
-    if (totalUploaded > 0) {
+    if (uploadedCount > 0) {
       controller.add(
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: '$totalUploaded images uploaded successfully across all services.',
+          message: '$uploadedCount images uploaded successfully.',
         ),
       );
     } else {
@@ -107,12 +91,15 @@ class BackupImagesUploaderService {
       );
     }
 
-    return allSuccess;
+    return uploadedCount >= 0;
   }
 
-  Future<int> _uploadAssetsForService(BackupCloudService service) async {
-    final email = service.currentUser!.email;
-    final List<AssetDbModel>? localAssets = await _getLocalAsset(email, service.serviceType);
+  /// Upload all local assets that haven't been backed up to this service
+  ///
+  /// Returns: Number of assets successfully uploaded
+  Future<int> _uploadAssetsForService(BackupCloudService cloudService) async {
+    final email = cloudService.currentUser!.email;
+    final List<AssetDbModel>? localAssets = await _getLocalAsset(email, cloudService.serviceType);
 
     if (localAssets == null || localAssets.isEmpty) {
       return 0;
@@ -123,25 +110,28 @@ class BackupImagesUploaderService {
     int uploadedCount = 0;
     for (AssetDbModel asset in localAssets) {
       if (asset.localFile == null) continue;
-      final uploaded = await _uploadAsset(service, asset);
+      final uploaded = await _uploadAsset(cloudService, asset);
       if (uploaded) uploadedCount++;
     }
 
     return uploadedCount;
   }
 
-  Future<bool> _uploadAsset(BackupCloudService service, AssetDbModel asset) async {
+  /// Upload a single asset to the specified service with retry logic
+  ///
+  /// Returns: true if upload succeeded, false otherwise
+  Future<bool> _uploadAsset(BackupCloudService cloudService, AssetDbModel asset) async {
     final cloudFileName = asset.cloudFileName;
-    final String? email = service.currentUser?.email;
+    final String? email = cloudService.currentUser?.email;
 
     if (cloudFileName == null || asset.localFile == null || email == null) {
-      debugPrint('Skipping asset upload: missing required data');
+      AppLogger.d('Skipping asset upload: missing required data');
       return false;
     }
 
     try {
       final cloudFile = await RetryExecutor.execute(
-        () => service.uploadFile(
+        () => cloudService.uploadFile(
           cloudFileName,
           asset.localFile!,
           folderName: asset.type.subDirectory,
@@ -152,7 +142,7 @@ class BackupImagesUploaderService {
 
       if (cloudFile != null) {
         final updated = asset.copyWithCloudFile(
-          serviceType: service.serviceType,
+          serviceType: cloudService.serviceType,
           cloudFile: cloudFile,
           email: email,
         );
@@ -166,16 +156,24 @@ class BackupImagesUploaderService {
       throw exp.AuthException(
         e.message,
         e.type,
-        serviceType: service.serviceType,
+        serviceType: cloudService.serviceType,
         context: e.context,
       );
     } catch (e) {
-      debugPrint('Failed to upload asset $cloudFileName: $e');
+      AppLogger.d('Failed to upload asset $cloudFileName: $e');
       // Don't rethrow - continue with other assets
       return false;
     }
   }
 
+  /// Get all local assets that haven't been backed up to this service
+  ///
+  /// Filters assets where:
+  /// - cloudDestinations doesn't have this service, OR
+  /// - cloudDestinations[service][email] is null
+  /// - Local file exists
+  ///
+  /// Returns: List of assets needing backup
   Future<List<AssetDbModel>?> _getLocalAsset(String email, BackupServiceType serviceType) async {
     CollectionDbModel<AssetDbModel>? assets = await AssetDbModel.db.where();
     return assets?.items

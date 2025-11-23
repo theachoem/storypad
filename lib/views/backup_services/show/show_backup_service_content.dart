@@ -54,7 +54,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
           subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
         ),
         if (viewModel.yearlyBackups!.isNotEmpty) const SpSectionTitle(title: "Backups (partitioned by year)"),
-        for (MapEntry<int, CloudFileObject> entry in viewModel.yearlyBackups?.entries ?? {})
+        for (MapEntry<int, CloudFileObject> entry in viewModel.getSortedYearlyBackups())
           SpPopupMenuButton(
             items: (context) {
               return [
