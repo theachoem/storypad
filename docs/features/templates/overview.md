@@ -1,7 +1,5 @@
 # Templates Add-on
 
-**Price:** $1.99 (one-time purchase)
-
 ## Description
 
 Create your own daily writing templates. The Templates add-on allows you to design reusable writing structures that help you maintain consistency and establish productive writing habits.

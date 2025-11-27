@@ -21,7 +21,7 @@ Keep simplicity for a diary app & journal app while having more features & custo
 ## Monetization
 
 - **Free Core App:** No ads, no data selling, no subscriptions
-- **Optional Add-ons:** One-time purchases ($1.99 each)
+- **Optional Add-ons:** One-time purchases
   - Relaxing Sounds
   - Templates
   - Period Calendar
@@ -29,11 +29,11 @@ Keep simplicity for a diary app & journal app while having more features & custo
 
 ### Why Individual Add-ons (NOT Bundles) ⚠️
 
-**Decision:** Keep individual $1.99 add-ons with promotional deals instead of bundling.
+**Decision:** Keep individual $1.19 add-ons with promotional deals instead of bundling.
 
 **Reasoning:**
 
-- **Lower friction** – $1.99 feels less risky than larger upfront cost
+- **Lower friction** – $1.19 feels less risky than larger upfront cost
 - **User choice** – Customers only pay for features they actually want
 - **Aligns with brand** – Matches minimalist philosophy over aggressive monetization
 - **Infinitely scalable** – Works with 4 add-ons or 40 add-ons equally well

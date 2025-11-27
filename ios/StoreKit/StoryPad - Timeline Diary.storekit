@@ -15,7 +15,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "1.19",
       "familyShareable" : true,
       "internalID" : "6754039959",
       "localizations" : [
@@ -30,7 +30,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "1.19",
       "familyShareable" : true,
       "internalID" : "6748109452",
       "localizations" : [
@@ -45,7 +45,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "1.19",
       "familyShareable" : true,
       "internalID" : "6748109594",
       "localizations" : [
@@ -60,7 +60,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "1.19",
       "familyShareable" : true,
       "internalID" : "6755052252",
       "localizations" : [

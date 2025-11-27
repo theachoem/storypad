@@ -1,9 +1,5 @@
 # Voice Journal Feature - Technical Overview
 
-## 💰 Feature Pricing: $1.99 (One-time purchase)
-
----
-
 ## ✅ Status: COMPLETE & SHIPPED 🚀
 
 The Voice Journaling feature is fully implemented and live in production! Users can record voice notes, organize them by tags, and play them back seamlessly.
@@ -733,7 +729,7 @@ User selects "Travel" → Only shows this voice note
 
 ---
 
-## ✨ Why Users Will Pay $1.99
+## ✨ Why Users Will Pay
 
 1. **Emotional Connection** - Hear your own voice in past entries
 2. **Accessibility** - For people who prefer speaking to typing

@@ -28,7 +28,7 @@ Product-focused documentation for marketing, planning, and strategic decisions.
 ### Monetization
 
 - Free core app (no ads, no subscriptions)
-- Optional $1.99 add-ons (4 current: Voice Journal, Templates, Relaxing Sounds, Period Calendar)
+- Optional add-ons (4 current: Voice Journal, Templates, Relaxing Sounds, Period Calendar)
 - Promotional deals (30-50% off) via Remote Config
 - **No bundles** – Individual deals scale infinitely as catalog grows
 
