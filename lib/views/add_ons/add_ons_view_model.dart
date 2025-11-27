@@ -39,7 +39,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
       });
 
   StoreProduct? getProduct(String productIdentifier) =>
-      context.read<InAppPurchaseProvider>().getProduct(productIdentifier);
+      context.mounted ? context.read<InAppPurchaseProvider>().getProduct(productIdentifier) : null;
 
   ({String? displayPrice, String? displayComparePrice, String? badgeLabel}) getActiveDeal(AppProduct product) {
     final storeProduct = getProduct(product.productIdentifier);
