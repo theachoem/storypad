@@ -18,6 +18,7 @@ class SearchFilterObject {
   final int? eventId;
   final int? assetId;
   final bool? starred;
+  final int? limit;
 
   SearchFilterObject({
     required this.years,
@@ -31,6 +32,7 @@ class SearchFilterObject {
     this.month,
     this.day,
     this.starred,
+    this.limit,
   });
 
   Map<String, dynamic>? toDatabaseFilter({
@@ -50,6 +52,7 @@ class SearchFilterObject {
     if (assetId != null) filters['asset'] = assetId;
     if (starred != null) filters['starred'] = starred;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
+    if (limit != null) filters['limit'] = limit;
 
     // Search whole database when has query.
     if (query != null && query.trim().isNotEmpty == true) {

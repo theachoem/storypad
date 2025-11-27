@@ -19,11 +19,14 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
 
   ValueNotifier<String> queryNotifier = ValueNotifier('');
 
+  static const int defaultLimitOnEmptyQuery = 20;
+
   late final SearchFilterObject initialFilter = SearchFilterObject(
     years: params.initialYear != null ? {params.initialYear!} : {},
     types: {PathType.docs},
     tagId: null,
     assetId: null,
+    limit: defaultLimitOnEmptyQuery,
   );
 
   late SearchFilterObject filter = initialFilter;
@@ -31,6 +34,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   void search(String query) {
     debouncedCallback(() {
       queryNotifier.value = query.trim();
+      filter = filter.copyWith(limit: query.trim().isNotEmpty ? null : defaultLimitOnEmptyQuery);
 
       AnalyticsService.instance.logSearch(
         searchTerm: query.trim(),
@@ -53,7 +57,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     ).push(context);
 
     if (result is SearchFilterObject) {
-      filter = result;
+      filter = result.copyWith(limit: null);
       notifyListeners();
     }
   }

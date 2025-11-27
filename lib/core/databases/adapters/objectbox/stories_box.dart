@@ -209,6 +209,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     QueryBuilder<StoryObjectBox>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
 
     Query<StoryObjectBox>? query = queryBuilder.build();
+
+    int? limit = filters != null && filters.containsKey('limit') ? filters['limit'] as int : null;
+    if (limit != null) query.limit = limit;
+
     objects = await query.findAsync();
 
     Map<int, EventDbModel> events = await EventsBox()

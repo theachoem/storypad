@@ -29,6 +29,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject starred(bool? starred);
 
+  SearchFilterObject limit(int? limit);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
@@ -48,6 +50,7 @@ abstract class _$SearchFilterObjectCWProxy {
     int? month,
     int? day,
     bool? starred,
+    int? limit,
   });
 }
 
@@ -95,6 +98,9 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject starred(bool? starred) => call(starred: starred);
 
   @override
+  SearchFilterObject limit(int? limit) => call(limit: limit);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
@@ -114,6 +120,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
+    Object? limit = const $CopyWithPlaceholder(),
   }) {
     return SearchFilterObject(
       years: years == const $CopyWithPlaceholder() || years == null
@@ -160,6 +167,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.starred
           // ignore: cast_nullable_to_non_nullable
           : starred as bool?,
+      limit: limit == const $CopyWithPlaceholder()
+          ? _value.limit
+          // ignore: cast_nullable_to_non_nullable
+          : limit as int?,
     );
   }
 }
@@ -195,6 +206,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       month: (json['month'] as num?)?.toInt(),
       day: (json['day'] as num?)?.toInt(),
       starred: json['starred'] as bool?,
+      limit: (json['limit'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
@@ -210,6 +222,7 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'event_id': instance.eventId,
       'asset_id': instance.assetId,
       'starred': instance.starred,
+      'limit': instance.limit,
     };
 
 const _$PathTypeEnumMap = {

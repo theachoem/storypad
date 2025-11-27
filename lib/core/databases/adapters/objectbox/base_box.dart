@@ -131,8 +131,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     QueryBuilder<B>? queryBuilder = buildQuery(filters: filters, returnDeleted: returnDeleted);
 
     Query<B>? query = queryBuilder.build();
-    objects = await query.findAsync();
 
+    int? limit = filters != null && filters.containsKey('limit') ? filters['limit'] as int : null;
+    if (limit != null) query.limit = limit;
+
+    objects = await query.findAsync();
     List<T> docs = await objectsToModels(objects, options);
     return CollectionDbModel<T>(items: docs);
   }
