@@ -24,22 +24,25 @@ class _PeriodCalendarContent extends StatelessWidget {
         controller: PrimaryScrollController.maybeOf(context),
         headerSliverBuilder: (context, _) {
           return [
-            SliverToBoxAdapter(
-              child: SpCalendar(
-                initialYear: viewModel.year,
-                initialMonth: viewModel.month,
-                onMonthChanged: viewModel.onMonthChanged,
-                controller: viewModel.calendarController,
-                cellBuilder: (context, date, isDisplayMonth) {
-                  return SpCalendarPeriodDateCell(
-                    date: date,
-                    isDisplayMonth: isDisplayMonth,
-                    isLastMonthPeriodDate: viewModel.isLastMonthPeriodDate(date),
-                    isPeriodDate: viewModel.isPeriodDate(date),
-                    selected: viewModel.isDateSelected(date),
-                    onTap: isDisplayMonth ? () => viewModel.toggleDate(context, date) : null,
-                  );
-                },
+            SliverPadding(
+              padding: MediaQuery.paddingOf(context).copyWith(top: 0, bottom: 0),
+              sliver: SliverToBoxAdapter(
+                child: SpCalendar(
+                  initialYear: viewModel.year,
+                  initialMonth: viewModel.month,
+                  onMonthChanged: viewModel.onMonthChanged,
+                  controller: viewModel.calendarController,
+                  cellBuilder: (context, date, isDisplayMonth) {
+                    return SpCalendarPeriodDateCell(
+                      date: date,
+                      isDisplayMonth: isDisplayMonth,
+                      isLastMonthPeriodDate: viewModel.isLastMonthPeriodDate(date),
+                      isPeriodDate: viewModel.isPeriodDate(date),
+                      selected: viewModel.isDateSelected(date),
+                      onTap: isDisplayMonth ? () => viewModel.toggleDate(context, date) : null,
+                    );
+                  },
+                ),
               ),
             ),
           ];

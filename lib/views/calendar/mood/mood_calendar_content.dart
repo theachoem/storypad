@@ -31,30 +31,33 @@ class _CalendarStoriesContent extends StatelessWidget {
                 onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
               ),
             ),
-            SliverToBoxAdapter(
-              child: SpCalendar(
-                initialYear: viewModel.year,
-                initialMonth: viewModel.month,
-                onMonthChanged: viewModel.onMonthChanged,
-                controller: viewModel.calendarController,
-                cellBuilder: (context, date, isDisplayMonth) {
-                  final feeling = isDisplayMonth ? viewModel.feelingMapByDay[date.day] : null;
-                  return SpCalendarDateCell(
-                    date: date,
-                    selectedYear: viewModel.year,
-                    selectedMonth: viewModel.month,
-                    selectedDay: viewModel.selectedDay,
-                    feeling: feeling,
-                    isDisplayMonth: isDisplayMonth,
-                    onTap: isDisplayMonth
-                        ? () => viewModel.onDaySelected(
-                            viewModel.year,
-                            viewModel.month,
-                            viewModel.selectedDay == date.day ? null : date.day,
-                          )
-                        : null,
-                  );
-                },
+            SliverPadding(
+              padding: MediaQuery.paddingOf(context).copyWith(top: 0, bottom: 0),
+              sliver: SliverToBoxAdapter(
+                child: SpCalendar(
+                  initialYear: viewModel.year,
+                  initialMonth: viewModel.month,
+                  onMonthChanged: viewModel.onMonthChanged,
+                  controller: viewModel.calendarController,
+                  cellBuilder: (context, date, isDisplayMonth) {
+                    final feeling = isDisplayMonth ? viewModel.feelingMapByDay[date.day] : null;
+                    return SpCalendarDateCell(
+                      date: date,
+                      selectedYear: viewModel.year,
+                      selectedMonth: viewModel.month,
+                      selectedDay: viewModel.selectedDay,
+                      feeling: feeling,
+                      isDisplayMonth: isDisplayMonth,
+                      onTap: isDisplayMonth
+                          ? () => viewModel.onDaySelected(
+                              viewModel.year,
+                              viewModel.month,
+                              viewModel.selectedDay == date.day ? null : date.day,
+                            )
+                          : null,
+                    );
+                  },
+                ),
               ),
             ),
           ];

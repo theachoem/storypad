@@ -258,18 +258,7 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
     List<Widget> actions = [
       buildMoreOptionsButton(context),
       IconButton(
-        onPressed: () {
-          if (kIsCupertino) {
-            context.read<DevicePreferencesProvider>().toggleThemeMode(context);
-          } else {
-            context.read<DevicePreferencesProvider>().toggleThemeMode(
-              context,
-              delay: const Duration(milliseconds: 300),
-            );
-            // TODO: fix material modal to dynamic base on theme mode instead of pop
-            Navigator.maybePop(context);
-          }
-        },
+        onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
         icon: SpThemeModeIcon(parentContext: context),
       ),
       Builder(

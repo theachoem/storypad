@@ -98,10 +98,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
         IconButton.outlined(
           tooltip: tr("add_ons.templates.title"),
           visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
-          icon: SpFadeIn.fromBottom(
-            duration: Durations.long1,
-            child: const Icon(SpIcons.lightBulb, color: Colors.yellow),
-          ),
+          icon: const Icon(SpIcons.lightBulb, color: Colors.yellow),
           color: Colors.white,
           onPressed: () {
             toggle(context);

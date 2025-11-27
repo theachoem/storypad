@@ -48,14 +48,17 @@ class SpCalendarPeriodDateCell extends StatelessWidget {
           child: Stack(
             children: [
               if (isLastMonthPeriodDate)
-                Icon(
-                  SpIcons.waterDrop,
-                  size: 44,
-                  color: lastMonthDropColor,
+                Center(
+                  child: Icon(
+                    SpIcons.waterDrop,
+                    size: 44,
+                    color: lastMonthDropColor,
+                  ),
                 ),
               if (isPeriodDate)
                 AnimatedContainer(
-                  transformAlignment: Alignment.center,
+                  alignment: .center,
+                  transformAlignment: .center,
                   curve: Curves.bounceOut,
                   duration: Durations.medium3,
                   transform: Matrix4.identity()..spScale(selected ? 1.2 : 1.0),
