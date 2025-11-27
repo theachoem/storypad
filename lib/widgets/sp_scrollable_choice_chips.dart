@@ -39,8 +39,8 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
 
             return ChoiceChip(
               showCheckmark: false,
-              label: RichText(
-                text: TextSpan(
+              label: Text.rich(
+                TextSpan(
                   text: "$label ",
                   style: TextTheme.of(context).labelMedium,
                   children: [

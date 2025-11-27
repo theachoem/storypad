@@ -86,10 +86,9 @@ After posting, DM your link to [@${RemoteConfigService.tiktokUsername.get()}](ht
     );
   }
 
-  RichText buildTitle(BuildContext context) {
-    return RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
+  Widget buildTitle(BuildContext context) {
+    return Text.rich(
+      TextSpan(
         text: "🌿 Post on social media & get free add-ons",
         style: Theme.of(context).textTheme.titleLarge,
         children: [

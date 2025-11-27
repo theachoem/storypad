@@ -9,7 +9,7 @@ class _BackupServicesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Backup"),
+        title: Text(tr('page.backups.title')),
       ),
       body: ListView(
         children: [
@@ -18,7 +18,7 @@ class _BackupServicesContent extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
-            title: const Text("Import / Export"),
+            title: Text(tr('page.import_export_backup')),
             onTap: () => const ImportExportRoute().push(context),
           ),
         ],

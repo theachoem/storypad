@@ -61,12 +61,11 @@ class _FeelingObjectCard extends StatelessWidget {
       width: 100 - 4,
       child: FittedBox(
         fit: BoxFit.scaleDown,
-        child: RichText(
+        child: Text.rich(
           maxLines: 2,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
-          textScaler: MediaQuery.textScalerOf(context),
-          text: TextSpan(
+          TextSpan(
             style: Theme.of(context).textTheme.labelSmall,
             text: name,
             children: [

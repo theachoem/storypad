@@ -15,9 +15,8 @@ class LanguageTile extends StatelessWidget {
       onTap: () => LanguagesRoute().push(context),
       leading: const Icon(SpIcons.globe),
       subtitle: Text(kNativeLanguageNames[context.locale.toLanguageTag()]!),
-      title: RichText(
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+      title: Text.rich(
+        TextSpan(
           style: Theme.of(context).textTheme.bodyLarge,
           text: "${tr("page.language.title")} ",
           children: [

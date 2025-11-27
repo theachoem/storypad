@@ -93,9 +93,8 @@ class _ShowAddOnContent extends StatelessWidget {
   }
 
   Widget buildFAQTitle(BuildContext context) {
-    Widget child = RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
+    Widget child = Text.rich(
+      TextSpan(
         text: 'FAQ',
         style: TextTheme.of(
           context,

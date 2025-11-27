@@ -9,15 +9,15 @@ class _ImportExportContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Import / Export'),
+        title: Text(tr('page.import_export_backup')),
       ),
       body: ListView(
         children: [
           const SizedBox(height: 16.0),
-          const SpSectionTitle(title: "Import"),
+          SpSectionTitle(title: tr('general.import')),
           ListTile(
             leading: const Icon(SpIcons.importOffline),
-            title: const Text("Import StoryPad JSON (.json)"),
+            title: Text(tr('list_tile.import_storypad_json.title')),
             onTap: () => viewModel.import(context),
           ),
           // TODO: more import options with files support + export by date & export in PDF
@@ -37,7 +37,7 @@ class _ImportExportContent extends StatelessWidget {
           //   onTap: () {},
           // ),
           const Divider(),
-          const SpSectionTitle(title: "Export"),
+          SpSectionTitle(title: tr('general.export')),
           // ListTile(
           //   leading: const Icon(SpIcons.calendar),
           //   title: const Text("Date"),
@@ -56,7 +56,7 @@ class _ImportExportContent extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: FilledButton(
-              child: const Text("Export StoryPad JSON (.zip)"),
+              child: Text(tr('list_tile.export_storypad_json.title')),
               onPressed: () => viewModel.export(context),
             ),
           ),

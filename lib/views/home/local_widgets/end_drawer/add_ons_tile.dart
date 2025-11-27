@@ -12,9 +12,8 @@ class _AddOnsTile extends StatelessWidget {
           contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
           leading: const Icon(SpIcons.addOns),
           trailing: context.read<InAppPurchaseProvider>().hasActiveDeals ? const SpGiftAnimatedIcon() : null,
-          title: RichText(
-            textScaler: MediaQuery.textScalerOf(context),
-            text: TextSpan(
+          title: Text.rich(
+            TextSpan(
               style: Theme.of(context).textTheme.bodyLarge,
               text: "${tr('page.add_ons.title')} ",
               children: [

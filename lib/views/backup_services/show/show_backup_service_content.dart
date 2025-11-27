@@ -10,9 +10,8 @@ class _ShowBackupServiceContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: RichText(
-          textScaler: MediaQuery.textScalerOf(context),
-          text: TextSpan(
+        title: Text.rich(
+          TextSpan(
             style: TextTheme.of(context).titleLarge,
             children: [
               TextSpan(text: "${viewModel.serviceType.displayName} "),
@@ -53,7 +52,29 @@ class _ShowBackupServiceContent extends StatelessWidget {
           title: Text(viewModel.params.service.currentUser?.email ?? tr('list_tile.backup.unsignin_subtitle')),
           subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
         ),
-        if (viewModel.yearlyBackups!.isNotEmpty) const SpSectionTitle(title: "Backups (partitioned by year)"),
+        if (viewModel.errorMessage != null)
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.paddingOf(context).left,
+              right: MediaQuery.paddingOf(context).left,
+            ),
+            child: Text(
+              viewModel.errorMessage!,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        if (viewModel.errorMessage == null && viewModel.yearlyBackups!.isEmpty)
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.paddingOf(context).left,
+              right: MediaQuery.paddingOf(context).left,
+            ),
+            child: Text(
+              tr('general.no_backup_found'),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        if (viewModel.yearlyBackups!.isNotEmpty) SpSectionTitle(title: tr('page.backups.title')),
         for (MapEntry<int, CloudFileObject> entry in viewModel.getSortedYearlyBackups())
           SpPopupMenuButton(
             items: (context) {
@@ -107,7 +128,6 @@ class _ShowBackupServiceContent extends StatelessWidget {
               );
             },
           ),
-
         // We want to display actual filerrs in store in each service instead,
         // but because limitation with API, we will show all backups for now.
         // const ListTile(

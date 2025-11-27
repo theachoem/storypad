@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' show BackupException;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -31,6 +32,8 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
+  String? errorMessage;
+
   /// Example output:
   /// [
   ///   MapEntry(2022, CloudFileObject(id: '123', year: 2022, lastUpdatedAt: DateTime(2022, 1, 1))),
@@ -54,11 +57,13 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> load() async {
     final service = backupProvider.repository.getService(serviceType);
+    errorMessage = null;
 
     try {
       yearlyBackups = await service.fetchYearlyBackups();
-    } catch (e) {
+    } on BackupException catch (e) {
       yearlyBackups = {};
+      errorMessage = e.message;
     }
 
     notifyListeners();

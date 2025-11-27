@@ -20,10 +20,9 @@ class _LicenseText extends StatelessWidget {
     return SpTapEffect(
       effects: [SpTapEffectType.touchableOpacity],
       onTap: () => showLicenseDialog(context),
-      child: RichText(
+      child: Text.rich(
         textAlign: TextAlign.center,
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+        TextSpan(
           children: [
             WidgetSpan(
               child: Container(

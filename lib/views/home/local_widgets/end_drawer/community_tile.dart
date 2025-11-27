@@ -10,9 +10,8 @@ class _CommunityTile extends StatelessWidget {
       builder: (context, newBadge, hideBadge) {
         return ListTile(
           leading: const Icon(SpIcons.forum),
-          title: RichText(
-            textScaler: MediaQuery.textScalerOf(context),
-            text: TextSpan(
+          title: Text.rich(
+            TextSpan(
               style: Theme.of(context).textTheme.bodyLarge,
               text: "${tr("page.community.title")} ",
               children: [

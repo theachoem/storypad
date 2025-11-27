@@ -27,9 +27,8 @@ class BackupServiceTile extends StatelessWidget {
 
     Widget leading = Icon(metadata.icon);
     Widget? trailing;
-    Widget title = RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
+    Widget title = Text.rich(
+      TextSpan(
         text: '${metadata.displayName} ',
         style: TextTheme.of(context).bodyLarge,
         children: [
@@ -79,7 +78,7 @@ class BackupServiceTile extends StatelessWidget {
           subtitle = Text(
             tr('list_tile.backup.some_data_has_not_sync_subtitle'),
           );
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case null:
           trailing = const SizedBox.square(

@@ -113,8 +113,8 @@ class _PagesLayoutState extends State<_PagesLayout> {
     return Positioned(
       right: 16.0,
       bottom: MediaQuery.of(context).padding.bottom + 16.0,
-      child: RichText(
-        text: TextSpan(
+      child: Text.rich(
+        TextSpan(
           text: "${index + 1}",
           style: TextTheme.of(context).bodySmall,
           children: [

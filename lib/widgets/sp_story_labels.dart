@@ -232,9 +232,8 @@ class SpStoryLabels extends StatelessWidget {
     Widget? text;
 
     if (leadingIconData != null) {
-      text = RichText(
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+      text = Text.rich(
+        TextSpan(
           style: TextTheme.of(context).labelMedium,
           children: [
             WidgetSpan(

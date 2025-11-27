@@ -41,8 +41,8 @@ class _ShowTagContent extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     return SpTapEffect(
       onTap: () => viewModel.goToEditPage(context),
-      child: RichText(
-        text: TextSpan(
+      child: Text.rich(
+        TextSpan(
           text: "${viewModel.tag.title} ",
           style: TextTheme.of(context).titleLarge,
           children: [

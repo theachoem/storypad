@@ -22,9 +22,8 @@ class GoogleDriveTile extends StatelessWidget {
 
     Widget leading = Icon(SpIcons.googleDrive);
     Widget? trailing;
-    Widget title = RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
+    Widget title = Text.rich(
+      TextSpan(
         text: 'Google Drive ',
         style: TextTheme.of(context).bodyLarge,
         children: [

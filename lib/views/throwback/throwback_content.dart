@@ -53,9 +53,8 @@ class _ThrowbackContent extends StatelessWidget {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      title: RichText(
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+      title: Text.rich(
+        TextSpan(
           text: "${tr('general.throwback')} ",
           style: TextTheme.of(context).titleLarge,
           children: [

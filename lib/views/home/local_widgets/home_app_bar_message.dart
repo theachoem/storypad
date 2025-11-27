@@ -42,11 +42,11 @@ class _HomeAppBarMessage extends StatelessWidget {
       alignment: Alignment.topLeft,
       showFirst: showWelcomeMessage,
       firstChild: child,
-      secondChild: RichText(
+      secondChild: Text.rich(
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
         textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+        TextSpan(
           style: TextTheme.of(context).bodyLarge,
           text: title,
           children: trailing == null ? null : [WidgetSpan(alignment: PlaceholderAlignment.middle, child: trailing)],

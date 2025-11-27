@@ -22,9 +22,8 @@ class _HomeEndDrawerHeader extends StatelessWidget {
               viewModel.year.toString(),
               style: TextTheme.of(context).displayMedium?.copyWith(color: ColorScheme.of(context).primary),
             ),
-            RichText(
-              textScaler: MediaQuery.textScalerOf(context),
-              text: TextSpan(
+            Text.rich(
+              TextSpan(
                 text: "${tr("button.switch")} ",
                 style: TextTheme.of(context).labelLarge,
                 children: const [

@@ -75,9 +75,8 @@ class _BackupTile extends StatelessWidget {
       leading = Icon(SpIcons.googleDrive);
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;
-      title = RichText(
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+      title = Text.rich(
+        TextSpan(
           text: "${tr("list_tile.backup.title")} ",
           style: TextTheme.of(context).bodyLarge,
           children: [
@@ -104,9 +103,8 @@ class _BackupTile extends StatelessWidget {
       if (provider.step3Message != null) subtitle = Text("${tr("general.syncing")} 3/4");
       if (provider.step4Message != null) subtitle = Text("${tr("general.syncing")} 4/4");
 
-      title = RichText(
-        textScaler: MediaQuery.textScalerOf(context),
-        text: TextSpan(
+      title = Text.rich(
+        TextSpan(
           text: tr("list_tile.backup.title"),
           style: TextTheme.of(context).bodyLarge,
           children: [

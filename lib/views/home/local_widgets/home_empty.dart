@@ -90,10 +90,10 @@ class _HomeEmpty extends StatelessWidget {
             Container(
               constraints: const BoxConstraints(maxWidth: 200),
               margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight),
-              child: RichText(
+              child: Text.rich(
                 textAlign: TextAlign.center,
                 textScaler: MediaQuery.textScalerOf(context),
-                text: TextSpan(
+                TextSpan(
                   style: TextTheme.of(context).bodyLarge,
                   children: [
                     TextSpan(text: message.split("{EDIT_BUTTON}").first),

@@ -85,9 +85,8 @@ class _StoryTileContents extends StatelessWidget {
           if (story.inArchives) ...[
             Container(
               margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8.0)),
-              child: RichText(
-                textScaler: MediaQuery.textScalerOf(context),
-                text: TextSpan(
+              child: Text.rich(
+                TextSpan(
                   style: TextTheme.of(context).labelMedium,
                   children: [
                     const WidgetSpan(

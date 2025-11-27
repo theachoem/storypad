@@ -25,8 +25,8 @@ class BackupEventsTableViewer extends StatelessWidget {
             'period' => const Icon(SpIcons.waterDrop),
             _ => const Icon(Icons.event),
           },
-          title: RichText(
-            text: TextSpan(
+          title: Text.rich(
+            TextSpan(
               text: "${event.eventType.capitalize} ",
               children: [
                 if (event.permanentlyDeletedAt != null)
