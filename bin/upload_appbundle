@@ -34,4 +34,5 @@ CMD="bundle exec fastlane upload_to_play_store \
 cd bin/fastlane || exit 1
 
 echo "Executing: $CMD"
-exec $CMD
+eval $CMD
+echo "Complete at: $(date)"

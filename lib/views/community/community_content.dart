@@ -68,12 +68,6 @@ class _CommunityContent extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(SpIcons.share),
-            title: Text(tr("list_tile.share_app.title")),
-            subtitle: Text(tr("list_tile.share_app.subtitle")),
-            onTap: () => SpShareAppBottomSheet().show(context: context),
-          ),
         ],
       ),
     );

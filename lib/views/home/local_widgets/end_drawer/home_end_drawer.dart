@@ -19,13 +19,13 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/library/library_view.dart';
-import 'package:storypad/views/search/search_view.dart' show SearchRoute;
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
 import 'package:storypad/views/community/community_view.dart' show CommunityRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -83,7 +83,6 @@ class HomeEndDrawer extends StatelessWidget {
           _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
-          buildSearchTile(context),
           buildTagsTile(context),
           buildArchiveBinTile(context),
           if (kStoryPad)
@@ -104,16 +103,14 @@ class HomeEndDrawer extends StatelessWidget {
             title: Text(tr("list_tile.rate.title")),
             onTap: () => AppStoreOpenerService.call(),
           ),
+          ListTile(
+            leading: const Icon(SpIcons.share),
+            title: Text(tr("list_tile.share_app.title")),
+            subtitle: Text(tr("list_tile.share_app.subtitle")),
+            onTap: () => SpShareAppBottomSheet().show(context: context),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget buildSearchTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(SpIcons.search),
-      title: Text(tr("page.search.title")),
-      onTap: () => SearchRoute(initialYear: context.read<HomeViewModel>().year).push(context),
     );
   }
 

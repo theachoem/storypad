@@ -72,7 +72,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
     return Consumer<TagsProvider>(
       builder: (context, tagsProvider, child) {
         return Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+          padding: const EdgeInsets.only(top: 12.0),
           child: SpScrollableChoiceChips<TagDbModel>(
             choices: tagsProvider.tags?.items ?? [],
             storiesCount: (TagDbModel tag) => tag.id == selectedTagId ? assets?.items.length : null,

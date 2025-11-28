@@ -134,17 +134,18 @@ class _BackupTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          onTap: () => const BackupServicesRoute().push(context, rootNavigator: true),
+          onTap: () => const BackupServicesRoute().push(context),
           leading: leading,
           title: title,
           subtitle: subtitle,
         ),
-        if (action != null)
+        if (action != null) ...[
           Padding(
             padding: const EdgeInsets.only(left: 52.0),
             child: action,
           ),
-        const SizedBox(height: 4.0),
+          const SizedBox(height: 4.0),
+        ],
       ],
     );
   }

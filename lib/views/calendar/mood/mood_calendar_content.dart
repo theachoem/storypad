@@ -22,13 +22,16 @@ class _CalendarStoriesContent extends StatelessWidget {
         headerSliverBuilder: (context, _) {
           return [
             SliverToBoxAdapter(
-              child: SpScrollableChoiceChips<TagDbModel>(
-                choices: viewModel.tags ?? [],
-                storiesCount: (TagDbModel tag) =>
-                    viewModel.tagSelected(tag) ? viewModel.currentFilterStoriesCount : null,
-                toLabel: (TagDbModel tag) => tag.title,
-                selected: (TagDbModel tag) => viewModel.tagSelected(tag),
-                onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SpScrollableChoiceChips<TagDbModel>(
+                  choices: viewModel.tags ?? [],
+                  storiesCount: (TagDbModel tag) =>
+                      viewModel.tagSelected(tag) ? viewModel.currentFilterStoriesCount : null,
+                  toLabel: (TagDbModel tag) => tag.title,
+                  selected: (TagDbModel tag) => viewModel.tagSelected(tag),
+                  onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
+                ),
               ),
             ),
             SliverPadding(
