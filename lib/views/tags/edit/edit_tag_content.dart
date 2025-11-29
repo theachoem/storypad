@@ -10,6 +10,17 @@ class _EditTagContent extends StatelessWidget {
     return SpTextInputsPage(
       appBar: AppBar(
         title: viewModel.tag != null ? Text(tr("page.edit_tag.title")) : Text(tr("page.new_tag.title")),
+        actions: [
+          if (viewModel.tag != null)
+            IconButton(
+              color: ColorScheme.of(context).error,
+              icon: const Icon(SpIcons.deleteForever),
+              onPressed: () async {
+                bool deleted = await context.read<TagsProvider>().deleteTag(context, viewModel.tag!);
+                if (deleted && context.mounted) Navigator.maybePop(context);
+              },
+            ),
+        ],
       ),
       fields: [
         SpTextInputField(

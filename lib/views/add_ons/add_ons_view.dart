@@ -31,28 +31,22 @@ part 'local_widgets/add_on_card.dart';
 
 class AddOnsRoute extends BaseRoute {
   const AddOnsRoute({
-    this.fullscreenDialog = false,
     this.onLoaded,
   });
 
-  @override
-  final bool fullscreenDialog;
   final void Function(BuildContext context, AddOnsViewModel viewModel)? onLoaded;
 
   static Future<void> pushAndNavigateTo({
     required AppProduct product,
     required BuildContext context,
-    bool fullscreenDialog = false,
   }) {
     return AddOnsRoute(
-      fullscreenDialog: fullscreenDialog,
       onLoaded: (context, viewModel) {
         final addOn = viewModel.addOns?.where((a) => a.type == product).firstOrNull;
         if (addOn == null) return;
 
         ShowAddOnRoute(
           addOn: addOn,
-          fullscreenDialog: fullscreenDialog,
         ).push(context);
       },
     ).push(context);

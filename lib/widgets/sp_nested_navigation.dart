@@ -20,10 +20,18 @@ class SpNestedNavigation extends StatefulWidget {
 }
 
 class SpNestedNavigationState extends State<SpNestedNavigation> {
+  final HeroController heroController = MaterialApp.createMaterialHeroController();
+
+  @override
+  void dispose() {
+    heroController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return HeroControllerScope(
-      controller: MaterialApp.createMaterialHeroController(),
+      controller: heroController,
       child: ScaffoldMessenger(
         child: Navigator(
           key: widget.navigatorKey,

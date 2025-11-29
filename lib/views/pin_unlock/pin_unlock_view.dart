@@ -49,9 +49,6 @@ class PinUnlockRoute extends BaseRoute {
   final void Function(BuildContext context, String? pin) onValidated;
   final Future<bool> Function()? onConfirmWithBiometrics;
 
-  @override
-  bool get fullscreenDialog => true;
-
   factory PinUnlockRoute.confirmation({
     required BuildContext context,
     required String correctPin,

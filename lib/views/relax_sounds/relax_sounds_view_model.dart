@@ -66,7 +66,6 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
       AddOnsRoute.pushAndNavigateTo(
         product: AppProduct.relax_sounds,
         context: context,
-        fullscreenDialog: true,
       );
       return;
     }
@@ -137,7 +136,6 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
       AddOnsRoute.pushAndNavigateTo(
         product: AppProduct.relax_sounds,
         context: context,
-        fullscreenDialog: true,
       );
       return;
     }

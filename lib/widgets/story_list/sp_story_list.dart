@@ -6,7 +6,6 @@ import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 import 'package:storypad/widgets/sp_throwback_tile.dart';
-import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
@@ -54,19 +53,14 @@ class SpStoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
 
-    return Stack(
-      children: [
-        const SpSpStoryListTimelineVerticleDivider(),
-        if (onRefresh != null) ...[
-          RefreshIndicator.adaptive(
-            onRefresh: onRefresh!,
-            child: buildList(context),
-          ),
-        ] else ...[
-          buildList(context),
-        ],
-      ],
-    );
+    if (onRefresh != null) {
+      return RefreshIndicator.adaptive(
+        onRefresh: onRefresh!,
+        child: buildList(context),
+      );
+    } else {
+      return buildList(context);
+    }
   }
 
   Widget buildList(BuildContext listContext) {
@@ -76,7 +70,6 @@ class SpStoryList extends StatelessWidget {
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.only(
-        top: 16.0,
         left: MediaQuery.of(listContext).padding.left,
         right: MediaQuery.of(listContext).padding.right,
         bottom: MediaQuery.of(listContext).padding.bottom + 16.0,
@@ -111,7 +104,7 @@ class SpStoryList extends StatelessWidget {
                 if (viewOnly) {
                   ShowChangeRoute(content: story.latestContent!, preferences: story.preferences).push(context);
                 } else {
-                  ShowStoryRoute(id: story.id, story: story).push(context, rootNavigator: true);
+                  ShowStoryRoute(id: story.id, story: story).push(context);
                 }
               },
             );

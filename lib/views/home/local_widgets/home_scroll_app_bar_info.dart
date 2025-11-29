@@ -40,5 +40,12 @@ class _HomeScrollAppBarInfo {
   double getHelloTextHeight() => scaler.scale(helloTextBaseHeight);
   double getQuestionTextHeight() => scaler.scale(questionTextBaseHeight);
   double getContentsHeight() => getHelloTextHeight() + getQuestionTextHeight();
-  Color getBackgroundColor(BuildContext context) => Theme.of(context).appBarTheme.backgroundColor!;
+
+  Color getScaffoldBackgroundColor(BuildContext context) {
+    return kIsCupertino && AppTheme.isDarkMode(context) && AppTheme.isMonochrome(context)
+        ? Colors.black
+        : Theme.of(context).scaffoldBackgroundColor;
+  }
+
+  Color getBackgroundColor(BuildContext context) => getScaffoldBackgroundColor(context);
 }

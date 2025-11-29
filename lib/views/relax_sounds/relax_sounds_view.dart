@@ -44,10 +44,10 @@ class RelaxSoundsRoute extends BaseRoute {
   const RelaxSoundsRoute();
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => RelaxSoundsView(params: this);
+
+  static const String routeName = 'relax_sounds';
+  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class RelaxSoundsView extends StatelessWidget {

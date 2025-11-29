@@ -23,6 +23,9 @@ class SearchRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => SearchView(params: this);
+
+  static const String routeName = 'search';
+  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class SearchView extends StatelessWidget {

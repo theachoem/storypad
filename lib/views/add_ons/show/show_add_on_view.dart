@@ -23,11 +23,8 @@ part '../local_widgets/demo_images.dart';
 class ShowAddOnRoute extends BaseRoute {
   const ShowAddOnRoute({
     required this.addOn,
-    this.fullscreenDialog = false,
   });
 
-  @override
-  final bool fullscreenDialog;
   final AddOnObject addOn;
 
   @override

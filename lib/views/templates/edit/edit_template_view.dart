@@ -28,9 +28,6 @@ class EditTemplateRoute extends BaseRoute {
   final TemplateDbModel? initialTemplate;
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => EditTemplateView(params: this);
 }
 

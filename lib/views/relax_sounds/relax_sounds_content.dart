@@ -27,7 +27,6 @@ class _RelaxSoundsContent extends StatelessWidget {
                     AddOnsRoute.pushAndNavigateTo(
                       product: AppProduct.relax_sounds,
                       context: context,
-                      fullscreenDialog: true,
                     );
                   }
                 },

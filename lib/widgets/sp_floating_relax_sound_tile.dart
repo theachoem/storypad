@@ -9,7 +9,7 @@ import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/timer_picker_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_relax_sounds_sheet.dart';
+import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -46,9 +46,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
         backgroundColor: backgroundColor,
         provider: provider,
         child: buildContents(context, backgroundColor, provider),
-        onTap: fromHome
-            ? () => const SpRelaxSoundsSheet().show(context: context)
-            : () => showTimerPicker(provider, context),
+        onTap: fromHome ? () => const RelaxSoundsRoute().push(context) : () => showTimerPicker(provider, context),
       ),
     );
   }

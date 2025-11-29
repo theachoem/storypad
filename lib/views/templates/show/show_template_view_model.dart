@@ -61,7 +61,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       initialMonth: params.initialMonth,
       initialDay: params.initialDay,
       template: template,
-    ).push(context, rootNavigator: true);
+    ).push(context);
 
     if (context.mounted && result is StoryDbModel) {
       Future.delayed(const Duration(seconds: 1)).then((_) {

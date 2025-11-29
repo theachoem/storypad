@@ -6,7 +6,8 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
-import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/views/root/root_view.dart';
+import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -40,7 +41,7 @@ class App extends StatelessWidget {
               themeMode: themeMode,
               theme: theme,
               darkTheme: darkTheme,
-              home: const HomeView(),
+              home: const RootView(),
               localizationsDelegates: [
                 ...EasyLocalization.of(context)!.delegates,
                 DefaultCupertinoLocalizations.delegate,
@@ -53,7 +54,9 @@ class App extends StatelessWidget {
               builder: (context, child) {
                 return GestureDetector(
                   onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                  child: child!,
+                  child: DesktopMainMenuPadding(
+                    child: child!,
+                  ),
                 );
               },
             ),

@@ -65,7 +65,7 @@ class TagsProvider extends ChangeNotifier {
     await reload();
   }
 
-  Future<void> deleteTag(BuildContext context, TagDbModel tag) async {
+  Future<bool> deleteTag(BuildContext context, TagDbModel tag) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       title: tr('dialog.are_you_sure_to_delete_tag.title'),
@@ -80,7 +80,11 @@ class TagsProvider extends ChangeNotifier {
       AnalyticsService.instance.logDeleteTag(
         tag: tag,
       );
+
+      return true;
     }
+
+    return false;
   }
 
   Future<void> editTag(BuildContext context, TagDbModel tag) async {

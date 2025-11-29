@@ -32,7 +32,7 @@ class _SpThemeModeIconState extends State<SpThemeModeIcon> with DebounchedCallba
     return Consumer<DevicePreferencesProvider>(
       builder: (context, provider, child) {
         debouncedCallback(() {
-          setDarkMode(provider.isDarkModeBaseOnThemeMode(context));
+          if (context.mounted) setDarkMode(provider.isDarkModeBaseOnThemeMode(context));
         });
 
         return SpAnimatedIcons.fadeScale(

@@ -57,7 +57,7 @@ class _CommunityContent extends StatelessWidget {
           ListTile(
             leading: Icon(SpIcons.license),
             title: Text(tr("list_tile.licenses.title")),
-            onLongPress: () => const DeveloperOptionsRoute().push(context, rootNavigator: true),
+            onLongPress: () => const DeveloperOptionsRoute().push(context),
             onTap: () {
               AnalyticsService.instance.logLicenseView();
               showLicensePage(

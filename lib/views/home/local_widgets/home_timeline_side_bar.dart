@@ -70,9 +70,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               ),
             ),
             icon: const Icon(SpIcons.search),
-            onPressed: () => SpSearchSheet(
-              initialYear: widget.viewModel.year,
-            ).show(context: context),
+            onPressed: () => SearchRoute(initialYear: widget.viewModel.year).pushNamed(context),
           ),
         ),
         SpFadeIn.bound(
@@ -85,7 +83,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               ),
             ),
             icon: const Icon(SpIcons.musicNote),
-            onPressed: () => const SpRelaxSoundsSheet().show(context: context),
+            onPressed: () => const RelaxSoundsRoute().pushNamed(context),
           ),
         ),
       ],
@@ -110,10 +108,11 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
             ),
             icon: const Icon(SpIcons.calendar),
-            onPressed: () => SpCalendarSheet(
+            onPressed: () => CalendarRoute(
               initialMonth: null,
               initialYear: widget.viewModel.year,
-            ).show(context: context),
+              initialSegment: .mood,
+            ).pushNamed(context),
           ),
         ],
       ),

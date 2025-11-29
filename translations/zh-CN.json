@@ -300,6 +300,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "正在同步你的数据",
   "page.home.app_bar.messages.what_in_ur_mind": "你正在想什么？",
   "page.home.empty_message": "请点击 {EDIT_BUTTON} 将故事添加到 {YEAR}。",
+  "page.home.title": "家",
   "page.image_picker.empty_message": "添加的照片将显示在这里。",
   "page.import_export_backup": "导入/导出数据",
   "page.language.title": "语言",

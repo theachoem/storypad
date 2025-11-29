@@ -16,7 +16,7 @@ class _StoryMonthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 4.0, top: index == 0 ? 8.0 : 16),
+      margin: EdgeInsets.only(bottom: 0.0, top: index == 0 ? 8.0 : 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,

@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -12,7 +14,6 @@ import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
-import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
@@ -90,15 +91,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     setStories(stories);
     notifyListeners();
-  }
-
-  void onboard() {
-    nickname = PreferenceDbModel.db.nickname.get();
-    notifyListeners();
-
-    // onboard is considered re-starting experience,
-    // reset to show new badge back.
-    NewBadgeStorage().remove();
   }
 
   Future<void> refresh(BuildContext context) async {

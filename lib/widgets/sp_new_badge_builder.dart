@@ -30,7 +30,7 @@ class _SpNewBadgeBuilderState extends State<SpNewBadgeBuilder> {
   Future<void> load() async {
     await NewBadgeStorage().clicked(widget.badgeKey).then((clicked) {
       showNewBadge = !clicked;
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 

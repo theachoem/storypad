@@ -127,6 +127,7 @@ abstract class BaseBottomSheet {
       context: context,
       semanticsDismissible: true,
       barrierDismissible: true,
+      useRootNavigator: false,
       builder: (context) {
         return MediaQuery.removePadding(
           context: context,

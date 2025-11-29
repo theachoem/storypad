@@ -300,6 +300,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "Синхронизируем ваши данные...",
   "page.home.app_bar.messages.what_in_ur_mind": "Поделишься своими мыслями?",
   "page.home.empty_message": "Пожалуйста тапните на {EDIT_BUTTON} чтобы добавить историю на {YEAR}.",
+  "page.home.title": "Хайм",
   "page.image_picker.empty_message": "Добавленные изображения хранятся здесь.",
   "page.import_export_backup": "Daten importieren/exportieren",
   "page.language.title": "Язык",

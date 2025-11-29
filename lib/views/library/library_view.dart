@@ -46,6 +46,9 @@ class LibraryRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => LibraryView(params: this);
+
+  static const String routeName = 'library';
+  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class LibraryView extends StatelessWidget {

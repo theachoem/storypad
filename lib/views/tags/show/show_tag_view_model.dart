@@ -32,7 +32,15 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> goToEditPage(BuildContext context) async {
     await context.read<TagsProvider>().editTag(context, tag);
-    _tag = await TagDbModel.db.find(tag.id) ?? _tag;
+    var editedTag = await TagDbModel.db.find(tag.id);
+
+    // tags can be removed which mean we should pop show tag page.
+    if (editedTag == null) {
+      if (context.mounted) Navigator.pop(context);
+    } else {
+      _tag = editedTag;
+    }
+
     notifyListeners();
   }
 

@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 
@@ -12,11 +11,8 @@ abstract class BaseRoute {
   Map<String, String?>? get analyticsParameters => null;
 
   String get className => runtimeType.toString();
-
   String get analyticScreenName => className.replaceAll("Route", "");
   String get analyticScreenClass => className.replaceAll("Route", "View");
-
-  bool get fullscreenDialog => false;
 
   Widget buildPage(BuildContext context);
 
@@ -46,15 +42,9 @@ abstract class BaseRoute {
   }
 
   PageRoute<T> buildRoute<T>(BuildContext context) {
-    if (fullscreenDialog) {
-      return kIsCupertino
-          ? buildCupertinoRoute(context: context, fullscreenDialog: true)
-          : buildMaterialRoute(context: context, fullscreenDialog: true);
-    } else {
-      return CupertinoSheetRoute.hasParentSheet(context)
-          ? buildCupertinoRoute(context: context, fullscreenDialog: false)
-          : buildMaterialRoute(context: context, fullscreenDialog: false);
-    }
+    return CupertinoSheetRoute.hasParentSheet(context)
+        ? buildCupertinoRoute(context: context, fullscreenDialog: false)
+        : buildMaterialRoute(context: context, fullscreenDialog: false);
   }
 
   PageRoute<T> buildCupertinoRoute<T>({

@@ -26,7 +26,6 @@ class _LibraryContent extends StatelessWidget {
                     AddOnsRoute.pushAndNavigateTo(
                       product: AppProduct.voice_journal,
                       context: context,
-                      fullscreenDialog: true,
                     );
                   }
                 },

@@ -133,11 +133,7 @@ class _AddOnsContent extends StatelessWidget {
   }
 
   Widget buildAddOnsGrid(BuildContext context, EdgeInsets screenPadding, BoxConstraints constraints) {
-    final screenWidth = constraints.maxWidth;
-    final isLargeScreen = screenWidth > 900;
-    final isMediumScreen = screenWidth > 600;
-
-    int crossAxisCount = isLargeScreen ? 4 : (isMediumScreen ? 3 : 2);
+    int crossAxisCount = constraints.maxWidth ~/ 170;
 
     return AlignedGridView.count(
       padding: EdgeInsets.only(
@@ -156,10 +152,7 @@ class _AddOnsContent extends StatelessWidget {
         final addOn = viewModel.addOns![index];
         return _AddOnGridItem(
           addOn: addOn,
-          onTap: () => ShowAddOnRoute(
-            addOn: addOn,
-            fullscreenDialog: viewModel.params.fullscreenDialog,
-          ).push(context),
+          onTap: () => ShowAddOnRoute(addOn: addOn).push(context),
         );
       },
     );
