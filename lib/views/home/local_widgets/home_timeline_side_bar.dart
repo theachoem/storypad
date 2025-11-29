@@ -62,6 +62,21 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
           ),
         SpFadeIn.bound(
           child: IconButton(
+            tooltip: tr('page.search.title'),
+            style: IconButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+            ),
+            icon: const Icon(SpIcons.search),
+            onPressed: () => SpSearchSheet(
+              initialYear: widget.viewModel.year,
+            ).show(context: context),
+          ),
+        ),
+        SpFadeIn.bound(
+          child: IconButton(
             tooltip: tr('add_ons.relax_sounds.title'),
             style: IconButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.surface,
@@ -70,7 +85,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               ),
             ),
             icon: const Icon(SpIcons.musicNote),
-            onPressed: () => const RelaxSoundsRoute().push(context),
+            onPressed: () => const SpRelaxSoundsSheet().show(context: context),
           ),
         ),
       ],

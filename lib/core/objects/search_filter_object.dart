@@ -9,6 +9,7 @@ part 'search_filter_object.g.dart';
 class SearchFilterObject {
   final Set<int> years;
   final Set<int>? excludeYears;
+  final String? query;
   final int? month;
   final int? day;
   final Set<PathType> types;
@@ -25,6 +26,7 @@ class SearchFilterObject {
     required this.types,
     required this.tagId,
     required this.assetId,
+    this.query,
     this.galleryTemplateId,
     this.templateId,
     this.eventId,
@@ -35,9 +37,7 @@ class SearchFilterObject {
     this.limit,
   });
 
-  Map<String, dynamic>? toDatabaseFilter({
-    String? query,
-  }) {
+  Map<String, dynamic>? toDatabaseFilter() {
     Map<String, dynamic> filters = {};
 
     if (query != null) filters['query'] = query;
@@ -55,7 +55,7 @@ class SearchFilterObject {
     if (limit != null) filters['limit'] = limit;
 
     // Search whole database when has query.
-    if (query != null && query.trim().isNotEmpty == true) {
+    if (query?.trim().isNotEmpty == true) {
       filters['types'] = PathType.values.map((e) => e.name).toList();
       filters.remove('years');
     }

@@ -12,18 +12,16 @@ import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dar
 class SpStoryListWithQuery extends StatefulWidget {
   const SpStoryListWithQuery({
     super.key,
-    this.query,
     this.viewOnly = false,
     this.filter,
     this.disableMultiEdit = false,
   });
 
   final SearchFilterObject? filter;
-  final String? query;
   final bool viewOnly;
   final bool disableMultiEdit;
 
-  String get uniqueness => jsonEncode(filter?.toDatabaseFilter(query: query)) + viewOnly.toString();
+  String get uniqueness => jsonEncode(filter?.toDatabaseFilter()) + viewOnly.toString();
 
   static SpStoryListWithQueryState? of(BuildContext context) {
     return context.findAncestorStateOfType<SpStoryListWithQueryState>();
@@ -43,7 +41,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     debugPrint("📂 Load SpStoryListWithQuery from $debugSource");
 
     stories = await StoryDbModel.db.where(
-      filters: widget.filter?.toDatabaseFilter(query: widget.query) ?? {'query': widget.query},
+      filters: widget.filter?.toDatabaseFilter(),
     );
 
     if (widget.filter?.years.length == 1 && widget.filter?.month != null && widget.filter?.day != null) {

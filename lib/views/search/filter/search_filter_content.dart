@@ -12,7 +12,6 @@ class _SearchFilterContent extends StatelessWidget {
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: Text(tr("page.search_filter.title")),
         actions: [
-          _RememberSwitcher(viewModel: viewModel),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
@@ -73,38 +72,6 @@ class _SearchFilterContent extends StatelessWidget {
       toLabel: (TagDbModel tag) => tag.title,
       selected: (TagDbModel tag) => viewModel.searchFilter.tagId == tag.id,
       onToggle: (TagDbModel tag) => viewModel.toggleTag(tag),
-    );
-  }
-}
-
-class _RememberSwitcher extends StatelessWidget {
-  const _RememberSwitcher({
-    required this.viewModel,
-  });
-
-  final SearchFilterViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-      visible: viewModel.params.allowSaveSearchFilter,
-      child: SpFadeIn(
-        delay: Durations.medium1,
-        child: GestureDetector(
-          onTap: () => viewModel.setSavingSearchFilter(!(viewModel.savingSearchFilterEnabled == true)),
-          child: Row(
-            spacing: 0.0,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(tr('button.remember')),
-              Checkbox.adaptive(
-                value: viewModel.savingSearchFilterEnabled == true,
-                onChanged: (value) => viewModel.setSavingSearchFilter(value!),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

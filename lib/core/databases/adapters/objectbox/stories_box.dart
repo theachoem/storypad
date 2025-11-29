@@ -104,6 +104,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
   Map<int, int> getStoryCountByTags({
     required List<int> tagIds,
+    String? query,
     List<int>? years,
     List<String>? types,
   }) {
@@ -115,8 +116,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       storyCountsByTagIds[tagId] = buildQuery(
         filters: {
           'tag': tagId,
-          if (years != null) 'years': years,
-          if (types != null) 'types': types,
+          'query': query,
+          if (years != null && years.isNotEmpty) 'years': years,
+          if (types != null && types.isNotEmpty) 'types': types,
         },
       ).build().count();
     }

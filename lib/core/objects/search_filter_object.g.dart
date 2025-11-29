@@ -15,6 +15,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject assetId(int? assetId);
 
+  SearchFilterObject query(String? query);
+
   SearchFilterObject galleryTemplateId(String? galleryTemplateId);
 
   SearchFilterObject templateId(int? templateId);
@@ -43,6 +45,7 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<PathType> types,
     int? tagId,
     int? assetId,
+    String? query,
     String? galleryTemplateId,
     int? templateId,
     int? eventId,
@@ -72,6 +75,9 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
 
   @override
   SearchFilterObject assetId(int? assetId) => call(assetId: assetId);
+
+  @override
+  SearchFilterObject query(String? query) => call(query: query);
 
   @override
   SearchFilterObject galleryTemplateId(String? galleryTemplateId) =>
@@ -113,6 +119,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? types = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
+    Object? query = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
     Object? eventId = const $CopyWithPlaceholder(),
@@ -139,6 +146,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
           : assetId as int?,
+      query: query == const $CopyWithPlaceholder()
+          ? _value.query
+          // ignore: cast_nullable_to_non_nullable
+          : query as String?,
       galleryTemplateId: galleryTemplateId == const $CopyWithPlaceholder()
           ? _value.galleryTemplateId
           // ignore: cast_nullable_to_non_nullable
@@ -197,6 +208,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
           .toSet(),
       tagId: (json['tag_id'] as num?)?.toInt(),
       assetId: (json['asset_id'] as num?)?.toInt(),
+      query: json['query'] as String?,
       galleryTemplateId: json['gallery_template_id'] as String?,
       templateId: (json['template_id'] as num?)?.toInt(),
       eventId: (json['event_id'] as num?)?.toInt(),
@@ -213,6 +225,7 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
     <String, dynamic>{
       'years': instance.years.toList(),
       'exclude_years': instance.excludeYears?.toList(),
+      'query': instance.query,
       'month': instance.month,
       'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),

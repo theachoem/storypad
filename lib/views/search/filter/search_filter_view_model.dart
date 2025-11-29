@@ -24,12 +24,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   bool get filtered => jsonEncode(searchFilter.toDatabaseFilter()) != jsonEncode(params.resetTune.toDatabaseFilter());
 
-  bool? _savingSearchFilterEnabled;
-  bool? get savingSearchFilterEnabled => _savingSearchFilterEnabled;
-
   Future<void> load() async {
-    if (params.allowSaveSearchFilter) _savingSearchFilterEnabled = await SearchFilterStorage().readObject() != null;
-
     if (params.filterTagModifiable) {
       years = await StoryDbModel.db.getStoryCountsByYear(
         filters: {
@@ -59,9 +54,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     searchFilter = searchFilter.copyWith(starred: value);
     notifyListeners();
 
-    if (params.allowSaveSearchFilter) {
-      SearchFilterStorage().writeObject(searchFilter);
-    }
+    SearchFilterStorage().writeObject(searchFilter);
   }
 
   Future<void> toggleYear(int year) async {
@@ -80,9 +73,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     notifyListeners();
-    if (params.allowSaveSearchFilter) {
-      SearchFilterStorage().writeObject(searchFilter);
-    }
+    SearchFilterStorage().writeObject(searchFilter);
 
     await _resetTagsCount();
     notifyListeners();
@@ -92,31 +83,18 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     searchFilter = searchFilter.copyWith(tagId: tag.id == searchFilter.tagId ? null : tag.id);
     notifyListeners();
 
-    if (params.allowSaveSearchFilter) {
-      SearchFilterStorage().writeObject(searchFilter);
-    }
+    SearchFilterStorage().writeObject(searchFilter);
   }
 
   Future<void> reset(BuildContext context) async {
     searchFilter = params.resetTune;
-    notifyListeners();
-
-    if (params.allowSaveSearchFilter) {
-      SearchFilterStorage().remove();
-    }
-
+    SearchFilterStorage().remove();
     await _resetTagsCount();
     notifyListeners();
   }
 
-  Future<void> setSavingSearchFilter(bool enabled) async {
-    if (enabled) {
-      SearchFilterStorage().writeObject(searchFilter);
-    } else {
-      SearchFilterStorage().remove();
-    }
-
-    _savingSearchFilterEnabled = await SearchFilterStorage().readObject() != null;
+  Future<void> setSavingSearchFilter() async {
+    SearchFilterStorage().writeObject(searchFilter);
     notifyListeners();
   }
 

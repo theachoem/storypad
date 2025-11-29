@@ -26,3 +26,4 @@ esac
 
 echo "Executing: $CMD"
 exec $CMD
+echo "Complete at: $(date)"

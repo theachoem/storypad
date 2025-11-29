@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SpScrollableChoiceChips<T> extends StatelessWidget {
+class SpScrollableChoiceChips<T> extends StatefulWidget {
   const SpScrollableChoiceChips({
     super.key,
     required this.choices,
@@ -8,6 +8,7 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
     required this.toLabel,
     required this.selected,
     required this.onToggle,
+    this.autoScrollToSelectedOnChanged = false,
     this.wrapWidth,
   });
 
@@ -17,6 +18,57 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
   final bool Function(T choice) selected;
   final void Function(T choice)? onToggle;
   final double? wrapWidth;
+  final bool autoScrollToSelectedOnChanged;
+
+  @override
+  State<SpScrollableChoiceChips<T>> createState() => _SpScrollableChoiceChipsState<T>();
+}
+
+class _SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> {
+  final Map<int, GlobalKey> _chipKeys = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToFirstSelected(animated: false);
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant SpScrollableChoiceChips<T> oldWidget) {
+    if (widget.autoScrollToSelectedOnChanged) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToFirstSelected(animated: true);
+      });
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _scrollToFirstSelected({
+    bool animated = true,
+  }) {
+    int? lastSelectedIndex;
+
+    for (int i = 0; i < widget.choices.length; i++) {
+      if (widget.selected(widget.choices[i])) {
+        lastSelectedIndex = i;
+      }
+    }
+
+    if (lastSelectedIndex != null) {
+      final key = _chipKeys[lastSelectedIndex];
+      if (key?.currentContext != null) {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          curve: Curves.ease,
+          duration: animated ? Durations.medium1 : Duration.zero,
+          alignment: 0.5,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +81,23 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
         ),
       ),
       child: SizedBox(
-        width: wrapWidth,
+        width: widget.wrapWidth,
         child: Wrap(
           spacing: 8.0,
-          children: List.generate(choices.length, (index) {
-            final choice = choices.elementAt(index);
-            final label = toLabel(choice);
-            final storyCount = storiesCount(choice);
+          runSpacing: 8.0,
+          children: List.generate(widget.choices.length, (index) {
+            final choice = widget.choices.elementAt(index);
+            final label = widget.toLabel(choice);
+            final storyCount = widget.storiesCount(choice);
+
+            _chipKeys[index] = GlobalKey();
 
             return ChoiceChip(
+              key: _chipKeys[index],
+              materialTapTargetSize: .shrinkWrap,
               showCheckmark: false,
+              selected: widget.selected(choice),
+              onSelected: widget.onToggle != null ? (_) => widget.onToggle!(choice) : null,
               label: Text.rich(
                 TextSpan(
                   text: "$label ",
@@ -66,8 +125,6 @@ class SpScrollableChoiceChips<T> extends StatelessWidget {
                   ],
                 ),
               ),
-              selected: selected(choice),
-              onSelected: onToggle != null ? (_) => onToggle!(choice) : null,
             );
           }),
         ),
