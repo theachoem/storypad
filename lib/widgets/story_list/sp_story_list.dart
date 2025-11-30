@@ -78,6 +78,7 @@ class SpStoryList extends StatelessWidget {
       itemBuilder: (context, itemIndex) {
         if (hasThrowback && itemIndex == 0) {
           return SpThrowbackTile(
+            listHasStories: stories?.items.isNotEmpty == true,
             throwbackDates: throwbackDates,
           );
         }

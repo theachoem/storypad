@@ -5,14 +5,21 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/views/throwback/throwback_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect;
+import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 class SpThrowbackTile extends StatelessWidget {
   const SpThrowbackTile({
     super.key,
     required this.throwbackDates,
+    required this.listHasStories,
   });
 
   final List<DateTime>? throwbackDates;
+
+  // Use to check whether list that has this throwback tile has any stories at all.
+  // If not, we will not display divider line after throwback tile.
+  final bool listHasStories;
+
   DateTime get throwbackRepresentDate => throwbackDates?.firstOrNull ?? DateTime.now();
 
   Future<void> view(BuildContext context) {
@@ -39,13 +46,41 @@ class SpThrowbackTile extends StatelessWidget {
 
     return SpTapEffect(
       onTap: () => view(context),
-      child: buildContent(context, title, subtitle),
+      child: Stack(
+        children: [
+          if (listHasStories) ...[
+            const Positioned(
+              left: 32.0,
+              top: 44,
+              bottom: 0.0,
+              child: VerticalDivider(width: 1),
+            ),
+            Positioned(
+              left: 16.0 + 0.5,
+              bottom: 0.0,
+              child: Container(
+                width: SpStoryTile.monogramSize,
+                alignment: Alignment.center,
+                child: Container(
+                  width: 3,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: ColorScheme.of(context).onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          buildContent(context, title, subtitle),
+        ],
+      ),
     );
   }
 
   Widget buildContent(BuildContext context, String title, String subtitle) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 16.0, bottom: 12.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16.0,

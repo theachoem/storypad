@@ -170,7 +170,7 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.paused) {
-      _authenticated = false;
+      if (hasAppLock) _authenticated = false;
     }
   }
 
