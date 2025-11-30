@@ -22,6 +22,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/library/library_view.dart';
+import 'package:storypad/views/root/root_view_model.dart';
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
@@ -111,16 +112,24 @@ class HomeEndDrawer extends StatelessWidget {
           buildTagsTile(context),
           buildArchiveBinTile(context),
           if (kStoryPad)
-            ListTile(
-              leading: const Icon(SpIcons.photo),
-              title: Text(tr("page.library.title")),
-              onTap: () => LibraryRoute().push(context),
+            ValueListenableBuilder(
+              valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+              builder: (context, sideBarInfo, child) {
+                bool bigScreen = sideBarInfo?.bigScreen ?? false;
+                return Visibility(
+                  visible: !bigScreen,
+                  child: ListTile(
+                    leading: const Icon(SpIcons.photo),
+                    title: Text(tr("page.library.title")),
+                    onTap: () => LibraryRoute().push(context),
+                  ),
+                );
+              },
             ),
+          if (kIAPEnabled) const _AddOnsTile(),
+          buildSettingTile(context),
           const Divider(),
           const _BackupTile(),
-          const Divider(),
-          buildSettingTile(context),
-          if (kIAPEnabled) const _AddOnsTile(),
           const Divider(),
           const _CommunityTile(),
           ListTile(
