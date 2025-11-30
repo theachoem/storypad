@@ -22,7 +22,10 @@ class SpCalendar extends StatefulWidget {
     required this.cellBuilder,
     this.onMonthChanged,
     this.controller,
+    this.showBottomBorder = false,
   });
+
+  final bool showBottomBorder;
 
   /// The initial year to display
   final int initialYear;
@@ -159,7 +162,7 @@ class _SpCalendarState extends State<SpCalendar> {
             );
           },
         ),
-        const Divider(height: 1),
+        if (widget.showBottomBorder) const Divider(height: 1),
       ],
     );
   }
