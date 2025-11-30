@@ -33,6 +33,14 @@ class OnboardingTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return buildScaffold(context, constraints);
+      },
+    );
+  }
+
+  Widget buildScaffold(BuildContext context, BoxConstraints constraints) {
     double staturBarHeight = MediaQuery.of(context).padding.top;
     double bottomBarHeight = MediaQuery.of(context).padding.bottom + 24;
 

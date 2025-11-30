@@ -39,7 +39,12 @@ class _ShowTagContent extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: buildBottomNavigationBar(context, state),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(SpIcons.newStory),
+        onPressed: () => viewModel.goToNewPage(context),
+      ),
       body: SpStoryList.withQuery(
+        key: ValueKey(viewModel.editedKey),
         viewOnly: viewModel.params.storyViewOnly,
         filter: viewModel.filter,
       ),

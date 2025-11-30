@@ -38,34 +38,36 @@ class _PagesLayoutState extends State<_PagesLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return PageView.builder(
-      controller: widget.builder.pageController,
-      itemCount: widget.builder.pages.length,
-      itemBuilder: (context, index) {
-        return Stack(
-          children: [
-            SingleChildScrollView(
-              clipBehavior: Clip.none,
-              padding: widget.builder.padding,
-              child: Column(
-                children: [
-                  if (widget.builder.headerBuilder != null) buildHeader(index, screenWidth),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 200),
-                    child: widget.builder.buildPage(
-                      widget.builder.pages[index],
-                      context,
-                      smallPage: false,
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return PageView.builder(
+          controller: widget.builder.pageController,
+          itemCount: widget.builder.pages.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  clipBehavior: Clip.none,
+                  padding: widget.builder.padding,
+                  child: Column(
+                    children: [
+                      if (widget.builder.headerBuilder != null) buildHeader(index, constraints.maxWidth),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 200),
+                        child: widget.builder.buildPage(
+                          widget.builder.pages[index],
+                          context,
+                          smallPage: false,
+                        ),
+                      ),
+                      widget.builder._buildAddButton(),
+                    ],
                   ),
-                  widget.builder._buildAddButton(),
-                ],
-              ),
-            ),
-            buildPageNumber(index, context),
-          ],
+                ),
+                buildPageNumber(index, context),
+              ],
+            );
+          },
         );
       },
     );
