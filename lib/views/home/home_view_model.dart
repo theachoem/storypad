@@ -146,14 +146,17 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     await _checkNewStoryResult(addedStory);
   }
 
+  bool showFadeInYearEndDrawer = false;
   HomeEndDrawerState endDrawerState = HomeEndDrawerState.showSettings;
   Future<void> openSettings(BuildContext context) async {
+    showFadeInYearEndDrawer = true;
     endDrawerState = HomeEndDrawerState.showSettings;
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
   }
 
   Future<void> openYearsView(BuildContext context) async {
+    showFadeInYearEndDrawer = false;
     endDrawerState = HomeEndDrawerState.showYearsView;
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();

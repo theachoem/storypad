@@ -43,33 +43,18 @@ class _HomeScaffold extends StatelessWidget {
             ),
           ),
           buildTimelineSideBar(context),
-          buildSideBarTogglerButton(context),
+          SpSideBarTogglerButton.buildViewButton(
+            viewContext: context,
+            open: true,
+          ),
           Positioned(
             left: 0,
             right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 12.0,
+            bottom: MediaQuery.paddingOf(context).bottom + 12.0,
             child: const _AppUpdateFloatingButton(),
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildSideBarTogglerButton(BuildContext viewContext) {
-    return Builder(
-      builder: (context) {
-        // when bottom navigation is visible, we should use context for screen padding.
-        // else if bottom nav is not visible, padding from context is 0, so we use view context for padding instead.
-        var screenPadding = MediaQuery.of(context).padding.bottom == 0
-            ? MediaQuery.of(viewContext).padding
-            : MediaQuery.of(context).padding;
-
-        return Positioned(
-          left: screenPadding.left + (Platform.isMacOS ? 12.0 : 8.0),
-          bottom: screenPadding.bottom + 12.0,
-          child: SpSideBarTogglerButton.open(),
-        );
-      },
     );
   }
 

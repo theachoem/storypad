@@ -23,8 +23,7 @@ class _SideBar extends StatelessWidget {
       },
       child: Material(
         color: ColorScheme.of(context).surface,
-        child: Container(
-          width: 260.0,
+        child: DecoratedBox(
           decoration: BoxDecoration(
             border: Border(
               right: BorderSide(
@@ -47,10 +46,10 @@ class _SideBar extends StatelessWidget {
                   child: buildSideBarItems(context),
                 ),
               ),
-              Positioned(
+              SpSideBarTogglerButton.buildViewButton(
                 right: 12.0,
-                bottom: MediaQuery.paddingOf(context).bottom + 12.0,
-                child: SpSideBarTogglerButton.close(),
+                viewContext: context,
+                open: false,
               ),
             ],
           ),

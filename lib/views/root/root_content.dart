@@ -31,14 +31,11 @@ class _RootContent extends StatelessWidget {
                 viewModel.setSideBarInfoWithConstraints(constraints);
               });
 
-              return Container(
-                color: ColorScheme.of(context).surface,
-                child: Row(
-                  children: [
-                    _SideBar(viewModel: viewModel),
-                    buildPagesNavigator(context),
-                  ],
-                ),
+              return Row(
+                children: [
+                  _SideBar(viewModel: viewModel),
+                  buildPagesNavigator(context),
+                ],
               );
             },
           ),
@@ -74,11 +71,11 @@ class _RootContent extends StatelessWidget {
               _RootRouteObserver(
                 onPop: (route, previousRoute) {
                   if (previousRoute?.settings.name == null) return;
-                  viewModel.selectedRouteNotifier.value = previousRoute!.settings.name!;
+                  viewModel.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
                 },
                 onPush: (route, previousRoute) {
                   if (route.settings.name == null) return;
-                  viewModel.selectedRouteNotifier.value = route.settings.name!;
+                  viewModel.selectedRootRouteNameNotifier.value = route.settings.name!;
                 },
               ),
             ],

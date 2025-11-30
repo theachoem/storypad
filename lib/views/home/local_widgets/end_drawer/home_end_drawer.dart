@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart";
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
@@ -47,12 +50,34 @@ class HomeEndDrawer extends StatelessWidget {
     final viewModel = Provider.of<HomeViewModel>(context);
 
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
-      return SpFadeIn.fromRight(
-        duration: Durations.long1,
-        child: HomeYearsView(
+      if (viewModel.showFadeInYearEndDrawer) {
+        return Material(
+          color: ColorScheme.of(context).surface,
+          child: SpFadeIn(
+            builder: (context, animation, child) {
+              return SpFadeIn(
+                child: AnimatedBuilder(
+                  animation: animation,
+                  child: child,
+                  builder: (context, child) {
+                    return Transform(
+                      transform: Matrix4.identity()..spTranslate(lerpDouble(24.0, 0, animation.value)!, 0.0),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            },
+            child: HomeYearsView(
+              params: HomeYearsRoute(viewModel: viewModel),
+            ),
+          ),
+        );
+      } else {
+        return HomeYearsView(
           params: HomeYearsRoute(viewModel: viewModel),
-        ),
-      );
+        );
+      }
     }
 
     return Scaffold(

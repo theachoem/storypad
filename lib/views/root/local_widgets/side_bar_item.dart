@@ -20,8 +20,8 @@ class _SideBarItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: ValueListenableBuilder(
-        valueListenable: viewModel.selectedRouteNotifier,
-        builder: (context, selectedRoute, child) {
+        valueListenable: viewModel.selectedRootRouteNameNotifier,
+        builder: (context, selectedRootRouteName, child) {
           return Container(
             padding: const EdgeInsets.only(
               left: _RootContent.leadingPaddedSize,
@@ -30,7 +30,7 @@ class _SideBarItem extends StatelessWidget {
               right: 8.0,
             ),
             decoration: BoxDecoration(
-              border: selectedRoute == routeName
+              border: selectedRootRouteName == routeName
                   ? Border(
                       right: BorderSide(
                         color: ColorScheme.of(context).primary,

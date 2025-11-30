@@ -12,7 +12,15 @@ class _SearchContent extends StatelessWidget {
         return PopScope(
           canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: buildScaffold(context, state),
+          child: Stack(
+            children: [
+              buildScaffold(context, state),
+              SpSideBarTogglerButton.buildViewButton(
+                viewContext: context,
+                open: true,
+              ),
+            ],
+          ),
         );
       },
     );

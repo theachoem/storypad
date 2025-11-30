@@ -12,7 +12,7 @@ import 'package:storypad/views/tags/show/show_tag_view.dart';
 
 class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final ValueNotifier<String> selectedRouteNotifier = ValueNotifier('home');
+  final ValueNotifier<String> selectedRootRouteNameNotifier = ValueNotifier('home');
   final HeroController heroController = MaterialApp.createMaterialHeroController();
 
   final ValueNotifier<RootViewSideBarInfo?> sideBarInfoNotifier = ValueNotifier(null);
@@ -20,7 +20,7 @@ class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCal
   String? get initialRoute => 'home';
 
   void navigate(String routeName, BaseRoute? arguments) {
-    bool alreadySelected = selectedRouteNotifier.value == routeName;
+    bool alreadySelected = selectedRootRouteNameNotifier.value == routeName;
 
     if (routeName == 'home') {
       navigatorKey.currentState?.popUntil((route) => route.isFirst);
@@ -94,7 +94,7 @@ class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCal
 
   @override
   void dispose() {
-    selectedRouteNotifier.dispose();
+    selectedRootRouteNameNotifier.dispose();
     sideBarInfoNotifier.dispose();
     heroController.dispose();
     super.dispose();
