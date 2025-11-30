@@ -47,5 +47,5 @@ class _HomeScrollAppBarInfo {
         : Theme.of(context).scaffoldBackgroundColor;
   }
 
-  Color getBackgroundColor(BuildContext context) => getScaffoldBackgroundColor(context);
+  Color getBackgroundColor(BuildContext context) => Theme.of(context).appBarTheme.backgroundColor!;
 }

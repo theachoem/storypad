@@ -11,7 +11,6 @@ class _PeriodCalendarContent extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         automaticallyImplyActions: false,
-        forceMaterialTransparency: true,
         toolbarHeight: 12,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1.0),

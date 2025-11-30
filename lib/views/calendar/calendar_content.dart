@@ -46,7 +46,6 @@ class _CalendarContent extends StatelessWidget {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      forceMaterialTransparency: true,
       centerTitle: true,
       bottom: viewModel.segments.length > 1 ? buildSegmentButtons(context) : null,
       title: ValueListenableBuilder(
