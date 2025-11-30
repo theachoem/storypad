@@ -69,7 +69,7 @@ class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCal
 
   void setSideBarInfoWithConstraints(BoxConstraints constraints) {
     debouncedCallback(duration: const Duration(milliseconds: 100), () {
-      bool bigScreen = constraints.maxWidth >= 720.0;
+      bool bigScreen = constraints.maxWidth >= 720.0 && constraints.maxHeight >= 500.0;
 
       bool showSideBar;
       bool manuallyToggled;

@@ -11,7 +11,6 @@ class _HomeAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       backgroundColor: viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
-      forceMaterialTransparency: true,
       actions: const [SizedBox()],
       automaticallyImplyLeading: false,
       pinned: true,
