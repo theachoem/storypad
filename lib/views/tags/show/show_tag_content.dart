@@ -12,7 +12,15 @@ class _ShowTagContent extends StatelessWidget {
         return PopScope(
           canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: buildScaffold(context, state),
+          child: Stack(
+            children: [
+              buildScaffold(context, state),
+              SpSideBarTogglerButton.buildViewButton(
+                viewContext: context,
+                open: true,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -31,7 +39,12 @@ class _ShowTagContent extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: buildBottomNavigationBar(context, state),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(SpIcons.newStory),
+        onPressed: () => viewModel.goToNewPage(context),
+      ),
       body: SpStoryList.withQuery(
+        key: ValueKey(viewModel.editedKey),
         viewOnly: viewModel.params.storyViewOnly,
         filter: viewModel.filter,
       ),

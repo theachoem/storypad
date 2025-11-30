@@ -35,9 +35,6 @@ class ShowTemplateGalleryRoute extends BaseRoute {
   }
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => ShowTemplateGalleryView(params: this);
 }
 

@@ -34,7 +34,7 @@ class _HomeContent extends StatelessWidget {
         bool bigScreen = constraints.maxWidth >= 450;
 
         return Drawer(
-          width: bigScreen ? 400 : null,
+          width: bigScreen ? 280 : null,
           child: bigScreen ? const SpNestedNavigation(initialScreen: HomeEndDrawer()) : const HomeEndDrawer(),
         );
       },
@@ -97,7 +97,7 @@ class _HomeContent extends StatelessWidget {
 
     return SliverPadding(
       padding: EdgeInsets.only(
-        top: 16.0,
+        top: 0.0,
         left: MediaQuery.of(listContext).padding.left,
         right: MediaQuery.of(listContext).padding.right,
         bottom: kToolbarHeight + 200 + MediaQuery.of(listContext).padding.bottom,

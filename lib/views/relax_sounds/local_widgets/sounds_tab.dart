@@ -18,76 +18,80 @@ class _SoundsTab extends StatelessWidget {
     Iterable<RelaxSoundObject> relaxSounds = provider.relaxSounds.values;
     relaxSounds = relaxSounds.where((sound) => !musicSoundUrls.contains(sound.soundUrlPath));
 
-    return CustomScrollView(
-      controller: PrimaryScrollController.maybeOf(context),
-      slivers: [
-        SliverPadding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: MediaQuery.of(context).padding.left + 16.0,
-            right: MediaQuery.of(context).padding.right + 16.0,
-            bottom: 24.0,
-          ),
-          sliver: SliverAlignedGrid.count(
-            crossAxisCount: MediaQuery.of(context).size.width ~/ 115,
-            itemCount: musicSounds.length,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 16.0,
-            itemBuilder: (context, index) {
-              return buildSoundItem(
-                context: context,
-                relaxSounds: musicSounds,
-                index: index,
-                provider: provider,
-              );
-            },
-          ),
-        ),
-        SliverPadding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).padding.left + 16.0,
-            right: MediaQuery.of(context).padding.right + 16.0,
-            bottom: 16.0,
-          ),
-          sliver: SliverAlignedGrid.count(
-            crossAxisCount: MediaQuery.of(context).size.width ~/ 115,
-            itemCount: relaxSounds.length,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 16.0,
-            itemBuilder: (context, index) {
-              return buildSoundItem(
-                context: context,
-                relaxSounds: relaxSounds,
-                index: index,
-                provider: provider,
-              );
-            },
-          ),
-        ),
-        if (!context.read<InAppPurchaseProvider>().relaxSound)
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8.0),
-            sliver: SliverToBoxAdapter(
-              child: ListTile(
-                onTap: () => SpRewardSheet().show(context: context),
-                trailing: const Icon(SpIcons.info),
-                tileColor: Theme.of(context).colorScheme.readOnly.surface1,
-                shape: RoundedSuperellipseBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                title: Text(tr('list_tile.share_relax_sound_to_social.title')),
-                subtitle: SpMarkdownBody(
-                  body: tr('list_tile.share_relax_sound_to_social.subtitle'),
-                ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return CustomScrollView(
+          controller: PrimaryScrollController.maybeOf(context),
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.only(
+                top: 16.0,
+                left: MediaQuery.of(context).padding.left + 16.0,
+                right: MediaQuery.of(context).padding.right + 16.0,
+                bottom: 24.0,
+              ),
+              sliver: SliverAlignedGrid.count(
+                crossAxisCount: constraints.maxWidth ~/ 115,
+                itemCount: musicSounds.length,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 16.0,
+                itemBuilder: (context, index) {
+                  return buildSoundItem(
+                    context: context,
+                    relaxSounds: musicSounds,
+                    index: index,
+                    provider: provider,
+                  );
+                },
               ),
             ),
-          ),
-        const SliverToBoxAdapter(child: SizedBox(height: 16.0)),
-        const SliverToBoxAdapter(child: Divider(height: 1)),
-        const SliverToBoxAdapter(child: _LicenseText()),
-        SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + 120.0)),
-      ],
+            SliverPadding(
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).padding.left + 16.0,
+                right: MediaQuery.of(context).padding.right + 16.0,
+                bottom: 16.0,
+              ),
+              sliver: SliverAlignedGrid.count(
+                crossAxisCount: constraints.maxWidth ~/ 115,
+                itemCount: relaxSounds.length,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 16.0,
+                itemBuilder: (context, index) {
+                  return buildSoundItem(
+                    context: context,
+                    relaxSounds: relaxSounds,
+                    index: index,
+                    provider: provider,
+                  );
+                },
+              ),
+            ),
+            if (!context.read<InAppPurchaseProvider>().relaxSound)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8.0),
+                sliver: SliverToBoxAdapter(
+                  child: ListTile(
+                    onTap: () => SpRewardSheet().show(context: context),
+                    trailing: const Icon(SpIcons.info),
+                    tileColor: Theme.of(context).colorScheme.readOnly.surface1,
+                    shape: RoundedSuperellipseBorder(
+                      side: BorderSide(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    title: Text(tr('list_tile.share_relax_sound_to_social.title')),
+                    subtitle: SpMarkdownBody(
+                      body: tr('list_tile.share_relax_sound_to_social.subtitle'),
+                    ),
+                  ),
+                ),
+              ),
+            const SliverToBoxAdapter(child: SizedBox(height: 16.0)),
+            const SliverToBoxAdapter(child: Divider(height: 1)),
+            const SliverToBoxAdapter(child: _LicenseText()),
+            SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + 120.0)),
+          ],
+        );
+      },
     );
   }
 

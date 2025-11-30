@@ -7,7 +7,6 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_search_filter_sheet.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -117,14 +116,12 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   Future<void> goToFilterPage(BuildContext context) async {
     if (searchFilter == null) return;
 
-    final result = await SpSearchFilterSheet(
-      params: SearchFilterRoute(
-        initialTune: searchFilter!,
-        multiSelectYear: true,
-        filterTagModifiable: true,
-        resetTune: initialFilter,
-      ),
-    ).show(context: context);
+    final result = await SearchFilterRoute(
+      initialTune: searchFilter!,
+      multiSelectYear: true,
+      filterTagModifiable: true,
+      resetTune: initialFilter,
+    ).push(context);
 
     if (result is SearchFilterObject) {
       searchFilter = result.copyWith(limit: null);

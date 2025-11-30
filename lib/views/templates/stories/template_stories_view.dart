@@ -20,9 +20,6 @@ class TemplateStoriesRoute extends BaseRoute {
   final GalleryTemplateObject? galleryTemplate;
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => TemplateStoriesView(params: this);
 }
 

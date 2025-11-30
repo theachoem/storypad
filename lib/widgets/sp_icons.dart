@@ -79,6 +79,7 @@ class SpIcons {
   static const IconData refresh = kIsCupertino ? CupertinoIcons.refresh : Icons.refresh;
   static const IconData calendar = kIsCupertino ? CupertinoIcons.calendar : Icons.calendar_month;
   static const IconData history = kIsCupertino ? CupertinoIcons.time : Icons.history_outlined;
+  static const IconData home = kIsCupertino ? CupertinoIcons.home : Icons.home_outlined;
   static const IconData exportOffline = kIsCupertino ? CupertinoIcons.arrow_down_doc : Icons.download;
   static const IconData importOffline = kIsCupertino ? CupertinoIcons.arrow_up_doc : Icons.folder_open;
   static const IconData update = kIsCupertino ? CupertinoIcons.arrow_down : Icons.system_update;
@@ -108,4 +109,5 @@ class SpIcons {
   static const IconData gift = kIsCupertino ? CupertinoIcons.gift : Icons.card_giftcard_outlined;
   static const IconData waterDrop = Icons.water_drop;
   static const IconData download = kIsCupertino ? CupertinoIcons.cloud_download : Icons.download_outlined;
+  static final IconData sideBarLeft = kIsCupertino ? CupertinoIcons.sidebar_left : MdiIcons.dockLeft;
 }

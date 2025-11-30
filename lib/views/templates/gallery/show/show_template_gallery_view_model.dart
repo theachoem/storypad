@@ -119,7 +119,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
 
     final result = await EditStoryRoute(
       galleryTemplate: galleryTemplate,
-    ).push(context, rootNavigator: true);
+    ).push(context);
 
     if (context.mounted && result is StoryDbModel) {
       Future.delayed(const Duration(seconds: 1)).then((_) {

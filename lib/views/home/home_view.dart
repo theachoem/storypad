@@ -9,20 +9,20 @@ import 'package:storypad/core/services/welcome_message_service.dart' show Welcom
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/providers/nickname_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
+import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/views/root/root_view_model.dart';
+import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
-import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_relax_sounds_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_search_sheet.dart';
-import 'package:storypad/widgets/sp_app_lock_wrapper.dart' show SpAppLockWrapper;
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
 import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
-import 'package:storypad/widgets/sp_onboarding_wrapper.dart' show SpOnboardingWrapper;
+import 'package:storypad/widgets/sp_side_bar_toggler_button.dart';
 import 'package:storypad/widgets/sp_throwback_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart' show SpStoryListMultiEditWrapper;
 import 'package:storypad/widgets/base_view/view_model_provider.dart' show ViewModelProvider;
@@ -37,8 +37,6 @@ import 'package:storypad/widgets/sp_measure_size.dart' show SpMeasureSize;
 import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect, SpTapEffectType;
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart' show SpStoryListenerBuilder;
 import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart' show SpStoryTileListItem;
-import 'package:storypad/widgets/story_list/sp_story_list_timeline_verticle_divider.dart'
-    show SpSpStoryListTimelineVerticleDivider;
 
 import 'home_view_model.dart';
 
@@ -73,18 +71,11 @@ class HomeView extends StatelessWidget {
     return ViewModelProvider<HomeViewModel>(
       create: (context) => HomeViewModel(),
       builder: (context, viewModel, child) {
-        return DesktopMainMenuPadding(
-          child: SpAppLockWrapper(
-            child: SpOnboardingWrapper(
-              onOnboarded: () => viewModel.onboard(),
-              child: Builder(
-                builder: (context) {
-                  _homeContext = context;
-                  return _HomeContent(viewModel);
-                },
-              ),
-            ),
-          ),
+        return Builder(
+          builder: (context) {
+            _homeContext = context;
+            return _HomeContent(viewModel);
+          },
         );
       },
     );

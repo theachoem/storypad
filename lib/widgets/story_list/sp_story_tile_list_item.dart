@@ -29,31 +29,73 @@ class SpStoryTileListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     StoryDbModel? previousStory = index - 1 >= 0 ? stories.items[index - 1] : null;
     StoryDbModel story = stories.items[index];
-
+    StoryDbModel? nextStory = index + 1 < stories.items.length ? stories.items[index + 1] : null;
     bool showMonogram = previousStory == null || !previousStory.sameDayAs(story);
+
+    Widget timelineDivider;
+
+    if (nextStory != null) {
+      // 1. show line all the way from header to bottom.
+      timelineDivider = const Positioned(
+        left: 32.0,
+        top: 0,
+        bottom: 0,
+        child: VerticalDivider(width: 1),
+      );
+    } else {
+      // 2. only show line from header to dot/monogram when there is no story.
+      timelineDivider = const Positioned(
+        left: 32.0,
+        height: 16.0,
+        child: VerticalDivider(width: 1),
+      );
+    }
 
     if (previousStory?.month != story.month || previousStory?.year != story.year) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StoryMonthHeader(index: index, context: context, story: story, showYear: showYear),
-          SpStoryTile(
-            story: story,
-            showMonogram: showMonogram,
-            viewOnly: viewOnly,
-            onTap: onTap,
-            listContext: listContext,
+          if (index == 0) const SizedBox(height: 12.0),
+          Stack(
+            children: [
+              // 3. timeline divider can connect between story to story with same month,
+              // when there is different month which has another header, we need to draw divider connector
+              // from previous month to current.
+              if (previousStory != null)
+                const Positioned(
+                  left: 32.0,
+                  top: 0,
+                  bottom: 0,
+                  child: VerticalDivider(width: 1),
+                ),
+              _StoryMonthHeader(index: index, context: context, story: story, showYear: showYear),
+            ],
+          ),
+          Stack(
+            children: [
+              timelineDivider,
+              buildStoryTile(story, showMonogram),
+            ],
           ),
         ],
       );
     } else {
-      return SpStoryTile(
-        story: story,
-        showMonogram: showMonogram,
-        viewOnly: viewOnly,
-        onTap: onTap,
-        listContext: listContext,
+      return Stack(
+        children: [
+          timelineDivider,
+          buildStoryTile(story, showMonogram),
+        ],
       );
     }
+  }
+
+  Widget buildStoryTile(StoryDbModel story, bool showMonogram) {
+    return SpStoryTile(
+      story: story,
+      showMonogram: showMonogram,
+      viewOnly: viewOnly,
+      onTap: onTap,
+      listContext: listContext,
+    );
   }
 }

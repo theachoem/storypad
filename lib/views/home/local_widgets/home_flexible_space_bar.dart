@@ -9,35 +9,47 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlexibleSpaceBar(
-      collapseMode: CollapseMode.pin,
-      background: Container(
-        alignment: Alignment.bottomCenter,
-        margin: EdgeInsets.only(
-          left: 16.0 + MediaQuery.of(context).padding.left,
-          right: 16.0 + MediaQuery.of(context).padding.right,
-          bottom:
-              viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
-              viewModel.scrollInfo.appBar(context).contentsMarginBottom,
-        ),
-        child: Stack(
-          children: [
-            buildGreetingMessage(context),
-            buildYear(context),
-          ],
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, appBarConstraints) {
+        return FlexibleSpaceBar(
+          collapseMode: CollapseMode.pin,
+          background: Container(
+            alignment: Alignment.bottomCenter,
+            margin: EdgeInsets.only(
+              left: 16.0 + MediaQuery.of(context).padding.left,
+              right: 16.0 + MediaQuery.of(context).padding.right,
+              bottom:
+                  viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
+                  viewModel.scrollInfo.appBar(context).contentsMarginBottom,
+            ),
+            child: Stack(
+              children: [
+                buildGreetingMessage(context, appBarConstraints),
+                buildYear(context, appBarConstraints),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget buildGreetingMessage(BuildContext context) {
+  Widget buildGreetingMessage(BuildContext context, BoxConstraints appBarConstraints) {
     return Positioned(
       top: 0,
       bottom: 0,
-      left: AppTheme.getDirectionValue(context, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0, 0.0),
-      right: AppTheme.getDirectionValue(context, 0.0, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0),
+      left: AppTheme.getDirectionValue(
+        context,
+        viewModel.scrollInfo.appBar(context).getYearSize(appBarConstraints).width + 8.0,
+        0.0,
+      ),
+      right: AppTheme.getDirectionValue(
+        context,
+        0.0,
+        viewModel.scrollInfo.appBar(context).getYearSize(appBarConstraints).width + 8.0,
+      ),
       child: SpTapEffect(
-        onTap: () => viewModel.changeName(context),
+        onTap: () => context.read<NicknameProvider>().changeName(context),
         child: Container(
           alignment: AppTheme.getDirectionValue(context, Alignment.bottomRight, Alignment.bottomLeft),
           child: SpMeasureSize(
@@ -61,7 +73,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                 });
               }
             },
-            child: Wrap(
+            child: const Wrap(
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -69,8 +81,8 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 2.0,
                   children: [
-                    _HomeAppBarNickname(nickname: viewModel.nickname),
-                    const _HomeAppBarMessage(),
+                    _HomeAppBarNickname(),
+                    _HomeAppBarMessage(),
                   ],
                 ),
               ],
@@ -81,7 +93,10 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
     );
   }
 
-  Widget buildYear(BuildContext context) {
+  Widget buildYear(
+    BuildContext context,
+    BoxConstraints appBarConstraints,
+  ) {
     return Positioned(
       top: MediaQuery.of(context).padding.top + viewModel.scrollInfo.appBar(context).contentsMarginTop,
       bottom: 0,
@@ -89,8 +104,8 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
       right: AppTheme.getDirectionValue(context, null, 0.0),
       child: Container(
         alignment: AppTheme.getDirectionValue(context, Alignment.topLeft, Alignment.topRight),
-        width: viewModel.scrollInfo.appBar(context).getYearSize().width,
-        height: viewModel.scrollInfo.appBar(context).getYearSize().height,
+        width: viewModel.scrollInfo.appBar(context).getYearSize(appBarConstraints).width,
+        height: viewModel.scrollInfo.appBar(context).getYearSize(appBarConstraints).height,
         margin: viewModel.scrollInfo.extraExpandedHeight > 0 ? const EdgeInsets.only(bottom: 8.0) : null,
         child: SpTapEffect(
           effects: const [SpTapEffectType.touchableOpacity],

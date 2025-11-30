@@ -300,6 +300,7 @@
   "page.home.app_bar.messages.we_syncing_ur_data": "Stiamo sincronizzando i tuoi dati",
   "page.home.app_bar.messages.what_in_ur_mind": "Cos'hai in mente?",
   "page.home.empty_message": "Fai clic su {EDIT_BUTTON} per aggiungere una storia a {YEAR}.",
+  "page.home.title": "Casa",
   "page.image_picker.empty_message": "Le foto aggiunte appariranno qui.",
   "page.import_export_backup": "Importa/Esporta dati",
   "page.language.title": "Lingua",

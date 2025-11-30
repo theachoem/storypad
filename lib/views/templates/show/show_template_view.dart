@@ -30,9 +30,6 @@ class ShowTemplateRoute extends BaseRoute {
   final TemplateDbModel template;
 
   @override
-  bool get fullscreenDialog => true;
-
-  @override
   Widget buildPage(BuildContext context) => ShowTemplateView(params: this);
 }
 

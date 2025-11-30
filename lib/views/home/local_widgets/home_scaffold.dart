@@ -17,14 +17,10 @@ class _HomeScaffold extends StatelessWidget {
   final Widget floatingActionButton;
   final Widget bottomNavigationBar;
 
-  Color? getBackgroundColor(BuildContext context) {
-    return kIsCupertino && AppTheme.isDarkMode(context) && AppTheme.isMonochrome(context) ? Colors.black : null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: getBackgroundColor(context),
+      backgroundColor: viewModel.scrollInfo.appBar(context).getScaffoldBackgroundColor(context),
       resizeToAvoidBottomInset: false,
       drawerEnableOpenDragGesture: false,
       endDrawerEnableOpenDragGesture: false,
@@ -34,7 +30,6 @@ class _HomeScaffold extends StatelessWidget {
       extendBody: true,
       body: Stack(
         children: [
-          const SpSpStoryListTimelineVerticleDivider(),
           RefreshIndicator.adaptive(
             edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
             onRefresh: () => viewModel.refresh(context),
@@ -48,10 +43,14 @@ class _HomeScaffold extends StatelessWidget {
             ),
           ),
           buildTimelineSideBar(context),
+          SpSideBarTogglerButton.buildViewButton(
+            viewContext: context,
+            open: true,
+          ),
           Positioned(
             left: 0,
             right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 12.0,
+            bottom: MediaQuery.paddingOf(context).bottom + 12.0,
             child: const _AppUpdateFloatingButton(),
           ),
         ],
@@ -65,17 +64,23 @@ class _HomeScaffold extends StatelessWidget {
       child: SpStoryListMultiEditWrapper.listen(
         context: viewContext,
         builder: (context, state) {
-          return Visibility(
-            visible: !state.editing,
-            child: _HomeTimelineSideBar(
-              viewModel: viewModel,
-              // when bottom navigation is visible, we should use context for screen padding.
-              // else if bottom nav is not visible, padding from context is 0, so we use view context for padding instead.
-              screenPadding: MediaQuery.of(context).padding.bottom == 0
-                  ? MediaQuery.of(viewContext).padding
-                  : MediaQuery.of(context).padding,
-              backgroundColor: getBackgroundColor(context) ?? ColorScheme.of(context).surface,
-            ),
+          return ValueListenableBuilder(
+            valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+            builder: (context, sideBarInfo, child) {
+              bool bigScreen = sideBarInfo?.bigScreen ?? false;
+              return Visibility(
+                visible: viewModel.stories != null && !bigScreen && !state.editing,
+                child: _HomeTimelineSideBar(
+                  viewModel: viewModel,
+                  // when bottom navigation is visible, we should use context for screen padding.
+                  // else if bottom nav is not visible, padding from context is 0, so we use view context for padding instead.
+                  screenPadding: MediaQuery.of(context).padding.bottom == 0
+                      ? MediaQuery.of(viewContext).padding
+                      : MediaQuery.of(context).padding,
+                  backgroundColor: viewModel.scrollInfo.appBar(context).getScaffoldBackgroundColor(context),
+                ),
+              );
+            },
           );
         },
       ),

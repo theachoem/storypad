@@ -1,19 +1,17 @@
 part of '../home_view.dart';
 
 class _HomeAppBarNickname extends StatelessWidget {
-  const _HomeAppBarNickname({
-    required this.nickname,
-  });
-
-  final String? nickname;
+  const _HomeAppBarNickname();
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<NicknameProvider>(context);
+
     return Text(
       tr(
         "page.home.app_bar.hello_nickname",
         namedArgs: {
-          "NICKNAME": nickname ?? "",
+          "NICKNAME": provider.nickname ?? "",
         },
       ),
       maxLines: 1,

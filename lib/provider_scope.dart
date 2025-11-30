@@ -4,6 +4,7 @@ import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
+import 'package:storypad/providers/nickname_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
@@ -38,6 +39,9 @@ class ProviderScope extends StatelessWidget {
         ),
         ListenableProvider<InAppPurchaseProvider>(
           create: (context) => InAppPurchaseProvider(context),
+        ),
+        ListenableProvider<NicknameProvider>(
+          create: (context) => NicknameProvider(),
         ),
         ListenableProvider<RelaxSoundsProvider>(
           lazy: true,

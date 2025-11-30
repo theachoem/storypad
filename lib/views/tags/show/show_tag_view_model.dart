@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -23,6 +25,12 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   late TagDbModel _tag;
   TagDbModel get tag => _tag;
 
+  int editedKey = 0;
+  void refreshList() {
+    editedKey++;
+    notifyListeners();
+  }
+
   late SearchFilterObject filter = SearchFilterObject(
     years: {},
     types: {PathType.docs},
@@ -32,8 +40,30 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> goToEditPage(BuildContext context) async {
     await context.read<TagsProvider>().editTag(context, tag);
-    _tag = await TagDbModel.db.find(tag.id) ?? _tag;
+    var editedTag = await TagDbModel.db.find(tag.id);
+
+    // tags can be removed which mean we should pop show tag page.
+    if (editedTag == null) {
+      if (context.mounted) Navigator.pop(context);
+    } else {
+      _tag = editedTag;
+    }
+
     notifyListeners();
+  }
+
+  Future<void> goToNewPage(BuildContext context) async {
+    await EditStoryRoute(
+      id: null,
+      initialTagIds: [tag.id],
+    ).push(context);
+
+    editedKey += 1;
+    notifyListeners();
+
+    Future.delayed(const Duration(seconds: 1)).then((_) {
+      HomeView.reload(debugSource: '$runtimeType#goToNewPage');
+    });
   }
 
   Future<void> goToFilterPage(BuildContext context) async {

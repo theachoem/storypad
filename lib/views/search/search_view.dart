@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
+import 'package:storypad/widgets/sp_side_bar_toggler_button.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,9 @@ class SearchRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => SearchView(params: this);
+
+  static const String routeName = 'search';
+  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class SearchView extends StatelessWidget {

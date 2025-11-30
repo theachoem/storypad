@@ -71,6 +71,8 @@ class InAppPurchaseProvider extends ChangeNotifier {
   Future<List<StoreProduct>?> fetchAndCacheProducts({
     required String debugSource,
   }) async {
+    if (!kIAPEnabled) return null;
+
     try {
       storeProducts = kIAPEnabled
           ? await Purchases.getProducts(AppProduct.productIdentifiers, productCategory: ProductCategory.nonSubscription)

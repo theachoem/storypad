@@ -9,10 +9,10 @@ import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/core/objects/product_deal_object.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_calendar_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'add_ons_view.dart';
 
@@ -83,7 +83,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         onPurchased: null,
         onOpen: (BuildContext context) => LibraryRoute(
           initialTabIndex: 1,
-        ).push(context, rootNavigator: true),
+        ).push(context),
       ),
       AddOnObject(
         type: AppProduct.templates,
@@ -102,7 +102,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onTry: null,
         onPurchased: null,
-        onOpen: (BuildContext context) => const TemplatesRoute().push(context, rootNavigator: true),
+        onOpen: (BuildContext context) => const TemplatesRoute().push(context),
       ),
       AddOnObject(
         type: AppProduct.relax_sounds,
@@ -121,7 +121,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onTry: null,
         onPurchased: null,
-        onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context, rootNavigator: true),
+        onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
       ),
       AddOnObject(
         type: AppProduct.period_calendar,
@@ -151,11 +151,11 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
           }
         },
         onOpen: (BuildContext context) async {
-          SpCalendarSheet(
+          CalendarRoute(
             initialMonth: DateTime.now().month,
             initialYear: DateTime.now().year,
             initialSegment: CalendarSegmentId.period,
-          ).show(context: context);
+          ).push(context);
         },
       ),
     ];

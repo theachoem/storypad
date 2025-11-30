@@ -25,13 +25,13 @@ class _HomeScrollAppBarInfo {
   double getExpandedHeight() =>
       contentsMarginTop + getContentsHeight() + contentsMarginBottom + getTabBarPreferredHeight() + extraExpandedHeight;
 
-  Size getYearSize() {
+  Size getYearSize(BoxConstraints appBarConstraints) {
     double aspectRatio = 24 / 10;
     double baseHeight = 52;
     double baseWidth = baseHeight * aspectRatio;
 
     // make sure not bigger than 2.5 of screen width.
-    double actualWidth = min(MediaQuery.of(context).size.width / 2.5, scaler.scale(baseWidth));
+    double actualWidth = min(appBarConstraints.maxWidth / 2.5, scaler.scale(baseWidth));
     double actualHeight = actualWidth / aspectRatio;
 
     return Size(actualWidth, actualHeight);
@@ -40,5 +40,12 @@ class _HomeScrollAppBarInfo {
   double getHelloTextHeight() => scaler.scale(helloTextBaseHeight);
   double getQuestionTextHeight() => scaler.scale(questionTextBaseHeight);
   double getContentsHeight() => getHelloTextHeight() + getQuestionTextHeight();
+
+  Color getScaffoldBackgroundColor(BuildContext context) {
+    return kIsCupertino && AppTheme.isDarkMode(context) && AppTheme.isMonochrome(context)
+        ? Colors.black
+        : Theme.of(context).scaffoldBackgroundColor;
+  }
+
   Color getBackgroundColor(BuildContext context) => Theme.of(context).appBarTheme.backgroundColor!;
 }

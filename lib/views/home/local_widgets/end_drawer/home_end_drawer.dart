@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "package:storypad/core/constants/app_constants.dart";
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
@@ -19,6 +22,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/library/library_view.dart';
+import 'package:storypad/views/root/root_view_model.dart';
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
 import 'package:storypad/core/extensions/color_scheme_extension.dart' show ColorSchemeExtension;
@@ -47,12 +51,34 @@ class HomeEndDrawer extends StatelessWidget {
     final viewModel = Provider.of<HomeViewModel>(context);
 
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
-      return SpFadeIn.fromRight(
-        duration: Durations.long1,
-        child: HomeYearsView(
+      if (viewModel.showFadeInYearEndDrawer) {
+        return Material(
+          color: ColorScheme.of(context).surface,
+          child: SpFadeIn(
+            builder: (context, animation, child) {
+              return SpFadeIn(
+                child: AnimatedBuilder(
+                  animation: animation,
+                  child: child,
+                  builder: (context, child) {
+                    return Transform(
+                      transform: Matrix4.identity()..spTranslate(lerpDouble(24.0, 0, animation.value)!, 0.0),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            },
+            child: HomeYearsView(
+              params: HomeYearsRoute(viewModel: viewModel),
+            ),
+          ),
+        );
+      } else {
+        return HomeYearsView(
           params: HomeYearsRoute(viewModel: viewModel),
-        ),
-      );
+        );
+      }
     }
 
     return Scaffold(
@@ -86,16 +112,24 @@ class HomeEndDrawer extends StatelessWidget {
           buildTagsTile(context),
           buildArchiveBinTile(context),
           if (kStoryPad)
-            ListTile(
-              leading: const Icon(SpIcons.photo),
-              title: Text(tr("page.library.title")),
-              onTap: () => LibraryRoute().push(context),
+            ValueListenableBuilder(
+              valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+              builder: (context, sideBarInfo, child) {
+                bool bigScreen = sideBarInfo?.bigScreen ?? false;
+                return Visibility(
+                  visible: !bigScreen,
+                  child: ListTile(
+                    leading: const Icon(SpIcons.photo),
+                    title: Text(tr("page.library.title")),
+                    onTap: () => LibraryRoute().push(context),
+                  ),
+                );
+              },
             ),
+          if (kIAPEnabled) const _AddOnsTile(),
+          buildSettingTile(context),
           const Divider(),
           const _BackupTile(),
-          const Divider(),
-          buildSettingTile(context),
-          if (kIAPEnabled) const _AddOnsTile(),
           const Divider(),
           const _CommunityTile(),
           ListTile(

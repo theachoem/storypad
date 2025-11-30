@@ -44,9 +44,7 @@ class _LockedBarrier extends StatefulWidget {
 class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController animationController;
 
-  bool authenticated = false;
   bool showBarrier = true;
-  bool startListenToLifeCycle = false;
 
   @override
   void initState() {
@@ -70,46 +68,35 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    switch (state) {
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        authenticated = false;
-        break;
-      case AppLifecycleState.resumed:
-        // there is some case when user already click cancel authenticating & then, app continue in resume state which calling authenticate() again.
-        // put this, so it does not need to authenticate again if already here to avoid loop calling authenticate().
-        if (ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
-          await authenticate();
-        }
-        break;
+    if (state == AppLifecycleState.resumed) {
+      authenticate();
     }
   }
 
   Future<void> authenticate() async {
     await Future.microtask(() {});
 
-    if (authenticated) return;
+    if (!mounted) return;
+    final provider = context.read<AppLockProvider>();
+
+    if (provider.authenticated) return;
     if (animationController.value != 1) animationController.animateTo(1);
-    if (showBarrier != true) setState(() => showBarrier = true);
+    if (showBarrier != true) {
+      setState(() => showBarrier = true);
+    }
 
-    final context = this.context;
-    if (!context.mounted) return;
+    await provider.authenticateIfHas(
+      context: context,
+      debugSource: '$runtimeType#authenticate',
+    );
 
-    if (ModalRoute.of(context)?.isCurrent == true) {
-      authenticated = await context.read<AppLockProvider>().authenticateIfHas(
-        context: context,
-        debugSource: '$runtimeType#authenticate',
-      );
-      if (authenticated) {
-        await animationController.reverse(from: 1.0);
-        setState(() => showBarrier = false);
-      }
+    if (!mounted) return;
+    if (provider.authenticated) {
+      await animationController.reverse(from: 1.0);
+      setState(() => showBarrier = false);
     }
   }
 

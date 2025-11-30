@@ -48,7 +48,6 @@ class _TemplatesContent extends StatelessWidget {
             AddOnsRoute.pushAndNavigateTo(
               product: AppProduct.templates,
               context: context,
-              fullscreenDialog: true,
             );
           }
         },
