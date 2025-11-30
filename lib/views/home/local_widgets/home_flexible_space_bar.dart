@@ -37,7 +37,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
       left: AppTheme.getDirectionValue(context, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0, 0.0),
       right: AppTheme.getDirectionValue(context, 0.0, viewModel.scrollInfo.appBar(context).getYearSize().width + 8.0),
       child: SpTapEffect(
-        onTap: () => viewModel.changeName(context),
+        onTap: () => context.read<NicknameProvider>().changeName(context),
         child: Container(
           alignment: AppTheme.getDirectionValue(context, Alignment.bottomRight, Alignment.bottomLeft),
           child: SpMeasureSize(
@@ -61,7 +61,7 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                 });
               }
             },
-            child: Wrap(
+            child: const Wrap(
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -69,8 +69,8 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 2.0,
                   children: [
-                    _HomeAppBarNickname(nickname: viewModel.nickname),
-                    const _HomeAppBarMessage(),
+                    _HomeAppBarNickname(),
+                    _HomeAppBarMessage(),
                   ],
                 ),
               ],

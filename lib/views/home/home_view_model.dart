@@ -8,7 +8,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
-import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -19,7 +18,6 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_nickname_bottom_sheet.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
 
@@ -30,15 +28,12 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
   HomeViewModel() {
-    nickname = PreferenceDbModel.db.nickname.get();
-
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');
 
     BackupRepository.appInstance.restoreService.addListener(_restoreServiceListener);
   }
 
-  String? nickname;
   int year = DateTime.now().year;
 
   List<DateTime>? _throwbackDates;
@@ -63,7 +58,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }) async {
     debugPrint('🚧 Reload home from $debugSource 🏠');
 
-    nickname = PreferenceDbModel.db.nickname.get();
     final stories = await StoryDbModel.db.where(
       filters: SearchFilterObject(
         years: {year},
@@ -163,15 +157,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     endDrawerState = HomeEndDrawerState.showYearsView;
     AnalyticsService.instance.logOpenHomeEndDrawer(year: year);
     Scaffold.of(context).openEndDrawer();
-  }
-
-  void changeName(BuildContext context) async {
-    final result = await SpNicknameBottomSheet(nickname: nickname).show(context: context);
-    if (result is String) {
-      PreferenceDbModel.db.nickname.set(result);
-      nickname = PreferenceDbModel.db.nickname.get();
-      notifyListeners();
-    }
   }
 
   void onAStoryDeleted(StoryDbModel story) {

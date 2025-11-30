@@ -46,7 +46,6 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
 
   bool authenticated = false;
   bool showBarrier = true;
-  bool startListenToLifeCycle = false;
 
   @override
   void initState() {
@@ -70,7 +69,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
     switch (state) {
@@ -82,11 +81,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
         authenticated = false;
         break;
       case AppLifecycleState.resumed:
-        // there is some case when user already click cancel authenticating & then, app continue in resume state which calling authenticate() again.
-        // put this, so it does not need to authenticate again if already here to avoid loop calling authenticate().
-        if (ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
-          await authenticate();
-        }
+        authenticate();
         break;
     }
   }
@@ -101,15 +96,13 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     final context = this.context;
     if (!context.mounted) return;
 
-    if (ModalRoute.of(context)?.isCurrent == true) {
-      authenticated = await context.read<AppLockProvider>().authenticateIfHas(
-        context: context,
-        debugSource: '$runtimeType#authenticate',
-      );
-      if (authenticated) {
-        await animationController.reverse(from: 1.0);
-        setState(() => showBarrier = false);
-      }
+    authenticated = await context.read<AppLockProvider>().authenticateIfHas(
+      context: context,
+      debugSource: '$runtimeType#authenticate',
+    );
+    if (authenticated) {
+      await animationController.reverse(from: 1.0);
+      setState(() => showBarrier = false);
     }
   }
 
