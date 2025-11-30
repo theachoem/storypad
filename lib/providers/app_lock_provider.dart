@@ -29,6 +29,7 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
       reload();
     }
 
+    _authenticated = hasAppLock ? false : true;
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -45,7 +46,7 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   // currently there is not UI that listen to this value yet,
   // just for reading mostly when popping route, open new route.
-  bool _authenticated = false;
+  late bool _authenticated;
   bool get authenticated => _authenticated;
 
   Future<void> reload() async {
