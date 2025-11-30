@@ -44,7 +44,6 @@ class _LockedBarrier extends StatefulWidget {
 class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController animationController;
 
-  bool authenticated = false;
   bool showBarrier = true;
 
   @override
@@ -72,35 +71,30 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    switch (state) {
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        authenticated = false;
-        break;
-      case AppLifecycleState.resumed:
-        authenticate();
-        break;
+    if (state == AppLifecycleState.resumed) {
+      authenticate();
     }
   }
 
   Future<void> authenticate() async {
     await Future.microtask(() {});
 
-    if (authenticated) return;
+    if (!mounted) return;
+    final provider = context.read<AppLockProvider>();
+
+    if (provider.authenticated) return;
     if (animationController.value != 1) animationController.animateTo(1);
-    if (showBarrier != true) setState(() => showBarrier = true);
+    if (showBarrier != true) {
+      setState(() => showBarrier = true);
+    }
 
-    final context = this.context;
-    if (!context.mounted) return;
-
-    authenticated = await context.read<AppLockProvider>().authenticateIfHas(
+    await provider.authenticateIfHas(
       context: context,
       debugSource: '$runtimeType#authenticate',
     );
-    if (authenticated) {
+
+    if (!mounted) return;
+    if (provider.authenticated) {
       await animationController.reverse(from: 1.0);
       setState(() => showBarrier = false);
     }

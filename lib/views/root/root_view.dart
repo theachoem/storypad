@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
+import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -32,16 +33,7 @@ class RootView extends StatelessWidget {
     return ViewModelProvider<RootViewModel>(
       create: (context) => RootViewModel(),
       builder: (context, viewModel, child) {
-        return SpAppLockWrapper(
-          child: SpOnboardingWrapper(
-            onOnboarded: () {
-              // onboard is considered re-starting experience,
-              // reset to show new badge back.
-              NewBadgeStorage().remove();
-            },
-            child: _RootContent(viewModel),
-          ),
-        );
+        return _RootContent(viewModel);
       },
     );
   }

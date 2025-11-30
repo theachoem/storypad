@@ -9,30 +9,40 @@ class _RootContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          final NavigatorState? navigator = viewModel.navigatorKey.currentState;
-          if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-        }
-      },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            viewModel.setSideBarInfoWithConstraints(constraints);
-          });
-
-          return Container(
-            color: ColorScheme.of(context).surface,
-            child: Row(
-              children: [
-                _SideBar(viewModel: viewModel),
-                buildPagesNavigator(context),
-              ],
-            ),
-          );
+    return SpAppLockWrapper(
+      child: SpOnboardingWrapper(
+        onOnboarded: () {
+          // onboard is considered re-starting experience,
+          // reset to show new badge back.
+          NewBadgeStorage().remove();
         },
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!context.read<AppLockProvider>().authenticated) return;
+            if (!didPop) {
+              final NavigatorState? navigator = viewModel.navigatorKey.currentState;
+              if (navigator?.canPop() ?? false) navigator?.maybePop(result);
+            }
+          },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                viewModel.setSideBarInfoWithConstraints(constraints);
+              });
+
+              return Container(
+                color: ColorScheme.of(context).surface,
+                child: Row(
+                  children: [
+                    _SideBar(viewModel: viewModel),
+                    buildPagesNavigator(context),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

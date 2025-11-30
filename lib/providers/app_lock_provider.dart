@@ -1,9 +1,10 @@
 import 'dart:async' show Future;
+import 'dart:ui';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart'
     show AlertDialogAction, showConfirmationDialog, showTextAnswerDialog;
 import 'package:easy_localization/easy_localization.dart' show tr;
-import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
+import 'package:flutter/material.dart' show BuildContext, ChangeNotifier, WidgetsBindingObserver, WidgetsBinding;
 import 'package:storypad/core/objects/app_lock_object.dart' show $AppLockObjectCopyWith, AppLockObject;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
@@ -14,7 +15,7 @@ import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLo
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart' show SecurityQuestionsRoute;
 import 'package:storypad/views/pin_unlock/pin_unlock_view.dart' show PinUnlockRoute, PinUnlockTitle;
 
-class AppLockProvider extends ChangeNotifier {
+class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
   AppLockProvider() {
     final initialData = AppLockInitializer.getAndClear();
 
@@ -27,6 +28,8 @@ class AppLockProvider extends ChangeNotifier {
 
       reload();
     }
+
+    WidgetsBinding.instance.addObserver(this);
   }
 
   bool get hasAppLock =>
@@ -40,6 +43,11 @@ class AppLockProvider extends ChangeNotifier {
   LocalAuthService get localAuth => _localAuth;
   AppLockObject get appLock => _appLock;
 
+  // currently there is not UI that listen to this value yet,
+  // just for reading mostly when popping route, open new route.
+  bool _authenticated = false;
+  bool get authenticated => _authenticated;
+
   Future<void> reload() async {
     await localAuth.load();
     _appLock = await storage.readObject() ?? _appLock;
@@ -47,11 +55,11 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   final avoidDublciated = AvoidDublicatedCallService<bool>();
-  Future<bool> authenticateIfHas({
+  Future<void> authenticateIfHas({
     required BuildContext context,
     required String debugSource,
   }) async {
-    return avoidDublciated.run(() async {
+    _authenticated = await avoidDublciated.run(() async {
       if (!hasAppLock) return true;
       if (appLock.pin != null) {
         return PinUnlockRoute.confirmation(
@@ -154,5 +162,20 @@ class AppLockProvider extends ChangeNotifier {
         await reload();
       }
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      _authenticated = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
