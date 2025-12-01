@@ -19,6 +19,12 @@ import 'archives_view_model.dart';
 part 'archives_content.dart';
 
 class ArchivesRoute extends BaseRoute {
+  final PathType pathType;
+
+  ArchivesRoute({
+    required this.pathType,
+  });
+
   @override
   Future<T?> push<T extends Object?>(
     BuildContext context, {

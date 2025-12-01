@@ -14,7 +14,7 @@ class ArchivesViewModel extends ChangeNotifier with DisposeAwareMixin {
   });
 
   int editedKey = 0;
-  PathType type = PathType.archives;
+  late PathType type = params.pathType;
 
   void refreshList() {
     editedKey++;
