@@ -25,6 +25,10 @@ class ShowTagRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => ShowTagView(params: this);
+
+  static String routeName({required int id}) => 'tags/$id';
+  Future<void> pushNamed(BuildContext context) =>
+      Navigator.of(context).pushNamed(routeName(id: tag.id), arguments: this);
 }
 
 class ShowTagView extends StatelessWidget {

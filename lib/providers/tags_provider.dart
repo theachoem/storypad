@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbMod
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
 import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagRoute;
 import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
+import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 class TagsProvider extends ChangeNotifier {
   TagsProvider() {
@@ -121,9 +122,20 @@ class TagsProvider extends ChangeNotifier {
     required TagDbModel tag,
     required bool storyViewOnly,
   }) async {
-    ShowTagRoute(
-      storyViewOnly: storyViewOnly,
-      tag: tag,
-    ).push(context);
+    final nestedNavigator = SpNestedNavigation.maybeOf(context);
+
+    // - When a SpNestedNavigation exists: use push() so the tag view is stacked locally and the sidebar selection is preserved.
+    // - else: use pushNamed() on the [RootView] navigator so the sidebar updates (tag becomes the active selection).
+    if (nestedNavigator != null) {
+      ShowTagRoute(
+        storyViewOnly: storyViewOnly,
+        tag: tag,
+      ).push(context);
+    } else {
+      ShowTagRoute(
+        storyViewOnly: storyViewOnly,
+        tag: tag,
+      ).pushNamed(context);
+    }
   }
 }

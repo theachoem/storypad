@@ -110,7 +110,7 @@ class _SideBar extends StatelessWidget {
         _TagHeader(viewModel),
         ...tags.map((tag) {
           return _SideBarItem(
-            routeName: 'tags/${tag.id}',
+            routeName: ShowTagRoute.routeName(id: tag.id),
             title: tag.title,
             leading: const Icon(SpIcons.tag, size: 24.0),
             viewModel: viewModel,
