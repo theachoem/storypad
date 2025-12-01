@@ -114,7 +114,10 @@ class _SideBar extends StatelessWidget {
             title: tag.title,
             leading: const Icon(SpIcons.tag, size: 24.0),
             viewModel: viewModel,
-            onTap: () => viewModel.navigate('tags/${tag.id}', ShowTagRoute(tag: tag, storyViewOnly: false)),
+            onTap: () => viewModel.navigate(
+              ShowTagRoute.routeName(id: tag.id),
+              ShowTagRoute(tag: tag, storyViewOnly: false),
+            ),
           );
         }),
       ],

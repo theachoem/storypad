@@ -109,7 +109,16 @@ class HomeEndDrawer extends StatelessWidget {
           _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
-          buildTagsTile(context),
+          ValueListenableBuilder(
+            valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+            builder: (context, sideBarInfo, child) {
+              bool bigScreen = sideBarInfo?.bigScreen ?? false;
+              return Visibility(
+                visible: !bigScreen,
+                child: buildTagsTile(context),
+              );
+            },
+          ),
           if (kStoryPad)
             ValueListenableBuilder(
               valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
