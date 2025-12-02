@@ -6,6 +6,7 @@ import 'package:storypad/core/mixins/comparable.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
+import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 
 part 'story_content_db_model.g.dart';
 
@@ -70,14 +71,14 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.richPages,
   });
 
-  static String? generatePlainText(List<StoryPageDbModel>? newRichPages) {
+  static String? generateBodyPlainText(List<StoryPageDbModel>? newRichPages) {
     if (newRichPages == null || newRichPages.isEmpty) return null;
     return [
-      newRichPages.first.memoryPlainText ?? '',
+      newRichPages.first.title ?? '',
       if (newRichPages.length > 1)
         for (final p in newRichPages.getRange(1, newRichPages.length)) ...[
           p.title ?? '',
-          p.memoryPlainText ?? '',
+          QuillDeltaToPlainTextService.call(p.body ?? [], markdown: true),
         ],
     ].join('\n').trim();
   }
@@ -92,7 +93,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
     return copyWith(
       title: newRichPages.first.title,
-      plainText: generatePlainText(newRichPages),
+      plainText: generateBodyPlainText(newRichPages),
       richPages: newRichPages,
     );
   }
@@ -107,7 +108,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
         StoryPageDbModel(
           id: DateTime.now().millisecondsSinceEpoch,
           title: null,
-          memoryPlainText: null,
           body: null,
           crossAxisCount: crossAxisCount,
           mainAxisCount: mainAxisCount,
@@ -123,7 +123,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
     return copyWith(
       title: richPages?.first.title,
-      plainText: generatePlainText(newRichPages),
+      plainText: generateBodyPlainText(newRichPages),
       richPages: [
         ...richPages ?? [],
       ]..removeWhere((e) => e.id == pageId),
@@ -137,7 +137,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
     return copyWith(
       title: index == 0 ? newPage.title : title,
-      plainText: generatePlainText(richPages),
+      plainText: generateBodyPlainText(richPages),
       richPages: richPages,
     );
   }

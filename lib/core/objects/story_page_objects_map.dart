@@ -4,7 +4,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 import 'package:storypad/core/services/stories/story_content_pages_to_document_service.dart';
 
 class StoryPageObjectsMap {
@@ -74,7 +73,7 @@ class StoryPageObjectsMap {
 
       map[richPage.id] = StoryPageObject(
         key: GlobalKey(),
-        page: richPage.copyWith(memoryPlainText: QuillRootToPlainTextService.call(quillController.document.root)),
+        page: richPage,
         titleController: TextEditingController.fromValue(
           TextEditingValue(
             text: richPage.title?.trim() ?? '',

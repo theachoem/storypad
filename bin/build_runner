@@ -2,5 +2,10 @@
 
 CMD="dart run build_runner build"
 
+# Check if --delete flag is provided
+if echo "$@" | grep -q -- "--delete"; then
+  CMD="$CMD --delete-conflicting-outputs"
+fi
+
 echo "Executing: $CMD"
 exec $CMD

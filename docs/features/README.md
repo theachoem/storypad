@@ -14,5 +14,6 @@ features/
 
 - [Period Calendar](./period-calendar/overview.md) - Track and manage menstrual cycles
 - [Relaxing Sounds](./relaxing-sounds/overview.md) - Audio content for relaxation
+- [Search](./search/overview.md) - Text search and advanced filtering system
 - [Templates](./templates/overview.md) - Predefined templates for entries
 - [Voice Journal](./voice-journal/overview.md) - Record and organize voice notes

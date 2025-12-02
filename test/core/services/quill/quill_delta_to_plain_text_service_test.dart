@@ -3,7 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
+import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 
 // Helper function to create a Document from a JSON string (Delta format)
 Document _docFromJson(String jsonString) {
@@ -11,29 +11,29 @@ Document _docFromJson(String jsonString) {
 }
 
 void main() {
-  group('QuillRootToPlainTextService', () {
+  group('QuillDeltaToPlainTextService', () {
     test('should convert simple text correctly', () {
       final doc = _docFromJson('[{"insert":"Hello World\\n"}]');
-      final result = QuillRootToPlainTextService.call(doc.root);
+      final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
       expect(result, 'Hello World\n');
     });
 
     test('should handle multiple lines', () {
       final doc = _docFromJson('[{"insert":"First line\\nSecond line\\n"}]');
-      final result = QuillRootToPlainTextService.call(doc.root);
+      final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
       expect(result, 'First line\nSecond line\n');
     });
 
     group('Markdown Formatting', () {
       test('should format bold text', () {
         final doc = _docFromJson('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '**bold text**\n');
       });
 
       test('should format italic text', () {
         final doc = _docFromJson('[{"insert":"italic text","attributes":{"italic":true}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '*italic text*\n');
       });
 
@@ -41,19 +41,19 @@ void main() {
         final doc = _docFromJson(
           '[{"insert":"bold and italic","attributes":{"bold":true,"italic":true}},{"insert":"\\n"}]',
         );
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '***bold and italic***\n');
       });
 
       test('should format a link', () {
         final doc = _docFromJson('[{"insert":"Google","attributes":{"link":"https://google.com"}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '[Google](https://google.com)\n');
       });
 
       test('should not apply markdown when markdown is false', () {
         final doc = _docFromJson('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root, markdown: false);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson(), markdown: false);
         expect(result, 'bold text\n');
       });
     });
@@ -63,7 +63,7 @@ void main() {
         final doc = _docFromJson(
           '[{"insert":"Item 1"},{"insert":"\\n","attributes":{"list":"bullet"}},{"insert":"Item 2"},{"insert":"\\n","attributes":{"list":"bullet"}}]',
         );
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '- Item 1\n- Item 2\n');
       });
 
@@ -79,20 +79,41 @@ void main() {
             '\t\ti. Deep 1\n'
             '\t\tii. Deep 2\n'
             '3. Third\n';
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, expected);
+      });
+
+      test('should handle ordered lists exceeding 26 items with fallback to numbers', () {
+        // Create a list with 28 items at indent level 1 (should use a-z, then fallback to 27. 28.)
+        final items = <Map<String, dynamic>>[];
+        for (int i = 1; i <= 28; i++) {
+          items.add({"insert": "Item $i"});
+          items.add({
+            "insert": "\n",
+            "attributes": {"indent": 1, "list": "ordered"},
+          });
+        }
+
+        final doc = _docFromJson(json.encode(items));
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
+
+        // First 26 should be a-z, then 27 and 28 should be numbers
+        expect(result.contains('\ta. Item 1\n'), true);
+        expect(result.contains('\tz. Item 26\n'), true);
+        expect(result.contains('\t27. Item 27\n'), true);
+        expect(result.contains('\t28. Item 28\n'), true);
       });
 
       group('markdown = true', () {
         test('should format a checked list item', () {
           final doc = _docFromJson('[{"insert":"Task 1"},{"insert":"\\n","attributes":{"list":"checked"}}]');
-          final result = QuillRootToPlainTextService.call(doc.root, markdown: true);
+          final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson(), markdown: true);
           expect(result, '- [x] Task 1\n');
         });
 
         test('should format an unchecked list item', () {
           final doc = _docFromJson('[{"insert":"Task 2"},{"insert":"\\n","attributes":{"list":"unchecked"}}]');
-          final result = QuillRootToPlainTextService.call(doc.root, markdown: true);
+          final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson(), markdown: true);
           expect(result, '- [ ] Task 2\n');
         });
       });
@@ -100,13 +121,13 @@ void main() {
       group('markdown = false', () {
         test('should format a checked list item', () {
           final doc = _docFromJson('[{"insert":"Task 1"},{"insert":"\\n","attributes":{"list":"checked"}}]');
-          final result = QuillRootToPlainTextService.call(doc.root, markdown: false);
+          final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson(), markdown: false);
           expect(result, '✅ Task 1\n');
         });
 
         test('should format an unchecked list item', () {
           final doc = _docFromJson('[{"insert":"Task 2"},{"insert":"\\n","attributes":{"list":"unchecked"}}]');
-          final result = QuillRootToPlainTextService.call(doc.root, markdown: false);
+          final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson(), markdown: false);
           expect(result, '⏹️ Task 2\n');
         });
       });
@@ -115,7 +136,7 @@ void main() {
     group('Blocks', () {
       test('should format a blockquote', () {
         final doc = _docFromJson('[{"insert":"This is a quote."},{"insert":"\\n","attributes":{"blockquote":true}}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '> This is a quote.\n');
       });
 
@@ -123,13 +144,13 @@ void main() {
         final doc = _docFromJson(
           '[{"insert":"This is a quote."},{"insert":"\\n","attributes":{"blockquote":true, "indent": 1}}]',
         );
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '> > This is a quote.\n');
       });
 
       test('should format a code block', () {
         final doc = _docFromJson('[{"insert":"final a = 1;"},{"insert":"\\n","attributes":{"code-block":true}}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '```\nfinal a = 1;\n```\n');
       });
     });
@@ -137,14 +158,14 @@ void main() {
     group('Embeds', () {
       test('should return an empty string for image embeds', () {
         final doc = _docFromJson('[{"insert":{"image":"path/to/image.png"}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '\n'); // The newline character still exists
       });
 
       test('should handle other embeds using toPlainText', () {
         // Assuming a hypothetical 'video' embed
         final doc = _docFromJson('[{"insert":{"video":"path/to/video.mp4"}},{"insert":"\\n"}]');
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         // The default toPlainText for unknown embeds is the unicode object replacement char
         expect(result, '\uFFFC\n');
       });
@@ -177,7 +198,7 @@ void main() {
             '> A quote:\n'
             'And a link to [my site](https://example.com).\n';
 
-        final result = QuillRootToPlainTextService.call(doc.root);
+        final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, expected);
       });
     });

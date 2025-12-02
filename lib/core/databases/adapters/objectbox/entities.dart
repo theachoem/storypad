@@ -67,7 +67,7 @@ class StoryObjectBox extends BaseObjectBox {
   int? eventId;
 
   // for query
-  String? metadata;
+  String? searchMetadata;
   String? preferences;
 
   @override
@@ -96,7 +96,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.tags,
     required this.assets,
     required this.eventId,
-    required this.metadata,
+    required this.searchMetadata,
     required this.preferences,
     required this.permanentlyDeletedAt,
     this.lastSavedDeviceId,

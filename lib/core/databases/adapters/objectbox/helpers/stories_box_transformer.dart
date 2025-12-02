@@ -75,13 +75,6 @@ List<StoryObjectBox> _modelsToObjects(Map<String, dynamic> map) {
 StoryObjectBox _modelToObject(Map<String, dynamic> map) {
   StoryDbModel story = map['model'];
 
-  final content = story.draftContent ?? story.latestContent;
-  String? searchMetadata = content?.richPages
-      ?.map((e) {
-        return [e.title, e.memoryPlainText].join("\n");
-      })
-      .join("\n");
-
   return StoryObjectBox(
     id: story.id,
     version: story.version,
@@ -101,7 +94,7 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
-    metadata: searchMetadata,
+    searchMetadata: _generateSearchMetadata(story.draftContent ?? story.latestContent),
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
@@ -109,4 +102,15 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     permanentlyDeletedAt: story.permanentlyDeletedAt,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );
+}
+
+String? _generateSearchMetadata(StoryContentDbModel? content) {
+  if (content == null) return null;
+
+  // This combine first page title, and plain text for other pages.
+  // Check StoryContentDbModel#generateBodyPlainText for more details.
+  return [
+    if (content.title != null) content.title,
+    if (content.plainText != null) content.plainText,
+  ].join('\n');
 }

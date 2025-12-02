@@ -107,7 +107,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     ].swap(oldIndex: oldIndex, newIndex: newIndex);
 
     draftContent = draftContent!.copyWith(
-      plainText: StoryContentDbModel.generatePlainText(draftContent?.richPages),
+      plainText: StoryContentDbModel.generateBodyPlainText(draftContent?.richPages),
       richPages: pages,
     );
 

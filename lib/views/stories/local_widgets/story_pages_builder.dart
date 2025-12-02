@@ -12,7 +12,6 @@ import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_pages_block.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';

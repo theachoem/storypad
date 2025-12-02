@@ -11,7 +11,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
+import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:sqflite/sqflite.dart' as sqlite;
 
@@ -83,7 +83,7 @@ class StorypadLegacyDatabase {
 
         final content = StoryContentDbModel.create(createdAt: storypadStory.createOn).copyWith(
           title: storypadStory.title,
-          plainText: document != null ? QuillRootToPlainTextService.call(document.root) : null,
+          plainText: document != null ? QuillDeltaToPlainTextService.call(document.root.toDelta().toJson()) : null,
           richPages: [
             StoryPageDbModel(
               id: DateTime.now().millisecondsSinceEpoch,

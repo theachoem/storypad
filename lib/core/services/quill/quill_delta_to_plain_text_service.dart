@@ -12,45 +12,51 @@
 /// Output with markdown=true: "Hello **World**\n"
 /// Output with markdown=false: "Hello World\n"
 class QuillDeltaToPlainTextService {
-  /// Converts Quill Delta operations to plain text or markdown.
+  /// Extracts and formats text from Delta operations.
   ///
-  /// [deltaOps] - List of Delta operations in JSON format
-  /// [markdown] - If true, converts to markdown format; if false, plain text only
+  /// Delta operations structure:
+  /// - Each op has an "insert" field (String or Map for embeds)
+  /// - Line-level attributes (list, blockquote, code-block, indent) are on the newline character
+  /// - Text-level attributes (bold, italic, link) are on text segments
   ///
-  /// Returns empty string if [deltaOps] is null or empty.
-  ///
-  /// Example:
-  /// ```dart
-  /// final deltaJson = [
-  ///   {"insert": "Title\n", "attributes": {"header": 1}},
-  ///   {"insert": "List item", "attributes": {"list": "bullet"}}
-  /// ];
-  /// final text = QuillDeltaToPlainTextService.call(deltaJson);
+  /// Example Delta ops:
+  /// ```json
+  /// [
+  ///   {"insert": "First item"},
+  ///   {"insert": "\n", "attributes": {"list": "bullet"}},
+  ///   {"insert": "Second item"},
+  ///   {"insert": "\n", "attributes": {"list": "bullet"}}
+  /// ]
   /// ```
+  /// Output: "- First item\n- Second item\n"
   static String call(
-    List<dynamic>? deltaOps, {
+    List<dynamic> deltaOps, {
     bool markdown = true,
   }) {
-    // Safety check: return empty string if deltaOps is null or empty
-    if (deltaOps == null || deltaOps.isEmpty) {
-      return '';
-    }
+    // orderedListCounter: Tracks the numbering for ordered lists at each indent level
+    // Example: {0: 3, 1: 2} means:
+    //   - Level 0 (no indent): next number is 4 (1. 2. 3. [4])
+    //   - Level 1 (one indent): next number is 3 (a. b. [c])
+    Map<int, int>? orderedListCounter = {};
 
-    String prefix = '';
-    final Map<int, int> orderedListCounter = {};
-
+    // buffer: Accumulates the final output text (line by line)
+    // Example after processing: "# Title\n- Item 1\n- Item 2\n"
     final StringBuffer buffer = StringBuffer();
+
+    // currentLineText: Temporarily stores text for the current line being processed
+    // Gets flushed to buffer when we hit a newline character
+    // Example: "Hello **World**" (before adding "\n" to buffer)
     String currentLineText = '';
+
+    // inCodeBlock: Tracks whether we're currently inside a code block
+    // Helps determine when to add opening/closing ``` markers
+    // Example: false → true (add ```), true → false (add ```\n)
     bool inCodeBlock = false;
 
     for (final op in deltaOps) {
-      // Safety check: skip invalid operations
       if (op is! Map<String, dynamic>) continue;
 
       final insert = op['insert'];
-      // Safety check: skip operations without insert
-      if (insert == null) continue;
-
       final attributes = (op['attributes'] as Map<String, dynamic>?) ?? {};
 
       if (insert is String) {
@@ -60,7 +66,7 @@ class QuillDeltaToPlainTextService {
 
           for (int i = 0; i < parts.length; i++) {
             if (parts[i].isNotEmpty) {
-              final formattedText = _applyTextFormatting(parts[i], attributes, markdown, prefix);
+              final formattedText = _applyTextFormatting(parts[i], attributes, markdown);
               currentLineText += formattedText;
             }
 
@@ -68,11 +74,11 @@ class QuillDeltaToPlainTextService {
             if (i < parts.length - 1) {
               // Extract line-level attributes from the newline's attributes
               // Example: {"insert": "\n", "attributes": {"list": "bullet", "indent": 1}}
-              final indentLevel = _safeParseInt(attributes['indent']);
+              final indentLevel = attributes['indent'] as int?;
               final indent = '\t' * (indentLevel ?? 0);
-              final list = _safeParseString(attributes['list']); // 'bullet', 'ordered', 'checked', 'unchecked'
-              final isBlockquote = attributes.containsKey('blockquote') && attributes['blockquote'] != false;
-              final isCodeBlock = attributes.containsKey('code-block') && attributes['code-block'] != false;
+              final list = attributes['list'] as String?; // 'bullet', 'ordered', 'checked', 'unchecked'
+              final isBlockquote = attributes.containsKey('blockquote');
+              final isCodeBlock = attributes.containsKey('code-block');
 
               // Handle code block transitions
               if (inCodeBlock && !isCodeBlock) {
@@ -92,7 +98,7 @@ class QuillDeltaToPlainTextService {
               } else if (isBlockquote) {
                 // Blockquotes: prefix with '>' (multiple '>' for nested quotes)
                 // Example: "> quoted text\n" or "> > nested quote\n"
-                linePrefix = indentLevel != null && indentLevel > 0 ? '> ' * (indentLevel + 1) : '> ';
+                linePrefix = indentLevel != null ? '> ' * (indentLevel + 1) : '> ';
               } else if (list == 'bullet') {
                 // Bullet list: prefix with '- '
                 // Example: "- Item 1\n"
@@ -100,11 +106,18 @@ class QuillDeltaToPlainTextService {
               } else if (list == 'ordered') {
                 // Ordered list: numbering based on indent level
                 // Level 0: 1. 2. 3.
-                // Level 1: a. b. c.
+                // Level 1: a. b. c. (with bounds check: max 26, then falls back to numbers)
                 // Level 2: i. ii. iii. (Roman numerals)
-                final key = indentLevel ?? 0;
-                int index = orderedListCounter[key] = (orderedListCounter[key] ?? 0) + 1;
-                final formattedIndex = _formatOrderedListIndex(index, indentLevel);
+                int index = orderedListCounter[indentLevel ?? 0] = (orderedListCounter[indentLevel ?? 0] ?? 0) + 1;
+                final formattedIndex = switch (indentLevel) {
+                  0 => '$index.', // 1. 2. 3.
+                  1 =>
+                    index <= 26
+                        ? '${String.fromCharCode(96 + index)}.' // a. b. c. (up to z)
+                        : '$index.', // Fallback to numbers if > 26
+                  2 => '${_toRoman(index).toLowerCase()}.', // i. ii. iii.
+                  _ => '$index.',
+                };
                 linePrefix += '$formattedIndex ';
               } else if (list == 'checked') {
                 // Checked checkbox: markdown "- [x] " or emoji "✅ "
@@ -122,17 +135,13 @@ class QuillDeltaToPlainTextService {
           }
         } else {
           // Text without newline - just accumulate with formatting
-          final formattedText = _applyTextFormatting(insert, attributes, markdown, prefix);
+          final formattedText = _applyTextFormatting(insert, attributes, markdown);
           currentLineText += formattedText;
         }
       } else if (insert is Map) {
         // Handle embeds (images, videos, audio, custom embeds)
         // Example: {"insert": {"image": "path/to/image.png"}}
-        final embedType = insert.keys.firstOrNull;
-
-        if (embedType == null) {
-          continue;
-        }
+        final embedType = insert.keys.first;
 
         if (embedType == 'image' || embedType == 'audio') {
           // Skip images and audio - don't include in text output
@@ -156,37 +165,6 @@ class QuillDeltaToPlainTextService {
     return buffer.toString();
   }
 
-  /// Safely parses an integer from a dynamic value.
-  /// Returns null if the value cannot be parsed as an integer.
-  static int? _safeParseInt(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is String) return int.tryParse(value);
-    return null;
-  }
-
-  /// Safely parses a string from a dynamic value.
-  /// Returns null if the value is not a string.
-  static String? _safeParseString(dynamic value) {
-    if (value == null) return null;
-    if (value is String) return value;
-    return null;
-  }
-
-  /// Formats ordered list index based on indent level.
-  /// Level 0: 1. 2. 3.
-  /// Level 1: a. b. c.
-  /// Level 2: i. ii. iii.
-  static String _formatOrderedListIndex(int index, int? indentLevel) {
-    return switch (indentLevel) {
-      0 => '$index.', // 1. 2. 3.
-      1 when index >= 1 && index <= 26 => '${String.fromCharCode(96 + index)}.', // a. b. c.
-      1 => '$index.', // Fallback if index > 26
-      2 => '${_toRoman(index).toLowerCase()}.', // i. ii. iii.
-      _ => '$index.',
-    };
-  }
-
   /// Applies text-level formatting (bold, italic, links) to a text segment.
   ///
   /// Text attributes examples:
@@ -195,7 +173,7 @@ class QuillDeltaToPlainTextService {
   /// - {"bold": true, "italic": true} → "***text***"
   /// - {"link": "https://example.com"} → "[text](https://example.com)"
   ///
-  /// [text] - The text content to format (never null)
+  /// [text] - The text content to format
   /// [attributes] - Delta attributes map containing formatting info
   /// [markdown] - Whether to apply markdown formatting
   /// [prefix] - Optional prefix to prepend to the text
@@ -203,22 +181,18 @@ class QuillDeltaToPlainTextService {
     String text,
     Map<String, dynamic> attributes,
     bool markdown,
-    String prefix,
   ) {
-    // Safety check: ensure text is not empty
-    if (text.isEmpty) return prefix;
+    if (!markdown) return text;
 
-    if (!markdown) return prefix + text;
-
-    final isBold = attributes.containsKey('bold') && attributes['bold'] == true;
-    final isItalic = attributes.containsKey('italic') && attributes['italic'] == true;
-    final link = _safeParseString(attributes['link']);
+    final isBold = attributes.containsKey('bold');
+    final isItalic = attributes.containsKey('italic');
+    final link = attributes['link'] as String?;
 
     String result = text;
 
-    if (link != null && link.isNotEmpty) {
+    if (link != null) {
       // Links: [text](url)
-      return '$prefix[$text]($link)';
+      return '[$text]($link)';
     } else if (isBold && isItalic) {
       // Bold + Italic: ***text***
       result = '***$text***';
@@ -230,13 +204,12 @@ class QuillDeltaToPlainTextService {
       result = '*$text*';
     }
 
-    return prefix + result;
+    return result;
   }
 
   /// Converts a number to lowercase Roman numerals.
   ///
   /// Used for nested ordered lists at indent level 2.
-  /// Safely handles edge cases with bounds checking.
   ///
   /// Examples:
   /// - 1 → "i"
@@ -245,10 +218,6 @@ class QuillDeltaToPlainTextService {
   /// - 4 → "iv"
   /// - 5 → "v"
   static String _toRoman(int number) {
-    // Safety check: only convert positive numbers
-    if (number <= 0) return '$number';
-    if (number >= 4000) return '$number'; // Avoid overly complex Roman numerals
-
     final numerals = {
       1000: 'M',
       900: 'CM',
