@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
+import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
 class StoryPlainTextExporter {
@@ -48,8 +48,8 @@ class StoryPlainTextExporter {
     final title = page.titleController.text.trim().trim();
     if (title.isNotEmpty) parts.add(title);
 
-    String plainTexts = QuillRootToPlainTextService.call(
-      page.bodyController.document.root,
+    String plainTexts = QuillDeltaToPlainTextService.call(
+      page.bodyController.document.root.toDelta().toJson(),
       markdown: markdown,
     );
 

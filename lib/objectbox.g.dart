@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(32, 5877908410429539901),
+    lastPropertyId: const obx_int.IdUid(33, 6880637040027848499),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -104,12 +104,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(17, 8623820136669220816),
-        name: 'metadata',
-        type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(18, 1429297690659026930),
         name: 'hour',
         type: 6,
@@ -178,6 +172,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(32, 5877908410429539901),
         name: 'galleryTemplateId',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(33, 6880637040027848499),
+        name: 'searchMetadata',
         type: 9,
         flags: 0,
       ),
@@ -644,6 +644,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       5301328484806180063,
       8536407145733065373,
       4928182202971877211,
+      8623820136669220816,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -673,9 +674,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
             : fbb.writeList(
                 object.tags!.map(fbb.writeString).toList(growable: false),
               );
-        final metadataOffset = object.metadata == null
-            ? null
-            : fbb.writeString(object.metadata!);
         final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
             ? null
             : fbb.writeString(object.lastSavedDeviceId!);
@@ -694,7 +692,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final galleryTemplateIdOffset = object.galleryTemplateId == null
             ? null
             : fbb.writeString(object.galleryTemplateId!);
-        fbb.startTable(33);
+        final searchMetadataOffset = object.searchMetadata == null
+            ? null
+            : fbb.writeString(object.searchMetadata!);
+        fbb.startTable(34);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -708,7 +709,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(10, object.movedToBinAt?.millisecondsSinceEpoch);
         fbb.addOffset(11, changesOffset);
         fbb.addOffset(12, tagsOffset);
-        fbb.addOffset(16, metadataOffset);
         fbb.addInt64(17, object.hour);
         fbb.addInt64(18, object.minute);
         fbb.addInt64(19, object.second);
@@ -721,6 +721,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(29, object.templateId);
         fbb.addInt64(30, object.eventId);
         fbb.addOffset(31, galleryTemplateIdOffset);
+        fbb.addOffset(32, searchMetadataOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -830,9 +831,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           64,
         );
-        final metadataParam = const fb.StringReader(
+        final searchMetadataParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 36);
+        ).vTableGetNullable(buffer, rootOffset, 68);
         final preferencesParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 52);
@@ -865,7 +866,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           tags: tagsParam,
           assets: assetsParam,
           eventId: eventIdParam,
-          metadata: metadataParam,
+          searchMetadata: searchMetadataParam,
           preferences: preferencesParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
@@ -1480,68 +1481,68 @@ class StoryObjectBox_ {
     _entities[0].properties[12],
   );
 
-  /// See [StoryObjectBox.metadata].
-  static final metadata = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[13],
-  );
-
   /// See [StoryObjectBox.hour].
   static final hour = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[14],
+    _entities[0].properties[13],
   );
 
   /// See [StoryObjectBox.minute].
   static final minute = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[15],
+    _entities[0].properties[14],
   );
 
   /// See [StoryObjectBox.second].
   static final second = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[16],
+    _entities[0].properties[15],
   );
 
   /// See [StoryObjectBox.permanentlyDeletedAt].
   static final permanentlyDeletedAt = obx.QueryDateProperty<StoryObjectBox>(
-    _entities[0].properties[17],
+    _entities[0].properties[16],
   );
 
   /// See [StoryObjectBox.lastSavedDeviceId].
   static final lastSavedDeviceId = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[18],
+    _entities[0].properties[17],
   );
 
   /// See [StoryObjectBox.assets].
   static final assets = obx.QueryIntegerVectorProperty<StoryObjectBox>(
-    _entities[0].properties[19],
+    _entities[0].properties[18],
   );
 
   /// See [StoryObjectBox.preferences].
   static final preferences = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[20],
+    _entities[0].properties[19],
   );
 
   /// See [StoryObjectBox.latestContent].
   static final latestContent = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[21],
+    _entities[0].properties[20],
   );
 
   /// See [StoryObjectBox.draftContent].
   static final draftContent = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[22],
+    _entities[0].properties[21],
   );
 
   /// See [StoryObjectBox.templateId].
   static final templateId = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[23],
+    _entities[0].properties[22],
   );
 
   /// See [StoryObjectBox.eventId].
   static final eventId = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[24],
+    _entities[0].properties[23],
   );
 
   /// See [StoryObjectBox.galleryTemplateId].
   static final galleryTemplateId = obx.QueryStringProperty<StoryObjectBox>(
+    _entities[0].properties[24],
+  );
+
+  /// See [StoryObjectBox.searchMetadata].
+  static final searchMetadata = obx.QueryStringProperty<StoryObjectBox>(
     _entities[0].properties[25],
   );
 }

@@ -18,11 +18,6 @@ class StoryPageDbModel {
   final int id;
   final String? title;
 
-  /// only use when passing data (in memory)
-  /// we don't store memoryPlainText here. Instead we store them in story content.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final String? memoryPlainText;
-
   // List: Returns JSON-serializable version of quill delta.
   final List<dynamic>? body;
 
@@ -35,7 +30,6 @@ class StoryPageDbModel {
     required this.body,
     int? crossAxisCount,
     int? mainAxisCount,
-    this.memoryPlainText,
   }) : crossAxisCount = crossAxisCount ?? 2,
        mainAxisCount = mainAxisCount ?? 1;
 

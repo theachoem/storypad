@@ -84,8 +84,12 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   }
 
   @override
-  Future<T?> find(int id, {bool returnDeleted = false}) async {
-    AppLogger.info("Triggering $tableName#find $id 🍎");
+  Future<T?> find(
+    int id, {
+    bool returnDeleted = false,
+    String? debugSource,
+  }) async {
+    AppLogger.info("Triggering $tableName#find $id 🍎 from $debugSource");
 
     B? object = box.get(id);
     if (object?.permanentlyDeletedAt != null && !returnDeleted) return null;
@@ -159,8 +163,9 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   Future<T?> set(
     T record, {
     bool runCallbacks = true,
+    String? debugSource,
   }) async {
-    AppLogger.info("Triggering $tableName#set 🍎");
+    AppLogger.info("Triggering $tableName#set 🍎 from $debugSource");
     B constructed = await modelToObject(record);
 
     constructed.setDeviceId();

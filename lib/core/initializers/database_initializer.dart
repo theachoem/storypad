@@ -42,7 +42,7 @@ class DatabaseInitializer {
       for (int i = 0; i < assets.length; i++) {
         var tags = await StoryDbModel.db.computeStoriesTagsForAsset(assets[i]);
         final isLastAsset = i == assets.length - 1;
-        await assets[i].copyWith(tags: tags.toList()).save(runCallbacks: isLastAsset);
+        await assets[i].copyWith(tags: tags.toList(), updatedAt: DateTime.now()).save(runCallbacks: isLastAsset);
       }
 
       await ComputedInitialTagsForAssetsStorage().write(true);

@@ -1,5 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:isolate';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
@@ -8,6 +10,7 @@ import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -49,6 +52,59 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     AppLogger.info('🤾‍♀️ Migrated Stories: $count');
+  }
+
+  /// Regenerates searchMetadata for stories that don't have it (legacy data from older versions).
+  ///
+  /// Background:
+  /// - [searchMetadata] should never be null; it's a concatenated string of all page titles and bodies
+  ///   generated in DB level here in [_generateSearchMetadata] when stories are saved.
+  /// - Older app versions may have stories missing this field, causing search to not find them.
+  ///
+  /// Call this only on the search view (lazy-load pattern) when needed to search text,
+  Future<void> reindexSearchMetadata() async {
+    final conditions = StoryObjectBox_.id
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
+        .and(StoryObjectBox_.searchMetadata.isNull());
+
+    final queryBuilder = box.query(conditions);
+    final boxes = await queryBuilder.build().findAsync();
+
+    int count = 0;
+    int failed = 0;
+
+    const batchSize = 50;
+
+    for (int i = 0; i < boxes.length; i += batchSize) {
+      final batch = boxes.sublist(i, math.min(i + batchSize, boxes.length));
+
+      final toUpdate = await Isolate.run(() {
+        final toUpdate = <StoryObjectBox>[];
+
+        for (var storyBox in batch) {
+          try {
+            final contentStr = storyBox.draftContent ?? storyBox.latestContent;
+            final content = StoryContentHelper.stringToContent(contentStr!);
+            final updatedMetadata = _generateSearchMetadata(content);
+            storyBox.searchMetadata = updatedMetadata;
+            toUpdate.add(storyBox);
+            count++;
+          } catch (e, stackTrace) {
+            AppLogger.error('Failed to reindex story ${storyBox.id}', error: e, stackTrace: stackTrace);
+            failed++;
+          }
+        }
+
+        return toUpdate;
+      });
+
+      if (toUpdate.isNotEmpty) {
+        await box.putManyAsync(toUpdate);
+      }
+    }
+
+    AppLogger.info('🔍 Reindexed Stories: $count (Failed: $failed)');
   }
 
   Future<Map<int, int>> getStoryCountsByYear({
@@ -165,26 +221,27 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   Future<StoryDbModel?> set(
     StoryDbModel record, {
     bool runCallbacks = true,
+    String? debugSource,
   }) async {
-    StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks);
+    StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks, debugSource: debugSource);
 
     // Only rebuild asset tags when story is published (not draft).
     // Draft stories auto-save frequently, so we skip this expensive operation.
     // Tag computation happens once when user click "Done".
-    if (saved != null && !saved.draftStory) {
+    if (saved != null && !saved.draftStory && saved.assets?.isNotEmpty == true) {
       List<AssetDbModel> assets = await AssetDbModel.db
           .where(filters: {'ids': saved.assets})
           .then((e) => e?.items ?? []);
+
       for (int i = 0; i < assets.length; i++) {
         Set<int> tags = await computeStoriesTagsForAsset(assets[i]);
         final isLastAsset = i == assets.length - 1;
-        await assets[i].copyWith(tags: tags.toList()).save(runCallbacks: isLastAsset);
+        await assets[i].copyWith(tags: tags.toList(), updatedAt: DateTime.now()).save(runCallbacks: isLastAsset);
       }
-      AppLogger.info("🏷️ StoryBox#set: computing tags for asset");
+      AppLogger.info("🏷️ $runtimeType#set: computing tags for asset");
     }
 
-    AppLogger.info("🚧 StoryBox#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
-
+    AppLogger.info("🚧 $runtimeType#set: latest ${saved?.latestContent?.id}, draft: ${saved?.draftContent?.id}");
     return saved;
   }
 
@@ -286,7 +343,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     if (query != null) {
       conditions = conditions.and(
-        StoryObjectBox_.metadata.contains(
+        StoryObjectBox_.searchMetadata.contains(
           query,
           caseSensitive: false,
         ),

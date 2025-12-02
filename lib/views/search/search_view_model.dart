@@ -22,7 +22,9 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   SearchViewModel({
     required this.params,
   }) {
-    load();
+    StoryDbModel.db.reindexSearchMetadata().then((_) {
+      load();
+    });
   }
 
   SearchFilterObject? searchFilter;
