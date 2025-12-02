@@ -109,8 +109,16 @@ class HomeEndDrawer extends StatelessWidget {
           _HomeEndDrawerHeader(viewModel),
           const Divider(height: 1),
           const SizedBox(height: 8.0),
-          buildTagsTile(context),
-          buildArchiveBinTile(context),
+          ValueListenableBuilder(
+            valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+            builder: (context, sideBarInfo, child) {
+              bool bigScreen = sideBarInfo?.bigScreen ?? false;
+              return Visibility(
+                visible: !bigScreen,
+                child: buildTagsTile(context),
+              );
+            },
+          ),
           if (kStoryPad)
             ValueListenableBuilder(
               valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
@@ -126,10 +134,13 @@ class HomeEndDrawer extends StatelessWidget {
                 );
               },
             ),
-          if (kIAPEnabled) const _AddOnsTile(),
-          buildSettingTile(context),
+          buildArchiveTile(context),
+          buildBinsTile(context),
           const Divider(),
           const _BackupTile(),
+          const Divider(),
+          if (kIAPEnabled) const _AddOnsTile(),
+          buildSettingTile(context),
           const Divider(),
           const _CommunityTile(),
           ListTile(
@@ -156,11 +167,19 @@ class HomeEndDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildArchiveBinTile(BuildContext context) {
+  Widget buildArchiveTile(BuildContext context) {
     return ListTile(
       leading: const Icon(SpIcons.archive),
-      title: Text(tr("page.archive_or_bin.title")),
-      onTap: () => ArchivesRoute().push(context),
+      title: Text(tr('general.path_type.archives')),
+      onTap: () => ArchivesRoute(pathType: .archives).push(context),
+    );
+  }
+
+  Widget buildBinsTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(SpIcons.delete),
+      title: Text(tr('general.path_type.bins')),
+      onTap: () => ArchivesRoute(pathType: .bins).push(context),
     );
   }
 

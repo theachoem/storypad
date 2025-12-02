@@ -27,8 +27,13 @@ class _SearchContent extends StatelessWidget {
   }
 
   Widget buildScaffold(BuildContext context, SpStoryListMultiEditWrapperState state) {
-    var visibleTags = viewModel.tags?.where((tag) => tag.storiesCount != null && tag.storiesCount! > 0).toList();
-    if (visibleTags?.isEmpty == true) visibleTags = viewModel.tags;
+    var visibleTags =
+        viewModel.tags?.where((tag) {
+          if (tag.id == 0) return true;
+          if (tag.storiesCount == null) return false;
+          return tag.storiesCount! > 0;
+        }).toList() ??
+        [];
 
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +69,7 @@ class _SearchContent extends StatelessWidget {
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
-        bottom: visibleTags?.isNotEmpty == true
+        bottom: visibleTags.isNotEmpty == true
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(34.0 + 12.0 + 1.0),
                 child: Column(
@@ -72,10 +77,10 @@ class _SearchContent extends StatelessWidget {
                   children: [
                     SpScrollableChoiceChips<TagDbModel>(
                       autoScrollToSelectedOnChanged: true,
-                      choices: visibleTags ?? [],
+                      choices: visibleTags,
                       storiesCount: (TagDbModel tag) => tag.storiesCount,
                       toLabel: (TagDbModel tag) => tag.title,
-                      selected: (TagDbModel tag) => viewModel.searchFilter?.tagId == tag.id,
+                      selected: (TagDbModel tag) => viewModel.tagSelected(tag),
                       onToggle: (TagDbModel tag) => viewModel.toggleTag(tag, context),
                     ),
                     const SizedBox(height: 12.0),

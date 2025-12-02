@@ -115,8 +115,8 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     for (final tagId in tagIds) {
       storyCountsByTagIds[tagId] = buildQuery(
         filters: {
-          'tag': tagId,
           'query': query,
+          if (tagId != 0) 'tag': tagId,
           if (years != null && years.isNotEmpty) 'years': years,
           if (types != null && types.isNotEmpty) 'types': types,
         },

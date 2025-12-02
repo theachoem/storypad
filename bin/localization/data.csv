@@ -43,7 +43,6 @@ button.put_back,Put back,أعد,Zurücklegen,Volver,Volver,Remettre,पहली
 button.put_back_all,Put all back,ضع كل شيء مرة أخرى,Lege alles zurück,Pon todo de vuelta,Pon todo de vuelta,Remettez tout en place,सब वापस रख दो,Kembalikan semuanya,Rimetti tutto a posto,全部元に戻す,ដាក់មកវិញទាំងអស់,모두 되돌리기,Odłóż wszystko z powrotem,Coloque tudo de volta,Đặt lại tất cả,全部恢复,Вернуть всё на главную
 button.record_voice,Record,تسجيل الصوت,Sprachaufnahme,Grabar voz,Grabar voz,Enregistrement vocal,आवाज रिकॉर्ड करना,Rekam suara,Registra la voce,音声を録音する,ថតសំឡេង,음성 녹음,Nagraj głos,Gravar voz,Ghi âm giọng nói,录音,Записать голос
 button.refresh,Refresh,ينعش,Aktualisieren,Refrescar,Refrescar,Rafraîchir,ताज़ा करना,Menyegarkan,Aggiornare,リフレッシュ,ធ្វើឱ្យស្រស់,새로 고치다,Odświeżać,Atualizar,Làm cho khỏe lại,刷新,Обновить
-button.remember,Remember,يتذكر,Erinnern,Recordar,Recordar,Souviens-toi,याद करना,Ingat,Ricordare,記憶する,ចងចាំ,기억하기,Pamiętać,Lembrar,Nhớ,记住,Запомнить
 button.remove,Remove,يزيل,Entfernen,Eliminar,Eliminar,Retirer,निकालना,Menghapus,Rimuovere,取り除く,ដកចេញ,제거하다,Usunąć,Remover,Di dời,消除,Энтфернен
 button.rename,Rename,إعادة التسمية,Umbenennen,Rebautizar,Rebautizar,Rebaptiser,नाम बदलें,Ganti nama,Rinominare,名前を変更,ប្តូរឈ្មោះ,이름 바꾸기,Przemianować,Renomear,Đổi tên,重命名,Переименовать
 button.reset,Reset,إعادة ضبط,Zurücksetzen,Reiniciar,Reiniciar,Réinitialiser,रीसेट करें,Mengatur ulang,Reset,リセット,កំណត់ឡើងវិញ,초기화,Nastawić,Reiniciar,Cài lại,重置,Сбросить
@@ -340,7 +339,6 @@ list_tile.use_this_font.title,Use this font,استخدم هذا الخط,Verwend
 page.add_ons.title,Add-ons,الإضافات,Add-ons,Complementos,Complementos,Modules complémentaires,ऐड-ऑन,Pengaya,Componenti aggiuntivi,アドオン,កម្មវិធីបន្ថែម,추가 기능,Dodatki,Complementos,Tiện ích bổ sung,附加组件,Плагины
 page.add_year.title,Add Year,أضف سنة,Jahr hinzufügen,Agregar año,Agregar año,Ajouter une année,वर्ष जोड़े,Tambahkan Tahun,Aggiungi anno,年を追加,បន្ថែមឆ្នាំ,연도 추가하기,Dodaj rok,Adicionar ano,Thêm năm,添加年份,Добавить год
 page.app_lock.title,App Lock,قفل التطبيق,App-Sperre,Bloqueo de aplicaciones,Bloqueo de aplicaciones,Verrouillage d'application,ऐप लॉक,Kunci Aplikasi,Blocco dell'app,アプリロック,ចាក់សោកម្មវិធី,앱 잠금,Blokada aplikacji,Bloqueio de aplicativo,Khóa ứng dụng,应用锁,Блокировка приложения
-page.archive_or_bin.title,Archives / Bins,المحفوظات / صناديق,Archive / Behälter,Archivos / Papeleras,Archivos / Papeleras,Archives / Poubelles,पुरालेख / डिब्बे,Arsip / Tempat Sampah,Archivi/Cestini,アーカイブ / ゴミ箱,បណ្ណសារ / ធុង,보관함 / 휴지통,Archiwa / Kosze,Arquivos / Caixas,Lưu trữ / Thùng,归档/垃圾箱,Архив / Корзина
 page.backups.title,Backups,النسخ الاحتياطية,Backups,Copias de seguridad,Copias de seguridad,Sauvegardes,बैकअप,Cadangan,Backup,バックアップ,ការបម្រុងទុក,백업,Kopie zapasowe,Cópias de segurança,Sao lưu,备份,Бэкапы
 page.calendar.title,Calendar,تقويم,Kalender,Calendario,Calendario,Calendrier,कैलेंडर,Kalender,Calendario,カレンダー,ប្រតិទិន,달력,Kalendarz,Calendário,Lịch,日历,Календарь
 page.community.title,Community,مجتمع,Gemeinschaft,Comunidad,Comunidad,Communauté,समुदाय,Masyarakat,Comunità,コミュニティ,សហគមន៍,커뮤니티,Wspólnota,Comunidade,Cộng đồng,社区,Сообщество

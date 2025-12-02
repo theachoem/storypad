@@ -76,7 +76,7 @@ class _SideBar extends StatelessWidget {
           title: tr('page.search.title'),
           leading: const Icon(SpIcons.search, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate(SearchRoute.routeName, SearchRoute(initialYear: DateTime.now().year)),
+          onTap: () => viewModel.navigate(SearchRoute.routeName, SearchRoute()),
         ),
         _SideBarItem(
           routeName: CalendarRoute.routeName,
@@ -110,11 +110,14 @@ class _SideBar extends StatelessWidget {
         _TagHeader(viewModel),
         ...tags.map((tag) {
           return _SideBarItem(
-            routeName: 'tags/${tag.id}',
+            routeName: ShowTagRoute.routeName(id: tag.id),
             title: tag.title,
             leading: const Icon(SpIcons.tag, size: 24.0),
             viewModel: viewModel,
-            onTap: () => viewModel.navigate('tags/${tag.id}', ShowTagRoute(tag: tag, storyViewOnly: false)),
+            onTap: () => viewModel.navigate(
+              ShowTagRoute.routeName(id: tag.id),
+              ShowTagRoute(tag: tag, storyViewOnly: false),
+            ),
           );
         }),
       ],

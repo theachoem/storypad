@@ -16,11 +16,7 @@ import 'search_view_model.dart';
 part 'search_content.dart';
 
 class SearchRoute extends BaseRoute {
-  SearchRoute({
-    required this.initialYear,
-  });
-
-  final int? initialYear;
+  SearchRoute();
 
   @override
   Widget buildPage(BuildContext context) => SearchView(params: this);
