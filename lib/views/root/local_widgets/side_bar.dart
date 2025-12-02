@@ -76,7 +76,7 @@ class _SideBar extends StatelessWidget {
           title: tr('page.search.title'),
           leading: const Icon(SpIcons.search, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate(SearchRoute.routeName, SearchRoute(initialYear: DateTime.now().year)),
+          onTap: () => viewModel.navigate(SearchRoute.routeName, SearchRoute()),
         ),
         _SideBarItem(
           routeName: CalendarRoute.routeName,

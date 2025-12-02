@@ -70,7 +70,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
               ),
             ),
             icon: const Icon(SpIcons.search),
-            onPressed: () => SearchRoute(initialYear: widget.viewModel.year).pushNamed(context),
+            onPressed: () => SearchRoute().pushNamed(context),
           ),
         ),
         SpFadeIn.bound(

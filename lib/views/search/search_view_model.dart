@@ -19,8 +19,6 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   final TextEditingController queryController = TextEditingController();
   final FocusNode queryFocusNode = FocusNode();
 
-  static const int defaultLimitOnEmptyQuery = 20;
-
   SearchViewModel({
     required this.params,
   }) {
@@ -29,14 +27,16 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
 
   SearchFilterObject? searchFilter;
   late final SearchFilterObject initialFilter = SearchFilterObject(
-    years: params.initialYear != null ? {params.initialYear!} : {},
+    years: {},
     types: {PathType.docs},
     tagId: null,
     assetId: null,
-    limit: defaultLimitOnEmptyQuery,
+    limit: 100,
   );
 
-  List<TagDbModel>? tags;
+  List<TagDbModel>? _tags;
+  List<TagDbModel>? get tags => _tags;
+
   CollectionDbModel<StoryDbModel>? _stories;
   CollectionDbModel<StoryDbModel> get stories => _stories ?? CollectionDbModel(items: []);
 
@@ -51,7 +51,9 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
       return initialFilter.copyWith(tagId: value?.tagId);
     });
 
-    tags = await TagDbModel.db.where().then((e) => e?.items);
+    _tags = await TagDbModel.db.where().then((e) => e?.items ?? []);
+    if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
+
     await _resetTagsCount();
     notifyListeners();
   }
@@ -62,7 +64,6 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     debouncedCallback(() async {
       searchFilter = searchFilter!.copyWith(
         query: query.trim().isNotEmpty ? query.trim() : null,
-        limit: null,
       );
       await _resetTagsCount();
       notifyListeners();
@@ -78,7 +79,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   void clearQuery(BuildContext context) async {
     if (searchFilter == null) return;
 
-    searchFilter = searchFilter!.copyWith(query: null, limit: null);
+    searchFilter = searchFilter!.copyWith(query: null);
     queryController.clear();
     await _resetTagsCount();
     notifyListeners();
@@ -86,10 +87,15 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     SearchFilterStorage().writeObject(searchFilter!);
   }
 
+  bool tagSelected(TagDbModel tag) => (searchFilter?.tagId == tag.id) || (tag.id == 0 && searchFilter?.tagId == null);
+
   void toggleTag(TagDbModel tag, BuildContext context) async {
     if (searchFilter == null) return;
 
-    searchFilter = searchFilter!.copyWith(tagId: tag.id == searchFilter!.tagId ? null : tag.id, limit: null);
+    searchFilter = searchFilter!.copyWith(
+      tagId: tag.id == searchFilter!.tagId || tag.id == 0 ? null : tag.id,
+    );
+
     notifyListeners();
 
     SearchFilterStorage().writeObject(searchFilter!);
@@ -124,7 +130,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     ).push(context);
 
     if (result is SearchFilterObject) {
-      searchFilter = result.copyWith(limit: null);
+      searchFilter = result;
       await _resetTagsCount();
       notifyListeners();
     }
