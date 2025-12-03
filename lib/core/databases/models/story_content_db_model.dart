@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/mixins/comparable.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
 
@@ -19,7 +19,7 @@ List<StoryPageDbModel>? _richPagesFromJson(dynamic richPages) {
 
       // generate default ID for previous record if not exist.
       if (page['id'] == null) {
-        debugPrint('StoryContentDbModel._richPagesFromJson generating page ID 🚧🚧🚧🚧🚧');
+        AppLogger.d('StoryContentDbModel._richPagesFromJson generating page ID 🚧🚧🚧🚧🚧');
         page['id'] = now + index;
       }
 
@@ -74,7 +74,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   static String? generateBodyPlainText(List<StoryPageDbModel>? newRichPages) {
     if (newRichPages == null || newRichPages.isEmpty) return null;
     return [
-      newRichPages.first.title ?? '',
+      QuillDeltaToPlainTextService.call(newRichPages.first.body ?? [], markdown: true),
       if (newRichPages.length > 1)
         for (final p in newRichPages.getRange(1, newRichPages.length)) ...[
           p.title ?? '',
