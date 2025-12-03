@@ -40,7 +40,6 @@ class _SearchContent extends StatelessWidget {
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: TextField(
           controller: viewModel.queryController,
-          focusNode: viewModel.queryFocusNode,
           textInputAction: TextInputAction.search,
           style: Theme.of(context).appBarTheme.titleTextStyle,
           keyboardType: TextInputType.text,
@@ -76,7 +75,7 @@ class _SearchContent extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     SpScrollableChoiceChips<TagDbModel>(
-                      autoScrollToSelectedOnChanged: true,
+                      key: viewModel.tagsChipsKey,
                       choices: visibleTags,
                       storiesCount: (TagDbModel tag) => tag.storiesCount,
                       toLabel: (TagDbModel tag) => tag.title,

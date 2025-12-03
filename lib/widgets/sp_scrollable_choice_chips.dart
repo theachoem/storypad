@@ -8,7 +8,6 @@ class SpScrollableChoiceChips<T> extends StatefulWidget {
     required this.toLabel,
     required this.selected,
     required this.onToggle,
-    this.autoScrollToSelectedOnChanged = false,
     this.wrapWidth,
   });
 
@@ -18,13 +17,12 @@ class SpScrollableChoiceChips<T> extends StatefulWidget {
   final bool Function(T choice) selected;
   final void Function(T choice)? onToggle;
   final double? wrapWidth;
-  final bool autoScrollToSelectedOnChanged;
 
   @override
-  State<SpScrollableChoiceChips<T>> createState() => _SpScrollableChoiceChipsState<T>();
+  State<SpScrollableChoiceChips<T>> createState() => SpScrollableChoiceChipsState<T>();
 }
 
-class _SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> {
+class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> {
   final Map<int, GlobalKey> _chipKeys = {};
 
   @override
@@ -32,21 +30,11 @@ class _SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>>
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToFirstSelected(animated: false);
+      scrollToFirstSelected(animated: false);
     });
   }
 
-  @override
-  void didUpdateWidget(covariant SpScrollableChoiceChips<T> oldWidget) {
-    if (widget.autoScrollToSelectedOnChanged) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToFirstSelected(animated: true);
-      });
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  void _scrollToFirstSelected({
+  void scrollToFirstSelected({
     bool animated = true,
   }) {
     int? lastSelectedIndex;

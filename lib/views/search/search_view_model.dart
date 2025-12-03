@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
+import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -17,7 +18,7 @@ import 'search_view.dart';
 class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final SearchRoute params;
   final TextEditingController queryController = TextEditingController();
-  final FocusNode queryFocusNode = FocusNode();
+  final tagsChipsKey = GlobalKey<SpScrollableChoiceChipsState<TagDbModel>>();
 
   SearchViewModel({
     required this.params,
@@ -64,9 +65,13 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     if (searchFilter == null) return;
 
     debouncedCallback(() async {
+      String? newQuery = query.trim().isNotEmpty ? query.trim() : null;
+      if (newQuery == searchFilter!.query) return;
+
       searchFilter = searchFilter!.copyWith(
         query: query.trim().isNotEmpty ? query.trim() : null,
       );
+
       await _resetTagsCount();
       notifyListeners();
 
@@ -103,7 +108,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     SearchFilterStorage().writeObject(searchFilter!);
 
     // Dismiss keyboard to improve UX when selecting tags.
-    if (queryFocusNode.hasFocus) queryFocusNode.unfocus();
+    if (FocusScope.of(context).hasFocus) FocusScope.of(context).unfocus();
   }
 
   Future<void> _resetTagsCount() async {
@@ -135,6 +140,10 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
       searchFilter = result;
       await _resetTagsCount();
       notifyListeners();
+
+      Future.microtask(() {
+        tagsChipsKey.currentState?.scrollToFirstSelected();
+      });
     }
   }
 
@@ -159,7 +168,6 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   @override
   void dispose() {
     queryController.dispose();
-    queryFocusNode.dispose();
     super.dispose();
   }
 }
