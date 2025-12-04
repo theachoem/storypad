@@ -10,6 +10,7 @@ import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
 class TagsProvider extends ChangeNotifier {
   TagsProvider() {
+    StoryDbModel.db.addGlobalListener(reload);
     setup();
   }
 
@@ -125,5 +126,11 @@ class TagsProvider extends ChangeNotifier {
       storyViewOnly: storyViewOnly,
       tag: tag,
     ).push(context);
+  }
+
+  @override
+  void dispose() {
+    StoryDbModel.db.removeGlobalListener(reload);
+    super.dispose();
   }
 }
