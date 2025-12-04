@@ -7,6 +7,15 @@ class _PinUnlockContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return KeyboardListener(
+      autofocus: true,
+      focusNode: viewModel.focusNode,
+      onKeyEvent: viewModel.handleKeyEvent,
+      child: _buildContent(context),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double itemSize = MediaQuery.textScalerOf(context).scale(72.0);
