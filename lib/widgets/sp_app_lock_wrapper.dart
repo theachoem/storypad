@@ -82,7 +82,6 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     if (!mounted) return;
     final provider = context.read<AppLockProvider>();
 
-    if (provider.authenticated) return;
     if (animationController.value != 1) animationController.animateTo(1);
     if (showBarrier != true) {
       setState(() => showBarrier = true);
