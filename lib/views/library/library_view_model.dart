@@ -19,6 +19,11 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   });
 
   Future<void> deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
+    // This is important as user could just recently deleted the story with this asset in it which show a snack to undo.
+    // So if we don't clear it, it will show the snack bar, user can restore back the story, but the asset will still be deleted.
+    // This is rare case, but still important to handle.
+    MessengerService.of(context).clearSnackBars();
+
     final bool hasInternet = await InternetCheckerService().check();
     if (!context.mounted) return;
 
