@@ -12,7 +12,6 @@ import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_snap_scroll_physics.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 part 'license_text.dart';
@@ -126,11 +125,6 @@ class _GalleryTabState extends State<GalleryTab> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                physics: SpSnapScrollPhysics(
-                  itemWidthGetter: (metrics) {
-                    return 170 + 16.0;
-                  },
-                ),
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
