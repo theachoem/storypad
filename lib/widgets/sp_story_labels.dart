@@ -182,7 +182,6 @@ class SpStoryLabels extends StatelessWidget {
           onTap: fromStoryTile
               ? null
               : () {
-                  Feedback.forTap(context);
                   CalendarRoute(
                     initialMonth: story.event!.month,
                     initialYear: story.event!.year,

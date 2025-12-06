@@ -90,8 +90,6 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     required BuildContext context,
     double? initialVolume,
   }) async {
-    Feedback.forTap(context);
-
     final iapProvider = context.read<InAppPurchaseProvider>();
     if (!sound.free && !iapProvider.relaxSound) return openAddOn(context);
 

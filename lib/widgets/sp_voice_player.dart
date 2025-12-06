@@ -307,8 +307,6 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   /// Cycle to next playback speed (1.0x → 1.5x → 2.0x → loops).
   /// Inspired by Telegram: tap the speed indicator to cycle through speeds.
   void cycleToNextSpeed() {
-    if (mounted) Feedback.forTap(context);
-
     final currentIndex = _speedOptions.indexOf(_playbackSpeed);
     final nextIndex = (currentIndex + 1) % _speedOptions.length;
     final nextSpeed = _speedOptions[nextIndex];

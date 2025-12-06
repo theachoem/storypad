@@ -36,12 +36,7 @@ class SpCalendarPeriodDateCell extends StatelessWidget {
       child: SpTapEffect(
         effects: [SpTapEffectType.scaleDown],
         scaleActive: 0.8,
-        onTap: onTap != null
-            ? () {
-                Feedback.forTap(context);
-                onTap!();
-              }
-            : null,
+        onTap: onTap,
         child: Container(
           margin: const EdgeInsets.all(6.0),
           alignment: Alignment.center,
