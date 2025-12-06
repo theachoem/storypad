@@ -20,13 +20,13 @@ class _EditTemplateContent extends StatelessWidget {
     return Scaffold(
       endDrawer: TagsEndDrawer(
         onUpdated: (tags) => viewModel.setTags(tags),
-        initialTags: viewModel.template?.tags ?? [],
+        initialTags: viewModel.template.tags ?? [],
       ),
       appBar: AppBar(
         title: TextFormField(
           autofocus: true,
           style: TextTheme.of(context).titleLarge,
-          initialValue: viewModel.template?.name,
+          initialValue: viewModel.template.name,
           onChanged: (value) => viewModel.onNameChanged(value),
           decoration: const InputDecoration(
             hintText: "Name...",
@@ -42,25 +42,23 @@ class _EditTemplateContent extends StatelessWidget {
         ],
       ),
       body: buildBody(context, pages),
-      bottomNavigationBar: viewModel.template == null
-          ? null
-          : SpPagesToolbar(
-              managingPage: viewModel.pagesManager.managingPage,
-              pages: pages,
-              backgroundColor: ColorScheme.of(context).readOnly.surface1,
-              preferences: viewModel.template!.preferences,
-              onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-            ),
+      bottomNavigationBar: SpPagesToolbar(
+        managingPage: viewModel.pagesManager.managingPage,
+        pages: pages,
+        backgroundColor: ColorScheme.of(context).readOnly.surface1,
+        preferences: viewModel.template.preferences,
+        onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+      ),
     );
   }
 
   Widget buildBody(BuildContext context, List<StoryPageObject> pages) {
-    if (viewModel.draftContent == null || pages.isEmpty || viewModel.template == null) {
+    if (viewModel.draftContent == null || pages.isEmpty) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
     return StoryPagesBuilder(
-      preferences: viewModel.template?.preferences,
+      preferences: viewModel.template.preferences,
       pages: pages,
       storyContent: viewModel.draftContent!,
       headerBuilder: (_) => buildPageHeader(context),
@@ -88,7 +86,7 @@ class _EditTemplateContent extends StatelessWidget {
       spacing: 12.0,
       children: [
         TemplateTagLabels(
-          template: viewModel.template!,
+          template: viewModel.template,
           margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
         ),
       ],

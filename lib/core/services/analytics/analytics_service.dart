@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
@@ -318,6 +319,19 @@ class AnalyticsService extends BaseAnalyticsService {
 
     return FirebaseAnalytics.instance.logEvent(
       name: sanitizeEventName('change_story_date'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logSaveStoryAsTemplate({
+    required StoryDbModel story,
+    required TemplateDbModel template,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logSaveStoryAsTemplate', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('save_story_as_template'),
       parameters: parameters,
     );
   }

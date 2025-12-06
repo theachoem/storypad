@@ -22,25 +22,9 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   EditTemplateViewModel({
     required this.params,
   }) {
-    template = params.initialTemplate;
-    flowType = template == null ? EditingFlowType.create : EditingFlowType.update;
-
-    template ??= TemplateDbModel(
-      id: openedOn.millisecondsSinceEpoch,
-      tags: [],
-      name: null,
-      content: null,
-      note: null,
-      galleryTemplateId: null,
-      createdAt: openedOn,
-      updatedAt: openedOn,
-      archivedAt: null,
-      lastSavedDeviceId: null,
-      permanentlyDeletedAt: null,
-    );
-
-    latestContent = template?.content ?? StoryContentDbModel.create(createdAt: openedOn);
-    draftContent = template?.content ?? StoryContentDbModel.create(createdAt: openedOn);
+    template = params.initialTemplate ?? TemplateDbModel.newTemplate(createdAt: openedOn);
+    latestContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
+    draftContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
 
     bool alreadyHasPage = draftContent!.richPages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
@@ -55,14 +39,15 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     load();
   }
 
-  TemplateDbModel? template;
+  late TemplateDbModel template;
   StoryContentDbModel? draftContent;
   StoryContentDbModel? latestContent;
 
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
   late final StoryPagesManagerInfo pagesManager;
-  late EditingFlowType flowType;
   final DateTime openedOn = DateTime.now();
+
+  EditingFlowType get flowType => params.flowType;
 
   Future<void> load() async {
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
@@ -80,9 +65,9 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     pagesManager.pagesMap.add(richPage: draftContent!.richPages!.last, readOnly: false);
 
     if (hasDataWritten) {
-      template = template!.copyWith(content: draftContent, updatedAt: DateTime.now());
+      template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
       lastSavedAtNotifier.value = DateTime.now();
-      TemplateDbModel.db.set(template!);
+      TemplateDbModel.db.set(template);
     }
 
     notifyListeners();
@@ -112,9 +97,9 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     );
 
     if (hasDataWritten) {
-      template = template!.copyWith(content: draftContent, updatedAt: DateTime.now());
+      template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
       lastSavedAtNotifier.value = DateTime.now();
-      TemplateDbModel.db.set(template!);
+      TemplateDbModel.db.set(template);
     }
 
     notifyListeners();
@@ -143,9 +128,9 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       pagesManager.pagesMap.remove(richPage.id);
 
       if (hasDataWritten) {
-        template = template!.copyWith(content: draftContent, updatedAt: DateTime.now());
+        template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
         lastSavedAtNotifier.value = DateTime.now();
-        TemplateDbModel.db.set(template!);
+        TemplateDbModel.db.set(template);
       }
 
       notifyListeners();
@@ -154,12 +139,12 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
   Future<void> onNameChanged(String newTemplateName) async {
     return debouncedCallback(() async {
-      template = template!.copyWith(
+      template = template.copyWith(
         name: newTemplateName.trim(),
         updatedAt: DateTime.now(),
       );
       lastSavedAtNotifier.value = DateTime.now();
-      await TemplateDbModel.db.set(template!);
+      await TemplateDbModel.db.set(template);
     });
   }
 
@@ -169,44 +154,49 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
     return debouncedCallback(() async {
       if (hasChange) {
-        template = template!.copyWith(content: draftContent, updatedAt: DateTime.now());
+        template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
         lastSavedAtNotifier.value = DateTime.now();
-        await TemplateDbModel.db.set(template!);
+        await TemplateDbModel.db.set(template);
       }
     });
   }
 
   Future<bool> setTags(List<int> tags) async {
-    template = template!.copyWith(tags: tags, updatedAt: DateTime.now());
+    template = template.copyWith(tags: tags, updatedAt: DateTime.now());
     notifyListeners();
 
     if (hasDataWritten) {
       lastSavedAtNotifier.value = DateTime.now();
-      TemplateDbModel.db.set(template!);
+      TemplateDbModel.db.set(template);
     }
 
     return true;
   }
 
   Future<void> changePreferences(StoryPreferencesDbModel preferences) async {
-    if (preferences.layoutType != template?.preferences.layoutType) {
+    if (preferences.layoutType != template.preferences.layoutType) {
       pagesManager.currentPageIndexNotifier.value = null;
 
       if (pagesManager.pageController.hasClients) pagesManager.pageController.jumpToPage(0);
       if (pagesManager.pageScrollController.hasClients) pagesManager.pageScrollController.jumpTo(0);
     }
 
-    template = template!.copyWith(updatedAt: DateTime.now(), preferences: preferences);
+    template = template.copyWith(updatedAt: DateTime.now(), preferences: preferences);
     notifyListeners();
 
     if (hasDataWritten) {
-      await TemplateDbModel.db.set(template!);
+      await TemplateDbModel.db.set(template);
       lastSavedAtNotifier.value = DateTime.now();
     }
   }
 
-  void done(BuildContext context) {
-    Navigator.maybePop(context, template);
+  Future<void> done(BuildContext context) async {
+    // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
+    await TemplateDbModel.db.set(template);
+    lastSavedAtNotifier.value = template.updatedAt;
+
+    // call pop instead of maybePop to skip pop scope
+    if (context.mounted) Navigator.pop(context, template);
   }
 
   bool get hasDataWritten =>
@@ -225,5 +215,44 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   void dispose() {
     pagesManager.dispose();
     super.dispose();
+  }
+
+  Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
+    if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
+    if (didPop) return;
+
+    Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
+      return showOkCancelAlertDialog(
+        context: context,
+        isDestructiveAction: true,
+        title: tr("dialog.are_you_sure_to_discard_these_changes.title"),
+        okLabel: tr("button.discard"),
+      );
+    }
+
+    if (flowType == EditingFlowType.create) {
+      if (lastSavedAtNotifier.value != null) {
+        OkCancelResult userAction = await showDiscardConfirmation(context);
+        if (userAction == OkCancelResult.ok) {
+          await TemplateDbModel.db.delete(template.id, softDelete: false);
+          if (context.mounted) return Navigator.of(context).pop(null);
+        } else {
+          return;
+        }
+      } else {
+        if (context.mounted) Navigator.of(context).pop(null);
+      }
+    } else if (flowType == EditingFlowType.update) {
+      if (template.updatedAt != params.initialTemplate?.updatedAt) {
+        OkCancelResult userAction = await showDiscardConfirmation(context);
+        if (userAction == OkCancelResult.ok) {
+          await TemplateDbModel.db.set(params.initialTemplate!);
+          template = params.initialTemplate!;
+          if (context.mounted) return Navigator.of(context).pop(null);
+        }
+      } else {
+        if (context.mounted) Navigator.of(context).pop(null);
+      }
+    }
   }
 }

@@ -17,7 +17,7 @@ class StoryTileActions {
     required this.storyListReloaderContext,
   });
 
-  Future<void> hardDelete(BuildContext context) async {
+  Future<bool> hardDelete(BuildContext context) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
       isDestructiveAction: true,
@@ -34,7 +34,7 @@ class StoryTileActions {
         story: originalStory,
       );
 
-      if (!context.mounted) return;
+      if (!context.mounted) return true;
 
       Future<void> undoHardDelete() async {
         StoryDbModel? updatedStory = await StoryDbModel.db.set(originalStory);
@@ -62,6 +62,10 @@ class StoryTileActions {
           );
         },
       );
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -78,10 +82,10 @@ class StoryTileActions {
     MessengerService.of(context).showSnackBar(tr("snack_bar.restore_individual_success"));
   }
 
-  Future<void> moveToBin(BuildContext context) async {
+  Future<bool> moveToBin(BuildContext context) async {
     StoryDbModel originalStory = story.copyWith();
     StoryDbModel? updatedStory = await originalStory.moveToBin();
-    if (updatedStory == null) return;
+    if (updatedStory == null) return false;
 
     AnalyticsService.instance.logMoveStoryToBin(
       story: updatedStory,
@@ -116,12 +120,14 @@ class StoryTileActions {
         },
       );
     }
+
+    return true;
   }
 
-  Future<void> archive(BuildContext context) async {
+  Future<bool> archive(BuildContext context) async {
     StoryDbModel originalStory = story.copyWith();
     StoryDbModel? updatedStory = await originalStory.archive();
-    if (updatedStory == null) return;
+    if (updatedStory == null) return false;
 
     AnalyticsService.instance.logArchiveStory(
       story: updatedStory,
@@ -149,12 +155,14 @@ class StoryTileActions {
         },
       );
     }
+
+    return true;
   }
 
-  Future<void> putBack(BuildContext context) async {
+  Future<bool> putBack(BuildContext context) async {
     StoryDbModel originalStory = story.copyWith();
     StoryDbModel? updatedStory = await originalStory.putBack();
-    if (updatedStory == null) return;
+    if (updatedStory == null) return false;
 
     await reloadHome('$runtimeType#putBack');
 
@@ -189,6 +197,8 @@ class StoryTileActions {
         },
       );
     }
+
+    return true;
   }
 
   Future<void> toggleStarred() async {

@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -52,7 +53,7 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return StoryThemeSheet(
+    return _StoryThemeSheet(
       story: story,
       draftContent: draftContent,
       viewModel: viewModel,
@@ -61,14 +62,13 @@ class SpStoryThemeBottomSheet extends BaseBottomSheet {
   }
 }
 
-class StoryThemeSheet extends StatefulWidget {
+class _StoryThemeSheet extends StatefulWidget {
   final StoryDbModel story;
   final StoryContentDbModel? draftContent;
   final BaseStoryViewModel viewModel;
   final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
 
-  const StoryThemeSheet({
-    super.key,
+  const _StoryThemeSheet({
     required this.story,
     this.draftContent,
     required this.viewModel,
@@ -76,10 +76,10 @@ class StoryThemeSheet extends StatefulWidget {
   });
 
   @override
-  State<StoryThemeSheet> createState() => _StoryThemeSheetState();
+  State<_StoryThemeSheet> createState() => _StoryThemeSheetState();
 }
 
-class _StoryThemeSheetState extends State<StoryThemeSheet> {
+class _StoryThemeSheetState extends State<_StoryThemeSheet> {
   late StoryPreferencesDbModel preferences = widget.story.preferences;
 
   @override
@@ -189,14 +189,32 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
                     widget.onThemeChanged(preferences);
                   },
           ),
+          SpPopMenuItem(
+            title: tr('button.save_as_template'),
+            leadingIconData: SpIcons.lightBulb,
+            trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
+            titleStyle: context.read<InAppPurchaseProvider>().template
+                ? null
+                : TextStyle(color: Theme.of(context).disabledColor),
+            onPressed: () => widget.viewModel.saveAsTemplate(context),
+          ),
           if (widget.viewModel.readOnly && story.putBackAble)
             SpPopMenuItem(
               title: tr('button.put_back'),
               leadingIconData: SpIcons.putBack,
               onPressed: widget.viewModel.readOnly
-                  ? () {
-                      StoryTileActions(story: story, storyListReloaderContext: null).putBack(context);
-                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                  ? () async {
+                      // StoryTileActions should only used when action will pop the page after action.
+                      // Because it didn't notify its change to the view model. So not recommended to use it in any other case.
+                      // StoryTile already listen to change by itself, that's why it is allowed to use [StoryTileActions]
+                      bool putBack = await StoryTileActions(
+                        story: story,
+                        storyListReloaderContext: null,
+                      ).putBack(context);
+
+                      if (putBack && context.mounted) {
+                        Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                      }
                     }
                   : null,
             ),
@@ -205,9 +223,18 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
               title: tr('button.archive'),
               leadingIconData: SpIcons.archive,
               onPressed: widget.viewModel.readOnly
-                  ? () {
-                      StoryTileActions(story: story, storyListReloaderContext: null).archive(context);
-                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                  ? () async {
+                      // StoryTileActions should only used when action will pop the page after action.
+                      // Because it didn't notify its change to the view model. So not recommended to use it in any other case.
+                      // StoryTile already listen to change by itself, that's why it is allowed to use [StoryTileActions]
+                      bool archived = await StoryTileActions(
+                        story: story,
+                        storyListReloaderContext: null,
+                      ).archive(context);
+
+                      if (archived && context.mounted) {
+                        Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                      }
                     }
                   : null,
             ),
@@ -217,9 +244,18 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
               leadingIconData: SpIcons.delete,
               titleStyle: TextStyle(color: ColorScheme.of(context).error),
               onPressed: widget.viewModel.readOnly
-                  ? () {
-                      StoryTileActions(story: story, storyListReloaderContext: null).moveToBin(context);
-                      Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                  ? () async {
+                      // StoryTileActions should only used when action will pop the page after action.
+                      // Because it didn't notify its change to the view model. So not recommended to use it in any other case.
+                      // StoryTile already listen to change by itself, that's why it is allowed to use [StoryTileActions]
+                      bool moved = await StoryTileActions(
+                        story: story,
+                        storyListReloaderContext: null,
+                      ).moveToBin(context);
+
+                      if (moved && context.mounted) {
+                        Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                      }
                     }
                   : null,
             ),
@@ -230,8 +266,17 @@ class _StoryThemeSheetState extends State<StoryThemeSheet> {
               titleStyle: TextStyle(color: ColorScheme.of(context).error),
               onPressed: widget.viewModel.readOnly
                   ? () async {
-                      await StoryTileActions(story: story, storyListReloaderContext: null).hardDelete(context);
-                      if (context.mounted) Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                      // StoryTileActions should only used when action will pop the page after action.
+                      // Because it didn't notify its change to the view model. So not recommended to use it in any other case.
+                      // StoryTile already listen to change by itself, that's why it is allowed to use [StoryTileActions]
+                      bool deleted = await StoryTileActions(
+                        story: story,
+                        storyListReloaderContext: null,
+                      ).hardDelete(context);
+
+                      if (deleted && context.mounted) {
+                        Navigator.pop(context, SpStoryThemeBottomSheetPopAction.backToStoryList);
+                      }
                     }
                   : null,
             ),
