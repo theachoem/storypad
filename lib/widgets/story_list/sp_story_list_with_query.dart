@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -115,6 +116,16 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
 
   Widget buildFadeInList() {
     if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (stories!.items.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          tr('general.no_story_yet'),
+          style: Theme.of(context).textTheme.bodyMedium,
+          textAlign: .center,
+        ),
+      );
+    }
     return KeyedSubtree(
       key: ValueKey(widget.uniqueness),
       child: SpFadeIn.fromBottom(
