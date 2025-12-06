@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -16,6 +17,11 @@ class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCal
   /// For any navigation from sidebar, use this RootViewModel#navigate instead of push directly.
   void navigate(BaseRoute route) {
     bool alreadySelected = selectedRootRouteNameNotifier.value == route.routeName;
+
+    AnalyticsService.instance.logViewRoute(
+      routeObject: route,
+      analyticsParameters: route.analyticsParameters,
+    );
 
     if (route.routeName == const HomeRoute().routeName) {
       navigatorKey.currentState?.popUntil((r) => r.isFirst);
