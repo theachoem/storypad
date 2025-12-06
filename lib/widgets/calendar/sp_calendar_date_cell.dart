@@ -31,7 +31,8 @@ class SpCalendarDateCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpTapEffect(
-      effects: [SpTapEffectType.scaleDown],
+      effects: [.scaleDown, .touchableOpacity],
+      scaleActive: 0.9,
       onTap: onTap,
       child: Stack(
         clipBehavior: Clip.none,

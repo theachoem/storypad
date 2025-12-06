@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 
 enum SpTapEffectType {
@@ -57,6 +58,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
   late Animation<double> scaleAnimation;
   late Animation<double> opacityAnimation;
   late Animation<double> borderAnimation;
+  late FocusNode _internalFocusNode;
 
   @override
   void initState() {
@@ -64,12 +66,14 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
     scaleAnimation = Tween<double>(begin: 1, end: widget.scaleActive).animate(controller);
     opacityAnimation = Tween<double>(begin: 1, end: opacityActive).animate(controller);
     borderAnimation = Tween<double>(begin: 0, end: 1).animate(controller);
+    _internalFocusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _internalFocusNode.dispose();
     super.dispose();
   }
 
@@ -91,8 +95,10 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    Widget result;
+
     if (widget.onTap != null) {
-      return GestureDetector(
+      result = GestureDetector(
         behavior: widget.behavior,
         onLongPress: widget.onLongPressed != null
             ? () {
@@ -106,8 +112,31 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
         child: buildChild(controller),
       );
     } else {
-      return buildChild(controller);
+      result = buildChild(controller);
     }
+
+    // Handle keyboard events for accessibility.
+    // Same behaviour to inkwell.
+    return Focus(
+      focusNode: _internalFocusNode,
+      onKeyEvent: (node, event) {
+        if (widget.onTap != null &&
+            (HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.enter) ||
+                HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.space))) {
+          onTap();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      onFocusChange: (hasFocus) {
+        if (hasFocus && widget.onTap != null) {
+          controller.forward();
+        } else {
+          controller.reverse();
+        }
+      },
+      child: result,
+    );
   }
 
   AnimatedBuilder buildChild(AnimationController controller) {
