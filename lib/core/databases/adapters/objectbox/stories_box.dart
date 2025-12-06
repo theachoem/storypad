@@ -290,6 +290,38 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }
 
   @override
+  Future<StoryDbModel?> find(
+    int id, {
+    bool returnDeleted = false,
+    String? debugSource,
+  }) async {
+    AppLogger.info("Triggering $tableName#find $id 🍎 from $debugSource");
+
+    StoryObjectBox? object = box.get(id);
+    if (object?.permanentlyDeletedAt != null && !returnDeleted) return null;
+
+    Map<int, EventDbModel>? events;
+
+    if (object?.eventId != null) {
+      events = await EventsBox()
+          .buildQuery(
+            filters: {
+              'ids': [object?.eventId],
+            },
+          )
+          .build()
+          .findAsync()
+          .then((query) async => {for (var item in query) item.id: await EventsBox().objectToModel(item)});
+    }
+
+    if (object != null) {
+      return objectToModel(object, events != null ? {'events': events} : null);
+    } else {
+      return null;
+    }
+  }
+
+  @override
   QueryBuilder<StoryObjectBox> buildQuery({
     Map<String, dynamic>? filters,
     bool returnDeleted = false,

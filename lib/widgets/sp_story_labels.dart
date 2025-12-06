@@ -9,8 +9,10 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
   final Future<void> Function() onContinueEditing;
@@ -174,10 +176,24 @@ class SpStoryLabels extends StatelessWidget {
 
     if (story.event?.period == true) {
       children.add(
-        Icon(
-          SpIcons.waterDrop,
-          color: Theme.of(context).colorScheme.error,
-          size: MediaQuery.textScalerOf(context).scale(16.0),
+        SpTapEffect(
+          scaleActive: 1.5,
+          effects: [.scaleDown],
+          onTap: fromStoryTile
+              ? null
+              : () {
+                  Feedback.forTap(context);
+                  CalendarRoute(
+                    initialMonth: story.event!.month,
+                    initialYear: story.event!.year,
+                    initialSegment: .period,
+                  ).push(context);
+                },
+          child: Icon(
+            SpIcons.waterDrop,
+            color: Theme.of(context).colorScheme.error,
+            size: MediaQuery.textScalerOf(context).scale(16.0),
+          ),
         ),
       );
     }
