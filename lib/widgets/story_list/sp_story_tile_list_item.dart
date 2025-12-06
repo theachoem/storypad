@@ -15,10 +15,12 @@ class SpStoryTileListItem extends StatelessWidget {
     required this.showYear,
     required this.onTap,
     required this.listContext,
+    required this.listHasThrowback,
     this.viewOnly = false,
   });
 
   final int index;
+  final bool listHasThrowback;
   final CollectionDbModel<StoryDbModel> stories;
   final bool showYear;
   final void Function() onTap;
@@ -55,7 +57,10 @@ class SpStoryTileListItem extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (index == 0) const SizedBox(height: 12.0),
+          // when index is 0 and there is no throwback, add extra spacing at top
+          // else no padding to make UI look nicer to throwback tile on top.
+          if (index == 0 && !listHasThrowback) const SizedBox(height: 12.0),
+
           Stack(
             children: [
               // 3. timeline divider can connect between story to story with same month,

@@ -5,7 +5,6 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/views/throwback/throwback_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect;
-import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 class SpThrowbackTile extends StatelessWidget {
   const SpThrowbackTile({
@@ -46,35 +45,7 @@ class SpThrowbackTile extends StatelessWidget {
 
     return SpTapEffect(
       onTap: () => view(context),
-      child: Stack(
-        children: [
-          if (listHasStories) ...[
-            const Positioned(
-              left: 32.0,
-              top: 44,
-              bottom: 0.0,
-              child: VerticalDivider(width: 1),
-            ),
-            Positioned(
-              left: 16.0 + 0.5,
-              bottom: 0.0,
-              child: Container(
-                width: SpStoryTile.monogramSize,
-                alignment: Alignment.center,
-                child: Container(
-                  width: 3,
-                  height: 3,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: ColorScheme.of(context).onSurface,
-                  ),
-                ),
-              ),
-            ),
-          ],
-          buildContent(context, title, subtitle),
-        ],
-      ),
+      child: buildContent(context, title, subtitle),
     );
   }
 

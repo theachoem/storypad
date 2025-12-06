@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'package:storypad/core/constants/locale_constants.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/views/root/root_view.dart';
-import 'package:storypad/widgets/base_view/desktop_main_menu_padding.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -23,6 +24,7 @@ class App extends StatelessWidget {
       startLocale: kFallbackLocale,
       child: AppTheme(
         builder: (context, preferences, theme, darkTheme, themeMode) {
+          MediaQueryData mediaQuery = MediaQuery.of(context);
           TextScaler textScaler = switch (preferences.fontSize) {
             null => MediaQuery.textScalerOf(context),
             FontSizeOption.small => const TextScaler.linear(0.85),
@@ -31,8 +33,14 @@ class App extends StatelessWidget {
             FontSizeOption.extraLarge => const TextScaler.linear(1.3),
           };
 
+          double mainMenuPadding = 0;
+
+          // Add padding for macOS main menu bar.
+          if (Platform.isMacOS) mainMenuPadding = 24;
+
           return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
+            data: mediaQuery.copyWith(
+              padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + mainMenuPadding),
               textScaler: textScaler,
               alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24,
             ),
@@ -51,11 +59,6 @@ class App extends StatelessWidget {
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,
-              builder: (context, child) {
-                return DesktopMainMenuPadding(
-                  child: child!,
-                );
-              },
             ),
           );
         },

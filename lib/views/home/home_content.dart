@@ -158,6 +158,7 @@ class _HomeContent extends StatelessWidget {
               stories: viewModel.stories!,
               onTap: () => viewModel.goToViewPage(context, story),
               listContext: listContext,
+              listHasThrowback: viewModel.hasThrowback,
             ),
           ],
         );

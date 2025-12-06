@@ -101,6 +101,7 @@ class SpStoryList extends StatelessWidget {
               index: storyIndex,
               viewOnly: viewOnly,
               listContext: listContext,
+              listHasThrowback: hasThrowback,
               onTap: () {
                 if (viewOnly) {
                   ShowChangeRoute(content: story.latestContent!, preferences: story.preferences).push(context);
