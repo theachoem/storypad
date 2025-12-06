@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_keyboard_listener.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';
 
 import 'show_story_view_model.dart';
@@ -47,9 +48,12 @@ class ShowStoryView extends StatelessWidget {
         return PopScope(
           canPop: !viewModel.pagesManager.managingPage,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: SpStoryPreferenceTheme(
-            preferences: viewModel.story?.preferences,
-            child: _ShowStoryContent(viewModel),
+          child: SpKeyboardListener(
+            onKeyEvent: (event) => viewModel.handleKeyEvent(event, context),
+            child: SpStoryPreferenceTheme(
+              preferences: viewModel.story?.preferences,
+              child: _ShowStoryContent(viewModel),
+            ),
           ),
         );
       },

@@ -7,7 +7,6 @@ import 'pin_unlock_view.dart';
 class PinUnlockViewModel extends ChangeNotifier with DisposeAwareMixin {
   final PinUnlockRoute params;
   final BuildContext context;
-  final FocusNode focusNode = FocusNode();
 
   PinUnlockViewModel({
     required this.params,
@@ -62,11 +61,5 @@ class PinUnlockViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> confirmWithBiometrics(BuildContext context) async {
     final authenticated = await params.onConfirmWithBiometrics!.call();
     if (context.mounted && authenticated) params.onValidated(context, null);
-  }
-
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
   }
 }

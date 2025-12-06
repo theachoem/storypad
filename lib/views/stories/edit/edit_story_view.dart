@@ -20,6 +20,7 @@ import 'package:storypad/widgets/pages_toolbar/sp_pages_toolbar.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_keyboard_listener.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';
 
 import 'edit_story_view_model.dart';
@@ -100,9 +101,12 @@ class EditStoryView extends StatelessWidget {
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: SpStoryPreferenceTheme(
-            preferences: viewModel.story?.preferences,
-            child: _EditStoryContent(viewModel),
+          child: SpKeyboardListener(
+            onKeyEvent: (event) => viewModel.handleKeyEvent(event, context),
+            child: SpStoryPreferenceTheme(
+              preferences: viewModel.story?.preferences,
+              child: _EditStoryContent(viewModel),
+            ),
           ),
         );
       },

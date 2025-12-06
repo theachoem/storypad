@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_keyboard_listener.dart';
 
 import 'pin_unlock_view_model.dart';
 
@@ -97,7 +98,10 @@ class PinUnlockView extends StatelessWidget {
     return ViewModelProvider<PinUnlockViewModel>(
       create: (context) => PinUnlockViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
-        return _PinUnlockContent(viewModel);
+        return SpKeyboardListener(
+          onKeyEvent: (event) => viewModel.handleKeyEvent(event),
+          child: _PinUnlockContent(viewModel),
+        );
       },
     );
   }

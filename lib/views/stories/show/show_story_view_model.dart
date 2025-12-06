@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -106,5 +107,15 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
   Future<void> onPopInvokedWithResult(bool didPop, Object? result, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
+  }
+
+  void handleKeyEvent(KeyEvent event, BuildContext context) {
+    if (event is KeyDownEvent) {
+      final isE = event.logicalKey == LogicalKeyboardKey.enter;
+
+      if (isE) {
+        goToEditPage(context);
+      }
+    }
   }
 }
