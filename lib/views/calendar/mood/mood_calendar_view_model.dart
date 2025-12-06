@@ -32,6 +32,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   final SpCalendarController calendarController = SpCalendarController();
+  final PageController pageController = PageController();
 
   List<TagDbModel>? _tags;
   List<TagDbModel>? get tags => _tags;
@@ -124,6 +125,11 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     if (params.monthYearNotifier.value.month != month || params.monthYearNotifier.value.year != year) {
       params.monthYearNotifier.value = (year: year, month: month);
     }
+
+    // Reset page controller to index 0 when month changes
+    if (pageController.hasClients) {
+      pageController.jumpToPage(0);
+    }
   }
 
   // this will also trigger onMonthChanged from SpCalendar.
@@ -135,7 +141,20 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     }
   }
 
-  void onDaySelected(int year, int month, int? day) {
+  void selectDay(int year, int month, int? day) {
+    onChanged(year, month, day, selectedTagId);
+
+    if (!pageController.hasClients) return;
+
+    final targetPage = day ?? 0;
+    final currentPage = pageController.page?.toInt() ?? 0;
+
+    if (currentPage != targetPage) {
+      pageController.jumpToPage(targetPage);
+    }
+  }
+
+  void onPageChanged(int year, int month, int? day) {
     onChanged(year, month, day, selectedTagId);
   }
 
@@ -147,6 +166,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   void dispose() {
     params.monthYearNotifier.removeListener(_onParentMonthYearChanged);
     StoryDbModel.db.removeGlobalListener(_reloadFeeling);
+    pageController.dispose();
     super.dispose();
   }
 }
