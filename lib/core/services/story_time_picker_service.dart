@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/widgets/sp_pin_to_home_button.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 class StoryTimePickerService {
@@ -42,20 +41,15 @@ class StoryTimePickerService {
       builder: (context, child) {
         return GestureDetector(
           onTap: () => Navigator.maybePop(context),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                child!,
-                SpPinToHomeButton(
-                  pinned: story.preferredShowTime,
-                  disabled: onToggleShowTime == null,
-                  onPressed: () async {
-                    onToggleShowTime!();
-                    if (context.mounted) Navigator.maybePop(context);
-                  },
-                ),
-              ],
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: .min,
+                children: [
+                  child!,
+                  buildShowTimeOnHomeCheckBox(),
+                ],
+              ),
             ),
           ),
         );
@@ -94,19 +88,54 @@ class StoryTimePickerService {
                       mode: CupertinoTimerPickerMode.hm,
                       onTimerDurationChanged: (duration) => notifier.value = _durationToTimeOfDay(duration),
                     ),
-                    SpPinToHomeButton(
-                      pinned: story.preferredShowTime,
-                      disabled: onToggleShowTime == null,
-                      onPressed: () async {
-                        onToggleShowTime!();
-                        if (context.mounted) Navigator.maybePop(context);
-                      },
-                    ),
+                    buildShowTimeOnHomeCheckBox(),
                   ],
                 ),
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  Widget buildShowTimeOnHomeCheckBox() {
+    return SpSingleStateWidget.listen(
+      initialValue: story.preferredShowTime,
+      builder: (context, value, notifier) {
+        return Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(8.0),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8.0),
+            onTap: () {
+              if (onToggleShowTime != null) {
+                onToggleShowTime!();
+                notifier.value = !value;
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                mainAxisAlignment: .center,
+                crossAxisAlignment: .center,
+                mainAxisSize: .min,
+                spacing: 4.0,
+                children: [
+                  Checkbox.adaptive(
+                    value: value,
+                    onChanged: (newValue) {
+                      if (onToggleShowTime != null) {
+                        onToggleShowTime!();
+                        notifier.value = newValue ?? false;
+                      }
+                    },
+                  ),
+                  Text(tr("button.show_time_on_home")),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
