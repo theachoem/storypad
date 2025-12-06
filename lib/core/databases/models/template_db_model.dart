@@ -60,6 +60,27 @@ class TemplateDbModel extends BaseDbModel {
 
   bool get archived => archivedAt != null;
 
+  factory TemplateDbModel.newTemplate({
+    required DateTime createdAt,
+    StoryContentDbModel? content,
+    String? galleryTemplateId,
+    List<int>? tags,
+  }) {
+    return TemplateDbModel(
+      id: createdAt.millisecondsSinceEpoch,
+      tags: tags ?? [],
+      name: null,
+      content: content,
+      note: null,
+      galleryTemplateId: galleryTemplateId,
+      createdAt: createdAt,
+      updatedAt: createdAt,
+      archivedAt: null,
+      lastSavedDeviceId: null,
+      permanentlyDeletedAt: null,
+    );
+  }
+
   @override
   Map<String, dynamic> toJson() => _$TemplateDbModelToJson(this);
   factory TemplateDbModel.fromJson(Map<String, dynamic> json) => _$TemplateDbModelFromJson(json);

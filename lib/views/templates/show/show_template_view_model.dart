@@ -79,7 +79,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   Future<void> goToEditPage(BuildContext context) async {
-    await EditTemplateRoute(initialTemplate: template).push(context);
+    await EditTemplateRoute(initialTemplate: template, flowType: .update).push(context);
     template = await TemplateDbModel.db.find(template.id) ?? template;
     _setTemplate(template);
     await load();

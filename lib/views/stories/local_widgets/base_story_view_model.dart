@@ -4,17 +4,23 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
+import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/templates/edit/edit_template_view.dart';
 
 part 'story_pages_manager_info.dart';
 
@@ -168,6 +174,39 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     AnalyticsService.instance.logChangeStoryDate(
       story: story!,
     );
+  }
+
+  Future<void> saveAsTemplate(BuildContext context) async {
+    if (story == null) return;
+
+    if (!context.read<InAppPurchaseProvider>().template) {
+      AddOnsRoute.pushAndNavigateTo(product: AppProduct.templates, context: context);
+      return;
+    }
+
+    var result = await EditTemplateRoute(
+      flowType: .create,
+      initialTemplate: TemplateDbModel.newTemplate(
+        createdAt: DateTime.now(),
+        content: story!.draftContent ?? story!.latestContent,
+        galleryTemplateId: story!.galleryTemplateId,
+        tags: story!.validTags,
+      ),
+    ).push(context);
+
+    if (result is TemplateDbModel) {
+      story = story!.copyWith(templateId: result.id, updatedAt: DateTime.now());
+
+      if (hasDataWritten) {
+        await StoryDbModel.db.set(story!);
+        lastSavedAtNotifier.value = story?.updatedAt;
+      }
+
+      AnalyticsService.instance.logSaveStoryAsTemplate(
+        story: story!,
+        template: result,
+      );
+    }
   }
 
   Future<void> addNewPage() async {

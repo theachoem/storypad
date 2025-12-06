@@ -54,7 +54,7 @@ class _TemplatesTabState extends State<TemplatesTab> {
   }
 
   Future<void> goToNewPage(BuildContext context) async {
-    await EditTemplateRoute().push(context);
+    await EditTemplateRoute(flowType: .create).push(context);
     await load();
   }
 
