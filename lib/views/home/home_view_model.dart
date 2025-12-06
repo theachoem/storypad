@@ -43,6 +43,12 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   CollectionDbModel<StoryDbModel>? _stories;
   CollectionDbModel<StoryDbModel>? get stories => _stories;
   void setStories(CollectionDbModel<StoryDbModel>? value) {
+    // Automatically sort stories by displayPathDate in descending order.
+    // This ensures consistent ordering regardless of how stories are added or modified.
+    if (value != null && value.items.isNotEmpty) {
+      value.items.sort((a, b) => b.displayPathDate.compareTo(a.displayPathDate));
+    }
+
     _stories = value;
     scrollInfo.setupStoryKeys(stories?.items ?? []);
   }
@@ -111,6 +117,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (editedStory is StoryDbModel && editedStory.updatedAt != story.updatedAt) {
       year = editedStory.year;
       await reload(debugSource: '$runtimeType#goToNewPage');
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollInfo.moveToStory(targetStoryId: editedStory.id);
+      });
     }
   }
 
@@ -182,20 +192,8 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> _checkNewStoryResult(Object? addedStory) async {
     if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
-        int index = 0;
-
-        // 1-1-2022 3pm: 0
-        // 1-1-2022 12pm: 1
-        // 2-1-2022 1am: 2
-        // 3-1-2022 1am: 3
-        //
-        // added: 1-1-2022 2pm
-        index = stories!.items.indexWhere((story) => addedStory.displayPathDate.isAfter(story.displayPathDate));
-
-        // index possibly -1
-        index = max(index, 0);
-
-        setStories(stories!.addElement(addedStory, index));
+        // setStories will automatically sort the stories by displayPathDate
+        setStories(stories!.addElement(addedStory, 0));
         notifyListeners();
       } else {
         await MessengerService.of(HomeView.homeContext!).showLoading(
