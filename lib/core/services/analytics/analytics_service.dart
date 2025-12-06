@@ -556,6 +556,13 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logTakePhoto() {
+    debug('logTakePhoto');
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('take_photo'),
+    );
+  }
+
   Future<void> logViewImages({
     required int imagesCount,
   }) {

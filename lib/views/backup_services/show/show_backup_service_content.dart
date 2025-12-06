@@ -173,7 +173,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => viewModel.reauthenticate(context),
                 icon: const Icon(SpIcons.refresh),
-                label: Text(tr('button.sign_in')),
+                label: Text(tr('button.retry')),
               )
             else if (error.isRetryable)
               FilledButton.icon(

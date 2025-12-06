@@ -22,6 +22,8 @@ final bool kIAPEnabled =
     (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
     (Platform.isIOS && kRevenueCatIosApiKey.trim().isNotEmpty);
 
+final bool kSupportCamera = Platform.isAndroid || Platform.isIOS;
+
 final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
 final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';

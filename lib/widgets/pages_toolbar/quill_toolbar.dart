@@ -43,6 +43,16 @@ class _QuillToolbar extends StatelessWidget {
       ),
       child: Row(
         children: [
+          if (kSupportCamera)
+            IconButton(
+              tooltip: tr('button.take_photo'),
+              icon: const Icon(SpIcons.camera),
+              onPressed: () => SpImagePickerBottomSheet.showImagePicker(
+                context: context,
+                controller: controller,
+                source: .camera,
+              ),
+            ),
           IconButton(
             tooltip: FlutterQuillLocalizations.of(context)?.image,
             icon: const Icon(SpIcons.photo),

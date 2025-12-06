@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
@@ -23,6 +24,31 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   bool get fullScreen => true;
 
   final List<AssetDbModel> assets;
+
+  static Future<void> showImagePicker({
+    required BuildContext context,
+    required QuillController controller,
+    required ImageSource source,
+  }) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(source: source);
+    if (photo == null) return;
+
+    AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+    if (tookAsset == null) return;
+
+    final index = controller.selection.baseOffset;
+    final length = controller.selection.extentOffset - index;
+
+    controller.replaceText(index, length, BlockEmbed.image(tookAsset.embedLink), null);
+    controller.moveCursorToPosition(index + 1);
+
+    if (source == ImageSource.camera) {
+      AnalyticsService.instance.logTakePhoto();
+    } else {
+      AnalyticsService.instance.logInsertNewPhoto();
+    }
+  }
 
   static Future<void> showQuillPicker<T>({
     required BuildContext context,
