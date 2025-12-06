@@ -3,12 +3,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
 
 abstract class BaseRoute {
   const BaseRoute();
 
   // Only basic user unrelated info. Most screen should return empty.
   Map<String, String?>? get analyticsParameters => null;
+
+  /// Optional route name for named navigation. Determines how the route is built and transitioned.
+  ///
+  /// When [routeName] is provided:
+  /// - Route is generated via [RootViewModel.generateRoute()], which uses standard [MaterialPageRoute]
+  /// - Ensures consistent route transitions across the app (important for root sidebar stability)
+  /// - Custom route definitions in this class are ignored
+  ///
+  /// When [routeName] is null:
+  /// - Route is built using the custom [buildRoute()] method defined in this class
+  /// - Allows full customization: CupertinoSheetRoute, PageRouteBuilder with animations, etc.
+  /// - Each route can define its own unique transition behavior
+  String? get routeName => null;
 
   String get className => runtimeType.toString();
   String get analyticScreenName => className.replaceAll("Route", "");
@@ -26,7 +40,17 @@ abstract class BaseRoute {
     );
 
     if (!context.mounted) return null;
-    return Navigator.of(context, rootNavigator: rootNavigator).push(buildRoute<T>(context));
+
+    // - When a SpNestedNavigation exists: use push() so the tag view is stacked locally and the sidebar selection is preserved.
+    // - When no SpNestedNavigation exists and routeName is null: use push() directly as well.
+    // - else: use pushNamed() on the [RootView] navigator so the sidebar updates (tag becomes the active selection).
+    final nestedNavigator = SpNestedNavigation.maybeOf(context);
+
+    if (nestedNavigator != null || routeName == null) {
+      return Navigator.of(context, rootNavigator: rootNavigator).push(buildRoute<T>(context));
+    } else {
+      return Navigator.of(context, rootNavigator: rootNavigator).pushNamed(routeName!, arguments: this);
+    }
   }
 
   Future<T?> pushReplacement<T extends Object?>(
@@ -38,7 +62,16 @@ abstract class BaseRoute {
       analyticsParameters: analyticsParameters,
     );
 
-    return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(buildRoute<T>(context));
+    // - When a SpNestedNavigation exists: use pushReplacement() so the tag view is stacked locally and the sidebar selection is preserved.
+    // - When no SpNestedNavigation exists and routeName is null: use pushReplacement() directly as well.
+    // - else: use pushReplacementNamed() on the [RootView] navigator so the sidebar updates (tag becomes the active selection).
+    final nestedNavigator = SpNestedNavigation.maybeOf(context);
+
+    if (nestedNavigator != null || routeName == null) {
+      return Navigator.of(context, rootNavigator: rootNavigator).pushReplacement(buildRoute<T>(context));
+    } else {
+      return Navigator.of(context, rootNavigator: rootNavigator).pushReplacementNamed(routeName!, arguments: this);
+    }
   }
 
   PageRoute<T> buildRoute<T>(BuildContext context) {

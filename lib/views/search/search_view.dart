@@ -16,13 +16,13 @@ import 'search_view_model.dart';
 part 'search_content.dart';
 
 class SearchRoute extends BaseRoute {
+  @override
+  String get routeName => 'search';
+
   SearchRoute();
 
   @override
   Widget buildPage(BuildContext context) => SearchView(params: this);
-
-  static const String routeName = 'search';
-  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class SearchView extends StatelessWidget {

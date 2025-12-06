@@ -17,6 +17,7 @@ import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/root/root_view_model.dart';
 import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
+import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
@@ -52,6 +53,16 @@ part 'local_widgets/home_empty.dart';
 part 'local_widgets/app_update_floating_button.dart';
 part 'local_widgets/rounded_indicator.dart';
 part 'local_widgets/home_timeline_side_bar.dart';
+
+class HomeRoute extends BaseRoute {
+  @override
+  String get routeName => 'home';
+
+  const HomeRoute();
+
+  @override
+  Widget buildPage(BuildContext context) => const HomeView();
+}
 
 class HomeView extends StatelessWidget {
   const HomeView({

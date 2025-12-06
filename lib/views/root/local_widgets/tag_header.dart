@@ -8,7 +8,7 @@ class _TagHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => viewModel.navigate(TagsRoute.routeName, TagsRoute()),
+      onTap: () => viewModel.navigate(TagsRoute()),
       child: ValueListenableBuilder(
         valueListenable: viewModel.selectedRootRouteNameNotifier,
         child: Row(
@@ -32,7 +32,7 @@ class _TagHeader extends StatelessWidget {
           ],
         ),
         builder: (context, selectedRootRouteName, contents) {
-          bool selected = selectedRootRouteName == TagsRoute.routeName;
+          bool selected = selectedRootRouteName == TagsRoute().routeName;
 
           return Container(
             padding: EdgeInsets.only(
