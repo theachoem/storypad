@@ -106,7 +106,24 @@ class SpStoryLabels extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
-    List<Widget> children = buildTags(tagProvider, context);
+    List<Widget> children = [];
+
+    bool showTime = story.preferredShowTime || !fromStoryTile;
+    if (showTime) {
+      children.add(
+        Consumer<DevicePreferencesProvider>(
+          builder: (context, provider, child) {
+            return buildPin(
+              context: context,
+              title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
+              onTap: () => showTimePicker(context),
+            );
+          },
+        ),
+      );
+    }
+
+    children.addAll(buildTags(tagProvider, context));
 
     if (voicesCount != null && voicesCount! > 0) {
       children.add(
@@ -142,21 +159,6 @@ class SpStoryLabels extends StatelessWidget {
             story: story,
             onToggleShowDayCount: onToggleShowDayCount,
           ).show(context: context),
-        ),
-      );
-    }
-
-    bool showTime = story.preferredShowTime || !fromStoryTile;
-    if (showTime) {
-      children.add(
-        Consumer<DevicePreferencesProvider>(
-          builder: (context, provider, child) {
-            return buildPin(
-              context: context,
-              title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
-              onTap: () => showTimePicker(context),
-            );
-          },
         ),
       );
     }
