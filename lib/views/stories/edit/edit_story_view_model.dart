@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -153,6 +154,22 @@ class EditStoryViewModel extends BaseStoryViewModel {
         requested = true;
       }
     });
+  }
+
+  void handleKeyEvent(KeyEvent event, BuildContext context) {
+    if (event is KeyDownEvent) {
+      final isCtrlOrCmd =
+          HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.controlLeft) ||
+          HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.controlRight) ||
+          HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.metaLeft) ||
+          HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.metaRight);
+
+      final isS = event.logicalKey == LogicalKeyboardKey.keyS;
+
+      if (isCtrlOrCmd && isS) {
+        done(context);
+      }
+    }
   }
 
   Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
