@@ -17,6 +17,9 @@ import 'calendar_view_model.dart';
 part 'calendar_content.dart';
 
 class CalendarRoute extends BaseRoute {
+  @override
+  String get routeName => 'calendar';
+
   const CalendarRoute({
     required this.initialMonth,
     required this.initialYear,
@@ -29,9 +32,6 @@ class CalendarRoute extends BaseRoute {
 
   @override
   Widget buildPage(BuildContext context) => CalendarView(params: this);
-
-  static const String routeName = 'calendar';
-  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class CalendarView extends StatelessWidget {

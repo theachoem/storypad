@@ -41,13 +41,13 @@ part 'local_widgets/sounds_tab.dart';
 part 'relax_sounds_content.dart';
 
 class RelaxSoundsRoute extends BaseRoute {
+  @override
+  String get routeName => 'relax_sounds';
+
   const RelaxSoundsRoute();
 
   @override
   Widget buildPage(BuildContext context) => RelaxSoundsView(params: this);
-
-  static const String routeName = 'relax_sounds';
-  Future<void> pushNamed(BuildContext context) => Navigator.of(context).pushNamed(routeName, arguments: this);
 }
 
 class RelaxSoundsView extends StatelessWidget {

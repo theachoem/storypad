@@ -65,26 +65,29 @@ class _SideBar extends StatelessWidget {
     return Column(
       children: [
         _SideBarItem(
-          routeName: 'home',
+          routeName: const HomeRoute().routeName,
           title: tr('page.home.title'),
           leading: const Icon(SpIcons.home, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate('home', null),
+          onTap: () => viewModel.navigate(const HomeRoute()),
         ),
         _SideBarItem(
-          routeName: SearchRoute.routeName,
+          routeName: SearchRoute().routeName,
           title: tr('page.search.title'),
           leading: const Icon(SpIcons.search, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate(SearchRoute.routeName, SearchRoute()),
+          onTap: () => viewModel.navigate(SearchRoute()),
         ),
         _SideBarItem(
-          routeName: CalendarRoute.routeName,
+          routeName: CalendarRoute(
+            initialMonth: DateTime.now().month,
+            initialYear: DateTime.now().year,
+            initialSegment: .mood,
+          ).routeName,
           title: tr('page.calendar.title'),
           leading: const Icon(SpIcons.calendar, size: 24.0),
           viewModel: viewModel,
           onTap: () => viewModel.navigate(
-            CalendarRoute.routeName,
             CalendarRoute(
               initialMonth: DateTime.now().month,
               initialYear: DateTime.now().year,
@@ -93,31 +96,28 @@ class _SideBar extends StatelessWidget {
           ),
         ),
         _SideBarItem(
-          routeName: LibraryRoute.routeName,
+          routeName: LibraryRoute().routeName,
           title: tr('page.library.title'),
           leading: const Icon(SpIcons.photo, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate(LibraryRoute.routeName, LibraryRoute()),
+          onTap: () => viewModel.navigate(LibraryRoute()),
         ),
         _SideBarItem(
-          routeName: RelaxSoundsRoute.routeName,
+          routeName: const RelaxSoundsRoute().routeName,
           title: tr('general.sounds'),
           leading: const Icon(SpIcons.musicNote, size: 24.0),
           viewModel: viewModel,
-          onTap: () => viewModel.navigate(RelaxSoundsRoute.routeName, const RelaxSoundsRoute()),
+          onTap: () => viewModel.navigate(const RelaxSoundsRoute()),
         ),
         const SizedBox(height: 12.0),
         _TagHeader(viewModel),
         ...tags.map((tag) {
           return _SideBarItem(
-            routeName: ShowTagRoute.routeName(id: tag.id),
+            routeName: ShowTagRoute(tag: tag, storyViewOnly: false).routeName,
             title: tag.title,
             leading: const Icon(SpIcons.tag, size: 24.0),
             viewModel: viewModel,
-            onTap: () => viewModel.navigate(
-              ShowTagRoute.routeName(id: tag.id),
-              ShowTagRoute(tag: tag, storyViewOnly: false),
-            ),
+            onTap: () => viewModel.navigate(ShowTagRoute(tag: tag, storyViewOnly: false)),
           );
         }),
       ],

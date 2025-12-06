@@ -73,7 +73,7 @@ class _SoundsTab extends StatelessWidget {
                   child: ListTile(
                     onTap: () => SpRewardSheet().show(context: context),
                     trailing: const Icon(SpIcons.info),
-                    tileColor: Theme.of(context).colorScheme.readOnly.surface1,
+                    tileColor: Theme.of(context).colorScheme.surface,
                     shape: RoundedSuperellipseBorder(
                       side: BorderSide(color: Theme.of(context).dividerColor),
                       borderRadius: BorderRadius.circular(12.0),

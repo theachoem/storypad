@@ -1,64 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
-import 'package:storypad/views/tags/tags_view.dart';
-import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/views/library/library_view.dart';
-import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
-import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/home/home_view.dart';
-import 'package:storypad/views/search/search_view.dart';
-import 'package:storypad/views/tags/show/show_tag_view.dart';
+import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
 
 class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
+  final String initialRoute = const HomeRoute().routeName;
+
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final ValueNotifier<String> selectedRootRouteNameNotifier = ValueNotifier('home');
   final HeroController heroController = MaterialApp.createMaterialHeroController();
-
   final ValueNotifier<RootViewSideBarInfo?> sideBarInfoNotifier = ValueNotifier(null);
 
-  String? get initialRoute => 'home';
+  /// For any navigation from sidebar, use this RootViewModel#navigate instead of push directly.
+  void navigate(BaseRoute route) {
+    bool alreadySelected = selectedRootRouteNameNotifier.value == route.routeName;
 
-  void navigate(String routeName, BaseRoute? arguments) {
-    bool alreadySelected = selectedRootRouteNameNotifier.value == routeName;
-
-    if (routeName == 'home') {
-      navigatorKey.currentState?.popUntil((route) => route.isFirst);
+    if (route.routeName == const HomeRoute().routeName) {
+      navigatorKey.currentState?.popUntil((r) => r.isFirst);
     } else if (alreadySelected) {
-      navigatorKey.currentState?.popUntil((route) => route.settings.name == routeName);
+      navigatorKey.currentState?.popUntil((r) => r.settings.name == route.routeName);
     } else {
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        routeName,
-        (route) => route.isFirst,
-        arguments: arguments,
+        route.routeName!,
+        (r) => r.isFirst,
+        arguments: route,
       );
     }
   }
 
+  /// Builds pages based on [RouteSettings].
+  /// Except the home page which is the initial route and does not require any arguments,
+  /// All other pages should use [BaseRoute] as arguments for navigation.
   MaterialPageRoute<dynamic>? generateRoute(RouteSettings settings) {
-    Widget? page;
+    BaseRoute? route;
 
-    if (settings.name == 'home') {
-      page = const HomeView();
-    } else if (settings.name == SearchRoute.routeName) {
-      page = SearchView(params: settings.arguments as SearchRoute);
-    } else if (settings.name == CalendarRoute.routeName) {
-      page = CalendarView(params: settings.arguments as CalendarRoute);
-    } else if (settings.name == LibraryRoute.routeName) {
-      page = LibraryView(params: settings.arguments as LibraryRoute);
-    } else if (settings.name == RelaxSoundsRoute.routeName) {
-      page = RelaxSoundsView(params: settings.arguments as RelaxSoundsRoute);
-    } else if (settings.name == TagsRoute.routeName) {
-      page = TagsView(params: settings.arguments as TagsRoute);
-    } else if (settings.name != null && settings.name!.startsWith('tags/')) {
-      page = ShowTagView(params: settings.arguments as ShowTagRoute);
+    if (settings.name == const HomeRoute().routeName) {
+      route = const HomeRoute();
+    } else if (settings.arguments is BaseRoute) {
+      route = settings.arguments as BaseRoute;
     }
 
-    if (page == null) return null;
+    if (route == null) return null;
+
     return MaterialPageRoute(
       settings: settings,
-      builder: (_) => page!,
+      builder: (context) => route!.buildPage(context),
     );
   }
 
