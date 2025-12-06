@@ -52,18 +52,8 @@ class _ShowBackupServiceContent extends StatelessWidget {
           title: Text(viewModel.params.service.currentUser?.email ?? tr('list_tile.backup.unsignin_subtitle')),
           subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
         ),
-        if (viewModel.errorMessage != null)
-          Padding(
-            padding: EdgeInsets.only(
-              left: MediaQuery.paddingOf(context).left,
-              right: MediaQuery.paddingOf(context).left,
-            ),
-            child: Text(
-              viewModel.errorMessage!,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        if (viewModel.errorMessage == null && viewModel.yearlyBackups!.isEmpty)
+        if (viewModel.error != null) ..._buildErrorSection(context),
+        if (viewModel.error == null && viewModel.yearlyBackups!.isEmpty)
           Padding(
             padding: EdgeInsets.only(
               left: MediaQuery.paddingOf(context).left,
@@ -156,5 +146,45 @@ class _ShowBackupServiceContent extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  List<Widget> _buildErrorSection(BuildContext context) {
+    final error = viewModel.error!;
+
+    return [
+      const SizedBox(height: 16),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            Icon(
+              SpIcons.warning,
+              size: 48,
+              color: ColorScheme.of(context).error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              error.userFriendlyMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: ColorScheme.of(context).error),
+            ),
+            const SizedBox(height: 24),
+            if (error is AuthException && error.requiresReauth)
+              FilledButton.icon(
+                onPressed: () => viewModel.reauthenticate(context),
+                icon: const Icon(SpIcons.refresh),
+                label: Text(tr('button.sign_in')),
+              )
+            else if (error.isRetryable)
+              FilledButton.icon(
+                onPressed: () => viewModel.retry(context),
+                icon: const Icon(SpIcons.refresh),
+                label: Text(tr('button.retry')),
+              ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 16),
+    ];
   }
 }

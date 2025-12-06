@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' show BackupException;
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -32,7 +32,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
-  String? errorMessage;
+  BackupException? error;
 
   /// Example output:
   /// [
@@ -57,13 +57,13 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> load() async {
     final service = backupProvider.repository.getService(serviceType);
-    errorMessage = null;
+    error = null;
 
     try {
       yearlyBackups = await service.fetchYearlyBackups();
     } on BackupException catch (e) {
       yearlyBackups = {};
-      errorMessage = e.message;
+      error = e;
     }
 
     notifyListeners();
@@ -114,5 +114,20 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
   void signOut(BuildContext context) async {
     await context.read<BackupProvider>().signOut(context, serviceType);
     if (context.mounted) Navigator.maybePop(context);
+  }
+
+  Future<void> retry(BuildContext context) async {
+    await load();
+  }
+
+  Future<void> reauthenticate(BuildContext context) async {
+    await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#reauthenticate',
+      future: () async {
+        final service = backupProvider.repository.getService(serviceType);
+        await service.reauthenticateIfNeeded();
+        await load();
+      },
+    );
   }
 }
