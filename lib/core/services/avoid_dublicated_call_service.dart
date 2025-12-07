@@ -1,6 +1,8 @@
 import 'dart:async';
 
 class AvoidDublicatedCallService<T> {
+  bool get isRunning => _completer != null;
+
   Completer<T>? _completer;
 
   Future<T> run(Future<T> Function() callback) async {

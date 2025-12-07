@@ -72,16 +72,24 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.resumed) {
-      authenticate();
+      authenticate(force: false);
     }
   }
 
-  Future<void> authenticate() async {
+  Future<void> authenticate({
+    bool force = false,
+  }) async {
     await Future.microtask(() {});
 
     if (!mounted) return;
     final provider = context.read<AppLockProvider>();
 
+    // Skip authentication if already authenticated, unless forced (e.g., manual unlock button press)
+    // This prevents duplicate authentication attempts when app lifecycle triggers resume
+    if (provider.authenticated && !force) return;
+
+    // Avoid duplicate authentication attempts
+    if (provider.authenticating) return;
     if (animationController.value != 1) animationController.animateTo(1);
     if (showBarrier != true) {
       setState(() => showBarrier = true);
@@ -176,7 +184,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     } else {
       return FilledButton.icon(
         icon: const Icon(SpIcons.lock),
-        onPressed: () => authenticate(),
+        onPressed: () => authenticate(force: true),
         label: Text(tr('button.unlock')),
       );
     }
