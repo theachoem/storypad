@@ -48,6 +48,7 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
   // just for reading mostly when popping route, open new route.
   late bool _authenticated;
   bool get authenticated => _authenticated;
+  bool get authenticating => avoidDublciated.isRunning;
 
   Future<void> reload() async {
     await localAuth.load();
