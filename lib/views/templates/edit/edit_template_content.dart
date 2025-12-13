@@ -36,6 +36,17 @@ class _EditTemplateContent extends StatelessWidget {
         leading: const CloseButton(),
         actions: [
           const SizedBox(width: 8.0),
+          IconButton(
+            tooltip: tr("page.theme.title"),
+            icon: const Icon(SpIcons.theme),
+            onPressed: () {
+              SpStoryThemeBottomSheet(
+                preferences: viewModel.template.preferences,
+                storyViewModel: null,
+                onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+              ).show(context: context);
+            },
+          ),
           const StoryEndDrawerButton(),
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
@@ -33,6 +34,7 @@ part 'story_page_builder_action.dart';
 
 part 'layouts/pages_layout.dart';
 part 'layouts/list_layout.dart';
+part 'layouts/grid_layout.dart';
 
 class StoryPagesBuilder extends StatelessWidget {
   const StoryPagesBuilder({
@@ -77,8 +79,10 @@ class StoryPagesBuilder extends StatelessWidget {
     switch (preferences?.layoutType) {
       case PageLayoutType.list:
         return _ListLayout(builder: this);
+      case PageLayoutType.grid:
+        return _GridLayout(builder: this);
       case PageLayoutType.pages:
-      default:
+      case null:
         return _PagesLayout(builder: this);
     }
   }

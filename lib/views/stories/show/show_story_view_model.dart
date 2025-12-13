@@ -63,6 +63,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     double? initialPageScrollOffet;
 
     switch (story?.preferences.layoutType) {
+      case PageLayoutType.grid:
       case PageLayoutType.list:
         initialPageScrollOffet = pagesManager.pageScrollController.offset;
 
@@ -78,8 +79,9 @@ class ShowStoryViewModel extends BaseStoryViewModel {
         nearestPageIndex ??= draftContent!.richPages!.length - 1;
         break;
       case PageLayoutType.pages:
-      default:
         nearestPageIndex = pagesManager.pageController.page?.toInt();
+        break;
+      case null:
         break;
     }
 

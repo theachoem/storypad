@@ -71,25 +71,9 @@ class SpLayoutTypeSection extends StatelessWidget {
   Widget buildLayoutDemo(PageLayoutType layoutType, BuildContext context) {
     switch (layoutType) {
       case PageLayoutType.list:
-        return Container(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            spacing: 6.0,
-            children: List.generate(
-              3,
-              (index) {
-                return Flexible(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: ColorScheme.of(context).readOnly.surface2,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
+        return const _ListDemo();
+      case PageLayoutType.grid:
+        return const _GridDemo();
       case PageLayoutType.pages:
         return Container(
           margin: const EdgeInsets.all(8.0),
@@ -101,6 +85,97 @@ class SpLayoutTypeSection extends StatelessWidget {
           ),
         );
     }
+  }
+}
+
+class _ListDemo extends StatelessWidget {
+  const _ListDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        spacing: 6.0,
+        children: List.generate(
+          3,
+          (index) {
+            return Flexible(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorScheme.of(context).readOnly.surface2,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _GridDemo extends StatelessWidget {
+  const _GridDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        spacing: 6.0,
+        children: [
+          Expanded(
+            child: Column(
+              spacing: 6.0,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).readOnly.surface2,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).readOnly.surface2,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              spacing: 6.0,
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).readOnly.surface2,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).readOnly.surface2,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
