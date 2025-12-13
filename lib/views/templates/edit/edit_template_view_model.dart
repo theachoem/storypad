@@ -18,6 +18,7 @@ import 'edit_template_view.dart';
 
 class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final EditTemplateRoute params;
+  final PageController pageController = PageController();
 
   EditTemplateViewModel({
     required this.params,
@@ -214,6 +215,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   @override
   void dispose() {
     pagesManager.dispose();
+    pageController.dispose();
     super.dispose();
   }
 

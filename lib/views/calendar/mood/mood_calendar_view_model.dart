@@ -40,6 +40,12 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   late int month = params.monthYearNotifier.value.month;
   late int year = params.monthYearNotifier.value.year;
 
+  int editedKey = 0;
+  void refreshList() {
+    editedKey++;
+    notifyListeners();
+  }
+
   int? selectedDay;
   int? selectedTagId;
   int? currentFilterStoriesCount;
@@ -82,7 +88,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       selectedDay = addedStory.day;
     }
 
-    notifyListeners();
+    refreshList();
 
     Future.delayed(const Duration(seconds: 1)).then((_) {
       HomeView.reload(debugSource: '$runtimeType#goToNewPage');

@@ -22,6 +22,7 @@ import 'show_template_gallery_view.dart';
 
 class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final ShowTemplateGalleryRoute params;
+  final PageController pageController = PageController();
 
   ShowTemplateGalleryViewModel({required this.params}) {
     pagesManager = StoryPagesManagerInfo(
@@ -132,6 +133,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
   @override
   void dispose() {
     pagesManager.dispose();
+    pageController.dispose();
     super.dispose();
   }
 }

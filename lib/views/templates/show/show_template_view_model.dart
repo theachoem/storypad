@@ -21,6 +21,7 @@ import 'show_template_view.dart';
 
 class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final ShowTemplateRoute params;
+  final PageController pageController = PageController();
 
   ShowTemplateViewModel({required this.params}) {
     _setTemplate(params.template);
@@ -96,6 +97,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   @override
   void dispose() {
     pagesManager.dispose();
+    pageController.dispose();
     super.dispose();
   }
 

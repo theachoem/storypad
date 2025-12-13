@@ -21,10 +21,9 @@ class StoryThemeButton extends StatelessWidget {
         icon: const Icon(SpIcons.moreVert),
         onPressed: () async {
           var nextAction = await SpStoryThemeBottomSheet(
-            story: viewModel.story!,
+            preferences: viewModel.story!.preferences,
             onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
-            draftContent: viewModel.draftContent,
-            viewModel: viewModel,
+            storyViewModel: viewModel,
           ).show(context: context);
 
           if (!context.mounted) return;

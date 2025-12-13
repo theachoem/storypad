@@ -109,8 +109,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
           id: DateTime.now().millisecondsSinceEpoch,
           title: null,
           body: null,
-          crossAxisCount: crossAxisCount,
-          mainAxisCount: mainAxisCount,
         ),
       ],
     );

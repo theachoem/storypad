@@ -115,6 +115,7 @@ class _CalendarStoriesContent extends StatelessWidget {
         // Index 1+ shows stories for specific day
         final day = index;
         return SpStoryList.withQuery(
+          key: ValueKey(viewModel.editedKey),
           disableMultiEdit: true,
           filter: SearchFilterObject(
             years: {viewModel.year},

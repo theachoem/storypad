@@ -240,5 +240,6 @@ const _$FontSizeOptionEnumMap = {
 
 const _$PageLayoutTypeEnumMap = {
   PageLayoutType.list: 'list',
+  PageLayoutType.grid: 'grid',
   PageLayoutType.pages: 'pages',
 };

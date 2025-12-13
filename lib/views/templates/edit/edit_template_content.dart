@@ -36,6 +36,17 @@ class _EditTemplateContent extends StatelessWidget {
         leading: const CloseButton(),
         actions: [
           const SizedBox(width: 8.0),
+          IconButton(
+            tooltip: tr("page.theme.title"),
+            icon: const Icon(SpIcons.theme),
+            onPressed: () {
+              SpStoryThemeBottomSheet(
+                preferences: viewModel.template.preferences,
+                storyViewModel: null,
+                onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
+              ).show(context: context);
+            },
+          ),
           const StoryEndDrawerButton(),
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
@@ -59,6 +70,7 @@ class _EditTemplateContent extends StatelessWidget {
 
     return StoryPagesBuilder(
       preferences: viewModel.template.preferences,
+      pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.draftContent!,
       headerBuilder: (_) => buildPageHeader(context),
@@ -87,7 +99,7 @@ class _EditTemplateContent extends StatelessWidget {
       children: [
         TemplateTagLabels(
           template: viewModel.template,
-          margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
+          margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 12.0),
         ),
       ],
     );

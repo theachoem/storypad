@@ -6,6 +6,7 @@ import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 
 class ShowChangeViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ShowChangeRoute params;
+  final PageController pageController = PageController();
 
   ShowChangeViewModel({
     required this.params,
@@ -32,6 +33,7 @@ class ShowChangeViewModel extends ChangeNotifier with DisposeAwareMixin {
   @override
   void dispose() {
     pagesMap?.dispose();
+    pageController.dispose();
     super.dispose();
   }
 }

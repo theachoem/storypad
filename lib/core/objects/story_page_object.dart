@@ -18,13 +18,7 @@ class StoryPageObject {
   // The first title visible will be get the focused when move to edit page.
   double? titleVisibleFraction;
 
-  double get aspectRatio => crossAxisCount / mainAxisCount;
-
-  bool matched(double aspectRatio) => this.aspectRatio == aspectRatio;
-
   int get id => page.id;
-  int get crossAxisCount => page.crossAxisCount;
-  int get mainAxisCount => page.mainAxisCount;
 
   StoryPageObject({
     required this.key,

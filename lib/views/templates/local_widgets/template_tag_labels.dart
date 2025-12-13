@@ -32,6 +32,7 @@ class TemplateTagLabels extends StatelessWidget {
 
         return Container(
           margin: margin,
+          width: double.infinity,
           child: Wrap(
             spacing: MediaQuery.textScalerOf(context).scale(4),
             runSpacing: MediaQuery.textScalerOf(context).scale(4),
