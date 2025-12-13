@@ -27,12 +27,12 @@ class GoogleDriveTile extends StatelessWidget {
         text: 'Google Drive ',
         style: TextTheme.of(context).bodyLarge,
         children: [
-          if (provider.currentUser?.photoUrl != null)
+          if (provider.currentGoogleUser?.photoUrl != null)
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  provider.currentUser!.photoUrl!,
+                  provider.currentGoogleUser!.photoUrl!,
                 ),
                 radius: 8.0,
               ),
@@ -53,12 +53,16 @@ class GoogleDriveTile extends StatelessWidget {
         case BackupConnectionStatus.unknownError:
           trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.unknown_error'));
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => provider.recheckAndSync(
+            services: [provider.repository.googleDriveService],
+          );
           break;
         case BackupConnectionStatus.noInternet:
           trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => provider.recheckAndSync(
+            services: [provider.repository.googleDriveService],
+          );
           break;
         case BackupConnectionStatus.needGoogleDrivePermission:
           trailing = Icon(SpIcons.cloudOff);
@@ -73,7 +77,9 @@ class GoogleDriveTile extends StatelessWidget {
           subtitle = Text(
             tr('list_tile.backup.some_data_has_not_sync_subtitle'),
           );
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => provider.recheckAndSync(
+            services: [provider.repository.googleDriveService],
+          );
           break;
         case null:
           trailing = const SizedBox.square(

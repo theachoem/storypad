@@ -44,6 +44,7 @@ class CloudFileObject {
       return BackupFileObject(
         createdAt: createdAt!,
         device: DeviceInfoObject(model: 'StoryPad', id: 'legacy-model-id'),
+        hasCompression: fileName!.endsWith('.zip'),
       );
     } else {
       return BackupFileObject.fromFileName(fileName!);

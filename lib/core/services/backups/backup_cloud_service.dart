@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 /// Abstract base class for cloud backup services
@@ -10,8 +10,11 @@ abstract class BackupCloudService {
   BackupServiceType get serviceType;
 
   /// User currently authenticated with this cloud service
-  GoogleUserObject? get currentUser;
+  CloudServiceUser? get currentUser;
   bool get isSignedIn => currentUser != null;
+  bool get autoBackupEnabled => currentUser?.autoBackupEnabled ?? true;
+
+  bool get hasCompression => serviceType == BackupServiceType.google_drive;
 
   /// Initialize the cloud service (load stored credentials)
   Future<void> initialize();
@@ -24,6 +27,8 @@ abstract class BackupCloudService {
 
   /// Verify access to requested scopes
   Future<bool> canAccessRequestedScopes();
+
+  void setAutoBackupEnabled(bool enabled);
 
   /// Sign in to the cloud service
   Future<bool> signIn();
@@ -39,11 +44,17 @@ abstract class BackupCloudService {
   /// Returns: Tuple of (content, size)
   Future<(String, int)?> getFileContent(CloudFileObject file);
 
-  /// Upload a new yearly backup file
+  /// Upload a new yearly backup file to the backups/ folder
   Future<CloudFileObject?> uploadYearlyBackup({
     required String fileName,
     required io.File file,
-  });
+  }) async {
+    return uploadFile(
+      fileName,
+      file,
+      folderName: 'backups',
+    );
+  }
 
   /// Update an existing yearly backup file (atomic)
   /// Uses file ID to prevent race conditions
@@ -51,7 +62,13 @@ abstract class BackupCloudService {
     required String fileId,
     required String fileName,
     required io.File file,
-  });
+  }) {
+    return updateFile(
+      fileId: fileId,
+      fileName: fileName,
+      file: file,
+    );
+  }
 
   /// Find a file by ID in cloud storage
   Future<CloudFileObject?> findFileById(String fileId);
@@ -65,5 +82,12 @@ abstract class BackupCloudService {
     String fileName,
     io.File file, {
     String? folderName,
+  });
+
+  // Update an existing file in cloud storage
+  Future<CloudFileObject?> updateFile({
+    required String fileId,
+    required String fileName,
+    required io.File file,
   });
 }

@@ -27,9 +27,9 @@ class SpDbAssetLoader extends StatefulWidget {
     return Consumer<BackupProvider>(
       builder: (context, backupProvider, child) {
         return SpDbAssetLoader(
-          key: ValueKey('SpDbAssetLoader-$relativePath-${backupProvider.currentUser?.hashCode}'),
+          key: ValueKey('SpDbAssetLoader-$relativePath-${backupProvider.currentGoogleUser?.hashCode}'),
           relativePath: relativePath,
-          currentUser: backupProvider.currentUser,
+          currentUser: backupProvider.currentGoogleUser,
           builder: builder,
         );
       },
@@ -44,7 +44,7 @@ class SpDbAssetLoader extends StatefulWidget {
     AssetType? type = AssetType.getTypeFromLink(relativePath);
 
     if (id == null || type == null) {
-      throw StateError('$relativePath is invalid.');
+      throw GoogleDriveAssetDownloaderException('$relativePath is invalid.');
     }
 
     String filePath = type.getStoragePath(id: id, extension: extension(relativePath));
@@ -67,7 +67,7 @@ class SpDbAssetLoader extends StatefulWidget {
     }
 
     if (localFile != null) return localFile;
-    throw StateError('Asset file for $relativePath not found.');
+    throw GoogleDriveAssetDownloaderException('Asset file for $relativePath not found.');
   }
 
   @override
@@ -90,11 +90,11 @@ class _SpDbAssetLoaderState extends State<SpDbAssetLoader> with AutomaticKeepAli
   Future<void> load() async {
     try {
       file = await SpDbAssetLoader.load(relativePath, currentUser);
-      setState(() {});
     } catch (e) {
-      error = e;
-      if (mounted) setState(() {});
+      error = e is GoogleDriveAssetDownloaderException ? e.message : e;
     }
+
+    if (mounted) setState(() {});
   }
 
   @override

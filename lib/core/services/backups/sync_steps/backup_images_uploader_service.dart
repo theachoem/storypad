@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
-import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -63,7 +62,7 @@ class BackupImagesUploaderService {
   }
 
   Future<bool> _start(BackupCloudService cloudService) async {
-    if (!cloudService.isSignedIn || cloudService.currentUser?.email == null) {
+    if (!cloudService.isSignedIn) {
       throw exp.AuthException(
         'Service ${cloudService.serviceType.displayName} is not signed in',
         exp.AuthExceptionType.signInRequired,
@@ -98,8 +97,7 @@ class BackupImagesUploaderService {
   ///
   /// Returns: Number of assets successfully uploaded
   Future<int> _uploadAssetsForService(BackupCloudService cloudService) async {
-    final email = cloudService.currentUser!.email;
-    final List<AssetDbModel>? localAssets = await _getLocalAsset(email, cloudService.serviceType);
+    final List<AssetDbModel>? localAssets = await _getLocalAsset(cloudService);
 
     if (localAssets == null || localAssets.isEmpty) {
       return 0;
@@ -122,9 +120,8 @@ class BackupImagesUploaderService {
   /// Returns: true if upload succeeded, false otherwise
   Future<bool> _uploadAsset(BackupCloudService cloudService, AssetDbModel asset) async {
     final cloudFileName = asset.cloudFileName;
-    final String? email = cloudService.currentUser?.email;
 
-    if (cloudFileName == null || asset.localFile == null || email == null) {
+    if (cloudFileName == null || asset.localFile == null) {
       AppLogger.d('Skipping asset upload: missing required data');
       return false;
     }
@@ -134,19 +131,23 @@ class BackupImagesUploaderService {
         () => cloudService.uploadFile(
           cloudFileName,
           asset.localFile!,
-          folderName: asset.type.subDirectory.name,
+          folderName: asset.type.subDirectory.relativePath,
         ),
         policy: RetryPolicy.network,
         operationName: 'upload_asset_$cloudFileName',
       );
 
       if (cloudFile != null) {
-        final updated = asset.copyWithCloudFile(
-          serviceType: cloudService.serviceType,
-          cloudFile: cloudFile,
-          email: email,
-        );
-        await AssetDbModel.db.set(updated);
+        if (cloudService.currentUser?.identifier != null) {
+          final updated = asset.copyWithCloudFile(
+            serviceType: cloudService.serviceType,
+            cloudFile: cloudFile,
+            email: cloudService.currentUser!.identifier,
+          );
+          await AssetDbModel.db.set(updated);
+        }
+
+        AppLogger.d('Uploaded asset to ${cloudService.serviceType.displayName}: $cloudFileName');
         return true;
       }
 
@@ -174,14 +175,21 @@ class BackupImagesUploaderService {
   /// - Local file exists
   ///
   /// Returns: List of assets needing backup
-  Future<List<AssetDbModel>?> _getLocalAsset(String email, BackupServiceType serviceType) async {
+  Future<List<AssetDbModel>?> _getLocalAsset(BackupCloudService cloudService) async {
     CollectionDbModel<AssetDbModel>? assets = await AssetDbModel.db.where();
-    return assets?.items
-        .where(
-          (e) => e.cloudDestinations[serviceType.id] == null || e.cloudDestinations[serviceType.id]?[email] == null,
-        )
-        .toList()
-        .where((e) => e.localFile?.existsSync() == true)
-        .toList();
+
+    if (cloudService.currentUser?.identifier != null) {
+      return assets?.items
+          .where(
+            (e) =>
+                e.cloudDestinations[cloudService.serviceType.id] == null ||
+                e.cloudDestinations[cloudService.serviceType.id]?[cloudService.currentUser?.identifier] == null,
+          )
+          .toList()
+          .where((e) => e.localFile?.existsSync() == true)
+          .toList();
+    } else {
+      return assets?.items;
+    }
   }
 }

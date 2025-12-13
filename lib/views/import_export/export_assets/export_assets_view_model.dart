@@ -59,7 +59,7 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> downloadAssets(BuildContext context) async {
-    final currentUser = context.read<BackupProvider>().currentUser;
+    final currentUser = context.read<BackupProvider>().currentGoogleUser;
 
     // Download assets first if needed
     final assetsToDownload = _assets.where((asset) {

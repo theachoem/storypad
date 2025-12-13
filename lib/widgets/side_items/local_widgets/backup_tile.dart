@@ -46,7 +46,7 @@ class BackupTile extends StatelessWidget {
           action = FilledButton.icon(
             icon: const Icon(SpIcons.refresh),
             label: Text(tr('button.retry')),
-            onPressed: () => provider.recheckAndSync(),
+            onPressed: () => provider.recheckAndSync(services: provider.services),
           );
           break;
         case .noInternet:
@@ -56,7 +56,7 @@ class BackupTile extends StatelessWidget {
           action = FilledButton.icon(
             icon: const Icon(SpIcons.refresh),
             label: Text(tr('button.refresh')),
-            onPressed: () => provider.recheckAndSync(),
+            onPressed: () => provider.recheckAndSync(services: provider.services),
           );
           break;
         case .needGoogleDrivePermission:
@@ -75,7 +75,7 @@ class BackupTile extends StatelessWidget {
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
           action = FilledButton(
             child: Text(tr('button.sync')),
-            onPressed: () => provider.recheckAndSync(),
+            onPressed: () => provider.recheckAndSync(services: provider.services),
           );
           break;
         case null:
@@ -136,11 +136,12 @@ class BackupTile extends StatelessWidget {
       );
     }
 
-    if (provider.currentUser?.photoUrl != null) {
+    String? photoUrl = provider.currentGoogleUser?.photoUrl;
+    if (photoUrl != null) {
       leading = Transform.scale(
         scale: 1.5,
         child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(provider.currentUser!.photoUrl!),
+          backgroundImage: CachedNetworkImageProvider(photoUrl),
           radius: 12.0,
         ),
       );

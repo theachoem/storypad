@@ -1,10 +1,12 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
