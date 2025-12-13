@@ -11,7 +11,6 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/objects/story_pages_block.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
@@ -33,7 +32,7 @@ part 'quill_editor.dart';
 part 'story_page_builder_action.dart';
 
 part 'layouts/pages_layout.dart';
-part 'layouts/grid_layout.dart';
+part 'layouts/list_layout.dart';
 
 class StoryPagesBuilder extends StatelessWidget {
   const StoryPagesBuilder({
@@ -77,107 +76,11 @@ class StoryPagesBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (preferences?.layoutType) {
       case PageLayoutType.list:
-        return _GridLayout(builder: this);
+        return _ListLayout(builder: this);
       case PageLayoutType.pages:
       default:
         return _PagesLayout(builder: this);
     }
-  }
-
-  Widget _buildColumnLayoutBlock(StoryPagesBlock block, BuildContext context) {
-    return Column(
-      spacing: spacing,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: block.pages.map((page) {
-        return Container(
-          constraints: pages.length == 1 ? const BoxConstraints(minHeight: 200) : null,
-          child: buildPage(page, context),
-        );
-      }).toList(),
-    );
-  }
-
-  IntrinsicHeight _buildRowLayoutBlock(
-    BuildContext context,
-    StoryPageObject firstPage,
-    StoryPageObject secondPage,
-  ) {
-    return IntrinsicHeight(
-      child: Row(
-        spacing: spacing,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Flexible(child: buildPage(firstPage, context)),
-          Flexible(child: buildPage(secondPage, context)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGrid1LayoutBlock(
-    BuildContext context,
-    StoryPageObject firstPage,
-    StoryPageObject secondPage,
-    StoryPageObject thirdPage,
-  ) {
-    return IntrinsicHeight(
-      child: Row(
-        spacing: spacing,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Flexible(child: buildPage(firstPage, context)),
-          Flexible(
-            child: Column(
-              spacing: spacing,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Flexible(child: buildPage(secondPage, context)),
-                buildPage(thirdPage, context),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGrid2LayoutBlock(
-    BuildContext context,
-    StoryPageObject firstPage,
-    StoryPageObject secondPage,
-    StoryPageObject thirdPage,
-  ) {
-    return IntrinsicHeight(
-      child: Row(
-        spacing: spacing,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Flexible(
-            child: Column(
-              spacing: spacing,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Flexible(child: buildPage(firstPage, context)),
-                buildPage(secondPage, context),
-              ],
-            ),
-          ),
-          Flexible(child: buildPage(thirdPage, context)),
-        ],
-      ),
-    );
   }
 
   Widget buildPage(

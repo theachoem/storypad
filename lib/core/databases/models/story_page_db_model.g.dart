@@ -13,10 +13,6 @@ abstract class _$StoryPageDbModelCWProxy {
 
   StoryPageDbModel body(List<dynamic>? body);
 
-  StoryPageDbModel crossAxisCount(int? crossAxisCount);
-
-  StoryPageDbModel mainAxisCount(int? mainAxisCount);
-
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -24,13 +20,7 @@ abstract class _$StoryPageDbModelCWProxy {
   /// ```dart
   /// StoryPageDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
-  StoryPageDbModel call({
-    int id,
-    String? title,
-    List<dynamic>? body,
-    int? crossAxisCount,
-    int? mainAxisCount,
-  });
+  StoryPageDbModel call({int id, String? title, List<dynamic>? body});
 }
 
 /// Callable proxy for `copyWith` functionality.
@@ -50,14 +40,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
   StoryPageDbModel body(List<dynamic>? body) => call(body: body);
 
   @override
-  StoryPageDbModel crossAxisCount(int? crossAxisCount) =>
-      call(crossAxisCount: crossAxisCount);
-
-  @override
-  StoryPageDbModel mainAxisCount(int? mainAxisCount) =>
-      call(mainAxisCount: mainAxisCount);
-
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -69,8 +51,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
     Object? body = const $CopyWithPlaceholder(),
-    Object? crossAxisCount = const $CopyWithPlaceholder(),
-    Object? mainAxisCount = const $CopyWithPlaceholder(),
   }) {
     return StoryPageDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -85,14 +65,6 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
           ? _value.body
           // ignore: cast_nullable_to_non_nullable
           : body as List<dynamic>?,
-      crossAxisCount: crossAxisCount == const $CopyWithPlaceholder()
-          ? _value.crossAxisCount
-          // ignore: cast_nullable_to_non_nullable
-          : crossAxisCount as int?,
-      mainAxisCount: mainAxisCount == const $CopyWithPlaceholder()
-          ? _value.mainAxisCount
-          // ignore: cast_nullable_to_non_nullable
-          : mainAxisCount as int?,
     );
   }
 }
@@ -113,8 +85,6 @@ StoryPageDbModel _$StoryPageDbModelFromJson(Map<String, dynamic> json) =>
       id: _idFromJson(json['id']),
       title: json['title'] as String?,
       body: json['body'] as List<dynamic>?,
-      crossAxisCount: (json['cross_axis_count'] as num?)?.toInt(),
-      mainAxisCount: (json['main_axis_count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$StoryPageDbModelToJson(StoryPageDbModel instance) =>
@@ -122,6 +92,4 @@ Map<String, dynamic> _$StoryPageDbModelToJson(StoryPageDbModel instance) =>
       'id': instance.id,
       'title': instance.title,
       'body': instance.body,
-      'cross_axis_count': instance.crossAxisCount,
-      'main_axis_count': instance.mainAxisCount,
     };

@@ -21,17 +21,11 @@ class StoryPageDbModel {
   // List: Returns JSON-serializable version of quill delta.
   final List<dynamic>? body;
 
-  final int crossAxisCount;
-  final int mainAxisCount;
-
   StoryPageDbModel({
     required this.id,
     required this.title,
     required this.body,
-    int? crossAxisCount,
-    int? mainAxisCount,
-  }) : crossAxisCount = crossAxisCount ?? 2,
-       mainAxisCount = mainAxisCount ?? 1;
+  });
 
   Map<String, dynamic> toJson() => _$StoryPageDbModelToJson(this);
   factory StoryPageDbModel.fromJson(Map<String, dynamic> json) => _$StoryPageDbModelFromJson(json);
