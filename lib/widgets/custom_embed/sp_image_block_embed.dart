@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/quill/custom_attributes/embed_alignment_attribute.dart';
 import 'package:storypad/widgets/quill/custom_attributes/embed_size_attribute.dart';
@@ -15,9 +16,11 @@ import 'package:storypad/widgets/sp_images_viewer.dart';
 
 class SpImageBlockEmbed extends quill.EmbedBuilder {
   final List<String> Function() fetchAllImages;
+  final PageLayoutType? layoutType;
 
   SpImageBlockEmbed({
     required this.fetchAllImages,
+    required this.layoutType,
   });
 
   @override
@@ -30,6 +33,7 @@ class SpImageBlockEmbed extends quill.EmbedBuilder {
       readOnly: embedContext.readOnly,
       node: embedContext.node,
       fetchAllImages: fetchAllImages,
+      layoutType: layoutType,
     );
   }
 }
@@ -40,10 +44,12 @@ class _QuillImageRenderer extends StatelessWidget {
     required this.controller,
     required this.readOnly,
     required this.fetchAllImages,
+    required this.layoutType,
   });
 
   final quill.Embed node;
   final quill.QuillController controller;
+  final PageLayoutType? layoutType;
   final bool readOnly;
   final List<String> Function() fetchAllImages;
 
@@ -71,8 +77,13 @@ class _QuillImageRenderer extends StatelessWidget {
           width = double.infinity;
           height = null;
         } else {
-          width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
-          height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+          if (layoutType == PageLayoutType.grid) {
+            width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(88));
+            height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(88));
+          } else {
+            width = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+            height = min(constraints.maxWidth, MediaQuery.textScalerOf(context).scale(150));
+          }
         }
 
         return Container(

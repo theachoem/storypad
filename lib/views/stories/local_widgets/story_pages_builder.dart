@@ -46,7 +46,7 @@ class StoryPagesBuilder extends StatelessWidget {
     required this.padding,
     required this.pageScrollController,
     required this.viewInsets,
-    this.pageController,
+    required this.pageController,
     this.onTitleVisibilityChanged,
     this.onPageChanged,
     this.onGoToEdit,
@@ -60,7 +60,7 @@ class StoryPagesBuilder extends StatelessWidget {
   /// [StoryHeader]
   final Widget Function(StoryPageObject page)? headerBuilder;
   final StoryPreferencesDbModel? preferences;
-  final PageController? pageController;
+  final PageController pageController;
   final StoryContentDbModel storyContent;
   final List<StoryPageObject> pages;
 

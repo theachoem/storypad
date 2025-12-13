@@ -22,17 +22,17 @@ class _PagesLayoutState extends State<_PagesLayout> {
       _setPageOffset();
     });
 
-    widget.builder.pageController?.addListener(_setPageOffset);
+    widget.builder.pageController.addListener(_setPageOffset);
   }
 
   void _setPageOffset() {
-    pageOffset.value = widget.builder.pageController?.offset ?? 0.0;
+    pageOffset.value = widget.builder.pageController.offset;
   }
 
   @override
   void dispose() {
     pageOffset.dispose();
-    widget.builder.pageController?.removeListener(_setPageOffset);
+    widget.builder.pageController.removeListener(_setPageOffset);
     super.dispose();
   }
 
@@ -80,7 +80,7 @@ class _PagesLayoutState extends State<_PagesLayout> {
       builder: (context, offset, child) {
         SpPageViewDatas datas = SpPageViewDatas.fromOffset(
           itemIndex: pageIndex,
-          controller: widget.builder.pageController!,
+          controller: widget.builder.pageController,
           width: screenWidth,
         );
 

@@ -19,6 +19,7 @@ class _ShowTemplateContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         title: viewModel.template.name != null ? Text(viewModel.template.name!) : null,
         actions: [
@@ -95,6 +96,7 @@ class _ShowTemplateContent extends StatelessWidget {
 
     return StoryPagesBuilder(
       preferences: viewModel.template.preferences,
+      pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.draftContent!,
       headerBuilder: (_) => buildPageHeader(context),
@@ -114,7 +116,7 @@ class _ShowTemplateContent extends StatelessWidget {
   Widget buildPageHeader(BuildContext context) {
     return TemplateTagLabels(
       template: viewModel.template,
-      margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 12.0),
+      margin: const EdgeInsets.symmetric(horizontal: 12.0),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';

@@ -7,6 +7,7 @@ class _QuillEditor extends StatefulWidget {
     required this.scrollController,
     required this.readOnly,
     required this.storyContent,
+    required this.layoutType,
     required this.onChanged,
     required this.onGoToEdit,
   });
@@ -16,6 +17,7 @@ class _QuillEditor extends StatefulWidget {
   final ScrollController scrollController;
   final bool readOnly;
   final StoryContentDbModel storyContent;
+  final PageLayoutType? layoutType;
   final void Function()? onChanged;
   final void Function()? onGoToEdit;
 
@@ -96,6 +98,7 @@ class _QuillEditorState extends State<_QuillEditor> {
         placeholder: "...",
         embedBuilders: [
           SpImageBlockEmbed(
+            layoutType: widget.layoutType,
             fetchAllImages: () => StoryExtractAssetsFromContentService.images(widget.storyContent),
           ),
           SpAudioBlockEmbed(),

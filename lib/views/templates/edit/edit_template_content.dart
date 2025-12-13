@@ -70,6 +70,7 @@ class _EditTemplateContent extends StatelessWidget {
 
     return StoryPagesBuilder(
       preferences: viewModel.template.preferences,
+      pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.draftContent!,
       headerBuilder: (_) => buildPageHeader(context),
@@ -98,7 +99,7 @@ class _EditTemplateContent extends StatelessWidget {
       children: [
         TemplateTagLabels(
           template: viewModel.template,
-          margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 16.0),
+          margin: const EdgeInsets.symmetric(horizontal: 12.0).copyWith(top: 12.0),
         ),
       ],
     );

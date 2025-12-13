@@ -83,7 +83,8 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
     final note = viewModel.galleryTemplate.note;
 
     return StoryPagesBuilder(
-      preferences: StoryPreferencesDbModel.create().copyWith(layoutType: PageLayoutType.list),
+      preferences: StoryPreferencesDbModel.create().copyWith(layoutType: .list),
+      pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.draftContent!,
       headerBuilder: note != null
@@ -93,6 +94,7 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
             )
           : null,
       padding: EdgeInsets.only(
+        top: note == null ? 12.0 : 0.0,
         left: MediaQuery.of(context).padding.left,
         right: MediaQuery.of(context).padding.right,
         bottom: MediaQuery.of(context).padding.bottom + 12,

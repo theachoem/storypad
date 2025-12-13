@@ -64,7 +64,9 @@ class _StoryPage extends StatelessWidget {
         children: [
           buildEditor(context),
           if (canMoveUp || canMoveDown || canDeletePage) ...[
-            if (!readOnly && preferences?.layoutType == PageLayoutType.list) buildMoreVertButton(context),
+            if (!readOnly &&
+                (preferences?.layoutType == PageLayoutType.list || preferences?.layoutType == PageLayoutType.grid))
+              buildMoreVertButton(context),
           ],
         ],
       ),
@@ -107,6 +109,7 @@ class _StoryPage extends StatelessWidget {
             scrollController: page.bodyScrollController,
             readOnly: readOnly,
             storyContent: storyContent,
+            layoutType: preferences?.layoutType,
             onGoToEdit: onGoToEdit,
           ),
         ),
