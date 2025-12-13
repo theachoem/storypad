@@ -36,6 +36,8 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   CollectionDbModel<StoryDbModel>? stories;
   List<DateTime>? _throwbackDates;
 
+  bool get hasThrowback => _throwbackDates?.isNotEmpty == true;
+
   Future<void> load({
     required String debugSource,
   }) async {
@@ -116,7 +118,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
 
   Widget buildFadeInList() {
     if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (stories!.items.isEmpty) {
+    if (stories!.items.isEmpty && !hasThrowback) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
@@ -126,6 +128,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
         ),
       );
     }
+
     return KeyedSubtree(
       key: ValueKey(widget.uniqueness),
       child: SpFadeIn.fromBottom(

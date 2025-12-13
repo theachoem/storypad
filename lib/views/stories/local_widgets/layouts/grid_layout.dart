@@ -15,7 +15,7 @@ class _GridLayout extends StatelessWidget {
       controller: builder.pageScrollController,
       padding: builder.padding,
       children: [
-        builder.headerBuilder!(builder.pages[0]),
+        if (builder.headerBuilder != null) builder.headerBuilder!(builder.pages[0]),
         Padding(
           padding: EdgeInsets.all(builder.spacing),
           child: StaggeredGrid.count(
