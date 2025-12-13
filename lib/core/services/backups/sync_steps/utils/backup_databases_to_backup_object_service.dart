@@ -10,9 +10,10 @@ class BackupDatabasesToBackupObjectService {
   static Future<BackupObject> call({
     required List<BaseDbAdapter<BaseDbModel>> databases,
     required DateTime lastUpdatedAt,
+    required bool hasCompression,
     int? year, // Optional: filter records by createdAt.year for v3 yearly backups
   }) async {
-    debugPrint('BackupDatabasesToBackupObjectService#constructBackup year=$year');
+    debugPrint('BackupDatabasesToBackupObjectService#constructBackup year=$year hasCompression=$hasCompression');
     Map<String, dynamic> tables = await _constructTables(databases, year: year);
     debugPrint('BackupDatabasesToBackupObjectService#constructBackup ${tables.keys}');
 
@@ -24,6 +25,7 @@ class BackupDatabasesToBackupObjectService {
         device: kDeviceInfo,
         version: year != null ? '3' : '2', // v3 for yearly, v2 for legacy
         year: year,
+        hasCompression: hasCompression,
       ),
     );
   }

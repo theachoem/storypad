@@ -159,6 +159,7 @@ class BackupUploaderService {
           databases: BackupRepository.databases,
           lastUpdatedAt: lastUpdatedAt,
           year: year, // Filter by year
+          hasCompression: cloudService.hasCompression,
         );
 
         final file = await constructBackupFile(

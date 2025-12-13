@@ -27,12 +27,12 @@ class GoogleDriveTile extends StatelessWidget {
         text: 'Google Drive ',
         style: TextTheme.of(context).bodyLarge,
         children: [
-          if (provider.currentUser?.photoUrl != null)
+          if (provider.currentGoogleUser?.photoUrl != null)
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  provider.currentUser!.photoUrl!,
+                  provider.currentGoogleUser!.photoUrl!,
                 ),
                 radius: 8.0,
               ),

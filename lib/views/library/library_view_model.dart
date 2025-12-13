@@ -61,8 +61,8 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
       return true;
     }
 
-    if (provider.currentUser?.email == null) return false;
-    final fileId = asset.getGoogleDriveIdForEmail(provider.currentUser!.email);
+    if (provider.currentGoogleUser?.email == null) return false;
+    final fileId = asset.getGoogleDriveIdForEmail(provider.currentGoogleUser!.email);
 
     if (fileId != null) {
       bool? deleted;

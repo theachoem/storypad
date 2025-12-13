@@ -49,7 +49,9 @@ class _ShowBackupServiceContent extends StatelessWidget {
                   ),
                 )
               : const Icon(SpIcons.profile),
-          title: Text(viewModel.params.service.currentUser?.email ?? tr('list_tile.backup.unsignin_subtitle')),
+          title: Text(
+            viewModel.params.service.currentUser?.identifier ?? tr('list_tile.backup.unsignin_subtitle'),
+          ),
           subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
         ),
         if (viewModel.error != null) ..._buildErrorSection(context),

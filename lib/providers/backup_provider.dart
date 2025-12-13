@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/web_dav_cloud_service.dart';
+import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/services/web_dav_credentials_inputter_service.dart';
+import 'package:storypad/core/storages/backup_import_history_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -58,10 +69,28 @@ class BackupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  BackupRepository get repository => BackupRepository.appInstance;
+  static final BackupRepository repoInstance = _createRepoInstance();
+  static BackupRepository _createRepoInstance() {
+    return BackupRepository(
+      restoreService: RestoreBackupService(),
+      step1ImagesUploader: BackupImagesUploaderService(),
+      step2LatestBackupChecker: BackupLatestCheckerService(),
+      step3LatestBackupImporter: BackupImporterService(),
+      step4NewBackupUploader: BackupUploaderService(),
+      internetChecker: InternetCheckerService(),
+      googleDriveService: GoogleDriveCloudService(),
+      webDavService: WebDavCloudService(onSignIn: () => WebDavCredentialsInputterService().open()),
+      importHistoryStorage: BackupImportHistoryStorage(),
+    );
+  }
 
-  GoogleUserObject? get currentUser => repository.currentUser;
+  BackupRepository get repository => repoInstance;
+
+  GoogleUserObject? get currentGoogleUser => repository.currentGoogleUser;
   bool get isSignedIn => repository.isSignedIn;
+
+  /// Get all authenticated cloud service users for asset downloads
+  List<CloudServiceUser> get availableUsers => repository.availableUsers;
 
   Stream<BackupSyncMessage?> get step1MessageStream => repository.step1MessageStream;
   Stream<BackupSyncMessage?> get step2MessageStream => repository.step2MessageStream;
@@ -82,7 +111,7 @@ class BackupProvider extends ChangeNotifier {
       ) ==
       true;
 
-  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentUser?.email != null;
+  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentGoogleUser?.email != null;
 
   DateTime? get lastSyncedAt => _lastSyncedAtByYear?.values.whereType<DateTime>().fold<DateTime?>(
     null,
@@ -119,7 +148,7 @@ class BackupProvider extends ChangeNotifier {
     }
 
     if (readyToSynced) {
-      await _syncBackupAcrossDevices(currentUser!.email);
+      await _syncBackupAcrossDevices();
     }
 
     _syncing = false;
@@ -130,21 +159,18 @@ class BackupProvider extends ChangeNotifier {
     BuildContext context,
     BackupServiceType serviceType,
   ) async {
-    final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
-      debugSource: '$runtimeType#signIn',
-      future: () => repository.signIn(serviceType),
-    );
+    final result = await repository.signIn(serviceType);
 
-    if (result?.isSuccess == true) {
+    if (result.isSuccess == true) {
       if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
       AnalyticsService.instance.logSignInWithGoogle();
 
       _connectionStatus = BackupConnectionStatus.readyToSync;
       _lastSyncedAtByYear = null;
       _lastDbUpdatedAtByYear = null;
-    } else if (result?.error != null) {
+    } else if (result.error != null) {
       // Handle sign-in error - could show user-friendly message
-      AppLogger.d('Sign-in failed: ${result!.error!.message}');
+      AppLogger.d('Sign-in failed: ${result.error!.message}');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result.error!.message)),
@@ -221,7 +247,7 @@ class BackupProvider extends ChangeNotifier {
   ///    - Auth failures trigger connection status update
   ///    - Failed services retry on next sync
   ///
-  Future<void> _syncBackupAcrossDevices(String email) async {
+  Future<void> _syncBackupAcrossDevices() async {
     // Get current state of all years in local database
     _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
     notifyListeners();

@@ -95,7 +95,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     await _logoutIfInvalid(context);
     if (!context.mounted) return;
 
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser != null) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
       if (_customerInfo?.originalAppUserId == hash) return;
@@ -166,7 +166,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     await _loginIfNot(context);
 
     if (!context.mounted) return;
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser == null) return;
 
     try {
@@ -182,10 +182,10 @@ class InAppPurchaseProvider extends ChangeNotifier {
     if (!kIAPEnabled) return;
     if (_customerInfo != null) return;
 
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser == null) {
       await SpConnectWithGoogleDriveSheet().show(context: context);
-      if (context.mounted) currentUser = context.read<BackupProvider>().currentUser;
+      if (context.mounted) currentUser = context.read<BackupProvider>().currentGoogleUser;
     }
 
     if (currentUser != null && context.mounted) {
@@ -208,7 +208,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
   Future<void> _logoutIfInvalid(BuildContext context) async {
     if (!kIAPEnabled) return;
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
 
     if (currentUser != null && _customerInfo != null) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);

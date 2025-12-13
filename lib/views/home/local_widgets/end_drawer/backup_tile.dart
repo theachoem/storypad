@@ -120,11 +120,12 @@ class _BackupTile extends StatelessWidget {
       );
     }
 
-    if (provider.currentUser?.photoUrl != null) {
+    String? photoUrl = provider.currentGoogleUser?.photoUrl;
+    if (photoUrl != null) {
       leading = Transform.scale(
         scale: 1.5,
         child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(provider.currentUser!.photoUrl!),
+          backgroundImage: CachedNetworkImageProvider(photoUrl),
           radius: 12.0,
         ),
       );

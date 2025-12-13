@@ -10,7 +10,9 @@ void main() {
     final testFileInfo = BackupFileObject(
       createdAt: testDateTime,
       device: testDeviceInfo,
+      hasCompression: false,
     );
+
     final testTables = {
       'users': [
         {'id': 1, 'name': 'John Doe'},

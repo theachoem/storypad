@@ -144,7 +144,9 @@ This approach ensures all cloud data is downloaded before any upload, protecting
 
 ## File Format
 
-**Filename**: `Backup::3::{year}::{timestamp}::{device_model}::{device_id}.zip`
+**Filename**: `Backup__3__{year}__{timestamp}__{device_model}__{device_id}.zip`
+
+**Legacy Format** (still supported): `Backup::3::{year}::{timestamp}::{device_model}::{device_id}.zip`
 
 **Structure**: GZIP-compressed JSON with yearly partitioning
 
@@ -153,9 +155,9 @@ appDataFolder/
   ├── images/                    ← Image assets
   ├── audio/                     ← Audio assets
   ├── backups/                   ← v3 yearly backups folder
-  │   ├── Backup::3::2025::1734350000000::iPhone 15 Pro::ABC123.zip
-  │   ├── Backup::3::2024::1704067200000::iPad Pro::DEF456.zip
-  │   └── Backup::3::2023::1672531200000::iPhone 15 Pro::ABC123.zip
+  │   ├── Backup__3__2025__1734350000000__iPhone 15 Pro__ABC123.zip
+  │   ├── Backup__3__2024__1704067200000__iPad Pro__DEF456.zip
+  │   └── Backup__3__2023__1672531200000__iPhone 15 Pro__ABC123.zip
   │
   └── Legacy backups (v2/v1) in root (fallback for new devices)
       ├── Backup::2::1704067200000::iPhone 15 Pro::ABC123.zip
@@ -175,9 +177,11 @@ When a new device signs in and has no v3 backups yet:
 4. Only the most recent legacy backup is fetched (monolithic backup contains all years)
 5. Once v3 backups are created, they take precedence in future syncs
 
-**Filename Format**: `Backup::3::{year}::{timestamp}::{device_model}::{device_id}.zip`
+**Filename Format**: `Backup__3__{year}__{timestamp}__{device_model}__{device_id}.zip`
 
-**Example**: `Backup::3::2025::1734350000000::iPhone 15 Pro::ABC123.zip`
+**Example**: `Backup__3__2025__1734350000000__iPhone 15 Pro__ABC123.zip`
+
+**Legacy Format** (still supported for reading): `Backup::3::{year}::{timestamp}::{device_model}::{device_id}.zip`
 
 ```json
 {
@@ -238,7 +242,7 @@ When a new device signs in and has no v3 backups yet:
 **Note**: Contains ALL records from ALL years in single file. No longer created by current app versions.
 
 - **v2**: `Backup::2::{timestamp}::{device_model}::{device_id}` (GZIP compressed)
-- **v1**: `Backup::v1::{timestamp}::{device_model}.json` (uncompressed JSON)
+- **v1**: `Backup::1::{timestamp}::{device_model}.json` (uncompressed JSON)
 
 ## Related Classes & Files
 

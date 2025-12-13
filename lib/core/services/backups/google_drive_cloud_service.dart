@@ -28,7 +28,7 @@ class _GoogleAuthClient extends http.BaseClient {
 
 // These class are responsible for calling google drive APIs.
 // Exception should not catch here. Let repository handle it.
-class GoogleDriveCloudService implements BackupCloudService {
+class GoogleDriveCloudService extends BackupCloudService {
   @override
   BackupServiceType get serviceType => BackupServiceType.google_drive;
 
@@ -313,7 +313,7 @@ class GoogleDriveCloudService implements BackupCloudService {
       if (backupsFolderId != null) {
         drive.FileList fileList = await client.files.list(
           spaces: "appDataFolder",
-          q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
+          q: "(name contains 'Backup__3__' or name contains 'Backup::3::') and '$backupsFolderId' in parents",
         );
 
         if (fileList.files != null && fileList.files!.isNotEmpty) {
@@ -365,12 +365,12 @@ class GoogleDriveCloudService implements BackupCloudService {
   /// Update an existing yearly backup file atomically using file ID
   /// This prevents race conditions when multiple devices sync simultaneously
   @override
-  Future<CloudFileObject?> updateYearlyBackup({
+  Future<CloudFileObject?> updateFile({
     required String fileId,
     required String fileName,
     required io.File file,
   }) async {
-    AppLogger.d('GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName');
+    AppLogger.d('GoogleDriveService#updateFile fileId=$fileId, fileName=$fileName');
 
     try {
       if (!file.existsSync()) {
@@ -388,7 +388,7 @@ class GoogleDriveCloudService implements BackupCloudService {
       drive.File fileToUpdate = drive.File();
       fileToUpdate.name = fileName;
 
-      AppLogger.d('GoogleDriveService#updateYearlyBackup uploading...');
+      AppLogger.d('GoogleDriveService#updateFile uploading...');
       drive.File received = await client.files.update(
         fileToUpdate,
         fileId,
@@ -399,7 +399,7 @@ class GoogleDriveCloudService implements BackupCloudService {
       );
 
       if (received.id != null) {
-        AppLogger.d('GoogleDriveService#updateYearlyBackup updated: ${received.id}');
+        AppLogger.d('GoogleDriveService#updateFile updated: ${received.id}');
         return CloudFileObject.fromGoogleDrive(received);
       }
 
@@ -410,68 +410,7 @@ class GoogleDriveCloudService implements BackupCloudService {
         serviceType: serviceType,
       );
     } catch (e) {
-      _handleApiException(e, 'updateYearlyBackup', context: fileName);
-      rethrow;
-    }
-  }
-
-  /// Upload a new yearly backup file to the backups/ folder
-  @override
-  Future<CloudFileObject?> uploadYearlyBackup({
-    required String fileName,
-    required io.File file,
-  }) async {
-    AppLogger.d('GoogleDriveService#uploadYearlyBackup $fileName');
-
-    try {
-      if (!file.existsSync()) {
-        throw exp.FileOperationException(
-          'Local file does not exist: ${file.path}',
-          exp.FileOperationType.upload,
-          context: fileName,
-          serviceType: serviceType,
-        );
-      }
-
-      drive.DriveApi client = await _getAuthenticatedClient();
-
-      // Ensure backups/ folder exists
-      String? folderId = await loadFolder(client, 'backups');
-      if (folderId == null) {
-        throw exp.FileOperationException(
-          'Failed to create or find backups folder',
-          exp.FileOperationType.upload,
-          context: fileName,
-          serviceType: serviceType,
-        );
-      }
-
-      drive.File fileToUpload = drive.File();
-      fileToUpload.name = fileName;
-      fileToUpload.parents = [folderId];
-
-      AppLogger.d('GoogleDriveService#uploadYearlyBackup uploading...');
-      drive.File received = await client.files.create(
-        fileToUpload,
-        uploadMedia: drive.Media(
-          file.openRead(),
-          file.lengthSync(),
-        ),
-      );
-
-      if (received.id != null) {
-        AppLogger.d('GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}');
-        return CloudFileObject.fromGoogleDrive(received);
-      }
-
-      throw exp.FileOperationException(
-        'Upload succeeded but no file ID returned',
-        exp.FileOperationType.upload,
-        context: fileName,
-        serviceType: serviceType,
-      );
-    } catch (e) {
-      _handleApiException(e, 'uploadYearlyBackup', context: fileName);
+      _handleApiException(e, 'updateFile', context: fileName);
       rethrow;
     }
   }

@@ -90,7 +90,7 @@ class BackupServiceTile extends StatelessWidget {
       }
     }
 
-    if (provider.allYearSynced) {
+    if (service.isSignedIn && provider.allYearSynced) {
       subtitle = Text(
         DateFormatHelper.yMEd_jmNullable(
               provider.lastSyncedAt,
@@ -100,14 +100,13 @@ class BackupServiceTile extends StatelessWidget {
       );
 
       onPressed = () => ShowBackupServiceRoute(service: service).push(context);
-
       trailing = Icon(
         SpIcons.cloudDone,
         color: ColorScheme.of(context).bootstrap.success.color,
       );
     }
 
-    if (provider.syncing) {
+    if (service.isSignedIn && provider.syncing) {
       trailing = const SizedBox.square(
         dimension: 24,
         child: CircularProgressIndicator.adaptive(),

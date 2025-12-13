@@ -35,12 +35,14 @@ class SpImage extends StatelessWidget {
     if (link.startsWith("storypad://")) {
       return Consumer<BackupProvider>(
         builder: (context, provider, child) {
+          final availableUsers = provider.availableUsers;
+
           return Image(
-            key: ValueKey(provider.currentUser?.accessToken),
+            key: ValueKey(availableUsers.map((u) => u.identifier).join(',')),
             width: width,
             height: height,
             fit: BoxFit.cover,
-            image: SpDbImageProvider(embedLink: link, currentUser: provider.currentUser),
+            image: SpDbImageProvider(embedLink: link, availableUsers: availableUsers),
             errorBuilder: (context, error, strackTrace) =>
                 errorWidget?.call(context, link, error) ??
                 buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),

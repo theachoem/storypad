@@ -3,11 +3,12 @@ import 'package:storypad/core/objects/device_info_object.dart';
 
 class BackupFileObject {
   static const String prefix = "Backup";
-  static const String splitBy = "::";
+  static const String splitBy = "__"; // Use __ for Windows compatibility (old :: still supported)
 
   final DateTime createdAt;
   final String version;
   final DeviceInfoObject device;
+  final bool hasCompression;
   final int? year; // For v3 yearly backups
 
   bool sameDayAs(BackupFileObject fileInfo) {
@@ -18,15 +19,14 @@ class BackupFileObject {
   BackupFileObject({
     required this.createdAt,
     required this.device,
+    required this.hasCompression,
     String? version,
     this.year,
   }) : version = version ?? (year != null ? '3' : '2');
 
-  bool? get hasCompression => version == '2' || version == '3';
-
-  // v3: Backup::3::2025::1734350000000::iPhone 15 Pro::iPhone123.zip (year-based)
-  // v2: Backup::2::1731680400000::iPhone 15 Pro::ABC123.zip (legacy)
-  // v1: Backup::v1::2022-06-14T17:44:47.097469::Pixel 5.json (legacy)
+  // v3: Backup__3__2025__1734350000000__iPhone 15 Pro__iPhone123 (year-based, extension added separately)
+  // v2 (legacy): Backup::2::1731680400000::iPhone 15 Pro::ABC123 (extension added separately)
+  // v1 (legacy): Backup::1::2022-06-14T17:44:47.097469::Pixel 5 (extension added separately)
   String get fileName {
     if (version == '3') {
       if (year == null) {
@@ -54,7 +54,7 @@ class BackupFileObject {
   }
 
   String get fileNameWithExtention {
-    if (version == '1') {
+    if (!hasCompression) {
       return "$fileName.json";
     } else {
       return "$fileName.zip";
@@ -62,17 +62,21 @@ class BackupFileObject {
   }
 
   static BackupFileObject? fromFileName(String fileName) {
+    bool hasCompression = fileName.endsWith(".zip");
+
     if (fileName.endsWith(".zip")) fileName = fileName.replaceAll(".zip", "");
     if (fileName.endsWith(".json")) fileName = fileName.replaceAll(".json", "");
 
-    List<String> value = fileName.trim().split(splitBy);
+    // Support both __ (new format) and :: (legacy format) for backward compatibility
+    String separator = fileName.contains('__') ? '__' : '::';
+    List<String> value = fileName.trim().split(separator);
 
     if (value.isNotEmpty) {
       String? version = value.length > 1 ? value[1] : null;
 
       switch (version) {
         case "3":
-          // v3: Backup::3::2025::1734350000000::iPhone 15 Pro::iPhone123
+          // v3: Backup__3__2025__1734350000000__iPhone 15 Pro__iPhone123 (or legacy Backup::3::...)
           try {
             int year = int.parse(value[2]);
             int millisecondsEpoch = int.parse(value[3]);
@@ -85,6 +89,7 @@ class BackupFileObject {
               device: DeviceInfoObject(model: deviceModel, id: deviceId),
               version: version!,
               year: year,
+              hasCompression: hasCompression,
             );
           } catch (e) {
             debugPrint("ERROR: fromFileName v3 parse error: $e");
@@ -92,8 +97,8 @@ class BackupFileObject {
           break;
         case "2":
         case "1":
-          // v2: Backup::2::1731680400000::iPhone 15 Pro::ABC123
-          // v1: Backup::1::1731680400000::Pixel 5::ABC123
+          // v2: Backup__2__1731680400000__iPhone 15 Pro__ABC123 (or legacy Backup::2::...)
+          // v1: Backup__1__1731680400000__Pixel 5__ABC123 (or legacy Backup::1::...)
           try {
             int millisecondsEpoch = int.parse(value[2]);
             DateTime createdAt = DateTime.fromMillisecondsSinceEpoch(millisecondsEpoch);
@@ -103,6 +108,7 @@ class BackupFileObject {
               createdAt: createdAt,
               device: DeviceInfoObject(model: deviceModel, id: deviceId),
               version: version!,
+              hasCompression: hasCompression,
             );
           } catch (e) {
             debugPrint("ERROR: fromFileName $e");

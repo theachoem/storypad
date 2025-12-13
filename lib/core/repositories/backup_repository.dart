@@ -10,11 +10,13 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/backups/web_dav_cloud_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
@@ -51,6 +53,7 @@ class BackupRepository {
 
   final RestoreBackupService restoreService;
   final GoogleDriveCloudService googleDriveService;
+  final WebDavCloudService webDavService;
 
   final BackupImagesUploaderService _step1ImagesUploader;
   final BackupLatestCheckerService _step2LatestBackupChecker;
@@ -61,6 +64,7 @@ class BackupRepository {
 
   BackupRepository({
     required this.googleDriveService,
+    required this.webDavService,
     required this.restoreService,
     required BackupImagesUploaderService step1ImagesUploader,
     required BackupLatestCheckerService step2LatestBackupChecker,
@@ -75,28 +79,28 @@ class BackupRepository {
        _internetChecker = internetChecker,
        _importHistoryStorage = importHistoryStorage;
 
-  static final BackupRepository appInstance = _createInstance();
-
-  static BackupRepository _createInstance() {
-    return BackupRepository(
-      restoreService: RestoreBackupService(),
-      step1ImagesUploader: BackupImagesUploaderService(),
-      step2LatestBackupChecker: BackupLatestCheckerService(),
-      step3LatestBackupImporter: BackupImporterService(),
-      step4NewBackupUploader: BackupUploaderService(),
-      internetChecker: InternetCheckerService(),
-      googleDriveService: GoogleDriveCloudService(),
-      importHistoryStorage: BackupImportHistoryStorage(),
-    );
-  }
-
   Future<void> initialize() async {
     await googleDriveService.initialize();
+    await webDavService.initialize();
   }
 
   // currentUser & isSignedIn are load in initializer - before rendering UI.
-  GoogleUserObject? get currentUser => googleDriveService.currentUser;
-  bool get isSignedIn => currentUser != null;
+  GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser;
+  bool get isSignedIn => availableUsers.isNotEmpty;
+
+  /// Get all authenticated cloud service users for asset downloads
+  List<CloudServiceUser> get availableUsers {
+    final users = <CloudServiceUser>[];
+
+    if (googleDriveService.currentUser != null) {
+      users.add(googleDriveService.currentUser!);
+    }
+    if (webDavService.currentUser != null) {
+      users.add(webDavService.currentUser!);
+    }
+
+    return users;
+  }
 
   Stream<BackupSyncMessage?> get step1MessageStream => _step1ImagesUploader.message;
   Stream<BackupSyncMessage?> get step2MessageStream => _step2LatestBackupChecker.message;
@@ -105,6 +109,7 @@ class BackupRepository {
 
   List<BackupCloudService> get services => [
     googleDriveService,
+    webDavService,
   ];
 
   BackupCloudService getService(BackupServiceType serviceType) {

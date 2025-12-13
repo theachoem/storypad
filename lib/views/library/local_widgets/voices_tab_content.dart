@@ -227,7 +227,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
   Widget _buildBackupStatus(AssetDbModel asset, BackupProvider provider, BuildContext context) {
     Widget child;
 
-    if (!asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
+    if (!asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
       child = CircleAvatar(
         radius: 10.0,
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
@@ -237,7 +237,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
           size: 14.0,
         ),
       );
-    } else if (asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
+    } else if (asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
       child = CircleAvatar(
         radius: 10.0,
         backgroundColor: ColorScheme.of(context).bootstrap.success.color,

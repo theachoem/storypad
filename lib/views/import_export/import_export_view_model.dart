@@ -77,6 +77,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
       future: () => BackupDatabasesToBackupObjectService.call(
         databases: BackupRepository.databases,
         lastUpdatedAt: lastDbUpdatedAt,
+        hasCompression: false,
       ),
     );
 

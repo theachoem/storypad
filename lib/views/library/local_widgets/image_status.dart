@@ -15,7 +15,7 @@ class _ImageStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget child;
 
-    if (!asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
+    if (!asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
       child = CircleAvatar(
         radius: 16.0,
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
@@ -25,9 +25,9 @@ class _ImageStatus extends StatelessWidget {
           size: 20.0,
         ),
       );
-    } else if (asset.isGoogleDriveUploadedFor(provider.currentUser?.email)) {
+    } else if (asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
       child = Tooltip(
-        message: asset.getGoogleDriveUrlForEmail(provider.currentUser!.email),
+        message: asset.getGoogleDriveUrlForEmail(provider.currentGoogleUser!.email),
         child: CircleAvatar(
           radius: 16.0,
           backgroundColor: ColorScheme.of(context).bootstrap.success.color,

@@ -25,6 +25,7 @@ class SpIcons {
   static const IconData voice = kIsCupertino ? CupertinoIcons.mic : Icons.mic_none_sharp;
   static const IconData cloudUpload = kIsCupertino ? CupertinoIcons.cloud_upload : Icons.backup_outlined;
   static final IconData googleDrive = MdiIcons.googleDrive;
+  static final IconData webDav = MdiIcons.database;
   static const IconData cloudDone = Icons.cloud_done_outlined;
   static final IconData cloudOff = MdiIcons.cloudOff;
   static final IconData pinSlash = kIsCupertino ? CupertinoIcons.pin_slash : MdiIcons.pinOff;

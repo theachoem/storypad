@@ -78,7 +78,11 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
         await MessengerService.of(context).showLoading(
           debugSource: '$runtimeType#openCloudFile',
           future: () async {
-            final result = await context.read<BackupProvider>().repository.googleDriveService.getFileContent(cloudFile);
+            final result = await context
+                .read<BackupProvider>()
+                .repository
+                .getService(serviceType)
+                .getFileContent(cloudFile);
 
             final fileContent = result?.$1;
 
@@ -104,7 +108,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#deleteCloudFile',
       future: () async {
-        bool? success = await context.read<BackupProvider>().repository.googleDriveService.deleteFile(file.id);
+        bool? success = await context.read<BackupProvider>().repository.getService(serviceType).deleteFile(file.id);
         if (success == true) yearlyBackups?.remove(file.year);
         notifyListeners();
       },

@@ -33,6 +33,7 @@ class BackupObject {
           id: contents['meta_data']['device_id'],
         ),
         year: contents['year'] != null ? int.tryParse(contents['year'].toString()) : null,
+        hasCompression: false,
       ),
     );
   }

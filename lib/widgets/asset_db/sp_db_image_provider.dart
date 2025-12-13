@@ -5,17 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/services/cloud_asset_downloader_service.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   final String embedLink;
   final double scale;
-  final GoogleUserObject? currentUser;
+  final List<CloudServiceUser>? availableUsers;
 
   SpDbImageProvider({
     required this.embedLink,
-    required this.currentUser,
+    required this.availableUsers,
     this.scale = 1,
   });
 
@@ -47,12 +47,12 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
       assert(key == this);
 
       // Download asset if needed
-      if (asset != null && localFile == null) {
-        final downloader = GoogleDriveAssetDownloaderService();
+      if (asset != null && localFile == null && availableUsers != null) {
+        final downloader = CloudAssetDownloaderService();
         localFile = File(
           await downloader.downloadAsset(
             asset: asset,
-            currentUser: currentUser,
+            availableUsers: availableUsers!,
             localFile: localFile,
           ),
         );
@@ -99,12 +99,24 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
 
     return other is SpDbImageProvider &&
         other.embedLink == embedLink &&
-        currentUser?.accessToken == other.currentUser?.accessToken &&
+        _usersEqual(availableUsers ?? [], other.availableUsers ?? []) &&
         other.scale == scale;
   }
 
+  bool _usersEqual(List<CloudServiceUser> a, List<CloudServiceUser> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].identifier != b[i].identifier) return false;
+    }
+    return true;
+  }
+
   @override
-  int get hashCode => Object.hash(embedLink, currentUser?.email, scale);
+  int get hashCode => Object.hash(
+    embedLink,
+    Object.hashAll(availableUsers?.map((u) => u.identifier) ?? []),
+    scale,
+  );
 
   @override
   String toString() =>

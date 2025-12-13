@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/cloud_asset_downloader_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/sp_voice_player.dart';
@@ -69,12 +69,12 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
       throw StateError('Asset metadata not loaded');
     }
 
-    final currentUser = context.read<BackupProvider>().currentUser;
-    final downloader = GoogleDriveAssetDownloaderService();
+    final availableUsers = context.read<BackupProvider>().availableUsers;
+    final downloader = CloudAssetDownloaderService();
 
     return downloader.downloadAsset(
       asset: _asset!,
-      currentUser: currentUser,
+      availableUsers: availableUsers,
       localFile: _asset!.localFile,
     );
   }

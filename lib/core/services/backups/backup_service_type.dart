@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 enum BackupServiceType {
-  google_drive(id: 'google_drive', displayName: 'Google Drive')
+  google_drive(id: 'google_drive', displayName: 'Google Drive'),
+  web_dav(id: 'web_dav', displayName: 'WebDAV')
   ;
 
   final String id;
@@ -24,6 +25,8 @@ enum BackupServiceType {
     switch (this) {
       case BackupServiceType.google_drive:
         return SpIcons.googleDrive;
+      case BackupServiceType.web_dav:
+        return SpIcons.webDav;
     }
   }
 }
