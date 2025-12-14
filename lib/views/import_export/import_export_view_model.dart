@@ -5,7 +5,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backup_services/backups/show/show_backup_view.dart';
@@ -19,13 +21,46 @@ import 'package:storypad/providers/backup_provider.dart';
 
 import 'import_export_view.dart';
 
+enum AppExportOption {
+  storyPadJson,
+  markdown,
+  pdf,
+}
+
 class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ImportExportRoute params;
   final String parentName = "backups";
 
   ImportExportViewModel({
     required this.params,
-  });
+  }) {
+    loadStoryCount(notifyUI: false);
+  }
+
+  int? storyCount;
+  SearchFilterObject initialExportFilter = SearchFilterObject(
+    years: {},
+    types: {},
+    tagId: null,
+    assetId: null,
+  );
+
+  late SearchFilterObject exportFilter = initialExportFilter;
+
+  bool get filtered =>
+      jsonEncode(exportFilter.toDatabaseFilter()) != jsonEncode(initialExportFilter.toDatabaseFilter());
+
+  void setExportFilter(SearchFilterObject result) {
+    exportFilter = result;
+    loadStoryCount(notifyUI: true);
+  }
+
+  Future<void> loadStoryCount({
+    bool notifyUI = true,
+  }) async {
+    storyCount = StoryDbModel.db.getStoryCountBy(filters: exportFilter.toDatabaseFilter());
+    if (notifyUI) notifyListeners();
+  }
 
   Future<void> import(BuildContext context) async {
     AnalyticsService.instance.logImportOfflineBackup();

@@ -32,6 +32,7 @@ class QuillDeltaToPlainTextService {
   static String call(
     List<dynamic> deltaOps, {
     bool markdown = true,
+    bool includeMarkdownEmbeds = false,
   }) {
     // orderedListCounter: Tracks the numbering for ordered lists at each indent level
     // Example: {0: 3, 1: 2} means:
@@ -140,10 +141,16 @@ class QuillDeltaToPlainTextService {
         }
       } else if (insert is Map) {
         // Handle embeds (images, videos, audio, custom embeds)
-        // Example: {"insert": {"image": "path/to/image.png"}}
+        // Example: {"insert": {"image": "storypad://assets/1759081859921"}}
         final embedType = insert.keys.first;
 
         if (embedType == 'image' || embedType == 'audio') {
+          if (includeMarkdownEmbeds) {
+            final url = insert[embedType];
+
+            // Markdown image syntax: ![alt text](url)
+            currentLineText += '![$embedType]($url)';
+          }
           // Skip images and audio - don't include in text output
         } else {
           // For other embeds (like video), use Unicode object replacement character
