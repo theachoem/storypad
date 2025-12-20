@@ -11,7 +11,6 @@ import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
-import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_measure_size.dart';
 import 'package:storypad/widgets/sp_story_labels.dart';
@@ -39,7 +38,7 @@ class StoryHeader extends StatelessWidget {
   final StoryContentDbModel draftContent;
   final SpStoryLabelsDraftActions? draftActions;
   final ValueNotifier<int?>? currentPageIndexNotifier;
-  final Future<void> Function(String? feeling) setFeeling;
+  final Future<void> Function(String? feeling)? setFeeling;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
   final Future<void> Function(DateTime) onChangeDate;
@@ -87,7 +86,7 @@ class StoryHeader extends StatelessWidget {
           viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
       story: viewModel.story!,
       draftContent: viewModel.draftContent!,
-      setFeeling: viewModel.setFeeling,
+      setFeeling: null,
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       onToggleShowTime: viewModel.toggleShowTime,
       readOnly: true,
@@ -133,23 +132,10 @@ class StoryHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: _StoryHeaderDateSelector(
-                  story: story,
-                  dateReadOnly: dateReadOnly,
-                  onChangeDate: onChangeDate,
-                ),
-              ),
-              SpFeelingButton(
-                feeling: story.feeling,
-                onPicked: setFeeling,
-              ),
-            ],
-          ),
+        _StoryHeaderDateSelector(
+          story: story,
+          dateReadOnly: dateReadOnly,
+          onChangeDate: onChangeDate,
         ),
         SpStoryLabels(
           story: story,
@@ -158,6 +144,7 @@ class StoryHeader extends StatelessWidget {
           onToggleShowDayCount: onToggleShowDayCount,
           onToggleShowTime: onToggleShowTime,
           onChangeDate: onChangeDate,
+          setFeeling: setFeeling,
           onToggleManagingPage: onToggleManagingPage,
           draftActions: draftActions,
         ),
@@ -187,24 +174,26 @@ class _StoryHeaderDateSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? daySuffix = DateFormatHelper.getDaySuffix(story.displayPathDate.day, context.locale);
-    return Row(
-      children: [
-        InkWell(
-          onTap: dateReadOnly || onChangeDate == null ? null : () => changeDate(context),
-          borderRadius: BorderRadius.circular(4.0),
-          child: Row(
-            children: [
-              buildDay(context),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      alignment: .centerLeft,
+      child: InkWell(
+        onTap: dateReadOnly || onChangeDate == null ? null : () => changeDate(context),
+        borderRadius: BorderRadius.circular(4.0),
+        child: Wrap(
+          crossAxisAlignment: .center,
+          children: [
+            buildDay(context),
+            const SizedBox(width: 4.0),
+            if (daySuffix != null) buildDaySuffixMonthYear(context, daySuffix) else buildMonthYear(context),
+            if (!dateReadOnly) ...[
               const SizedBox(width: 4.0),
-              if (daySuffix != null) buildDaySuffixMonthYear(context, daySuffix) else buildMonthYear(context),
-              if (!dateReadOnly) ...[
-                const SizedBox(width: 4.0),
-                const Icon(SpIcons.dropDown),
-              ],
+              const Icon(SpIcons.dropDown),
             ],
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

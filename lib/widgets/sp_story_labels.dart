@@ -1,16 +1,21 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
+import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
+import 'package:storypad/widgets/sp_expand_tap_area.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -34,6 +39,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowTime,
     required this.onChangeDate,
     required this.onToggleManagingPage,
+    this.setFeeling,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -58,6 +64,7 @@ class SpStoryLabels extends StatelessWidget {
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function()? onToggleShowTime;
+  final Future<void> Function(String? feeling)? setFeeling;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -123,8 +130,6 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    children.addAll(buildTags(tagProvider, context));
-
     if (voicesCount != null && voicesCount! > 0) {
       children.add(
         buildPin(
@@ -176,6 +181,57 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    children.addAll(buildTags(tagProvider, context));
+
+    if (story.feeling != null || setFeeling != null) {
+      children.add(
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 300,
+          bottomToTop: false,
+          margin: 12.0,
+          dyGetter: (dy) => dy + 32,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (void Function() callback) {
+            return SpFeelingPicker(
+              feeling: story.feeling,
+              onPicked: (feeling) async {
+                await setFeeling?.call(feeling);
+                callback();
+              },
+            );
+          },
+          builder: (callback) {
+            return SpExpandTapArea.buildIfHasTap(
+              onTap: setFeeling != null ? callback : null,
+              tapPadding: const EdgeInsets.all(4),
+              child: SpTapEffect(
+                scaleActive: 1.3,
+                onTap: setFeeling != null ? callback : null,
+                child: SizedBox(
+                  height: MediaQuery.textScalerOf(context).scale(20),
+                  child: Align(
+                    alignment: .center,
+                    widthFactor: 1.0,
+                    child:
+                        FeelingObject.feelingsByKey[story.feeling]?.image64.image(
+                          width: MediaQuery.textScalerOf(context).scale(16.0),
+                          key: ValueKey('feeling-${story.feeling}'),
+                        ) ??
+                        Icon(
+                          SpIcons.addFeeling,
+                          key: const ValueKey('feeling-none'),
+                          size: MediaQuery.textScalerOf(context).scale(16.0),
+                          color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                        ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
     if (story.event?.period == true) {
       children.add(
         SpTapEffect(
@@ -190,10 +246,17 @@ class SpStoryLabels extends StatelessWidget {
                     initialSegment: .period,
                   ).push(context);
                 },
-          child: Icon(
-            SpIcons.waterDrop,
-            color: Theme.of(context).colorScheme.error,
-            size: MediaQuery.textScalerOf(context).scale(16.0),
+          child: SizedBox(
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Align(
+              alignment: .center,
+              widthFactor: 1.0,
+              child: Icon(
+                SpIcons.waterDrop,
+                color: Theme.of(context).colorScheme.error,
+                size: MediaQuery.textScalerOf(context).scale(16.0),
+              ),
+            ),
           ),
         ),
       );
@@ -274,12 +337,16 @@ class SpStoryLabels extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(4.0),
         onTap: onTap,
-        child: Padding(
+        child: Container(
+          height: MediaQuery.textScalerOf(context).scale(20),
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.textScalerOf(context).scale(7),
-            vertical: MediaQuery.textScalerOf(context).scale(1),
           ),
-          child: text,
+          child: Align(
+            alignment: .center,
+            widthFactor: 1.0,
+            child: text,
+          ),
         ),
       ),
     );
