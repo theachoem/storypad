@@ -39,7 +39,7 @@
               "body": [
                 {
                   "insert": {
-                    "image": "storypad://assets/1759081859921"
+                    "image": "images/1759081859921.jpg"
                   }
                 },
                 {
@@ -262,13 +262,14 @@
     "assets": [
       {
         "id": 1759081859921,
-        "original_source": "/Users/theachoem/Library/Developer/CoreSimulator/Devices/E4FE0944-A650-4306-989D-2E89C4F27692/data/Containers/Data/Application/FC967E1A-438C-49CD-93E5-68F79D67C35A/Library/Application Support/images/1759081859921.jpeg",
+        "original_source": "images/1759081859921.jpg",
+        "version": 2,
         "tags": [27, 30],
         "cloud_destinations": {
           "google_drive": {
             "imacoustic.th@gmail.com": {
               "file_id": "1Z9DMYj4IDJEs3W4peFCyQu8xKxw3QT6Wb-nLp_OY4NYE_Dh0zw",
-              "file_name": "1759081859921.jpeg"
+              "file_name": "1759081859921.jpg"
             }
           }
         },

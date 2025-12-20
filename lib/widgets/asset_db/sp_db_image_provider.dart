@@ -9,12 +9,12 @@ import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
-  final String embedLink;
+  final String relativePath;
   final double scale;
   final GoogleUserObject? currentUser;
 
   SpDbImageProvider({
-    required this.embedLink,
+    required this.relativePath,
     required this.currentUser,
     this.scale = 1,
   });
@@ -29,9 +29,9 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode: decode),
       scale: key.scale,
-      debugLabel: key.embedLink,
+      debugLabel: key.relativePath,
       informationCollector: () => <DiagnosticsNode>[
-        ErrorDescription('AssetLink: $embedLink'),
+        ErrorDescription('Asset relative path: $relativePath'),
       ],
     );
   }
@@ -40,7 +40,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     SpDbImageProvider key, {
     required ImageDecoderCallback decode,
   }) async {
-    AssetDbModel? asset = await AssetDbModel.findBy(embedLink: embedLink);
+    AssetDbModel? asset = await AssetDbModel.findBy(relativePath: relativePath);
     File? localFile = asset?.localFile;
 
     try {
@@ -66,7 +66,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
         }
         return decode(await ui.ImmutableBuffer.fromFilePath(localFile.path));
       } else {
-        throw StateError('$embedLink cannot be loaded.');
+        throw StateError('$relativePath cannot be loaded.');
       }
     } catch (e) {
       if (asset != null && File(asset.localFilePath).existsSync()) {
@@ -98,15 +98,15 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     }
 
     return other is SpDbImageProvider &&
-        other.embedLink == embedLink &&
+        other.relativePath == relativePath &&
         currentUser?.accessToken == other.currentUser?.accessToken &&
         other.scale == scale;
   }
 
   @override
-  int get hashCode => Object.hash(embedLink, currentUser?.email, scale);
+  int get hashCode => Object.hash(relativePath, currentUser?.email, scale);
 
   @override
   String toString() =>
-      '${objectRuntimeType(this, 'SpDbImageProvider')}("$embedLink", scale: ${scale.toStringAsFixed(1)})';
+      '${objectRuntimeType(this, 'SpDbImageProvider')}("$relativePath", scale: ${scale.toStringAsFixed(1)})';
 }

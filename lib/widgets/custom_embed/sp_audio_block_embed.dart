@@ -51,8 +51,8 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
   /// Load asset metadata (but not the file itself)
   Future<void> loadAssetMetadata() async {
     try {
-      final embedLink = widget.node.value.data;
-      final asset = await AssetDbModel.findBy(embedLink: embedLink);
+      final relativePath = widget.node.value.data;
+      final asset = await AssetDbModel.findBy(relativePath: relativePath);
 
       if (mounted && asset != null) {
         setState(() {

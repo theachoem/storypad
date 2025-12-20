@@ -27,6 +27,8 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel tags(List<int>? tags);
 
+  AssetDbModel version(int? version);
+
   AssetDbModel metadata(Map<String, dynamic>? metadata);
 
   /// Creates a new instance with the provided field values.
@@ -46,6 +48,7 @@ abstract class _$AssetDbModelCWProxy {
     DateTime? permanentlyDeletedAt,
     AssetType type,
     List<int>? tags,
+    int? version,
     Map<String, dynamic>? metadata,
   });
 }
@@ -90,6 +93,9 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
   AssetDbModel tags(List<int>? tags) => call(tags: tags);
 
   @override
+  AssetDbModel version(int? version) => call(version: version);
+
+  @override
   AssetDbModel metadata(Map<String, dynamic>? metadata) =>
       call(metadata: metadata);
 
@@ -111,6 +117,7 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
+    Object? version = const $CopyWithPlaceholder(),
     Object? metadata = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
@@ -154,6 +161,10 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
           : tags as List<int>?,
+      version: version == const $CopyWithPlaceholder()
+          ? _value.version
+          // ignore: cast_nullable_to_non_nullable
+          : version as int?,
       metadata: metadata == const $CopyWithPlaceholder()
           ? _value.metadata
           // ignore: cast_nullable_to_non_nullable
@@ -194,6 +205,7 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
   tags: (json['tags'] as List<dynamic>?)
       ?.map((e) => (e as num).toInt())
       .toList(),
+  version: (json['version'] as num?)?.toInt() ?? 2,
   metadata: json['metadata'] as Map<String, dynamic>?,
 );
 
@@ -203,6 +215,7 @@ Map<String, dynamic> _$AssetDbModelToJson(
   'id': instance.id,
   'original_source': instance.originalSource,
   'tags': instance.tags,
+  'version': instance.version,
   'cloud_destinations': instance.cloudDestinations,
   'type': _assetTypeToJson(instance.type),
   'metadata': instance.metadata,

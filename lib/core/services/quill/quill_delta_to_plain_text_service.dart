@@ -141,7 +141,7 @@ class QuillDeltaToPlainTextService {
         }
       } else if (insert is Map) {
         // Handle embeds (images, videos, audio, custom embeds)
-        // Example: {"insert": {"image": "storypad://assets/1759081859921"}}
+        // Example: {"insert": {"image": "images/1759081859921.jpg"}}
         final embedType = insert.keys.first;
 
         if (embedType == 'image' || embedType == 'audio') {

@@ -1,13 +1,11 @@
-import 'package:storypad/core/types/asset_type.dart';
-
-/// Parse asset links and IDs from Quill Delta format.
+/// Parse asset paths and IDs from Quill Delta format.
 ///
 /// Quill Delta represents content as a list of operations with structure:
 /// ```
 /// [
 ///   { "insert": "Hello " },
-///   { "insert": { "image": "storypad://assets/123" } },
-///   { "insert": { "audio": "storypad://audio/456" } }
+///   { "insert": { "image": "images/123.jpg" } },
+///   { "insert": { "audio": "audio/456.m4a" } }
 /// ]
 /// ```
 ///
@@ -21,8 +19,8 @@ class AssetLinkParser {
   /// Example:
   /// ```dart
   /// final body = [
-  ///   { "insert": { "image": "storypad://assets/123" } },
-  ///   { "insert": { "audio": "storypad://audio/456" } }
+  ///   { "insert": { "image": "assets/123.jpg" } },
+  ///   { "insert": { "audio": "audio/456.m4a" } }
   /// ];
   /// final ids = AssetLinkParser.extractIds(body);
   /// // ids == {123, 456}
@@ -37,8 +35,9 @@ class AssetLinkParser {
       final insert = node['insert'] as Map;
       for (final value in insert.values) {
         if (value is String) {
-          final assetId = AssetType.parseAssetId(value);
-          if (assetId != null) ids.add(assetId);
+          final assetId = value.split("/").last.split(".").first;
+          final assetIdInt = int.tryParse(assetId);
+          if (assetIdInt != null) ids.add(assetIdInt);
         }
       }
     }
@@ -46,20 +45,38 @@ class AssetLinkParser {
     return ids;
   }
 
-  /// Extract asset links (as strings) by prefix
+  /// Extract embed sources of a specific embed type from Quill Delta body.
   ///
-  /// Returns a List of asset links that start with the given prefix.
-  /// This is useful when you need the full links rather than just IDs.
+  /// This method scans the provided Quill Delta body for nodes that contain
+  /// the specified embed type and returns a list of corresponding source values.
+  /// Returns both local asset paths (images/, audio/) and external URLs (http://, https://),
+  /// but filters out empty strings and other invalid values.
   ///
   /// Example:
   /// ```dart
-  /// final audioLinks = AssetLinkParser.extractByEmbedLinkPrefix(
+  /// // Input: Content with pages containing image and audio embeds
+  /// final body = [
+  ///   {
+  ///     "insert": {"image": "images/1762500783746.jpg"}  // local asset
+  ///   },
+  ///   {
+  ///     "insert": {"audio": "audio/1762500783747.m4a"}  // local asset
+  ///   },
+  ///   {
+  ///     "insert": {"image": "https://example.com/image.jpg"}  // external URL
+  ///   },
+  ///   {
+  ///     "insert": {"image": ""}  // filtered out
+  ///   }
+  /// ];
+  ///
+  /// final imageSources = AssetLinkParser.extractEmbedSources(
   ///   body,
-  ///   AssetType.audio.embedLinkPrefix
+  ///   'image',
   /// );
-  /// // audioLinks == ['storypad://audio/456']
+  /// // imageSources == ['images/1762500783746.jpg', 'https://example.com/image.jpg']
   /// ```
-  static List<String> extractByEmbedLinkPrefix(List<dynamic>? body, String scheme) {
+  static List<String> extractEmbedSources(List<dynamic>? body, String embedType) {
     final links = <String>[];
     if (body == null || body.isEmpty) return links;
 
@@ -67,9 +84,12 @@ class AssetLinkParser {
       if (node is! Map || node['insert'] is! Map) continue;
 
       final insert = node['insert'] as Map;
-      for (final value in insert.values) {
-        if (value is String && value.startsWith(scheme)) {
-          links.add(value);
+      if (insert[embedType] is String) {
+        final path = insert[embedType] as String;
+        // Include: local asset paths (images/, audio/) or external URLs (http://, https://)
+        // Exclude: empty strings and other invalid values
+        if (path.isNotEmpty) {
+          links.add(path);
         }
       }
     }

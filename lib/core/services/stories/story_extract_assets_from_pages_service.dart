@@ -10,10 +10,10 @@ import 'package:storypad/core/services/asset_link_parser.dart';
 /// ```dart
 /// // Input: Page with image and audio embeds
 /// // {
-/// //   "insert": {"image": "storypad://assets/1762500783746"}
+/// //   "insert": {"image": "images/1762500783746.jpg"}
 /// // },
 /// // {
-/// //   "insert": {"audio": "storypad://audio/1762500783747"}
+/// //   "insert": {"audio": "audio/1762500783747.m4a"}
 /// // }
 ///
 /// // Output: {1762500783746, 1762500783747}

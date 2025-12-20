@@ -2,11 +2,12 @@ part of '../sp_story_tile.dart';
 
 class _StoryTileAssets extends StatelessWidget {
   const _StoryTileAssets({
-    required this.assetLinks,
+    required this.assetPaths,
   });
 
-  // eg. ['storypad://assets/1762500783746', 'storypad://assets/1762500985286']
-  final List<String> assetLinks;
+  // Relative paths to assets embedded in the story
+  // eg. ['images/1762500783746.jpg', 'images/1762500985286.jpg']
+  final List<String> assetPaths;
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +17,13 @@ class _StoryTileAssets extends StatelessWidget {
         height: 56,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemCount: min(4, assetLinks.length),
+          itemCount: min(4, assetPaths.length),
           separatorBuilder: (context, index) => const SizedBox(width: 8.0),
           itemBuilder: (context, index) {
             return _AssetTile(
-              assetLink: assetLinks[index],
-              displayMoreButton: index == 3 && assetLinks.length > 4,
-              allAssetLinks: assetLinks,
+              assetPath: assetPaths[index],
+              displayMoreButton: index == 3 && assetPaths.length > 4,
+              allAssetPaths: assetPaths,
             );
           },
         ),
@@ -31,20 +32,20 @@ class _StoryTileAssets extends StatelessWidget {
   }
 }
 
-/// Displays a single asset tile from a link (image or audio)
+/// Displays a single asset tile from a relative path (image or audio)
 class _AssetTile extends StatelessWidget {
   const _AssetTile({
-    required this.assetLink,
+    required this.assetPath,
     required this.displayMoreButton,
-    required this.allAssetLinks,
+    required this.allAssetPaths,
   });
 
-  final String assetLink;
+  final String assetPath;
   final bool displayMoreButton;
-  final List<String> allAssetLinks;
+  final List<String> allAssetPaths;
 
-  // Detect if link is audio or image
-  bool get _isAudio => AssetType.getTypeFromLink(assetLink) == AssetType.audio;
+  // Detect if path is audio or image
+  bool get _isAudio => AssetType.getTypeFromLink(assetPath) == AssetType.audio;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class _AssetTile extends StatelessWidget {
             side: BorderSide(color: Theme.of(context).dividerColor),
           ),
           child: SpImage(
-            link: assetLink,
+            link: assetPath,
             height: 56,
             width: 56,
             errorWidget: (context, url, error) {
@@ -93,7 +94,7 @@ class _AssetTile extends StatelessWidget {
               child: displayMoreButton
                   ? Center(
                       child: Text(
-                        '+${allAssetLinks.length - 4}',
+                        '+${allAssetPaths.length - 4}',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     )
@@ -132,7 +133,7 @@ class _AssetTile extends StatelessWidget {
 
   void _viewImages(BuildContext context) {
     // Filter to only image links for the viewer
-    final imageLinks = allAssetLinks.where((link) => AssetType.getTypeFromLink(link) != AssetType.audio).toList();
+    final imageLinks = allAssetPaths.where((link) => AssetType.getTypeFromLink(link) != AssetType.audio).toList();
     SpImagesViewer.fromString(
       images: imageLinks,
       initialIndex: 0,

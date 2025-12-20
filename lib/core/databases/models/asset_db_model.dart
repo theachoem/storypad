@@ -23,8 +23,13 @@ class AssetDbModel extends BaseDbModel {
 
   @override
   final int id;
+
+  // in v2, this is always a relative local file path
+  // eg. "images/1762500783746.jpg"
   final String originalSource;
+
   final List<int>? tags;
+  final int? version;
   final Map<String, Map<String, Map<String, String>>> cloudDestinations;
 
   @JsonKey(fromJson: _assetTypeFromJson, toJson: _assetTypeToJson)
@@ -52,19 +57,13 @@ class AssetDbModel extends BaseDbModel {
     required this.permanentlyDeletedAt,
     required this.type,
     required this.tags,
+    this.version = 2,
     this.metadata,
   });
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;
 
   String? get cloudFileName => localFile != null ? "$id${extension(localFile!.path)}" : null;
-
-  /// URI link for embedding in Quill editor
-  ///
-  /// Automatically routes to correct scheme based on asset type:
-  /// - Audio: storypad://audio/{id}
-  /// - Image (or null): storypad://assets/{id}
-  String get embedLink => type.buildEmbedLink(id);
 
   bool get isAudio => type == AssetType.audio;
   bool get isImage => type == AssetType.image;
@@ -81,9 +80,6 @@ class AssetDbModel extends BaseDbModel {
   }
 
   File? get localFile {
-    final file = File(originalSource);
-    if (file.existsSync()) return file;
-
     final possibleFile = File(localFilePath);
     if (possibleFile.existsSync()) return possibleFile;
 
@@ -97,6 +93,18 @@ class AssetDbModel extends BaseDbModel {
   /// - Audio: `/support/dir/audio/1762500783746.m4a`
   String get localFilePath {
     return type.getStoragePath(
+      id: id,
+      extension: extension(originalSource),
+    );
+  }
+
+  /// Get the relative storage path for this asset.
+  /// This is used for storing paths in the database.
+  /// Example output:
+  /// - Image: `images/1762500783746.jpg`
+  /// - Audio: `audio/1762500783746.m4a`
+  String get relativeLocalFilePath {
+    return type.getRelativeStoragePath(
       id: id,
       extension: extension(originalSource),
     );
@@ -173,15 +181,15 @@ class AssetDbModel extends BaseDbModel {
     runCallbacks: runCallbacks,
   );
 
-  /// Find an asset by its URI link
+  /// Find an asset by its relative file path
   ///
-  /// Supports both image and audio schemes:
-  /// - storypad://assets/{id}
-  /// - storypad://audio/{id}
+  /// Supports relative paths for both image and audio:
+  /// - images/{id}.jpg
+  /// - audio/{id}.m4a
   static Future<AssetDbModel?> findBy({
-    required String embedLink,
+    required String relativePath,
   }) async {
-    final id = AssetType.parseAssetId(embedLink);
+    final id = AssetType.parseAssetId(relativePath);
     return id != null ? AssetDbModel.db.find(id) : null;
   }
 

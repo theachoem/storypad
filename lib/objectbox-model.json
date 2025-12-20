@@ -247,7 +247,7 @@
     },
     {
       "id": "5:4094713120589114734",
-      "lastPropertyId": "12:7750389189867599724",
+      "lastPropertyId": "13:8859144998009161825",
       "name": "AssetObjectBox",
       "properties": [
         {
@@ -300,6 +300,11 @@
           "id": "12:7750389189867599724",
           "name": "tags",
           "type": 27
+        },
+        {
+          "id": "13:8859144998009161825",
+          "name": "version",
+          "type": 6
         }
       ],
       "relations": []
