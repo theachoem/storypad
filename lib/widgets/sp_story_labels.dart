@@ -14,7 +14,6 @@ import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
-import 'package:storypad/widgets/sp_expand_tap_area.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -201,30 +200,28 @@ class SpStoryLabels extends StatelessWidget {
             );
           },
           builder: (callback) {
-            return SpExpandTapArea.buildIfHasTap(
+            return SpTapEffect(
+              scaleActive: 2,
+              effects: [.scaleDown],
+              behavior: .translucent,
               onTap: setFeeling != null ? callback : null,
-              tapPadding: const EdgeInsets.all(8),
-              child: SpTapEffect(
-                scaleActive: 1.5,
-                effects: [.scaleDown],
-                onTap: setFeeling != null ? callback : null,
-                child: SizedBox(
-                  height: MediaQuery.textScalerOf(context).scale(20),
-                  child: Align(
-                    alignment: .center,
-                    widthFactor: 1.0,
-                    child:
-                        FeelingObject.feelingsByKey[story.feeling]?.image64.image(
-                          width: MediaQuery.textScalerOf(context).scale(16.0),
-                          key: ValueKey('feeling-${story.feeling}'),
-                        ) ??
-                        Icon(
-                          SpIcons.addFeeling,
-                          key: const ValueKey('feeling-none'),
-                          size: MediaQuery.textScalerOf(context).scale(16.0),
-                          color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
-                        ),
-                  ),
+              child: SizedBox(
+                width: MediaQuery.textScalerOf(context).scale(20),
+                height: MediaQuery.textScalerOf(context).scale(20),
+                child: Align(
+                  alignment: .center,
+                  widthFactor: 1.0,
+                  child:
+                      FeelingObject.feelingsByKey[story.feeling]?.image64.image(
+                        width: MediaQuery.textScalerOf(context).scale(16.0),
+                        key: ValueKey('feeling-${story.feeling}'),
+                      ) ??
+                      Icon(
+                        SpIcons.addFeeling,
+                        key: const ValueKey('feeling-none'),
+                        size: MediaQuery.textScalerOf(context).scale(16.0),
+                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                      ),
                 ),
               ),
             );
@@ -236,8 +233,9 @@ class SpStoryLabels extends StatelessWidget {
     if (story.event?.period == true) {
       children.add(
         SpTapEffect(
-          scaleActive: 1.5,
+          scaleActive: 2,
           effects: [.scaleDown],
+          behavior: .translucent,
           onTap: fromStoryTile
               ? null
               : () {

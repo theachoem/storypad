@@ -38,7 +38,7 @@ class StoryHeader extends StatelessWidget {
   final StoryContentDbModel draftContent;
   final SpStoryLabelsDraftActions? draftActions;
   final ValueNotifier<int?>? currentPageIndexNotifier;
-  final Future<void> Function(String? feeling)? setFeeling;
+  final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function() onToggleShowTime;
   final Future<void> Function(DateTime) onChangeDate;
