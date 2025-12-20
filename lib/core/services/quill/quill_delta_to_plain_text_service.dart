@@ -1,3 +1,5 @@
+import 'package:storypad/core/types/asset_type.dart';
+
 /// Converts Quill Delta JSON format to plain text or markdown.
 ///
 /// Example Delta JSON:
@@ -33,6 +35,9 @@ class QuillDeltaToPlainTextService {
     List<dynamic> deltaOps, {
     bool markdown = true,
     bool includeMarkdownEmbeds = false,
+
+    // eg. ../
+    String embedRelativePath = '',
   }) {
     // orderedListCounter: Tracks the numbering for ordered lists at each indent level
     // Example: {0: 3, 1: 2} means:
@@ -146,10 +151,16 @@ class QuillDeltaToPlainTextService {
 
         if (embedType == 'image' || embedType == 'audio') {
           if (includeMarkdownEmbeds) {
-            final url = insert[embedType];
+            final url = insert[embedType].toString();
 
-            // Markdown image syntax: ![alt text](url)
-            currentLineText += '![$embedType]($url)';
+            if (AssetType.values.map((e) => e.subDirectory).any((subDirectory) => url.startsWith(subDirectory))) {
+              // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
+              // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
+              currentLineText += '![$embedType]($embedRelativePath$url)';
+            } else {
+              // Markdown image syntax: ![alt text](url)
+              currentLineText += '![$embedType]($url)';
+            }
           }
           // Skip images and audio - don't include in text output
         } else {

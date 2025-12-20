@@ -181,6 +181,7 @@ class ExportStoriesToMarkdownService {
             page.body!,
             markdown: true,
             includeMarkdownEmbeds: true,
+            embedRelativePath: '../',
           ).trim(); // Trim to remove leading/trailing whitespace
 
           if (pageMarkdown.isNotEmpty) {

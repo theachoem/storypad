@@ -13,6 +13,7 @@ class _ExportSection extends StatefulWidget {
 
 class _ExportSectionState extends State<_ExportSection> {
   AppExportOption selectedOption = .storyPadJson;
+  bool includeMedia = true;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class _ExportSectionState extends State<_ExportSection> {
               secondary: Icon(SpIcons.markdown),
               title: Text(tr('list_tile.export_markdown.title')),
               subtitle: Text(tr('list_tile.export_markdown.subtitle')),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 6.0, bottom: 0.0),
               value: AppExportOption.markdown,
             ),
           if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context))
@@ -53,7 +54,9 @@ class _ExportSectionState extends State<_ExportSection> {
             ),
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 16.0),
+            margin: MediaQuery.paddingOf(
+              context,
+            ).copyWith(top: 0.0, bottom: 0).add(const EdgeInsets.symmetric(horizontal: 16.0)),
             child: FilledButton(
               onPressed: widget.viewModel.storyCount == null || widget.viewModel.storyCount == 0
                   ? null
@@ -61,10 +64,55 @@ class _ExportSectionState extends State<_ExportSection> {
               child: Text(tr('button.export')),
             ),
           ),
+          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context)) ...[
+            const Divider(height: 32.0),
+            Container(
+              width: double.infinity,
+              margin: MediaQuery.paddingOf(
+                context,
+              ).copyWith(top: 0.0, bottom: 0).add(const EdgeInsets.symmetric(horizontal: 16.0)),
+              child: TextButton.icon(
+                icon: const Icon(SpIcons.photo),
+                label: Text(tr('button.export_assets')),
+                onPressed: () => const ExportAssetsRoute().push(context),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
+
+  // Widget buildIncludeMediaTile() {
+  //   return SpFadeIn.fromBottom(
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         setState(() {
+  //           includeMedia = !includeMedia;
+  //         });
+  //       },
+  //       child: Container(
+  //         padding: const EdgeInsets.only(left: 56.0, right: 24.0),
+  //         width: double.infinity,
+  //         child: Row(
+  //           children: [
+  //             Checkbox.adaptive(
+  //               value: includeMedia,
+  //               onChanged: (bool? value) {
+  //                 setState(() {
+  //                   includeMedia = value ?? true;
+  //                 });
+  //               },
+  //             ),
+  //             const Expanded(
+  //               child: Text("Include media (may increase export file size"),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget buildExportHeader(BuildContext context) {
     return SpSectionTitle(

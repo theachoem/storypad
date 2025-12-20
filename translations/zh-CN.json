@@ -24,6 +24,7 @@
   "button.done": "完成",
   "button.edit": "编辑",
   "button.export": "导出数据",
+  "button.export_assets": "出口媒体",
   "button.forgot_pin": "忘记密码？",
   "button.get_started": "开始使用",
   "button.grant_permission": "授予权限",

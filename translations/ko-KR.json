@@ -24,6 +24,7 @@
   "button.done": "완료",
   "button.edit": "편집",
   "button.export": "내보내기 데이터",
+  "button.export_assets": "미디어 내보내기",
   "button.forgot_pin": "PIN 번호를 잊으셨나요?",
   "button.get_started": "시작하기",
   "button.grant_permission": "허가를 부여하다",

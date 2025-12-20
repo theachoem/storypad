@@ -24,6 +24,7 @@
   "button.done": "Done",
   "button.edit": "Edit",
   "button.export": "Export",
+  "button.export_assets": "Export Media",
   "button.forgot_pin": "Forgot PIN?",
   "button.get_started": "Get Started",
   "button.grant_permission": "Grant Permission",

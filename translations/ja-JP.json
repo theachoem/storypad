@@ -24,6 +24,7 @@
   "button.done": "完了",
   "button.edit": "編集",
   "button.export": "データのエクスポート",
+  "button.export_assets": "メディアのエクスポート",
   "button.forgot_pin": "PIN をお忘れですか？",
   "button.get_started": "開始",
   "button.grant_permission": "許可を与える",

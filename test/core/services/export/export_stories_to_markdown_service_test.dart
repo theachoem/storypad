@@ -497,7 +497,7 @@ void main() {
       final content = await file.readAsString();
 
       expect(content, contains('Check out this image:'));
-      expect(content, contains('![image](images/1759081859921.jpg)'));
+      expect(content, contains('![image](../images/1759081859921.jpg)'));
     });
 
     test('should escape special characters in YAML values', () async {

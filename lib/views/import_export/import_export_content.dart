@@ -38,6 +38,7 @@ class _ImportExportContent extends StatelessWidget {
           // ),
           const Divider(),
           _ExportSection(viewModel: viewModel),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.0),
         ],
       ),
     );

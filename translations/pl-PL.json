@@ -24,6 +24,7 @@
   "button.done": "Zrobione",
   "button.edit": "Redagować",
   "button.export": "Eksport danych",
+  "button.export_assets": "Eksport mediów",
   "button.forgot_pin": "Zapomniałeś PIN-u?",
   "button.get_started": "Rozpocznij",
   "button.grant_permission": "Udziel pozwolenia",

@@ -140,6 +140,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         // Export stories to markdown (organized by year)
         Map<int, TagDbModel?> tags = {};
         Map<int, EventDbModel?> events = {};
+
         await ExportStoriesToMarkdownService.call(
           stories: stories,
           outputDir: tempDir,
