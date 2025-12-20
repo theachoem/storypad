@@ -203,9 +203,10 @@ class SpStoryLabels extends StatelessWidget {
           builder: (callback) {
             return SpExpandTapArea.buildIfHasTap(
               onTap: setFeeling != null ? callback : null,
-              tapPadding: const EdgeInsets.all(4),
+              tapPadding: const EdgeInsets.all(8),
               child: SpTapEffect(
-                scaleActive: 1.3,
+                scaleActive: 1.5,
+                effects: [.scaleDown],
                 onTap: setFeeling != null ? callback : null,
                 child: SizedBox(
                   height: MediaQuery.textScalerOf(context).scale(20),

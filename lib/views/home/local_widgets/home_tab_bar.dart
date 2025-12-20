@@ -13,6 +13,7 @@ class _HomeTabBar extends StatelessWidget {
     return Stack(
       children: [
         TabBar(
+          physics: const AlwaysScrollableScrollPhysics(),
           indicatorSize: TabBarIndicatorSize.tab,
           enableFeedback: true,
           tabAlignment: TabAlignment.start,
