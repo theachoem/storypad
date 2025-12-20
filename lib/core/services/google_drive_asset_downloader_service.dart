@@ -62,13 +62,13 @@ class GoogleDriveAssetDownloaderService {
 
     // If no user or no Google Drive access, can't download
     if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
-      throw StateError('${asset.embedLink} cannot be loaded.');
+      throw StateError('${asset.relativeLocalFilePath} cannot be loaded.');
     }
 
     // Get download URL from Google Drive
     final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
     if (downloadUrl == null) {
-      throw StateError('${asset.embedLink} with no valid download URL cannot be loaded.');
+      throw StateError('${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.');
     }
 
     // Download file from Google Drive
@@ -76,7 +76,7 @@ class GoogleDriveAssetDownloaderService {
       downloadUrl: downloadUrl,
       localFilePath: asset.localFilePath,
       authHeaders: currentUser.authHeaders,
-      embedLink: asset.embedLink,
+      embedLink: asset.relativeLocalFilePath,
     );
   }
 

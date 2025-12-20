@@ -1,43 +1,33 @@
 import 'package:storypad/core/constants/app_constants.dart';
 
-/// Asset type enumeration with URI scheme management.
+/// Asset type enumeration with storage subdirectory management.
 ///
 /// This is the single source of truth for asset types and how they are
-/// referenced throughout the application. Adding new asset types requires
+/// stored in the application. Adding new asset types requires
 /// adding a new enum value only.
 ///
-/// Example asset links:
-/// - Image: storypad://assets/1762500783746
-/// - Audio: storypad://audio/1762500783747
+/// Example relative paths:
+/// - Image: images/1762500783746.jpg
+/// - Audio: audio/1762500783747.m4a
 enum AssetType {
-  /// Original asset type.
+  /// Image asset type (photos, screenshots, etc.)
   ///
-  /// Uses 'assets' in the URI for backward compatibility with existing
-  /// embed links, but stores files in the 'images' subdirectory.
-  /// This naming mismatch is intentional to maintain compatibility.
-  image(embedLinkPath: 'assets', subDirectory: 'images'),
+  /// Stores files in the 'images' subdirectory.
+  /// Example: images/1762500783746.jpg
+  image(subDirectory: 'images'),
 
-  /// Recently added asset type for audio files (voice notes, etc.).
+  /// Audio asset type (voice notes, recordings, etc.)
   ///
-  /// Uses 'audio' for both URI scheme and storage subdirectory.
-  audio(embedLinkPath: 'audio', subDirectory: 'audio')
+  /// Stores files in the 'audio' subdirectory.
+  /// Example: audio/1762500783747.m4a
+  audio(subDirectory: 'audio')
   ;
 
-  final String embedLinkPath;
   final String subDirectory;
 
   const AssetType({
-    required this.embedLinkPath,
     required this.subDirectory,
   });
-
-  /// Full URI path for this asset type
-  /// Returns: "storypad://{path}/"
-  String get embedLinkPrefix => 'storypad://$embedLinkPath/';
-
-  /// Build a complete link for the given asset ID
-  /// Returns: "storypad://{scheme}/{id}"
-  String buildEmbedLink(int id) => '$embedLinkPrefix$id';
 
   String getStoragePath({
     required int id,
@@ -48,6 +38,15 @@ enum AssetType {
     return "${kSupportDirectory.path}/$subDirectory/$id$extension";
   }
 
+  String getRelativeStoragePath({
+    required int id,
+    required String extension,
+  }) {
+    /// Get the relative storage path for an asset based on ID, extension, and type.
+    /// This is used for storing paths in the database.
+    return "$subDirectory/$id$extension";
+  }
+
   static AssetType fromValue(String? value) {
     for (var type in AssetType.values) {
       if (type.name == value) return type;
@@ -55,55 +54,25 @@ enum AssetType {
     return AssetType.image;
   }
 
-  /// Parse asset ID from a URI link
+  /// Parse asset ID from a relative file path
   ///
-  /// Returns null if the link doesn't match this type's scheme.
-  ///
-  /// Example:
-  /// ```dart
-  /// final id = AssetType.audio.parseAssetIdFromLink('storypad://audio/123');
-  /// // id == 123
-  /// ```
-  int? parseAssetIdFromLink(String link) {
-    if (link.startsWith(embedLinkPrefix)) {
-      return int.tryParse(link.substring(embedLinkPrefix.length));
-    }
-    return null;
+  /// Extracts the numeric ID from paths like:
+  /// - images/1762500783746.jpg → 1762500783746
+  /// - audio/1762500783747.m4a → 1762500783747
+  static int? parseAssetId(String relativePath) {
+    final assetId = relativePath.split("/").last.split(".").first;
+    final assetIdInt = int.tryParse(assetId);
+    return assetIdInt;
   }
 
-  /// Parse asset ID from a URI link (convenience method)
+  /// Determine asset type from a relative file path
   ///
-  /// Tries to parse with any asset type and returns the ID if found.
-  ///
-  /// Example:
-  /// ```dart
-  /// final id = AssetType.parseAssetId('storypad://audio/123');
-  /// // id == 123
-  /// ```
-  static int? parseAssetId(String link) {
+  /// Returns the asset type enum based on the subdirectory prefix.
+  /// Returns null if the path doesn't match any known type.
+  static AssetType? getTypeFromLink(String relativePath) {
     for (final type in AssetType.values) {
-      if (link.startsWith(type.embedLinkPrefix)) {
-        return int.tryParse(link.substring(type.embedLinkPrefix.length));
-      }
+      if (relativePath.startsWith(type.subDirectory)) return type;
     }
     return null;
   }
-
-  /// Determine asset type from a URI link
-  ///
-  /// Returns the asset type enum or null if link is invalid.
-  static AssetType? getTypeFromLink(String link) {
-    for (final type in AssetType.values) {
-      if (link.startsWith(type.embedLinkPrefix)) return type;
-    }
-    return null;
-  }
-
-  /// Check if a string is a valid asset link
-  static bool isValidAssetLink(String link) {
-    return AssetType.values.any((type) => link.startsWith(type.embedLinkPrefix));
-  }
-
-  /// All supported URI schemes (for validation and parsing)
-  static List<String> get allEmbedLinkPrefixes => AssetType.values.map((t) => t.embedLinkPrefix).toList();
 }

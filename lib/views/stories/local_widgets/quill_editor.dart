@@ -99,7 +99,7 @@ class _QuillEditorState extends State<_QuillEditor> {
         embedBuilders: [
           SpImageBlockEmbed(
             layoutType: widget.layoutType,
-            fetchAllImages: () => StoryExtractAssetsFromContentService.images(widget.storyContent),
+            fetchAllImages: () => StoryContentEmbedExtractor.images(widget.storyContent),
           ),
           SpAudioBlockEmbed(),
           SpDateBlockEmbed(),

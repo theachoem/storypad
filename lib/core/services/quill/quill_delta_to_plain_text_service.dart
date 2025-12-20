@@ -1,3 +1,5 @@
+import 'package:storypad/core/types/asset_type.dart';
+
 /// Converts Quill Delta JSON format to plain text or markdown.
 ///
 /// Example Delta JSON:
@@ -32,6 +34,10 @@ class QuillDeltaToPlainTextService {
   static String call(
     List<dynamic> deltaOps, {
     bool markdown = true,
+    bool includeMarkdownEmbeds = false,
+
+    // eg. ../
+    String embedRelativePath = '',
   }) {
     // orderedListCounter: Tracks the numbering for ordered lists at each indent level
     // Example: {0: 3, 1: 2} means:
@@ -140,10 +146,22 @@ class QuillDeltaToPlainTextService {
         }
       } else if (insert is Map) {
         // Handle embeds (images, videos, audio, custom embeds)
-        // Example: {"insert": {"image": "path/to/image.png"}}
+        // Example: {"insert": {"image": "images/1759081859921.jpg"}}
         final embedType = insert.keys.first;
 
         if (embedType == 'image' || embedType == 'audio') {
+          if (includeMarkdownEmbeds) {
+            final url = insert[embedType].toString();
+
+            if (AssetType.values.map((e) => e.subDirectory).any((subDirectory) => url.startsWith(subDirectory))) {
+              // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
+              // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
+              currentLineText += '![$embedType]($embedRelativePath$url)';
+            } else {
+              // Markdown image syntax: ![alt text](url)
+              currentLineText += '![$embedType]($url)';
+            }
+          }
           // Skip images and audio - don't include in text output
         } else {
           // For other embeds (like video), use Unicode object replacement character

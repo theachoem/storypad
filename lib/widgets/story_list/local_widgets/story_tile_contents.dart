@@ -20,10 +20,10 @@ class _StoryTileContents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // display only images for now.
-    final assetLinks = content != null ? StoryExtractAssetsFromContentService.images(content) : null;
+    final assetPaths = content != null ? StoryContentEmbedExtractor.images(content) : null;
 
-    final audioEmbedLinks = (story.draftContent ?? story.latestContent) != null
-        ? StoryExtractAssetsFromContentService.audio(story.draftContent ?? story.latestContent)
+    final audioPaths = (story.draftContent ?? story.latestContent) != null
+        ? StoryContentEmbedExtractor.audio(story.draftContent ?? story.latestContent)
         : null;
 
     return Expanded(
@@ -55,7 +55,7 @@ class _StoryTileContents extends StatelessWidget {
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
-            voicesCount: audioEmbedLinks?.length,
+            voicesCount: audioPaths?.length,
             margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
             onToggleShowDayCount: viewOnly
                 ? null
@@ -77,9 +77,9 @@ class _StoryTileContents extends StatelessWidget {
                   },
             onToggleManagingPage: null,
           ),
-          if (assetLinks?.isNotEmpty == true) ...[
+          if (assetPaths?.isNotEmpty == true) ...[
             SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
-            _StoryTileAssets(assetLinks: assetLinks!),
+            _StoryTileAssets(assetPaths: assetPaths!),
             if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
           ],
           if (story.inArchives) ...[

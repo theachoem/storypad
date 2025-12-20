@@ -72,13 +72,13 @@ class EditStoryViewModel extends BaseStoryViewModel {
       richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
     );
 
-    if (params.initialAsset?.embedLink != null) {
+    if (params.initialAsset?.relativeLocalFilePath != null) {
       final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
       final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
       pagesManager.pagesMap.first.bodyController.replaceText(
         index,
         length,
-        BlockEmbed.image(params.initialAsset!.embedLink),
+        BlockEmbed.image(params.initialAsset!.relativeLocalFilePath),
         null,
       );
     }

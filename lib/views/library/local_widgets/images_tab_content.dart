@@ -215,10 +215,10 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
             leadingIconData: SpIcons.photo,
             title: tr("button.view"),
             onPressed: () {
-              final embedLinks = assets?.items.map((e) => e.embedLink).toList() ?? [];
+              final embedLinks = assets?.items.map((e) => e.relativeLocalFilePath).toList() ?? [];
               SpImagesViewer.fromString(
                 images: embedLinks,
-                initialIndex: embedLinks.indexOf(asset.embedLink),
+                initialIndex: embedLinks.indexOf(asset.relativeLocalFilePath),
               ).show(context);
             },
           ),
@@ -241,7 +241,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
                 Stack(
                   children: [
                     SpImage(
-                      link: asset.embedLink,
+                      link: asset.relativeLocalFilePath,
                       width: double.infinity,
                       height: 120,
                     ),

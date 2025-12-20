@@ -25,6 +25,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }) {
     int? createdYear = filters?["created_year"];
     AssetType? type = filters?["type"];
+    int? version = filters?["version"];
     List<int>? ids = filters?["ids"]?.cast<int>();
     int? tag = filters?["tag"];
 
@@ -37,6 +38,10 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       );
     } else if (type != null) {
       conditions = conditions.and(AssetObjectBox_.type.equals(type.name));
+    }
+
+    if (version == 1) {
+      conditions = conditions.and(AssetObjectBox_.version.equals(1).or(AssetObjectBox_.version.isNull()));
     }
 
     if (tag != null) {
@@ -77,6 +82,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
       permanentlyDeletedAt: model.permanentlyDeletedAt,
+      version: model.version ?? 1,
     );
   }
 
@@ -96,6 +102,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
         permanentlyDeletedAt: model.permanentlyDeletedAt,
+        version: model.version ?? 1,
       );
     }).toList();
   }
@@ -113,6 +120,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       updatedAt: object.updatedAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
       permanentlyDeletedAt: object.permanentlyDeletedAt,
+      version: object.version ?? 1,
     );
   }
 

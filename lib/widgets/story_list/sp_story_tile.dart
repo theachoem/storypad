@@ -9,7 +9,7 @@ import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/objects/story_icon_object.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
-import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';

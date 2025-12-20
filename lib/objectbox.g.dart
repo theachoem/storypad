@@ -310,7 +310,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4094713120589114734),
     name: 'AssetObjectBox',
-    lastPropertyId: const obx_int.IdUid(12, 7750389189867599724),
+    lastPropertyId: const obx_int.IdUid(13, 8859144998009161825),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -371,6 +371,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(12, 7750389189867599724),
         name: 'tags',
         type: 27,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 8859144998009161825),
+        name: 'version',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -1058,7 +1064,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final tagsOffset = object.tags == null
             ? null
             : fbb.writeListInt64(object.tags!);
-        fbb.startTable(13);
+        fbb.startTable(14);
         fbb.addInt64(0, object.id);
         fbb.addOffset(2, cloudDestinationsOffset);
         fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
@@ -1069,6 +1075,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(9, typeOffset);
         fbb.addOffset(10, metadataOffset);
         fbb.addOffset(11, tagsOffset);
+        fbb.addInt64(12, object.version);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1108,6 +1115,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fb.Int64Reader(),
           lazy: false,
         ).vTableGetNullable(buffer, rootOffset, 26);
+        final versionParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          28,
+        );
         final lastSavedDeviceIdParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 16);
@@ -1121,6 +1133,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           type: typeParam,
           metadata: metadataParam,
           tags: tagsParam,
+          version: versionParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
@@ -1687,6 +1700,11 @@ class AssetObjectBox_ {
   /// See [AssetObjectBox.tags].
   static final tags = obx.QueryIntegerVectorProperty<AssetObjectBox>(
     _entities[3].properties[9],
+  );
+
+  /// See [AssetObjectBox.version].
+  static final version = obx.QueryIntegerProperty<AssetObjectBox>(
+    _entities[3].properties[10],
   );
 }
 

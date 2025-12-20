@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -33,6 +34,8 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
 
       tags = await TagDbModel.db.where().then((e) => e?.items);
+      if (tags?.isNotEmpty == true) tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
+
       await _resetTagsCount();
     } else {
       years = await StoryDbModel.db.getStoryCountsByYear(
@@ -79,8 +82,12 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  bool tagSelected(TagDbModel tag) => (searchFilter.tagId == tag.id) || (tag.id == 0 && searchFilter.tagId == null);
+
   void toggleTag(TagDbModel tag) {
-    searchFilter = searchFilter.copyWith(tagId: tag.id == searchFilter.tagId ? null : tag.id);
+    searchFilter = searchFilter.copyWith(
+      tagId: tag.id == searchFilter.tagId || tag.id == 0 ? null : tag.id,
+    );
     notifyListeners();
 
     SearchFilterStorage().writeObject(searchFilter);

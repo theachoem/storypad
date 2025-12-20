@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "tables": {
+    "preferences": [],
+    "stories": [
+      {
+        "id": 1735537709471,
+        "version": 2,
+        "type": "docs",
+        "year": 2025,
+        "month": 1,
+        "day": 4,
+        "hour": 0,
+        "minute": 0,
+        "second": 0,
+        "starred": false,
+        "feeling": "excited",
+        "tags": [],
+        "assets": [1759081859921],
+        "latest_content": {
+          "id": 1737228252622,
+          "title": "Let's Begin: 2025 ✨",
+          "plain_text": "Hi there, this is me from 2025, but don't worry, you can handle anything!\n",
+          "created_at": "2025-01-19T02:24:12.622471",
+          "pages": null,
+          "rich_pages": [
+            {
+              "id": 1747569989013,
+              "title": "Let's Begin: 2025 ✨",
+              "body": [
+                {
+                  "insert": "Hi there, this is me from 2025, but don't worry, you can handle anything!\n"
+                }
+              ]
+            },
+            {
+              "id": 1758130569824,
+              "title": null,
+              "body": [
+                {
+                  "insert": {
+                    "image": "images/1759081859921.jpg"
+                  }
+                },
+                {
+                  "insert": "\n"
+                }
+              ]
+            }
+          ]
+        },
+        "draft_content": null,
+        "created_at": "2024-12-30T12:48:29.471",
+        "updated_at": "2025-08-23T01:16:06.974",
+        "gallery_template_id": null,
+        "template_id": null,
+        "event_id": null,
+        "moved_to_bin_at": null,
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "preferences": {
+          "star_icon": null,
+          "show_day_count": true,
+          "show_time": false,
+          "color_seed_value": null,
+          "color_tone": null,
+          "font_family": null,
+          "font_size": null,
+          "font_weight_index": null,
+          "title_font_family": null,
+          "title_font_weight_index": null,
+          "title_expanded": null,
+          "layout_type": "pages"
+        },
+        "permanently_deleted_at": null
+      },
+      {
+        "id": 1715024221522,
+        "version": 2,
+        "type": "docs",
+        "year": 2024,
+        "month": 5,
+        "day": 7,
+        "hour": 2,
+        "minute": 37,
+        "second": 0,
+        "starred": false,
+        "feeling": null,
+        "tags": null,
+        "assets": null,
+        "latest_content": {
+          "id": 1715024260730,
+          "title": "",
+          "plain_text": "Another tough week again, have lots of urgent task, and also need to prepare for present at innovation Festival.\n",
+          "created_at": "2024-05-07T02:37:40.730119",
+          "pages": null,
+          "rich_pages": [
+            {
+              "id": 1747572214870,
+              "title": "",
+              "body": [
+                {
+                  "insert": "Another tough week again, have lots of urgent task, and also need to prepare for present at innovation Festival.\n"
+                }
+              ]
+            }
+          ]
+        },
+        "draft_content": null,
+        "created_at": "2024-05-07T02:37:01.522",
+        "updated_at": "2025-01-25T17:53:01.265",
+        "gallery_template_id": null,
+        "template_id": null,
+        "event_id": null,
+        "moved_to_bin_at": null,
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "preferences": {
+          "star_icon": null,
+          "show_day_count": false,
+          "show_time": false,
+          "color_seed_value": null,
+          "color_tone": null,
+          "font_family": null,
+          "font_size": null,
+          "font_weight_index": null,
+          "title_font_family": null,
+          "title_font_weight_index": null,
+          "title_expanded": null,
+          "layout_type": "pages"
+        },
+        "permanently_deleted_at": null
+      },
+      {
+        "id": 1710076461049,
+        "version": 2,
+        "type": "docs",
+        "year": 2024,
+        "month": 3,
+        "day": 10,
+        "hour": 20,
+        "minute": 14,
+        "second": 19,
+        "starred": false,
+        "feeling": "cheerfulness",
+        "tags": ["20"],
+        "assets": null,
+        "latest_content": {
+          "id": 1710078835174,
+          "title": "Brown app idea but for all cafe",
+          "plain_text": "We can put it in ABA. Service add-ons\n- App / Admin\n- Recipe\n",
+          "created_at": "2024-03-10T20:53:55.174836",
+          "pages": null,
+          "rich_pages": [
+            {
+              "id": 1747569989058,
+              "title": "Brown app idea but for all cafe",
+              "body": [
+                {
+                  "insert": "We can put it in ABA. Service add-ons\n- App / Admin\n- Recipe\n"
+                }
+              ]
+            }
+          ]
+        },
+        "draft_content": null,
+        "created_at": "2024-03-10T20:14:21.049",
+        "updated_at": "2025-08-23T01:16:07.204",
+        "gallery_template_id": null,
+        "template_id": null,
+        "event_id": null,
+        "moved_to_bin_at": null,
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "preferences": {
+          "star_icon": null,
+          "show_day_count": false,
+          "show_time": false,
+          "color_seed_value": null,
+          "color_tone": null,
+          "font_family": null,
+          "font_size": null,
+          "font_weight_index": null,
+          "title_font_family": null,
+          "title_font_weight_index": null,
+          "title_expanded": null,
+          "layout_type": "pages"
+        },
+        "permanently_deleted_at": null
+      },
+      {
+        "id": 1708195135141,
+        "version": 2,
+        "type": "docs",
+        "year": 2024,
+        "month": 2,
+        "day": 18,
+        "hour": 1,
+        "minute": 38,
+        "second": 55,
+        "starred": false,
+        "feeling": null,
+        "tags": ["20"],
+        "assets": null,
+        "latest_content": {
+          "id": 1708195163990,
+          "title": "Rewrite StoryPad",
+          "plain_text": "Support data comming from old StoryPad, and can communicate with Spooky. \n",
+          "created_at": "2024-02-18T01:39:23.990526",
+          "pages": null,
+          "rich_pages": [
+            {
+              "id": 1747572214889,
+              "title": "Rewrite StoryPad",
+              "body": [
+                {
+                  "insert": "Support data comming from old StoryPad, and can communicate with Spooky. \n"
+                }
+              ]
+            }
+          ]
+        },
+        "draft_content": null,
+        "created_at": "2024-02-18T01:38:55.141",
+        "updated_at": "2025-01-25T17:53:01.384",
+        "gallery_template_id": null,
+        "template_id": null,
+        "event_id": null,
+        "moved_to_bin_at": null,
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "preferences": {
+          "star_icon": null,
+          "show_day_count": false,
+          "show_time": false,
+          "color_seed_value": null,
+          "color_tone": null,
+          "font_family": null,
+          "font_size": null,
+          "font_weight_index": null,
+          "title_font_family": null,
+          "title_font_weight_index": null,
+          "title_expanded": null,
+          "layout_type": "pages"
+        },
+        "permanently_deleted_at": null
+      }
+    ],
+    "tags": [
+      {
+        "id": 21,
+        "index": 3,
+        "version": 0,
+        "title": "Workout 🏋️",
+        "starred": true,
+        "emoji": null,
+        "created_at": "2024-01-15T01:06:18.268",
+        "updated_at": "2025-12-01T12:33:56.086",
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "permanently_deleted_at": null,
+        "stories_count": null
+      }
+    ],
+    "events": [],
+    "templates": [],
+    "assets": [
+      {
+        "id": 1759081859921,
+        "original_source": "images/1759081859921.jpg",
+        "version": 2,
+        "tags": [27, 30],
+        "cloud_destinations": {
+          "google_drive": {
+            "imacoustic.th@gmail.com": {
+              "file_id": "1Z9DMYj4IDJEs3W4peFCyQu8xKxw3QT6Wb-nLp_OY4NYE_Dh0zw",
+              "file_name": "1759081859921.jpg"
+            }
+          }
+        },
+        "type": "image",
+        "metadata": null,
+        "created_at": "2025-09-29T00:50:59.924",
+        "updated_at": "2025-12-13T13:33:05.623",
+        "last_saved_device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+        "permanently_deleted_at": null
+      }
+    ],
+    "relax_sound_mixes": []
+  },
+  "meta_data": {
+    "device_model": "iPhone",
+    "device_id": "9415AA63-AB61-44C8-B9DD-D8343EE9C538",
+    "created_at": "2025-12-01T12:33:56.086"
+  },
+  "year": 2024
+}

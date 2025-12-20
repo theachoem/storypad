@@ -32,7 +32,8 @@ class SpImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (link.startsWith("storypad://")) {
+    // Check if this is a relative asset path (images/ or audio/)
+    if (link.startsWith("images/") || link.startsWith("audio/")) {
       return Consumer<BackupProvider>(
         builder: (context, provider, child) {
           return Image(
@@ -40,7 +41,7 @@ class SpImage extends StatelessWidget {
             width: width,
             height: height,
             fit: BoxFit.cover,
-            image: SpDbImageProvider(embedLink: link, currentUser: provider.currentUser),
+            image: SpDbImageProvider(relativePath: link, currentUser: provider.currentUser),
             errorBuilder: (context, error, strackTrace) =>
                 errorWidget?.call(context, link, error) ??
                 buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),

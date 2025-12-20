@@ -97,8 +97,8 @@ class _QuillImageRenderer extends StatelessWidget {
                 onTap: readOnly ? () => viewImage(context, link) : null,
                 onLongPress: () async {
                   Feedback.forLongPress(context);
-                  final embedLink = node.value.data;
-                  final asset = await AssetDbModel.findBy(embedLink: embedLink);
+                  final relativePath = node.value.data;
+                  final asset = await AssetDbModel.findBy(relativePath: relativePath);
                   if (!context.mounted || asset == null) return;
                   SpAssetInfoSheet(
                     asset: asset,

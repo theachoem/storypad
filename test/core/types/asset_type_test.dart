@@ -11,68 +11,12 @@ void main() {
 
     test('image type has correct properties', () {
       expect(AssetType.image.name, equals('image'));
-      expect(AssetType.image.embedLinkPath, equals('assets'));
       expect(AssetType.image.subDirectory, equals('images'));
     });
 
     test('audio type has correct properties', () {
       expect(AssetType.audio.name, equals('audio'));
-      expect(AssetType.audio.embedLinkPath, equals('audio'));
       expect(AssetType.audio.subDirectory, equals('audio'));
-    });
-  });
-
-  group('AssetType - embedLinkPrefix', () {
-    test('generates correct prefix for image', () {
-      expect(AssetType.image.embedLinkPrefix, equals('storypad://assets/'));
-    });
-
-    test('generates correct prefix for audio', () {
-      expect(AssetType.audio.embedLinkPrefix, equals('storypad://audio/'));
-    });
-
-    test('prefix always ends with slash', () {
-      for (final type in AssetType.values) {
-        expect(type.embedLinkPrefix, endsWith('/'));
-      }
-    });
-
-    test('prefix always starts with storypad://', () {
-      for (final type in AssetType.values) {
-        expect(type.embedLinkPrefix, startsWith('storypad://'));
-      }
-    });
-  });
-
-  group('AssetType - buildEmbedLink', () {
-    test('builds correct image embed link', () {
-      const id = 1762500783746;
-      expect(
-        AssetType.image.buildEmbedLink(id),
-        equals('storypad://assets/1762500783746'),
-      );
-    });
-
-    test('builds correct audio embed link', () {
-      const id = 1762500783747;
-      expect(
-        AssetType.audio.buildEmbedLink(id),
-        equals('storypad://audio/1762500783747'),
-      );
-    });
-
-    test('handles various ID values', () {
-      final testIds = [1, 100, 999999, 1762500783746];
-      for (final id in testIds) {
-        expect(
-          AssetType.image.buildEmbedLink(id),
-          equals('storypad://assets/$id'),
-        );
-        expect(
-          AssetType.audio.buildEmbedLink(id),
-          equals('storypad://audio/$id'),
-        );
-      }
     });
   });
 
@@ -124,218 +68,169 @@ void main() {
     });
   });
 
-  group('AssetType - parseAssetIdFromLink', () {
-    test('parses image asset ID from valid link', () {
-      const link = 'storypad://assets/1762500783746';
+  group('AssetType - getRelativeStoragePath', () {
+    test('generates correct relative path for image', () {
+      const id = 1762500783746;
+      const extension = '.jpg';
       expect(
-        AssetType.image.parseAssetIdFromLink(link),
-        equals(1762500783746),
+        AssetType.image.getRelativeStoragePath(id: id, extension: extension),
+        equals('images/1762500783746.jpg'),
       );
     });
 
-    test('parses audio asset ID from valid link', () {
-      const link = 'storypad://audio/1762500783747';
+    test('generates correct relative path for audio', () {
+      const id = 1762500783747;
+      const extension = '.m4a';
       expect(
-        AssetType.audio.parseAssetIdFromLink(link),
-        equals(1762500783747),
+        AssetType.audio.getRelativeStoragePath(id: id, extension: extension),
+        equals('audio/1762500783747.m4a'),
       );
     });
 
-    test('returns null for mismatched type', () {
-      const audioLink = 'storypad://audio/123';
-      expect(AssetType.image.parseAssetIdFromLink(audioLink), isNull);
+    test('handles various extensions', () {
+      const testData = [
+        ('.jpg', 'images/123.jpg'),
+        ('.png', 'images/123.png'),
+        ('.gif', 'images/123.gif'),
+      ];
 
-      const imageLink = 'storypad://assets/456';
-      expect(AssetType.audio.parseAssetIdFromLink(imageLink), isNull);
+      for (final (extension, expected) in testData) {
+        expect(
+          AssetType.image.getRelativeStoragePath(id: 123, extension: extension),
+          equals(expected),
+        );
+      }
+    });
+  });
+
+  group('AssetType - parseAssetId (static method)', () {
+    test('parses image asset ID from relative path', () {
+      const path = 'images/1762500783746.jpg';
+      expect(AssetType.parseAssetId(path), equals(1762500783746));
     });
 
-    test('returns null for invalid link format', () {
-      expect(AssetType.image.parseAssetIdFromLink('invalid'), isNull);
-      expect(AssetType.image.parseAssetIdFromLink('storypad://assets/'), isNull);
-      expect(AssetType.image.parseAssetIdFromLink('storypad://assets/abc'), isNull);
+    test('parses audio asset ID from relative path', () {
+      const path = 'audio/1762500783747.m4a';
+      expect(AssetType.parseAssetId(path), equals(1762500783747));
+    });
+
+    test('returns null for invalid path format', () {
+      expect(AssetType.parseAssetId('invalid'), isNull);
+      expect(AssetType.parseAssetId('images/'), isNull);
+      expect(AssetType.parseAssetId('images/abc.jpg'), isNull);
     });
 
     test('handles edge case IDs', () {
       expect(
-        AssetType.image.parseAssetIdFromLink('storypad://assets/0'),
+        AssetType.parseAssetId('images/0.jpg'),
         equals(0),
       );
       expect(
-        AssetType.audio.parseAssetIdFromLink('storypad://audio/999999999'),
+        AssetType.parseAssetId('audio/999999999.m4a'),
         equals(999999999),
       );
     });
-  });
 
-  group('AssetType - parseAssetId (static convenience method)', () {
-    test('parses image link', () {
-      const link = 'storypad://assets/1762500783746';
-      expect(AssetType.parseAssetId(link), equals(1762500783746));
-    });
-
-    test('parses audio link', () {
-      const link = 'storypad://audio/1762500783747';
-      expect(AssetType.parseAssetId(link), equals(1762500783747));
-    });
-
-    test('returns null for invalid link', () {
-      expect(AssetType.parseAssetId('invalid://link/123'), isNull);
-      expect(AssetType.parseAssetId('storypad://unknown/123'), isNull);
-      expect(AssetType.parseAssetId('not a link'), isNull);
-    });
-
-    test('handles various valid links', () {
-      final testLinks = [
-        ('storypad://assets/1', 1),
-        ('storypad://assets/999', 999),
-        ('storypad://audio/1', 1),
-        ('storypad://audio/999', 999),
-      ];
-
-      for (final (link, expectedId) in testLinks) {
-        expect(AssetType.parseAssetId(link), equals(expectedId));
-      }
+    test('handles paths without extensions', () {
+      expect(
+        AssetType.parseAssetId('images/123'),
+        equals(123),
+      );
+      expect(
+        AssetType.parseAssetId('audio/456'),
+        equals(456),
+      );
     });
   });
 
   group('AssetType - getTypeFromLink (static)', () {
-    test('identifies image type from link', () {
-      const link = 'storypad://assets/123';
-      expect(AssetType.getTypeFromLink(link), equals(AssetType.image));
+    test('identifies image type from relative path', () {
+      const path = 'images/123.jpg';
+      expect(AssetType.getTypeFromLink(path), equals(AssetType.image));
     });
 
-    test('identifies audio type from link', () {
-      const link = 'storypad://audio/123';
-      expect(AssetType.getTypeFromLink(link), equals(AssetType.audio));
+    test('identifies audio type from relative path', () {
+      const path = 'audio/123.m4a';
+      expect(AssetType.getTypeFromLink(path), equals(AssetType.audio));
     });
 
-    test('returns null for invalid link', () {
+    test('returns null for invalid path', () {
       expect(AssetType.getTypeFromLink('invalid'), isNull);
-      expect(AssetType.getTypeFromLink('storypad://unknown/123'), isNull);
+      expect(AssetType.getTypeFromLink('unknown/123.jpg'), isNull);
     });
 
-    test('matches any valid asset link', () {
+    test('matches any valid asset path by subdirectory', () {
       for (final type in AssetType.values) {
-        final link = type.buildEmbedLink(123);
-        expect(AssetType.getTypeFromLink(link), equals(type));
-      }
-    });
-  });
-
-  group('AssetType - isValidAssetLink (static)', () {
-    test('validates image links', () {
-      expect(
-        AssetType.isValidAssetLink('storypad://assets/123'),
-        isTrue,
-      );
-    });
-
-    test('validates audio links', () {
-      expect(
-        AssetType.isValidAssetLink('storypad://audio/456'),
-        isTrue,
-      );
-    });
-
-    test('rejects invalid links', () {
-      expect(AssetType.isValidAssetLink('invalid'), isFalse);
-      expect(AssetType.isValidAssetLink('storypad://unknown/123'), isFalse);
-      expect(AssetType.isValidAssetLink('http://example.com'), isFalse);
-    });
-
-    test('all buildEmbedLink results are valid', () {
-      for (final type in AssetType.values) {
-        final link = type.buildEmbedLink(123);
-        expect(AssetType.isValidAssetLink(link), isTrue);
-      }
-    });
-  });
-
-  group('AssetType - allEmbedLinkPrefixes (static)', () {
-    test('includes all asset type prefixes', () {
-      final prefixes = AssetType.allEmbedLinkPrefixes;
-      expect(prefixes, hasLength(2));
-      expect(prefixes, contains('storypad://assets/'));
-      expect(prefixes, contains('storypad://audio/'));
-    });
-
-    test('all prefixes are valid', () {
-      for (final prefix in AssetType.allEmbedLinkPrefixes) {
-        expect(prefix, startsWith('storypad://'));
-        expect(prefix, endsWith('/'));
+        final path = type.getRelativeStoragePath(id: 123, extension: '.ext');
+        expect(AssetType.getTypeFromLink(path), equals(type));
       }
     });
   });
 
   group('AssetType - Integration Tests', () {
-    test('complete workflow for image asset link parsing', () {
+    test('complete workflow for image asset path', () {
       const assetId = 1762500783746;
+      const extension = '.jpg';
 
-      // Build link
-      final link = AssetType.image.buildEmbedLink(assetId);
-      expect(link, equals('storypad://assets/1762500783746'));
+      // Generate relative path
+      final path = AssetType.image.getRelativeStoragePath(
+        id: assetId,
+        extension: extension,
+      );
+      expect(path, equals('images/1762500783746.jpg'));
 
-      // Validate link
-      expect(AssetType.isValidAssetLink(link), isTrue);
-
-      // Get type from link
-      final type = AssetType.getTypeFromLink(link);
+      // Get type from path
+      final type = AssetType.getTypeFromLink(path);
       expect(type, equals(AssetType.image));
 
-      // Parse ID from link
-      final parsedId = AssetType.parseAssetId(link);
+      // Parse ID from path
+      final parsedId = AssetType.parseAssetId(path);
       expect(parsedId, equals(assetId));
     });
 
-    test('complete workflow for audio asset link parsing', () {
+    test('complete workflow for audio asset path', () {
       const assetId = 1762500783747;
+      const extension = '.m4a';
 
-      // Build link
-      final link = AssetType.audio.buildEmbedLink(assetId);
-      expect(link, equals('storypad://audio/1762500783747'));
+      // Generate relative path
+      final path = AssetType.audio.getRelativeStoragePath(
+        id: assetId,
+        extension: extension,
+      );
+      expect(path, equals('audio/1762500783747.m4a'));
 
-      // Validate link
-      expect(AssetType.isValidAssetLink(link), isTrue);
-
-      // Get type from link
-      final type = AssetType.getTypeFromLink(link);
+      // Get type from path
+      final type = AssetType.getTypeFromLink(path);
       expect(type, equals(AssetType.audio));
 
-      // Parse ID from link
-      final parsedId = AssetType.parseAssetId(link);
+      // Parse ID from path
+      final parsedId = AssetType.parseAssetId(path);
       expect(parsedId, equals(assetId));
     });
 
     test('type identification consistency', () {
       for (final type in AssetType.values) {
         for (final id in [1, 123, 999999]) {
-          final link = type.buildEmbedLink(id);
-          expect(AssetType.getTypeFromLink(link), equals(type));
-          expect(AssetType.parseAssetId(link), equals(id));
-          expect(AssetType.isValidAssetLink(link), isTrue);
+          final path = type.getRelativeStoragePath(id: id, extension: '.ext');
+          expect(AssetType.getTypeFromLink(path), equals(type));
+          expect(AssetType.parseAssetId(path), equals(id));
         }
       }
     });
   });
 
-  group('AssetType - backward compatibility', () {
-    test('image uses assets scheme for backward compatibility', () {
-      // Image type deliberately uses 'assets' in URI for backward compatibility
-      expect(AssetType.image.embedLinkPath, equals('assets'));
-      expect(AssetType.image.subDirectory, equals('images'));
-
-      // This asymmetry is intentional and documented
-      expect(
-        AssetType.image.embedLinkPrefix,
-        isNot(equals('${AssetType.image.subDirectory}/')),
-      );
+  group('AssetType - Storage paths', () {
+    test('getRelativeStoragePath returns relative path', () {
+      final path = AssetType.image.getRelativeStoragePath(id: 123, extension: '.jpg');
+      // Should start with subDirectory, not an absolute path
+      expect(path, equals('images/123.jpg'));
+      expect(path, isNot(startsWith('/')));
     });
 
-    test('old image links still work', () {
-      const oldImageLink = 'storypad://assets/1762500783746';
-      expect(AssetType.isValidAssetLink(oldImageLink), isTrue);
-      expect(AssetType.parseAssetId(oldImageLink), equals(1762500783746));
-      expect(AssetType.getTypeFromLink(oldImageLink), equals(AssetType.image));
+    test('getRelativeStoragePath works for audio', () {
+      final path = AssetType.audio.getRelativeStoragePath(id: 456, extension: '.m4a');
+      expect(path, equals('audio/456.m4a'));
+      expect(path, isNot(startsWith('/')));
     });
   });
 }

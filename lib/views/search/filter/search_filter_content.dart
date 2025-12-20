@@ -70,7 +70,7 @@ class _SearchFilterContent extends StatelessWidget {
       choices: viewModel.tags ?? [],
       storiesCount: (TagDbModel tag) => tag.storiesCount,
       toLabel: (TagDbModel tag) => tag.title,
-      selected: (TagDbModel tag) => viewModel.searchFilter.tagId == tag.id,
+      selected: (TagDbModel tag) => viewModel.tagSelected(tag),
       onToggle: (TagDbModel tag) => viewModel.toggleTag(tag),
     );
   }

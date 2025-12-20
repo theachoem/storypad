@@ -20,7 +20,7 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/12345',
+                'image': 'images/12345.jpg',
               },
             },
           ]),
@@ -36,7 +36,7 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'audio': 'storypad://audio/67890',
+                'audio': 'audio/67890.m4a',
               },
             },
           ]),
@@ -52,17 +52,17 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/111',
+                'image': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/222',
+                'audio': 'audio/222.m4a',
               },
             },
             {
               'insert': {
-                'video': 'storypad://assets/333',
+                'video': 'images/333.mp4',
               },
             },
           ]),
@@ -78,14 +78,14 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/100',
+                'image': 'images/100.jpg',
               },
             },
           ]),
           _createPageWithBody([
             {
               'insert': {
-                'audio': 'storypad://audio/200',
+                'audio': 'audio/200.m4a',
               },
             },
           ]),
@@ -101,12 +101,12 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/999',
+                'image': 'images/999.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/999',
+                'audio': 'audio/999.m4a',
               },
             },
           ]),
@@ -128,7 +128,7 @@ void main() {
             },
             {
               'insert': {
-                'audio': 'storypad://audio/123',
+                'audio': 'audio/123.m4a',
               },
             },
           ]),
@@ -139,27 +139,27 @@ void main() {
         expect(result, {123});
       });
 
-      test('supports both storypad://assets/ (images) and storypad://audio/ prefixes', () {
+      test('supports both images/ and audio/ prefixes', () {
         final pages = [
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/111',
+                'image': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/222',
+                'audio': 'audio/222.m4a',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/333',
+                'image': 'images/333.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/444',
+                'audio': 'audio/444.m4a',
               },
             },
           ]),
@@ -175,12 +175,12 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': {'url': 'storypad://assets/123'},
+                'image': {'url': 'images/123.jpg'},
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/456',
+                'audio': 'audio/456.m4a',
               },
             },
           ]),
@@ -196,12 +196,12 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/abc',
+                'image': 'images/abc.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/123',
+                'audio': 'audio/123.m4a',
               },
             },
           ]),
@@ -218,7 +218,7 @@ void main() {
             {'text': 'just text'},
             {
               'insert': {
-                'image': 'storypad://assets/123',
+                'image': 'images/123.jpg',
               },
             },
           ]),
@@ -237,7 +237,7 @@ void main() {
             },
             {
               'insert': {
-                'audio': 'storypad://audio/456',
+                'audio': 'audio/456.m4a',
               },
             },
           ]),
@@ -254,7 +254,7 @@ void main() {
             'just a string',
             {
               'insert': {
-                'image': 'storypad://assets/789',
+                'image': 'images/789.jpg',
               },
             },
           ]),
@@ -291,7 +291,7 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/$largeId',
+                'image': 'images/$largeId.jpg',
               },
             },
           ]),
@@ -307,8 +307,8 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/111',
-                'audio': 'storypad://assets/222',
+                'image': 'images/111.jpg',
+                'audio': 'images/222.jpg',
                 'attributes': {'bold': true},
               },
             },
@@ -334,12 +334,12 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/100',
+                'image': 'images/100.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://assets/200',
+                'audio': 'images/200.jpg',
               },
             },
             {
@@ -351,7 +351,7 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'video': 'storypad://assets/300',
+                'video': 'images/300.mp4',
               },
             },
           ]),

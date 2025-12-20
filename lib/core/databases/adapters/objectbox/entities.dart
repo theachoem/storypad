@@ -176,6 +176,8 @@ class AssetObjectBox extends BaseObjectBox {
   String originalSource;
   String cloudDestinations;
 
+  int? version;
+
   // 'image', 'audio', etc.
   String? type;
 
@@ -209,6 +211,7 @@ class AssetObjectBox extends BaseObjectBox {
     required this.type,
     required this.metadata,
     required this.tags,
+    required this.version,
     this.lastSavedDeviceId,
   });
 

@@ -2,10 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:tar/tar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
 import 'package:storypad/views/backup_services/backups/show/show_backup_view.dart';
@@ -16,8 +21,15 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/core/services/export/export_stories_to_markdown_service.dart';
 
 import 'import_export_view.dart';
+
+enum AppExportOption {
+  storyPadJson,
+  markdown,
+  pdf,
+}
 
 class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ImportExportRoute params;
@@ -25,7 +37,34 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   ImportExportViewModel({
     required this.params,
-  });
+  }) {
+    loadStoryCount(notifyUI: false);
+  }
+
+  int? storyCount;
+  SearchFilterObject initialExportFilter = SearchFilterObject(
+    years: {},
+    types: {},
+    tagId: null,
+    assetId: null,
+  );
+
+  late SearchFilterObject exportFilter = initialExportFilter;
+
+  bool get filtered =>
+      jsonEncode(exportFilter.toDatabaseFilter()) != jsonEncode(initialExportFilter.toDatabaseFilter());
+
+  void setExportFilter(SearchFilterObject result) {
+    exportFilter = result;
+    loadStoryCount(notifyUI: true);
+  }
+
+  Future<void> loadStoryCount({
+    bool notifyUI = true,
+  }) async {
+    storyCount = StoryDbModel.db.getStoryCountBy(filters: exportFilter.toDatabaseFilter());
+    if (notifyUI) notifyListeners();
+  }
 
   Future<void> import(BuildContext context) async {
     AnalyticsService.instance.logImportOfflineBackup();
@@ -64,7 +103,122 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     ShowBackupsRoute(backup).push(context);
   }
 
-  Future<void> export(BuildContext context) async {
+  Future<void> export(BuildContext context, AppExportOption option) async {
+    switch (option) {
+      case AppExportOption.storyPadJson:
+        await exportJson(context);
+        break;
+      case AppExportOption.markdown:
+        await exportMarkdown(context);
+        break;
+      case AppExportOption.pdf:
+        MessengerService.of(context).showSnackBar('PDF export coming soon!');
+        break;
+    }
+  }
+
+  Future<void> exportMarkdown(BuildContext context) async {
+    AnalyticsService.instance.logExportOfflineBackup();
+
+    (File, Directory)? result = await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#exportMarkdown',
+      future: () async {
+        final stories = await StoryDbModel.db
+            .where(filters: filtered ? exportFilter.toDatabaseFilter() : null)
+            .then((context) => context?.items);
+
+        if (!context.mounted || stories == null || stories.isEmpty) return null;
+
+        final String exportFileName =
+            "$kAppName-${kDeviceInfo.model}-markdown-${DateTime.now().toIso8601String()}.tar.gz";
+        final tempDir = Directory(
+          "${kSupportDirectory.path}/$parentName/markdown_export_${DateTime.now().millisecondsSinceEpoch}",
+        );
+
+        await tempDir.create(recursive: true);
+
+        // Export stories to markdown (organized by year)
+        Map<int, TagDbModel?> tags = {};
+        Map<int, EventDbModel?> events = {};
+
+        await ExportStoriesToMarkdownService.call(
+          stories: stories,
+          outputDir: tempDir,
+          tagNameGetter: (tagId) async {
+            tags[tagId] ??= await TagDbModel.db.find(tagId);
+            return tags[tagId]?.title;
+          },
+          eventTypeGetter: (eventId) async {
+            events[eventId] ??= await EventDbModel.db.find(eventId);
+            return events[eventId]?.eventType;
+          },
+        );
+
+        // Create tar.gz archive
+        final tarFile = File("${kSupportDirectory.path}/$parentName/$exportFileName");
+        await tarFile.create(recursive: true);
+
+        // Create tar.gz archive from directory
+        final entries = <TarEntry>[];
+
+        for (final entity in tempDir.listSync(recursive: true)) {
+          if (entity is File) {
+            final relativePath = entity.path.substring(tempDir.path.length + 1);
+            final bytes = await entity.readAsBytes();
+            entries.add(
+              TarEntry.data(
+                TarHeader(
+                  name: relativePath,
+                  mode: 420, // 0644 in octal
+                  size: bytes.length,
+                  modified: entity.lastModifiedSync(),
+                ),
+                bytes,
+              ),
+            );
+          }
+        }
+
+        await Stream.fromIterable(entries).transform(tarWriter).transform(gzip.encoder).pipe(tarFile.openWrite());
+        return (tarFile, tempDir);
+      },
+    );
+
+    if (!context.mounted) return;
+    if (result == null) return;
+
+    File tarFile = result.$1;
+    Directory tempDir = result.$2;
+
+    // Share/save the tar.gz file
+    if (Platform.isIOS) {
+      await SharePlus.instance.share(
+        ShareParams(
+          title: basename(tarFile.path),
+          sharePositionOrigin: Rect.fromLTWH(
+            0,
+            0,
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height / 2,
+          ),
+          files: [XFile(tarFile.path)],
+        ),
+      );
+    } else if (Platform.isAndroid) {
+      await FilePicker.platform.saveFile(
+        fileName: basename(tarFile.path),
+        type: FileType.custom,
+        allowedExtensions: ['gz'],
+        bytes: await tarFile.readAsBytes(),
+      );
+    }
+
+    // Cleanup
+    await tempDir.delete(recursive: true);
+    await tarFile.delete();
+  }
+
+  Future<void> exportJson(BuildContext context) async {
     AnalyticsService.instance.logExportOfflineBackup();
 
     DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
@@ -76,6 +230,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
       debugSource: '$runtimeType#export',
       future: () => BackupDatabasesToBackupObjectService.call(
         databases: BackupRepository.databases,
+        storyFilter: filtered ? exportFilter : null,
         lastUpdatedAt: lastDbUpdatedAt,
       ),
     );

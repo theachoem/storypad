@@ -28,6 +28,7 @@ class DatabaseInitializer {
     await StoryDbModel.db.migrateDataToV2();
     await moveExistingAssetToSupportDirectory();
     await computeStoryTagsForAsset();
+    await migrateEmbedAssetsToUseRelativeFilePaths();
   }
 
   // The 'tags' column was newly added to the asset table, so existing data may be missing tags.
@@ -46,6 +47,37 @@ class DatabaseInitializer {
       }
 
       await ComputedInitialTagsForAssetsStorage().write(true);
+    }
+  }
+
+  // With the new asset embedding approach, we can export and import stories more reliably.
+  static Future<void> migrateEmbedAssetsToUseRelativeFilePaths() async {
+    var assets = await AssetDbModel.db.where(filters: {'version': 1}).then((e) => e?.items ?? <AssetDbModel>[]);
+
+    for (int i = 0; i < assets.length; i++) {
+      AssetDbModel asset = assets[i];
+      final result = await StoryDbModel.db
+          .buildQuery(filters: {'asset': asset.id}, returnDeleted: false)
+          .build()
+          .findAsync();
+
+      /// URI link for embedding in Quill editor
+      /// Automatically routes to correct scheme based on asset type:
+      /// - Audio: storypad://audio/{id}
+      /// - Image (or null): storypad://assets/{id}
+      final legacyEmbedLink = switch (asset.type) {
+        .image => 'storypad://assets/${asset.id}',
+        .audio => 'storypad://audio/${asset.id}',
+      };
+
+      for (int j = 0; j < result.length; j++) {
+        result[j].draftContent = result[j].draftContent?.replaceAll(legacyEmbedLink, asset.relativeLocalFilePath);
+        result[j].latestContent = result[j].latestContent?.replaceAll(legacyEmbedLink, asset.relativeLocalFilePath);
+      }
+
+      asset = asset.copyWith(version: 2, originalSource: asset.relativeLocalFilePath);
+      await StoryDbModel.db.box.putManyAsync(result);
+      await AssetDbModel.db.set(asset, runCallbacks: false);
     }
   }
 

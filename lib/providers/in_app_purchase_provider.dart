@@ -9,6 +9,7 @@ import 'package:storypad/core/objects/product_deal_object.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_sheet.dart';
@@ -45,6 +46,18 @@ class InAppPurchaseProvider extends ChangeNotifier {
       if (!context.mounted) return;
       await revalidateCustomerInfo(context);
     });
+  }
+
+  bool earlyAdoperUser(BuildContext context) {
+    if (!kIAPEnabled) return false;
+
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    if (currentUser == null) return false;
+
+    final currentUserHash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
+    final earlyAdopterUserHashes = RemoteConfigService.earlyAdopterUserHashes.get()['hashes'];
+
+    return earlyAdopterUserHashes is List && earlyAdopterUserHashes.contains(currentUserHash);
   }
 
   Future<void> _initialize(BuildContext context) async {

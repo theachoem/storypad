@@ -12,7 +12,7 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';

@@ -37,36 +37,8 @@ class _ImportExportContent extends StatelessWidget {
           //   onTap: () {},
           // ),
           const Divider(),
-          SpSectionTitle(title: tr('general.export')),
-          // ListTile(
-          //   leading: const Icon(SpIcons.calendar),
-          //   title: const Text("Date"),
-          //   contentPadding: const EdgeInsetsDirectional.only(start: 16.0, end: 12.0),
-          //   trailing: const Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Text("All Entries"),
-          //       Icon(SpIcons.dropDown),
-          //     ],
-          //   ),
-          //   onTap: () {},
-          // ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: FilledButton(
-              child: Text(tr('list_tile.export_storypad_json.title')),
-              onPressed: () => viewModel.export(context),
-            ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          //   child: OutlinedButton(
-          //     child: const Text("Export PDF"),
-          //     onPressed: () {},
-          //   ),
-          // ),
+          _ExportSection(viewModel: viewModel),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.0),
         ],
       ),
     );

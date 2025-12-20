@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/services/stories/story_extract_assets_from_content_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 
 void main() {
-  group('StoryExtractAssetsFromContentService', () {
+  group('StoryContentEmbedExtractor', () {
     group('images()', () {
       test('returns empty list when content is null', () {
-        final result = StoryExtractAssetsFromContentService.images(null);
+        final result = StoryContentEmbedExtractor.images(null);
         expect(result, isEmpty);
       });
 
@@ -20,7 +20,7 @@ void main() {
           pages: [],
           richPages: [],
         );
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
         expect(result, isEmpty);
       });
 
@@ -29,15 +29,15 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/12345',
+                'image': 'images/12345.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/12345']);
+        expect(result, ['images/12345.jpg']);
       });
 
       test('extracts multiple image links', () {
@@ -45,20 +45,20 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/111',
+                'image': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/222',
+                'image': 'images/222.png',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/111', 'storypad://assets/222']);
+        expect(result, ['images/111.jpg', 'images/222.png']);
       });
 
       test('extracts images from multiple pages', () {
@@ -66,52 +66,52 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/100',
+                'image': 'images/100.jpg',
               },
             },
           ]),
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/200',
+                'image': 'images/200.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/100', 'storypad://assets/200']);
+        expect(result, ['images/100.jpg', 'images/200.jpg']);
       });
 
-      test('filters out audio links (storypad://audio/)', () {
+      test('filters out audio links (audio/)', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/111',
+                'image': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/222',
+                'audio': 'audio/222.m4a',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/333',
+                'image': 'images/333.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/111', 'storypad://assets/333']);
-        expect(result, isNot(contains('storypad://audio/222')));
+        expect(result, ['images/111.jpg', 'images/333.jpg']);
+        expect(result, isNot(contains('audio/222.m4a')));
       });
 
-      test('filters out non-storypad links', () {
+      test('includes both local assets and external URLs', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
@@ -121,15 +121,15 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/123',
+                'image': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/123']);
+        expect(result, ['https://example.com/image.jpg', 'images/123.jpg']);
       });
 
       test('ignores non-string embed values', () {
@@ -137,20 +137,20 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': {'url': 'storypad://assets/123'},
+                'image': {'url': 'images/123.jpg'},
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/456',
+                'image': 'images/456.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/456']);
+        expect(result, ['images/456.jpg']);
       });
 
       test('ignores nodes without insert map', () {
@@ -159,15 +159,15 @@ void main() {
             {'text': 'just text'},
             {
               'insert': {
-                'image': 'storypad://assets/123',
+                'image': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/123']);
+        expect(result, ['images/123.jpg']);
       });
 
       test('ignores nodes with insert that is not a map', () {
@@ -178,15 +178,15 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/456',
+                'image': 'images/456.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/456']);
+        expect(result, ['images/456.jpg']);
       });
 
       test('ignores non-map nodes', () {
@@ -195,15 +195,15 @@ void main() {
             'just a string',
             {
               'insert': {
-                'image': 'storypad://assets/789',
+                'image': 'images/789.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/789']);
+        expect(result, ['images/789.jpg']);
       });
 
       test('handles page with null body', () {
@@ -221,7 +221,7 @@ void main() {
           pages: [],
           richPages: [page],
         );
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
         expect(result, isEmpty);
       });
@@ -229,7 +229,7 @@ void main() {
       test('handles page with empty body', () {
         final content = _createContentWithPages([_createPageWithBody([])]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
         expect(result, isEmpty);
       });
@@ -240,17 +240,17 @@ void main() {
             {
               'insert': {
                 'text': 'Some text',
-                'image': 'storypad://assets/111',
-                'audio': 'storypad://audio/222',
+                'image': 'images/111.jpg',
+                'audio': 'audio/222.m4a',
                 'attributes': {'bold': true},
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/111']);
+        expect(result, ['images/111.jpg']);
       });
 
       test('handles complex mixed content', () {
@@ -263,17 +263,17 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/100',
+                'image': 'images/100.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/200',
+                'audio': 'audio/200.m4a',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/300',
+                'image': 'images/300.jpg',
               },
             },
           ]),
@@ -285,15 +285,15 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/400',
+                'image': 'images/400.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/100', 'storypad://assets/300', 'storypad://assets/400']);
+        expect(result, ['images/100.jpg', 'images/300.jpg', 'https://external.com/img.png', 'images/400.jpg']);
       });
 
       test('preserves order of extracted images', () {
@@ -301,28 +301,28 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/999',
+                'image': 'images/999.jpg',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/111',
+                'image': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/222',
+                'image': 'images/222.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, orderedEquals(['storypad://assets/999', 'storypad://assets/111', 'storypad://assets/222']));
+        expect(result, orderedEquals(['images/999.jpg', 'images/111.jpg', 'images/222.jpg']));
       });
 
-      test('ignores empty string embed values', () {
+      test('filters out empty string embed values', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
@@ -332,21 +332,21 @@ void main() {
             },
             {
               'insert': {
-                'image': 'storypad://assets/123',
+                'image': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.images(content);
+        final result = StoryContentEmbedExtractor.images(content);
 
-        expect(result, ['storypad://assets/123']);
+        expect(result, ['images/123.jpg']);
       });
     });
 
     group('audio()', () {
       test('returns empty list when content is null', () {
-        final result = StoryExtractAssetsFromContentService.audio(null);
+        final result = StoryContentEmbedExtractor.audio(null);
         expect(result, isEmpty);
       });
 
@@ -359,7 +359,7 @@ void main() {
           pages: [],
           richPages: [],
         );
-        final result = StoryExtractAssetsFromContentService.audio(content);
+        final result = StoryContentEmbedExtractor.audio(content);
         expect(result, isEmpty);
       });
 
@@ -368,15 +368,15 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'audio': 'storypad://audio/12345',
+                'audio': 'audio/12345.m4a',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.audio(content);
+        final result = StoryContentEmbedExtractor.audio(content);
 
-        expect(result, ['storypad://audio/12345']);
+        expect(result, ['audio/12345.m4a']);
       });
 
       test('extracts multiple audio links', () {
@@ -384,53 +384,53 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'audio': 'storypad://audio/111',
+                'audio': 'audio/111.m4a',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/222',
+                'audio': 'audio/222.m4a',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.audio(content);
+        final result = StoryContentEmbedExtractor.audio(content);
 
-        expect(result, ['storypad://audio/111', 'storypad://audio/222']);
+        expect(result, ['audio/111.m4a', 'audio/222.m4a']);
       });
 
-      test('filters out image links (storypad://assets/)', () {
+      test('filters out image links (images/)', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
               'insert': {
-                'audio': 'storypad://audio/111',
+                'audio': 'audio/111.m4a',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/222',
+                'image': 'images/222.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/333',
+                'audio': 'audio/333.m4a',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.audio(content);
+        final result = StoryContentEmbedExtractor.audio(content);
 
-        expect(result, ['storypad://audio/111', 'storypad://audio/333']);
-        expect(result, isNot(contains('storypad://assets/222')));
+        expect(result, ['audio/111.m4a', 'audio/333.m4a']);
+        expect(result, isNot(contains('images/222.jpg')));
       });
     });
 
     group('all()', () {
       test('returns empty list when content is null', () {
-        final result = StoryExtractAssetsFromContentService.all(null);
+        final result = StoryContentEmbedExtractor.all(null);
         expect(result, isEmpty);
       });
 
@@ -439,34 +439,34 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'storypad://assets/100',
+                'image': 'images/100.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/200',
+                'audio': 'audio/200.m4a',
               },
             },
             {
               'insert': {
-                'image': 'storypad://assets/300',
+                'image': 'images/300.jpg',
               },
             },
             {
               'insert': {
-                'audio': 'storypad://audio/400',
+                'audio': 'audio/400.m4a',
               },
             },
           ]),
         ]);
 
-        final result = StoryExtractAssetsFromContentService.all(content);
+        final result = StoryContentEmbedExtractor.all(content);
 
         expect(result, [
-          'storypad://assets/100',
-          'storypad://assets/300',
-          'storypad://audio/200',
-          'storypad://audio/400',
+          'images/100.jpg',
+          'images/300.jpg',
+          'audio/200.m4a',
+          'audio/400.m4a',
         ]);
       });
     });
