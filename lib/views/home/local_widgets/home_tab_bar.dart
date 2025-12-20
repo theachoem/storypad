@@ -10,38 +10,54 @@ class _HomeTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> actionButtons = constructActionButtons(context);
-    return Stack(
+
+    const double dividerHeight = 1;
+    const double tabBarPaddingTop = 2;
+
+    return Column(
       children: [
-        TabBar(
-          indicatorSize: TabBarIndicatorSize.tab,
-          enableFeedback: true,
-          tabAlignment: TabAlignment.start,
-          isScrollable: true,
-          indicatorAnimation: TabIndicatorAnimation.linear,
-          labelColor: Theme.of(context).colorScheme.onPrimary,
-          unselectedLabelColor: Theme.of(context).colorScheme.primary,
-          padding: EdgeInsets.only(
-            left: AppTheme.getDirectionValue(context, 14.0 + actionButtons.length * 44.0, 14.0)!,
-            right: AppTheme.getDirectionValue(context, 14.0, 14.0 + actionButtons.length * 44.0)!,
-            top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
-            bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
-          ),
-          indicator: _RoundedIndicator.simple(
-            height: viewModel.scrollInfo.appBar(context).indicatorHeight,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          onTap: (index) {
-            viewModel.scrollInfo.moveToMonthIndex(
-              targetMonthIndex: index,
-              context: context,
-            );
-          },
-          splashBorderRadius: BorderRadius.circular(viewModel.scrollInfo.appBar(context).indicatorHeight / 2),
-          tabs: viewModel.months.map((month) {
-            return buildMonthTab(context, month);
-          }).toList(),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop - tabBarPaddingTop - dividerHeight,
+                  bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(56),
+                  child: TabBar(
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    enableFeedback: true,
+                    tabAlignment: TabAlignment.start,
+                    isScrollable: true,
+                    indicatorAnimation: TabIndicatorAnimation.linear,
+                    labelColor: Theme.of(context).colorScheme.onPrimary,
+                    unselectedLabelColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.only(left: 14.0, right: 14.0, top: tabBarPaddingTop),
+                    indicator: _RoundedIndicator.simple(
+                      height: viewModel.scrollInfo.appBar(context).indicatorHeight,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    dividerColor: Colors.transparent,
+                    onTap: (index) {
+                      viewModel.scrollInfo.moveToMonthIndex(
+                        targetMonthIndex: index,
+                        context: context,
+                      );
+                    },
+                    splashBorderRadius: BorderRadius.circular(viewModel.scrollInfo.appBar(context).indicatorHeight / 2),
+                    tabs: viewModel.months.map((month) {
+                      return buildMonthTab(context, month);
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+            buildActionButtons(context, actionButtons),
+          ],
         ),
-        buildIconsButtonsWrapper(context, actionButtons),
+        const Divider(height: dividerHeight),
       ],
     );
   }
@@ -60,34 +76,10 @@ class _HomeTabBar extends StatelessWidget {
     ];
   }
 
-  Widget buildIconsButtonsWrapper(BuildContext context, List<Widget> actionButtons) {
-    return Positioned(
-      top: 0,
-      right: AppTheme.getDirectionValue(context, null, 0),
-      left: AppTheme.getDirectionValue(context, 0, null),
-      bottom: 1,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: AppTheme.getDirectionValue(context, 4.0, 16.0)!,
-          right: AppTheme.getDirectionValue(context, 16.0, 4.0)!,
-        ),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft)!,
-            end: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight)!,
-            stops: [0.0, 0.3],
-            colors: [
-              viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
-              viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
-            ],
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: actionButtons,
-        ),
-      ),
+  Widget buildActionButtons(BuildContext context, List<Widget> actionButtons) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: actionButtons,
     );
   }
 

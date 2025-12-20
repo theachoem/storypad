@@ -11,24 +11,47 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, appBarConstraints) {
-        return FlexibleSpaceBar(
-          collapseMode: CollapseMode.pin,
-          background: Container(
-            alignment: Alignment.bottomCenter,
-            margin: EdgeInsets.only(
-              left: 16.0 + MediaQuery.of(context).padding.left,
-              right: 16.0 + MediaQuery.of(context).padding.right,
-              bottom:
-                  viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
-                  viewModel.scrollInfo.appBar(context).contentsMarginBottom,
+        return Stack(
+          children: [
+            Container(
+              clipBehavior: .hardEdge,
+              height: double.infinity,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: .topCenter,
+                  end: .bottomCenter,
+                  colors: [
+                    viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
+                    viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.9),
+                  ],
+                ),
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: const SizedBox.expand(),
+              ),
             ),
-            child: Stack(
-              children: [
-                buildGreetingMessage(context, appBarConstraints),
-                buildYear(context, appBarConstraints),
-              ],
+            FlexibleSpaceBar(
+              collapseMode: .pin,
+              background: Container(
+                alignment: Alignment.bottomCenter,
+                padding: EdgeInsets.only(
+                  left: 16.0 + MediaQuery.of(context).padding.left,
+                  right: 16.0 + MediaQuery.of(context).padding.right,
+                  bottom:
+                      viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
+                      viewModel.scrollInfo.appBar(context).contentsMarginBottom,
+                ),
+                child: Stack(
+                  children: [
+                    buildGreetingMessage(context, appBarConstraints),
+                    buildYear(context, appBarConstraints),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );
