@@ -10,6 +10,7 @@ enum FileOperationType {
 /// File operation exceptions
 class FileOperationException extends BackupException {
   final FileOperationType operation;
+  final int? statusCode;
 
   const FileOperationException(
     super.message,
@@ -17,6 +18,7 @@ class FileOperationException extends BackupException {
     super.context,
     super.isRetryable = true,
     super.serviceType,
+    this.statusCode,
   });
 
   @override

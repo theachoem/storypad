@@ -251,41 +251,46 @@ class GoogleDriveCloudService implements BackupCloudService {
     drive.DriveApi? client = await googleDriveClient;
     if (client == null) return null;
 
-    CloudFileObject? fileInfo = await findFileById(file.id);
-    if (fileInfo == null) return null;
+    return _executeWithRetry(
+      methodName: 'getFileContent',
+      operation: () async {
+        CloudFileObject? fileInfo = await findFileById(file.id);
+        if (fileInfo == null) return null;
 
-    Object? media = await client.files.get(
-      fileInfo.id,
-      downloadOptions: drive.DownloadOptions.fullMedia,
+        Object? media = await client.files.get(
+          fileInfo.id,
+          downloadOptions: drive.DownloadOptions.fullMedia,
+        );
+        if (media is! drive.Media) return null;
+
+        if (file.getFileInfo()?.hasCompression == true) {
+          List<int> dataStore = [];
+
+          final completer = Completer<List<int>>();
+          media.stream.listen(
+            (data) => dataStore.insertAll(dataStore.length, data),
+            onDone: () => completer.complete(dataStore),
+            onError: (error) => completer.completeError(error),
+          );
+
+          final bytes = await completer.future;
+          final decodedBytes = io.gzip.decode(bytes);
+          return (utf8.decode(decodedBytes), bytes.length);
+        } else {
+          List<int> dataStore = [];
+
+          Completer completer = Completer();
+          media.stream.listen(
+            (data) => dataStore.insertAll(dataStore.length, data),
+            onDone: () => completer.complete(utf8.decode(dataStore)),
+            onError: (error) {},
+          );
+
+          await completer.future;
+          return (utf8.decode(dataStore), dataStore.length);
+        }
+      },
     );
-    if (media is! drive.Media) return null;
-
-    if (file.getFileInfo()?.hasCompression == true) {
-      List<int> dataStore = [];
-
-      final completer = Completer<List<int>>();
-      media.stream.listen(
-        (data) => dataStore.insertAll(dataStore.length, data),
-        onDone: () => completer.complete(dataStore),
-        onError: (error) => completer.completeError(error),
-      );
-
-      final bytes = await completer.future;
-      final decodedBytes = io.gzip.decode(bytes);
-      return (utf8.decode(decodedBytes), bytes.length);
-    } else {
-      List<int> dataStore = [];
-
-      Completer completer = Completer();
-      media.stream.listen(
-        (data) => dataStore.insertAll(dataStore.length, data),
-        onDone: () => completer.complete(utf8.decode(dataStore)),
-        onError: (error) {},
-      );
-
-      await completer.future;
-      return (utf8.decode(dataStore), dataStore.length);
-    }
   }
 
   @override
@@ -293,10 +298,14 @@ class GoogleDriveCloudService implements BackupCloudService {
     drive.DriveApi? client = await googleDriveClient;
     if (client == null) return null;
 
-    Object file = await client.files.get(fileId);
-    if (file is drive.File) return CloudFileObject.fromGoogleDrive(file);
-
-    return null;
+    return _executeWithRetry(
+      methodName: 'findFileById',
+      operation: () async {
+        Object file = await client.files.get(fileId);
+        if (file is drive.File) return CloudFileObject.fromGoogleDrive(file);
+        return null;
+      },
+    );
   }
 
   /// Fetch all yearly backups (v3) from the backups/ folder
@@ -304,38 +313,38 @@ class GoogleDriveCloudService implements BackupCloudService {
   /// Returns a map of year -> CloudFileObject
   @override
   Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
-    try {
-      drive.DriveApi client = await _getAuthenticatedClient();
+    return _executeWithRetry(
+      methodName: 'fetchYearlyBackups',
+      operation: () async {
+        drive.DriveApi client = await _getAuthenticatedClient();
 
-      // First, try to fetch v3 yearly backups from backups/ folder
-      final backupsFolderId = await loadFolder(client, 'backups');
+        // First, try to fetch v3 yearly backups from backups/ folder
+        final backupsFolderId = await loadFolder(client, 'backups');
 
-      if (backupsFolderId != null) {
-        drive.FileList fileList = await client.files.list(
-          spaces: "appDataFolder",
-          q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
-        );
+        if (backupsFolderId != null) {
+          drive.FileList fileList = await client.files.list(
+            spaces: "appDataFolder",
+            q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
+          );
 
-        if (fileList.files != null && fileList.files!.isNotEmpty) {
-          Map<int, CloudFileObject> yearlyBackups = {};
-          for (var file in fileList.files!) {
-            final cloudFile = CloudFileObject.fromGoogleDrive(file);
-            final year = cloudFile.year;
-            if (year != null) {
-              yearlyBackups[year] = cloudFile;
+          if (fileList.files != null && fileList.files!.isNotEmpty) {
+            Map<int, CloudFileObject> yearlyBackups = {};
+            for (var file in fileList.files!) {
+              final cloudFile = CloudFileObject.fromGoogleDrive(file);
+              final year = cloudFile.year;
+              if (year != null) {
+                yearlyBackups[year] = cloudFile;
+              }
             }
+            return yearlyBackups;
           }
-          return yearlyBackups;
         }
-      }
 
-      // Should be removed after all users have migrated to v3 backups.
-      // Only for backward compatibility.
-      return _fetchLegacyBackups(client);
-    } catch (e) {
-      _handleApiException(e, 'fetchYearlyBackups');
-      rethrow;
-    }
+        // Should be removed after all users have migrated to v3 backups.
+        // Only for backward compatibility.
+        return _fetchLegacyBackups(client);
+      },
+    );
   }
 
   // Fallback: Fetch legacy backups (v2/v1) from root folder
@@ -343,23 +352,28 @@ class GoogleDriveCloudService implements BackupCloudService {
   /// to indicate they should be treated specially and not as part of normal yearly sync logic.
   /// This prevents accidental misuse if code tries to interpret them as real yearly backups.
   Future<Map<int, CloudFileObject>> _fetchLegacyBackups(drive.DriveApi client) async {
-    AppLogger.d('No v3 backups found, fetching legacy backups...');
+    return _executeWithRetry(
+      methodName: 'fetchLegacyBackups',
+      operation: () async {
+        AppLogger.d('No v3 backups found, fetching legacy backups...');
 
-    drive.FileList legacyFileList = await client.files.list(
-      spaces: "appDataFolder",
-      q: "name contains '.json' or name contains '.zip'",
-      orderBy: "createdTime desc",
-      pageSize: 1, // Only fetch the most recent legacy backup
+        drive.FileList legacyFileList = await client.files.list(
+          spaces: "appDataFolder",
+          q: "name contains '.json' or name contains '.zip'",
+          orderBy: "createdTime desc",
+          pageSize: 1, // Only fetch the most recent legacy backup
+        );
+
+        if (legacyFileList.files == null || legacyFileList.files!.isEmpty) {
+          return {};
+        }
+
+        // Legacy backups are monolithic (contain all years), so we use a sentinel year (-1)
+        // to indicate this is a legacy backup, not a yearly backup
+        final cloudFile = CloudFileObject.fromLegacyStoryPad(legacyFileList.files!.first);
+        return {-1: cloudFile};
+      },
     );
-
-    if (legacyFileList.files == null || legacyFileList.files!.isEmpty) {
-      return {};
-    }
-
-    // Legacy backups are monolithic (contain all years), so we use a sentinel year (-1)
-    // to indicate this is a legacy backup, not a yearly backup
-    final cloudFile = CloudFileObject.fromLegacyStoryPad(legacyFileList.files!.first);
-    return {-1: cloudFile};
   }
 
   /// Update an existing yearly backup file atomically using file ID
@@ -372,47 +386,47 @@ class GoogleDriveCloudService implements BackupCloudService {
   }) async {
     AppLogger.d('GoogleDriveService#updateYearlyBackup fileId=$fileId, fileName=$fileName');
 
-    try {
-      if (!file.existsSync()) {
+    return _executeWithRetry(
+      methodName: 'updateYearlyBackup',
+      operation: () async {
+        if (!file.existsSync()) {
+          throw exp.FileOperationException(
+            'Local file does not exist: ${file.path}',
+            exp.FileOperationType.upload,
+            context: fileName,
+            serviceType: serviceType,
+          );
+        }
+
+        drive.DriveApi client = await _getAuthenticatedClient();
+
+        // Update both the file content AND the filename (to reflect new timestamp)
+        drive.File fileToUpdate = drive.File();
+        fileToUpdate.name = fileName;
+
+        AppLogger.d('GoogleDriveService#updateYearlyBackup uploading...');
+        drive.File received = await client.files.update(
+          fileToUpdate,
+          fileId,
+          uploadMedia: drive.Media(
+            file.openRead(),
+            file.lengthSync(),
+          ),
+        );
+
+        if (received.id != null) {
+          AppLogger.d('GoogleDriveService#updateYearlyBackup updated: ${received.id}');
+          return CloudFileObject.fromGoogleDrive(received);
+        }
+
         throw exp.FileOperationException(
-          'Local file does not exist: ${file.path}',
+          'Update succeeded but no file ID returned',
           exp.FileOperationType.upload,
           context: fileName,
           serviceType: serviceType,
         );
-      }
-
-      drive.DriveApi client = await _getAuthenticatedClient();
-
-      // Update both the file content AND the filename (to reflect new timestamp)
-      drive.File fileToUpdate = drive.File();
-      fileToUpdate.name = fileName;
-
-      AppLogger.d('GoogleDriveService#updateYearlyBackup uploading...');
-      drive.File received = await client.files.update(
-        fileToUpdate,
-        fileId,
-        uploadMedia: drive.Media(
-          file.openRead(),
-          file.lengthSync(),
-        ),
-      );
-
-      if (received.id != null) {
-        AppLogger.d('GoogleDriveService#updateYearlyBackup updated: ${received.id}');
-        return CloudFileObject.fromGoogleDrive(received);
-      }
-
-      throw exp.FileOperationException(
-        'Update succeeded but no file ID returned',
-        exp.FileOperationType.upload,
-        context: fileName,
-        serviceType: serviceType,
-      );
-    } catch (e) {
-      _handleApiException(e, 'updateYearlyBackup', context: fileName);
-      rethrow;
-    }
+      },
+    );
   }
 
   /// Upload a new yearly backup file to the backups/ folder
@@ -423,57 +437,57 @@ class GoogleDriveCloudService implements BackupCloudService {
   }) async {
     AppLogger.d('GoogleDriveService#uploadYearlyBackup $fileName');
 
-    try {
-      if (!file.existsSync()) {
+    return _executeWithRetry(
+      methodName: 'uploadYearlyBackup',
+      operation: () async {
+        if (!file.existsSync()) {
+          throw exp.FileOperationException(
+            'Local file does not exist: ${file.path}',
+            exp.FileOperationType.upload,
+            context: fileName,
+            serviceType: serviceType,
+          );
+        }
+
+        drive.DriveApi client = await _getAuthenticatedClient();
+
+        // Ensure backups/ folder exists
+        String? folderId = await loadFolder(client, 'backups');
+        if (folderId == null) {
+          throw exp.FileOperationException(
+            'Failed to create or find backups folder',
+            exp.FileOperationType.upload,
+            context: fileName,
+            serviceType: serviceType,
+          );
+        }
+
+        drive.File fileToUpload = drive.File();
+        fileToUpload.name = fileName;
+        fileToUpload.parents = [folderId];
+
+        AppLogger.d('GoogleDriveService#uploadYearlyBackup uploading...');
+        drive.File received = await client.files.create(
+          fileToUpload,
+          uploadMedia: drive.Media(
+            file.openRead(),
+            file.lengthSync(),
+          ),
+        );
+
+        if (received.id != null) {
+          AppLogger.d('GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}');
+          return CloudFileObject.fromGoogleDrive(received);
+        }
+
         throw exp.FileOperationException(
-          'Local file does not exist: ${file.path}',
+          'Upload succeeded but no file ID returned',
           exp.FileOperationType.upload,
           context: fileName,
           serviceType: serviceType,
         );
-      }
-
-      drive.DriveApi client = await _getAuthenticatedClient();
-
-      // Ensure backups/ folder exists
-      String? folderId = await loadFolder(client, 'backups');
-      if (folderId == null) {
-        throw exp.FileOperationException(
-          'Failed to create or find backups folder',
-          exp.FileOperationType.upload,
-          context: fileName,
-          serviceType: serviceType,
-        );
-      }
-
-      drive.File fileToUpload = drive.File();
-      fileToUpload.name = fileName;
-      fileToUpload.parents = [folderId];
-
-      AppLogger.d('GoogleDriveService#uploadYearlyBackup uploading...');
-      drive.File received = await client.files.create(
-        fileToUpload,
-        uploadMedia: drive.Media(
-          file.openRead(),
-          file.lengthSync(),
-        ),
-      );
-
-      if (received.id != null) {
-        AppLogger.d('GoogleDriveService#uploadYearlyBackup uploaded: ${received.id}');
-        return CloudFileObject.fromGoogleDrive(received);
-      }
-
-      throw exp.FileOperationException(
-        'Upload succeeded but no file ID returned',
-        exp.FileOperationType.upload,
-        context: fileName,
-        serviceType: serviceType,
-      );
-    } catch (e) {
-      _handleApiException(e, 'uploadYearlyBackup', context: fileName);
-      rethrow;
-    }
+      },
+    );
   }
 
   @override
@@ -484,70 +498,100 @@ class GoogleDriveCloudService implements BackupCloudService {
   }) async {
     AppLogger.d('GoogleDriveService#uploadFile $fileName');
 
-    try {
-      if (!file.existsSync()) {
-        throw exp.FileOperationException(
-          'Local file does not exist: ${file.path}',
-          exp.FileOperationType.upload,
-          context: fileName,
-          serviceType: serviceType,
-        );
-      }
-
-      drive.DriveApi client = await _getAuthenticatedClient();
-
-      drive.File fileToUpload = drive.File();
-      fileToUpload.name = fileName;
-      fileToUpload.parents = ["appDataFolder"];
-
-      if (folderName != null) {
-        String? folderId = await loadFolder(client, folderName);
-        if (folderId == null) {
+    return _executeWithRetry(
+      methodName: 'uploadFile',
+      operation: () async {
+        if (!file.existsSync()) {
           throw exp.FileOperationException(
-            'Failed to create or find folder: $folderName',
+            'Local file does not exist: ${file.path}',
             exp.FileOperationType.upload,
             context: fileName,
             serviceType: serviceType,
           );
         }
-        fileToUpload.parents = [folderId];
-      }
 
-      AppLogger.d('GoogleDriveService#uploadFile uploading...');
-      drive.File received = await client.files.create(
-        fileToUpload,
-        uploadMedia: drive.Media(
-          file.openRead(),
-          file.lengthSync(),
-        ),
-      );
+        drive.DriveApi client = await _getAuthenticatedClient();
 
-      if (received.id != null) {
-        AppLogger.d('GoogleDriveService#uploadFile uploaded: ${received.id}');
-        return CloudFileObject.fromGoogleDrive(received);
-      }
+        drive.File fileToUpload = drive.File();
+        fileToUpload.name = fileName;
+        fileToUpload.parents = ["appDataFolder"];
 
-      throw exp.FileOperationException(
-        'Upload succeeded but no file ID returned',
-        exp.FileOperationType.upload,
-        context: fileName,
-        serviceType: serviceType,
-      );
-    } catch (e) {
-      _handleApiException(e, 'uploadFile', context: fileName);
-      rethrow;
-    }
+        if (folderName != null) {
+          String? folderId = await loadFolder(client, folderName);
+          if (folderId == null) {
+            throw exp.FileOperationException(
+              'Failed to create or find folder: $folderName',
+              exp.FileOperationType.upload,
+              context: fileName,
+              serviceType: serviceType,
+            );
+          }
+          fileToUpload.parents = [folderId];
+        }
+
+        AppLogger.d('GoogleDriveService#uploadFile uploading...');
+        drive.File received = await client.files.create(
+          fileToUpload,
+          uploadMedia: drive.Media(
+            file.openRead(),
+            file.lengthSync(),
+          ),
+        );
+
+        if (received.id != null) {
+          AppLogger.d('GoogleDriveService#uploadFile uploaded: ${received.id}');
+          return CloudFileObject.fromGoogleDrive(received);
+        }
+
+        throw exp.FileOperationException(
+          'Upload succeeded but no file ID returned',
+          exp.FileOperationType.upload,
+          context: fileName,
+          serviceType: serviceType,
+        );
+      },
+    );
   }
 
   @override
   Future<bool> deleteFile(String cloudFileId) async {
+    return _executeWithRetry(
+      methodName: 'deleteFile',
+      operation: () async {
+        drive.DriveApi client = await _getAuthenticatedClient();
+        await client.files.delete(cloudFileId);
+        return true;
+      },
+    );
+  }
+
+  Future<T> _executeWithRetry<T>({
+    required String methodName,
+    required Future<T> Function() operation,
+  }) async {
     try {
-      drive.DriveApi client = await _getAuthenticatedClient();
-      await client.files.delete(cloudFileId);
-      return true;
+      return await operation();
     } catch (e) {
-      _handleApiException(e, 'deleteFile', context: cloudFileId);
-      rethrow;
+      final exception = _buildException(e, methodName);
+
+      if (exception is exp.AuthException && exception.requiresReauth) {
+        final reauthenticated = await reauthenticateIfNeeded();
+
+        if (reauthenticated) {
+          AppLogger.d('Reauthentication succeeded.');
+
+          try {
+            return operation();
+          } catch (e) {
+            final exp.BackupException exception = _buildException(e, methodName);
+            throw exception;
+          }
+        } else {
+          AppLogger.d('Reauthentication failed.');
+        }
+      }
+
+      throw exception;
     }
   }
 
@@ -565,13 +609,13 @@ class GoogleDriveCloudService implements BackupCloudService {
   }
 
   /// Handle and map API exceptions to appropriate BackupExceptions
-  void _handleApiException(dynamic error, String operation, {String? context}) {
-    if (error is exp.BackupException) return; // Already a BackupException
+  exp.BackupException _buildException(dynamic error, String methodName, {String? context}) {
+    if (error is exp.BackupException) return error;
 
     // Handle specific HTTP errors from Google APIs
     if (error.toString().contains('401')) {
-      throw exp.AuthException(
-        'Authentication failed during $operation',
+      return exp.AuthException(
+        'Authentication failed during $methodName',
         exp.AuthExceptionType.tokenExpired,
         context: context,
         serviceType: serviceType,
@@ -580,33 +624,34 @@ class GoogleDriveCloudService implements BackupCloudService {
 
     if (error.toString().contains('403')) {
       if (error.toString().toLowerCase().contains('quota') || error.toString().toLowerCase().contains('limit')) {
-        throw exp.QuotaException(
-          'Quota exceeded during $operation',
+        return exp.QuotaException(
+          'Quota exceeded during $methodName',
           exp.QuotaExceptionType.rateLimitExceeded,
           context: context,
           serviceType: serviceType,
         );
       }
-      throw exp.AuthException(
-        'Access denied during $operation',
+      return exp.AuthException(
+        'Access denied during $methodName',
         exp.AuthExceptionType.tokenRevoked,
         context: context,
         serviceType: serviceType,
       );
     }
 
-    if (error.toString().contains('404')) {
-      throw exp.FileOperationException(
-        'File not found during $operation',
-        _getFileOperationType(operation),
+    if (error.toString().contains('404') || (error is drive.DetailedApiRequestError && error.status == 404)) {
+      return exp.FileOperationException(
+        'File not found during $methodName',
+        _getFileOperationType(methodName),
         context: context,
         serviceType: serviceType,
+        statusCode: 404,
       );
     }
 
     if (error.toString().contains('429')) {
-      throw exp.QuotaException(
-        'Rate limit exceeded during $operation',
+      return exp.QuotaException(
+        'Rate limit exceeded during $methodName',
         exp.QuotaExceptionType.rateLimitExceeded,
         context: context,
         serviceType: serviceType,
@@ -615,16 +660,16 @@ class GoogleDriveCloudService implements BackupCloudService {
 
     // Handle network errors
     if (error is io.SocketException || error is TimeoutException) {
-      throw exp.NetworkException(
-        'Network error during $operation: $error',
+      return exp.NetworkException(
+        'Network error during $methodName: $error',
         context: context,
         serviceType: serviceType,
       );
     }
 
     // Default to service exception for unknown errors
-    throw exp.ServiceException(
-      'Unknown error during $operation: $error',
+    return exp.ServiceException(
+      'Unknown error during $methodName: $error',
       exp.ServiceExceptionType.unexpectedError,
       context: context,
       serviceType: serviceType,
@@ -632,15 +677,15 @@ class GoogleDriveCloudService implements BackupCloudService {
   }
 
   /// Map operation name to exp.FileOperationType
-  exp.FileOperationType _getFileOperationType(String operation) {
-    switch (operation.toLowerCase()) {
-      case 'uploadfile':
+  exp.FileOperationType _getFileOperationType(String methodName) {
+    switch (methodName) {
+      case 'uploadFile':
       case 'upload':
         return exp.FileOperationType.upload;
-      case 'deletefile':
+      case 'deleteFile':
       case 'delete':
         return exp.FileOperationType.delete;
-      case 'downloadfile':
+      case 'downloadFile':
       case 'download':
         return exp.FileOperationType.download;
       default:
@@ -651,28 +696,33 @@ class GoogleDriveCloudService implements BackupCloudService {
   Future<String?> loadFolder(drive.DriveApi client, String folderName) async {
     if (_folderDriveIdByFolderName[folderName] != null) return _folderDriveIdByFolderName[folderName];
 
-    drive.FileList response = await client.files.list(
-      spaces: "appDataFolder",
-      q: "name='$folderName' and mimeType='application/vnd.google-apps.folder'",
+    return _executeWithRetry(
+      methodName: 'loadFolder',
+      operation: () async {
+        drive.FileList response = await client.files.list(
+          spaces: "appDataFolder",
+          q: "name='$folderName' and mimeType='application/vnd.google-apps.folder'",
+        );
+
+        if (response.files?.firstOrNull?.id != null) {
+          AppLogger.d(
+            "Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}",
+          );
+          return _folderDriveIdByFolderName[folderName] = response.files!.first.id!;
+        }
+
+        drive.File folderToCreate = drive.File();
+        folderToCreate.name = folderName;
+        folderToCreate.parents = ["appDataFolder"];
+        folderToCreate.mimeType = "application/vnd.google-apps.folder";
+
+        final createdFolder = await client.files.create(folderToCreate);
+        AppLogger.d(
+          "Drive folder ${createdFolder.name} created: ${createdFolder.id}",
+        );
+
+        return _folderDriveIdByFolderName[folderName] = createdFolder.id!;
+      },
     );
-
-    if (response.files?.firstOrNull?.id != null) {
-      AppLogger.d(
-        "Drive folder ${response.files!.first.name} founded: ${response.files!.first.id}",
-      );
-      return _folderDriveIdByFolderName[folderName] = response.files!.first.id!;
-    }
-
-    drive.File folderToCreate = drive.File();
-    folderToCreate.name = folderName;
-    folderToCreate.parents = ["appDataFolder"];
-    folderToCreate.mimeType = "application/vnd.google-apps.folder";
-
-    final createdFolder = await client.files.create(folderToCreate);
-    AppLogger.d(
-      "Drive folder ${createdFolder.name} created: ${createdFolder.id}",
-    );
-
-    return _folderDriveIdByFolderName[folderName] = createdFolder.id!;
   }
 }
