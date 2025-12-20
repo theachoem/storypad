@@ -36,7 +36,7 @@ class _BottomNav extends StatelessWidget {
                 ),
                 FilledButton.icon(
                   icon: const Icon(SpIcons.search),
-                  label: Text(tr("button.search")),
+                  label: Text(viewModel.params.submitButtonLabel ?? tr("button.search")),
                   onPressed: () => viewModel.search(context),
                 ),
               ],

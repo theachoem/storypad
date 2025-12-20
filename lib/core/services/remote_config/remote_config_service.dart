@@ -10,6 +10,7 @@ class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     bugReportUrl,
     productDeals,
+    earlyAdopterUserHashes,
     faqUrl,
     featureFlags,
     latestRewardMessage,
@@ -50,6 +51,18 @@ class RemoteConfigService {
     'PRODUCT_DEALS',
     _RemoteConfigValueType.json,
     {},
+  );
+
+  static const earlyAdopterUserHashes = _RemoteConfigObject<Map>(
+    'EARLY_ADOPTER_USER_HASHES',
+    _RemoteConfigValueType.json,
+    {
+      'hashes': [
+        '247e8827df3ae5ee5a686723f9a67de94086537432cb15c3bc18d8759b53d6f7',
+        '7afde6574d0d732586049ef776c018cecf19972d83553d4cc987090d7539d71b',
+        '60807b7887c8210d2f2a41d797c27003a6d6e567b0f2afd36c32a23134714618',
+      ],
+    },
   );
 
   static const faqUrl = _RemoteConfigObject<String>(

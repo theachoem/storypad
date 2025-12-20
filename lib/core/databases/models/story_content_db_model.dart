@@ -67,8 +67,8 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required this.title,
     required this.plainText,
     required this.createdAt,
-    required this.pages,
     required this.richPages,
+    this.pages,
   });
 
   static String? generateBodyPlainText(List<StoryPageDbModel>? newRichPages) {

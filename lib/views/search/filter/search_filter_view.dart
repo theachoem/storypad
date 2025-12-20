@@ -19,12 +19,14 @@ class SearchFilterRoute extends BaseRoute {
     required this.multiSelectYear,
     required this.filterTagModifiable,
     required this.resetTune,
+    this.submitButtonLabel,
   });
 
   final SearchFilterObject initialTune;
   final SearchFilterObject resetTune;
   final bool multiSelectYear;
   final bool filterTagModifiable;
+  final String? submitButtonLabel;
 
   @override
   Widget buildPage(BuildContext context) => SearchFilterView(params: this);

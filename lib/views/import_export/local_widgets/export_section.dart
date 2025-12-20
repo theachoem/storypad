@@ -31,30 +31,34 @@ class _ExportSectionState extends State<_ExportSection> {
           RadioListTile(
             secondary: const Icon(SpIcons.importOffline),
             title: Text(tr('list_tile.export_storypad_json.title')),
-            subtitle: const Text('Native format preserving all data & metadata'),
+            subtitle: Text(tr('list_tile.export_storypad_json.subtitle')),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
             value: AppExportOption.storyPadJson,
           ),
-          RadioListTile(
-            secondary: Icon(SpIcons.markdown),
-            title: const Text('Export Markdown (.md)'),
-            subtitle: const Text('Compatible with Obsidian, Notion, and markdown editors.'),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            value: AppExportOption.markdown,
-          ),
-          RadioListTile(
-            secondary: Icon(SpIcons.pdf),
-            title: const Text('Export PDF (.pdf)'),
-            subtitle: const Text('Shareable document with images and formatting.'),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            value: AppExportOption.pdf,
-          ),
+          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context))
+            RadioListTile(
+              secondary: Icon(SpIcons.markdown),
+              title: Text(tr('list_tile.export_markdown.title')),
+              subtitle: Text(tr('list_tile.export_markdown.subtitle')),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              value: AppExportOption.markdown,
+            ),
+          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context))
+            RadioListTile(
+              secondary: Icon(SpIcons.pdf),
+              title: Text(tr('list_tile.export_pdf.title')),
+              subtitle: Text(tr('list_tile.export_pdf.subtitle')),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              value: AppExportOption.pdf,
+            ),
           Container(
             width: double.infinity,
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             child: FilledButton(
-              child: const Text("Export"),
-              onPressed: () => widget.viewModel.export(context),
+              onPressed: widget.viewModel.storyCount == null || widget.viewModel.storyCount == 0
+                  ? null
+                  : () => widget.viewModel.export(context, selectedOption),
+              child: Text(tr('button.export')),
             ),
           ),
         ],
@@ -72,6 +76,7 @@ class _ExportSectionState extends State<_ExportSection> {
             initialTune: widget.viewModel.exportFilter,
             filterTagModifiable: true,
             multiSelectYear: true,
+            submitButtonLabel: tr('button.select'),
           ).push(context);
 
           if (result is SearchFilterObject) {
