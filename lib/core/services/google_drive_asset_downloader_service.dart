@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
@@ -26,6 +27,9 @@ import 'package:storypad/core/objects/google_user_object.dart';
 class GoogleDriveAssetDownloaderService {
   static const int maxDownloadSize = 20 * 1024 * 1024; // 20MB
 
+  /// Tracks in-progress downloads by local file path to prevent concurrent downloads
+  final Map<String, Completer<String>> _downloadingByPath = {};
+
   /// Downloads an asset from Google Drive if not already cached locally.
   ///
   /// Returns the local file path if successful.
@@ -51,33 +55,56 @@ class GoogleDriveAssetDownloaderService {
       return localFile.path;
     }
 
-    final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+    final localFilePath = asset.localFilePath;
 
-    // Check if user has permission to download
-    if (uploadedEmails.isNotEmpty && !uploadedEmails.contains(currentUser?.email)) {
-      throw StateError(
-        'Login with ${uploadedEmails.join(" or ")} to access this ${asset.type.name}.',
+    // Check if file exists at expected path (even if localFile wasn't provided)
+    if (File(localFilePath).existsSync()) {
+      return localFilePath;
+    }
+
+    // If download is already in progress, wait for it
+    if (_downloadingByPath[localFilePath] != null && !_downloadingByPath[localFilePath]!.isCompleted) {
+      return _downloadingByPath[localFilePath]!.future;
+    }
+
+    // Create a new completer for this download
+    _downloadingByPath[localFilePath] = Completer<String>();
+
+    try {
+      final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+
+      // Check if user has permission to download
+      if (uploadedEmails.isNotEmpty && !uploadedEmails.contains(currentUser?.email)) {
+        throw StateError(
+          'Login with ${uploadedEmails.join(" or ")} to access this ${asset.type.name}.',
+        );
+      }
+
+      // If no user or no Google Drive access, can't download
+      if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
+        throw StateError('${asset.relativeLocalFilePath} cannot be loaded.');
+      }
+
+      // Get download URL from Google Drive
+      final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
+      if (downloadUrl == null) {
+        throw StateError('${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.');
+      }
+
+      // Download file from Google Drive
+      final path = await _downloadFromUrl(
+        downloadUrl: downloadUrl,
+        localFilePath: localFilePath,
+        authHeaders: currentUser.authHeaders,
+        embedLink: asset.relativeLocalFilePath,
       );
-    }
 
-    // If no user or no Google Drive access, can't download
-    if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
-      throw StateError('${asset.relativeLocalFilePath} cannot be loaded.');
+      _downloadingByPath[localFilePath]?.complete(path);
+      return path;
+    } catch (e) {
+      _downloadingByPath[localFilePath]?.completeError(e);
+      rethrow;
     }
-
-    // Get download URL from Google Drive
-    final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
-    if (downloadUrl == null) {
-      throw StateError('${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.');
-    }
-
-    // Download file from Google Drive
-    return _downloadFromUrl(
-      downloadUrl: downloadUrl,
-      localFilePath: asset.localFilePath,
-      authHeaders: currentUser.authHeaders,
-      embedLink: asset.relativeLocalFilePath,
-    );
   }
 
   /// Internal method to handle the actual HTTP download and file saving.
