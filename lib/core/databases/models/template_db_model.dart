@@ -63,6 +63,7 @@ class TemplateDbModel extends BaseDbModel {
   factory TemplateDbModel.newTemplate({
     required DateTime createdAt,
     StoryContentDbModel? content,
+    StoryPreferencesDbModel? preferences,
     String? galleryTemplateId,
     List<int>? tags,
   }) {
@@ -72,6 +73,7 @@ class TemplateDbModel extends BaseDbModel {
       name: null,
       content: content,
       note: null,
+      preferences: preferences,
       galleryTemplateId: galleryTemplateId,
       createdAt: createdAt,
       updatedAt: createdAt,

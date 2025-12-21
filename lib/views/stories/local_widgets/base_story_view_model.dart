@@ -190,6 +190,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
         createdAt: DateTime.now(),
         content: story!.draftContent ?? story!.latestContent,
         galleryTemplateId: story!.galleryTemplateId,
+        preferences: story?.preferences,
         tags: story!.validTags,
       ),
     ).push(context);
