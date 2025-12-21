@@ -33,6 +33,7 @@ class SpTapEffect extends StatefulWidget {
     this.effects = const [
       SpTapEffectType.touchableOpacity,
     ],
+    this.curve = Curves.ease,
     this.onLongPressed,
     this.borderOption,
     this.scaleActive = 0.98,
@@ -44,6 +45,7 @@ class SpTapEffect extends StatefulWidget {
   final List<SpTapEffectType> effects;
   final void Function()? onTap;
   final void Function()? onLongPressed;
+  final Curve curve;
   final Duration duration;
   final bool vibrate;
   final HitTestBehavior? behavior;
@@ -63,9 +65,15 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
   @override
   void initState() {
     controller = AnimationController(vsync: this, duration: widget.duration);
-    scaleAnimation = Tween<double>(begin: 1, end: widget.scaleActive).animate(controller);
-    opacityAnimation = Tween<double>(begin: 1, end: opacityActive).animate(controller);
-    borderAnimation = Tween<double>(begin: 0, end: 1).animate(controller);
+    scaleAnimation = Tween<double>(begin: 1, end: widget.scaleActive).animate(
+      CurvedAnimation(parent: controller, curve: widget.curve),
+    );
+    opacityAnimation = Tween<double>(begin: 1, end: opacityActive).animate(
+      CurvedAnimation(parent: controller, curve: widget.curve),
+    );
+    borderAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: controller, curve: widget.curve),
+    );
     _internalFocusNode = FocusNode();
     super.initState();
   }

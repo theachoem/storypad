@@ -201,10 +201,12 @@ class SpStoryLabels extends StatelessWidget {
           },
           builder: (callback) {
             return SpTapEffect(
-              scaleActive: 2,
+              scaleActive: 2.5,
+              duration: Durations.medium3,
+              curve: Curves.easeInOutCubicEmphasized,
               effects: [.scaleDown],
               behavior: .translucent,
-              onTap: setFeeling != null ? callback : null,
+              onTap: fromStoryTile ? null : callback,
               child: SizedBox(
                 width: MediaQuery.textScalerOf(context).scale(20),
                 height: MediaQuery.textScalerOf(context).scale(20),
@@ -213,13 +215,13 @@ class SpStoryLabels extends StatelessWidget {
                   widthFactor: 1.0,
                   child:
                       FeelingObject.feelingsByKey[story.feeling]?.image64.image(
-                        width: MediaQuery.textScalerOf(context).scale(16.0),
+                        width: MediaQuery.textScalerOf(context).scale(18.0),
                         key: ValueKey('feeling-${story.feeling}'),
                       ) ??
                       Icon(
                         SpIcons.addFeeling,
                         key: const ValueKey('feeling-none'),
-                        size: MediaQuery.textScalerOf(context).scale(16.0),
+                        size: MediaQuery.textScalerOf(context).scale(18.0),
                         color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
                       ),
                 ),
@@ -233,7 +235,9 @@ class SpStoryLabels extends StatelessWidget {
     if (story.event?.period == true) {
       children.add(
         SpTapEffect(
-          scaleActive: 2,
+          scaleActive: 2.5,
+          duration: Durations.medium3,
+          curve: Curves.easeInOutCubicEmphasized,
           effects: [.scaleDown],
           behavior: .translucent,
           onTap: fromStoryTile
