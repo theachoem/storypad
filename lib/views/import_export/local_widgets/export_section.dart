@@ -13,7 +13,6 @@ class _ExportSection extends StatefulWidget {
 
 class _ExportSectionState extends State<_ExportSection> {
   AppExportOption selectedOption = .storyPadJson;
-  bool includeMedia = true;
 
   @override
   Widget build(BuildContext context) {

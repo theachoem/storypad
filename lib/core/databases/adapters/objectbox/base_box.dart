@@ -42,7 +42,9 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
       conditions = conditions.and(lastSavedDeviceIdProperty.equals(kDeviceInfo.id));
     }
 
-    conditions = conditions.and(permanentlyDeletedAtProperty.isNull());
+    // We don't need to filter out deleted records here because
+    // even deleted records can have updatedAt values. Usually for sync purposes.
+    // conditions = conditions.and(permanentlyDeletedAtProperty.isNull());
 
     final objects = await box.query(conditions).build().findAsync();
 
