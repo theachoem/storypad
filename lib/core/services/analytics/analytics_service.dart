@@ -468,6 +468,18 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logStorySaveDraft({
+    required StoryDbModel story,
+  }) {
+    final parameters = storyAnalyticParameters(story);
+    debug('logStorySaveDraft', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('story_save_draft'),
+      parameters: parameters,
+    );
+  }
+
   Future<void> logStoryContinueEdit({
     required StoryDbModel story,
   }) {

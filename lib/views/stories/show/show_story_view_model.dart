@@ -96,6 +96,12 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     await load();
   }
 
+  Future<void> done(BuildContext context) async {
+    story = buildStory(draft: false);
+    await StoryDbModel.db.set(story!);
+    lastSavedAtNotifier.value = story?.updatedAt;
+  }
+
   @override
   Future<void> onPageChanged(StoryPageDbModel richPage) async {
     // unlike edit view, we can notify UI on each change, and won't need to use debounce callback here.

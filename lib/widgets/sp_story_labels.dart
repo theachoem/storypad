@@ -19,11 +19,13 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
+  final Future<void> Function() onSaveDraft;
   final Future<void> Function() onContinueEditing;
   final Future<void> Function() onDiscardDraft;
   final Future<void> Function() onViewPrevious;
 
   SpStoryLabelsDraftActions({
+    required this.onSaveDraft,
     required this.onContinueEditing,
     required this.onDiscardDraft,
     required this.onViewPrevious,
@@ -72,6 +74,12 @@ class SpStoryLabels extends StatelessWidget {
       context: context,
       actions: [
         SheetAction(
+          label: tr("button.save"),
+          icon: SpIcons.save,
+          key: "save",
+          isDefaultAction: true,
+        ),
+        SheetAction(
           label: tr("button.continue_editing"),
           icon: SpIcons.edit,
           key: "continue_editing",
@@ -92,6 +100,10 @@ class SpStoryLabels extends StatelessWidget {
     );
 
     switch (action) {
+      case "save":
+        AnalyticsService.instance.logStorySaveDraft(story: story);
+        draftActions!.onSaveDraft();
+        break;
       case "continue_editing":
         AnalyticsService.instance.logStoryContinueEdit(story: story);
         draftActions!.onContinueEditing();

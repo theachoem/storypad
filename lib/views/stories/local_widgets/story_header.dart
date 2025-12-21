@@ -94,6 +94,7 @@ class StoryHeader extends StatelessWidget {
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: SpStoryLabelsDraftActions(
+        onSaveDraft: () => viewModel.done(context),
         onContinueEditing: () => viewModel.goToEditPage(context),
         onDiscardDraft: () async {
           OkCancelResult result = await showOkCancelAlertDialog(
