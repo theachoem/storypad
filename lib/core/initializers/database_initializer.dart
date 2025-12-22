@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
@@ -8,6 +7,8 @@ import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/services/asset_orphaned_fixer_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/computed_initial_tags_for_assets_storage.dart';
 
 class DatabaseInitializer {
@@ -29,6 +30,7 @@ class DatabaseInitializer {
     await moveExistingAssetToSupportDirectory();
     await computeStoryTagsForAsset();
     await migrateEmbedAssetsToUseRelativeFilePaths();
+    await AssetOrphanedFixerService().call();
   }
 
   // The 'tags' column was newly added to the asset table, so existing data may be missing tags.
@@ -37,7 +39,7 @@ class DatabaseInitializer {
     bool initialComputed = await ComputedInitialTagsForAssetsStorage().read() ?? false;
 
     if (initialComputed == false) {
-      debugPrint('$DatabaseInitializer.computeStoryTagsForAsset initialComputed: $initialComputed');
+      AppLogger.d('$DatabaseInitializer.computeStoryTagsForAsset initialComputed: $initialComputed');
 
       var assets = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);
       for (int i = 0; i < assets.length; i++) {

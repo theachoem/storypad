@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
@@ -46,7 +48,14 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
         createdAt: result.recordedAt,
       );
 
+      // Copy file to app storage & clean up temp file
+      final storagePath = asset.type.getStoragePath(id: asset.id, extension: extension(result.filePath));
+      final newFile = File(storagePath)..createSync(recursive: true);
+      await newFile.writeAsBytes(File(result.filePath).readAsBytesSync());
+      if (File(result.filePath).existsSync()) File(result.filePath).deleteSync(recursive: true);
+
       final savedAsset = await asset.save();
+
       if (savedAsset != null && context.mounted) {
         final index = controller.selection.baseOffset;
         final length = controller.selection.extentOffset - index;

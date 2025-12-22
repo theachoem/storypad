@@ -171,7 +171,10 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
     _preferencesProvider.addListenerForVoicePlaybackSpeed(_onPreferencesChanged);
 
     setupListeners();
-    load();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      load();
+    });
   }
 
   void load() async {
@@ -399,8 +402,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const Spacer(),
-                    buildSpeedLabelButton(context),
+                    Expanded(child: buildSpeedLabelButton(context)),
                     Text(
                       DurationFormatService.formatDuration(_duration),
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(

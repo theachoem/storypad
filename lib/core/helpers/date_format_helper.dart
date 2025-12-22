@@ -20,10 +20,22 @@ class DateFormatHelper {
     return DateFormat.d(locale.toLanguageTag()).format(date);
   }
 
+  static String yMEd_jms(DateTime date, Locale locale) {
+    return DateFormat.yMEd(
+      locale.toLanguageTag(),
+    ).addPattern("- ${DateFormat.jms(locale.toLanguageTag()).pattern!}").format(date);
+  }
+
   static String yMEd_jm(DateTime date, Locale locale) {
     return DateFormat.yMEd(
       locale.toLanguageTag(),
     ).addPattern("- ${DateFormat.jm(locale.toLanguageTag()).pattern!}").format(date);
+  }
+
+  static String yMEd_Hms(DateTime date, Locale locale) {
+    return DateFormat.yMEd(
+      locale.toLanguageTag(),
+    ).addPattern("- ${DateFormat.Hms(locale.toLanguageTag()).pattern!}").format(date);
   }
 
   static String yMEd_Hm(DateTime date, Locale locale) {

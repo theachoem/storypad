@@ -108,7 +108,7 @@ class VoiceRecorderService {
 
   Future<String> _generateTempPath() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '${kSupportDirectory.path}/tmp/storypad_voice_$timestamp.m4a';
+    return '${kSupportDirectory.path}/tmp/$timestamp.m4a';
   }
 }
 
