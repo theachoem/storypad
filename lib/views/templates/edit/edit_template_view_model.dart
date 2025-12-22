@@ -59,7 +59,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     notifyListeners();
   }
 
-  void addNewPage() {
+  void addNewPage() async {
     HapticFeedback.selectionClick();
 
     draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
