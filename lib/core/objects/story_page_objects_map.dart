@@ -38,7 +38,7 @@ class StoryPageObjectsMap {
     required StoryPageDbModel richPage,
     required bool readOnly,
   }) async {
-    final document = await StoryContentPagesToDocumentService.forSinglePage(richPage);
+    final document = StoryContentPagesToDocumentService.forSinglePageSync(richPage);
     _map[richPage.id] = StoryPageObject(
       key: GlobalKey(),
       page: richPage,

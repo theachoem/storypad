@@ -11,6 +11,10 @@ class StoryContentPagesToDocumentService {
     return compute(_buildDocument, richPage);
   }
 
+  static Document forSinglePageSync(StoryPageDbModel richPage) {
+    return _buildDocument(richPage);
+  }
+
   static List<Document> _buildDocuments(List<StoryPageDbModel>? richPages) {
     if (richPages == null || richPages.isEmpty == true) return [];
     return richPages.map((page) => _buildDocument(page)).toList();
