@@ -3,6 +3,8 @@
   "_meta.language_name": "Chinese (Simplified)",
   "_meta.native_name": "中文 (简体)",
   "_fomula": "公式",
+  "add_ons.markdown_export.subtitle": "兼容 Obsidian、Notion 和 Markdown 编辑器。",
+  "add_ons.markdown_export.title": "Markdown 导出",
   "add_ons.period_calendar.subtitle": "追踪你的周期和感受",
   "add_ons.period_calendar.title": "经期日历",
   "add_ons.relax_sounds.subtitle": "在写作或阅读之前调整好自己的心情。",

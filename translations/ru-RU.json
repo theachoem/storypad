@@ -3,6 +3,8 @@
   "_meta.language_name": "Russian",
   "_meta.native_name": "Русский",
   "_fomula": "Формаль",
+  "add_ons.markdown_export.subtitle": "Совместимость с Obsidian, Notion и редакторами Markdown.",
+  "add_ons.markdown_export.title": "Markdown-Export",
   "add_ons.period_calendar.subtitle": "Следите за циклом и своими чувствами.",
   "add_ons.period_calendar.title": "Календарь менструаций",
   "add_ons.relax_sounds.subtitle": "Пишите или читайте, в ритме заданного вами настроения!",

@@ -17,6 +17,21 @@
     {
       "displayPrice" : "1.19",
       "familyShareable" : true,
+      "internalID" : "6756936811",
+      "localizations" : [
+        {
+          "description" : "Compatible with Obsidian, Notion, and markdown editors.",
+          "displayName" : "Markdown Export",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "markdown_export",
+      "referenceName" : "markdown_export",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "1.19",
+      "familyShareable" : true,
       "internalID" : "6754039959",
       "localizations" : [
         {
@@ -78,58 +93,54 @@
   "settings" : {
     "_applicationInternalID" : "6744032172",
     "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
     "_developerTeamID" : "XF9U464CCP",
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 784304090.04646897,
+    "_lastSynchronizedDate" : 788208994.87479401,
     "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",
     "_storeKitErrors" : [
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Load Products"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Purchase"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Verification"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Store Sync"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Subscription Status"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Transaction"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
-    ]
+    ],
+    "_timeRate" : 0
   },
   "subscriptionGroups" : [
 

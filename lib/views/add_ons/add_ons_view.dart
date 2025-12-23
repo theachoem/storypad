@@ -18,8 +18,6 @@ import 'package:storypad/views/add_ons/show/show_add_on_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_reward_sheet.dart';
-import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';

@@ -158,52 +158,10 @@ class _AddOnsContent extends StatelessWidget {
     );
   }
 
-  Widget buildRewardsCard() {
-    return Consumer<InAppPurchaseProvider>(
-      builder: (context, provider, child) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).add(
-            EdgeInsets.only(
-              left: MediaQuery.of(context).padding.left,
-              right: MediaQuery.of(context).padding.right,
-            ),
-          ),
-          child: ListTile(
-            visualDensity: VisualDensity.compact,
-            dense: true,
-            key: ValueKey(provider.rewardExpiredAt != null ? 'appied' : 'not_applied'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            leading: const SpGiftAnimatedIcon(),
-            title: Text(
-              provider.rewardExpiredAt != null
-                  ? tr('list_tile.unlock_your_rewards.applied_title')
-                  : tr('list_tile.unlock_your_rewards.unapplied_title'),
-            ),
-            trailing: const Icon(SpIcons.info, size: 20),
-            subtitle: provider.rewardExpiredAt != null
-                ? Text(
-                    tr(
-                      'general.expired_on',
-                      namedArgs: {'EXP_DATE': DateFormatHelper.yMEd(provider.rewardExpiredAt!, context.locale)},
-                    ),
-                  )
-                : null,
-            onTap: () => SpRewardSheet().show(context: context),
-          ),
-        );
-      },
-    );
-  }
-
   Widget buildBottomNavigation(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (kIAPEnabled) buildRewardsCard(),
         Container(
           padding: EdgeInsets.only(
             left: 24.0,

@@ -10,6 +10,7 @@ import 'package:storypad/core/objects/product_deal_object.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
+import 'package:storypad/views/import_export/import_export_view.dart';
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
@@ -93,7 +94,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         displayComparePrice: getActiveDeal(AppProduct.templates).displayComparePrice,
         badgeLabel: getActiveDeal(AppProduct.templates).badgeLabel,
         iconData: SpIcons.lightBulb,
-        weekdayColor: 2,
+        weekdayColor: 1,
         demoImages: [
           '/add_ons_demos/templates/template_1.jpg',
           '/add_ons_demos/templates/template_2.jpg',
@@ -112,7 +113,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
         displayComparePrice: getActiveDeal(AppProduct.relax_sounds).displayComparePrice,
         badgeLabel: getActiveDeal(AppProduct.relax_sounds).badgeLabel,
         iconData: SpIcons.musicNote,
-        weekdayColor: 1,
+        weekdayColor: 4,
         demoImages: [
           '/add_ons_demos/relax_sounds/relax_sound_1.jpg',
           '/add_ons_demos/relax_sounds/relax_sound_2.jpg',
@@ -157,6 +158,26 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
             initialSegment: CalendarSegmentId.period,
           ).push(context);
         },
+      ),
+      AddOnObject(
+        type: AppProduct.markdown_export,
+        title: tr('add_ons.markdown_export.title'),
+        subtitle: tr('add_ons.markdown_export.subtitle'),
+        displayPrice: getActiveDeal(AppProduct.markdown_export).displayPrice,
+        displayComparePrice: getActiveDeal(AppProduct.markdown_export).displayComparePrice,
+        badgeLabel: getActiveDeal(AppProduct.markdown_export).badgeLabel,
+        iconData: SpIcons.markdown,
+        weekdayColor: 6,
+        demoImages: [
+          '/add_ons_demos/markdown_export/markdown_export_1.jpg',
+          '/add_ons_demos/markdown_export/markdown_export_2.jpg',
+          '/add_ons_demos/markdown_export/markdown_export_3.jpg',
+          '/add_ons_demos/markdown_export/markdown_export_4.jpg',
+          '/add_ons_demos/markdown_export/markdown_export_5.jpg',
+        ],
+        onTry: null,
+        onPurchased: null,
+        onOpen: (BuildContext context) => const ImportExportRoute().push(context),
       ),
     ];
 

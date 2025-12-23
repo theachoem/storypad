@@ -107,7 +107,7 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
         final String exportFileName =
             "$kAppName-${kDeviceInfo.model}-assets-${DateTime.now().toIso8601String()}.tar.gz";
         final tempDir = Directory(
-          "${kSupportDirectory.path}/export_assets/assets_export_${DateTime.now().millisecondsSinceEpoch}",
+          "${kSupportDirectory.path}/tmp/assets_export_${DateTime.now().millisecondsSinceEpoch}",
         );
 
         await tempDir.create(recursive: true);
