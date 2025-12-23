@@ -51,7 +51,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     });
   }
 
-  bool earlyAdoperUser(BuildContext context) {
+  bool earlyAdopterUser(BuildContext context) {
     if (!kIAPEnabled) return false;
 
     GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;

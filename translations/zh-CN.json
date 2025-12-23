@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "导出PDF（.pdf）",
   "list_tile.export_storypad_json.subtitle": "保留所有数据和元数据的原生格式",
   "list_tile.export_storypad_json.title": "导出 StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "单个txt文件，纯文本格式，可在任何地方使用",
+  "list_tile.export_txt.title": "导出文本（.txt）",
   "list_tile.faq.title": "常见问题",
   "list_tile.file_size.title": "文件大小",
   "list_tile.font_family.title": "字体",

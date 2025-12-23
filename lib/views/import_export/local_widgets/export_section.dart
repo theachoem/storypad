@@ -35,22 +35,27 @@ class _ExportSectionState extends State<_ExportSection> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
             value: AppExportOption.storyPadJson,
           ),
-          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context))
-            RadioListTile(
-              secondary: Icon(SpIcons.markdown),
-              title: Text(tr('list_tile.export_markdown.title')),
-              subtitle: Text(tr('list_tile.export_markdown.subtitle')),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 6.0, bottom: 0.0),
-              value: AppExportOption.markdown,
-            ),
-          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context))
-            RadioListTile(
-              secondary: Icon(SpIcons.pdf),
-              title: Text(tr('list_tile.export_pdf.title')),
-              subtitle: Text(tr('list_tile.export_pdf.subtitle')),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-              value: AppExportOption.pdf,
-            ),
+          RadioListTile(
+            secondary: Icon(SpIcons.text),
+            title: Text(tr('list_tile.export_txt.title')),
+            subtitle: Text(tr('list_tile.export_txt.subtitle')),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+            value: AppExportOption.text,
+          ),
+          RadioListTile(
+            secondary: Icon(SpIcons.markdown),
+            title: Text(tr('list_tile.export_markdown.title')),
+            subtitle: Text(tr('list_tile.export_markdown.subtitle')),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+            value: AppExportOption.markdown,
+          ),
+          // RadioListTile(
+          //   secondary: Icon(SpIcons.pdf),
+          //   title: Text(tr('list_tile.export_pdf.title')),
+          //   subtitle: Text(tr('list_tile.export_pdf.subtitle')),
+          //   contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+          //   value: AppExportOption.pdf,
+          // ),
           Container(
             width: double.infinity,
             margin: MediaQuery.paddingOf(
@@ -63,20 +68,18 @@ class _ExportSectionState extends State<_ExportSection> {
               child: Text(tr('button.export')),
             ),
           ),
-          if (context.read<InAppPurchaseProvider>().earlyAdoperUser(context)) ...[
-            const Divider(height: 32.0),
-            Container(
-              width: double.infinity,
-              margin: MediaQuery.paddingOf(
-                context,
-              ).copyWith(top: 0.0, bottom: 0).add(const EdgeInsets.symmetric(horizontal: 16.0)),
-              child: TextButton.icon(
-                icon: const Icon(SpIcons.photo),
-                label: Text(tr('button.export_assets')),
-                onPressed: () => const ExportAssetsRoute().push(context),
-              ),
+          const Divider(height: 32.0),
+          Container(
+            width: double.infinity,
+            margin: MediaQuery.paddingOf(
+              context,
+            ).copyWith(top: 0.0, bottom: 0).add(const EdgeInsets.symmetric(horizontal: 16.0)),
+            child: TextButton.icon(
+              icon: const Icon(SpIcons.photo),
+              label: Text(tr('button.export_assets')),
+              onPressed: () => const ExportAssetsRoute().push(context),
             ),
-          ],
+          ),
         ],
       ),
     );

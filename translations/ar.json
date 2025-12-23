@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "تصدير ملف PDF (.pdf)",
   "list_tile.export_storypad_json.subtitle": "تنسيق أصلي يحافظ على جميع البيانات والبيانات الوصفية",
   "list_tile.export_storypad_json.title": "تصدير StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "ملف نصي واحد، بتنسيق نص عادي، يعمل في كل مكان",
+  "list_tile.export_txt.title": "تصدير النص (.txt)",
   "list_tile.faq.title": "التعليمات",
   "list_tile.file_size.title": "حجم الملف",
   "list_tile.font_family.title": "عائلة الخطوط",

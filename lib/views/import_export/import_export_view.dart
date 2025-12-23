@@ -1,7 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/import_export/export_assets/export_assets_view.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';

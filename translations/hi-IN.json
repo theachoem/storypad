@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "पीडीएफ (.pdf) निर्यात करें",
   "list_tile.export_storypad_json.subtitle": "मूल प्रारूप सभी डेटा और मेटाडेटा को संरक्षित रखता है",
   "list_tile.export_storypad_json.title": "स्टोरीपैड JSON (.json) निर्यात करें",
+  "list_tile.export_txt.subtitle": "एक सिंगल txt फ़ाइल, प्लेन टेक्स्ट फॉर्मेट में, हर जगह काम करती है",
+  "list_tile.export_txt.title": "टेक्स्ट (.txt) निर्यात करें",
   "list_tile.faq.title": "अक्सर पूछे जाने वाले प्रश्न",
   "list_tile.file_size.title": "फ़ाइल का साइज़",
   "list_tile.font_family.title": "फुहारा परिवार",

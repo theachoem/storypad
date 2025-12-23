@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "Ekspor PDF (.pdf)",
   "list_tile.export_storypad_json.subtitle": "Format asli yang mempertahankan semua data & metadata",
   "list_tile.export_storypad_json.title": "Ekspor StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "File txt tunggal, format teks biasa, berfungsi di mana saja.",
+  "list_tile.export_txt.title": "Ekspor Teks (.txt)",
   "list_tile.faq.title": "Pertanyaan Umum",
   "list_tile.file_size.title": "Ukuran berkas",
   "list_tile.font_family.title": "Keluarga Font",

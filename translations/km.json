@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "នាំចេញ PDF (.pdf)",
   "list_tile.export_storypad_json.subtitle": "ទម្រង់ដើមដែលរក្សាទិន្នន័យ និងទិន្នន័យមេតាទាំងអស់",
   "list_tile.export_storypad_json.title": "នាំចេញ StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "ឯកសារ txt តែមួយ ទម្រង់អត្ថបទធម្មតា ដំណើរការគ្រប់ទីកន្លែង",
+  "list_tile.export_txt.title": "នាំចេញអត្ថបទ (.txt)",
   "list_tile.faq.title": "សំណួរគេសួរញឹកញាប់",
   "list_tile.file_size.title": "ទំហំឯកសារ",
   "list_tile.font_family.title": "គ្រួសារពុម្ពអក្សរ",
