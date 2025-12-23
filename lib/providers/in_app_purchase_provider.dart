@@ -23,6 +23,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
       _rewardAddOns?.contains(productIdentifier) == true ||
       _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
+  // Some feature unlocked base on credits.
+  int get credits => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
+
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);

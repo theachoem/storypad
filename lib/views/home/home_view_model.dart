@@ -15,6 +15,7 @@ import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
@@ -129,7 +130,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       id: null,
       initialYear: year,
     ).push(context);
-    await _checkNewStoryResult(addedStory);
+    if (context.mounted) await _checkNewStoryResult(context, addedStory);
   }
 
   void takePhoto(BuildContext context) async {
@@ -148,14 +149,14 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialAsset: asset,
     ).push(HomeView.homeContext!);
 
-    await _checkNewStoryResult(addedStory);
+    if (context.mounted) await _checkNewStoryResult(context, addedStory);
   }
 
   Future<void> goToTemplatePage(BuildContext context) async {
     final addedStory = await TemplatesRoute(
       initialYear: year,
     ).push(context);
-    await _checkNewStoryResult(addedStory);
+    if (context.mounted) await _checkNewStoryResult(context, addedStory);
   }
 
   bool showFadeInYearEndDrawer = false;
@@ -191,7 +192,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  Future<void> _checkNewStoryResult(Object? addedStory) async {
+  Future<void> _checkNewStoryResult(BuildContext context, Object? addedStory) async {
     if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
         // setStories will automatically sort the stories by displayPathDate
@@ -214,6 +215,11 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       // reload all time ensure data consistency.
       // inconsistent data may occur when adding story from different year.
       await reload(debugSource: '$runtimeType#_checkNewStoryResult');
+    }
+
+    // auto sync if have enough credits.
+    if (context.mounted && context.read<InAppPurchaseProvider>().credits > 1) {
+      context.read<BackupProvider>().recheckAndSync();
     }
   }
 

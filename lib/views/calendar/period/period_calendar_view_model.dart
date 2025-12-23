@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -9,6 +10,8 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/calendar/period/period_calendar_view.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -184,6 +187,11 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
         calendarController.goToMonth(addedStory.year, addedStory.month);
       }
       date = DateTime(addedStory.year, addedStory.month, addedStory.day);
+
+      // auto sync if have enough credits.
+      if (context.mounted && context.read<InAppPurchaseProvider>().credits > 1) {
+        context.read<BackupProvider>().recheckAndSync();
+      }
     }
 
     await load(initialSelectedDate: date);
