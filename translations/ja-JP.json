@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "PDF をエクスポート (.pdf)",
   "list_tile.export_storypad_json.subtitle": "すべてのデータとメタデータを保持するネイティブ形式",
   "list_tile.export_storypad_json.title": "StoryPad JSON (.json) をエクスポート",
+  "list_tile.export_txt.subtitle": "単一のtxtファイル、プレーンテキスト形式、どこでも動作します",
+  "list_tile.export_txt.title": "テキストのエクスポート (.txt)",
   "list_tile.faq.title": "よくある質問",
   "list_tile.file_size.title": "ファイルサイズ",
   "list_tile.font_family.title": "フォントの種類",

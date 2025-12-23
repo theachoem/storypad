@@ -22,11 +22,13 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/core/services/export/export_stories_to_markdown_service.dart';
+import 'package:storypad/core/services/export/export_stories_to_text_service.dart';
 
 import 'import_export_view.dart';
 
 enum AppExportOption {
   storyPadJson,
+  text,
   markdown,
   pdf,
 }
@@ -107,6 +109,9 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     switch (option) {
       case AppExportOption.storyPadJson:
         await exportJson(context);
+        break;
+      case AppExportOption.text:
+        await exportText(context);
         break;
       case AppExportOption.markdown:
         await exportMarkdown(context);
@@ -216,6 +221,72 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     // Cleanup
     await tempDir.delete(recursive: true);
     await tarFile.delete();
+  }
+
+  Future<void> exportText(BuildContext context) async {
+    AnalyticsService.instance.logExportOfflineBackup();
+
+    File? result = await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#exportText',
+      future: () async {
+        final stories = await StoryDbModel.db
+            .where(filters: filtered ? exportFilter.toDatabaseFilter() : null)
+            .then((context) => context?.items);
+
+        if (!context.mounted || stories == null || stories.isEmpty) return null;
+
+        final String exportFileName = "$kAppName-${kDeviceInfo.model}-text-${DateTime.now().toIso8601String()}.txt";
+        final textFile = File("${kSupportDirectory.path}/$parentName/$exportFileName");
+
+        // Export stories to text
+        Map<int, TagDbModel?> tags = {};
+        Map<int, EventDbModel?> events = {};
+
+        await ExportStoriesToTextService.call(
+          stories: stories,
+          outputFile: textFile,
+          tagNameGetter: (tagId) async {
+            tags[tagId] ??= await TagDbModel.db.find(tagId);
+            return tags[tagId]?.title;
+          },
+          eventTypeGetter: (eventId) async {
+            events[eventId] ??= await EventDbModel.db.find(eventId);
+            return events[eventId]?.eventType;
+          },
+        );
+
+        return textFile;
+      },
+    );
+
+    if (!context.mounted) return;
+    if (result == null) return;
+
+    // Share/save the text file
+    if (Platform.isIOS) {
+      await SharePlus.instance.share(
+        ShareParams(
+          title: basename(result.path),
+          sharePositionOrigin: Rect.fromLTWH(
+            0,
+            0,
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height / 2,
+          ),
+          files: [XFile(result.path)],
+        ),
+      );
+    } else if (Platform.isAndroid) {
+      await FilePicker.platform.saveFile(
+        fileName: basename(result.path),
+        type: FileType.custom,
+        allowedExtensions: ['txt'],
+        bytes: await result.readAsBytes(),
+      );
+    }
+
+    // Cleanup
+    await result.delete();
   }
 
   Future<void> exportJson(BuildContext context) async {

@@ -102,6 +102,7 @@ class SpIcons {
   static const IconData pauseCircle = kIsCupertino ? CupertinoIcons.pause_circle_fill : Icons.pause_circle;
   static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
   static final IconData markdown = MdiIcons.languageMarkdownOutline;
+  static final IconData text = MdiIcons.text;
   static final IconData pdf = MdiIcons.filePdfBox;
   static const IconData timer = kIsCupertino ? CupertinoIcons.timer : Icons.timer_outlined;
   static const IconData lightBulb = kIsCupertino ? CupertinoIcons.lightbulb : Icons.lightbulb_outline;

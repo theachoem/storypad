@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "Xuất file PDF (.pdf)",
   "list_tile.export_storypad_json.subtitle": "Định dạng gốc bảo toàn tất cả dữ liệu và siêu dữ liệu.",
   "list_tile.export_storypad_json.title": "Xuất StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "Một tệp văn bản duy nhất, định dạng văn bản thuần túy, hoạt động ở mọi nơi.",
+  "list_tile.export_txt.title": "Xuất văn bản (.txt)",
   "list_tile.faq.title": "Câu hỏi thường gặp",
   "list_tile.file_size.title": "Kích thước tập tin",
   "list_tile.font_family.title": "Họ phông chữ",

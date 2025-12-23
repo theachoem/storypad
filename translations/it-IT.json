@@ -269,6 +269,8 @@
   "list_tile.export_pdf.title": "Esporta PDF (.pdf)",
   "list_tile.export_storypad_json.subtitle": "Formato nativo che preserva tutti i dati e i metadati",
   "list_tile.export_storypad_json.title": "Esporta StoryPad JSON (.json)",
+  "list_tile.export_txt.subtitle": "Singolo file txt, formato di testo normale, funziona ovunque",
+  "list_tile.export_txt.title": "Esporta testo (.txt)",
   "list_tile.faq.title": "Domande frequenti",
   "list_tile.file_size.title": "Dimensione del file",
   "list_tile.font_family.title": "Famiglia di caratteri",
