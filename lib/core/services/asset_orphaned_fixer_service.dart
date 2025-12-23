@@ -5,7 +5,10 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/asset_file_matcher_service.dart';
 import 'package:storypad/core/storages/base_object_storages/bool_storage.dart';
 
-class _RanAssetOrphanedFixerStorage extends BoolStorage {}
+class _RanAssetOrphanedFixerStorage extends BoolStorage {
+  @override
+  int get version => 2;
+}
 
 /// Fixes orphaned assets by matching temp files to database entries.
 ///

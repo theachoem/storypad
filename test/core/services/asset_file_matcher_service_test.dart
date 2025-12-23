@@ -49,42 +49,91 @@ void main() {
       expect(matches[assets[4]]?.path, file5.path);
     });
 
-    test('matches assets within 30-second tolerance', () async {
-      final baseTime = DateTime.now();
+    test('matches file created 7 minutes after asset (long recording)', () async {
+      // Scenario: Asset created at 11:50pm, file created at 11:57pm (7 min recording)
+      final assetTime = DateTime(2024, 1, 15, 23, 50, 0);
+      final fileTime = DateTime(2024, 1, 15, 23, 57, 0);
 
-      final file1 = await _createFileAtTime(tempDir, '1.m4a', baseTime);
-      final file2 = await _createFileAtTime(tempDir, '2.m4a', baseTime.add(const Duration(seconds: 25)));
-
-      final assets = [
-        _createAsset(1, baseTime.add(const Duration(seconds: 5)), '/audio/1.m4a'),
-        _createAsset(2, baseTime.add(const Duration(seconds: 30)), '/audio/2.m4a'),
-      ];
+      final file = await _createFileAtTime(tempDir, 'recording.m4a', fileTime);
+      final asset = _createAsset(1, assetTime, '/audio/1.m4a');
 
       final matches = await AssetFileMatcherService.matchAssets(
-        assets: assets,
-        availableFiles: [file1, file2],
+        assets: [asset],
+        availableFiles: [file],
       );
 
-      expect(matches.length, 2);
-      expect(matches[assets[0]]?.path, file1.path);
-      expect(matches[assets[1]]?.path, file2.path);
+      expect(matches.length, 1);
+      expect(matches[asset]?.path, file.path);
     });
 
-    test('does not match files outside 30-second tolerance', () async {
+    test('matches file created 1 hour after asset (very long recording)', () async {
+      // Scenario: Asset created at 10:00pm, file created at 11:00pm (1 hour recording)
+      final assetTime = DateTime(2024, 1, 15, 22, 0, 0);
+      final fileTime = DateTime(2024, 1, 15, 23, 0, 0);
+
+      final file = await _createFileAtTime(tempDir, 'recording.m4a', fileTime);
+      final asset = _createAsset(1, assetTime, '/audio/1.m4a');
+
+      final matches = await AssetFileMatcherService.matchAssets(
+        assets: [asset],
+        availableFiles: [file],
+      );
+
+      expect(matches.length, 1);
+      expect(matches[asset]?.path, file.path);
+    });
+
+    test('matches files in sequential order', () async {
       final baseTime = DateTime.now();
 
-      final file1 = await _createFileAtTime(tempDir, '1.m4a', baseTime);
+      // Assets created first
+      final asset1Time = baseTime;
+      final asset2Time = baseTime.add(const Duration(seconds: 10));
+      final asset3Time = baseTime.add(const Duration(seconds: 20));
+
+      // Files created after (in order, but with varying delays)
+      final file1 = await _createFileAtTime(tempDir, '1.m4a', baseTime.add(const Duration(seconds: 5)));
+      final file2 = await _createFileAtTime(
+        tempDir,
+        '2.m4a',
+        baseTime.add(const Duration(minutes: 15)),
+      ); // 15 min later
+      final file3 = await _createFileAtTime(tempDir, '3.m4a', baseTime.add(const Duration(hours: 1))); // 1 hour later
 
       final assets = [
-        _createAsset(1, baseTime.add(const Duration(seconds: 45)), '/audio/1.m4a'),
+        _createAsset(1, asset1Time, '/audio/1.m4a'),
+        _createAsset(2, asset2Time, '/audio/2.m4a'),
+        _createAsset(3, asset3Time, '/audio/3.m4a'),
       ];
 
       final matches = await AssetFileMatcherService.matchAssets(
         assets: assets,
-        availableFiles: [file1],
+        availableFiles: [file1, file2, file3],
       );
 
-      expect(matches.length, 0);
+      expect(matches.length, 3);
+      expect(matches[assets[0]]?.path, file1.path);
+      expect(matches[assets[1]]?.path, file2.path);
+      expect(matches[assets[2]]?.path, file3.path);
+    });
+
+    test('skips files created before asset', () async {
+      final baseTime = DateTime.now();
+
+      // File created BEFORE asset - should skip
+      final fileBefore = await _createFileAtTime(tempDir, '1.m4a', baseTime.subtract(const Duration(seconds: 10)));
+      // File created AFTER asset - should match
+      final fileAfter = await _createFileAtTime(tempDir, '2.m4a', baseTime.add(const Duration(seconds: 5)));
+
+      final asset = _createAsset(1, baseTime, '/audio/1.m4a');
+
+      final matches = await AssetFileMatcherService.matchAssets(
+        assets: [asset],
+        availableFiles: [fileBefore, fileAfter],
+      );
+
+      expect(matches.length, 1);
+      expect(matches[asset]?.path, fileAfter.path);
     });
 
     test('matches by file extension', () async {

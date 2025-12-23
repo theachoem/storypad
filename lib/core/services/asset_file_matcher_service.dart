@@ -5,18 +5,19 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 
 /// Service for matching orphaned assets with their temporary files.
 ///
-/// Uses creation time proximity to match assets with files:
-/// - Assets are created first in the database
-/// - Files are created shortly after (usually within seconds)
-/// - Matches files to assets by finding the closest preceding file
+/// Uses sequential matching based on creation time order:
+/// - Assets are created first in the database (when recording starts)
+/// - Files are created after recording finishes (can be hours later for long recordings)
+/// - Matches files to assets by finding the next available file created after each asset
+/// - Works for any recording length without time limits
 class AssetFileMatcherService {
   /// Match multiple assets with available temporary files
   ///
   /// Algorithm:
-  /// 1. Sort assets by creation time
-  /// 2. Sort files by creation time
-  /// 3. For each asset, find the closest file created around the same time
-  /// 4. Use a time window of ±30 seconds for matching
+  /// 1. Sort assets by creation time (oldest first)
+  /// 2. Sort files by creation time (oldest first)
+  /// 3. For each asset, find the first unused file created after it with matching extension
+  /// 4. No time limit - handles recordings of any length (seconds to hours)
   static Future<Map<AssetDbModel, File>> matchAssets({
     required List<AssetDbModel> assets,
     required List<File> availableFiles,
@@ -32,14 +33,16 @@ class AssetFileMatcherService {
     final fileStats = await _getFileStats(availableFiles);
     if (fileStats.isEmpty) return {};
 
-    // Match each asset with closest file
+    final sortedFiles = fileStats.entries.toList()..sort((a, b) => a.value.modified.compareTo(b.value.modified));
+
+    // Match each asset with the next available file
+    int fileIndex = 0;
     for (final asset in sortedAssets) {
-      final match = _findClosestFile(asset, fileStats);
+      final match = _findNextFile(asset, sortedFiles, fileIndex);
       if (match != null) {
         matches[asset] = match.$1;
-        // Remove used file to avoid duplicate matches
-        fileStats.remove(match.$1);
-        AppLogger.d('✅ Matched asset ${asset.id} with ${match.$1.path} (${match.$2}ms difference)');
+        fileIndex = match.$2 + 1; // Move to next file for next asset
+        AppLogger.d('✅ Matched asset ${asset.id} with ${match.$1.path}');
       } else {
         AppLogger.d('❌ No match found for asset ${asset.id}');
       }
@@ -64,21 +67,20 @@ class AssetFileMatcherService {
     return stats;
   }
 
-  /// Find the closest file to an asset's creation time
+  /// Find the next available file created after an asset
   ///
-  /// Returns a tuple of (File, timeDifferenceInMs) or null if no match within tolerance
-  static (File, int)? _findClosestFile(
+  /// Returns a tuple of (File, fileIndex) or null if no match found
+  static (File, int)? _findNextFile(
     AssetDbModel asset,
-    Map<File, FileStat> fileStats,
+    List<MapEntry<File, FileStat>> sortedFiles,
+    int startIndex,
   ) {
-    const int maxToleranceMs = 30000; // 30 seconds
     final assetCreatedAt = asset.createdAt;
     final expectedExt = extension(asset.originalSource);
 
-    File? bestMatch;
-    int bestDiff = maxToleranceMs;
-
-    for (final entry in fileStats.entries) {
+    // Search for the first file created after the asset with matching extension
+    for (int i = startIndex; i < sortedFiles.length; i++) {
+      final entry = sortedFiles[i];
       final file = entry.key;
       final stat = entry.value;
       final fileExt = extension(file.path);
@@ -86,17 +88,16 @@ class AssetFileMatcherService {
       // Skip if extension doesn't match
       if (fileExt != expectedExt) continue;
 
-      // Calculate time difference
+      // Check if file was created after (or around) the asset
       final fileCreatedAt = stat.modified;
-      final diff = assetCreatedAt.difference(fileCreatedAt).inMilliseconds.abs();
+      final diff = fileCreatedAt.difference(assetCreatedAt).inMilliseconds;
 
-      // Find closest match within tolerance
-      if (diff < bestDiff) {
-        bestDiff = diff;
-        bestMatch = file;
+      // Allow small negative diff (up to 5 seconds) for timing variations
+      if (diff >= -5000) {
+        return (file, i);
       }
     }
 
-    return bestMatch != null ? (bestMatch, bestDiff) : null;
+    return null;
   }
 }
