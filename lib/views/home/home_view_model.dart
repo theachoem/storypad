@@ -130,7 +130,8 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       id: null,
       initialYear: year,
     ).push(context);
-    if (context.mounted) await _checkNewStoryResult(context, addedStory);
+
+    await _checkNewStoryResult(addedStory);
   }
 
   void takePhoto(BuildContext context) async {
@@ -149,14 +150,14 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialAsset: asset,
     ).push(HomeView.homeContext!);
 
-    if (context.mounted) await _checkNewStoryResult(context, addedStory);
+    await _checkNewStoryResult(addedStory);
   }
 
   Future<void> goToTemplatePage(BuildContext context) async {
     final addedStory = await TemplatesRoute(
       initialYear: year,
     ).push(context);
-    if (context.mounted) await _checkNewStoryResult(context, addedStory);
+    await _checkNewStoryResult(addedStory);
   }
 
   bool showFadeInYearEndDrawer = false;
@@ -192,7 +193,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  Future<void> _checkNewStoryResult(BuildContext context, Object? addedStory) async {
+  Future<void> _checkNewStoryResult(Object? addedStory) async {
     if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
         // setStories will automatically sort the stories by displayPathDate
@@ -218,8 +219,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     // auto sync if have enough credits.
-    if (context.mounted && context.read<InAppPurchaseProvider>().credits > 1) {
-      context.read<BackupProvider>().recheckAndSync();
+    if (HomeView.homeContext != null &&
+        HomeView.homeContext!.mounted &&
+        HomeView.homeContext!.read<InAppPurchaseProvider>().credits > 1) {
+      HomeView.homeContext!.read<BackupProvider>().recheckAndSync();
     }
   }
 

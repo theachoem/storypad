@@ -100,6 +100,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     story = buildStory(draft: false);
     await StoryDbModel.db.set(story!);
     lastSavedAtNotifier.value = story?.updatedAt;
+    notifyListeners();
   }
 
   @override
