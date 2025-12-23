@@ -19,9 +19,7 @@ import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_shee
 // Only this hashed identifier is stored in RevenueCat and Firebase - your real email never leaves your device.
 // This design ensures strong privacy protection while enabling purchase restoration and cross-device support.
 class InAppPurchaseProvider extends ChangeNotifier {
-  bool isActive(String productIdentifier) =>
-      _rewardAddOns?.contains(productIdentifier) == true ||
-      _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
+  bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   // Some feature unlocked base on credits.
   int get credits => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
@@ -30,16 +28,11 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
+  bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
 
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
   bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
   List<ProductDealObject> get activeDeals => ProductDealObject.getActiveDeals().values.toList();
-
-  DateTime? _rewardExpiredAt;
-  List<String>? _rewardAddOns;
-
-  DateTime? get rewardExpiredAt => _rewardExpiredAt;
-  List<String> get rewardAddOns => _rewardAddOns ?? [];
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;

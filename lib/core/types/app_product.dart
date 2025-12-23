@@ -4,7 +4,8 @@ enum AppProduct {
   voice_journal,
   relax_sounds,
   templates,
-  period_calendar
+  period_calendar,
+  markdown_export,
   ;
 
   static List<String> get productIdentifiers => values.map((e) => e.name).toList();

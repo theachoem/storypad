@@ -42,12 +42,38 @@ class _ExportSectionState extends State<_ExportSection> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
             value: AppExportOption.text,
           ),
-          RadioListTile(
-            secondary: Icon(SpIcons.markdown),
-            title: Text(tr('list_tile.export_markdown.title')),
-            subtitle: Text(tr('list_tile.export_markdown.subtitle')),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            value: AppExportOption.markdown,
+          Consumer<InAppPurchaseProvider>(
+            child: Icon(SpIcons.markdown),
+            builder: (context, provider, child) {
+              return GestureDetector(
+                onTap: provider.markdownExport
+                    ? null
+                    : () => AddOnsRoute.pushAndNavigateTo(product: AppProduct.markdown_export, context: context),
+                child: RadioListTile(
+                  enabled: provider.markdownExport,
+                  secondary: Builder(
+                    builder: (context) {
+                      if (provider.markdownExport) return Icon(SpIcons.markdown);
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(SpIcons.markdown),
+                          const Positioned(
+                            top: 0,
+                            right: -8,
+                            child: Icon(SpIcons.lock, size: 12.0),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  title: Text(tr('list_tile.export_markdown.title')),
+                  subtitle: Text(tr('list_tile.export_markdown.subtitle')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                  value: AppExportOption.markdown,
+                ),
+              );
+            },
           ),
           // RadioListTile(
           //   secondary: Icon(SpIcons.pdf),
@@ -65,7 +91,12 @@ class _ExportSectionState extends State<_ExportSection> {
               onPressed: widget.viewModel.storyCount == null || widget.viewModel.storyCount == 0
                   ? null
                   : () => widget.viewModel.export(context, selectedOption),
-              child: Text(tr('button.export')),
+              child: Text(
+                [
+                  tr('button.export'),
+                  if (selectedOption == AppExportOption.markdown) '(.tar.gz)',
+                ].join(' '),
+              ),
             ),
           ),
           const Divider(height: 32.0),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:tar/tar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -123,6 +124,8 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> exportMarkdown(BuildContext context) async {
+    if (!context.read<InAppPurchaseProvider>().markdownExport) return;
+
     AnalyticsService.instance.logExportOfflineBackup();
 
     (File, Directory)? result = await MessengerService.of(context).showLoading(
