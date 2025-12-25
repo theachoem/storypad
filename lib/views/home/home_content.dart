@@ -58,18 +58,42 @@ class _HomeContent extends StatelessWidget {
       context: context,
       builder: (context, state) {
         if (!state.editing) return const SpFloatingRelaxSoundsTile(fromHome: true);
+
+        final stories = [
+          ...viewModel.stories?.items.where((story) {
+                return state.selectedStories.contains(story.id);
+              }) ??
+              [],
+          ...viewModel.pinnedStories?.items.where((story) {
+                return state.selectedStories.contains(story.id);
+              }) ??
+              [],
+        ];
+
+        final allPinned = stories.every((story) => story.pinned == true);
+
         return SpMultiEditBottomNavBar(
           editing: true,
           onCancel: () => state.turnOffEditing(),
           buttons: [
-            OutlinedButton(
-              child: Text("${tr("button.archive")} (${state.selectedStories.length})"),
-              onPressed: () => state.archiveAll(context),
+            SpFadeIn.bound(
+              child: IconButton.outlined(
+                tooltip: allPinned
+                    ? "${tr("button.unpin_story")} (${state.selectedStories.length})"
+                    : "${tr("button.pin_story")} (${state.selectedStories.length})",
+                icon: allPinned ? Icon(SpIcons.pinSlash) : Icon(SpIcons.pin, color: ColorScheme.of(context).primary),
+                onPressed: stories.isEmpty ? null : () => viewModel.togglePinForStories(state, context),
+              ),
             ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
-              child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
-              onPressed: () => state.moveToBinAll(context),
+            IconButton.outlined(
+              tooltip: "${tr("button.archive")} (${state.selectedStories.length})",
+              icon: const Icon(SpIcons.archive),
+              onPressed: stories.isEmpty ? null : () => state.archiveAll(context),
+            ),
+            IconButton.outlined(
+              tooltip: "${tr("button.move_to_bin")} (${state.selectedStories.length})",
+              icon: const Icon(SpIcons.delete),
+              onPressed: stories.isEmpty ? null : () => state.moveToBinAll(context),
             ),
           ],
         );
@@ -79,7 +103,9 @@ class _HomeContent extends StatelessWidget {
 
   Widget buildBody(BuildContext listContext) {
     int itemsCount = viewModel.stories?.items.length ?? 0;
-    if (viewModel.hasThrowback) itemsCount += 1;
+
+    bool hasPinnedOrThrowback = viewModel.hasPinned || viewModel.hasThrowback;
+    if (hasPinnedOrThrowback) itemsCount += 1;
 
     if (viewModel.stories == null) {
       return const SliverFillRemaining(
@@ -105,20 +131,33 @@ class _HomeContent extends StatelessWidget {
       sliver: SliverList.builder(
         itemCount: itemsCount,
         itemBuilder: (context, itemIndex) {
-          if (viewModel.hasThrowback && itemIndex == 0) {
-            return SpThrowbackTile(
-              listHasStories: viewModel.stories?.items.isNotEmpty == true,
-              throwbackDates: viewModel.throwbackDates,
+          if (itemIndex == 0 && hasPinnedOrThrowback) {
+            return Column(
+              children: [
+                if (viewModel.hasThrowback)
+                  SpThrowbackTile(
+                    listHasStories: viewModel.stories?.items.isNotEmpty == true,
+                    throwbackDates: viewModel.throwbackDates,
+                  ),
+                for (int pinnedIndex = 0; pinnedIndex < (viewModel.pinnedStories?.items.length ?? 0); pinnedIndex++)
+                  buildStoryTile(
+                    index: pinnedIndex,
+                    context: context,
+                    listContext: listContext,
+                    stories: viewModel.pinnedStories!,
+                  ),
+              ],
             );
           }
 
           int storyIndex = itemIndex;
-          if (viewModel.hasThrowback) storyIndex = itemIndex - 1;
+          if (hasPinnedOrThrowback) storyIndex = itemIndex - 1;
 
           return buildStoryTile(
             index: storyIndex,
             context: context,
             listContext: listContext,
+            stories: viewModel.stories!,
           );
         },
       ),
@@ -129,11 +168,12 @@ class _HomeContent extends StatelessWidget {
     required int index,
     required BuildContext context,
     required BuildContext listContext,
+    required CollectionDbModel<StoryDbModel> stories,
   }) {
-    StoryDbModel story = viewModel.stories!.items[index];
+    StoryDbModel story = stories.items[index];
 
     return SpStoryListenerBuilder(
-      key: viewModel.scrollInfo.storyKeys[index],
+      key: viewModel.scrollInfo.getKeyForStoryIndex(story.pinned, index),
       story: story,
       onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
       onDeleted: () => viewModel.onAStoryDeleted(story),
@@ -153,9 +193,10 @@ class _HomeContent extends StatelessWidget {
               ),
             ),
             SpStoryTileListItem(
+              listHasPinned: viewModel.hasPinned,
               showYear: false,
               index: index,
-              stories: viewModel.stories!,
+              stories: stories,
               onTap: () => viewModel.goToViewPage(context, story),
               listContext: listContext,
               listHasThrowback: viewModel.hasThrowback,

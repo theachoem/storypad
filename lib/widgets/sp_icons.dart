@@ -28,7 +28,8 @@ class SpIcons {
   static const IconData cloudDone = Icons.cloud_done_outlined;
   static final IconData cloudOff = MdiIcons.cloudOff;
   static final IconData pinSlash = kIsCupertino ? CupertinoIcons.pin_slash : MdiIcons.pinOff;
-  static final IconData pin = kIsCupertino ? CupertinoIcons.pin : MdiIcons.pin;
+  static final IconData pin = kIsCupertino ? CupertinoIcons.pin_fill : MdiIcons.pin;
+  static final IconData pinOutline = kIsCupertino ? CupertinoIcons.pin : MdiIcons.pinOutline;
   static final IconData bookLock = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookLockOutline;
   static final IconData book = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOutline;
   static final IconData tune = kIsCupertino ? CupertinoIcons.slider_horizontal_3 : MdiIcons.tuneVariant;

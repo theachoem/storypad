@@ -16,11 +16,13 @@ class SpStoryTileListItem extends StatelessWidget {
     required this.onTap,
     required this.listContext,
     required this.listHasThrowback,
+    this.listHasPinned = false,
     this.viewOnly = false,
   });
 
   final int index;
   final bool listHasThrowback;
+  final bool listHasPinned;
   final CollectionDbModel<StoryDbModel> stories;
   final bool showYear;
   final void Function() onTap;
@@ -94,7 +96,10 @@ class SpStoryTileListItem extends StatelessWidget {
     }
   }
 
-  Widget buildStoryTile(StoryDbModel story, bool showMonogram) {
+  Widget buildStoryTile(
+    StoryDbModel story,
+    bool showMonogram,
+  ) {
     return SpStoryTile(
       story: story,
       showMonogram: showMonogram,

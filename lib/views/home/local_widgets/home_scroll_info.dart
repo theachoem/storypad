@@ -9,6 +9,7 @@ class _HomeScrollInfo {
   bool _scrolling = false;
   double extraExpandedHeight = 0;
   List<GlobalKey> storyKeys = [];
+  List<GlobalKey> pinnedStoryKeys = [];
 
   List<int> get months => viewModel().months;
 
@@ -26,8 +27,9 @@ class _HomeScrollInfo {
     scrollingToStoryIdNotifier.dispose();
   }
 
-  void setupStoryKeys(List<StoryDbModel> stories) {
+  void setupStoryKeys(List<StoryDbModel> stories, List<StoryDbModel> pinnedStories) {
     storyKeys = List.generate(stories.length, (_) => GlobalKey());
+    pinnedStoryKeys = List.generate(pinnedStories.length, (_) => GlobalKey());
   }
 
   void setExtraExpandedHeight(double extra) {
@@ -42,6 +44,8 @@ class _HomeScrollInfo {
     final stories = viewModel().stories?.items ?? [];
 
     int? visibleIndex;
+
+    // This listener only for tab change, so we only check unpinned stories.
     for (int i = 0; i < storyKeys.length; i++) {
       if (storyKeys[i].currentContext == null) continue;
 
@@ -67,20 +71,44 @@ class _HomeScrollInfo {
     }
   }
 
+  List<GlobalKey<State<StatefulWidget>>> getKeys(bool? pinned) {
+    return pinned == true ? pinnedStoryKeys : storyKeys;
+  }
+
+  GlobalKey<State<StatefulWidget>>? getKeyForStoryIndex(bool? pinned, int storyIndex) {
+    return getKeys(pinned)[storyIndex];
+  }
+
+  StoryDbModel? findStoryById(int storyId) {
+    final allStories = [
+      ...viewModel().stories?.items ?? [],
+      ...viewModel().pinnedStories?.items ?? [],
+    ];
+    return allStories.where((e) => e.id == storyId).firstOrNull;
+  }
+
   Future<void> moveToStory({
     required int targetStoryId,
   }) async {
-    List<StoryDbModel> stories = viewModel().stories?.items ?? [];
-    int targetStoryIndex = stories.indexWhere((e) => e.id == targetStoryId);
+    final story = findStoryById(targetStoryId);
+    if (story == null) return;
+
+    int targetStoryIndex = story.pinned == true
+        ? viewModel().pinnedStories?.items.indexWhere((e) => e.id == targetStoryId) ?? -1
+        : viewModel().stories?.items.indexWhere((e) => e.id == targetStoryId) ?? -1;
     if (targetStoryIndex == -1) return;
 
     scrollingToStoryIdNotifier.value = targetStoryId;
+    await moveToStoryIndex(targetStoryIndex: targetStoryIndex, pinned: story.pinned == true);
 
-    await moveToStoryIndex(targetStoryIndex: targetStoryIndex);
-
-    int? month = stories.elementAt(targetStoryIndex).month;
+    int? month = story.month;
     int monthIndex = months.indexWhere((e) => month == e);
-    DefaultTabController.of(storyKeys[targetStoryIndex].currentContext!).animateTo(monthIndex);
+
+    // for pinned, month tab should be first tab (0)
+    final context = getKeyForStoryIndex(story.pinned, targetStoryIndex)?.currentContext;
+    if (context != null && context.mounted) {
+      DefaultTabController.of(context).animateTo(story.pinned == true ? 0 : monthIndex);
+    }
 
     await Future.delayed(Durations.medium2, () {
       scrollingToStoryIdNotifier.value = null;
@@ -102,63 +130,65 @@ class _HomeScrollInfo {
 
     await moveToStoryIndex(
       targetStoryIndex: targetStoryIndex,
+      pinned: false,
     );
   }
 
   Future<void> moveToStoryIndex({
     required int targetStoryIndex,
+    required bool pinned,
   }) async {
     _scrolling = true;
-    List<StoryDbModel> stories = viewModel().stories?.items ?? [];
 
-    if (targetStoryIndex < 0 || targetStoryIndex >= storyKeys.length) {
+    final allStoryKeys = [...pinnedStoryKeys, ...storyKeys];
+    final globalTargetIndex = pinned ? targetStoryIndex : pinnedStoryKeys.length + targetStoryIndex;
+    final targetStoryKey = allStoryKeys.elementAt(globalTargetIndex);
+
+    if (globalTargetIndex < 0 || globalTargetIndex >= allStoryKeys.length) {
       _scrolling = false;
       return;
     }
 
-    if (targetStoryIndex == 0) {
-      await scrollController.animateTo(0.0, duration: Durations.long4, curve: Curves.fastLinearToSlowEaseIn);
-      _scrolling = false;
-      return;
-    }
+    // Progressively jump to visible keys until target becomes visible
+    int maxAttempts = 100; // Safety limit to avoid infinite loops
+    int attempts = 0;
 
-    final targetStoryKey = storyKeys.elementAt(targetStoryIndex);
-    (bool, int) result = _getScrollInfo(storyKeys, months, stories, targetStoryIndex);
+    while (targetStoryKey.currentContext == null && attempts < maxAttempts) {
+      attempts++;
 
-    bool isMovingRight = result.$1;
-    int nearestToTargetStoryIndex = result.$2;
-
-    if (targetStoryKey.currentContext == null) {
-      if (isMovingRight) {
-        for (int i = nearestToTargetStoryIndex; i <= targetStoryIndex; i++) {
-          final visibleKey = storyKeys[i];
-          final nextVisibleKey = (i + 1 < storyKeys.length) ? storyKeys[i + 1] : null;
-
-          if (visibleKey.currentContext == null) continue;
-          if (i != targetStoryIndex && nextVisibleKey?.currentContext != null) continue;
-
-          await Scrollable.ensureVisible(
-            visibleKey.currentContext!,
-            duration: i == targetStoryIndex ? Durations.medium3 : Durations.short1,
-            curve: i == targetStoryIndex ? Curves.ease : Curves.linear,
-          );
-        }
-      } else {
-        for (int i = nearestToTargetStoryIndex; i >= targetStoryIndex; i--) {
-          final visibleKey = storyKeys[i];
-          final nextVisibleKey = i > 0 ? storyKeys[i - 1] : null;
-
-          if (visibleKey.currentContext == null) continue;
-          if (i != targetStoryIndex && nextVisibleKey?.currentContext != null) continue;
-
-          await Scrollable.ensureVisible(
-            visibleKey.currentContext!,
-            duration: i == targetStoryIndex ? Durations.medium3 : Durations.short1,
-            curve: i == targetStoryIndex ? Curves.ease : Curves.linear,
-          );
+      // Find all currently visible keys
+      List<int> visibleIndices = [];
+      for (int i = 0; i < allStoryKeys.length; i++) {
+        if (allStoryKeys[i].currentContext != null) {
+          visibleIndices.add(i);
         }
       }
-    } else {
+
+      if (visibleIndices.isEmpty) break;
+
+      // Determine direction and find nearest visible key
+      bool isMovingForward = visibleIndices.every((index) => globalTargetIndex > index);
+      int nearestIndex = isMovingForward ? visibleIndices.last : visibleIndices.first;
+
+      // Jump to nearest visible key (no animation) to trigger rendering of more items
+      final nearestKey = allStoryKeys[nearestIndex];
+      if (nearestKey.currentContext != null) {
+        await Scrollable.ensureVisible(
+          nearestKey.currentContext!,
+          duration: Duration.zero,
+          curve: Curves.ease,
+        );
+
+        Completer<void> completer = Completer<void>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          completer.complete();
+        });
+        await completer.future;
+      }
+    }
+
+    // Finally, smoothly scroll to target if it's now visible
+    if (targetStoryKey.currentContext != null) {
       await Scrollable.ensureVisible(
         targetStoryKey.currentContext!,
         duration: Durations.medium3,
@@ -167,21 +197,5 @@ class _HomeScrollInfo {
     }
 
     _scrolling = false;
-  }
-
-  (bool, int) _getScrollInfo(
-    List<GlobalKey<State<StatefulWidget>>> storyKeys,
-    List<int> months,
-    List<StoryDbModel> stories,
-    int targetStoryIndex,
-  ) {
-    List<int> visibleStoryIndexes = [];
-
-    for (int i = 0; i < storyKeys.length; i++) {
-      if (storyKeys[i].currentContext != null) visibleStoryIndexes.add(i);
-    }
-
-    bool isMovingRight = visibleStoryIndexes.every((index) => targetStoryIndex > index);
-    return (isMovingRight, isMovingRight ? visibleStoryIndexes.last : visibleStoryIndexes.first);
   }
 }

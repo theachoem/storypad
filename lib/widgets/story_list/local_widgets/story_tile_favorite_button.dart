@@ -4,13 +4,11 @@ class _StoryTileFavoriteButton extends StatelessWidget {
   const _StoryTileFavoriteButton({
     required this.story,
     required this.toggleStarred,
-    required this.updateStarIcon,
     required this.multiEditState,
   });
 
   final StoryDbModel story;
   final Future<void> Function()? toggleStarred;
-  final Future<void> Function(String starIcon)? updateStarIcon;
   final SpStoryListMultiEditWrapperState? multiEditState;
 
   @override
@@ -38,132 +36,37 @@ class _StoryTileFavoriteButton extends StatelessWidget {
     return SpSingleStateWidget(
       initialValue: story.starred == true,
       builder: (context, notifier) {
-        const animationDuration = Durations.medium1;
-
-        int rowCount = (StoryIconObject.icons.length / 4).ceilToDouble().toInt();
-
-        double itemSize = 48;
-        double padding = 4.0;
-
-        double contentsWidth = itemSize * min(4, StoryIconObject.icons.length);
-        double width = contentsWidth + padding * 2 + 2;
-        double height = itemSize * rowCount + padding * 2 + 2;
-
-        return SpFloatingPopUpButton(
-          estimatedFloatingWidth: width,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 48,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (callback) => buildStarIconFloating(
-            width: width,
-            height: height,
-            padding: padding,
-            context: context,
-            notifier: notifier,
-            itemSize: itemSize,
+        return IconButton(
+          tooltip: tr("button.star"),
+          padding: const EdgeInsets.all(16.0),
+          iconSize: 18.0,
+          onPressed: toggleStarred == null
+              ? null
+              : () async {
+                  notifier.value = !notifier.value;
+                  await toggleStarred?.call();
+                },
+          icon: ValueListenableBuilder(
+            valueListenable: notifier,
+            builder: (context, starred, child) {
+              return SpAnimatedIcons(
+                duration: Durations.medium1,
+                showFirst: starred,
+                firstChild: Icon(
+                  SpIcons.favoriteFilled,
+                  color: ColorScheme.of(context).error,
+                  applyTextScaling: true,
+                ),
+                secondChild: Icon(
+                  SpIcons.favorite,
+                  color: Theme.of(context).dividerColor,
+                  applyTextScaling: true,
+                ),
+              );
+            },
           ),
-          builder: (callback) {
-            return buildStarButton(
-              callback: callback,
-              notifier: notifier,
-              animationDuration: animationDuration,
-            );
-          },
         );
       },
-    );
-  }
-
-  Widget buildStarIconFloating({
-    required double width,
-    required double height,
-    required double padding,
-    required BuildContext context,
-    required CmValueNotifier<bool> notifier,
-    required double itemSize,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      clipBehavior: Clip.hardEdge,
-      padding: EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-        color: ColorScheme.of(context).surface,
-        borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
-      ),
-      child: Wrap(
-        spacing: 0.0,
-        runSpacing: 0.0,
-        children: StoryIconObject.icons.entries.map((entry) {
-          Widget child;
-
-          bool defaultIcon =
-              story.preferredStarIcon == null && entry.value.filledIcon == StoryIconObject.fallbackIcon.filledIcon;
-
-          if (entry.key == story.preferredStarIcon || defaultIcon) {
-            child = IconButton.filledTonal(
-              icon: Icon(entry.value.outlineIcon(context)),
-              onPressed: () => updateStarIcon?.call(entry.key),
-            );
-          } else {
-            child = IconButton(
-              icon: Icon(entry.value.outlineIcon(context)),
-              onPressed: () => updateStarIcon?.call(entry.key),
-            );
-          }
-
-          return SizedBox(
-            width: itemSize,
-            height: itemSize,
-            child: Center(child: child),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget buildStarButton({
-    required VoidCallback callback,
-    required CmValueNotifier<bool> notifier,
-    required Duration animationDuration,
-  }) {
-    return IconButton(
-      tooltip: tr("button.star"),
-      padding: const EdgeInsets.all(16.0),
-      iconSize: 18.0,
-      onLongPress: callback,
-      onPressed: toggleStarred == null
-          ? null
-          : () async {
-              notifier.value = !notifier.value;
-              await Future.delayed(animationDuration);
-              await toggleStarred?.call();
-            },
-      icon: ValueListenableBuilder(
-        valueListenable: notifier,
-        builder: (context, starred, child) {
-          return Transform.scale(
-            scale: StoryIconObject.icons[story.preferredStarIcon]?.scale ?? StoryIconObject.fallbackIcon.scale,
-            child: SpAnimatedIcons(
-              duration: animationDuration,
-              showFirst: starred,
-              firstChild: Icon(
-                StoryIconObject.icons[story.preferredStarIcon]?.filledIcon(context) ??
-                    StoryIconObject.fallbackIcon.filledIcon(context),
-                color: ColorScheme.of(context).error,
-                applyTextScaling: true,
-              ),
-              secondChild: Icon(
-                StoryIconObject.icons[story.preferredStarIcon]?.outlineIcon(context) ??
-                    StoryIconObject.fallbackIcon.outlineIcon(context),
-                color: Theme.of(context).dividerColor,
-                applyTextScaling: true,
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

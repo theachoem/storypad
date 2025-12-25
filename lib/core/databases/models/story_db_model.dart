@@ -40,6 +40,7 @@ class StoryDbModel extends BaseDbModel {
   final int? second;
 
   final bool? starred;
+  final bool? pinned;
   final String? feeling;
 
   @JsonKey(fromJson: tagsFromJson)
@@ -85,6 +86,7 @@ class StoryDbModel extends BaseDbModel {
     required this.type,
     required this.id,
     required this.starred,
+    required this.pinned,
     required this.feeling,
     required this.year,
     required this.month,
@@ -111,7 +113,6 @@ class StoryDbModel extends BaseDbModel {
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences.showDayCount ?? false;
-  String? get preferredStarIcon => preferences.starIcon;
   bool get preferredShowTime => preferences.showTime ?? false;
 
   String? get preferredFontFamily => preferences.fontFamily;
@@ -196,6 +197,18 @@ class StoryDbModel extends BaseDbModel {
     );
   }
 
+  Future<StoryDbModel?> setPinned(
+    bool pinned, {
+    bool runCallbacks = true,
+  }) async {
+    if (!editable) return null;
+
+    return db.set(
+      copyWith(pinned: pinned, updatedAt: DateTime.now()),
+      runCallbacks: runCallbacks,
+    );
+  }
+
   Future<StoryDbModel?> updatePreferences({
     required StoryPreferencesDbModel preferences,
   }) async {
@@ -274,6 +287,7 @@ class StoryDbModel extends BaseDbModel {
       type: PathType.docs,
       id: now.millisecondsSinceEpoch,
       starred: false,
+      pinned: false,
       feeling: null,
       preferences: template?.preferences ?? StoryPreferencesDbModel.create(),
       latestContent: templateContent ?? StoryContentDbModel.create(),

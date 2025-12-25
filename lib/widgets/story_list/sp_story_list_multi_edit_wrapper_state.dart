@@ -66,6 +66,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         },
       );
 
+      await AnalyticsService.instance.logPutBackAllStories(count: selectedStories.length);
       turnOffEditing();
       return true;
     }
@@ -94,11 +95,42 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         },
       );
 
+      await AnalyticsService.instance.logMoveAllStoriesToBin(count: selectedStories.length);
       turnOffEditing();
       return true;
     }
 
     return false;
+  }
+
+  Future<bool> unpinAll(BuildContext context) async {
+    for (int i = 0; i < selectedStories.length; i++) {
+      int id = selectedStories.elementAt(i);
+      final record = await StoryDbModel.db.find(id);
+
+      // must run callbacks on each story since pinning changes
+      // depend on individual story tile. See home view.
+      await record?.setPinned(false, runCallbacks: true);
+    }
+
+    await AnalyticsService.instance.logUnpinAllStories(count: selectedStories.length);
+    turnOffEditing();
+    return true;
+  }
+
+  Future<bool> pinAll(BuildContext context) async {
+    for (int i = 0; i < selectedStories.length; i++) {
+      int id = selectedStories.elementAt(i);
+      final record = await StoryDbModel.db.find(id);
+
+      // must run callbacks on each story since pinning changes
+      // depend on individual story tile. See home view.
+      await record?.setPinned(true, runCallbacks: true);
+    }
+
+    await AnalyticsService.instance.logPinAllStories(count: selectedStories.length);
+    turnOffEditing();
+    return true;
   }
 
   Future<bool> archiveAll(BuildContext context) async {
@@ -122,6 +154,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         },
       );
 
+      await AnalyticsService.instance.logArchiveAllStories(count: selectedStories.length);
       turnOffEditing();
       return true;
     }
@@ -152,6 +185,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         },
       );
 
+      await AnalyticsService.instance.logPermanentDeleteAllStories(count: state.selectedStories.length);
       turnOffEditing();
       return true;
     }

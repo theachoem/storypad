@@ -35,6 +35,7 @@ class StoryObjectBox extends BaseObjectBox {
   int? second;
 
   bool? starred;
+  bool? pinned;
   String? feeling;
 
   @override
@@ -84,6 +85,7 @@ class StoryObjectBox extends BaseObjectBox {
     required this.minute,
     required this.second,
     required this.starred,
+    required this.pinned,
     required this.feeling,
     required this.createdAt,
     required this.updatedAt,

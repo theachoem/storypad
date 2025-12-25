@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(33, 6880637040027848499),
+    lastPropertyId: const obx_int.IdUid(34, 6588339555158711350),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -179,6 +179,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(33, 6880637040027848499),
         name: 'searchMetadata',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(34, 6588339555158711350),
+        name: 'pinned',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -701,7 +707,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final searchMetadataOffset = object.searchMetadata == null
             ? null
             : fbb.writeString(object.searchMetadata!);
-        fbb.startTable(34);
+        fbb.startTable(35);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -728,6 +734,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(30, object.eventId);
         fbb.addOffset(31, galleryTemplateIdOffset);
         fbb.addOffset(32, searchMetadataOffset);
+        fbb.addBool(33, object.pinned);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -793,6 +800,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           buffer,
           rootOffset,
           16,
+        );
+        final pinnedParam = const fb.BoolReader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          70,
         );
         final feelingParam = const fb.StringReader(
           asciiOptimization: true,
@@ -860,6 +872,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           minute: minuteParam,
           second: secondParam,
           starred: starredParam,
+          pinned: pinnedParam,
           feeling: feelingParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
@@ -1557,6 +1570,11 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.searchMetadata].
   static final searchMetadata = obx.QueryStringProperty<StoryObjectBox>(
     _entities[0].properties[25],
+  );
+
+  /// See [StoryObjectBox.pinned].
+  static final pinned = obx.QueryBooleanProperty<StoryObjectBox>(
+    _entities[0].properties[26],
   );
 }
 

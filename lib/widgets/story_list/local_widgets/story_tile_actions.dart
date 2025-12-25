@@ -210,18 +210,6 @@ class StoryTileActions {
     );
   }
 
-  Future<void> updateStarIcon(String starIcon) async {
-    StoryDbModel? updatedStory = await story.updatePreferences(
-      preferences: story.preferences.copyWith(starIcon: starIcon),
-    );
-
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logUpdateStarIcon(
-      story: updatedStory,
-    );
-  }
-
   Future<void> toggleShowDayCount() async {
     StoryDbModel? updatedStory = await story.updatePreferences(
       preferences: story.preferences.copyWith(showDayCount: !story.preferredShowDayCount),

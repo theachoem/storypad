@@ -98,6 +98,7 @@ class StorypadLegacyDatabase {
             type: PathType.docs,
             id: storypadStory.createOn.millisecondsSinceEpoch,
             starred: storypadStory.isFavorite,
+            pinned: false,
             feeling: storypadStory.feeling,
             preferences: null,
             year: storypadStory.forDate.year,

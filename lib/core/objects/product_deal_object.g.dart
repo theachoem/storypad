@@ -122,4 +122,5 @@ const _$AppProductEnumMap = {
   AppProduct.relax_sounds: 'relax_sounds',
   AppProduct.templates: 'templates',
   AppProduct.period_calendar: 'period_calendar',
+  AppProduct.markdown_export: 'markdown_export',
 };

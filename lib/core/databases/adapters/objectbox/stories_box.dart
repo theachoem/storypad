@@ -341,6 +341,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? eventId = filters?["event_id"];
     int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
+    bool? pinned = filters?["pinned"];
     int? order = filters?["order"];
     bool priority = filters?["priority"] == true;
     List<int>? selectedYears = filters?["selected_years"];
@@ -357,6 +358,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (eventId != null) conditions = conditions.and(StoryObjectBox_.eventId.equals(eventId));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
+    if (pinned != null && pinned == true) conditions = conditions.and(StoryObjectBox_.pinned.equals(pinned));
+    if (pinned != null && pinned == false) {
+      conditions = conditions.and(StoryObjectBox_.pinned.equals(pinned).or(StoryObjectBox_.pinned.isNull()));
+    }
     if (type != null) conditions = conditions.and(StoryObjectBox_.type.equals(type));
     if (types != null) conditions = conditions.and(StoryObjectBox_.type.oneOf(types));
     if (year != null) conditions = conditions.and(StoryObjectBox_.year.equals(year));
