@@ -37,12 +37,6 @@ class _StoryTileStarredButton extends StatelessWidget {
                   storyListReloaderContext: listContext,
                 ).toggleStarred,
           multiEditState: multiEditState,
-          updateStarIcon: viewOnly
-              ? null
-              : StoryTileActions(
-                  story: story,
-                  storyListReloaderContext: listContext,
-                ).updateStarIcon,
         ),
       ),
     );

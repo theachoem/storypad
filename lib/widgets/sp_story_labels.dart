@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
@@ -269,6 +270,29 @@ class SpStoryLabels extends StatelessWidget {
               child: Icon(
                 SpIcons.waterDrop,
                 color: Theme.of(context).colorScheme.error,
+                size: MediaQuery.textScalerOf(context).scale(16.0),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (fromStoryTile && story.pinned == true) {
+      children.add(
+        SizedBox(
+          height: MediaQuery.textScalerOf(context).scale(20),
+          child: Align(
+            alignment: .center,
+            widthFactor: 1.0,
+            child: Transform(
+              alignment: .center,
+              transform: Matrix4.identity()
+                ..rotateZ(0.5)
+                ..spScale(1.1),
+              child: Icon(
+                SpIcons.pin,
+                color: Theme.of(context).colorScheme.secondary,
                 size: MediaQuery.textScalerOf(context).scale(16.0),
               ),
             ),

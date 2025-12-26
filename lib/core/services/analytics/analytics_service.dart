@@ -384,18 +384,6 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
-  Future<void> logUpdateStarIcon({
-    required StoryDbModel story,
-  }) {
-    final parameters = storyAnalyticParameters(story);
-    debug('logUpdateStarIcon', parameters);
-
-    return FirebaseAnalytics.instance.logEvent(
-      name: sanitizeEventName('update_star_icon'),
-      parameters: parameters,
-    );
-  }
-
   Future<void> logToggleShowDayCount({
     required StoryDbModel story,
   }) {
@@ -644,6 +632,78 @@ class AnalyticsService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logPutBackAllStories({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logPutBackAllStories', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('put_back_all_stories'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logMoveAllStoriesToBin({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logMoveAllStoriesToBin', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('move_all_stories_to_bin'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logUnpinAllStories({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logUnpinAllStories', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('unpin_all_stories'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logPinAllStories({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logPinAllStories', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('pin_all_stories'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logArchiveAllStories({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logArchiveAllStories', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('archive_all_stories'),
+      parameters: parameters,
+    );
+  }
+
+  Future<void> logPermanentDeleteAllStories({
+    required int count,
+  }) {
+    final parameters = sanitizeParameters({'count': count.toString()});
+    debug('logPermanentDeleteAllStories', parameters);
+
+    return FirebaseAnalytics.instance.logEvent(
+      name: sanitizeEventName('permanent_delete_all_stories'),
+      parameters: parameters,
+    );
+  }
+
   Map<String, Object>? storyAnalyticParameters(StoryDbModel story) {
     return sanitizeParameters({
       'version': story.version.toString(),
@@ -657,7 +717,6 @@ class AnalyticsService extends BaseAnalyticsService {
       'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
           .toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
-      'preferred_star_icon': story.preferences.starIcon,
       'preferred_show_day_count': story.preferences.showDayCount?.toString(),
       'preferred_show_time': story.preferences.showTime?.toString(),
     });

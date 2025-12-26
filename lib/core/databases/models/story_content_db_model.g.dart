@@ -15,9 +15,9 @@ abstract class _$StoryContentDbModelCWProxy {
 
   StoryContentDbModel createdAt(DateTime createdAt);
 
-  StoryContentDbModel pages(List<List<dynamic>>? pages);
-
   StoryContentDbModel richPages(List<StoryPageDbModel>? richPages);
+
+  StoryContentDbModel pages(List<List<dynamic>>? pages);
 
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryContentDbModel(...).copyWith.fieldName(value)`.
@@ -31,8 +31,8 @@ abstract class _$StoryContentDbModelCWProxy {
     String? title,
     String? plainText,
     DateTime createdAt,
-    List<List<dynamic>>? pages,
     List<StoryPageDbModel>? richPages,
+    List<List<dynamic>>? pages,
   });
 }
 
@@ -58,11 +58,11 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
       call(createdAt: createdAt);
 
   @override
-  StoryContentDbModel pages(List<List<dynamic>>? pages) => call(pages: pages);
-
-  @override
   StoryContentDbModel richPages(List<StoryPageDbModel>? richPages) =>
       call(richPages: richPages);
+
+  @override
+  StoryContentDbModel pages(List<List<dynamic>>? pages) => call(pages: pages);
 
   @override
   /// Creates a new instance with the provided field values.
@@ -77,8 +77,8 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
     Object? title = const $CopyWithPlaceholder(),
     Object? plainText = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
-    Object? pages = const $CopyWithPlaceholder(),
     Object? richPages = const $CopyWithPlaceholder(),
+    Object? pages = const $CopyWithPlaceholder(),
   }) {
     return StoryContentDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -97,14 +97,14 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      pages: pages == const $CopyWithPlaceholder()
-          ? _value.pages
-          // ignore: cast_nullable_to_non_nullable
-          : pages as List<List<dynamic>>?,
       richPages: richPages == const $CopyWithPlaceholder()
           ? _value.richPages
           // ignore: cast_nullable_to_non_nullable
           : richPages as List<StoryPageDbModel>?,
+      pages: pages == const $CopyWithPlaceholder()
+          ? _value.pages
+          // ignore: cast_nullable_to_non_nullable
+          : pages as List<List<dynamic>>?,
     );
   }
 }
@@ -127,10 +127,10 @@ StoryContentDbModel _$StoryContentDbModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String?,
       plainText: json['plain_text'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      richPages: _richPagesFromJson(json['rich_pages']),
       pages: (json['pages'] as List<dynamic>?)
           ?.map((e) => e as List<dynamic>)
           .toList(),
-      richPages: _richPagesFromJson(json['rich_pages']),
     );
 
 Map<String, dynamic> _$StoryContentDbModelToJson(

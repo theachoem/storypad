@@ -9,8 +9,6 @@ part of 'story_preferences_db_model.dart';
 abstract class _$StoryPreferencesDbModelCWProxy {
   StoryPreferencesDbModel showDayCount(bool? showDayCount);
 
-  StoryPreferencesDbModel starIcon(String? starIcon);
-
   StoryPreferencesDbModel showTime(bool? showTime);
 
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue);
@@ -40,7 +38,6 @@ abstract class _$StoryPreferencesDbModelCWProxy {
   /// ```
   StoryPreferencesDbModel call({
     bool? showDayCount,
-    String? starIcon,
     bool? showTime,
     int? colorSeedValue,
     int? colorTone,
@@ -65,10 +62,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
   @override
   StoryPreferencesDbModel showDayCount(bool? showDayCount) =>
       call(showDayCount: showDayCount);
-
-  @override
-  StoryPreferencesDbModel starIcon(String? starIcon) =>
-      call(starIcon: starIcon);
 
   @override
   StoryPreferencesDbModel showTime(bool? showTime) => call(showTime: showTime);
@@ -119,7 +112,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
   /// ```
   StoryPreferencesDbModel call({
     Object? showDayCount = const $CopyWithPlaceholder(),
-    Object? starIcon = const $CopyWithPlaceholder(),
     Object? showTime = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorTone = const $CopyWithPlaceholder(),
@@ -136,10 +128,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.showDayCount
           // ignore: cast_nullable_to_non_nullable
           : showDayCount as bool?,
-      starIcon: starIcon == const $CopyWithPlaceholder()
-          ? _value.starIcon
-          // ignore: cast_nullable_to_non_nullable
-          : starIcon as String?,
       showTime: showTime == const $CopyWithPlaceholder()
           ? _value.showTime
           // ignore: cast_nullable_to_non_nullable
@@ -201,7 +189,6 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
   Map<String, dynamic> json,
 ) => StoryPreferencesDbModel(
   showDayCount: json['show_day_count'] as bool?,
-  starIcon: json['star_icon'] as String?,
   showTime: json['show_time'] as bool?,
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   colorTone: (json['color_tone'] as num?)?.toInt(),
@@ -217,7 +204,6 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
 Map<String, dynamic> _$StoryPreferencesDbModelToJson(
   StoryPreferencesDbModel instance,
 ) => <String, dynamic>{
-  'star_icon': instance.starIcon,
   'show_day_count': instance.showDayCount,
   'show_time': instance.showTime,
   'color_seed_value': instance.colorSeedValue,

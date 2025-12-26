@@ -19,6 +19,7 @@ class SearchFilterObject {
   final int? eventId;
   final int? assetId;
   final bool? starred;
+  final bool? pinned;
   final int? limit;
 
   SearchFilterObject({
@@ -34,6 +35,7 @@ class SearchFilterObject {
     this.month,
     this.day,
     this.starred,
+    this.pinned,
     this.limit,
   });
 
@@ -51,6 +53,7 @@ class SearchFilterObject {
     if (eventId != null) filters['event_id'] = eventId;
     if (assetId != null) filters['asset'] = assetId;
     if (starred != null) filters['starred'] = starred;
+    if (pinned != null) filters['pinned'] = pinned;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
     if (limit != null) filters['limit'] = limit;
 

@@ -29,6 +29,7 @@ class CollectionDbModel<T extends BaseDbModel> {
   }
 
   T? find(int id) => items.where((e) => e.id == id).firstOrNull;
+  bool exists(int id) => items.map((e) => e.id).contains(id);
 
   CollectionDbModel<T>? removeElement(T item) {
     if (!items.map((e) => e.id).contains(item.id)) return this;

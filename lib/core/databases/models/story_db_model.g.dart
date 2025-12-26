@@ -15,6 +15,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel starred(bool? starred);
 
+  StoryDbModel pinned(bool? pinned);
+
   StoryDbModel feeling(String? feeling);
 
   StoryDbModel year(int year);
@@ -67,6 +69,7 @@ abstract class _$StoryDbModelCWProxy {
     PathType type,
     int id,
     bool? starred,
+    bool? pinned,
     String? feeling,
     int year,
     int month,
@@ -108,6 +111,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
 
   @override
   StoryDbModel starred(bool? starred) => call(starred: starred);
+
+  @override
+  StoryDbModel pinned(bool? pinned) => call(pinned: pinned);
 
   @override
   StoryDbModel feeling(String? feeling) => call(feeling: feeling);
@@ -189,6 +195,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? type = const $CopyWithPlaceholder(),
     Object? id = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
+    Object? pinned = const $CopyWithPlaceholder(),
     Object? feeling = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
@@ -227,6 +234,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.starred
           // ignore: cast_nullable_to_non_nullable
           : starred as bool?,
+      pinned: pinned == const $CopyWithPlaceholder()
+          ? _value.pinned
+          // ignore: cast_nullable_to_non_nullable
+          : pinned as bool?,
       feeling: feeling == const $CopyWithPlaceholder()
           ? _value.feeling
           // ignore: cast_nullable_to_non_nullable
@@ -327,6 +338,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
   type: $enumDecode(_$PathTypeEnumMap, json['type']),
   id: (json['id'] as num).toInt(),
   starred: json['starred'] as bool?,
+  pinned: json['pinned'] as bool?,
   feeling: json['feeling'] as String?,
   year: (json['year'] as num).toInt(),
   month: (json['month'] as num).toInt(),
@@ -380,6 +392,7 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'minute': instance.minute,
   'second': instance.second,
   'starred': instance.starred,
+  'pinned': instance.pinned,
   'feeling': instance.feeling,
   'tags': instance.tags,
   'assets': instance.assets,
