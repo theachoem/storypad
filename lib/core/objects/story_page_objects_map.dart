@@ -1,9 +1,12 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 import 'package:storypad/core/services/stories/story_content_pages_to_document_service.dart';
 
 class StoryPageObjectsMap {
@@ -59,21 +62,26 @@ class StoryPageObjectsMap {
     required bool readOnly,
     StoryPageObjectsMap? initialPagesMap,
   }) async {
-    final documents = await StoryContentPagesToDocumentService.call(content.richPages);
+    final result = await Isolate.run(() {
+      final documents = StoryContentPagesToDocumentService.forMultiplePagesSync(content.richPages);
+      final plainTextResult = GenerateBodyPlainTextService.call(content.richPages);
+      return (documents: documents, richPagesWithCounts: plainTextResult?.richPagesWithCounts);
+    });
+
     StoryPageObjectsMap map = StoryPageObjectsMap();
 
-    for (int i = 0; i < documents.length; i++) {
+    for (int i = 0; i < result.documents.length; i++) {
       final richPage = content.richPages![i];
 
       final quillController = QuillController(
-        document: documents[i],
+        document: result.documents[i],
         selection: initialPagesMap?[richPage.id]?.bodyController.selection ?? const TextSelection.collapsed(offset: 0),
         readOnly: readOnly,
       );
 
       map[richPage.id] = StoryPageObject(
         key: GlobalKey(),
-        page: richPage,
+        page: result.richPagesWithCounts?[i] ?? richPage,
         titleController: TextEditingController.fromValue(
           TextEditingValue(
             text: richPage.title?.trim() ?? '',

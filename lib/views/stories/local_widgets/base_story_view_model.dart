@@ -299,20 +299,21 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   StoryDbModel buildStory({
     bool draft = true,
+    DateTime? updatedAt,
   }) {
     final assets = StoryExtractAssetsFromPagesService.call(draftContent?.richPages);
 
     debugPrint("Found assets: $assets in ${story?.id}");
     if (draft) {
       return story!.copyWith(
-        updatedAt: DateTime.now(),
+        updatedAt: updatedAt ?? DateTime.now(),
         latestContent: story?.latestContent ?? draftContent,
         draftContent: draftContent,
         assets: assets.toList(),
       );
     } else {
       return story!.copyWith(
-        updatedAt: DateTime.now(),
+        updatedAt: updatedAt ?? DateTime.now(),
         latestContent: draftContent,
         draftContent: null,
         assets: assets.toList(),

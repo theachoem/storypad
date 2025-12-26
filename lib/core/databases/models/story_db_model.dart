@@ -57,6 +57,12 @@ class StoryDbModel extends BaseDbModel {
   final int? templateId;
   final int? eventId;
 
+  // We include this at DB level.
+  final EventDbModel? event;
+
+  final int? wordCount;
+  final int? characterCount;
+
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
 
@@ -88,6 +94,7 @@ class StoryDbModel extends BaseDbModel {
     required this.starred,
     required this.pinned,
     required this.feeling,
+
     required this.year,
     required this.month,
     required this.day,
@@ -105,6 +112,9 @@ class StoryDbModel extends BaseDbModel {
     required this.galleryTemplateId,
     required this.templateId,
     this.eventId,
+    this.event,
+    this.wordCount,
+    this.characterCount,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
   }) : _preferences = preferences;
@@ -289,6 +299,8 @@ class StoryDbModel extends BaseDbModel {
       starred: false,
       pinned: false,
       feeling: null,
+      wordCount: null,
+      characterCount: null,
       preferences: template?.preferences ?? StoryPreferencesDbModel.create(),
       latestContent: templateContent ?? StoryContentDbModel.create(),
       draftContent: templateContent,
@@ -320,6 +332,8 @@ class StoryDbModel extends BaseDbModel {
             id: DateTime.now().millisecondsSinceEpoch,
             title: "Let's Begin: $year ✨",
             body: delta.toJson(),
+            characterCount: null,
+            wordCount: null,
           ),
         ],
       ),
@@ -336,17 +350,8 @@ class StoryDbModel extends BaseDbModel {
   bool _cloudViewing = false;
   bool get cloudViewing => _cloudViewing;
 
-  // when fetch one/all, we will include this in db level.
-  EventDbModel? _event;
-  EventDbModel? get event => _event;
-
   StoryDbModel markAsCloudViewing() {
     _cloudViewing = true;
-    return this;
-  }
-
-  StoryDbModel includeEvent(EventDbModel? event) {
-    _event = event;
     return this;
   }
 }

@@ -53,6 +53,12 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel eventId(int? eventId);
 
+  StoryDbModel event(EventDbModel? event);
+
+  StoryDbModel wordCount(int? wordCount);
+
+  StoryDbModel characterCount(int? characterCount);
+
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
   StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
@@ -88,6 +94,9 @@ abstract class _$StoryDbModelCWProxy {
     String? galleryTemplateId,
     int? templateId,
     int? eventId,
+    EventDbModel? event,
+    int? wordCount,
+    int? characterCount,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
   });
@@ -175,6 +184,16 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel eventId(int? eventId) => call(eventId: eventId);
 
   @override
+  StoryDbModel event(EventDbModel? event) => call(event: event);
+
+  @override
+  StoryDbModel wordCount(int? wordCount) => call(wordCount: wordCount);
+
+  @override
+  StoryDbModel characterCount(int? characterCount) =>
+      call(characterCount: characterCount);
+
+  @override
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       call(lastSavedDeviceId: lastSavedDeviceId);
 
@@ -214,6 +233,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
     Object? eventId = const $CopyWithPlaceholder(),
+    Object? event = const $CopyWithPlaceholder(),
+    Object? wordCount = const $CopyWithPlaceholder(),
+    Object? characterCount = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
@@ -310,6 +332,18 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.eventId
           // ignore: cast_nullable_to_non_nullable
           : eventId as int?,
+      event: event == const $CopyWithPlaceholder()
+          ? _value.event
+          // ignore: cast_nullable_to_non_nullable
+          : event as EventDbModel?,
+      wordCount: wordCount == const $CopyWithPlaceholder()
+          ? _value.wordCount
+          // ignore: cast_nullable_to_non_nullable
+          : wordCount as int?,
+      characterCount: characterCount == const $CopyWithPlaceholder()
+          ? _value.characterCount
+          // ignore: cast_nullable_to_non_nullable
+          : characterCount as int?,
       lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
@@ -373,6 +407,11 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
   galleryTemplateId: json['gallery_template_id'] as String?,
   templateId: (json['template_id'] as num?)?.toInt(),
   eventId: (json['event_id'] as num?)?.toInt(),
+  event: json['event'] == null
+      ? null
+      : EventDbModel.fromJson(json['event'] as Map<String, dynamic>),
+  wordCount: (json['word_count'] as num?)?.toInt(),
+  characterCount: (json['character_count'] as num?)?.toInt(),
   lastSavedDeviceId: json['last_saved_device_id'] as String?,
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
@@ -403,6 +442,9 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'gallery_template_id': instance.galleryTemplateId,
   'template_id': instance.templateId,
   'event_id': instance.eventId,
+  'event': instance.event?.toJson(),
+  'word_count': instance.wordCount,
+  'character_count': instance.characterCount,
   'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'preferences': instance.preferences.toJson(),
