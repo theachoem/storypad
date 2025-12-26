@@ -33,10 +33,13 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     galleryTemplateId: object.galleryTemplateId,
     templateId: object.templateId,
     eventId: object.eventId,
+    wordCount: object.wordCount,
+    characterCount: object.characterCount,
   );
 
-  story.includeEvent(events[story.eventId]);
-  return story;
+  return story.copyWith(
+    event: events.containsKey(object.eventId) ? events[object.eventId] : null,
+  );
 }
 
 List<StoryDbModel> _objectsToModels(Map<String, dynamic> map) {
@@ -101,6 +104,8 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
     eventId: story.eventId,
+    wordCount: story.draftContent?.wordCount ?? story.latestContent?.wordCount,
+    characterCount: story.draftContent?.characterCount ?? story.latestContent?.characterCount,
     permanentlyDeletedAt: story.permanentlyDeletedAt,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
   );

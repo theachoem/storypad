@@ -3,8 +3,12 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 
 class StoryContentPagesToDocumentService {
-  static Future<List<Document>> call(List<StoryPageDbModel>? richPages) {
+  static Future<List<Document>> forMultiplePages(List<StoryPageDbModel>? richPages) {
     return compute(_buildDocuments, richPages);
+  }
+
+  static List<Document> forMultiplePagesSync(List<StoryPageDbModel>? richPages) {
+    return _buildDocuments(richPages);
   }
 
   static Future<Document> forSinglePage(StoryPageDbModel richPage) async {

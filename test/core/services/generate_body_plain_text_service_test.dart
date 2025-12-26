@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
 void main() {
-  group('StoryContentDbModel.generateBodyPlainText', () {
-    test('should return null when richPages is null', () {
-      final result = StoryContentDbModel.generateBodyPlainText(null);
+  group('GenerateBodyPlainTextService', () {
+    test('should return null for null input', () {
+      final result = GenerateBodyPlainTextService.call(null);
       expect(result, isNull);
     });
 
-    test('should return null when richPages is empty', () {
-      final result = StoryContentDbModel.generateBodyPlainText([]);
+    test('should return null for empty list', () {
+      final result = GenerateBodyPlainTextService.call([]);
       expect(result, isNull);
     });
 
@@ -24,8 +23,9 @@ void main() {
           body: json.decode('[{"insert":"Hello World\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, 'Hello World');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, 'Hello World');
     });
 
     test('should convert single page with empty body', () {
@@ -36,8 +36,9 @@ void main() {
           body: null,
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '');
     });
 
     test('should convert single page with formatted text', () {
@@ -48,8 +49,9 @@ void main() {
           body: json.decode('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '**bold text**');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '**bold text**');
     });
 
     test('should convert multiple pages with titles and bodies', () {
@@ -65,8 +67,9 @@ void main() {
           body: json.decode('[{"insert":"Second page content\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, 'First page content\n\nSecond Page\nSecond page content');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, 'First page content\n\nSecond Page\nSecond page content');
     });
 
     test('should handle multiple pages where subsequent pages have null titles', () {
@@ -82,9 +85,10 @@ void main() {
           body: json.decode('[{"insert":"Second page content\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
+      final result = GenerateBodyPlainTextService.call(pages);
       // Empty string is added for null title
-      expect(result, 'First page content\n\n\nSecond page content');
+      expect(result, isNotNull);
+      expect(result!.plainText, 'First page content\n\n\nSecond page content');
     });
 
     test('should convert multiple pages with complex formatting', () {
@@ -107,8 +111,9 @@ void main() {
           body: json.decode('[{"insert":"The end.\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, 'Welcome to **my story**!\n\nChapter 1\nOnce upon a time...\n\nChapter 2\nThe end.');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, 'Welcome to **my story**!\n\nChapter 1\nOnce upon a time...\n\nChapter 2\nThe end.');
     });
 
     test('should handle pages with lists', () {
@@ -121,8 +126,9 @@ void main() {
           ),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '- Task 1\n- Task 2');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '- Task 1\n- Task 2');
     });
 
     test('should handle pages with blockquotes', () {
@@ -133,8 +139,9 @@ void main() {
           body: json.decode('[{"insert":"Be yourself."},{"insert":"\\n","attributes":{"blockquote":true}}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '> Be yourself.');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '> Be yourself.');
     });
 
     test('should handle pages with links', () {
@@ -147,8 +154,9 @@ void main() {
           ),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, 'Visit [Google](https://google.com)');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, 'Visit [Google](https://google.com)');
     });
 
     test('should trim trailing whitespace from result', () {
@@ -159,8 +167,9 @@ void main() {
           body: json.decode('[{"insert":"Content\\n\\n\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, 'Content');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, 'Content');
     });
 
     test('should handle complex multi-page document', () {
@@ -190,7 +199,8 @@ void main() {
           body: json.decode('[{"insert":"The end."},{"insert":"\\n","attributes":{"blockquote":true}}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
       const expected =
           'My Story\nby Author\n'
           '\n'
@@ -203,7 +213,7 @@ void main() {
           '\n'
           'Chapter 3: The End\n'
           '> The end.';
-      expect(result, expected);
+      expect(result!.plainText, expected);
     });
 
     test('should handle pages with empty body arrays', () {
@@ -214,8 +224,9 @@ void main() {
           body: [],
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '');
     });
 
     test('should apply markdown formatting by default', () {
@@ -226,8 +237,54 @@ void main() {
           body: json.decode('[{"insert":"bold","attributes":{"bold":true}},{"insert":"\\n"}]'),
         ),
       ];
-      final result = StoryContentDbModel.generateBodyPlainText(pages);
-      expect(result, '**bold**');
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      expect(result!.plainText, '**bold**');
+    });
+
+    test('should calculate word count correctly with title', () {
+      final pages = [
+        StoryPageDbModel(
+          id: 1,
+          title: 'Hello World',
+          body: json.decode('[{"insert":"This is body\\n"}]'),
+        ),
+      ];
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      // Word count: "Hello" + "World" + "This" + "is" + "body" = 5 words
+      expect(result!.richPagesWithCounts[0].wordCount, 5);
+    });
+
+    test('should calculate character count correctly including title', () {
+      final pages = [
+        StoryPageDbModel(
+          id: 1,
+          title: 'My Title',
+          body: json.decode('[{"insert":"Hello World\\n"}]'),
+        ),
+      ];
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
+      // characterCount = title length (8) + body length (12) = 20
+      expect(result!.richPagesWithCounts[0].characterCount, 20);
+    });
+
+    test('should calculate total character count correctly', () {
+      final pages = [
+        StoryPageDbModel(
+          id: 1,
+          title: 'Page',
+          body: json.decode('[{"insert":"Body\\n"}]'),
+        ),
+        StoryPageDbModel(
+          id: 2,
+          title: 'Two',
+          body: json.decode('[{"insert":"Data\\n"}]'),
+        ),
+      ];
+      final result = GenerateBodyPlainTextService.call(pages);
+      expect(result, isNotNull);
     });
   });
 }

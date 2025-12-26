@@ -13,6 +13,10 @@ abstract class _$StoryPageDbModelCWProxy {
 
   StoryPageDbModel body(List<dynamic>? body);
 
+  StoryPageDbModel wordCount(int? wordCount);
+
+  StoryPageDbModel characterCount(int? characterCount);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -20,7 +24,13 @@ abstract class _$StoryPageDbModelCWProxy {
   /// ```dart
   /// StoryPageDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
-  StoryPageDbModel call({int id, String? title, List<dynamic>? body});
+  StoryPageDbModel call({
+    int id,
+    String? title,
+    List<dynamic>? body,
+    int? wordCount,
+    int? characterCount,
+  });
 }
 
 /// Callable proxy for `copyWith` functionality.
@@ -40,6 +50,13 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
   StoryPageDbModel body(List<dynamic>? body) => call(body: body);
 
   @override
+  StoryPageDbModel wordCount(int? wordCount) => call(wordCount: wordCount);
+
+  @override
+  StoryPageDbModel characterCount(int? characterCount) =>
+      call(characterCount: characterCount);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPageDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -51,6 +68,8 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
     Object? body = const $CopyWithPlaceholder(),
+    Object? wordCount = const $CopyWithPlaceholder(),
+    Object? characterCount = const $CopyWithPlaceholder(),
   }) {
     return StoryPageDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -65,6 +84,14 @@ class _$StoryPageDbModelCWProxyImpl implements _$StoryPageDbModelCWProxy {
           ? _value.body
           // ignore: cast_nullable_to_non_nullable
           : body as List<dynamic>?,
+      wordCount: wordCount == const $CopyWithPlaceholder()
+          ? _value.wordCount
+          // ignore: cast_nullable_to_non_nullable
+          : wordCount as int?,
+      characterCount: characterCount == const $CopyWithPlaceholder()
+          ? _value.characterCount
+          // ignore: cast_nullable_to_non_nullable
+          : characterCount as int?,
     );
   }
 }
@@ -85,11 +112,15 @@ StoryPageDbModel _$StoryPageDbModelFromJson(Map<String, dynamic> json) =>
       id: _idFromJson(json['id']),
       title: json['title'] as String?,
       body: json['body'] as List<dynamic>?,
+      wordCount: (json['word_count'] as num?)?.toInt(),
+      characterCount: (json['character_count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$StoryPageDbModelToJson(StoryPageDbModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
+      'word_count': instance.wordCount,
+      'character_count': instance.characterCount,
       'body': instance.body,
     };

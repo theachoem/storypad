@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(34, 6588339555158711350),
+    lastPropertyId: const obx_int.IdUid(36, 3051838431030192697),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -185,6 +185,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(34, 6588339555158711350),
         name: 'pinned',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(35, 84094890273270909),
+        name: 'wordCount',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(36, 3051838431030192697),
+        name: 'characterCount',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -707,7 +719,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final searchMetadataOffset = object.searchMetadata == null
             ? null
             : fbb.writeString(object.searchMetadata!);
-        fbb.startTable(35);
+        fbb.startTable(37);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -735,6 +747,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(31, galleryTemplateIdOffset);
         fbb.addOffset(32, searchMetadataOffset);
         fbb.addBool(33, object.pinned);
+        fbb.addInt64(34, object.wordCount);
+        fbb.addInt64(35, object.characterCount);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -849,6 +863,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           64,
         );
+        final wordCountParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          72,
+        );
+        final characterCountParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          74,
+        );
         final searchMetadataParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 68);
@@ -885,6 +909,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           tags: tagsParam,
           assets: assetsParam,
           eventId: eventIdParam,
+          wordCount: wordCountParam,
+          characterCount: characterCountParam,
           searchMetadata: searchMetadataParam,
           preferences: preferencesParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
@@ -1575,6 +1601,16 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.pinned].
   static final pinned = obx.QueryBooleanProperty<StoryObjectBox>(
     _entities[0].properties[26],
+  );
+
+  /// See [StoryObjectBox.wordCount].
+  static final wordCount = obx.QueryIntegerProperty<StoryObjectBox>(
+    _entities[0].properties[27],
+  );
+
+  /// See [StoryObjectBox.characterCount].
+  static final characterCount = obx.QueryIntegerProperty<StoryObjectBox>(
+    _entities[0].properties[28],
   );
 }
 

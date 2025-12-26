@@ -15,6 +15,7 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_color_list_selector.dart';
+import 'package:storypad/widgets/sp_cross_fade.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -300,7 +301,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
     BaseStoryViewModel? storyViewModel = widget.storyViewModel;
     StoryDbModel? story = storyViewModel?.story;
 
-    List<Widget> actions = [
+    List<Widget> startActions = [
       buildMoreOptionsButton(context),
       IconButton(
         onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
@@ -325,14 +326,70 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
         ),
     ];
 
-    if (!kIsCupertino) actions = actions.reversed.toList();
+    List<Widget> endActions = [
+      if (storyViewModel != null &&
+          widget.storyViewModel?.draftContent?.wordCount != null &&
+          widget.storyViewModel?.draftContent?.characterCount != null)
+        Expanded(
+          child: Align(
+            alignment: .centerRight,
+            child: _WordCharCountButton(storyViewModel: storyViewModel),
+          ),
+        ),
+      if (!kIsCupertino) const SizedBox(width: 8.0),
+      if (kIsCupertino) const Center(child: CloseButton()),
+    ];
+
+    if (!kIsCupertino) startActions = startActions.reversed.toList();
 
     return Row(
       mainAxisAlignment: kIsCupertino ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
       children: [
-        Row(children: actions),
-        if (kIsCupertino) const CloseButton(),
+        Row(children: startActions),
+        Expanded(child: Row(children: endActions)),
       ],
+    );
+  }
+}
+
+class _WordCharCountButton extends StatefulWidget {
+  const _WordCharCountButton({
+    required this.storyViewModel,
+  });
+
+  final BaseStoryViewModel? storyViewModel;
+
+  @override
+  State<_WordCharCountButton> createState() => _WordCharCountButtonState();
+}
+
+class _WordCharCountButtonState extends State<_WordCharCountButton> {
+  bool showingWords = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      icon: Icon(SpIcons.text),
+      label: SpCrossFade(
+        showFirst: showingWords,
+        firstChild: Text(
+          tr(
+            'general.word_count_args',
+            namedArgs: {'WORDS_COUNT': (widget.storyViewModel?.draftContent?.wordCount ?? 0).toString()},
+          ),
+        ),
+        secondChild: Text(
+          tr(
+            'general.character_count_args',
+            namedArgs: {'CHAR_COUNT': (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString()},
+          ),
+        ),
+      ),
+      onPressed: () {
+        setState(() {
+          showingWords = !showingWords;
+        });
+      },
     );
   }
 }

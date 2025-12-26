@@ -10,6 +10,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -92,9 +93,11 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       ...draftContent?.richPages ?? <StoryPageDbModel>[],
     ].swap(oldIndex: oldIndex, newIndex: newIndex);
 
+    final plainTextResult = GenerateBodyPlainTextService.call(pages);
+
     draftContent = draftContent!.copyWith(
-      plainText: StoryContentDbModel.generateBodyPlainText(draftContent?.richPages),
-      richPages: pages,
+      plainText: plainTextResult?.plainText,
+      richPages: plainTextResult?.richPagesWithCounts,
     );
 
     if (hasDataWritten) {

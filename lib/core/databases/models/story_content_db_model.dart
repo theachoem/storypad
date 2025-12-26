@@ -6,7 +6,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
+import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
 part 'story_content_db_model.g.dart';
 
@@ -62,6 +62,12 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   @JsonKey(fromJson: _richPagesFromJson)
   final List<StoryPageDbModel>? richPages;
 
+  int get wordCount =>
+      richPages?.fold<int>(0, (previousValue, element) => previousValue + (element.wordCount ?? 0)) ?? 0;
+
+  int get characterCount =>
+      richPages?.fold<int>(0, (previousValue, element) => previousValue + (element.characterCount ?? 0)) ?? 0;
+
   StoryContentDbModel({
     required this.id,
     required this.title,
@@ -71,18 +77,6 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     this.pages,
   });
 
-  static String? generateBodyPlainText(List<StoryPageDbModel>? newRichPages) {
-    if (newRichPages == null || newRichPages.isEmpty) return null;
-    return [
-      QuillDeltaToPlainTextService.call(newRichPages.first.body ?? [], markdown: true),
-      if (newRichPages.length > 1)
-        for (final p in newRichPages.getRange(1, newRichPages.length)) ...[
-          p.title ?? '',
-          QuillDeltaToPlainTextService.call(p.body ?? [], markdown: true),
-        ],
-    ].join('\n').trim();
-  }
-
   StoryContentDbModel reorder({
     required int oldIndex,
     required int newIndex,
@@ -91,10 +85,12 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       ...richPages ?? <StoryPageDbModel>[],
     ].reorder(oldIndex: oldIndex, newIndex: newIndex);
 
+    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
+
     return copyWith(
       title: newRichPages.first.title,
-      plainText: generateBodyPlainText(newRichPages),
-      richPages: newRichPages,
+      plainText: plainTextResult?.plainText,
+      richPages: plainTextResult?.richPagesWithCounts,
     );
   }
 
@@ -119,12 +115,12 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       ...richPages ?? [],
     ]..removeWhere((e) => e.id == pageId);
 
+    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
+
     return copyWith(
       title: richPages?.first.title,
-      plainText: generateBodyPlainText(newRichPages),
-      richPages: [
-        ...richPages ?? [],
-      ]..removeWhere((e) => e.id == pageId),
+      plainText: plainTextResult?.plainText,
+      richPages: plainTextResult?.richPagesWithCounts,
     );
   }
 
@@ -133,10 +129,12 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     int index = richPages.indexWhere((e) => e.id == newPage.id);
     richPages[index] = newPage;
 
+    final plainTextResult = GenerateBodyPlainTextService.call(richPages);
+
     return copyWith(
       title: index == 0 ? newPage.title : title,
-      plainText: generateBodyPlainText(richPages),
-      richPages: richPages,
+      plainText: plainTextResult?.plainText,
+      richPages: plainTextResult?.richPagesWithCounts,
     );
   }
 

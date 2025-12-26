@@ -31,6 +31,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject starred(bool? starred);
 
+  SearchFilterObject pinned(bool? pinned);
+
   SearchFilterObject limit(int? limit);
 
   /// Creates a new instance with the provided field values.
@@ -53,6 +55,7 @@ abstract class _$SearchFilterObjectCWProxy {
     int? month,
     int? day,
     bool? starred,
+    bool? pinned,
     int? limit,
   });
 }
@@ -104,6 +107,9 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject starred(bool? starred) => call(starred: starred);
 
   @override
+  SearchFilterObject pinned(bool? pinned) => call(pinned: pinned);
+
+  @override
   SearchFilterObject limit(int? limit) => call(limit: limit);
 
   @override
@@ -127,6 +133,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
+    Object? pinned = const $CopyWithPlaceholder(),
     Object? limit = const $CopyWithPlaceholder(),
   }) {
     return SearchFilterObject(
@@ -178,6 +185,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.starred
           // ignore: cast_nullable_to_non_nullable
           : starred as bool?,
+      pinned: pinned == const $CopyWithPlaceholder()
+          ? _value.pinned
+          // ignore: cast_nullable_to_non_nullable
+          : pinned as bool?,
       limit: limit == const $CopyWithPlaceholder()
           ? _value.limit
           // ignore: cast_nullable_to_non_nullable
@@ -218,6 +229,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       month: (json['month'] as num?)?.toInt(),
       day: (json['day'] as num?)?.toInt(),
       starred: json['starred'] as bool?,
+      pinned: json['pinned'] as bool?,
       limit: (json['limit'] as num?)?.toInt(),
     );
 
@@ -235,6 +247,7 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'event_id': instance.eventId,
       'asset_id': instance.assetId,
       'starred': instance.starred,
+      'pinned': instance.pinned,
       'limit': instance.limit,
     };
 

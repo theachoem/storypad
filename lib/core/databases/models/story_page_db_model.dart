@@ -17,6 +17,8 @@ class StoryPageDbModel {
   @JsonKey(fromJson: _idFromJson)
   final int id;
   final String? title;
+  final int? wordCount;
+  final int? characterCount;
 
   // List: Returns JSON-serializable version of quill delta.
   final List<dynamic>? body;
@@ -25,6 +27,8 @@ class StoryPageDbModel {
     required this.id,
     required this.title,
     required this.body,
+    this.wordCount,
+    this.characterCount,
   });
 
   Map<String, dynamic> toJson() => _$StoryPageDbModelToJson(this);

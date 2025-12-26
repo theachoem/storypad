@@ -66,6 +66,8 @@ class StoryObjectBox extends BaseObjectBox {
   int? templateId;
   String? galleryTemplateId;
   int? eventId;
+  int? wordCount;
+  int? characterCount;
 
   // for query
   String? searchMetadata;
@@ -98,6 +100,8 @@ class StoryObjectBox extends BaseObjectBox {
     required this.tags,
     required this.assets,
     required this.eventId,
+    required this.wordCount,
+    required this.characterCount,
     required this.searchMetadata,
     required this.preferences,
     required this.permanentlyDeletedAt,
