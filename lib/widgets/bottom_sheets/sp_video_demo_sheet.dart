@@ -9,22 +9,28 @@ import 'package:video_player/video_player.dart';
 
 class SpVideoDemoSheet extends BaseBottomSheet {
   const SpVideoDemoSheet({
-    required this.videoFile,
     required this.demoTitle,
     required this.demoSubtitle,
+    required this.demoBackgroundColor,
+    required this.controller,
   });
 
   final String demoTitle;
   final String demoSubtitle;
-  final File videoFile;
+  final Color? demoBackgroundColor;
+  final VideoPlayerController controller;
 
   static Future<T?> showVideoSheet<T>({
     required BuildContext context,
     required String videoUrlPath,
     required String demoTitle,
     required String demoSubtitle,
+    required Color? demoBackgroundColor,
+    required double demoWidth,
+    required double demoAspectRatio,
   }) async {
     File? file;
+    VideoPlayerController? controller;
 
     try {
       file = await FirestoreStorageService.instance.getCachedFile(videoUrlPath);
@@ -34,18 +40,25 @@ class SpVideoDemoSheet extends BaseBottomSheet {
               debugSource: 'SpVideoDemoSheet.showVideoSheet',
               future: () => FirestoreStorageService.instance.downloadFile(videoUrlPath).then((e) => e.file),
             );
+
+      if (file == null) return null;
+
+      controller = VideoPlayerController.file(file);
+      await controller.initialize();
+
+      if (!controller.value.isInitialized) return null;
     } catch (e) {
       return null;
     }
 
     if (!context.mounted) return null;
-    if (file == null) return null;
 
     return SpVideoDemoSheet(
-      videoFile: file,
+      controller: controller,
       demoTitle: demoTitle,
       demoSubtitle: demoSubtitle,
-    ).show<T>(context: context);
+      demoBackgroundColor: demoBackgroundColor,
+    ).show(context: context, useRootNavigator: true);
   }
 
   @override
@@ -69,26 +82,25 @@ class _SpVideoDemoSheet extends StatefulWidget {
   final SpVideoDemoSheet params;
 
   @override
-  State<_SpVideoDemoSheet> createState() => __SpVideoDemoSheetState();
+  State<_SpVideoDemoSheet> createState() => _SpVideoDemoSheetState();
 }
 
-class __SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
-  late VideoPlayerController _controller;
-
+class _SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(widget.params.videoFile)
-      ..initialize().then((_) {
-        setState(() {});
-        _controller.setLooping(true);
-        _controller.play();
-      });
+
+    _load();
+  }
+
+  void _load() async {
+    await widget.params.controller.setLooping(true);
+    await widget.params.controller.play();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.params.controller.dispose();
     super.dispose();
   }
 
@@ -103,46 +115,54 @@ class __SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
-                decoration: BoxDecoration(
-                  color: ColorScheme.of(context).primary,
-                ),
+                decoration: BoxDecoration(color: widget.params.demoBackgroundColor),
                 child: Wrap(
                   clipBehavior: .hardEdge,
                   alignment: .center,
                   runAlignment: .center,
                   children: [
-                    if (_controller.value.isInitialized)
-                      SizedBox(
-                        width: 270,
-                        child: ClipRRect(
-                          clipBehavior: .hardEdge,
-                          borderRadius: BorderRadius.circular(12),
-                          child: AspectRatio(
-                            aspectRatio: _controller.value.aspectRatio,
-                            child: VideoPlayer(_controller),
-                          ),
+                    SizedBox(
+                      width: 270,
+                      child: ClipRRect(
+                        clipBehavior: .hardEdge,
+                        borderRadius: BorderRadius.circular(12),
+                        child: AspectRatio(
+                          aspectRatio: widget.params.controller.value.aspectRatio,
+                          child: VideoPlayer(widget.params.controller),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),
               const Divider(height: 1),
               const SizedBox(height: 24.0),
-              Text(
-                widget.params.demoTitle,
-                style: TextTheme.of(context).titleLarge,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  widget.params.demoTitle,
+                  style: TextTheme.of(context).titleLarge,
+                ),
               ),
               const SizedBox(height: 8.0),
-              Text(
-                widget.params.demoSubtitle,
-                style: TextTheme.of(context).bodyMedium,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  widget.params.demoSubtitle,
+                  style: TextTheme.of(context).bodyMedium,
+                  textAlign: .center,
+                ),
               ),
-              SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.0),
+              SizedBox(height: MediaQuery.paddingOf(context).bottom + 24.0),
             ],
           ),
         ),
         Positioned(
-          top: 12,
+          // When width < height, in most cases this sheet in shown half screen.
+          // In that case, no need to add status bar height to the top padding.
+          top: MediaQuery.sizeOf(context).width < MediaQuery.sizeOf(context).height
+              ? 12.0
+              : MediaQuery.paddingOf(context).top + 12.0,
           right: 12,
           child: CloseButton(
             style: IconButton.styleFrom(

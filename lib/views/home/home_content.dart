@@ -32,9 +32,8 @@ class _HomeContent extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         bool bigScreen = constraints.maxWidth >= 450;
-
         return Drawer(
-          width: bigScreen ? 280 : null,
+          width: bigScreen ? 400 : null,
           child: bigScreen ? const SpNestedNavigation(initialScreen: HomeEndDrawer()) : const HomeEndDrawer(),
         );
       },

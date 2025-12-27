@@ -17,14 +17,14 @@ class RewardsViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
-  int? selectecedRewardIndex;
+  int? selectedRewardIndex;
 
   void toggleRewardAtIndex(int index) {
-    if (index == selectecedRewardIndex) {
-      selectecedRewardIndex = null;
+    if (index == selectedRewardIndex) {
+      selectedRewardIndex = null;
       notifyListeners();
     } else {
-      selectecedRewardIndex = index;
+      selectedRewardIndex = index;
       notifyListeners();
     }
   }

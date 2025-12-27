@@ -8,7 +8,7 @@ class SpNestedNavigation extends StatefulWidget {
     required this.initialScreen,
   });
 
-  final Key? navigatorKey;
+  final GlobalKey<NavigatorState>? navigatorKey;
   final Widget initialScreen;
 
   static SpNestedNavigationState? maybeOf(BuildContext context) {
@@ -30,19 +30,28 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return HeroControllerScope(
-      controller: heroController,
-      child: ScaffoldMessenger(
-        child: Navigator(
-          key: widget.navigatorKey,
-          clipBehavior: Clip.hardEdge,
-          onGenerateRoute: (setting) {
-            return MaterialPageRoute(
-              builder: (context) {
-                return widget.initialScreen;
-              },
-            );
-          },
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          final NavigatorState? navigator = widget.navigatorKey?.currentState;
+          if (navigator?.canPop() ?? false) navigator?.maybePop(result);
+        }
+      },
+      child: HeroControllerScope(
+        controller: heroController,
+        child: ScaffoldMessenger(
+          child: Navigator(
+            key: widget.navigatorKey,
+            clipBehavior: Clip.hardEdge,
+            onGenerateRoute: (setting) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return widget.initialScreen;
+                },
+              );
+            },
+          ),
         ),
       ),
     );

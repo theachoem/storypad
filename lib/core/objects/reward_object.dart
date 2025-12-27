@@ -23,7 +23,7 @@ class RewardObject {
   // Level 0  → "Free"
   // Level 1  → "Bronze"
   // Level 2  → "Silver"
-  // Level 3  → "Gold"
+  // Level 3  → "Gold" tr('general.user_type.gold')
   // Level 4  → "Platinum"
   // Level 5  → "Diamond"
   // Level 6  → "Elite"
@@ -58,11 +58,12 @@ class RewardObject {
     ),
     RewardObject(
       rewardedBadge: tr('general.user_type.silver'),
-      purchaseCount: 2,
+      purchaseCount: 3,
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
         .pinned_notes,
+        .auto_backups,
       ],
       features: [
         RewardFeatureObject(
@@ -73,18 +74,6 @@ class RewardObject {
           videoUrlPath: '/reward_feature_videos/pinned_notes.mp4',
           type: .pinned_notes,
         ),
-      ],
-    ),
-    RewardObject(
-      rewardedBadge: tr('general.user_type.gold'),
-      purchaseCount: 3,
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
-      includedRewardedFeatures: [
-        .writing_stats,
-        .pinned_notes,
-        .auto_backups,
-      ],
-      features: [
         RewardFeatureObject(
           title: tr('list_tile.reward_automatic_backup.title'),
           subtitle: tr('list_tile.reward_automatic_backup.subtitle'),

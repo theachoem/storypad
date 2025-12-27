@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,9 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'rewards_view_model.dart';
 
 part 'rewards_content.dart';
+part 'local_widgets/rewards_header.dart';
+part 'local_widgets/purchase_card.dart';
+part 'local_widgets/reward_tile.dart';
 
 class RewardsRoute extends BaseRoute {
   const RewardsRoute({

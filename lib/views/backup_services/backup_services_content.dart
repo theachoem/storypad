@@ -14,7 +14,7 @@ class _BackupServicesContent extends StatelessWidget {
           IconButton(
             icon: const Icon(SpIcons.refresh),
             onPressed: () => viewModel.syncServices(context),
-            tooltip: tr('action.refresh'),
+            tooltip: tr('button.refresh'),
           ),
         ],
       ),

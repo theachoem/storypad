@@ -23,6 +23,7 @@ class SpShareLogsBottomSheet extends BaseBottomSheet {
   @override
   Future<T?> show<T>({
     required BuildContext context,
+    bool useRootNavigator = false,
   }) async {
     backupEmail = context.read<BackupProvider>().currentUser?.email;
     emailHash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(backupEmail ?? "");
@@ -32,7 +33,10 @@ class SpShareLogsBottomSheet extends BaseBottomSheet {
     isConfigured = await Purchases.isConfigured;
 
     if (context.mounted) {
-      return super.show(context: context);
+      return super.show(
+        context: context,
+        useRootNavigator: useRootNavigator,
+      );
     }
 
     return null;

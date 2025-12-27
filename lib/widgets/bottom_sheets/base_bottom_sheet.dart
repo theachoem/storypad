@@ -24,6 +24,7 @@ abstract class BaseBottomSheet {
 
   Future<T?> show<T>({
     required BuildContext context,
+    bool useRootNavigator = false,
   }) {
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
 
@@ -33,6 +34,7 @@ abstract class BaseBottomSheet {
         backgroundColor: getBackgroundColor(context),
         context: context,
         fullScreen: fullScreen,
+        useRootNavigator: useRootNavigator,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     } else {
@@ -41,6 +43,7 @@ abstract class BaseBottomSheet {
         barrierColor: barrierColor,
         showDragHandle: showMaterialDragHandle,
         backgroundColor: getBackgroundColor(context),
+        useRootNavigator: useRootNavigator,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     }
@@ -52,9 +55,10 @@ abstract class BaseBottomSheet {
     bool? showDragHandle,
     Color? barrierColor,
     Color? backgroundColor,
+    bool useRootNavigator = false,
   }) {
     return showModalBottomSheet<T>(
-      useRootNavigator: true,
+      useRootNavigator: useRootNavigator,
       context: context,
       showDragHandle: showDragHandle,
       isScrollControlled: true,
@@ -103,6 +107,7 @@ abstract class BaseBottomSheet {
     required double paddingTop,
     required Widget Function(BuildContext context, double bottomPadding) builder,
     Color? backgroundColor,
+    bool useRootNavigator = false,
   }) {
     if (fullScreen) {
       return showCupertinoSheet(
@@ -127,7 +132,7 @@ abstract class BaseBottomSheet {
       context: context,
       semanticsDismissible: true,
       barrierDismissible: true,
-      useRootNavigator: false,
+      useRootNavigator: useRootNavigator,
       builder: (context) {
         return MediaQuery.removePadding(
           context: context,
