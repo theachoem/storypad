@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -329,8 +330,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
     bool showWordCount =
         storyViewModel != null &&
         widget.storyViewModel?.draftContent?.wordCount != null &&
-        widget.storyViewModel?.draftContent?.characterCount != null &&
-        context.read<InAppPurchaseProvider>().writingStats;
+        widget.storyViewModel?.draftContent?.characterCount != null;
 
     if (kIsCupertino) {
       return Row(
@@ -382,6 +382,15 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
+    final rewarded = !context.read<InAppPurchaseProvider>().writingStats;
+
+    if (!rewarded) {
+      return TextButton.icon(
+        icon: const Icon(SpIcons.lock),
+        label: const Text('Unlock writing stats'),
+        onPressed: () => const RewardsRoute().push(context),
+      );
+    }
     return TextButton.icon(
       icon: Icon(SpIcons.text),
       label: SpCrossFade(
@@ -389,13 +398,17 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
         firstChild: Text(
           tr(
             'general.word_count_args',
-            namedArgs: {'WORDS_COUNT': (widget.storyViewModel?.draftContent?.wordCount ?? 0).toString()},
+            namedArgs: {
+              'WORDS_COUNT': (widget.storyViewModel?.draftContent?.wordCount ?? 0).toString(),
+            },
           ),
         ),
         secondChild: Text(
           tr(
             'general.character_count_args',
-            namedArgs: {'CHAR_COUNT': (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString()},
+            namedArgs: {
+              'CHAR_COUNT': rewarded ? (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString() : '---',
+            },
           ),
         ),
       ),

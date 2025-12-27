@@ -9,7 +9,13 @@ class _RewardsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
     final currentReward = iapProvider.currentReward;
-    final addOnRewards = iapProvider.rewards.where((reward) => reward.purchaseCount > 0).toList();
+
+    List<RewardObject> addOnRewards = iapProvider.rewards.where((reward) => reward.purchaseCount > 0).toList();
+    List<RewardObject> selectedAddOnRewards = viewModel.selectecedRewardIndex != null
+        ? [addOnRewards[viewModel.selectecedRewardIndex!]]
+        : addOnRewards;
+
+    bool allRewarded = currentReward.features.length == iapProvider.rewards.last.features.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,15 +70,26 @@ class _RewardsContent extends StatelessWidget {
                   },
                 ),
                 Text(
-                  currentReward.rewardedTitle,
+                  'Rewards',
                   style: TextTheme.of(context).titleLarge,
                   textAlign: .center,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  currentReward.rewardedMessage,
+                  allRewarded
+                      ? 'You have unlocked all rewards! Thank you for supporting StoryPad development!'
+                      : 'Purchase add-ons to unlock extra features & support StoryPad development!',
                   style: TextTheme.of(context).bodyMedium,
                   textAlign: .center,
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: ColorScheme.of(context).primaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(currentReward.rewardedBadge),
                 ),
               ],
             ),
@@ -97,35 +114,38 @@ class _RewardsContent extends StatelessWidget {
                       child: buildCard(
                         context: context,
                         reward: reward,
-                        unlocked: currentReward.purchaseCount >= reward.purchaseCount,
+                        rewarded: currentReward.purchaseCount >= reward.purchaseCount,
+                        index: index,
                       ),
                     );
                   } else {
                     return buildCard(
                       context: context,
                       reward: reward,
-                      unlocked: currentReward.purchaseCount >= reward.purchaseCount,
+                      rewarded: currentReward.purchaseCount >= reward.purchaseCount,
+                      index: index,
                     );
                   }
                 },
               ),
             ),
           ),
-          for (int i = 0; i < addOnRewards.length; i++) ...[
+          for (int i = 0; i < selectedAddOnRewards.length; i++) ...[
             const SizedBox(height: 16),
             SpSectionTitle(
               title: [
-                '${addOnRewards[i].purchaseCount}',
-                '${addOnRewards[i].purchaseCount > 1 ? 'Purchases' : 'Purchase'} Rewards',
+                '${selectedAddOnRewards[i].purchaseCount}',
+                '${selectedAddOnRewards[i].purchaseCount > 1 ? 'Purchases' : 'Purchase'} Rewards',
               ].join(' '),
             ),
-            for (int j = 0; j < addOnRewards[i].features.length; j++) ...[
+            for (int j = 0; j < selectedAddOnRewards[i].features.length; j++) ...[
               buildRewardTile(
                 context: context,
-                title: addOnRewards[i].features[j].title,
-                subtitle: addOnRewards[i].features[j].description,
-                leadingIcon: addOnRewards[i].features[j].iconData,
-                leadingDayColor: ((i + j) + 1) % 7,
+                title: selectedAddOnRewards[i].features[j].title,
+                subtitle: selectedAddOnRewards[i].features[j].description,
+                leadingIcon: selectedAddOnRewards[i].features[j].iconData,
+                leadingDayColor: selectedAddOnRewards[i].features[j].dayColor,
+                rewarded: currentReward.includedRewardedFeatures.contains(selectedAddOnRewards[i].features[j].type),
               ),
             ],
           ],
@@ -140,15 +160,39 @@ class _RewardsContent extends StatelessWidget {
     required String subtitle,
     required IconData leadingIcon,
     required int leadingDayColor,
+    required bool rewarded,
   }) {
     return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: ColorFromDayService(context: context).get(leadingDayColor),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(leadingIcon, color: ColorFromDayService(context: context).getForeground()),
+      leading: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: ColorFromDayService(context: context).get(leadingDayColor),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(leadingIcon, color: ColorFromDayService(context: context).getForeground()),
+          ),
+          if (!rewarded)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                transform: Matrix4.identity()..spTranslate(8.0, 8.0),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: ColorScheme.of(context).surface,
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.lock,
+                  size: 16,
+                  color: ColorScheme.of(context).onSurface,
+                ),
+              ),
+            ),
+        ],
       ),
       title: Text(title),
       subtitle: Text(subtitle),
@@ -160,35 +204,47 @@ class _RewardsContent extends StatelessWidget {
   Widget buildCard({
     required BuildContext context,
     required RewardObject reward,
-    required bool unlocked,
+    required bool rewarded,
+    required int index,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).dividerColor),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisAlignment: .start,
-        crossAxisAlignment: .start,
-        children: [
-          Text(
-            reward.purchaseCount.toString(),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: ColorScheme.of(context).primary),
+    return SpTapEffect(
+      effects: [.scaleDown],
+      onTap: () => viewModel.toggleRewardAtIndex(index),
+      child: AnimatedContainer(
+        duration: Durations.short2,
+        curve: Curves.ease,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: rewarded ? ColorScheme.of(context).primaryContainer : ColorScheme.of(context).surface,
+          border: Border.all(
+            color: viewModel.selectecedRewardIndex == index
+                ? ColorScheme.of(context).primary
+                : Theme.of(context).dividerColor,
           ),
-          Text(
-            reward.purchaseCount > 1 ? 'Purchases' : 'Purchase',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          Align(
-            alignment: .bottomRight,
-            child: unlocked
-                ? Icon(SpIcons.verifiedFilled, color: ColorScheme.of(context).primary)
-                : const Icon(SpIcons.lock),
-          ),
-        ],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: .start,
+          crossAxisAlignment: .start,
+          children: [
+            Text(
+              reward.purchaseCount.toString(),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: ColorScheme.of(context).primary),
+            ),
+            Text(
+              reward.purchaseCount > 1 ? 'Purchases' : 'Purchase',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Align(
+              alignment: .bottomRight,
+              child: rewarded
+                  ? Icon(SpIcons.verifiedFilled, color: ColorScheme.of(context).primary)
+                  : const Icon(SpIcons.lock),
+            ),
+          ],
+        ),
       ),
     );
   }

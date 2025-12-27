@@ -24,7 +24,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   // Some feature unlocked base on credits.
-  int get purchaseCount => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
+  int get purchaseCount => AppProduct.values.where((product) => isActive(product.productIdentifier)).length;
 
   // Add-on features.
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
@@ -34,9 +34,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
 
   // Reward features.
-  bool get writingStats => currentReward.rewardedFeatures.contains(RewardFeature.writing_stats);
-  bool get pinnedNotes => currentReward.rewardedFeatures.contains(RewardFeature.pinned_notes);
-  bool get autoBackups => currentReward.rewardedFeatures.contains(RewardFeature.auto_backups);
+  bool get writingStats => currentReward.includedRewardedFeatures.contains(RewardFeature.writing_stats);
+  bool get pinnedNotes => currentReward.includedRewardedFeatures.contains(RewardFeature.pinned_notes);
+  bool get autoBackups => currentReward.includedRewardedFeatures.contains(RewardFeature.auto_backups);
 
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
   bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;

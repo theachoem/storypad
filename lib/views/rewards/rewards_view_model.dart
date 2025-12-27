@@ -8,4 +8,16 @@ class RewardsViewModel extends ChangeNotifier with DisposeAwareMixin {
   RewardsViewModel({
     required this.params,
   });
+
+  int? selectecedRewardIndex;
+
+  void toggleRewardAtIndex(int index) {
+    if (index == selectecedRewardIndex) {
+      selectecedRewardIndex = null;
+      notifyListeners();
+    } else {
+      selectecedRewardIndex = index;
+      notifyListeners();
+    }
+  }
 }
