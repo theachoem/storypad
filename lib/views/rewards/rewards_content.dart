@@ -7,8 +7,9 @@ class _RewardsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentReward = Provider.of<InAppPurchaseProvider>(context).currentReward;
-    final addOnRewards = RewardObject.rewards.where((reward) => reward.purchaseCount > 0).toList();
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+    final currentReward = iapProvider.currentReward;
+    final addOnRewards = iapProvider.rewards.where((reward) => reward.purchaseCount > 0).toList();
 
     return Scaffold(
       appBar: AppBar(

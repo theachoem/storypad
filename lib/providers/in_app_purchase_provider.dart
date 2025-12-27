@@ -12,6 +12,7 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/core/types/feature_reward.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_sheet.dart';
 
@@ -25,11 +26,17 @@ class InAppPurchaseProvider extends ChangeNotifier {
   // Some feature unlocked base on credits.
   int get purchaseCount => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
 
+  // Add-on features.
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
   bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
+
+  // Reward features.
+  bool get writingStats => currentReward.rewardedFeatures.contains(RewardFeature.writing_stats);
+  bool get pinnedNotes => currentReward.rewardedFeatures.contains(RewardFeature.pinned_notes);
+  bool get autoBackups => currentReward.rewardedFeatures.contains(RewardFeature.auto_backups);
 
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
   bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
@@ -38,17 +45,16 @@ class InAppPurchaseProvider extends ChangeNotifier {
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
 
+  List<RewardObject> get rewards => RewardObject.rewards;
   RewardObject get currentReward {
-    RewardObject lastMatch = RewardObject.rewards.first;
-
-    for (final reward in RewardObject.rewards) {
+    RewardObject lastMatch = rewards.first;
+    for (final reward in rewards) {
       if (purchaseCount >= reward.purchaseCount) {
         lastMatch = reward;
       } else {
         break;
       }
     }
-
     return lastMatch;
   }
 

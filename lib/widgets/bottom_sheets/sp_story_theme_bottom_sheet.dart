@@ -326,29 +326,43 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
         ),
     ];
 
-    List<Widget> endActions = [
-      if (storyViewModel != null &&
-          widget.storyViewModel?.draftContent?.wordCount != null &&
-          widget.storyViewModel?.draftContent?.characterCount != null)
-        Expanded(
-          child: Align(
-            alignment: .centerRight,
-            child: _WordCharCountButton(storyViewModel: storyViewModel),
-          ),
-        ),
-      if (!kIsCupertino) const SizedBox(width: 8.0),
-      if (kIsCupertino) const Center(child: CloseButton()),
-    ];
+    bool showWordCount =
+        storyViewModel != null &&
+        widget.storyViewModel?.draftContent?.wordCount != null &&
+        widget.storyViewModel?.draftContent?.characterCount != null &&
+        context.read<InAppPurchaseProvider>().writingStats;
 
-    if (!kIsCupertino) startActions = startActions.reversed.toList();
-
-    return Row(
-      mainAxisAlignment: kIsCupertino ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
-      children: [
-        Row(children: startActions),
-        Expanded(child: Row(children: endActions)),
-      ],
-    );
+    if (kIsCupertino) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(children: startActions),
+          if (showWordCount)
+            Expanded(
+              child: Align(
+                alignment: .centerRight,
+                child: _WordCharCountButton(storyViewModel: storyViewModel),
+              ),
+            ),
+          const CloseButton(),
+        ],
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: showWordCount ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
+        children: [
+          if (showWordCount)
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(left: 8.0),
+                alignment: .centerLeft,
+                child: _WordCharCountButton(storyViewModel: storyViewModel),
+              ),
+            ),
+          Row(children: startActions.reversed.toList()),
+        ],
+      );
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:storypad/core/types/feature_reward.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 part 'reward_feature_object.dart';
@@ -8,12 +9,14 @@ class RewardObject {
   final String rewardedTitle;
   final String rewardedMessage;
   final String rewardedIconPath;
+  final List<RewardFeature> rewardedFeatures;
   final List<RewardFeatureObject> features;
 
   RewardObject({
     required this.purchaseCount,
     required this.rewardedTitle,
     required this.rewardedMessage,
+    required this.rewardedFeatures,
     required this.rewardedIconPath,
     required this.features,
   });
@@ -24,6 +27,7 @@ class RewardObject {
       rewardedTitle: 'You are exploring StoryPad!',
       rewardedMessage: 'Start your journaling journey and unlock rewards.',
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedFeatures: [],
       features: [],
     ),
     RewardObject(
@@ -31,6 +35,9 @@ class RewardObject {
       rewardedTitle: 'You are a mindful writer!',
       rewardedMessage: 'You\'re building a meaningful reflection practice.',
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedFeatures: [
+        .writing_stats,
+      ],
       features: [
         RewardFeatureObject(
           title: 'Writing Stats',
@@ -44,6 +51,10 @@ class RewardObject {
       rewardedTitle: 'Your commitment to self-discovery is growing.',
       rewardedMessage: 'Your commitment to self-discovery is growing.',
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedFeatures: [
+        .writing_stats,
+        .pinned_notes,
+      ],
       features: [
         RewardFeatureObject(
           title: 'Pinned Notes',
@@ -57,6 +68,11 @@ class RewardObject {
       rewardedTitle: 'Passionate Keeper',
       rewardedMessage: 'You\'re creating a rich tapestry of memories.',
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedFeatures: [
+        .writing_stats,
+        .pinned_notes,
+        .auto_backups,
+      ],
       features: [
         RewardFeatureObject(
           title: 'Automatic Backup',
