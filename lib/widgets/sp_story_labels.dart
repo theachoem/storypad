@@ -195,6 +195,28 @@ class SpStoryLabels extends StatelessWidget {
 
     children.addAll(buildTags(tagProvider, context));
 
+    if (story.inArchives) {
+      children.add(
+        buildPin(
+          leadingIconData: SpIcons.archive,
+          context: context,
+          title: tr('snack_bar.archive_success'),
+          onTap: null,
+        ),
+      );
+    }
+    if (story.inBins) {
+      children.add(
+        buildPin(
+          leadingIconColor: ColorScheme.of(context).error,
+          leadingIconData: SpIcons.delete,
+          context: context,
+          title: tr('snack_bar.move_to_bin_success'),
+          onTap: null,
+        ),
+      );
+    }
+
     if (story.feeling != null || setFeeling != null) {
       children.add(
         SpFloatingPopUpButton(

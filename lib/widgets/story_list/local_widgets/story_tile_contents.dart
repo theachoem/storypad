@@ -52,6 +52,11 @@ class _StoryTileContents extends StatelessWidget {
                     ),
               child: SpMarkdownBody(body: content!.displayShortBody!),
             ),
+          if (assetPaths?.isNotEmpty == true) ...[
+            SizedBox(height: MediaQuery.textScalerOf(context).scale(6)),
+            _StoryTileAssets(assetPaths: assetPaths!),
+            SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
+          ],
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
@@ -77,28 +82,6 @@ class _StoryTileContents extends StatelessWidget {
                   },
             onToggleManagingPage: null,
           ),
-          if (assetPaths?.isNotEmpty == true) ...[
-            SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
-            _StoryTileAssets(assetPaths: assetPaths!),
-            if (story.inArchives) SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
-          ],
-          if (story.inArchives) ...[
-            Container(
-              margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8.0)),
-              child: Text.rich(
-                TextSpan(
-                  style: TextTheme.of(context).labelMedium,
-                  children: [
-                    const WidgetSpan(
-                      child: Icon(SpIcons.archive, size: 16.0),
-                      alignment: PlaceholderAlignment.middle,
-                    ),
-                    TextSpan(text: " ${tr('snack_bar.archive_success')}"),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
