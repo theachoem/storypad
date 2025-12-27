@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/objects/product_deal_object.dart';
+import 'package:storypad/core/objects/reward_object.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -22,7 +23,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   // Some feature unlocked base on credits.
-  int get credits => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
+  int get purchaseCount => AppProduct.values.map((product) => isActive(product.productIdentifier)).length;
 
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
@@ -36,6 +37,20 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
+
+  RewardObject get currentReward {
+    RewardObject lastMatch = RewardObject.rewards.first;
+
+    for (final reward in RewardObject.rewards) {
+      if (purchaseCount >= reward.purchaseCount) {
+        lastMatch = reward;
+      } else {
+        break;
+      }
+    }
+
+    return lastMatch;
+  }
 
   InAppPurchaseProvider(BuildContext context) {
     _initialize(context).then((_) async {
@@ -236,6 +251,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
 
   Future<void> presentCodeRedemptionSheet(BuildContext context) async {
     if (kIAPEnabled && Platform.isIOS) {
+      await _loginIfNot(context);
+      if (_customerInfo == null) return;
+
       await Purchases.presentCodeRedemptionSheet();
       if (context.mounted) restorePurchase(context);
     }

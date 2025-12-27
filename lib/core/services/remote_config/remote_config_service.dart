@@ -13,7 +13,7 @@ class RemoteConfigService {
     earlyAdopterUserHashes,
     faqUrl,
     featureFlags,
-    latestRewardMessage,
+    latestRedeemMessage,
     localizationSupportUrl,
     policyPrivacyUrl,
     redditUrl,
@@ -78,8 +78,8 @@ class RemoteConfigService {
   );
 
   // eg. Last reward: Nov 5 — [@abc_user](https://www.tiktok.com/@abc_user/video/123456)
-  static const latestRewardMessage = _RemoteConfigObject<String>(
-    'LATEST_REWARD_MESSAGE',
+  static const latestRedeemMessage = _RemoteConfigObject<String>(
+    'LATEST_REDEEM_MESSAGE',
     _RemoteConfigValueType.string,
     '',
   );

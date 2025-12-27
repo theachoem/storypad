@@ -20,13 +20,12 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_reward_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
-import 'package:storypad/widgets/sp_markdown_body.dart';
+
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'relax_sounds_view_model.dart';

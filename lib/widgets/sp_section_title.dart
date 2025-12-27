@@ -5,15 +5,18 @@ class SpSectionTitle extends StatelessWidget {
     super.key,
     required this.title,
     this.trailing,
+    this.padding,
   });
 
   final String title;
   final Widget? trailing;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding:
+          padding ??
           const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 4.0,

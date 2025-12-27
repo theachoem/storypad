@@ -66,25 +66,6 @@ class _SoundsTab extends StatelessWidget {
                 },
               ),
             ),
-            if (!context.read<InAppPurchaseProvider>().relaxSound)
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8.0),
-                sliver: SliverToBoxAdapter(
-                  child: ListTile(
-                    onTap: () => SpRewardSheet().show(context: context),
-                    trailing: const Icon(SpIcons.info),
-                    tileColor: Theme.of(context).colorScheme.surface,
-                    shape: RoundedSuperellipseBorder(
-                      side: BorderSide(color: Theme.of(context).dividerColor),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    title: Text(tr('list_tile.share_relax_sound_to_social.title')),
-                    subtitle: SpMarkdownBody(
-                      body: tr('list_tile.share_relax_sound_to_social.subtitle'),
-                    ),
-                  ),
-                ),
-              ),
             const SliverToBoxAdapter(child: SizedBox(height: 16.0)),
             const SliverToBoxAdapter(child: Divider(height: 1)),
             const SliverToBoxAdapter(child: _LicenseText()),

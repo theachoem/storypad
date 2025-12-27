@@ -9,16 +9,20 @@ class _AddOnsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(tr('page.add_ons.title')),
         centerTitle: kIsCupertino,
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
+          IconButton(
+            icon: const SpGiftAnimatedIcon(),
+            onPressed: () => const RewardsRoute().push(context),
+          ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
       body: buildBody(context),
-      bottomNavigationBar: buildBottomNavigation(context),
     );
   }
 
@@ -36,9 +40,10 @@ class _AddOnsContent extends StatelessWidget {
         return ListView(
           padding: EdgeInsets.zero,
           children: [
-            const SizedBox(height: 12.0),
             if (viewModel.dealEndDate != null) buildOfferDealCard(viewModel.dealEndDate!, padding, context),
             buildAddOnsGrid(context, padding, constraints),
+            buildTermPrivacyRestorePurchaseTexts(context),
+            SizedBox(height: padding.bottom),
           ],
         );
       },
@@ -158,52 +163,47 @@ class _AddOnsContent extends StatelessWidget {
     );
   }
 
-  Widget buildBottomNavigation(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: EdgeInsets.only(
-            left: 24.0,
-            right: 24.0,
-            top: 8.0,
-            bottom: MediaQuery.of(context).padding.bottom + 16.0,
-          ),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.center,
-            children:
-                [
-                  (
-                    (tr('general.term_of_use')),
-                    () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/term-of-use'),
+  Widget buildTermPrivacyRestorePurchaseTexts(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 24.0,
+        right: 24.0,
+        top: 8.0,
+        bottom: 16.0,
+      ),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        alignment: WrapAlignment.center,
+        runAlignment: WrapAlignment.center,
+        children:
+            [
+              (
+                (tr('general.term_of_use')),
+                () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/term-of-use'),
+              ),
+              ("•", null),
+              (
+                (tr('general.privacy_policy')),
+                () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/privacy-policy'),
+              ),
+              ("•", null),
+              (
+                tr('button.restore_purchase'),
+                () => context.read<InAppPurchaseProvider>().restorePurchase(context),
+              ),
+            ].map((link) {
+              return SpTapEffect(
+                onTap: link.$2,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8),
+                  child: Text(
+                    link.$1,
+                    style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).primary),
                   ),
-                  ("•", null),
-                  (
-                    (tr('general.privacy_policy')),
-                    () => UrlOpenerService.openInCustomTab(context, 'https://storypad.me/privacy-policy'),
-                  ),
-                  ("•", null),
-                  (
-                    tr('button.restore_purchase'),
-                    () => context.read<InAppPurchaseProvider>().restorePurchase(context),
-                  ),
-                ].map((link) {
-                  return SpTapEffect(
-                    onTap: link.$2,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8),
-                      child: Text(
-                        link.$1,
-                        style: TextTheme.of(context).labelMedium?.copyWith(color: ColorScheme.of(context).primary),
-                      ),
-                    ),
-                  );
-                }).toList(),
-          ),
-        ),
-      ],
+                ),
+              );
+            }).toList(),
+      ),
     );
   }
 }

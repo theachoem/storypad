@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -15,9 +14,11 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/show/show_add_on_view.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';

@@ -17,7 +17,6 @@ import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
@@ -316,13 +315,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       // reload all time ensure data consistency.
       // inconsistent data may occur when adding story from different year.
       await reload(debugSource: '$runtimeType#_checkNewStoryResult');
-    }
-
-    // auto sync if have enough credits.
-    if (HomeView.homeContext != null &&
-        HomeView.homeContext!.mounted &&
-        HomeView.homeContext!.read<InAppPurchaseProvider>().credits > 1) {
-      HomeView.homeContext!.read<BackupProvider>().recheckAndSync();
     }
   }
 
