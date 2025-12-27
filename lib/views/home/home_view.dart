@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:flutter/material.dart';
@@ -16,10 +15,10 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart' show InAppUpdateProvider;
 import 'package:storypad/providers/nickname_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart' show HomeEndDrawer;
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/root/root_view_model.dart';
 import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
@@ -33,7 +32,6 @@ import 'package:storypad/widgets/sp_loop_animation_builder.dart' show SpLoopAnim
 import 'package:storypad/widgets/sp_measure_size.dart' show SpMeasureSize;
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart' show SpMultiEditBottomNavBar;
 import 'package:storypad/widgets/sp_nested_navigation.dart' show SpNestedNavigation;
-import 'package:storypad/widgets/sp_new_badge_builder.dart';
 import 'package:storypad/widgets/sp_side_bar_toggler_button.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart' show SpTapEffect, SpTapEffectType;
 import 'package:storypad/widgets/sp_throwback_tile.dart';

@@ -45,6 +45,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
 
+  bool get allRewarded => currentReward.features.length == rewards.last.features.length;
   List<RewardObject> get rewards => RewardObject.rewards;
   RewardObject get currentReward {
     RewardObject lastMatch = rewards.first;

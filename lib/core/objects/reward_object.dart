@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/types/feature_reward.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -29,25 +30,25 @@ class RewardObject {
   // Level 7  → "Premium"
   // Level 8  → "Ultimate"
   // Level 10 → "Legendary"
-  static final List<RewardObject> rewards = [
+  static List<RewardObject> get rewards => [
     RewardObject(
       purchaseCount: 0,
-      rewardedBadge: 'Free',
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedBadge: tr('general.user_type.free'),
+      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [],
       features: [],
     ),
     RewardObject(
-      rewardedBadge: 'Bronze',
+      rewardedBadge: tr('general.user_type.bronze'),
       purchaseCount: 1,
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
       ],
       features: [
         RewardFeatureObject(
-          title: 'Writing Stats',
-          description: 'View word and character count for your story',
+          title: tr('list_tile.reward_writing_state_feature.title'),
+          subtitle: tr('list_tile.reward_writing_state_feature.subtitle'),
           iconData: SpIcons.text,
           dayColor: 1,
           type: .writing_stats,
@@ -55,17 +56,17 @@ class RewardObject {
       ],
     ),
     RewardObject(
-      rewardedBadge: 'Silver',
+      rewardedBadge: tr('general.user_type.silver'),
       purchaseCount: 2,
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
         .pinned_notes,
       ],
       features: [
         RewardFeatureObject(
-          title: 'Pinned Notes',
-          description: 'Keep your stories safe with automatic Google Drive sync',
+          title: tr('list_tile.reward_pinned_note_feature.title'),
+          subtitle: tr('list_tile.reward_pinned_note_feature.subtitle'),
           iconData: SpIcons.pinOutline,
           dayColor: 2,
           type: .pinned_notes,
@@ -73,9 +74,9 @@ class RewardObject {
       ],
     ),
     RewardObject(
-      rewardedBadge: 'Gold',
+      rewardedBadge: tr('general.user_type.gold'),
       purchaseCount: 4,
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
+      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
         .pinned_notes,
@@ -83,8 +84,8 @@ class RewardObject {
       ],
       features: [
         RewardFeatureObject(
-          title: 'Automatic Backup',
-          description: 'Keep your stories safe with automatic Google Drive sync',
+          title: tr('list_tile.reward_automatic_backup.title'),
+          subtitle: tr('list_tile.reward_automatic_backup.subtitle'),
           iconData: SpIcons.cloudDone,
           dayColor: 3,
           type: .auto_backups,

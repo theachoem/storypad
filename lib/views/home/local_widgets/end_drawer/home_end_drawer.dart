@@ -136,13 +136,13 @@ class HomeEndDrawer extends StatelessWidget {
           buildArchiveTile(context),
           buildBinsTile(context),
           const Divider(),
-          const _BackupTile(),
+          _BackupTile(),
           const Divider(),
           if (kIAPEnabled) const _AddOnsTile(),
           if (kIAPEnabled)
             ListTile(
               leading: const SpGiftAnimatedIcon(),
-              title: const Text('Feature Rewards'),
+              title: Text(tr('page.rewards.title')),
               onTap: () => const RewardsRoute().push(context),
             ),
           buildSettingTile(context),

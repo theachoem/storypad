@@ -387,7 +387,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
     if (!rewarded) {
       return TextButton.icon(
         icon: const Icon(SpIcons.lock),
-        label: const Text('Unlock writing stats'),
+        label: Text(tr('button.unlock_writing_stats')),
         onPressed: () => const RewardsRoute().push(context),
       );
     }

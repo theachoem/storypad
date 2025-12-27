@@ -15,140 +15,153 @@ class _RewardsContent extends StatelessWidget {
         ? [addOnRewards[viewModel.selectecedRewardIndex!]]
         : addOnRewards;
 
-    bool allRewarded = currentReward.features.length == iapProvider.rewards.last.features.length;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: .min,
-        children: [
-          const Divider(height: 1),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.paddingOf(context).bottom,
-              left: 16,
-              right: 16,
-              top: 8,
-            ),
-            child: FilledButton(
-              child: const Text('Browse Add-Ons'),
-              onPressed: () => const AddOnsRoute().push(context),
-            ),
-          ),
-        ],
+      floatingActionButtonLocation: .centerDocked,
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: null,
+        shape: const StadiumBorder(),
+        label: Text(tr('button.browse_add_ons')),
+        icon: const Icon(SpIcons.addOns),
+        onPressed: () => const AddOnsRoute().push(context),
       ),
-      body: ListView(
-        padding: EdgeInsetsGeometry.only(
-          bottom: MediaQuery.paddingOf(context).bottom,
-        ),
+      body: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.only(
-              left: MediaQuery.paddingOf(context).left + 32.0,
-              right: MediaQuery.paddingOf(context).right + 32.0,
+          ListView(
+            padding: EdgeInsetsGeometry.only(
+              bottom: MediaQuery.paddingOf(context).bottom + kToolbarHeight + 16.0,
             ),
-            child: Column(
-              children: [
-                SpFirestoreStorageDownloaderBuilder(
-                  filePath: '/icons/hand_drawn/hand_drawn_sun_56x56.png',
-                  builder: (context, file, failed) {
-                    if (file == null) {
-                      return SizedBox(
-                        width: 88,
-                        height: 88,
-                        child: Center(child: failed ? const Icon(Icons.error) : null),
-                      );
-                    }
-                    return Image.file(
-                      file,
-                      width: 88,
-                      height: 88,
-                    );
-                  },
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  left: MediaQuery.paddingOf(context).left + 32.0,
+                  right: MediaQuery.paddingOf(context).right + 32.0,
                 ),
-                Text(
-                  'Rewards',
-                  style: TextTheme.of(context).titleLarge,
-                  textAlign: .center,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  allRewarded
-                      ? 'You have unlocked all rewards! Thank you for supporting StoryPad development!'
-                      : 'Purchase add-ons to unlock extra features & support StoryPad development!',
-                  style: TextTheme.of(context).bodyMedium,
-                  textAlign: .center,
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: ColorScheme.of(context).primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(currentReward.rewardedBadge),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: EdgeInsets.only(
-              left: MediaQuery.paddingOf(context).left + 16.0,
-              right: MediaQuery.paddingOf(context).right + 16.0,
-            ),
-            child: StaggeredGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
-              children: List.generate(
-                addOnRewards.length,
-                (index) {
-                  final reward = addOnRewards[index];
-                  if (index == addOnRewards.length - 1) {
-                    return StaggeredGridTile.fit(
-                      crossAxisCellCount: 2,
-                      child: buildCard(
-                        context: context,
-                        reward: reward,
-                        rewarded: currentReward.purchaseCount >= reward.purchaseCount,
-                        index: index,
+                child: Column(
+                  children: [
+                    SpFirestoreStorageDownloaderBuilder(
+                      filePath: currentReward.rewardedIconPath,
+                      builder: (context, file, failed) {
+                        if (file == null) {
+                          return SizedBox(
+                            width: 88,
+                            height: 88,
+                            child: Center(child: failed ? const Icon(Icons.error) : null),
+                          );
+                        }
+                        return SizedBox(
+                          width: 88,
+                          height: 88,
+                          child: SpFadeIn.bound(
+                            duration: Durations.long1,
+                            delay: Durations.medium1,
+                            child: Image.file(file),
+                          ),
+                        );
+                      },
+                    ),
+                    Text(
+                      tr('page.rewards.title'),
+                      style: TextTheme.of(context).titleLarge,
+                      textAlign: .center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      iapProvider.allRewarded
+                          ? tr('page.rewards.message_all_rewards_unlocked')
+                          : tr('page.rewards.message_default'),
+                      style: TextTheme.of(context).bodyMedium,
+                      textAlign: .center,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).primaryContainer,
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    );
-                  } else {
-                    return buildCard(
-                      context: context,
-                      reward: reward,
-                      rewarded: currentReward.purchaseCount >= reward.purchaseCount,
-                      index: index,
-                    );
-                  }
-                },
+                      child: Text(currentReward.rewardedBadge),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: MediaQuery.paddingOf(context).left + 16.0,
+                  right: MediaQuery.paddingOf(context).right + 16.0,
+                ),
+                child: StaggeredGrid.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  children: List.generate(
+                    addOnRewards.length,
+                    (index) {
+                      final reward = addOnRewards[index];
+                      if (index == addOnRewards.length - 1) {
+                        return StaggeredGridTile.fit(
+                          crossAxisCellCount: 2,
+                          child: buildCard(
+                            context: context,
+                            reward: reward,
+                            rewarded: currentReward.purchaseCount >= reward.purchaseCount,
+                            index: index,
+                          ),
+                        );
+                      } else {
+                        return buildCard(
+                          context: context,
+                          reward: reward,
+                          rewarded: currentReward.purchaseCount >= reward.purchaseCount,
+                          index: index,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+              for (int i = 0; i < selectedAddOnRewards.length; i++) ...[
+                const SizedBox(height: 16),
+                SpSectionTitle(
+                  title: [
+                    '${selectedAddOnRewards[i].purchaseCount}',
+                    (selectedAddOnRewards[i].purchaseCount > 1 ? tr('general.purchases') : tr('general.purchase')),
+                  ].join(' '),
+                ),
+                for (int j = 0; j < selectedAddOnRewards[i].features.length; j++) ...[
+                  buildRewardTile(
+                    context: context,
+                    title: selectedAddOnRewards[i].features[j].title,
+                    subtitle: selectedAddOnRewards[i].features[j].subtitle,
+                    leadingIcon: selectedAddOnRewards[i].features[j].iconData,
+                    leadingDayColor: selectedAddOnRewards[i].features[j].dayColor,
+                    rewarded: currentReward.includedRewardedFeatures.contains(selectedAddOnRewards[i].features[j].type),
+                  ),
+                ],
+              ],
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: kToolbarHeight + 16.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: .topCenter,
+                  end: .bottomCenter,
+                  colors: [
+                    Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                    Theme.of(context).scaffoldBackgroundColor,
+                  ],
+                ),
               ),
             ),
           ),
-          for (int i = 0; i < selectedAddOnRewards.length; i++) ...[
-            const SizedBox(height: 16),
-            SpSectionTitle(
-              title: [
-                '${selectedAddOnRewards[i].purchaseCount}',
-                '${selectedAddOnRewards[i].purchaseCount > 1 ? 'Purchases' : 'Purchase'} Rewards',
-              ].join(' '),
-            ),
-            for (int j = 0; j < selectedAddOnRewards[i].features.length; j++) ...[
-              buildRewardTile(
-                context: context,
-                title: selectedAddOnRewards[i].features[j].title,
-                subtitle: selectedAddOnRewards[i].features[j].description,
-                leadingIcon: selectedAddOnRewards[i].features[j].iconData,
-                leadingDayColor: selectedAddOnRewards[i].features[j].dayColor,
-                rewarded: currentReward.includedRewardedFeatures.contains(selectedAddOnRewards[i].features[j].type),
-              ),
-            ],
-          ],
         ],
       ),
     );
@@ -234,7 +247,7 @@ class _RewardsContent extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: ColorScheme.of(context).primary),
             ),
             Text(
-              reward.purchaseCount > 1 ? 'Purchases' : 'Purchase',
+              reward.purchaseCount > 1 ? tr('general.purchases') : tr('general.purchase'),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Align(

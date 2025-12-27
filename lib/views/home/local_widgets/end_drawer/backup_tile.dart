@@ -1,8 +1,7 @@
 part of 'home_end_drawer.dart';
 
+// No need const constructor for translation to work properly.
 class _BackupTile extends StatelessWidget {
-  const _BackupTile();
-
   @override
   Widget build(BuildContext context) {
     BackupProvider provider = Provider.of<BackupProvider>(context);
