@@ -45,12 +45,9 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
     // Save if detect data is invalid mostly from previous version before 2.12.3 (plainText), 2.23.0 (count)
     // No need to do following in edit story view.
-    if (draftContent?.plainText != content.plainText || draftContent?.characterCount != content.characterCount) {
-      draftContent = draftContent?.copyWith(
-        plainText: content.plainText,
-        richPages: content.richPages,
-      );
-
+    if (draftContent?.plainText != content.plainText ||
+        draftContent?.characterCount != content.characterCount ||
+        draftContent?.wordCount != content.wordCount) {
       // Keep updatedAt same as before since this is just a silent fix. User didn't explicitly make change.
       story = buildStory(draft: false, updatedAt: story?.updatedAt);
       StoryDbModel.db.set(story!, runCallbacks: false);

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -16,8 +15,6 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
@@ -122,9 +119,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> refresh(BuildContext context) async {
     await reload(debugSource: '$runtimeType#refresh');
-
-    // no need to wait because home app bar already show loading UI during syning.
-    if (context.mounted) context.read<BackupProvider>().recheckAndSync();
   }
 
   Future<void> changeYear(int newYear) async {
@@ -316,13 +310,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       // reload all time ensure data consistency.
       // inconsistent data may occur when adding story from different year.
       await reload(debugSource: '$runtimeType#_checkNewStoryResult');
-    }
-
-    // auto sync if have enough credits.
-    if (HomeView.homeContext != null &&
-        HomeView.homeContext!.mounted &&
-        HomeView.homeContext!.read<InAppPurchaseProvider>().credits > 1) {
-      HomeView.homeContext!.read<BackupProvider>().recheckAndSync();
     }
   }
 

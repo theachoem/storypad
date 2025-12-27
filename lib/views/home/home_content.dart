@@ -32,9 +32,8 @@ class _HomeContent extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         bool bigScreen = constraints.maxWidth >= 450;
-
         return Drawer(
-          width: bigScreen ? 280 : null,
+          width: bigScreen ? 400 : null,
           child: bigScreen ? const SpNestedNavigation(initialScreen: HomeEndDrawer()) : const HomeEndDrawer(),
         );
       },
@@ -59,7 +58,7 @@ class _HomeContent extends StatelessWidget {
       builder: (context, state) {
         if (!state.editing) return const SpFloatingRelaxSoundsTile(fromHome: true);
 
-        final stories = [
+        List<StoryDbModel> stories = [
           ...viewModel.stories?.items.where((story) {
                 return state.selectedStories.contains(story.id);
               }) ??
@@ -70,21 +69,13 @@ class _HomeContent extends StatelessWidget {
               [],
         ];
 
-        final allPinned = stories.every((story) => story.pinned == true);
+        bool allPinned = stories.every((story) => story.pinned == true);
 
         return SpMultiEditBottomNavBar(
           editing: true,
           onCancel: () => state.turnOffEditing(),
           buttons: [
-            SpFadeIn.bound(
-              child: IconButton.outlined(
-                tooltip: allPinned
-                    ? "${tr("button.unpin_story")} (${state.selectedStories.length})"
-                    : "${tr("button.pin_story")} (${state.selectedStories.length})",
-                icon: allPinned ? Icon(SpIcons.pinSlash) : Icon(SpIcons.pin, color: ColorScheme.of(context).primary),
-                onPressed: stories.isEmpty ? null : () => viewModel.togglePinForStories(state, context),
-              ),
-            ),
+            _PinStoryIconButton(state: state, allPinned: allPinned, stories: stories, viewModel: viewModel),
             IconButton.outlined(
               tooltip: "${tr("button.archive")} (${state.selectedStories.length})",
               icon: const Icon(SpIcons.archive),

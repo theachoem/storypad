@@ -7,8 +7,6 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -88,11 +86,6 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         calendarController.goToMonth(addedStory.year, addedStory.month);
       }
       selectedDay = addedStory.day;
-
-      // auto sync if have enough credits.
-      if (context.mounted && context.read<InAppPurchaseProvider>().credits > 1) {
-        context.read<BackupProvider>().recheckAndSync();
-      }
     }
 
     refreshList();

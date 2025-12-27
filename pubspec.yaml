@@ -1,5 +1,5 @@
 name: storypad
-version: 2.23.0+561
+version: 2.23.1+571
 publish_to: none
 environment:
   sdk: ^3.10.0
@@ -64,6 +64,7 @@ dependencies:
   shared_preferences: 2.5.3
   sqflite: 2.4.2
   tar: ^2.0.0
+  video_player: ^2.10.1
   visibility_detector: 0.4.0+2
   yaml: 3.1.3
 

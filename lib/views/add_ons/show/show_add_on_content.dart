@@ -11,7 +11,7 @@ class _ShowAddOnContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        forceMaterialTransparency: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
           if (CupertinoSheetRoute.hasParentSheet(context))
@@ -21,11 +21,24 @@ class _ShowAddOnContent extends StatelessWidget {
       body: ListView(
         children: [
           buildContents(context, iapProvider),
+          const SizedBox(height: 16.0),
           _DemoImages(demoImageUrls: viewModel.demoImageUrls, context: context),
           const SizedBox(height: 24.0),
           buildFAQTitle(context),
           const SizedBox(height: 8.0),
           ...buildFAQs(context),
+          Center(
+            child: TextButton(
+              child: Text(tr('button.redeem_code')),
+              onPressed: () {
+                if (Platform.isIOS) {
+                  context.read<InAppPurchaseProvider>().presentCodeRedemptionSheet(context);
+                } else if (Platform.isAndroid) {
+                  SpAndroidRedemptionSheet().show(context: context);
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -157,7 +170,7 @@ class _ShowAddOnContent extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
       child: Column(
         children: [
           CircleAvatar(

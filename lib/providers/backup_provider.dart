@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -11,11 +12,10 @@ import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.da
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
 
-class BackupProvider extends ChangeNotifier {
+class BackupProvider extends ChangeNotifier with DebounchedCallback {
   BackupProvider() {
-    recheckAndSync();
-
     step1MessageStream.listen((message) {
       AppLogger.d(
         '$runtimeType: step1 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
@@ -51,6 +51,16 @@ class BackupProvider extends ChangeNotifier {
     for (var database in BackupRepository.databases) {
       database.addGlobalListener(_databaseListener);
     }
+
+    _setupConnection().then((_) {
+      // Auto sync if applicable.
+      // Wait 1 second before calling to ensure home context is ready.
+      Future.delayed(const Duration(seconds: 1), () {
+        if (HomeView.homeContext?.read<InAppPurchaseProvider>().autoBackups == true) {
+          recheckAndSync(setupConnection: false);
+        }
+      });
+    });
   }
 
   Future<void> _databaseListener() async {
@@ -105,11 +115,7 @@ class BackupProvider extends ChangeNotifier {
 
   List<BackupCloudService> get services => repository.services;
 
-  Future<void> recheckAndSync() async {
-    _syncing = true;
-    repository.resetMessages();
-    notifyListeners();
-
+  Future<void> _setupConnection() async {
     final connectionResult = await repository.checkConnection();
     _connectionStatus = connectionResult.data;
     notifyListeners();
@@ -117,7 +123,18 @@ class BackupProvider extends ChangeNotifier {
     if (connectionResult.error != null) {
       AppLogger.d('Connection check failed: ${connectionResult.error!.message}');
     }
+  }
 
+  Future<void> recheckAndSync({
+    bool setupConnection = true,
+  }) async {
+    if (_syncing) return;
+
+    _syncing = true;
+    repository.resetMessages();
+    notifyListeners();
+
+    if (setupConnection) await _setupConnection();
     if (readyToSynced) {
       await _syncBackupAcrossDevices(currentUser!.email);
     }

@@ -12,6 +12,11 @@ class ColorFromDayService {
     return colors()[weekday];
   }
 
+  Color? getForeground() {
+    bool darkMode = Theme.of(context).brightness == Brightness.dark;
+    return darkMode ? Colors.black : Colors.white;
+  }
+
   Map<int, Color> colors() {
     bool darkMode = Theme.of(context).brightness == Brightness.dark;
     return darkMode ? kColorsByDayDark : kColorsByDayLight;

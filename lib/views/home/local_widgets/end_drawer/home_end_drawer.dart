@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart' show tr, BuildContextEasyLocalizationExtension;
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/types/new_badge.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart' show ArchivesRoute;
 import 'package:storypad/views/backup_services/backup_services_view.dart';
@@ -22,6 +20,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
 import 'package:storypad/views/home/years_view/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
 import 'package:storypad/views/library/library_view.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/root/root_view_model.dart';
 import 'package:storypad/views/tags/tags_view.dart' show TagsRoute;
 import 'package:storypad/views/settings/settings_view.dart' show SettingsRoute;
@@ -137,9 +136,15 @@ class HomeEndDrawer extends StatelessWidget {
           buildArchiveTile(context),
           buildBinsTile(context),
           const Divider(),
-          const _BackupTile(),
+          _BackupTile(),
           const Divider(),
           if (kIAPEnabled) const _AddOnsTile(),
+          if (kIAPEnabled)
+            ListTile(
+              leading: const SpGiftAnimatedIcon(),
+              title: Text(tr('page.rewards.title')),
+              onTap: () => const RewardsRoute().push(context),
+            ),
           buildSettingTile(context),
           const Divider(),
           const _CommunityTile(),

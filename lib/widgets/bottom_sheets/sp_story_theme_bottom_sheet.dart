@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -326,29 +327,42 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
         ),
     ];
 
-    List<Widget> endActions = [
-      if (storyViewModel != null &&
-          widget.storyViewModel?.draftContent?.wordCount != null &&
-          widget.storyViewModel?.draftContent?.characterCount != null)
-        Expanded(
-          child: Align(
-            alignment: .centerRight,
-            child: _WordCharCountButton(storyViewModel: storyViewModel),
-          ),
-        ),
-      if (!kIsCupertino) const SizedBox(width: 8.0),
-      if (kIsCupertino) const Center(child: CloseButton()),
-    ];
+    bool showWordCount =
+        storyViewModel != null &&
+        widget.storyViewModel?.draftContent?.wordCount != null &&
+        widget.storyViewModel?.draftContent?.characterCount != null;
 
-    if (!kIsCupertino) startActions = startActions.reversed.toList();
-
-    return Row(
-      mainAxisAlignment: kIsCupertino ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
-      children: [
-        Row(children: startActions),
-        Expanded(child: Row(children: endActions)),
-      ],
-    );
+    if (kIsCupertino) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(children: startActions),
+          if (showWordCount)
+            Expanded(
+              child: Align(
+                alignment: .centerRight,
+                child: _WordCharCountButton(storyViewModel: storyViewModel),
+              ),
+            ),
+          const CloseButton(),
+        ],
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: showWordCount ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
+        children: [
+          if (showWordCount)
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(left: 8.0),
+                alignment: .centerLeft,
+                child: _WordCharCountButton(storyViewModel: storyViewModel),
+              ),
+            ),
+          Row(children: startActions.reversed.toList()),
+        ],
+      );
+    }
   }
 }
 
@@ -368,6 +382,16 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
+    final rewarded = context.read<InAppPurchaseProvider>().writingStats;
+
+    if (!rewarded) {
+      return TextButton.icon(
+        icon: const Icon(SpIcons.lock),
+        label: Text(tr('button.unlock_writing_stats')),
+        onPressed: () => const RewardsRoute(initialFocusedRewardFeature: .writing_stats).push(context),
+      );
+    }
+
     return TextButton.icon(
       icon: Icon(SpIcons.text),
       label: SpCrossFade(
@@ -375,13 +399,17 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
         firstChild: Text(
           tr(
             'general.word_count_args',
-            namedArgs: {'WORDS_COUNT': (widget.storyViewModel?.draftContent?.wordCount ?? 0).toString()},
+            namedArgs: {
+              'WORDS_COUNT': (widget.storyViewModel?.draftContent?.wordCount ?? 0).toString(),
+            },
           ),
         ),
         secondChild: Text(
           tr(
             'general.character_count_args',
-            namedArgs: {'CHAR_COUNT': (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString()},
+            namedArgs: {
+              'CHAR_COUNT': rewarded ? (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString() : '---',
+            },
           ),
         ),
       ),

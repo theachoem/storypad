@@ -95,27 +95,18 @@ class _SpOnboardingWrapperState extends State<SpOnboardingWrapper> with TickerPr
       return widget.child;
     }
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          final NavigatorState? navigator = onboardingKey?.currentState;
-          if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-        }
-      },
-      child: Material(
-        color: ColorScheme.of(context).surface,
-        child: Stack(
-          children: [
-            buildHomeAnimation(child: widget.child),
-            buildOnboardingAnimation(
-              child: SpNestedNavigation(
-                navigatorKey: onboardingKey,
-                initialScreen: OnboardingView(params: OnboardingRoute()),
-              ),
+    return Material(
+      color: ColorScheme.of(context).surface,
+      child: Stack(
+        children: [
+          buildHomeAnimation(child: widget.child),
+          buildOnboardingAnimation(
+            child: SpNestedNavigation(
+              navigatorKey: onboardingKey,
+              initialScreen: OnboardingView(params: OnboardingRoute()),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

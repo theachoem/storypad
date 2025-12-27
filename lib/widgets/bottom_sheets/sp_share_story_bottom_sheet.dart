@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -16,9 +15,7 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_reward_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_markdown_body.dart';
 
 class SpShareStoryBottomSheet extends BaseBottomSheet {
   @override
@@ -170,30 +167,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
                 onSubmitted: (value) => share(),
               ),
             ),
-            if (kIAPEnabled) buildShareToSocialCard(context),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildShareToSocialCard(BuildContext context) {
-    return Visibility(
-      visible: MediaQuery.of(context).viewInsets.bottom == 0, // keyboard closed
-      child: Container(
-        margin: const EdgeInsets.only(top: 16.0),
-        child: ListTile(
-          onTap: () => SpRewardSheet().show(context: context),
-          trailing: const Icon(SpIcons.info),
-          tileColor: Theme.of(context).colorScheme.readOnly.surface1,
-          shape: RoundedSuperellipseBorder(
-            side: BorderSide(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          title: Text(tr('list_tile.share_story_to_social.title')),
-          subtitle: SpMarkdownBody(
-            body: tr('list_tile.share_story_to_social.subtitle'),
-          ),
         ),
       ),
     );
