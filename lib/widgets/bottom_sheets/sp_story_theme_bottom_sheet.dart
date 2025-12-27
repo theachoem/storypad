@@ -382,15 +382,16 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final rewarded = !context.read<InAppPurchaseProvider>().writingStats;
+    final rewarded = context.read<InAppPurchaseProvider>().writingStats;
 
     if (!rewarded) {
       return TextButton.icon(
         icon: const Icon(SpIcons.lock),
         label: Text(tr('button.unlock_writing_stats')),
-        onPressed: () => const RewardsRoute().push(context),
+        onPressed: () => const RewardsRoute(initialFocusedRewardFeature: .writing_stats).push(context),
       );
     }
+
     return TextButton.icon(
       icon: Icon(SpIcons.text),
       label: SpCrossFade(

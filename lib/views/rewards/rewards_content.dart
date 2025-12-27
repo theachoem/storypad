@@ -54,11 +54,7 @@ class _RewardsContent extends StatelessWidget {
                         return SizedBox(
                           width: 88,
                           height: 88,
-                          child: SpFadeIn.bound(
-                            duration: Durations.long1,
-                            delay: Durations.medium1,
-                            child: Image.file(file),
-                          ),
+                          child: Image.file(file),
                         );
                       },
                     ),
@@ -139,6 +135,7 @@ class _RewardsContent extends StatelessWidget {
                     leadingIcon: selectedAddOnRewards[i].features[j].iconData,
                     leadingDayColor: selectedAddOnRewards[i].features[j].dayColor,
                     rewarded: currentReward.includedRewardedFeatures.contains(selectedAddOnRewards[i].features[j].type),
+                    type: selectedAddOnRewards[i].features[j].type,
                   ),
                 ],
               ],
@@ -172,45 +169,62 @@ class _RewardsContent extends StatelessWidget {
     required String title,
     required String subtitle,
     required IconData leadingIcon,
+    required RewardFeature type,
     required int leadingDayColor,
     required bool rewarded,
   }) {
-    return ListTile(
-      leading: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: ColorFromDayService(context: context).get(leadingDayColor),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(leadingIcon, color: ColorFromDayService(context: context).getForeground()),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: ValueListenableBuilder(
+            valueListenable: viewModel.focusingRewardFeature,
+            builder: (context, focusingRewardFeature, child) {
+              return AnimatedContainer(
+                duration: Durations.long4,
+                color: focusingRewardFeature == type ? ColorScheme.of(context).readOnly.surface5 : Colors.transparent,
+                curve: Curves.easeInOut,
+              );
+            },
           ),
-          if (!rewarded)
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                transform: Matrix4.identity()..spTranslate(8.0, 8.0),
-                padding: const EdgeInsets.all(4),
+        ),
+        ListTile(
+          leading: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: ColorScheme.of(context).surface,
-                  border: Border.all(color: Theme.of(context).dividerColor),
+                  color: ColorFromDayService(context: context).get(leadingDayColor),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.lock,
-                  size: 16,
-                  color: ColorScheme.of(context).onSurface,
-                ),
+                child: Icon(leadingIcon, color: ColorFromDayService(context: context).getForeground()),
               ),
-            ),
-        ],
-      ),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.play_circle_outlined),
-      onTap: () {},
+              if (!rewarded)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    transform: Matrix4.identity()..spTranslate(8.0, 8.0),
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).surface,
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.lock,
+                      size: 16,
+                      color: ColorScheme.of(context).onSurface,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          title: Text(title),
+          subtitle: Text(subtitle),
+          trailing: const Icon(Icons.play_circle_outlined),
+          onTap: () {},
+        ),
+      ],
     );
   }
 
