@@ -132,5 +132,7 @@
   "/relax_sounds/water/ocean_waves.wav": "/relax_sounds/water/ocean_waves-e3314b906cfa52065417f9c51c9b2f59.wav",
   "/relax_sounds/water/river_stream.svg": "/relax_sounds/water/river_stream-c138f14d67e6badf526d96d6bb0ca1d0.svg",
   "/relax_sounds/water/river_stream.txt": "/relax_sounds/water/river_stream-230636fa87deb1c789ce49711b7671c4.txt",
-  "/relax_sounds/water/river_stream.wav": "/relax_sounds/water/river_stream-fd60b586ac2bc25d511a2c41ef7c6faa.wav"
+  "/relax_sounds/water/river_stream.wav": "/relax_sounds/water/river_stream-fd60b586ac2bc25d511a2c41ef7c6faa.wav",
+  "/reward_feature_videos/pinned_notes.mp4": "/reward_feature_videos/pinned_notes-b55062efee2f5c4119d17a15f7e3b42d.mp4",
+  "/reward_feature_videos/writing_stats.mp4": "/reward_feature_videos/writing_stats-cf485fbbf9cbc895b42275f8942b953b.mp4"
 }

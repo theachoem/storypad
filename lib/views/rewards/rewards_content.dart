@@ -134,6 +134,7 @@ class _RewardsContent extends StatelessWidget {
                     subtitle: selectedAddOnRewards[i].features[j].subtitle,
                     leadingIcon: selectedAddOnRewards[i].features[j].iconData,
                     leadingDayColor: selectedAddOnRewards[i].features[j].dayColor,
+                    videoUrlPath: selectedAddOnRewards[i].features[j].videoUrlPath,
                     rewarded: currentReward.includedRewardedFeatures.contains(selectedAddOnRewards[i].features[j].type),
                     type: selectedAddOnRewards[i].features[j].type,
                   ),
@@ -168,6 +169,7 @@ class _RewardsContent extends StatelessWidget {
     required BuildContext context,
     required String title,
     required String subtitle,
+    required String videoUrlPath,
     required IconData leadingIcon,
     required RewardFeature type,
     required int leadingDayColor,
@@ -222,7 +224,14 @@ class _RewardsContent extends StatelessWidget {
           title: Text(title),
           subtitle: Text(subtitle),
           trailing: const Icon(Icons.play_circle_outlined),
-          onTap: () {},
+          onTap: () {
+            SpVideoDemoSheet.showVideoSheet(
+              context: context,
+              videoUrlPath: videoUrlPath,
+              demoTitle: title,
+              demoSubtitle: subtitle,
+            );
+          },
         ),
       ],
     );

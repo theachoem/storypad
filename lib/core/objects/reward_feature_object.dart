@@ -5,6 +5,7 @@ class RewardFeatureObject {
   final String subtitle;
   final IconData iconData;
   final int dayColor;
+  final String videoUrlPath;
   final RewardFeature type;
 
   RewardFeatureObject({
@@ -12,6 +13,7 @@ class RewardFeatureObject {
     required this.subtitle,
     required this.iconData,
     required this.dayColor,
+    required this.videoUrlPath,
     required this.type,
   });
 }
