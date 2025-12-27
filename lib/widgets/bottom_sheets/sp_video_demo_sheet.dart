@@ -113,7 +113,7 @@ class __SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
                   children: [
                     if (_controller.value.isInitialized)
                       SizedBox(
-                        width: 250,
+                        width: 270,
                         child: ClipRRect(
                           clipBehavior: .hardEdge,
                           borderRadius: BorderRadius.circular(12),

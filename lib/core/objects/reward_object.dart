@@ -77,7 +77,7 @@ class RewardObject {
     ),
     RewardObject(
       rewardedBadge: tr('general.user_type.gold'),
-      purchaseCount: 4,
+      purchaseCount: 3,
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
@@ -90,7 +90,7 @@ class RewardObject {
           subtitle: tr('list_tile.reward_automatic_backup.subtitle'),
           iconData: SpIcons.cloudDone,
           dayColor: 3,
-          videoUrlPath: '/reward_feature_videos/pinned_notes.mp4',
+          videoUrlPath: '/reward_feature_videos/auto_backups.mp4',
           type: .auto_backups,
         ),
       ],

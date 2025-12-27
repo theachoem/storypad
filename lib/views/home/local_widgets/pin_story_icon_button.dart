@@ -29,11 +29,12 @@ class _PinStoryIconButton extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 allPinned ? Icon(SpIcons.pinSlash) : Icon(SpIcons.pin),
-                const Positioned(
-                  bottom: -4,
-                  right: -12,
-                  child: Icon(SpIcons.lock, size: 16.0),
-                ),
+                if (!context.read<InAppPurchaseProvider>().pinnedNotes)
+                  const Positioned(
+                    bottom: -4,
+                    right: -12,
+                    child: Icon(SpIcons.lock, size: 16.0),
+                  ),
               ],
             ),
             color: allPinned ? null : ColorScheme.of(context).primary,

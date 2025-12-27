@@ -72,10 +72,12 @@ class _RootContent extends StatelessWidget {
                 onPop: (route, previousRoute) {
                   if (previousRoute?.settings.name == null) return;
                   viewModel.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
+                  autoBackupWhenNavigateToHome(previousRoute, context);
                 },
                 onPush: (route, previousRoute) {
                   if (route.settings.name == null) return;
                   viewModel.selectedRootRouteNameNotifier.value = route.settings.name!;
+                  autoBackupWhenNavigateToHome(route, context);
                 },
               ),
             ],
@@ -83,5 +85,17 @@ class _RootContent extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // This is to trigger auto backup when user navigates to home page.
+  // It is not fully accurate as some data can be modified directly on home page,
+  // but it is good enough for most cases. User can still click backup button manually to ensure data is backed up.
+  void autoBackupWhenNavigateToHome(Route<dynamic> route, BuildContext context) {
+    if (route.settings.name == const HomeRoute().routeName && context.read<InAppPurchaseProvider>().autoBackups) {
+      final backupProvider = context.read<BackupProvider>();
+      if (backupProvider.readyToSynced && !backupProvider.allYearSynced) {
+        backupProvider.recheckAndSync();
+      }
+    }
   }
 }

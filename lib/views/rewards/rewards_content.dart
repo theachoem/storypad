@@ -22,6 +22,8 @@ class _RewardsContent extends StatelessWidget {
       floatingActionButtonLocation: .centerDocked,
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
+        backgroundColor: ColorScheme.of(context).primary,
+        foregroundColor: ColorScheme.of(context).onPrimary,
         shape: const StadiumBorder(),
         label: Text(tr('button.browse_add_ons')),
         icon: const Icon(SpIcons.addOns),

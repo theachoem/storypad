@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
