@@ -49,7 +49,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
         draftContent?.characterCount != content.characterCount ||
         draftContent?.wordCount != content.wordCount) {
       // Keep updatedAt same as before since this is just a silent fix. User didn't explicitly make change.
-      story = buildStory(draft: false, updatedAt: story?.updatedAt);
+      story = buildStory(draft: story?.draftStory == true, updatedAt: story?.updatedAt);
       StoryDbModel.db.set(story!, runCallbacks: false);
     }
 
