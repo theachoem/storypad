@@ -11,33 +11,33 @@ void main() {
 
     test('image type has correct properties', () {
       expect(AssetType.image.name, equals('image'));
-      expect(AssetType.image.subDirectory, equals('images'));
+      expect(AssetType.image.subDirectory.relativePath, equals('images'));
     });
 
     test('audio type has correct properties', () {
       expect(AssetType.audio.name, equals('audio'));
-      expect(AssetType.audio.subDirectory, equals('audio'));
+      expect(AssetType.audio.subDirectory.relativePath, equals('audio'));
     });
   });
 
   group('AssetType - subDirectory property', () {
     test('image uses images subdirectory', () {
-      expect(AssetType.image.subDirectory, equals('images'));
+      expect(AssetType.image.subDirectory.relativePath, equals('images'));
     });
 
     test('audio uses audio subdirectory', () {
-      expect(AssetType.audio.subDirectory, equals('audio'));
+      expect(AssetType.audio.subDirectory.relativePath, equals('audio'));
     });
 
     test('subdirectories match storage paths structure', () {
       // The getStoragePath method uses subDirectory in its path construction
       // verify the subDirectory values are correctly set
       expect(
-        AssetType.image.subDirectory,
+        AssetType.image.subDirectory.relativePath,
         isNotEmpty,
       );
       expect(
-        AssetType.audio.subDirectory,
+        AssetType.audio.subDirectory.relativePath,
         isNotEmpty,
       );
     });

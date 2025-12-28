@@ -153,7 +153,9 @@ class QuillDeltaToPlainTextService {
           if (includeMarkdownEmbeds) {
             final url = insert[embedType].toString();
 
-            if (AssetType.values.map((e) => e.subDirectory).any((subDirectory) => url.startsWith(subDirectory))) {
+            if (AssetType.values
+                .map((e) => e.subDirectory)
+                .any((subDirectory) => url.startsWith(subDirectory.relativePath))) {
               // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
               // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
               currentLineText += '![$embedType]($embedRelativePath$url)';

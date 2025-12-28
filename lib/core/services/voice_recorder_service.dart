@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:record/record.dart';
-import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 
 /// Service for recording voice notes to m4a format.
 ///
@@ -108,7 +108,7 @@ class VoiceRecorderService {
 
   Future<String> _generateTempPath() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '${kSupportDirectory.path}/tmp/$timestamp.m4a';
+    return '${SupportDirectoryPath.tmp.directoryPath}/$timestamp.m4a';
   }
 }
 

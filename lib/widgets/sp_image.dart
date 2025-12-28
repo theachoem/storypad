@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
-import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class SpImage extends StatelessWidget {
@@ -48,7 +47,7 @@ class SpImage extends StatelessWidget {
             loadingBuilder: (context, child, loadingProgress) {
               return Stack(
                 children: [
-                  SpGradientLoading(
+                  SizedBox(
                     height: height ?? defaultSize,
                     width: width ?? defaultSize,
                   ),
@@ -73,7 +72,7 @@ class SpImage extends StatelessWidget {
         height: height,
         fit: BoxFit.cover,
         placeholder: (context, url) {
-          return SpGradientLoading(
+          return SizedBox(
             height: height ?? defaultSize,
             width: width ?? defaultSize,
           );

@@ -9,6 +9,7 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:tar/tar.dart';
 
@@ -107,7 +108,7 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
         final String exportFileName =
             "$kAppName-${kDeviceInfo.model}-assets-${DateTime.now().toIso8601String()}.tar.gz";
         final tempDir = Directory(
-          "${kSupportDirectory.path}/tmp/assets_export_${DateTime.now().millisecondsSinceEpoch}",
+          '${SupportDirectoryPath.tmp.directoryPath}/assets_export_${DateTime.now().millisecondsSinceEpoch}',
         );
 
         await tempDir.create(recursive: true);
@@ -123,7 +124,7 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
 
         // Create tar.gz archive
-        final tarFile = File("${kSupportDirectory.path}/export_assets/$exportFileName");
+        final tarFile = File("${SupportDirectoryPath.export_assets.directoryPath}/$exportFileName");
         await tarFile.create(recursive: true);
 
         final entries = <TarEntry>[];

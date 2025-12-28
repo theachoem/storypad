@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/asset_file_matcher_service.dart';
 import 'package:storypad/core/storages/base_object_storages/bool_storage.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 
 class _RanAssetOrphanedFixerStorage extends BoolStorage {
   @override
@@ -19,8 +19,7 @@ class AssetOrphanedFixerService {
     if (await _RanAssetOrphanedFixerStorage().read() == true) return;
     _RanAssetOrphanedFixerStorage().write(true);
 
-    final tmpDir = Directory('${kSupportDirectory.path}/tmp');
-
+    final tmpDir = SupportDirectoryPath.tmp.directory;
     if (!tmpDir.existsSync()) return AppLogger.d('❌ /tmp directory does not exist');
 
     var assets = await AssetDbModel.db.where().then((e) => e?.items ?? <AssetDbModel>[]);

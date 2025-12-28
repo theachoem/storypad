@@ -134,7 +134,7 @@ class BackupImagesUploaderService {
         () => cloudService.uploadFile(
           cloudFileName,
           asset.localFile!,
-          folderName: asset.type.subDirectory,
+          folderName: asset.type.subDirectory.name,
         ),
         policy: RetryPolicy.network,
         operationName: 'upload_asset_$cloudFileName',

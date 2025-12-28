@@ -32,9 +32,7 @@ class _GalleryTemplateCard extends StatelessWidget {
             SpFirestoreStorageDownloaderBuilder(
               filePath: template.iconUrlPath,
               builder: (context, file, failed) {
-                if (failed) return const SizedBox(width: 36, height: 36);
-                if (file == null) return const SpGradientLoading(height: 36, width: 26, shape: BoxShape.circle);
-
+                if (failed || file == null) return const SizedBox(width: 36, height: 36);
                 return Image.file(
                   file,
                   width: 36,
