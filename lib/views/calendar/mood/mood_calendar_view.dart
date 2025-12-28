@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -21,8 +20,10 @@ class MoodCalendarView extends StatelessWidget {
   const MoodCalendarView({
     super.key,
     required this.monthYearNotifier,
+    required this.hasMultipleSegments,
   });
 
+  final bool hasMultipleSegments;
   final ValueNotifier<({int year, int month})> monthYearNotifier;
 
   @override

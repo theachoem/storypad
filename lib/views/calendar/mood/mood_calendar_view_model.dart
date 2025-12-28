@@ -29,10 +29,16 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
     StoryDbModel.db.addGlobalListener(_reloadFeeling);
     params.monthYearNotifier.addListener(_onParentMonthYearChanged);
+
+    selectedDay =
+        params.monthYearNotifier.value.month == DateTime.now().month &&
+            params.monthYearNotifier.value.year == DateTime.now().year
+        ? DateTime.now().day
+        : 1;
   }
 
   final SpCalendarController calendarController = SpCalendarController();
-  final PageController pageController = PageController();
+  late final PageController pageController = PageController(initialPage: selectedDay ?? 0);
 
   List<TagDbModel>? _tags;
   List<TagDbModel>? get tags => _tags;

@@ -7,18 +7,6 @@ class _CalendarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (CupertinoSheetRoute.hasParentSheet(context)) {
-      return Container(
-        padding: const EdgeInsets.only(top: 12.0),
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: buildScaffold(context),
-      );
-    } else {
-      return buildScaffold(context);
-    }
-  }
-
-  Widget buildScaffold(BuildContext context) {
     return Stack(
       children: [
         Scaffold(
@@ -36,6 +24,7 @@ class _CalendarContent extends StatelessWidget {
   Widget buildBody() {
     return switch (viewModel.selectedSegment) {
       CalendarSegmentId.mood => MoodCalendarView(
+        hasMultipleSegments: viewModel.segments.length > 1,
         monthYearNotifier: viewModel.monthYearNotifier,
       ),
       CalendarSegmentId.period => PeriodCalendarView(

@@ -25,22 +25,22 @@ class _CommunityCard extends StatelessWidget {
               children: [
                 const SizedBox(height: 48.0),
                 SpFadeIn.fromBottom(
-                  delay: Durations.medium1,
+                  delay: Durations.medium1 * 1.2,
                   duration: Durations.medium4,
                   child: IconButton.filled(
+                    icon: Icon(MdiIcons.reddit),
+                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
+                  ),
+                ),
+                SpFadeIn.fromBottom(
+                  delay: Durations.medium1,
+                  duration: Durations.medium4,
+                  child: IconButton.filledTonal(
                     icon: const Icon(Icons.tiktok_outlined),
                     onPressed: () => UrlOpenerService.openInCustomTab(
                       context,
                       "https://www.tiktok.com/@${RemoteConfigService.tiktokUsername.get()}",
                     ),
-                  ),
-                ),
-                SpFadeIn.fromBottom(
-                  delay: Durations.medium1 * 1.2,
-                  duration: Durations.medium4,
-                  child: IconButton.filledTonal(
-                    icon: Icon(MdiIcons.reddit),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
                   ),
                 ),
                 SpFadeIn.fromBottom(

@@ -11,7 +11,7 @@ class _CalendarStoriesContent extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         automaticallyImplyActions: false,
-        toolbarHeight: 12,
+        toolbarHeight: viewModel.params.hasMultipleSegments ? 12.0 : 2.0,
         bottom: viewModel.tags?.isNotEmpty == true
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(34.0 + 12.0 + 1.0),
