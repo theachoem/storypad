@@ -12,6 +12,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 
@@ -30,24 +31,29 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     required QuillController controller,
     required ImageSource source,
   }) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? photo = await picker.pickImage(source: source);
-    if (photo == null) return;
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(source: source);
+        if (photo == null) return;
 
-    AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
-    if (tookAsset == null) return;
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        if (tookAsset == null) return;
 
-    final index = controller.selection.baseOffset;
-    final length = controller.selection.extentOffset - index;
+        final index = controller.selection.baseOffset;
+        final length = controller.selection.extentOffset - index;
 
-    controller.replaceText(index, length, BlockEmbed.image(tookAsset.relativeLocalFilePath), null);
-    controller.moveCursorToPosition(index + 1);
+        controller.replaceText(index, length, BlockEmbed.image(tookAsset.relativeLocalFilePath), null);
+        controller.moveCursorToPosition(index + 1);
 
-    if (source == ImageSource.camera) {
-      AnalyticsService.instance.logTakePhoto();
-    } else {
-      AnalyticsService.instance.logInsertNewPhoto();
-    }
+        if (source == ImageSource.camera) {
+          AnalyticsService.instance.logTakePhoto();
+        } else {
+          AnalyticsService.instance.logInsertNewPhoto();
+        }
+      },
+    );
   }
 
   static Future<void> showQuillPicker<T>({
@@ -82,7 +88,10 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     FilePickerResult? result;
 
     try {
-      result = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: true, withData: true);
+      result = await SpAppLockWrapper.disableAppLockIfHas(
+        context,
+        callback: () => FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: true, withData: true),
+      );
     } catch (e) {
       debugPrint(e.toString());
     }

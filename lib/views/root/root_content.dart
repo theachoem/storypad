@@ -19,7 +19,7 @@ class _RootContent extends StatelessWidget {
         child: PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) {
-            if (!context.read<AppLockProvider>().authenticated) return;
+            if (!SpAppLockWrapper.authenticated(context)) return;
             if (!didPop) {
               final NavigatorState? navigator = viewModel.navigatorKey.currentState;
               if (navigator?.canPop() ?? false) navigator?.maybePop(result);

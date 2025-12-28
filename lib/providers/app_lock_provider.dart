@@ -1,21 +1,18 @@
-import 'dart:async' show Future;
-import 'dart:ui';
-
-import 'package:adaptive_dialog/adaptive_dialog.dart'
-    show AlertDialogAction, showConfirmationDialog, showTextAnswerDialog;
+import 'dart:async';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart' show tr;
-import 'package:flutter/material.dart' show BuildContext, ChangeNotifier, WidgetsBindingObserver, WidgetsBinding;
-import 'package:storypad/core/objects/app_lock_object.dart' show $AppLockObjectCopyWith, AppLockObject;
+import 'package:flutter/material.dart';
+import 'package:storypad/core/initializers/app_lock_initializer.dart';
+import 'package:storypad/core/objects/app_lock_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
-import 'package:storypad/core/services/local_auth_service.dart' show LocalAuthService;
-import 'package:storypad/core/storages/app_lock_storage.dart' show AppLockStorage;
-import 'package:storypad/core/types/app_lock_question.dart' show AppLockQuestion;
-import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLockInitializer;
-import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart' show SecurityQuestionsRoute;
-import 'package:storypad/views/pin_unlock/pin_unlock_view.dart' show PinUnlockRoute, PinUnlockTitle;
+import 'package:storypad/core/services/local_auth_service.dart';
+import 'package:storypad/core/storages/app_lock_storage.dart';
+import 'package:storypad/core/types/app_lock_question.dart';
+import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
+import 'package:storypad/views/pin_unlock/pin_unlock_view.dart';
 
-class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
+class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {
     final initialData = AppLockInitializer.getAndClear();
 
@@ -28,9 +25,6 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
 
       reload();
     }
-
-    _authenticated = hasAppLock ? false : true;
-    WidgetsBinding.instance.addObserver(this);
   }
 
   bool get hasAppLock =>
@@ -44,12 +38,6 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
   LocalAuthService get localAuth => _localAuth;
   AppLockObject get appLock => _appLock;
 
-  // currently there is not UI that listen to this value yet,
-  // just for reading mostly when popping route, open new route.
-  late bool _authenticated;
-  bool get authenticated => _authenticated;
-  bool get authenticating => avoidDublciated.isRunning;
-
   Future<void> reload() async {
     await localAuth.load();
     _appLock = await storage.readObject() ?? _appLock;
@@ -57,11 +45,11 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   final avoidDublciated = AvoidDublicatedCallService<bool>();
-  Future<void> authenticateIfHas({
+  Future<bool> authenticateIfHas({
     required BuildContext context,
     required String debugSource,
   }) async {
-    _authenticated = await avoidDublciated.run(() async {
+    return avoidDublciated.run(() async {
       if (!hasAppLock) return true;
       if (appLock.pin != null) {
         return PinUnlockRoute.confirmation(
@@ -164,20 +152,5 @@ class AppLockProvider extends ChangeNotifier with WidgetsBindingObserver {
         await reload();
       }
     }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    if (state == AppLifecycleState.paused) {
-      if (hasAppLock) _authenticated = false;
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 }

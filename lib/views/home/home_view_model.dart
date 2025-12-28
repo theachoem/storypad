@@ -20,6 +20,7 @@ import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_sta
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
 part 'local_widgets/home_scroll_info.dart';
@@ -150,27 +151,31 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       id: null,
       initialYear: year,
     ).push(context);
-
     await _checkNewStoryResult(addedStory);
   }
 
   void takePhoto(BuildContext context) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
-    if (photo == null) return;
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+        if (photo == null) return;
 
-    AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
-    if (asset == null) return;
+        AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        if (asset == null) return;
 
-    AnalyticsService.instance.logTakePhoto();
+        AnalyticsService.instance.logTakePhoto();
 
-    final addedStory = await EditStoryRoute(
-      id: null,
-      initialYear: year,
-      initialAsset: asset,
-    ).push(HomeView.homeContext!);
+        final addedStory = await EditStoryRoute(
+          id: null,
+          initialYear: year,
+          initialAsset: asset,
+        ).push(HomeView.homeContext!);
 
-    await _checkNewStoryResult(addedStory);
+        await _checkNewStoryResult(addedStory);
+      },
+    );
   }
 
   Future<void> goToTemplatePage(BuildContext context) async {

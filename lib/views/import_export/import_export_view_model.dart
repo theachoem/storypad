@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:tar/tar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -72,8 +73,9 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> import(BuildContext context) async {
     AnalyticsService.instance.logImportOfflineBackup();
 
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
+    FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () => FilePicker.platform.pickFiles(type: FileType.any),
     );
 
     if (!context.mounted) return;
