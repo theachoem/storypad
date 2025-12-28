@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,19 @@ class SpAppLockWrapper extends StatelessWidget {
 
   final Widget child;
 
+  static final GlobalKey<_LockedBarrierState> _globalKey = GlobalKey<_LockedBarrierState>();
+
+  static bool authenticated(BuildContext context) =>
+      context.read<AppLockProvider>().hasAppLock ? _globalKey.currentState?.authenticated == true : true;
+
+  static Future<T> disableAppLockIfHas<T>(
+    BuildContext context, {
+    required FutureOr<T> Function() callback,
+  }) async {
+    if (_globalKey.currentState == null) return callback();
+    return _globalKey.currentState!.disableAppLockIfHas(context, callback: callback);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppLockProvider>(
@@ -25,7 +39,7 @@ class SpAppLockWrapper extends StatelessWidget {
             child!,
             Visibility(
               visible: provider.hasAppLock,
-              child: const _LockedBarrier(),
+              child: _LockedBarrier(key: _globalKey),
             ),
           ],
         );
@@ -35,7 +49,9 @@ class SpAppLockWrapper extends StatelessWidget {
 }
 
 class _LockedBarrier extends StatefulWidget {
-  const _LockedBarrier();
+  const _LockedBarrier({
+    super.key,
+  });
 
   @override
   State<_LockedBarrier> createState() => _LockedBarrierState();
@@ -44,7 +60,33 @@ class _LockedBarrier extends StatefulWidget {
 class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController animationController;
 
-  bool showBarrier = true;
+  bool authenticated = false;
+  bool barrierShown = true;
+  bool listenToLifeCycle = true;
+
+  Timer? _reEnableLifeCycleTimer;
+
+  Future<T> disableAppLockIfHas<T>(
+    BuildContext context, {
+    required FutureOr<T> Function() callback,
+  }) async {
+    _reEnableLifeCycleTimer?.cancel();
+    listenToLifeCycle = false;
+
+    // Re-enable life cycle listening after some time to avoid app lock being disabled forever
+    // if the callback forgets to re-enable it.
+    _reEnableLifeCycleTimer = Timer(const Duration(minutes: 3), () {
+      listenToLifeCycle = true;
+    });
+
+    final result = await callback();
+
+    _reEnableLifeCycleTimer?.cancel();
+    _reEnableLifeCycleTimer = null;
+    listenToLifeCycle = true;
+
+    return result;
+  }
 
   @override
   void initState() {
@@ -71,39 +113,50 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.resumed) {
-      authenticate(force: false);
+    switch (state) {
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        if (listenToLifeCycle) {
+          authenticated = false;
+          showBarrierIfNot();
+        }
+        break;
+      case AppLifecycleState.resumed:
+        // There are cases when the user has already canceled authentication, but the app resumes and may call authenticate() again.
+        // This check ensures we only re-authenticate when this route is not the current one, avoiding potential authentication loops.
+        if (listenToLifeCycle && ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
+          authenticate();
+        }
+        break;
     }
   }
 
-  Future<void> authenticate({
-    bool force = false,
-  }) async {
+  Future<void> showBarrierIfNot() async {
+    if (animationController.value != 1) animationController.animateTo(1);
+    if (!barrierShown) setState(() => barrierShown = true);
+  }
+
+  Future<void> authenticate() async {
     await Future.microtask(() {});
 
-    if (!mounted) return;
-    final provider = context.read<AppLockProvider>();
+    if (authenticated) return;
+    showBarrierIfNot();
 
-    // Skip authentication if already authenticated, unless forced (e.g., manual unlock button press)
-    // This prevents duplicate authentication attempts when app lifecycle triggers resume
-    if (provider.authenticated && !force) return;
+    final context = this.context;
+    if (!context.mounted) return;
 
-    // Avoid duplicate authentication attempts
-    if (provider.authenticating) return;
-    if (animationController.value != 1) animationController.animateTo(1);
-    if (showBarrier != true) {
-      setState(() => showBarrier = true);
-    }
-
-    await provider.authenticateIfHas(
-      context: context,
-      debugSource: '$runtimeType#authenticate',
-    );
-
-    if (!mounted) return;
-    if (provider.authenticated) {
-      await animationController.reverse(from: 1.0);
-      setState(() => showBarrier = false);
+    if (ModalRoute.of(context)?.isCurrent == true) {
+      authenticated = await context.read<AppLockProvider>().authenticateIfHas(
+        context: context,
+        debugSource: '$runtimeType#authenticate',
+      );
+      if (authenticated) {
+        await animationController.reverse(from: 1.0);
+        setState(() => barrierShown = false);
+      }
     }
   }
 
@@ -111,8 +164,8 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (showBarrier) buildBlurFilter(),
-        if (showBarrier) buildActionButtons(context),
+        if (barrierShown) buildBlurFilter(),
+        if (barrierShown) buildActionButtons(context),
       ],
     );
   }
@@ -184,7 +237,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     } else {
       return FilledButton.icon(
         icon: const Icon(SpIcons.lock),
-        onPressed: () => authenticate(force: true),
+        onPressed: () => authenticate(),
         label: Text(tr('button.unlock')),
       );
     }

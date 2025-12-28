@@ -1,14 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
 import 'package:storypad/core/extensions/color_extension.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
-
 export 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class UrlOpenerService {
@@ -61,29 +60,34 @@ class UrlOpenerService {
     String url, {
     bool prefersDeepLink = false,
   }) async {
-    if (!kIsWeb || !Platform.isIOS || !Platform.isAndroid) {
-      await launchUrlString(url, deeplinkOnly: prefersDeepLink);
-      return;
-    }
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        if (!kIsWeb || !Platform.isIOS || !Platform.isAndroid) {
+          await launchUrlString(url, deeplinkOnly: prefersDeepLink);
+          return;
+        }
 
-    Color toolbarColor = Theme.of(context).appBarTheme.backgroundColor ?? Colors.white;
-    Color foregroundColor = Theme.of(context).appBarTheme.foregroundColor ?? toolbarColor.darken(0.5);
+        Color toolbarColor = Theme.of(context).appBarTheme.backgroundColor ?? Colors.white;
+        Color foregroundColor = Theme.of(context).appBarTheme.foregroundColor ?? toolbarColor.darken(0.5);
 
-    AnalyticsService.instance.logOpenLinkInCustomTab(
-      url: url,
-    );
+        AnalyticsService.instance.logOpenLinkInCustomTab(
+          url: url,
+        );
 
-    await custom_tab.launchUrl(
-      Uri.parse(url),
-      prefersDeepLink: prefersDeepLink,
-      customTabsOptions: custom_tab.CustomTabsOptions(
-        colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(),
-      ),
-      safariVCOptions: custom_tab.SafariViewControllerOptions(
-        preferredBarTintColor: toolbarColor,
-        preferredControlTintColor: foregroundColor,
-        dismissButtonStyle: custom_tab.SafariViewControllerDismissButtonStyle.close,
-      ),
+        await custom_tab.launchUrl(
+          Uri.parse(url),
+          prefersDeepLink: prefersDeepLink,
+          customTabsOptions: custom_tab.CustomTabsOptions(
+            colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(),
+          ),
+          safariVCOptions: custom_tab.SafariViewControllerOptions(
+            preferredBarTintColor: toolbarColor,
+            preferredControlTintColor: foregroundColor,
+            dismissButtonStyle: custom_tab.SafariViewControllerDismissButtonStyle.close,
+          ),
+        );
+      },
     );
   }
 

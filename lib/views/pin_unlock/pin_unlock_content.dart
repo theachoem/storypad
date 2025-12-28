@@ -21,7 +21,7 @@ class _PinUnlockContent extends StatelessWidget {
           Flexible(
             child: FittedBox(
               child: Padding(
-                padding: EdgeInsets.only(top: displayInRow ? 24.0 : 0.0, bottom: displayInRow ? 4.0 : 0.0),
+                padding: EdgeInsets.symmetric(vertical: displayInRow ? 4.0 : 0.0),
                 child: buildPins(itemSize, spacing, context),
               ),
             ),
@@ -39,7 +39,10 @@ class _PinUnlockContent extends StatelessWidget {
             ],
           ),
           body: Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 16.0),
+            padding: EdgeInsets.only(
+              top: MediaQuery.paddingOf(context).top + 16.0,
+              bottom: MediaQuery.paddingOf(context).bottom + 16.0,
+            ),
             child: displayInRow ? Row(children: children) : Column(children: children),
           ),
         );
@@ -52,7 +55,6 @@ class _PinUnlockContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 24),
         (viewModel.pin.length >= 4) && !viewModel.params.validator(viewModel.pin)
             ? Text(
                 viewModel.params.invalidPinTitle,
