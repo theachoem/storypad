@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-enum FirestoreStorageBackground {
+enum RelaxSoundBackground {
   abstract_water_drops_on_turquoise_glass_background,
   color_beautiful_sky_vintage_forest,
   cups_and_pot_near_fire,
@@ -12,5 +12,5 @@ enum FirestoreStorageBackground {
   two_cloudy_tags_on_color_background
   ;
 
-  String? get urlPath => "/backgrounds/$name.jpg";
+  String? get urlPath => "/relax_sounds_backgrounds/$name.jpg";
 }
