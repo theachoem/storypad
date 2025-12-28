@@ -18,6 +18,7 @@ class _EditStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
+      endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
       endDrawer: viewModel.story != null
           ? TagsEndDrawer(

@@ -31,9 +31,13 @@ part 'local_widgets/add_on_card.dart';
 class AddOnsRoute extends BaseRoute {
   const AddOnsRoute({
     this.onLoaded,
+    this.fromRewardsView = false,
   });
 
   final void Function(BuildContext context, AddOnsViewModel viewModel)? onLoaded;
+
+  // simple flag to indicate if we came from the rewards view.
+  final bool fromRewardsView;
 
   static Future<void> pushAndNavigateTo({
     required AppProduct product,

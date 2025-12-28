@@ -18,6 +18,7 @@ class _ShowStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
+      endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context, pages),
       endDrawer: viewModel.story != null
           ? TagsEndDrawer(onUpdated: (tags) => viewModel.setTags(tags), initialTags: viewModel.story?.validTags ?? [])

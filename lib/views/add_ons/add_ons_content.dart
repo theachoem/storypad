@@ -16,7 +16,13 @@ class _AddOnsContent extends StatelessWidget {
         actions: [
           IconButton(
             icon: const SpGiftAnimatedIcon(),
-            onPressed: () => const RewardsRoute().push(context),
+            onPressed: () {
+              if (viewModel.params.fromRewardsView) {
+                Navigator.maybePop(context);
+              } else {
+                const RewardsRoute().push(context);
+              }
+            },
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),

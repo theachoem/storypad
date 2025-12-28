@@ -180,7 +180,7 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Icon(
-              SpIcons.keyboardUp,
+              SpIcons.keyboardRight,
               color: foregroundColor,
             ),
           ),
