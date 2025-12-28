@@ -1,5 +1,12 @@
 #!/usr/bin/env sh
 
+# Generate story backgrounds
+echo "Generating story backgrounds..."
+dart bin/backgrounds_generation/generate.dart
+
+echo ""
+echo "Running build_runner..."
+
 CMD="dart run build_runner build"
 
 # Check if --delete flag is provided

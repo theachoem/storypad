@@ -18,6 +18,7 @@ class _ShowStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context, pages),
       endDrawer: viewModel.story != null
@@ -69,7 +70,7 @@ class _ShowStoryContent extends StatelessWidget {
 
   AppBar buildAppBar(BuildContext context, List<StoryPageObject> pages) {
     return AppBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      forceMaterialTransparency: true,
       titleSpacing: 0.0,
       leading: SpAnimatedIcons.fadeScale(
         showFirst: viewModel.pagesManager.managingPage,

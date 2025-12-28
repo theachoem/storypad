@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/types/font_size_option.dart';
+import 'package:storypad/gen/story_backgrounds.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 
 class SpStoryPreferenceTheme extends StatelessWidget {
   const SpStoryPreferenceTheme({
@@ -19,6 +22,9 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   static final Map<Color, ColorScheme> _cacheDarkColorSchemes = {};
   static final Map<Color, ColorScheme> _cacheLightColorSchemes = {};
 
+  StoryBackground? get selectedBackground =>
+      preferences?.backgroundImagePath != null ? StoryBackgrounds.byFilename[preferences!.backgroundImagePath!] : null;
+
   bool isMonochrome(StoryPreferencesDbModel? preferences, BuildContext context) {
     final colorSeed = preferences?.colorSeed;
     return colorSeed == Colors.black || colorSeed == Colors.white;
@@ -27,8 +33,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<DevicePreferencesProvider>(context);
-    ColorScheme colorScheme = getStoryColorScheme(preferences, context);
 
+    ColorScheme colorScheme = getStoryColorScheme(preferences, context);
     Color? scaffoldBackgroundColor;
 
     if (isMonochrome(preferences, context) == true) {
@@ -75,9 +81,38 @@ class SpStoryPreferenceTheme extends StatelessWidget {
           fontWeight: preferences?.fontWeight ?? themeProvider.preferences.fontWeight,
           scaffoldBackgroundColor: scaffoldBackgroundColor,
         ),
-        child: child,
+        child: Stack(
+          children: [
+            buildBackground(scaffoldBackgroundColor),
+            child,
+          ],
+        ),
       ),
     );
+  }
+
+  Widget buildBackground(Color? scaffoldBackgroundColor) {
+    if (selectedBackground != null) {
+      return Positioned.fill(
+        child: SpFirestoreStorageDownloaderBuilder(
+          key: ValueKey(selectedBackground!.path),
+          filePath: selectedBackground!.path,
+          builder: (context, file, failed) {
+            if (file == null || failed) {
+              return Container(color: scaffoldBackgroundColor);
+            }
+
+            return switch (selectedBackground!.align) {
+              .left => Image.file(file, fit: .cover, alignment: .centerLeft),
+              .center => Image.file(file, fit: .cover, alignment: .center),
+              .right => Image.file(file, fit: .cover, alignment: .centerRight),
+            };
+          },
+        ),
+      );
+    } else {
+      return Container(color: scaffoldBackgroundColor);
+    }
   }
 
   ColorScheme getStoryColorScheme(
@@ -85,6 +120,22 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     BuildContext context,
   ) {
     Color? seedColor = preferences?.colorSeed;
+
+    if (selectedBackground != null) {
+      return switch (selectedBackground!.textColor) {
+        .black => _cacheLightColorSchemes[kDefaultColorSeed] = ColorScheme.fromSeed(
+          seedColor: kDefaultColorSeed,
+          brightness: Brightness.light,
+          dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+        ),
+        .white => _cacheDarkColorSchemes[kDefaultColorSeed] = ColorScheme.fromSeed(
+          seedColor: kDefaultColorSeed,
+          brightness: Brightness.dark,
+          dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+        ),
+      };
+    }
+
     if (seedColor == null) {
       return Theme.of(context).colorScheme;
     } else {

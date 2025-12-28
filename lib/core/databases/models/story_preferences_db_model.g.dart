@@ -15,6 +15,8 @@ abstract class _$StoryPreferencesDbModelCWProxy {
 
   StoryPreferencesDbModel colorTone(int? colorTone);
 
+  StoryPreferencesDbModel backgroundImagePath(String? backgroundImagePath);
+
   StoryPreferencesDbModel fontFamily(String? fontFamily);
 
   StoryPreferencesDbModel fontSize(FontSizeOption? fontSize);
@@ -41,6 +43,7 @@ abstract class _$StoryPreferencesDbModelCWProxy {
     bool? showTime,
     int? colorSeedValue,
     int? colorTone,
+    String? backgroundImagePath,
     String? fontFamily,
     FontSizeOption? fontSize,
     int? fontWeightIndex,
@@ -73,6 +76,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
   @override
   StoryPreferencesDbModel colorTone(int? colorTone) =>
       call(colorTone: colorTone);
+
+  @override
+  StoryPreferencesDbModel backgroundImagePath(String? backgroundImagePath) =>
+      call(backgroundImagePath: backgroundImagePath);
 
   @override
   StoryPreferencesDbModel fontFamily(String? fontFamily) =>
@@ -115,6 +122,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
     Object? showTime = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorTone = const $CopyWithPlaceholder(),
+    Object? backgroundImagePath = const $CopyWithPlaceholder(),
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontSize = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
@@ -140,6 +148,10 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.colorTone
           // ignore: cast_nullable_to_non_nullable
           : colorTone as int?,
+      backgroundImagePath: backgroundImagePath == const $CopyWithPlaceholder()
+          ? _value.backgroundImagePath
+          // ignore: cast_nullable_to_non_nullable
+          : backgroundImagePath as String?,
       fontFamily: fontFamily == const $CopyWithPlaceholder()
           ? _value.fontFamily
           // ignore: cast_nullable_to_non_nullable
@@ -192,6 +204,7 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
   showTime: json['show_time'] as bool?,
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   colorTone: (json['color_tone'] as num?)?.toInt(),
+  backgroundImagePath: json['background_image_path'] as String?,
   fontFamily: json['font_family'] as String?,
   fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
   fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
@@ -208,6 +221,7 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
   'show_time': instance.showTime,
   'color_seed_value': instance.colorSeedValue,
   'color_tone': instance.colorTone,
+  'background_image_path': instance.backgroundImagePath,
   'font_family': instance.fontFamily,
   'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
   'font_weight_index': instance.fontWeightIndex,
