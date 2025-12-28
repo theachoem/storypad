@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
-import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_image.dart';
 
 class SpAndroidRedemptionSheet extends BaseBottomSheet {
@@ -147,12 +146,7 @@ class SpAndroidRedemptionSheet extends BaseBottomSheet {
               );
             }
 
-            if (file == null) {
-              return const SpGradientLoading(
-                width: imageWidth,
-                height: imageHeight,
-              );
-            }
+            if (file == null) return const SizedBox.shrink();
 
             return Image.file(
               file,

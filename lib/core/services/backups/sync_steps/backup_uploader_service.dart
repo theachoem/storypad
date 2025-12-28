@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -14,8 +13,8 @@ import 'package:storypad/core/services/gzip_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
-import 'package:storypad/core/types/file_path_type.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 
 class BackupUploaderResponse {
   final bool hasError;
@@ -256,9 +255,7 @@ class BackupUploaderService {
     BackupObject backup,
   ) async {
     try {
-      final parent = io.Directory("${kSupportDirectory.path}/${FilePathType.backups.name}");
-      final file = io.File("${parent.path}/${serviceType.id}_year_$year.json");
-
+      final file = io.File("${SupportDirectoryPath.backups.directoryPath}/${serviceType.id}_year_$year.json");
       if (!file.existsSync()) {
         await file.create(recursive: true);
         AppLogger.d('BackupFileConstructor#constructFile createdFile: ${file.path.replaceAll(' ', '%20')}');

@@ -10,7 +10,6 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/templates/gallery/show/show_template_gallery_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
-import 'package:storypad/widgets/sp_gradient_loading.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 

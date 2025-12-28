@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 
 enum FirestoreStorageState { success, connectionFailed, unauthorized, unknown }
 
@@ -129,14 +129,14 @@ class FirestoreStorageService {
   }
 
   String constructDeviceDownloadPath(String path) {
-    return '${kSupportDirectory.path}/downloaded_from_firestore$path';
+    return '${SupportDirectoryPath.downloaded_from_firestore.directory.path}$path';
   }
 
   /// Cleans up any downloaded files that are no longer referenced in the assets map.
   /// Returns a list of paths that were deleted.
   Future<List<String>> cleanupUnusedFiles() async {
     try {
-      final downloadDir = Directory('${kSupportDirectory.path}/downloaded_from_firestore');
+      final downloadDir = SupportDirectoryPath.downloaded_from_firestore.directory;
       if (!await downloadDir.exists()) return [];
 
       // {

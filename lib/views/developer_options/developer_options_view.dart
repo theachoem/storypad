@@ -1,4 +1,6 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/views/developer_options/recently_deleted_records/recently_deleted_records_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_logs_bottom_sheet.dart';
@@ -45,6 +47,41 @@ class DeveloperOptionsView extends StatelessWidget {
             trailing: const Icon(SpIcons.keyboardRight),
             onTap: () => SpShareLogsBottomSheet().show(context: context),
           ),
+          const Divider(),
+          ...SupportDirectoryPath.values.where((path) => path.directory.existsSync()).map((supportPath) {
+            bool allowedToDelete =
+                supportPath != SupportDirectoryPath.objectbox &&
+                supportPath != SupportDirectoryPath.audio &&
+                supportPath != SupportDirectoryPath.images;
+            return ListTile(
+              leading: const Icon(SpIcons.folderOpen),
+              title: Text("Folder: ${supportPath.relativePath}"),
+              subtitle: Text(
+                "Size: ${supportPath.directory.listSync().map((e) => e.statSync().size).fold<int>(0, (a, b) => a + b) ~/ 1024} KB",
+              ),
+              trailing: allowedToDelete ? Icon(SpIcons.delete, color: ColorScheme.of(context).error) : null,
+              onTap: !allowedToDelete
+                  ? null
+                  : () async {
+                      final result = await showOkCancelAlertDialog(
+                        context: context,
+                        isDestructiveAction: true,
+                        title: 'Delete Folder',
+                        okLabel: 'Delete',
+                        message: [
+                          'Are you sure you want to delete "${supportPath.relativePath}" & all its contents?',
+                          'Make sure you have backed up any important data before proceeding.',
+                          'This action cannot be undone.',
+                        ].join("\n\n"),
+                      );
+
+                      if (result == OkCancelResult.ok) {
+                        await supportPath.directory.delete(recursive: true);
+                        if (context.mounted) Navigator.maybePop(context);
+                      }
+                    },
+            );
+          }),
         ],
       ),
     );

@@ -1,4 +1,4 @@
-import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 
 /// Asset type enumeration with storage subdirectory management.
 ///
@@ -14,16 +14,16 @@ enum AssetType {
   ///
   /// Stores files in the 'images' subdirectory.
   /// Example: images/1762500783746.jpg
-  image(subDirectory: 'images'),
+  image(subDirectory: .images),
 
   /// Audio asset type (voice notes, recordings, etc.)
   ///
   /// Stores files in the 'audio' subdirectory.
   /// Example: audio/1762500783747.m4a
-  audio(subDirectory: 'audio')
+  audio(subDirectory: .audio)
   ;
 
-  final String subDirectory;
+  final SupportDirectoryPath subDirectory;
 
   const AssetType({
     required this.subDirectory,
@@ -35,7 +35,7 @@ enum AssetType {
   }) {
     /// Get the storage path for an asset based on ID, extension, and type.
     /// This is the single source of truth for path construction.
-    return "${kSupportDirectory.path}/$subDirectory/$id$extension";
+    return "${subDirectory.directoryPath}/$id$extension";
   }
 
   String getRelativeStoragePath({
@@ -44,7 +44,7 @@ enum AssetType {
   }) {
     /// Get the relative storage path for an asset based on ID, extension, and type.
     /// This is used for storing paths in the database.
-    return "$subDirectory/$id$extension";
+    return "${subDirectory.relativePath}/$id$extension";
   }
 
   static AssetType fromValue(String? value) {
@@ -71,7 +71,7 @@ enum AssetType {
   /// Returns null if the path doesn't match any known type.
   static AssetType? getTypeFromLink(String relativePath) {
     for (final type in AssetType.values) {
-      if (relativePath.startsWith(type.subDirectory)) return type;
+      if (relativePath.startsWith(type.subDirectory.relativePath)) return type;
     }
     return null;
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:tar/tar.dart';
@@ -37,7 +38,6 @@ enum AppExportOption {
 
 class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   final ImportExportRoute params;
-  final String parentName = "backups";
 
   ImportExportViewModel({
     required this.params,
@@ -142,7 +142,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         final String exportFileName =
             "$kAppName-${kDeviceInfo.model}-markdown-${DateTime.now().toIso8601String()}.tar.gz";
         final tempDir = Directory(
-          "${kSupportDirectory.path}/$parentName/markdown_export_${DateTime.now().millisecondsSinceEpoch}",
+          "${SupportDirectoryPath.backups.directoryPath}/markdown_export_${DateTime.now().millisecondsSinceEpoch}",
         );
 
         await tempDir.create(recursive: true);
@@ -165,7 +165,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         );
 
         // Create tar.gz archive
-        final tarFile = File("${kSupportDirectory.path}/$parentName/$exportFileName");
+        final tarFile = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
         await tarFile.create(recursive: true);
 
         // Create tar.gz archive from directory
@@ -241,7 +241,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         if (!context.mounted || stories == null || stories.isEmpty) return null;
 
         final String exportFileName = "$kAppName-${kDeviceInfo.model}-text-${DateTime.now().toIso8601String()}.txt";
-        final textFile = File("${kSupportDirectory.path}/$parentName/$exportFileName");
+        final textFile = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
 
         // Export stories to text
         Map<int, TagDbModel?> tags = {};
@@ -313,7 +313,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     if (backup == null || !context.mounted) return;
     if (Platform.isIOS) {
-      final file = File("${kSupportDirectory.path}/$parentName/$exportFileName");
+      final file = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
 
       await file.create(recursive: true);
       await file.writeAsString(jsonEncode(backup.toContents()));
