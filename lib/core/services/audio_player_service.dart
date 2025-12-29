@@ -40,7 +40,7 @@ class AudioPlayerService {
     _setupCompleter = Completer();
     _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
 
-    File? cachedFile = await FirestoreStorageService.instance.getCachedFile(urlPath);
+    File? cachedFile = FirestoreStorageService.instance.getCachedFile(urlPath);
     if (cachedFile != null) {
       _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
       _setupCompleter?.complete(true);

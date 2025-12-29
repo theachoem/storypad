@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/helpers/path_helper.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
-import 'package:storypad/gen/story_backgrounds.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/rewards/rewards_view.dart';
@@ -17,10 +16,9 @@ import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
-import 'package:storypad/widgets/sp_color_list_selector.dart';
+import 'package:storypad/widgets/sp_background_picker.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -79,12 +77,11 @@ class _StoryThemeSheet extends StatefulWidget {
   State<_StoryThemeSheet> createState() => _StoryThemeSheetState();
 }
 
-class _StoryThemeSheetState extends State<_StoryThemeSheet> {
+class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallback {
   late StoryPreferencesDbModel preferences = widget.preferences;
 
   @override
   Widget build(BuildContext context) {
-    final backgrounds = StoryBackgrounds.all.values.expand((list) => list).toList();
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,34 +90,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
           const SizedBox(height: 4.0),
           buildHeader(context),
           const SizedBox(height: 8.0),
-          buildImageBackgroundsCarousel(backgrounds),
-          const SizedBox(height: 16.0),
-          SpColorListSelector(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            selectedColor: preferences.colorSeed,
-            colorTone: preferences.colorToneFallback,
-            onChanged: (color, colorTone) {
-              preferences = preferences.copyWith(
-                colorSeedValue: color?.toARGB32(),
-                colorTone: colorTone,
-                backgroundImagePath: null,
-              );
-              setState(() {});
-              widget.onThemeChanged(preferences);
-            },
-          ),
-          const SizedBox(height: 8.0),
-
-          // This give more problem on navigation.
-          // Let's disable it for now.
-          //
-          // ThemeModeTile(
-          //   currentThemeMode: theme.themeMode ?? ThemeMode.system,
-          //   onChanged: (ThemeMode themeMode) {
-          //     preferences = preferences.copyWith(themeMode: themeMode);
-          //     onThemeChanged(preferences);
-          //   },
-          // ),
           FontFamilyTile(
             currentFontWeight:
                 preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
@@ -152,7 +121,21 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
               widget.onThemeChanged(preferences);
             },
           ),
+          const SizedBox(height: 4.0),
           const Divider(height: 1),
+          const SizedBox(height: 8.0),
+          SpBackgroundPicker(
+            preferences: preferences,
+            onThemeChanged: (preferences) async {
+              setState(() {
+                this.preferences = preferences;
+              });
+
+              debouncedCallback(() {
+                widget.onThemeChanged(preferences);
+              }, duration: Durations.medium1);
+            },
+          ),
           const SizedBox(height: 12.0),
           SpLayoutTypeSection(
             selected: preferences.layoutType,
@@ -166,71 +149,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
           const SizedBox(height: 8.0),
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
-      ),
-    );
-  }
-
-  Widget buildImageBackgroundsCarousel(List<StoryBackground> backgrounds) {
-    return SizedBox(
-      height: 88,
-      child: CarouselView(
-        scrollDirection: .horizontal,
-        itemExtent: 88 * (16 / 9),
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        onTap: (index) async {
-          final background = backgrounds[index];
-          bool selected = preferences.backgroundImagePath == basename(background.path);
-
-          preferences = preferences.copyWith(
-            colorTone: null,
-            colorSeedValue: null,
-            backgroundImagePath: selected ? null : basename(background.path),
-          );
-          setState(() {});
-
-          await Future.delayed(Durations.medium1);
-          widget.onThemeChanged(preferences);
-        },
-        children: backgrounds.map((background) {
-          bool selected = preferences.backgroundImagePath == basename(background.path);
-
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: SpFirestoreStorageDownloaderBuilder(
-                    filePath: background.path,
-                    builder: (context, file, failed) {
-                      if (failed || file == null) return const SizedBox.shrink();
-                      return Image.file(
-                        file,
-                        fit: .cover,
-                      );
-                    },
-                  ),
-                ),
-              ),
-              if (selected)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: SpFadeIn.fromBottom(
-                    child: Icon(
-                      SpIcons.checkCircle,
-                      color: switch (background.textColor) {
-                        .black => Colors.black.withValues(alpha: 0.7),
-                        .white => Colors.white.withValues(alpha: 0.7),
-                      },
-                    ),
-                  ),
-                ),
-            ],
-          );
-        }).toList(),
       ),
     );
   }
@@ -379,10 +297,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
 
     List<Widget> startActions = [
       buildMoreOptionsButton(context),
-      IconButton(
-        onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
-        icon: SpThemeModeIcon(parentContext: context),
-      ),
       if (storyViewModel != null && story != null)
         Builder(
           builder: (context) {
@@ -399,6 +313,13 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
               },
             );
           },
+        ),
+      if (preferences.backgroundImagePath == null)
+        SpFadeIn.bound(
+          child: IconButton(
+            onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+            icon: SpThemeModeIcon(parentContext: context),
+          ),
         ),
     ];
 

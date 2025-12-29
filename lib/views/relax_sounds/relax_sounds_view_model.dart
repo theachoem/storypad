@@ -50,13 +50,13 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
 
   Future<void> load() async {
     _mixes = await RelaxSoundMixModel.db.where().then((value) => value?.items) ?? [];
-    await loadDownloadSounds();
+    loadDownloadSounds();
     notifyListeners();
   }
 
-  Future<void> loadDownloadSounds() async {
+  void loadDownloadSounds() {
     for (final sound in RelaxSoundObject.defaultSoundsList().values) {
-      File? cachedFile = await FirestoreStorageService.instance.getCachedFile(sound.soundUrlPath);
+      File? cachedFile = FirestoreStorageService.instance.getCachedFile(sound.soundUrlPath);
       if (cachedFile != null) _downloadedSoundUrlPaths.add(sound.soundUrlPath);
     }
   }

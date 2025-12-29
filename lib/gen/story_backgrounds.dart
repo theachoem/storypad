@@ -36,6 +36,51 @@ class StoryBackground {
 class StoryBackgrounds {
   const StoryBackgrounds._();
 
+  static const cute = [
+    StoryBackground(
+      name: 'hand-drawn-soft-earth-tones-background',
+      path:
+          '/story_backgrounds/cute__hand-drawn-soft-earth-tones-background__align-left__text-black.jpg',
+      align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'flat-floral-spring-background-22598571',
+      path:
+          '/story_backgrounds/cute__flat-floral-spring-background-22598571__align-right__text-white.jpg',
+      align: .right,
+      textColor: .white,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-spring-background',
+      path:
+          '/story_backgrounds/cute__hand-drawn-spring-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'watercolor-background-for-christmas-season-cerebration',
+      path:
+          '/story_backgrounds/cute__watercolor-background-for-christmas-season-cerebration__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'watercolor-international-cat-day-background',
+      path:
+          '/story_backgrounds/cute__watercolor-international-cat-day-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-flat-dongzhi-festival-background',
+      path:
+          '/story_backgrounds/cute__hand-drawn-flat-dongzhi-festival-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+  ];
+
   static const photorealistic = [
     StoryBackground(
       name:
@@ -87,11 +132,23 @@ class StoryBackgrounds {
   ];
 
   static const all = <String, List<StoryBackground>>{
+    'cute': cute,
     'photorealistic': photorealistic,
     'scene': scene,
   };
 
   static final byFilename = <String, StoryBackground>{
+    'cute__hand-drawn-soft-earth-tones-background__align-left__text-black.jpg':
+        cute[0],
+    'cute__flat-floral-spring-background-22598571__align-right__text-white.jpg':
+        cute[1],
+    'cute__hand-drawn-spring-background__align-right__text-black.jpg': cute[2],
+    'cute__watercolor-background-for-christmas-season-cerebration__align-right__text-black.jpg':
+        cute[3],
+    'cute__watercolor-international-cat-day-background__align-right__text-black.jpg':
+        cute[4],
+    'cute__hand-drawn-flat-dongzhi-festival-background__align-right__text-black.jpg':
+        cute[5],
     'photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg':
         photorealistic[0],
     'photorealistic__watercolor-winter-landscape__align-right__text-black.jpg':
@@ -107,6 +164,7 @@ class StoryBackgrounds {
   };
 
   static const groups = [
+    'cute',
     'photorealistic',
     'scene',
   ];

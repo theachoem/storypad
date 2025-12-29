@@ -11,7 +11,7 @@ import 'package:storypad/core/initializers/database_initializer.dart' show Datab
 import 'package:storypad/core/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
 import 'package:storypad/core/initializers/firebase_remote_config_initializer.dart'
     show FirebaseRemoteConfigInitializer;
-import 'package:storypad/core/initializers/firestore_storage_cleanup_initializer.dart';
+import 'package:storypad/core/initializers/firestore_storage_initializer.dart';
 import 'package:storypad/core/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/core/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/core/initializers/onboarding_initializer.dart' show OnboardingInitializer;
@@ -42,8 +42,8 @@ void main({
   await OnboardingInitializer.call();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  // cleanup
-  FirestoreStorageCleanupInitializer.call();
+  // initialize & cleanup old assets
+  await FirestoreStorageInitializer.call();
 
   LicensesInitializer.call();
 

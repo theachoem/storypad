@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
@@ -384,7 +385,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
           onHorizontalDragUpdate: downloading ? null : (details) => handleHorizontalDrag(details, constraints.maxWidth),
           onHorizontalDragEnd: downloading ? null : (_) => handleHorizontalDragEnd(),
           child: Material(
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            color: Colors.transparent,
             clipBehavior: Clip.hardEdge,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
@@ -490,7 +491,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
                 ? (_isDragging ? _draggedPosition.inMilliseconds : _position.inMilliseconds) / _duration.inMilliseconds
                 : 0) *
             constraints.maxWidth,
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.readOnly.surface5,
       ),
     );
   }

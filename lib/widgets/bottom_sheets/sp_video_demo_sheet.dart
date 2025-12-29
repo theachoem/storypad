@@ -33,7 +33,7 @@ class SpVideoDemoSheet extends BaseBottomSheet {
     VideoPlayerController? controller;
 
     try {
-      file = await FirestoreStorageService.instance.getCachedFile(videoUrlPath);
+      file = FirestoreStorageService.instance.getCachedFile(videoUrlPath);
       file ??= !context.mounted
           ? null
           : await MessengerService.of(context).showLoading(

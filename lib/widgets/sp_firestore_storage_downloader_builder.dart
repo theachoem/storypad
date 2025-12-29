@@ -22,18 +22,14 @@ class _SpFirestoreStorageDownloaderBuilderState extends State<SpFirestoreStorage
 
   @override
   void initState() {
-    load();
     super.initState();
+
+    file = FirestoreStorageService.instance.getCachedFile(widget.filePath);
+    if (file == null) downloadAndLoadFile();
   }
 
-  Future<void> load() async {
+  Future<void> downloadAndLoadFile() async {
     try {
-      file = await FirestoreStorageService.instance.getCachedFile(widget.filePath);
-      if (file != null) {
-        setState(() {});
-        return;
-      }
-
       file = await FirestoreStorageService.instance.downloadFile(widget.filePath).then((e) => e.file);
       setState(() {});
     } catch (e) {

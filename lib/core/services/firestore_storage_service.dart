@@ -36,23 +36,22 @@ class FirestoreStorageService {
 
   final Map<String, Completer<FirestoreStorageResponse>> _downloadingFileByUrlPath = {};
 
-  Future<Map<String, dynamic>?> get hash async =>
-      _hash ??= await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
-        return json.decode(jsonString);
-      });
+  Future<void> loadHash() async {
+    _hash = await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
+      return json.decode(jsonString);
+    });
+  }
 
   // input: /relax_sounds/animal/forest_birds.svg"
   // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
-  Future<String> getHashPath(String originalUrlPath) async {
-    return (await hash)?[originalUrlPath];
+  String getHashPath(String originalUrlPath) {
+    return _hash![originalUrlPath];
   }
 
-  Future<File?> getCachedFile(String urlPath) async {
-    final String hashPath = await getHashPath(urlPath);
+  File? getCachedFile(String urlPath) {
+    final String hashPath = getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
-
     if (File(downloadPath).existsSync()) return File(downloadPath);
-
     return null;
   }
 
@@ -63,7 +62,7 @@ class FirestoreStorageService {
       if (_downloadUrlsByUrlPath?[urlPath] != null) return _downloadUrlsByUrlPath?[urlPath];
 
       final storageRef = FirebaseStorage.instance.ref();
-      final String hashPath = await getHashPath(urlPath);
+      final String hashPath = getHashPath(urlPath);
       final childRef = storageRef.child(hashPath);
 
       return _downloadUrlsByUrlPath?[urlPath] = await childRef.getDownloadURL();
@@ -86,7 +85,7 @@ class FirestoreStorageService {
     assert(urlPath.startsWith("/"));
 
     final storageRef = FirebaseStorage.instance.ref();
-    final String hashPath = await getHashPath(urlPath);
+    final String hashPath = getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
 
     if (File(downloadPath).existsSync()) return FirestoreStorageResponse(file: File(downloadPath));
@@ -143,7 +142,7 @@ class FirestoreStorageService {
       //   "/relax_sounds/water/ocean_waves-130d1d326a06fe0f21d4650a4f7065b7.txt",
       //   "/relax_sounds/water/droplets-ec36e00209a8cece33eef6f5c3f80e61.txt",
       // };
-      final validBasenames = (await hash ?? {}).values.map((e) => path.basename(e.toString())).toSet();
+      final validBasenames = (_hash ?? {}).values.map((e) => path.basename(e.toString())).toSet();
 
       final files = await downloadDir.list(recursive: true).where((entity) => entity is File).toList();
       final deletedFiles = <String>[];
