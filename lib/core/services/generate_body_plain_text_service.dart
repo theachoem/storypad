@@ -1,5 +1,6 @@
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/services/quill/quill_root_to_plain_text_service.dart';
+import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
+import 'package:storypad/core/services/markdown_content_filter_service.dart';
 
 /// Result object for generateBodyPlainText operation
 class GenerateBodyPlainTextResult {
@@ -29,7 +30,7 @@ class GenerateBodyPlainTextService {
 
     // Compute text once per page and reuse results
     final pageTexts = newRichPages.map((page) {
-      return QuillDeltaToPlainTextService.call(page.body ?? [], markdown: true);
+      return QuillDeltaToPlainTextService.call(page.body ?? [], markdown: true, includeMarkdownEmbeds: false);
     }).toList();
 
     // Build plainText from computed texts
@@ -45,13 +46,17 @@ class GenerateBodyPlainTextService {
     // Build richPagesWithCounts using cached texts
     final richPagesWithCounts = [
       for (int i = 0; i < newRichPages.length; i++)
-        newRichPages[i].copyWith(
-          characterCount: (newRichPages[i].title?.length ?? 0) + pageTexts[i].length,
-          wordCount: '${newRichPages[i].title ?? ''} ${pageTexts[i]}'
-              .split(RegExp(r'\s+'))
-              .where((element) => element.isNotEmpty)
-              .length,
-        ),
+        () {
+          // Filter out markdown formatting to count only actual written content
+          final filteredTitle = MarkdownContentFilterService.call(newRichPages[i].title ?? '');
+          final filteredBody = MarkdownContentFilterService.call(pageTexts[i]);
+          final filteredCombined = '$filteredTitle $filteredBody';
+
+          return newRichPages[i].copyWith(
+            characterCount: filteredTitle.length + filteredBody.length,
+            wordCount: filteredCombined.split(RegExp(r'\s+')).where((element) => element.isNotEmpty).length,
+          );
+        }(),
     ];
 
     return GenerateBodyPlainTextResult(
