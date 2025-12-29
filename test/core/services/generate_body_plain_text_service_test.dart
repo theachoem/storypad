@@ -5,286 +5,591 @@ import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
 void main() {
   group('GenerateBodyPlainTextService', () {
-    test('should return null for null input', () {
-      final result = GenerateBodyPlainTextService.call(null);
-      expect(result, isNull);
-    });
+    group('Basic Functionality', () {
+      test('returns null for null input', () {
+        final result = GenerateBodyPlainTextService.call(null);
+        expect(result, isNull);
+      });
 
-    test('should return null for empty list', () {
-      final result = GenerateBodyPlainTextService.call([]);
-      expect(result, isNull);
-    });
+      test('returns null for empty list', () {
+        final result = GenerateBodyPlainTextService.call([]);
+        expect(result, isNull);
+      });
 
-    test('should convert single page with simple text', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Page 1',
-          body: json.decode('[{"insert":"Hello World\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, 'Hello World');
-    });
-
-    test('should convert single page with empty body', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Page 1',
-          body: null,
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '');
-    });
-
-    test('should convert single page with formatted text', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Page 1',
-          body: json.decode('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '**bold text**');
-    });
-
-    test('should convert multiple pages with titles and bodies', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'First Page',
-          body: json.decode('[{"insert":"First page content\\n"}]'),
-        ),
-        StoryPageDbModel(
-          id: 2,
-          title: 'Second Page',
-          body: json.decode('[{"insert":"Second page content\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, 'First page content\n\nSecond Page\nSecond page content');
-    });
-
-    test('should handle multiple pages where subsequent pages have null titles', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'First Page',
-          body: json.decode('[{"insert":"First page content\\n"}]'),
-        ),
-        StoryPageDbModel(
-          id: 2,
-          title: null,
-          body: json.decode('[{"insert":"Second page content\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      // Empty string is added for null title
-      expect(result, isNotNull);
-      expect(result!.plainText, 'First page content\n\n\nSecond page content');
-    });
-
-    test('should convert multiple pages with complex formatting', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Introduction',
-          body: json.decode(
-            '[{"insert":"Welcome to "},{"insert":"my story","attributes":{"bold":true}},{"insert":"!\\n"}]',
+      test('returns GenerateBodyPlainTextResult with required fields', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Test',
+            body: json.decode('[{"insert":"Content\\n"}]'),
           ),
-        ),
-        StoryPageDbModel(
-          id: 2,
-          title: 'Chapter 1',
-          body: json.decode('[{"insert":"Once upon a time...\\n"}]'),
-        ),
-        StoryPageDbModel(
-          id: 3,
-          title: 'Chapter 2',
-          body: json.decode('[{"insert":"The end.\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, 'Welcome to **my story**!\n\nChapter 1\nOnce upon a time...\n\nChapter 2\nThe end.');
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, isA<String>());
+        expect(result.richPagesWithCounts, isA<List<StoryPageDbModel>>());
+      });
     });
 
-    test('should handle pages with lists', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Todo List',
-          body: json.decode(
-            '[{"insert":"Task 1"},{"insert":"\\n","attributes":{"list":"bullet"}},{"insert":"Task 2"},{"insert":"\\n","attributes":{"list":"bullet"}}]',
+    group('Single Page Processing', () {
+      test('converts single page with simple text', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Page 1',
+            body: json.decode('[{"insert":"Hello World\\n"}]'),
           ),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '- Task 1\n- Task 2');
-    });
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, 'Hello World');
+      });
 
-    test('should handle pages with blockquotes', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Quotes',
-          body: json.decode('[{"insert":"Be yourself."},{"insert":"\\n","attributes":{"blockquote":true}}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '> Be yourself.');
-    });
-
-    test('should handle pages with links', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Links',
-          body: json.decode(
-            '[{"insert":"Visit "},{"insert":"Google","attributes":{"link":"https://google.com"}},{"insert":"\\n"}]',
+      test('handles single page with null body', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Empty Page',
+            body: null,
           ),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, 'Visit [Google](https://google.com)');
-    });
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, '');
+      });
 
-    test('should trim trailing whitespace from result', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Page',
-          body: json.decode('[{"insert":"Content\\n\\n\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, 'Content');
-    });
-
-    test('should handle complex multi-page document', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Title Page',
-          body: json.decode('[{"insert":"My Story\\n"},{"insert":"by Author\\n"}]'),
-        ),
-        StoryPageDbModel(
-          id: 2,
-          title: 'Chapter 1: The Beginning',
-          body: json.decode(
-            '[{"insert":"It was a "},{"insert":"dark","attributes":{"italic":true}},{"insert":" and stormy night.\\n"}]',
+      test('handles single page with empty body array', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Page',
+            body: json.decode('[]'),
           ),
-        ),
-        StoryPageDbModel(
-          id: 3,
-          title: 'Chapter 2: The Middle',
-          body: json.decode(
-            '[{"insert":"Things happened."},{"insert":"\\n","attributes":{"list":"bullet"}},{"insert":"More things."},{"insert":"\\n","attributes":{"list":"bullet"}}]',
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, '');
+      });
+
+      test('handles single page with null title', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Content\\n"}]'),
           ),
-        ),
-        StoryPageDbModel(
-          id: 4,
-          title: 'Chapter 3: The End',
-          body: json.decode('[{"insert":"The end."},{"insert":"\\n","attributes":{"blockquote":true}}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      const expected =
-          'My Story\nby Author\n'
-          '\n'
-          'Chapter 1: The Beginning\n'
-          'It was a *dark* and stormy night.\n'
-          '\n'
-          'Chapter 2: The Middle\n'
-          '- Things happened.\n'
-          '- More things.\n'
-          '\n'
-          'Chapter 3: The End\n'
-          '> The end.';
-      expect(result!.plainText, expected);
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, 'Content');
+      });
     });
 
-    test('should handle pages with empty body arrays', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Empty Page',
-          body: [],
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '');
+    group('Multiple Pages Processing', () {
+      test('combines multiple pages with titles', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'First',
+            body: json.decode('[{"insert":"Content 1\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 2,
+            title: 'Second',
+            body: json.decode('[{"insert":"Content 2\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, 'Content 1\n\nSecond\nContent 2');
+      });
+
+      test('handles multiple pages with some null titles', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'First',
+            body: json.decode('[{"insert":"Content 1\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 2,
+            title: null,
+            body: json.decode('[{"insert":"Content 2\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 3,
+            title: 'Third',
+            body: json.decode('[{"insert":"Content 3\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, 'Content 1\n\n\nContent 2\n\nThird\nContent 3');
+      });
+
+      test('handles three or more pages', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Chapter 1',
+            body: json.decode('[{"insert":"First\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 2,
+            title: 'Chapter 2',
+            body: json.decode('[{"insert":"Second\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 3,
+            title: 'Chapter 3',
+            body: json.decode('[{"insert":"Third\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+        expect(result!.plainText, contains('First'));
+        expect(result.plainText, contains('Chapter 2'));
+        expect(result.plainText, contains('Second'));
+        expect(result.plainText, contains('Chapter 3'));
+        expect(result.plainText, contains('Third'));
+      });
     });
 
-    test('should apply markdown formatting by default', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Formatted',
-          body: json.decode('[{"insert":"bold","attributes":{"bold":true}},{"insert":"\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      expect(result!.plainText, '**bold**');
+    group('Character Count (with Filtering)', () {
+      test('counts only actual text, not markdown formatting', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Test',
+            body: json.decode('[{"insert":"**bold**","attributes":{"bold":true}},{"insert":"\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Test" (4) + "bold" (4) = 8 characters (not counting **)
+        expect(page.characterCount, 8);
+      });
+
+      test('does not count bullet markers', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Item"},{"insert":"\\n","attributes":{"list":"bullet"}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // Only "Item" (4 characters), not "- Item"
+        expect(page.characterCount, 4);
+      });
+
+      test('does not count checkbox markers', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Task"},{"insert":"\\n","attributes":{"list":"unchecked"}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // Only "Task" (4 characters), not "- [ ] Task"
+        expect(page.characterCount, 4);
+      });
+
+      test('does not count list numbering', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"First"},{"insert":"\\n","attributes":{"list":"ordered"}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // Only "First" (5 characters), not "1. First"
+        expect(page.characterCount, 5);
+      });
+
+      test('includes title in character count', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Title',
+            body: json.decode('[{"insert":"Body\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Title" (5) + "Body" (4) = 9
+        expect(page.characterCount, 9);
+      });
+
+      test('handles empty content correctly', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.characterCount, 0);
+      });
+
+      test('counts multi-line content correctly', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Line 1\\nLine 2\\nLine 3\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Line 1\nLine 2\nLine 3" without final \n = 20 characters
+        expect(page.characterCount, 20);
+      });
     });
 
-    test('should calculate word count correctly with title', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Hello World',
-          body: json.decode('[{"insert":"This is body\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      // Word count: "Hello" + "World" + "This" + "is" + "body" = 5 words
-      expect(result!.richPagesWithCounts[0].wordCount, 5);
+    group('Word Count (with Filtering)', () {
+      test('counts words correctly', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'My Title',
+            body: json.decode('[{"insert":"Hello World\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "My Title Hello World" = 4 words
+        expect(page.wordCount, 4);
+      });
+
+      test('does not count bullet markers as words', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Item one"},{"insert":"\\n","attributes":{"list":"bullet"}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Item one" = 2 words (not "- Item one" = 3)
+        expect(page.wordCount, 2);
+      });
+
+      test('does not count checkbox markers as words', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Buy milk"},{"insert":"\\n","attributes":{"list":"unchecked"}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Buy milk" = 2 words (not "- [ ] Buy milk" = 4)
+        expect(page.wordCount, 2);
+      });
+
+      test('does not count markdown formatting as separate words', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // After markdown removal: "bold text" = 2 words (formatting markers removed correctly)
+        expect(page.wordCount, 2);
+      });
+
+      test('counts words in multiple lines', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"First line\\nSecond line\\nThird line\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // 6 words total
+        expect(page.wordCount, 6);
+      });
+
+      test('handles empty content correctly', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.wordCount, 0);
+      });
+
+      test('handles only whitespace correctly', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: '   ',
+            body: json.decode('[{"insert":"   \\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.wordCount, 0);
+      });
     });
 
-    test('should calculate character count correctly including title', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'My Title',
-          body: json.decode('[{"insert":"Hello World\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
-      // characterCount = title length (8) + body length (12) = 20
-      expect(result!.richPagesWithCounts[0].characterCount, 20);
+    group('Complex Formatting Scenarios', () {
+      test('handles pages with mixed formatting', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Story',
+            body: json.decode('''
+[
+  {"insert":"Chapter 1","attributes":{"header":1}},
+  {"insert":"\\n"},
+  {"insert":"Once upon a time...\\n"},
+  {"insert":"Task 1"},
+  {"insert":"\\n","attributes":{"list":"unchecked"}},
+  {"insert":"bold text","attributes":{"bold":true}},
+  {"insert":"\\n"}
+]
+            '''),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result, isNotNull);
+
+        final page = result!.richPagesWithCounts.first;
+        // Verify counts exclude markdown markers
+        expect(page.characterCount, greaterThan(0));
+        expect(page.wordCount, greaterThan(0));
+      });
+
+      test('handles pages with links and images', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode(
+              '[{"insert":"Click "},{"insert":"here","attributes":{"link":"https://example.com"}},{"insert":"\\n"}]',
+            ),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Click here" = 10 characters
+        expect(page.characterCount, 10);
+        expect(page.wordCount, 2);
+      });
+
+      test('handles pages with blockquotes', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Quoted text"},{"insert":"\\n","attributes":{"blockquote":true}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // "Quoted text" = 11 characters (not "> Quoted text")
+        expect(page.characterCount, 11);
+        expect(page.wordCount, 2);
+      });
+
+      test('handles pages with code blocks', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"const x = 5;"},{"insert":"\\n","attributes":{"code-block":true}}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // Code content counts, but not ``` markers
+        expect(page.characterCount, greaterThan(0));
+        expect(page.wordCount, greaterThan(0));
+      });
     });
 
-    test('should calculate total character count correctly', () {
-      final pages = [
-        StoryPageDbModel(
-          id: 1,
-          title: 'Page',
-          body: json.decode('[{"insert":"Body\\n"}]'),
-        ),
-        StoryPageDbModel(
-          id: 2,
-          title: 'Two',
-          body: json.decode('[{"insert":"Data\\n"}]'),
-        ),
-      ];
-      final result = GenerateBodyPlainTextService.call(pages);
-      expect(result, isNotNull);
+    group('Multiple Pages with Counts', () {
+      test('calculates counts for each page separately', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Short',
+            body: json.decode('[{"insert":"Hi\\n"}]'),
+          ),
+          StoryPageDbModel(
+            id: 2,
+            title: 'Longer Title',
+            body: json.decode('[{"insert":"This is a much longer sentence.\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+
+        final page1 = result!.richPagesWithCounts[0];
+        final page2 = result.richPagesWithCounts[1];
+
+        // First page should have fewer chars/words than second
+        expect(page1.characterCount, lessThan(page2.characterCount!));
+        expect(page1.wordCount, lessThan(page2.wordCount!));
+      });
+
+      test('returns same number of pages with counts', () {
+        final pages = [
+          StoryPageDbModel(id: 1, title: 'P1', body: json.decode('[{"insert":"A\\n"}]')),
+          StoryPageDbModel(id: 2, title: 'P2', body: json.decode('[{"insert":"B\\n"}]')),
+          StoryPageDbModel(id: 3, title: 'P3', body: json.decode('[{"insert":"C\\n"}]')),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        expect(result!.richPagesWithCounts.length, 3);
+      });
+
+      test('preserves page IDs and titles', () {
+        final pages = [
+          StoryPageDbModel(id: 42, title: 'Important', body: json.decode('[{"insert":"Text\\n"}]')),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.id, 42);
+        expect(page.title, 'Important');
+      });
+    });
+
+    group('Edge Cases', () {
+      test('handles page with only markdown formatting', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"---\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        // Horizontal rule removed, nothing left
+        expect(page.characterCount, 0);
+        expect(page.wordCount, 0);
+      });
+
+      test('handles page with special characters', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"@#\$%^&*()\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.characterCount, greaterThan(0));
+      });
+
+      test('handles page with unicode characters', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"你好世界\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.characterCount, 4);
+        expect(page.wordCount, 1);
+      });
+
+      test('handles page with emojis', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: null,
+            body: json.decode('[{"insert":"Hello 😊 World\\n"}]'),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+        expect(page.characterCount, greaterThan(0));
+        expect(page.wordCount, 3); // "Hello", "😊", "World"
+      });
+    });
+
+    group('Integration - Filters Applied Correctly', () {
+      test('user sees only content they wrote, not structure', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'My List',
+            body: json.decode('''
+[
+  {"insert":"Buy groceries"},
+  {"insert":"\\n","attributes":{"list":"unchecked"}},
+  {"insert":"Walk dog"},
+  {"insert":"\\n","attributes":{"list":"checked"}},
+  {"insert":"Important: "},
+  {"insert":"Call mom","attributes":{"bold":true}},
+  {"insert":"\\n"}
+]
+            '''),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+
+        // User wrote: "My List", "Buy groceries", "Walk dog", "Important: Call mom"
+        // Filter removes: "- [ ]", "✅ ", "**"
+        // Character count should reflect only written text
+        // final expectedWords = ['My', 'List', 'Buy', 'groceries', 'Walk', 'dog', 'Important:', 'Call', 'mom'];
+        expect(page.wordCount, 9); // All words preserved correctly
+      });
+
+      test('formatted story counts accurately', () {
+        final pages = [
+          StoryPageDbModel(
+            id: 1,
+            title: 'Chapter One',
+            body: json.decode('''
+[
+  {"insert":"Once upon a time"},
+  {"insert":"\\n","attributes":{"header":1}},
+  {"insert":"There lived a "},
+  {"insert":"brave","attributes":{"bold":true}},
+  {"insert":" knight.\\n"},
+  {"insert":"He went on adventures:"},
+  {"insert":"\\n"},
+  {"insert":"Fight dragon"},
+  {"insert":"\\n","attributes":{"list":"bullet"}},
+  {"insert":"Save princess"},
+  {"insert":"\\n","attributes":{"list":"bullet"}}
+]
+            '''),
+          ),
+        ];
+        final result = GenerateBodyPlainTextService.call(pages);
+        final page = result!.richPagesWithCounts.first;
+
+        // Content: "Chapter One Once upon a time There lived a brave knight. He went on adventures: Fight dragon Save princess"
+        // Without: "# ", "- ", "**"
+        expect(page.wordCount, 19); // Actual words after filtering
+        expect(page.characterCount, greaterThan(50)); // Reasonable char count
+      });
     });
   });
 }

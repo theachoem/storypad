@@ -17,3 +17,4 @@ features/
 - [Search](./search/overview.md) - Text search and advanced filtering system
 - [Templates](./templates/overview.md) - Predefined templates for entries
 - [Voice Journal](./voice-journal/overview.md) - Record and organize voice notes
+- [Word & Character Counting](./word-char-counting.md) - Accurate content counting system
