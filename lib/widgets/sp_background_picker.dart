@@ -15,6 +15,9 @@ import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';
 
+const double _backgroundCardHeight = 123;
+const double _backgroundCardAspectRatio = 2 / 2.5;
+
 class SpBackgroundPicker extends StatefulWidget {
   const SpBackgroundPicker({
     super.key,
@@ -68,7 +71,10 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
         ],
         if (selectedGroup == 'colors') ...[
           const SizedBox(height: 8),
-          _ColorBackgroundsCarousel(preferences: preferences, widget: widget),
+          _ColorBackgroundsCarousel(
+            preferences: preferences,
+            widget: widget,
+          ),
         ],
       ],
     );
@@ -148,16 +154,16 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
   Widget build(BuildContext context) {
     return Container(
       key: ValueKey(widget.groupName),
-      height: 72,
-      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      height: _backgroundCardHeight,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       clipBehavior: .hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9.0),
       ),
       child: CarouselView(
         scrollDirection: .horizontal,
-        itemExtent: 72 * (16 / 9),
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
+        padding: const EdgeInsets.symmetric(horizontal: 6.0),
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: Theme.of(context).dividerColor,
@@ -166,6 +172,8 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           borderRadius: BorderRadius.circular(8.0),
         ),
         onTap: (index) async {
+          HapticFeedback.selectionClick();
+
           final background = widget.backgrounds[index];
           bool selected = widget.preferences.backgroundImagePath == basename(background.path);
 
@@ -179,10 +187,8 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
         },
         children: List.generate(widget.backgrounds.length, (index) {
           backgroundKeys[index] ??= GlobalKey();
-          return SpFadeIn(
+          return KeyedSubtree(
             key: backgroundKeys[index],
-            delay: Duration(milliseconds: 50 * index),
-            duration: Durations.medium1,
             child: buildImageItem(widget.backgrounds[index]),
           );
         }),
@@ -195,7 +201,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
       children: [
         Positioned.fill(
           child: AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: 2 / 2.5,
             child: SpFirestoreStorageDownloaderBuilder(
               filePath: background.path,
               builder: (context, file, failed) {
@@ -203,6 +209,11 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
                 return Image.file(
                   file,
                   fit: .cover,
+                  alignment: switch (background.align) {
+                    .left => .centerLeft,
+                    .center => .center,
+                    .right => .centerRight,
+                  },
                 );
               },
             ),
@@ -308,16 +319,16 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
   Widget build(BuildContext context) {
     return Container(
       key: const ValueKey('colors'),
-      height: 72,
-      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      height: _backgroundCardHeight,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       clipBehavior: .hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9.0),
       ),
       child: CarouselView(
         scrollDirection: .horizontal,
-        itemExtent: 72 * (16 / 9),
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
+        padding: const EdgeInsets.symmetric(horizontal: 6.0),
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: Theme.of(context).dividerColor,
@@ -353,22 +364,18 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
       ),
     );
 
-    return Stack(
+    return Column(
       children: [
-        Row(
-          children: [
-            Flexible(child: Container(color: backgroundColor[500])),
-            Flexible(
-              child: Stack(
-                children: [
-                  Container(color: scaffoldBackgroundColor),
-                  buildToneBackground(selected, colorScheme),
-                  buildToneCurrentProgress(selected),
-                ],
-              ),
-            ),
-          ],
+        Flexible(
+          child: Stack(
+            children: [
+              Container(color: scaffoldBackgroundColor),
+              buildToneBackground(selected, colorScheme),
+              buildToneCurrentProgress(selected),
+            ],
+          ),
         ),
+        Flexible(child: Container(color: backgroundColor[500])),
       ],
     );
   }

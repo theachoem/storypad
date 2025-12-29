@@ -38,10 +38,66 @@ class StoryBackgrounds {
 
   static const cute = [
     StoryBackground(
+      name: 'vintage-animals-frame-colorful-pastel-jungle-background',
+      path:
+          '/story_backgrounds/cute__vintage-animals-frame-colorful-pastel-jungle-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'people-eating-delicious-cake',
+      path:
+          '/story_backgrounds/cute__people-eating-delicious-cake__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'pastel-colored-floral-background-with-copy-space',
+      path:
+          '/story_backgrounds/cute__pastel-colored-floral-background-with-copy-space__align-left__text-black.jpg',
+      align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'cartoon-lifestyle-summertime-scene',
+      path:
+          '/story_backgrounds/cute__cartoon-lifestyle-summertime-scene__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
       name: 'hand-drawn-soft-earth-tones-background',
       path:
           '/story_backgrounds/cute__hand-drawn-soft-earth-tones-background__align-left__text-black.jpg',
       align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'flat-design-soft-earth-tones-background',
+      path:
+          '/story_backgrounds/cute__flat-design-soft-earth-tones-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'cute-farmer-girl-cartoon-vector-illustration-with-shy-pose',
+      path:
+          '/story_backgrounds/cute__cute-farmer-girl-cartoon-vector-illustration-with-shy-pose__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-boho-background',
+      path:
+          '/story_backgrounds/cute__hand-drawn-boho-background__align-left__text-black.jpg',
+      align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'people-eating-sweet-and-delicious-cake',
+      path:
+          '/story_backgrounds/cute__people-eating-sweet-and-delicious-cake__align-right__text-black.jpg',
+      align: .right,
       textColor: .black,
     ),
     StoryBackground(
@@ -52,9 +108,30 @@ class StoryBackgrounds {
       textColor: .white,
     ),
     StoryBackground(
+      name: 'hand-drawn-tropical-leaves-background',
+      path:
+          '/story_backgrounds/cute__hand-drawn-tropical-leaves-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'young -character-in-nature',
+      path:
+          '/story_backgrounds/cute__young -character-in-nature__align-left__text-white.jpg',
+      align: .left,
+      textColor: .white,
+    ),
+    StoryBackground(
       name: 'hand-drawn-spring-background',
       path:
           '/story_backgrounds/cute__hand-drawn-spring-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'blue-botanical-copy-space-mobile-wallpaper-vector',
+      path:
+          '/story_backgrounds/cute__blue-botanical-copy-space-mobile-wallpaper-vector__align-right__text-black.jpg',
       align: .right,
       textColor: .black,
     ),
@@ -73,9 +150,51 @@ class StoryBackgrounds {
       textColor: .black,
     ),
     StoryBackground(
+      name: 'flat-background-for-carnival-celebration',
+      path:
+          '/story_backgrounds/cute__flat-background-for-carnival-celebration__align-left__text-black.jpg',
+      align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'girls-friendship-cartoon',
+      path:
+          '/story_backgrounds/cute__girls-friendship-cartoon__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-people-with-different pets',
+      path:
+          '/story_backgrounds/cute__hand-drawn-people-with-different pets__align-left__text-black.jpg',
+      align: .left,
+      textColor: .black,
+    ),
+    StoryBackground(
       name: 'hand-drawn-flat-dongzhi-festival-background',
       path:
           '/story_backgrounds/cute__hand-drawn-flat-dongzhi-festival-background__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-people-with-different pets',
+      path:
+          '/story_backgrounds/cute__hand-drawn-people-with-different pets__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'hand-drawn-female-bear-illustration',
+      path:
+          '/story_backgrounds/cute__hand-drawn-female-bear-illustration__align-right__text-black.jpg',
+      align: .right,
+      textColor: .black,
+    ),
+    StoryBackground(
+      name: 'tropical-wallpaper-with-different-leaves',
+      path:
+          '/story_backgrounds/cute__tropical-wallpaper-with-different-leaves__align-right__text-black.jpg',
       align: .right,
       textColor: .black,
     ),
@@ -84,24 +203,18 @@ class StoryBackgrounds {
   static const photorealistic = [
     StoryBackground(
       name:
+          'beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey',
+      path:
+          '/story_backgrounds/photorealistic__beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey__align-left__text-white.jpg',
+      align: .left,
+      textColor: .white,
+    ),
+    StoryBackground(
+      name:
           'beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1',
       path:
           '/story_backgrounds/photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg',
       align: .right,
-      textColor: .white,
-    ),
-    StoryBackground(
-      name: 'watercolor-winter-landscape',
-      path:
-          '/story_backgrounds/photorealistic__watercolor-winter-landscape__align-right__text-black.jpg',
-      align: .right,
-      textColor: .black,
-    ),
-    StoryBackground(
-      name: 'christmas-celebration-with-decorated-house-1',
-      path:
-          '/story_backgrounds/photorealistic__christmas-celebration-with-decorated-house-1__align-left__text-white.jpg',
-      align: .left,
       textColor: .white,
     ),
     StoryBackground(
@@ -120,52 +233,65 @@ class StoryBackgrounds {
     ),
   ];
 
-  static const scene = [
-    StoryBackground(
-      name:
-          'nature-scene-rural-land-agriculture-grassland-abtract-silhouette-asian-farmers-working-rice-field-il',
-      path:
-          '/story_backgrounds/scene__nature-scene-rural-land-agriculture-grassland-abtract-silhouette-asian-farmers-working-rice-field-il__align-left__text_white.jpg',
-      align: .left,
-      textColor: .white,
-    ),
-  ];
-
   static const all = <String, List<StoryBackground>>{
     'cute': cute,
     'photorealistic': photorealistic,
-    'scene': scene,
   };
 
   static final byFilename = <String, StoryBackground>{
-    'cute__hand-drawn-soft-earth-tones-background__align-left__text-black.jpg':
+    'cute__vintage-animals-frame-colorful-pastel-jungle-background__align-right__text-black.jpg':
         cute[0],
-    'cute__flat-floral-spring-background-22598571__align-right__text-white.jpg':
-        cute[1],
-    'cute__hand-drawn-spring-background__align-right__text-black.jpg': cute[2],
-    'cute__watercolor-background-for-christmas-season-cerebration__align-right__text-black.jpg':
+    'cute__people-eating-delicious-cake__align-right__text-black.jpg': cute[1],
+    'cute__pastel-colored-floral-background-with-copy-space__align-left__text-black.jpg':
+        cute[2],
+    'cute__cartoon-lifestyle-summertime-scene__align-right__text-black.jpg':
         cute[3],
-    'cute__watercolor-international-cat-day-background__align-right__text-black.jpg':
+    'cute__hand-drawn-soft-earth-tones-background__align-left__text-black.jpg':
         cute[4],
-    'cute__hand-drawn-flat-dongzhi-festival-background__align-right__text-black.jpg':
+    'cute__flat-design-soft-earth-tones-background__align-right__text-black.jpg':
         cute[5],
-    'photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg':
+    'cute__cute-farmer-girl-cartoon-vector-illustration-with-shy-pose__align-right__text-black.jpg':
+        cute[6],
+    'cute__hand-drawn-boho-background__align-left__text-black.jpg': cute[7],
+    'cute__people-eating-sweet-and-delicious-cake__align-right__text-black.jpg':
+        cute[8],
+    'cute__flat-floral-spring-background-22598571__align-right__text-white.jpg':
+        cute[9],
+    'cute__hand-drawn-tropical-leaves-background__align-right__text-black.jpg':
+        cute[10],
+    'cute__young -character-in-nature__align-left__text-white.jpg': cute[11],
+    'cute__hand-drawn-spring-background__align-right__text-black.jpg': cute[12],
+    'cute__blue-botanical-copy-space-mobile-wallpaper-vector__align-right__text-black.jpg':
+        cute[13],
+    'cute__watercolor-background-for-christmas-season-cerebration__align-right__text-black.jpg':
+        cute[14],
+    'cute__watercolor-international-cat-day-background__align-right__text-black.jpg':
+        cute[15],
+    'cute__flat-background-for-carnival-celebration__align-left__text-black.jpg':
+        cute[16],
+    'cute__girls-friendship-cartoon__align-right__text-black.jpg': cute[17],
+    'cute__hand-drawn-people-with-different pets__align-left__text-black.jpg':
+        cute[18],
+    'cute__hand-drawn-flat-dongzhi-festival-background__align-right__text-black.jpg':
+        cute[19],
+    'cute__hand-drawn-people-with-different pets__align-right__text-black.jpg':
+        cute[20],
+    'cute__hand-drawn-female-bear-illustration__align-right__text-black.jpg':
+        cute[21],
+    'cute__tropical-wallpaper-with-different-leaves__align-right__text-black.jpg':
+        cute[22],
+    'photorealistic__beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey__align-left__text-white.jpg':
         photorealistic[0],
-    'photorealistic__watercolor-winter-landscape__align-right__text-black.jpg':
+    'photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg':
         photorealistic[1],
-    'photorealistic__christmas-celebration-with-decorated-house-1__align-left__text-white.jpg':
-        photorealistic[2],
     'photorealistic__mountain-grassland-environmental-ecology-park-nature-concept-1__align-right__text-white.jpg':
-        photorealistic[3],
+        photorealistic[2],
     'photorealistic__beach-sunset-with-clouds-1__align-center__text-white.jpg':
-        photorealistic[4],
-    'scene__nature-scene-rural-land-agriculture-grassland-abtract-silhouette-asian-farmers-working-rice-field-il__align-left__text_white.jpg':
-        scene[0],
+        photorealistic[3],
   };
 
   static const groups = [
     'cute',
     'photorealistic',
-    'scene',
   ];
 }
