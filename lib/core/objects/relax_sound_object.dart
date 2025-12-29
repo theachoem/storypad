@@ -2,7 +2,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
-import 'package:storypad/core/types/firestore_storage_background.dart';
+import 'package:storypad/core/types/relax_sound_background.dart';
 
 part 'relax_sound_object.g.dart';
 
@@ -12,7 +12,7 @@ class RelaxSoundObject {
   final String translationKey;
   final String artist;
   final String svgIconUrlPath;
-  final FirestoreStorageBackground background;
+  final RelaxSoundBackground background;
 
   // mp3 or wave
   final String soundUrlPath;
@@ -111,7 +111,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@graham_makes',
         translationKey: 'sounds.acoustic_guitar_duet',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        background: .music_notes_on_heart_shaped_paper,
         svgIconUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.svg',
         soundUrlPath: '/relax_sounds/musics/acoustic_guitar_duet.mp3',
         dayColor: 3,
@@ -119,7 +119,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@Matio888',
         translationKey: 'sounds.serene_piano_reflections',
-        background: FirestoreStorageBackground.two_cloudy_tags_on_color_background,
+        background: .two_cloudy_tags_on_color_background,
         svgIconUrlPath: '/relax_sounds/musics/serene_piano_reflections.svg',
         soundUrlPath: '/relax_sounds/musics/serene_piano_reflections.mp3',
         dayColor: 2,
@@ -127,7 +127,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@Gustavo_Alivera',
         translationKey: 'sounds.serene_moments',
-        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        background: .color_beautiful_sky_vintage_forest,
         svgIconUrlPath: '/relax_sounds/musics/serene_moments.svg',
         soundUrlPath: '/relax_sounds/musics/serene_moments.mp3',
         dayColor: 1,
@@ -135,7 +135,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@voyouz',
         translationKey: 'sounds.music_box',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        background: .music_notes_on_heart_shaped_paper,
         svgIconUrlPath: '/relax_sounds/musics/music_box.svg',
         soundUrlPath: '/relax_sounds/musics/music_box.wav',
         dayColor: 1,
@@ -148,7 +148,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@jmbphilmes',
         translationKey: 'sounds.light_rain',
-        background: FirestoreStorageBackground.textured_green_and_black_liquefy_abstract_background,
+        background: .textured_green_and_black_liquefy_abstract_background,
         svgIconUrlPath: '/relax_sounds/rainy/light_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/light_rain.wav',
         dayColor: 3,
@@ -156,7 +156,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@InspectorJ',
         translationKey: 'sounds.rain_on_window',
-        background: FirestoreStorageBackground.textured_green_and_black_liquefy_abstract_background,
+        background: .textured_green_and_black_liquefy_abstract_background,
         svgIconUrlPath: '/relax_sounds/rainy/rain_on_window.svg',
         soundUrlPath: '/relax_sounds/rainy/rain_on_window.wav',
         dayColor: 4,
@@ -164,7 +164,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@lebaston100',
         translationKey: 'sounds.heavy_rain',
-        background: FirestoreStorageBackground.textured_green_and_black_liquefy_abstract_background,
+        background: .textured_green_and_black_liquefy_abstract_background,
         svgIconUrlPath: '/relax_sounds/rainy/heavy_rain.svg',
         soundUrlPath: '/relax_sounds/rainy/heavy_rain.wav',
         dayColor: 6,
@@ -172,7 +172,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@laribum',
         translationKey: 'sounds.thunder',
-        background: FirestoreStorageBackground.textured_green_and_black_liquefy_abstract_background,
+        background: .textured_green_and_black_liquefy_abstract_background,
         svgIconUrlPath: '/relax_sounds/rainy/thunder.svg',
         soundUrlPath: '/relax_sounds/rainy/thunder.wav',
         dayColor: 6,
@@ -185,7 +185,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@Profispiesser',
         translationKey: 'sounds.ocean_waves',
-        background: FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background,
+        background: .abstract_water_drops_on_turquoise_glass_background,
         svgIconUrlPath: '/relax_sounds/water/ocean_waves.svg',
         soundUrlPath: '/relax_sounds/water/ocean_waves.wav',
         dayColor: 5,
@@ -193,7 +193,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@felix.blume',
         translationKey: 'sounds.river_stream',
-        background: FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background,
+        background: .abstract_water_drops_on_turquoise_glass_background,
         svgIconUrlPath: '/relax_sounds/water/river_stream.svg',
         soundUrlPath: '/relax_sounds/water/river_stream.wav',
         dayColor: 5,
@@ -201,7 +201,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@Lydmakeren',
         translationKey: 'sounds.droplets',
-        background: FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background,
+        background: .abstract_water_drops_on_turquoise_glass_background,
         svgIconUrlPath: '/relax_sounds/water/droplets.svg',
         soundUrlPath: '/relax_sounds/water/droplets.wav',
         dayColor: 5,
@@ -209,7 +209,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@brunoboselli',
         translationKey: 'sounds.bubbles',
-        background: FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background,
+        background: .abstract_water_drops_on_turquoise_glass_background,
         svgIconUrlPath: '/relax_sounds/water/bubbles.svg',
         soundUrlPath: '/relax_sounds/water/bubbles.wav',
         dayColor: 5,
@@ -222,7 +222,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@Virgile_Loiseau',
         translationKey: 'sounds.night_crickets',
-        background: FirestoreStorageBackground.forest_full_of_high_rise_trees,
+        background: .forest_full_of_high_rise_trees,
         svgIconUrlPath: '/relax_sounds/animal/night_crickets.svg',
         soundUrlPath: '/relax_sounds/animal/night_crickets.wav',
         dayColor: 2,
@@ -230,7 +230,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@sacred_steel',
         translationKey: 'sounds.cicada',
-        background: FirestoreStorageBackground.forest_full_of_high_rise_trees,
+        background: .forest_full_of_high_rise_trees,
         svgIconUrlPath: '/relax_sounds/animal/cicada.svg',
         soundUrlPath: '/relax_sounds/animal/cicada.wav',
         dayColor: 4,
@@ -238,7 +238,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@eyecandyuk',
         translationKey: 'sounds.frogs',
-        background: FirestoreStorageBackground.forest_full_of_high_rise_trees,
+        background: .forest_full_of_high_rise_trees,
         svgIconUrlPath: '/relax_sounds/animal/frogs.svg',
         soundUrlPath: '/relax_sounds/animal/frogs.wav',
         dayColor: 1,
@@ -246,7 +246,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@reinsamba',
         translationKey: 'sounds.forest_birds',
-        background: FirestoreStorageBackground.fall_leaves_hanging_on_blurry_surface,
+        background: .fall_leaves_hanging_on_blurry_surface,
         svgIconUrlPath: '/relax_sounds/animal/forest_birds.svg',
         soundUrlPath: '/relax_sounds/animal/forest_birds.wav',
         dayColor: 3,
@@ -254,7 +254,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@interstellar_galleon',
         translationKey: 'sounds.seagulls',
-        background: FirestoreStorageBackground.fall_leaves_hanging_on_blurry_surface,
+        background: .fall_leaves_hanging_on_blurry_surface,
         svgIconUrlPath: '/relax_sounds/animal/seagulls.svg',
         soundUrlPath: '/relax_sounds/animal/seagulls.wav',
         dayColor: 5,
@@ -267,7 +267,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@AnoukJade',
         translationKey: 'sounds.wind_chime',
-        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        background: .color_beautiful_sky_vintage_forest,
         svgIconUrlPath: '/relax_sounds/melody/wind_chime.svg',
         soundUrlPath: '/relax_sounds/melody/wind_chime.wav',
         dayColor: 5,
@@ -275,7 +275,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@LoopUdu',
         translationKey: 'sounds.bamboo_windchime',
-        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        background: .color_beautiful_sky_vintage_forest,
         svgIconUrlPath: '/relax_sounds/melody/bamboo_windchime.svg',
         soundUrlPath: '/relax_sounds/melody/bamboo_windchime.wav',
         dayColor: 5,
@@ -283,7 +283,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@imagefilm.berlin',
         translationKey: 'sounds.singing_bowl',
-        background: FirestoreStorageBackground.color_beautiful_sky_vintage_forest,
+        background: .color_beautiful_sky_vintage_forest,
         svgIconUrlPath: '/relax_sounds/melody/singing_bowl.svg',
         soundUrlPath: '/relax_sounds/melody/singing_bowl.wav',
         dayColor: 1,
@@ -291,7 +291,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: 'mhuxley@marianst.com.au',
         translationKey: 'sounds.ticking_clock',
-        background: FirestoreStorageBackground.music_notes_on_heart_shaped_paper,
+        background: .music_notes_on_heart_shaped_paper,
         svgIconUrlPath: '/relax_sounds/melody/ticking_clock.svg',
         soundUrlPath: '/relax_sounds/melody/ticking_clock.wav',
         dayColor: 5,
@@ -304,7 +304,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@StevenMyat_',
         translationKey: 'sounds.campfire',
-        background: FirestoreStorageBackground.cups_and_pot_near_fire,
+        background: .cups_and_pot_near_fire,
         svgIconUrlPath: '/relax_sounds/fire/campfire.svg',
         soundUrlPath: '/relax_sounds/fire/campfire.wav',
         dayColor: 1,
@@ -312,7 +312,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@eclectic-kitty',
         translationKey: 'sounds.sausage_frying',
-        background: FirestoreStorageBackground.cups_and_pot_near_fire,
+        background: .cups_and_pot_near_fire,
         svgIconUrlPath: '/relax_sounds/fire/sausage_frying.svg',
         soundUrlPath: '/relax_sounds/fire/sausage_frying.wav',
         dayColor: 7,
@@ -325,7 +325,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@RICHERlandTV',
         translationKey: 'sounds.heartbeat',
-        background: FirestoreStorageBackground.two_cloudy_tags_on_color_background,
+        background: .two_cloudy_tags_on_color_background,
         svgIconUrlPath: '/relax_sounds/body/heartbeat.svg',
         soundUrlPath: '/relax_sounds/body/heartbeat.wav',
         dayColor: 7,
@@ -338,7 +338,7 @@ class RelaxSoundObject {
       RelaxSoundObject(
         artist: '@forfii',
         translationKey: 'sounds.typing',
-        background: FirestoreStorageBackground.designer_at_work_in_office,
+        background: .designer_at_work_in_office,
         svgIconUrlPath: '/relax_sounds/activity/typing.svg',
         soundUrlPath: '/relax_sounds/activity/typing.wav',
         dayColor: 7,

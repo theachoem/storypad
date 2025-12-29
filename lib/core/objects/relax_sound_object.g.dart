@@ -13,7 +13,7 @@ abstract class _$RelaxSoundObjectCWProxy {
 
   RelaxSoundObject svgIconUrlPath(String svgIconUrlPath);
 
-  RelaxSoundObject background(FirestoreStorageBackground background);
+  RelaxSoundObject background(RelaxSoundBackground background);
 
   RelaxSoundObject soundUrlPath(String soundUrlPath);
 
@@ -30,7 +30,7 @@ abstract class _$RelaxSoundObjectCWProxy {
     String artist,
     String translationKey,
     String svgIconUrlPath,
-    FirestoreStorageBackground background,
+    RelaxSoundBackground background,
     String soundUrlPath,
     int dayColor,
   });
@@ -55,7 +55,7 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
       call(svgIconUrlPath: svgIconUrlPath);
 
   @override
-  RelaxSoundObject background(FirestoreStorageBackground background) =>
+  RelaxSoundObject background(RelaxSoundBackground background) =>
       call(background: background);
 
   @override
@@ -102,7 +102,7 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
           background == const $CopyWithPlaceholder() || background == null
           ? _value.background
           // ignore: cast_nullable_to_non_nullable
-          : background as FirestoreStorageBackground,
+          : background as RelaxSoundBackground,
       soundUrlPath:
           soundUrlPath == const $CopyWithPlaceholder() || soundUrlPath == null
           ? _value.soundUrlPath
@@ -133,7 +133,7 @@ RelaxSoundObject _$RelaxSoundObjectFromJson(Map<String, dynamic> json) =>
       translationKey: json['translation_key'] as String,
       svgIconUrlPath: json['svg_icon_url_path'] as String,
       background: $enumDecode(
-        _$FirestoreStorageBackgroundEnumMap,
+        _$RelaxSoundBackgroundEnumMap,
         json['background'],
       ),
       soundUrlPath: json['sound_url_path'] as String,
@@ -145,28 +145,26 @@ Map<String, dynamic> _$RelaxSoundObjectToJson(RelaxSoundObject instance) =>
       'translation_key': instance.translationKey,
       'artist': instance.artist,
       'svg_icon_url_path': instance.svgIconUrlPath,
-      'background': _$FirestoreStorageBackgroundEnumMap[instance.background]!,
+      'background': _$RelaxSoundBackgroundEnumMap[instance.background]!,
       'sound_url_path': instance.soundUrlPath,
       'day_color': instance.dayColor,
     };
 
-const _$FirestoreStorageBackgroundEnumMap = {
-  FirestoreStorageBackground.abstract_water_drops_on_turquoise_glass_background:
+const _$RelaxSoundBackgroundEnumMap = {
+  RelaxSoundBackground.abstract_water_drops_on_turquoise_glass_background:
       'abstract_water_drops_on_turquoise_glass_background',
-  FirestoreStorageBackground.color_beautiful_sky_vintage_forest:
+  RelaxSoundBackground.color_beautiful_sky_vintage_forest:
       'color_beautiful_sky_vintage_forest',
-  FirestoreStorageBackground.cups_and_pot_near_fire: 'cups_and_pot_near_fire',
-  FirestoreStorageBackground.designer_at_work_in_office:
-      'designer_at_work_in_office',
-  FirestoreStorageBackground.fall_leaves_hanging_on_blurry_surface:
+  RelaxSoundBackground.cups_and_pot_near_fire: 'cups_and_pot_near_fire',
+  RelaxSoundBackground.designer_at_work_in_office: 'designer_at_work_in_office',
+  RelaxSoundBackground.fall_leaves_hanging_on_blurry_surface:
       'fall_leaves_hanging_on_blurry_surface',
-  FirestoreStorageBackground.forest_full_of_high_rise_trees:
+  RelaxSoundBackground.forest_full_of_high_rise_trees:
       'forest_full_of_high_rise_trees',
-  FirestoreStorageBackground.music_notes_on_heart_shaped_paper:
+  RelaxSoundBackground.music_notes_on_heart_shaped_paper:
       'music_notes_on_heart_shaped_paper',
-  FirestoreStorageBackground
-          .textured_green_and_black_liquefy_abstract_background:
+  RelaxSoundBackground.textured_green_and_black_liquefy_abstract_background:
       'textured_green_and_black_liquefy_abstract_background',
-  FirestoreStorageBackground.two_cloudy_tags_on_color_background:
+  RelaxSoundBackground.two_cloudy_tags_on_color_background:
       'two_cloudy_tags_on_color_background',
 };

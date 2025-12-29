@@ -26,6 +26,8 @@ class StoryPreferencesDbModel extends BaseDbModel {
 
   final int? colorSeedValue;
   final int? colorTone;
+  final String? backgroundImagePath;
+
   final String? fontFamily;
   final FontSizeOption? fontSize;
   final int? fontWeightIndex;
@@ -50,6 +52,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     required this.showTime,
     required this.colorSeedValue,
     required this.colorTone,
+    required this.backgroundImagePath,
     required this.fontFamily,
     required this.fontSize,
     required this.fontWeightIndex,
@@ -104,6 +107,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       showTime: true,
       colorSeedValue: null,
       colorTone: null,
+      backgroundImagePath: null,
       fontFamily: null,
       fontSize: null,
       fontWeightIndex: null,

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -15,8 +16,9 @@ import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
-import 'package:storypad/widgets/sp_color_list_selector.dart';
+import 'package:storypad/widgets/sp_background_picker.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -75,7 +77,7 @@ class _StoryThemeSheet extends StatefulWidget {
   State<_StoryThemeSheet> createState() => _StoryThemeSheetState();
 }
 
-class _StoryThemeSheetState extends State<_StoryThemeSheet> {
+class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallback {
   late StoryPreferencesDbModel preferences = widget.preferences;
 
   @override
@@ -88,29 +90,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
           const SizedBox(height: 4.0),
           buildHeader(context),
           const SizedBox(height: 8.0),
-          SpColorListSelector(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            selectedColor: preferences.colorSeed,
-            colorTone: preferences.colorToneFallback,
-            onChanged: (color, colorTone) {
-              preferences = preferences.copyWith(colorSeedValue: color?.toARGB32(), colorTone: colorTone);
-              setState(() {});
-
-              widget.onThemeChanged(preferences);
-            },
-          ),
-          const SizedBox(height: 8.0),
-
-          // This give more problem on navigation.
-          // Let's disable it for now.
-          //
-          // ThemeModeTile(
-          //   currentThemeMode: theme.themeMode ?? ThemeMode.system,
-          //   onChanged: (ThemeMode themeMode) {
-          //     preferences = preferences.copyWith(themeMode: themeMode);
-          //     onThemeChanged(preferences);
-          //   },
-          // ),
           FontFamilyTile(
             currentFontWeight:
                 preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
@@ -142,7 +121,21 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
               widget.onThemeChanged(preferences);
             },
           ),
+          const SizedBox(height: 4.0),
           const Divider(height: 1),
+          const SizedBox(height: 8.0),
+          SpBackgroundPicker(
+            preferences: preferences,
+            onThemeChanged: (preferences) async {
+              setState(() {
+                this.preferences = preferences;
+              });
+
+              debouncedCallback(() {
+                widget.onThemeChanged(preferences);
+              }, duration: Durations.medium1);
+            },
+          ),
           const SizedBox(height: 12.0),
           SpLayoutTypeSection(
             selected: preferences.layoutType,
@@ -304,10 +297,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
 
     List<Widget> startActions = [
       buildMoreOptionsButton(context),
-      IconButton(
-        onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
-        icon: SpThemeModeIcon(parentContext: context),
-      ),
       if (storyViewModel != null && story != null)
         Builder(
           builder: (context) {
@@ -324,6 +313,13 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> {
               },
             );
           },
+        ),
+      if (preferences.backgroundImagePath == null)
+        SpFadeIn.bound(
+          child: IconButton(
+            onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+            icon: SpThemeModeIcon(parentContext: context),
+          ),
         ),
     ];
 

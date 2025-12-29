@@ -68,7 +68,7 @@ class _LicenseText extends StatelessWidget {
             data: tr(
               'general.icons_credit',
               namedArgs: {
-                'ICON_LINK': '[freepik.com](https://www.freepik.com/author/juicy-fish/icons/juicy-fish-sketchy_908)',
+                'ICON_LINK': '[Freepik](https://www.freepik.com/author/juicy-fish/icons/juicy-fish-sketchy_908)',
               },
             ),
             onTapLink: (text, href, title) => UrlOpenerService.openForMarkdown(

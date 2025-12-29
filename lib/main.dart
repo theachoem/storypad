@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
@@ -10,7 +11,7 @@ import 'package:storypad/core/initializers/database_initializer.dart' show Datab
 import 'package:storypad/core/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
 import 'package:storypad/core/initializers/firebase_remote_config_initializer.dart'
     show FirebaseRemoteConfigInitializer;
-import 'package:storypad/core/initializers/firestore_storage_cleanup_initializer.dart';
+import 'package:storypad/core/initializers/firestore_storage_initializer.dart';
 import 'package:storypad/core/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/core/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/core/initializers/onboarding_initializer.dart' show OnboardingInitializer;
@@ -21,6 +22,7 @@ void main({
   FirebaseOptions? firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+  _installZeroOffsetPointerGuard();
 
   // firebase initialize
   await Firebase.initializeApp(options: firebaseOptions);
@@ -40,8 +42,8 @@ void main({
   await OnboardingInitializer.call();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  // cleanup
-  FirestoreStorageCleanupInitializer.call();
+  // initialize & cleanup old assets
+  await FirestoreStorageInitializer.call();
 
   LicensesInitializer.call();
 
@@ -50,4 +52,19 @@ void main({
       child: App(),
     ),
   );
+}
+
+// Tempoary workaround until this is fixed:
+// https://github.com/flutter/flutter/issues/175606#issuecomment-3576240885
+bool _zeroOffsetPointerGuardInstalled = false;
+void _installZeroOffsetPointerGuard() {
+  if (_zeroOffsetPointerGuardInstalled) return;
+  GestureBinding.instance.pointerRouter.addGlobalRoute(_absorbZeroOffsetPointerEvent);
+  _zeroOffsetPointerGuardInstalled = true;
+}
+
+void _absorbZeroOffsetPointerEvent(PointerEvent event) {
+  if (event.position == Offset.zero) {
+    GestureBinding.instance.cancelPointer(event.pointer);
+  }
 }

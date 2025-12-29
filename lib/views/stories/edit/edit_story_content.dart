@@ -18,6 +18,7 @@ class _EditStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
       endDrawer: viewModel.story != null
@@ -94,6 +95,7 @@ class _EditStoryContent extends StatelessWidget {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
+      forceMaterialTransparency: true,
       leading: SpAnimatedIcons.fadeScale(
         showFirst: viewModel.pagesManager.managingPage,
         firstChild: CloseButton(onPressed: () => viewModel.pagesManager.toggleManagingPage()),
