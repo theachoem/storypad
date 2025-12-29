@@ -4,4 +4,5 @@ enum RewardFeature {
   writing_stats,
   pinned_notes,
   auto_backups,
+  backgrounds,
 }

@@ -33,6 +33,7 @@ class _StoryTileContents extends StatelessWidget {
           if (hasTitle)
             Container(
               margin: const EdgeInsets.only(right: 16.0),
+              width: double.infinity,
               child: Text(
                 content!.title!,
                 style: TextTheme.of(context).titleMedium,

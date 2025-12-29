@@ -116,7 +116,6 @@ general.all,All,الجميع,Alle,Todo,Todo,Tous,सभी,Semua,Tutto,全て,�
 general.assets,Assets,أصول,Vermögenswerte,Activos,Activos,Actifs,संपत्ति,Aktiva,Attività,ファイル,ទ្រព្យសកម្ម,파일,Aktywa,Ativos,Tài sản,文件,Файлы
 general.background_group.colors,Colors,الألوان,Farben,Bandera,Bandera,Couleurs,रंग,Warna,Colori,色,ពណ៌,그림 물감,Zabarwienie,Cores,Màu sắc,颜色,Фарбен
 general.background_group.cute,Cute,لطيف,Niedlich,Lindo,Lindo,Mignon,प्यारा,Imut-imut,Carino,かわいい,គួរឲ្យស្រលាញ់,귀여운,Uroczy,Bonitinho,Dễ thương,可爱的,Нидлих
-general.background_group.photorealistic,Photorealistic,واقعي للغاية,fotorealistisch,Fotorrealista,Fotorrealista,Photoréaliste,फ़ोटोरियलिस्टिक,Fotorealistik,Fotorealistico,フォトリアリスティック,បែបរូបថតប្រាកដនិយម,사진처럼 사실적인,Fotorealistyczny,Fotorealista,Chân thực như ảnh,照片级写实,фотореалистичный
 general.beta,Beta,بيتا,Beta,Beta,Beta,Bêta,बीटा,Beta,Beta,ベータ,បេតា,베타,Beta,Beta,bản thử nghiệm,Beta,Бета
 general.biometrics_lock,Biometric Lock,قفل البيومترية,Biometrisches Schloss,Cerradura biométrica,Cerradura biométrica,Verrouillage biométrique,बायोमेट्रिक लॉक,Kunci Biometrik,Blocco biometrico,生体認証ロック,សោជីវមាត្រ,생체 인증 잠금,Zamek biometryczny,Bloqueio Biométrico,Khóa sinh trắc học,生物识别锁,Биометрический Ключ
 general.character_count_args,Characters: {CHAR_COUNT},عدد الأحرف: {CHAR_COUNT},Zeichen: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Caractères : {CHAR_COUNT},अक्षर: {CHAR_COUNT},Karakter: {JUMLAH_KARAKTER},Caratteri: {CHAR_COUNT},文字数: {CHAR_COUNT},តួអក្សរ៖ {CHAR_COUNT},문자 수: {CHAR_COUNT},Liczba znaków: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Số ký tự: {CHAR_COUNT},字符数：{CHAR_COUNT},Zeichen: {CHAR_COUNT}
@@ -292,6 +291,29 @@ general.sound_mixes,Mixes,مزيجات,Mischungen,Mezclas,Mezclas,Mélanges,घ�
 general.sounds,Sounds,الأصوات,Geräusche,Sonidos,Sonidos,Sons,ध्वनि,Suara,Suoni,音,សំឡេង,소리,Dźwięki,Sons,Âm thanh,音效,Звуки
 general.stop_in_args,Stop in {TIMER},توقف عند {TIMER},Stoppen Sie in {TIMER},Deténgase en {TIMER},Deténgase en {TIMER},Arrêtez-vous dans {TIMER},{TIMER} में रुकें,Berhenti pukul {TIMER},Interrompi tra {TIMER},{TIMER}で停止,ឈប់នៅម៉ោង {TIMER},{TIMER} 후에 중지,Zatrzymaj się za {TIMER},Pare em {TIMER},Dừng lại sau {TIMER},停在{TIMER},Остановить через {TIMER}
 general.stories,Stories,قصص,Geschichten,Historias,Historias,Histoires,कहानियां,Cerita,Storie,ストーリー,រឿង,스토리,Historie,Histórias,Truyện,故事,Истории
+general.story_background_credits,"- Background image by {BACKGROUND_LINK}
+- Modified and enhanced by {APP_NAME}","- صورة الخلفية من {BACKGROUND_LINK}
+
+- تم تعديلها وتحسينها بواسطة {APP_NAME}","Hintergrundbild von {BACKGROUND_LINK}
+
+Bearbeitet und erweitert von {APP_NAME}","- Imagen de fondo de {BACKGROUND_LINK}
+- Modificada y mejorada por {APP_NAME}","- Imagen de fondo de {BACKGROUND_LINK}
+- Modificada y mejorada por {APP_NAME}","- Image de fond par {BACKGROUND_LINK}
+
+- Modifiée et améliorée par {APP_NAME}","- पृष्ठभूमि छवि {BACKGROUND_LINK} द्वारा
+- {APP_NAME} द्वारा संशोधित और संवर्धित","- Gambar latar belakang oleh {BACKGROUND_LINK}
+- Dimodifikasi dan disempurnakan oleh {APP_NAME}","- Immagine di sfondo di {BACKGROUND_LINK}
+- Modificata e migliorata da {APP_NAME}","- 背景画像：{BACKGROUND_LINK}
+- 修正・加工：{APP_NAME}","- រូបភាពផ្ទៃខាងក្រោយដោយ {BACKGROUND_LINK}
+- កែប្រែ និងបង្កើនប្រសិទ្ធភាពដោយ {APP_NAME}","- 배경 이미지 제공: {BACKGROUND_LINK}
+- {APP_NAME}님이 수정 및 개선했습니다.","- Obraz tła autorstwa {BACKGROUND_LINK}
+- Zmodyfikowane i ulepszone przez {APP_NAME}","- Imagem de fundo por {BACKGROUND_LINK}
+- Modificado e aprimorado por {APP_NAME}","- Hình nền bởi {BACKGROUND_LINK}
+- Được chỉnh sửa và nâng cấp bởi {APP_NAME}","- 背景图片由 {BACKGROUND_LINK} 提供
+
+- 由 {APP_NAME} 修改和增强","Хинтергрундбилд от {BACKGROUND_LINK}
+
+Работа с приложением {APP_NAME}"
 general.syncing,Syncing...,جارٍ المزامنة...,Synchronisierung...,Sincronizando...,Sincronizando...,Synchronisation...,सिंक हो रहा है...,Menyinkronkan...,Sincronizzazione...,同期中...,កំពុង​ធ្វើ​សមកាលកម្ម...,동기화 중...,Synchronizowanie...,Sincronizando...,Đang đồng bộ hóa...,正在同步...,Синхронизация...
 general.system,System,اتبع النظام,Folgesystem,Seguir el sistema,Seguir el sistema,Système de suivi,अनुसरण प्रणाली,Ikuti Sistem,Segui il sistema,フォローシステム,អនុវត្តតាមប្រព័ន្ធ,팔로우 시스템,Śledź system,Siga o sistema,Theo dõi hệ thống,系统,Система
 general.tags,Tags,العلامات,Schlagworte,Etiquetas,Etiquetas,Balises,टैग,Tag,Tag,タグ,ស្លាក,태그,Tagi,Etiquetas,Thẻ,标签,Теги

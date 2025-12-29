@@ -71,7 +71,7 @@ class _LicenseText extends StatelessWidget {
                 "sounds.credits",
                 context: context,
                 namedArgs: {
-                  'ALBUM_BACKGROUND_LINK': "[freepik.com](https://freepik.com)",
+                  'ALBUM_BACKGROUND_LINK': "[Freepik](https://freepik.com)",
                   'ORIGINAL_SOUND_LINK': "[freesound.org](https://freesound.org)",
                   'APP_NAME': kAppName,
                 },

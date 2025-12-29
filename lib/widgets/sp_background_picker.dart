@@ -1,16 +1,19 @@
 import 'dart:async';
-
+import 'dart:math';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/gen/story_backgrounds.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -38,20 +41,26 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
 
   late String selectedGroup;
   late final Map<String, String> allGroups = {
-    'colors': 'Colors',
-    for (final key in StoryBackgrounds.all.keys) key: key.capitalize,
+    if (context.read<InAppPurchaseProvider>().backgrounds) 'cute': tr('general.background_group.cute'),
+    'colors': tr('general.background_group.colors'),
   };
 
   @override
   void initState() {
     super.initState();
 
-    selectedGroup =
-        preferences.backgroundImagePath
-            ?.split('__')
-            .firstWhere((group) => StoryBackgrounds.all.containsKey(group), orElse: () => 'colors') ??
-        'colors';
-    selectedGroup = allGroups.containsKey(selectedGroup) ? selectedGroup : 'colors';
+    if (preferences.colorSeed != null) {
+      selectedGroup = 'colors';
+    } else {
+      String? selectedGroup = preferences.backgroundImagePath
+          ?.split('__')
+          .where((group) => StoryBackgrounds.all.containsKey(group))
+          .firstOrNull;
+
+      this.selectedGroup = selectedGroup != null && allGroups.containsKey(selectedGroup)
+          ? selectedGroup
+          : allGroups.keys.first;
+    }
   }
 
   @override
@@ -59,7 +68,7 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
     return Column(
       mainAxisSize: .min,
       children: [
-        buildGroupSelector(),
+        if (allGroups.length > 1) buildGroupSelector(),
         if (StoryBackgrounds.all.containsKey(selectedGroup)) ...[
           const SizedBox(height: 8),
           _ImageBackgroundCarousel(
@@ -82,34 +91,83 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
   }
 
   Widget buildGroupSelector() {
-    return Align(
-      alignment: .centerLeft,
-      child: SingleChildScrollView(
-        scrollDirection: .horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          spacing: 8.0,
-          children: allGroups.entries.map((entry) {
-            return FilterChip(
-              selected: selectedGroup == entry.key,
-              label: Text(switch (entry.key) {
-                'colors' => tr('general.background_group.colors'),
-                'cute' => tr('general.background_group.cute'),
-                'photorealistic' => tr('general.background_group.photorealistic'),
-                String() => entry.key,
-              }),
-              showCheckmark: false,
-              onSelected: (selected) {
-                if (selected) {
-                  setState(() {
-                    selectedGroup = entry.key;
-                  });
-                }
-              },
-            );
-          }).toList(),
+    return Row(
+      children: [
+        Expanded(
+          child: Align(
+            alignment: .centerLeft,
+            child: SingleChildScrollView(
+              scrollDirection: .horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                spacing: 8.0,
+                children: allGroups.entries.map((entry) {
+                  return FilterChip(
+                    selected: selectedGroup == entry.key,
+                    label: Text(entry.value),
+                    showCheckmark: false,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          selectedGroup = entry.key;
+                        });
+                      }
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
         ),
-      ),
+        if (selectedGroup != 'colors')
+          SpFadeIn.bound(
+            child: IconButton(
+              icon: const Icon(SpIcons.info),
+              onPressed: () => showLicenseDialog(context),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> showLicenseDialog(BuildContext context) {
+    return showAdaptiveDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog.adaptive(
+          content: Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: MarkdownBody(
+              listItemCrossAxisAlignment: MarkdownListItemCrossAxisAlignment.start,
+              styleSheet: MarkdownStyleSheet(
+                p: TextTheme.of(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                a: TextTheme.of(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  decorationColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              data: tr(
+                "general.story_background_credits",
+                context: context,
+                namedArgs: {
+                  'BACKGROUND_LINK': "[Freepik](https://freepik.com)",
+                  'APP_NAME': kAppName,
+                },
+              ),
+              onTapLink: (text, href, title) => UrlOpenerService.openForMarkdown(
+                context: context,
+                text: text,
+                href: href,
+                title: title,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -133,27 +191,40 @@ class _ImageBackgroundCarousel extends StatefulWidget {
 }
 
 class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
-  final Map<int, GlobalKey> backgroundKeys = {};
+  late final CarouselController controller;
 
   @override
   void initState() {
+    controller = CarouselController();
     super.initState();
 
-    Future.delayed(Durations.medium2, () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       int? lastSelectedIndex;
-
       for (int i = 0; i < widget.backgrounds.length; i++) {
         bool selected = widget.preferences.backgroundImagePath == basename(widget.backgrounds[i].path);
         if (selected) lastSelectedIndex = i;
       }
 
       if (lastSelectedIndex != null) {
-        _scrollToIndex(
-          index: lastSelectedIndex,
-          keys: backgroundKeys,
+        controller.jumpTo(
+          min(
+            controller.position.maxScrollExtent,
+            _backgroundCardHeight * _backgroundCardAspectRatio * lastSelectedIndex,
+          ),
         );
       }
     });
+  }
+
+  // First 3 backgrounds has no restriction.
+  bool isLocked(int index) {
+    return index > 2 && !context.read<InAppPurchaseProvider>().backgrounds;
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -167,7 +238,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
         borderRadius: BorderRadius.circular(9.0),
       ),
       child: CarouselView(
-        scrollDirection: .horizontal,
+        controller: controller,
         itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
         padding: const EdgeInsets.symmetric(horizontal: 6.0),
         shape: RoundedRectangleBorder(
@@ -179,6 +250,11 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
         ),
         onTap: (index) async {
           HapticFeedback.selectionClick();
+
+          if (isLocked(index)) {
+            const RewardsRoute(initialFocusedRewardFeature: .backgrounds).push(context);
+            return;
+          }
 
           final background = widget.backgrounds[index];
           bool selected = widget.preferences.backgroundImagePath == basename(background.path);
@@ -192,17 +268,21 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           );
         },
         children: List.generate(widget.backgrounds.length, (index) {
-          backgroundKeys[index] ??= GlobalKey();
-          return KeyedSubtree(
-            key: backgroundKeys[index],
-            child: buildImageItem(widget.backgrounds[index]),
+          return SpFadeIn(
+            child: buildImageItem(
+              background: widget.backgrounds[index],
+              locked: isLocked(index),
+            ),
           );
         }),
       ),
     );
   }
 
-  Widget buildImageItem(StoryBackground background) {
+  Widget buildImageItem({
+    required StoryBackground background,
+    required bool locked,
+  }) {
     return Stack(
       children: [
         Positioned.fill(
@@ -231,6 +311,17 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
               .black => Colors.black.withValues(alpha: 0.7),
               .white => Colors.white.withValues(alpha: 0.7),
             },
+          ),
+        ],
+        if (locked) ...[
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withValues(alpha: 0.5),
+              child: const Icon(
+                SpIcons.lock,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ],
@@ -269,7 +360,7 @@ class _ColorBackgroundsCarousel extends StatefulWidget {
 }
 
 class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
-  final Map<int, GlobalKey> colorKeys = {};
+  late final CarouselController controller;
 
   final backgroundColors = [
     ColorSwatch(Colors.black.toARGB32(), {
@@ -281,22 +372,32 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
 
   @override
   void initState() {
+    controller = CarouselController();
     super.initState();
 
-    Future.delayed(Durations.medium2, () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       int? lastSelectedIndex;
+
       for (int i = 0; i < backgroundColors.length; i++) {
         bool selected = widget.preferences.colorSeed?.toARGB32() == backgroundColors[i].toARGB32();
         if (selected) lastSelectedIndex = i;
       }
 
       if (lastSelectedIndex != null) {
-        _scrollToIndex(
-          index: lastSelectedIndex,
-          keys: colorKeys,
+        controller.jumpTo(
+          min(
+            controller.position.maxScrollExtent,
+            _backgroundCardHeight * _backgroundCardAspectRatio * lastSelectedIndex,
+          ),
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void onTap(List<ColorSwatch<dynamic>> backgroundColors, int index) {
@@ -332,6 +433,7 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
         borderRadius: BorderRadius.circular(9.0),
       ),
       child: CarouselView(
+        controller: controller,
         scrollDirection: .horizontal,
         itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
         padding: const EdgeInsets.symmetric(horizontal: 6.0),
@@ -344,11 +446,7 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
         ),
         onTap: (index) => onTap(backgroundColors, index),
         children: List.generate(backgroundColors.length, (index) {
-          colorKeys[index] ??= GlobalKey();
-          return KeyedSubtree(
-            key: colorKeys[index],
-            child: buildColorItem(backgroundColors[index], context),
-          );
+          return SpFadeIn(child: buildColorItem(backgroundColors[index], context));
         }),
       ),
     );
@@ -425,7 +523,9 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
           width: 24,
           height: 24,
           child: CircularProgressIndicator(
-            color: colorScheme.readOnly.surface5,
+            color: colorScheme.brightness == Brightness.dark
+                ? Colors.white.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.2),
             value: 1,
             strokeCap: StrokeCap.round,
             strokeWidth: 3,
@@ -433,40 +533,5 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
         ),
       ),
     );
-  }
-}
-
-Future<void> _scrollToIndex({
-  required Map<int, GlobalKey<State<StatefulWidget>>> keys,
-  required int index,
-}) async {
-  if (keys[index]?.currentContext != null) return;
-  for (int i = 0; i <= index; i++) {
-    if (i == index) {
-      final key = keys[i];
-
-      if (key?.currentContext != null) {
-        await Scrollable.ensureVisible(
-          key!.currentContext!,
-          duration: Durations.short1,
-          curve: Curves.ease,
-          alignment: 0.5,
-        );
-      }
-    } else {
-      if (keys[i]?.currentContext != null) {
-        await Scrollable.ensureVisible(
-          keys[i]!.currentContext!,
-          duration: Duration.zero,
-          curve: Curves.ease,
-          alignment: 0.5,
-        );
-        Completer<void> completer = Completer<void>();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          completer.complete();
-        });
-        await completer.future;
-      }
-    }
   }
 }

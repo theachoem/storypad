@@ -200,42 +200,8 @@ class StoryBackgrounds {
     ),
   ];
 
-  static const photorealistic = [
-    StoryBackground(
-      name:
-          'beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey',
-      path:
-          '/story_backgrounds/photorealistic__beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey__align-left__text-white.jpg',
-      align: .left,
-      textColor: .white,
-    ),
-    StoryBackground(
-      name:
-          'beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1',
-      path:
-          '/story_backgrounds/photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg',
-      align: .right,
-      textColor: .white,
-    ),
-    StoryBackground(
-      name: 'mountain-grassland-environmental-ecology-park-nature-concept-1',
-      path:
-          '/story_backgrounds/photorealistic__mountain-grassland-environmental-ecology-park-nature-concept-1__align-right__text-white.jpg',
-      align: .right,
-      textColor: .white,
-    ),
-    StoryBackground(
-      name: 'beach-sunset-with-clouds-1',
-      path:
-          '/story_backgrounds/photorealistic__beach-sunset-with-clouds-1__align-center__text-white.jpg',
-      align: .center,
-      textColor: .white,
-    ),
-  ];
-
   static const all = <String, List<StoryBackground>>{
     'cute': cute,
-    'photorealistic': photorealistic,
   };
 
   static final byFilename = <String, StoryBackground>{
@@ -280,18 +246,9 @@ class StoryBackgrounds {
         cute[21],
     'cute__tropical-wallpaper-with-different-leaves__align-right__text-black.jpg':
         cute[22],
-    'photorealistic__beautiful-big-mountains-luxury-summer-adventure-active-vacation-mediterranean-sea-turkey__align-left__text-white.jpg':
-        photorealistic[0],
-    'photorealistic__beautiful-girl-enjoying-flowers-fields-sunrise-viewpoint-tak-province-1__align-right__text-white.jpg':
-        photorealistic[1],
-    'photorealistic__mountain-grassland-environmental-ecology-park-nature-concept-1__align-right__text-white.jpg':
-        photorealistic[2],
-    'photorealistic__beach-sunset-with-clouds-1__align-center__text-white.jpg':
-        photorealistic[3],
   };
 
   static const groups = [
     'cute',
-    'photorealistic',
   ];
 }
