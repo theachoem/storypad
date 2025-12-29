@@ -59,24 +59,26 @@ class RootViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCal
   void setSideBarInfoWithConstraints(BoxConstraints constraints) {
     debouncedCallback(duration: const Duration(milliseconds: 100), () {
       bool bigScreen = constraints.maxWidth >= 720.0 && constraints.maxHeight >= 500.0;
-
-      bool showSideBar;
-      bool manuallyToggled;
-
       final oldValue = sideBarInfoNotifier.value;
 
-      if (bigScreen) {
-        manuallyToggled = oldValue?.manuallyToggled ?? false;
-        showSideBar = manuallyToggled ? oldValue!.showSideBar : true;
+      bool showSideBar = oldValue?.showSideBar ?? false;
+      bool manuallyToggled = oldValue?.manuallyToggled ?? false;
+
+      if (manuallyToggled) {
+        // when manually toggled, but screen is now small,
+        // we have to close the sidebar & reset manuallyToggled to false
+        if (!bigScreen && showSideBar) {
+          manuallyToggled = false;
+          showSideBar = false;
+        }
       } else {
-        manuallyToggled = false;
-        showSideBar = false;
+        showSideBar = bigScreen ? true : false;
       }
 
       sideBarInfoNotifier.value = RootViewSideBarInfo(
         bigScreen: bigScreen,
-        showSideBar: bigScreen ? showSideBar : false,
-        manuallyToggled: bigScreen ? sideBarInfoNotifier.value?.manuallyToggled ?? false : false,
+        showSideBar: showSideBar,
+        manuallyToggled: manuallyToggled,
       );
     });
   }
