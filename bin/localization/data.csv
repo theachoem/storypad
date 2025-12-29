@@ -114,6 +114,9 @@ dialog.what_should_i_call_you.message,What should I call you?,ماذا يجب أ
 dialog.what_should_i_call_you.title,Hello,مرحبًا,Hallo,Hola,Hola,Bonjour,नमस्ते,Halo,Ciao,こんにちは,ជំរាបសួរ,안녕하세요,Cześć,Olá,Xin chào,你好,Привет
 general.all,All,الجميع,Alle,Todo,Todo,Tous,सभी,Semua,Tutto,全て,ទាំងអស់,모두,Wszystko,Todos,Tất cả,全部,Всё
 general.assets,Assets,أصول,Vermögenswerte,Activos,Activos,Actifs,संपत्ति,Aktiva,Attività,ファイル,ទ្រព្យសកម្ម,파일,Aktywa,Ativos,Tài sản,文件,Файлы
+general.background_group.colors,Colors,الألوان,Farben,Bandera,Bandera,Couleurs,रंग,Warna,Colori,色,ពណ៌,그림 물감,Zabarwienie,Cores,Màu sắc,颜色,Фарбен
+general.background_group.cute,Cute,لطيف,Niedlich,Lindo,Lindo,Mignon,प्यारा,Imut-imut,Carino,かわいい,គួរឲ្យស្រលាញ់,귀여운,Uroczy,Bonitinho,Dễ thương,可爱的,Нидлих
+general.background_group.photorealistic,Photorealistic,واقعي للغاية,fotorealistisch,Fotorrealista,Fotorrealista,Photoréaliste,फ़ोटोरियलिस्टिक,Fotorealistik,Fotorealistico,フォトリアリスティック,បែបរូបថតប្រាកដនិយម,사진처럼 사실적인,Fotorealistyczny,Fotorealista,Chân thực như ảnh,照片级写实,фотореалистичный
 general.beta,Beta,بيتا,Beta,Beta,Beta,Bêta,बीटा,Beta,Beta,ベータ,បេតា,베타,Beta,Beta,bản thử nghiệm,Beta,Бета
 general.biometrics_lock,Biometric Lock,قفل البيومترية,Biometrisches Schloss,Cerradura biométrica,Cerradura biométrica,Verrouillage biométrique,बायोमेट्रिक लॉक,Kunci Biometrik,Blocco biometrico,生体認証ロック,សោជីវមាត្រ,생체 인증 잠금,Zamek biometryczny,Bloqueio Biométrico,Khóa sinh trắc học,生物识别锁,Биометрический Ключ
 general.character_count_args,Characters: {CHAR_COUNT},عدد الأحرف: {CHAR_COUNT},Zeichen: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Caractères : {CHAR_COUNT},अक्षर: {CHAR_COUNT},Karakter: {JUMLAH_KARAKTER},Caratteri: {CHAR_COUNT},文字数: {CHAR_COUNT},តួអក្សរ៖ {CHAR_COUNT},문자 수: {CHAR_COUNT},Liczba znaków: {CHAR_COUNT},Caracteres: {CHAR_COUNT},Số ký tự: {CHAR_COUNT},字符数：{CHAR_COUNT},Zeichen: {CHAR_COUNT}

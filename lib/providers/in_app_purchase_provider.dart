@@ -29,6 +29,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
   // Add-on features.
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
+  bool get backgrounds => isActive(AppProduct.backgrounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
   bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
   bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);

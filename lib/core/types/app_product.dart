@@ -3,6 +3,7 @@
 enum AppProduct {
   voice_journal,
   relax_sounds,
+  backgrounds,
   templates,
   period_calendar,
   markdown_export,

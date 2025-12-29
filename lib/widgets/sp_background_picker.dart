@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/app_theme.dart';
@@ -91,7 +92,12 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
           children: allGroups.entries.map((entry) {
             return FilterChip(
               selected: selectedGroup == entry.key,
-              label: Text(entry.value),
+              label: Text(switch (entry.key) {
+                'colors' => tr('general.background_group.colors'),
+                'cute' => tr('general.background_group.cute'),
+                'photorealistic' => tr('general.background_group.photorealistic'),
+                String() => entry.key,
+              }),
               showCheckmark: false,
               onSelected: (selected) {
                 if (selected) {
