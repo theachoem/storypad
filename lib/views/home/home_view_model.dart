@@ -13,6 +13,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view.dart';
@@ -51,20 +52,17 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   CollectionDbModel<StoryDbModel>? get pinnedStories => _pinnedStories;
 
   void setStories(CollectionDbModel<StoryDbModel>? value, CollectionDbModel<StoryDbModel>? pinnedValue) {
-    // Automatically sort stories by displayPathDate in descending order.
-    // This ensures consistent ordering regardless of how stories are added or modified.
-    if (value != null && value.items.isNotEmpty) {
-      value.items.sort((a, b) => b.displayPathDate.compareTo(a.displayPathDate));
-    }
+    _stories = value?.deduplicateAndSort(
+      comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
+    );
+    _pinnedStories = pinnedValue?.deduplicateAndSort(
+      comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
+    );
 
-    if (pinnedValue != null && pinnedValue.items.isNotEmpty) {
-      pinnedValue.items.sort((a, b) => b.displayPathDate.compareTo(a.displayPathDate));
-    }
-
-    _stories = value;
-    _pinnedStories = pinnedValue;
-
-    scrollInfo.setupStoryKeys(stories?.items ?? [], pinnedStories?.items ?? []);
+    scrollInfo.setupStoryKeys(
+      stories?.items ?? [],
+      pinnedStories?.items ?? [],
+    );
   }
 
   List<int> get months {
@@ -76,7 +74,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> reload({
     required String debugSource,
   }) async {
-    debugPrint('🚧 Reload home from $debugSource 🏠');
+    AppLogger.d('🚧 Reload home from $debugSource 🏠');
 
     final stories = await StoryDbModel.db.where(
       filters: SearchFilterObject(
@@ -238,7 +236,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void onAStoryDeleted(StoryDbModel story) {
-    debugPrint('🚧 Removed ${story.id}:${story.type.name} by $runtimeType#onAStoryDeleted');
+    AppLogger.d('🚧 Removed ${story.id}:${story.type.name} by $runtimeType#onAStoryDeleted');
     setStories(stories?.removeElement(story), pinnedStories?.removeElement(story));
     notifyListeners();
   }
@@ -246,7 +244,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   void onAStoryReloaded(StoryDbModel updatedStory) {
     if (updatedStory.type != PathType.docs) {
       setStories(stories?.removeElement(updatedStory), pinnedStories?.removeElement(updatedStory));
-      debugPrint('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onAStoryReloaded');
+      AppLogger.d('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onAStoryReloaded');
     } else {
       if (updatedStory.pinned == true) {
         if (pinnedStories == null || pinnedStories?.items.isEmpty == true) {
@@ -277,7 +275,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
           );
         }
       }
-      debugPrint('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onAStoryReloaded');
+      AppLogger.d('🚧 Updated ${updatedStory.id}:${updatedStory.type.name} contents by $runtimeType#onAStoryReloaded');
     }
     notifyListeners();
   }
@@ -286,14 +284,21 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (stories != null && addedStory is StoryDbModel) {
       if (year == addedStory.year) {
         // setStories will automatically sort the stories by displayPathDate
+        // Check existence before adding to prevent duplicates
         if (addedStory.pinned == true) {
+          final pinnedCollection = pinnedStories ?? CollectionDbModel(items: []);
           setStories(
             stories?.removeElement(addedStory),
-            (pinnedStories ?? CollectionDbModel(items: [])).addElement(addedStory, 0),
+            pinnedCollection.exists(addedStory.id)
+                ? pinnedCollection.replaceElement(addedStory)
+                : pinnedCollection.addElement(addedStory, 0),
           );
         } else {
+          final storiesCollection = stories ?? CollectionDbModel(items: []);
           setStories(
-            (stories ?? CollectionDbModel(items: [])).addElement(addedStory, 0),
+            storiesCollection.exists(addedStory.id)
+                ? storiesCollection.replaceElement(addedStory)
+                : storiesCollection.addElement(addedStory, 0),
             pinnedStories?.removeElement(addedStory),
           );
         }

@@ -1,4 +1,5 @@
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 
 class CollectionDbModel<T extends BaseDbModel> {
   final List<T> items;
@@ -53,5 +54,31 @@ class CollectionDbModel<T extends BaseDbModel> {
     newItems.insert(newIndex, oldItem);
 
     return CollectionDbModel(items: newItems);
+  }
+
+  /// Deduplicates items by id and sorts them using the provided comparator.
+  /// Returns a new CollectionDbModel with unique, sorted items.
+  ///
+  /// If the collection is empty or null, returns the original collection.
+  /// Keeps the first occurrence of each id when duplicates are found.
+  CollectionDbModel<T>? deduplicateAndSort({
+    required int Function(T a, T b) comparator,
+    void Function(int id)? onDuplicateFound,
+  }) {
+    if (items.isEmpty) return this;
+
+    final seenIds = <int>{};
+    final uniqueItems = items.where((item) {
+      if (seenIds.contains(item.id)) {
+        AppLogger.debug('Deduplicate: Skipping duplicate ${item.runtimeType}:${item.id}');
+        onDuplicateFound?.call(item.id);
+        return false;
+      }
+      seenIds.add(item.id);
+      return true;
+    }).toList();
+
+    uniqueItems.sort(comparator);
+    return CollectionDbModel(items: uniqueItems);
   }
 }
