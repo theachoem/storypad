@@ -314,13 +314,12 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
             );
           },
         ),
-      if (preferences.backgroundImagePath == null)
-        SpFadeIn.bound(
-          child: IconButton(
-            onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
-            icon: SpThemeModeIcon(parentContext: context),
-          ),
+      SpFadeIn.bound(
+        child: IconButton(
+          onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+          icon: SpThemeModeIcon(parentContext: context),
         ),
+      ),
     ];
 
     bool showWordCount =
@@ -389,6 +388,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
     }
 
     return TextButton.icon(
+      style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
       icon: Icon(SpIcons.text),
       label: SpCrossFade(
         showFirst: showingWords,
