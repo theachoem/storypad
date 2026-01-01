@@ -109,22 +109,25 @@ class SpStoryPreferenceThemeConstructor {
   static final Map<String, ColorScheme> _cacheDarkColorSchemes = {};
   static final Map<String, ColorScheme> _cacheLightColorSchemes = {};
 
+  bool get backgroundForLightMode => selectedBackground?.textColor == StoryBackgroundTextColor.black;
+  bool get backgroundForDarkMode => selectedBackground?.textColor == StoryBackgroundTextColor.white;
+
   void _construct() {
     Color? seedColor = preferences?.colorSeed;
 
     if (selectedBackground != null) {
       // 1. when background is for light mode, and user in dark mode,
       // we do following check for eye comfort.
-      if (selectedBackground!.forLightMode && !isDarkMode) {
+      if (backgroundForLightMode && !isDarkMode) {
         overlayScaffoldBackgroundColor = null;
-        overrideForegroundColor = Colors.black;
-      } else if (selectedBackground!.forLightMode && isDarkMode) {
+        overrideForegroundColor = Colors.black.withValues(alpha: 0.87);
+      } else if (backgroundForLightMode && isDarkMode) {
         overlayScaffoldBackgroundColor = Colors.black.withValues(alpha: 0.5);
         overrideForegroundColor = Colors.white;
       }
       //
       // 2. for background for dark mode, it's fine to use directly on both dark/light mode.
-      else if (selectedBackground!.forDarkMode) {
+      else if (backgroundForDarkMode) {
         overlayScaffoldBackgroundColor = null;
         overrideForegroundColor = Colors.white;
       }
@@ -185,6 +188,7 @@ class SpStoryPreferenceThemeConstructor {
       );
     } else {
       colorScheme = Theme.of(context).colorScheme;
+      scaffoldBackgroundColor = colorScheme.surface;
       theme = AppTheme.getTheme(
         colorScheme: colorScheme,
         fontFamily: fontFamily,

@@ -388,6 +388,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
     }
 
     return TextButton.icon(
+      style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
       icon: Icon(SpIcons.text),
       label: SpCrossFade(
         showFirst: showingWords,

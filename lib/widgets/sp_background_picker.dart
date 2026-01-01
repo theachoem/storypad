@@ -39,15 +39,24 @@ class SpBackgroundPicker extends StatefulWidget {
 class _SpBackgroundPickerState extends State<SpBackgroundPicker> with DebounchedCallback {
   StoryPreferencesDbModel get preferences => widget.preferences;
 
+  final Map<String, GlobalKey> groupLabelKeys = {};
+
   late String selectedGroup;
   late final Map<String, String> allGroups = {
-    if (context.read<InAppPurchaseProvider>().backgrounds) 'cute': tr('general.background_group.cute'),
     'colors': tr('general.background_group.colors'),
+    'cute': tr('general.background_group.cute'),
+    'dailylife': tr('general.background_group.dailylife'),
+    'garden': tr('general.background_group.garden'),
+    'scenery': tr('general.background_group.scenery'),
   };
 
   @override
   void initState() {
     super.initState();
+
+    for (var key in allGroups.keys) {
+      groupLabelKeys[key] = GlobalKey();
+    }
 
     if (preferences.colorSeed != null) {
       selectedGroup = 'colors';
@@ -61,6 +70,18 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
           ? selectedGroup
           : allGroups.keys.first;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final key = groupLabelKeys[selectedGroup];
+      if (selectedGroup != allGroups.keys.first && key?.currentContext != null) {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          curve: Curves.ease,
+          duration: Durations.medium1,
+          alignment: 0.5,
+        );
+      }
+    });
   }
 
   @override
@@ -91,39 +112,54 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
   }
 
   Widget buildGroupSelector() {
-    return Row(
+    return Stack(
       children: [
-        Expanded(
-          child: Align(
-            alignment: .centerLeft,
-            child: SingleChildScrollView(
-              scrollDirection: .horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                spacing: 8.0,
-                children: allGroups.entries.map((entry) {
-                  return FilterChip(
-                    selected: selectedGroup == entry.key,
-                    label: Text(entry.value),
-                    showCheckmark: false,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() {
-                          selectedGroup = entry.key;
-                        });
-                      }
-                    },
-                  );
-                }).toList(),
-              ),
+        Align(
+          alignment: .centerLeft,
+          child: SingleChildScrollView(
+            scrollDirection: .horizontal,
+            padding: const EdgeInsets.only(left: 16.0, right: 48.0),
+            child: Row(
+              spacing: 8.0,
+              children: allGroups.entries.map((entry) {
+                return FilterChip(
+                  key: groupLabelKeys[entry.key],
+                  selected: selectedGroup == entry.key,
+                  label: Text(entry.value),
+                  showCheckmark: false,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        selectedGroup = entry.key;
+                      });
+                    }
+                  },
+                );
+              }).toList(),
             ),
           ),
         ),
         if (selectedGroup != 'colors')
-          SpFadeIn.bound(
-            child: IconButton(
-              icon: const Icon(SpIcons.info),
-              onPressed: () => showLicenseDialog(context),
+          Positioned(
+            right: 0,
+            child: SpFadeIn.fromRight(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: .centerLeft,
+                    end: .centerRight,
+                    colors: [
+                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                      Theme.of(context).scaffoldBackgroundColor,
+                      Theme.of(context).scaffoldBackgroundColor,
+                    ],
+                  ),
+                ),
+                child: IconButton(
+                  icon: const Icon(SpIcons.info),
+                  onPressed: () => showLicenseDialog(context),
+                ),
+              ),
             ),
           ),
       ],
@@ -193,6 +229,10 @@ class _ImageBackgroundCarousel extends StatefulWidget {
 class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
   late final CarouselController controller;
 
+  bool isSelected(StoryBackground background) {
+    return widget.preferences.backgroundImagePath == basename(background.path);
+  }
+
   @override
   void initState() {
     controller = CarouselController();
@@ -201,8 +241,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       int? lastSelectedIndex;
       for (int i = 0; i < widget.backgrounds.length; i++) {
-        bool selected = widget.preferences.backgroundImagePath == basename(widget.backgrounds[i].path);
-        if (selected) lastSelectedIndex = i;
+        if (isSelected(widget.backgrounds[i])) lastSelectedIndex = i;
       }
 
       if (lastSelectedIndex != null) {
@@ -218,7 +257,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
 
   // First 3 backgrounds has no restriction.
   bool isLocked(int index) {
-    return index > 2 && !context.read<InAppPurchaseProvider>().backgrounds;
+    return index > 0 && !context.read<InAppPurchaseProvider>().backgrounds;
   }
 
   @override
@@ -268,6 +307,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           return _ImageItem(
             background: widget.backgrounds[index],
             locked: isLocked(index),
+            selected: isSelected(widget.backgrounds[index]),
           );
         }),
       ),
@@ -279,19 +319,19 @@ class _ImageItem extends StatelessWidget {
   const _ImageItem({
     required this.background,
     required this.locked,
+    required this.selected,
   });
 
   final StoryBackground background;
   final bool locked;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         buildImage(),
-        if (background.path == basename(background.path)) ...[
-          buildSelectedCheck(),
-        ],
+        if (selected) buildSelectedCheck(),
         if (locked) ...[
           Positioned.fill(
             child: Container(
