@@ -34,7 +34,7 @@ class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
       params.addOn.onPurchased,
     );
 
-    // for initial purchase, we want to introduce user the reward page which they might unlock some features.
+    // For the initial purchase, we want to introduce the user to the rewards page where they might unlock some features.
     if (purchased && context.mounted && context.read<InAppPurchaseProvider>().purchaseCount == 1) {
       const RewardsRoute(fromAddOnsView: true).push(context);
     }

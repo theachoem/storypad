@@ -142,12 +142,13 @@ class _ShowAddOnContent extends StatelessWidget {
   Widget buildContents(BuildContext context, InAppPurchaseProvider iapProvider) {
     final actions = [
       if (iapProvider.isActive(viewModel.params.addOn.type.productIdentifier)) ...[
-        Expanded(
-          child: FilledButton(
-            child: Text(tr('button.open')),
-            onPressed: () => viewModel.params.addOn.onOpen(context),
+        if (viewModel.params.addOn.onOpen != null)
+          Expanded(
+            child: FilledButton(
+              child: Text(tr('button.open')),
+              onPressed: () => viewModel.params.addOn.onOpen?.call(context),
+            ),
           ),
-        ),
       ] else ...[
         Expanded(
           child: FilledButton(

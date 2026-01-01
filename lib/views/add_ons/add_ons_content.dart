@@ -144,7 +144,7 @@ class _AddOnsContent extends StatelessWidget {
   }
 
   Widget buildAddOnsGrid(BuildContext context, EdgeInsets screenPadding, BoxConstraints constraints) {
-    int crossAxisCount = constraints.maxWidth ~/ 170;
+    int crossAxisCount = constraints.maxWidth ~/ 175;
 
     return AlignedGridView.count(
       padding: EdgeInsets.only(

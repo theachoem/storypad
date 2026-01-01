@@ -17,6 +17,21 @@
     {
       "displayPrice" : "1.19",
       "familyShareable" : true,
+      "internalID" : "6757280549",
+      "localizations" : [
+        {
+          "description" : "Create the right atmosphere for your stories.",
+          "displayName" : "Backgrounds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "backgrounds",
+      "referenceName" : "backgrounds",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "1.19",
+      "familyShareable" : true,
       "internalID" : "6756936811",
       "localizations" : [
         {
@@ -98,7 +113,7 @@
     "_developerTeamID" : "XF9U464CCP",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 788208994.87479401,
+    "_lastSynchronizedDate" : 788995686.74861896,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",

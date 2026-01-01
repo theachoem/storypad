@@ -44,7 +44,8 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         data: themeConstructor.theme,
         child: Stack(
           children: [
-            buildBackground(themeConstructor),
+            Positioned.fill(child: Container(color: themeConstructor.scaffoldBackgroundColor)),
+            buildImageBackground(themeConstructor),
             if (themeConstructor.overlayScaffoldBackgroundColor != null)
               Positioned.fill(child: Container(color: themeConstructor.overlayScaffoldBackgroundColor)),
             child,
@@ -54,16 +55,14 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     );
   }
 
-  Widget buildBackground(SpStoryPreferenceThemeConstructor themeConstructor) {
+  Widget buildImageBackground(SpStoryPreferenceThemeConstructor themeConstructor) {
     if (themeConstructor.selectedBackground != null) {
       return Positioned.fill(
         child: SpFirestoreStorageDownloaderBuilder(
           key: ValueKey(themeConstructor.selectedBackground!.path),
           filePath: themeConstructor.selectedBackground!.path,
           builder: (context, file, failed) {
-            if (file == null || failed) {
-              return Container(color: themeConstructor.scaffoldBackgroundColor);
-            }
+            if (file == null) return const SizedBox.shrink();
 
             return switch (themeConstructor.selectedBackground!.align) {
               .left => Image.file(file, fit: .cover, alignment: .centerLeft),
@@ -74,7 +73,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
         ),
       );
     } else {
-      return Container(color: themeConstructor.scaffoldBackgroundColor);
+      return const SizedBox.shrink();
     }
   }
 }

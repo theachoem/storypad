@@ -23,10 +23,12 @@
 - **Themes & customization** – 20+ color themes, dark/light mode, fonts & layouts
 - **Export & share** – text, markdown, or full backups
 - **Add-ons** – enhance your writing experience (one-time purchase):
-  - **[Templates](docs/features/templates/overview.md)** – Create your own daily writing templates
-  - **[Relaxing Sounds](docs/features/relaxing-sounds/overview.md)** – Set the mood before you write or read
-  - **[Period Calendar](docs/features/period-calendar/overview.md)** – Track your period and create related story entries
-  - **[Voice Journal](docs/features/voice-journal/overview.md)** – Record and organize voice notes
+  - **Customize Backgrounds** – Personalize your writing space with themed backgrounds for enhanced focus & creativity
+  - **Templates**– Create your own daily writing templates
+  - **Relaxing Sounds** – Set the mood before you write or read
+  - **Period Calendar** – Track your period and create related story entries
+  - **Voice Journal** – Record and organize voice notes
+  - **Markdown Export** – Export entries in markdown format, fully compatible with Obsidian, Notion, and other editors
 - **Available in 20+ languages** – and fully open source for transparency
 
 ## ⚙️ Setup & Run
