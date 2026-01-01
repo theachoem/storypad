@@ -188,14 +188,16 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return buildQuery(filters: filters).build().count();
   }
 
-  Map<int, String?> getStoryFeelingByMonth({
+  // - empty mean has story but no feeling
+  // - null mean no story
+  // - non-empty mean has story with feeling
+  Map<int, List<String>> getStoryFeelingByMonth({
     required int month,
     required int year,
     int? tagId,
   }) {
     AppLogger.info("Triggering $tableName#getStoryFeelingByMonth 🍎");
-
-    Map<int, String?> storyFeelingByMonth = {};
+    Map<int, List<String>> storyFeelingByMonth = {};
 
     Map<String, Object> filters = {
       'year': year,
@@ -208,11 +210,17 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     for (final story in result) {
       if (story.feeling != null) {
-        storyFeelingByMonth[story.day] = story.feeling;
+        storyFeelingByMonth[story.day] ??= [];
+        storyFeelingByMonth[story.day]!.add(story.feeling!);
       } else if (story.feeling == null && storyFeelingByMonth[story.day] == null) {
-        storyFeelingByMonth[story.day] = 'exist_but_not_set';
+        storyFeelingByMonth[story.day] ??= [];
+        storyFeelingByMonth[story.day]!.add('exist_but_not_set');
       }
     }
+
+    storyFeelingByMonth.forEach((key, value) {
+      storyFeelingByMonth[key] = storyFeelingByMonth[key]!.toSet().toList();
+    });
 
     return storyFeelingByMonth;
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +22,19 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     required this.params,
     required BuildContext context,
   }) {
-    feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+    oddFeelingVisibleIndexNotifier = ValueNotifier<int>(0);
+    oddPeriodicTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      oddFeelingVisibleIndexNotifier.value = oddFeelingVisibleIndexNotifier.value + 1;
+    });
 
+    evenFeelingVisibleIndexNotifier = ValueNotifier<int>(0);
+    evenPeriodicTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        evenFeelingVisibleIndexNotifier.value = evenFeelingVisibleIndexNotifier.value + 1;
+      });
+    });
+
+    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
     _tags = [...context.read<TagsProvider>().tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
@@ -36,6 +49,13 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         ? DateTime.now().day
         : 1;
   }
+
+  // For feeling flip animation, giving even days a 1-second delay
+  // before flipping to have better visual effect.
+  late final Timer oddPeriodicTimer;
+  late final Timer evenPeriodicTimer;
+  late final ValueNotifier<int> oddFeelingVisibleIndexNotifier;
+  late final ValueNotifier<int> evenFeelingVisibleIndexNotifier;
 
   final SpCalendarController calendarController = SpCalendarController();
   late final PageController pageController = PageController(initialPage: selectedDay ?? 0);
@@ -56,7 +76,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   int? selectedTagId;
   int? currentFilterStoriesCount;
 
-  Map<int, String?> feelingMapByDay = {};
+  Map<int, List<String>> feelingsMapByDay = {};
 
   bool tagSelected(TagDbModel tag) => (selectedTagId == tag.id) || (tag.id == 0 && selectedTagId == null);
   SearchFilterObject get searchFilter {
@@ -73,7 +93,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   // only reload feeling when listen to DB.
   // story query list already know how to refresh their own list, so we don't have to refresh for them.
   Future<void> _reloadFeeling() async {
-    feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
     notifyListeners();
   }
 
@@ -108,7 +128,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     int? selectedTagId,
   ) async {
     if (year != this.year || month != this.month || selectedTagId != this.selectedTagId) {
-      feelingMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
+      feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
         month: month,
         year: year,
         tagId: selectedTagId,
@@ -179,6 +199,10 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     params.monthYearNotifier.removeListener(_onParentMonthYearChanged);
     StoryDbModel.db.removeGlobalListener(_reloadFeeling);
     pageController.dispose();
+    oddPeriodicTimer.cancel();
+    evenPeriodicTimer.cancel();
+    oddFeelingVisibleIndexNotifier.dispose();
+    evenFeelingVisibleIndexNotifier.dispose();
     super.dispose();
   }
 }

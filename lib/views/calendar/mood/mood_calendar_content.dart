@@ -150,13 +150,17 @@ class _CalendarStoriesContent extends StatelessWidget {
       onMonthChanged: viewModel.onMonthChanged,
       controller: viewModel.calendarController,
       cellBuilder: (context, date, isDisplayMonth) {
-        final feeling = isDisplayMonth ? viewModel.feelingMapByDay[date.day] : null;
+        List<String>? feelings = isDisplayMonth ? viewModel.feelingsMapByDay[date.day] : null;
+
         return SpCalendarDateCell(
+          feelingVisibleIndexNotifier: date.day.isEven
+              ? viewModel.evenFeelingVisibleIndexNotifier
+              : viewModel.oddFeelingVisibleIndexNotifier,
           date: date,
           selectedYear: viewModel.year,
           selectedMonth: viewModel.month,
           selectedDay: viewModel.selectedDay,
-          feeling: feeling,
+          feelings: feelings,
           isDisplayMonth: isDisplayMonth,
           onTap: isDisplayMonth
               ? () => viewModel.selectDay(

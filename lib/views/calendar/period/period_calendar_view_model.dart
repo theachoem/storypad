@@ -40,7 +40,7 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
   EventDbModel? get selectedEvent => _selectedEvent;
 
   CollectionDbModel<StoryDbModel>? _selectedEventStories;
-  CollectionDbModel<StoryDbModel> get selectedEventStories => _selectedEventStories ?? CollectionDbModel(items: []);
+  CollectionDbModel<StoryDbModel>? get selectedEventStories => _selectedEventStories;
 
   DateTime? get selectedEventDate => _selectedEvent?.date;
 
@@ -137,7 +137,7 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
       context: context,
       title: tr('dialog.are_you_sure_to_delete_period_date.title'),
       isDestructiveAction: true,
-      message: selectedEventStories.items.isNotEmpty == true
+      message: selectedEventStories?.items.isNotEmpty == true
           ? tr('dialog.are_you_sure_to_delete_period_date.message')
           : null,
       okLabel: tr('button.delete'),
