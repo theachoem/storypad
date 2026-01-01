@@ -46,7 +46,7 @@ class _PeriodCalendarContent extends StatelessWidget {
       children: [
         Flexible(child: buildCalendar(showBottomBorder: false)),
         const VerticalDivider(),
-        Flexible(child: buildStoryList()),
+        Flexible(child: buildStoryList(context)),
       ],
     );
   }
@@ -64,7 +64,7 @@ class _PeriodCalendarContent extends StatelessWidget {
           ),
         ];
       },
-      body: buildStoryList(),
+      body: buildStoryList(context),
     );
   }
 
@@ -90,7 +90,19 @@ class _PeriodCalendarContent extends StatelessWidget {
     );
   }
 
-  Widget buildStoryList() {
+  Widget buildStoryList(BuildContext context) {
+    if (viewModel.selectedEventStories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (viewModel.selectedEventStories?.items.isEmpty == true) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          tr('general.no_story_yet'),
+          style: Theme.of(context).textTheme.bodyMedium,
+          textAlign: .center,
+        ),
+      );
+    }
+
     return SpStoryList(
       stories: viewModel.selectedEventStories,
       onChanged: (item) => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),

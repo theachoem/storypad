@@ -145,7 +145,13 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
       viewOnly: widget.viewOnly,
       onDeleted: () => load(debugSource: '$runtimeType#onDeleted'),
       onChanged: (updatedStory) {
-        if (widget.filter?.types.contains(updatedStory.type) == true) {
+        if (widget.filter?.day != null && updatedStory.day != widget.filter!.day) {
+          // If filtering by day and the updated story is no longer on that day,
+          // remove it from the list.
+          stories = stories?.removeElement(updatedStory);
+          setState(() {});
+          return;
+        } else if (widget.filter?.types.contains(updatedStory.type) == true) {
           stories = stories?.replaceElement(updatedStory);
         } else {
           stories = stories?.removeElement(updatedStory);

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -169,6 +170,33 @@ class SpFadeIn extends StatelessWidget {
               );
             },
           ),
+        );
+      },
+      child: child,
+    );
+  }
+
+  factory SpFadeIn.flip({
+    required Widget child,
+    Duration? delay,
+    Duration duration = Durations.medium1,
+    bool testCurves = false,
+  }) {
+    return SpFadeIn(
+      delay: delay,
+      duration: duration,
+      testCurves: testCurves,
+      builder: (context, animation, child) {
+        return AnimatedBuilder(
+          animation: animation,
+          child: child,
+          builder: (context, child) {
+            return Transform(
+              transform: Matrix4.rotationY(lerpDouble(-math.pi, 0, animation.value)!),
+              alignment: Alignment.center,
+              child: child,
+            );
+          },
         );
       },
       child: child,

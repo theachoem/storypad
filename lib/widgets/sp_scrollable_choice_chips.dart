@@ -86,32 +86,32 @@ class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> 
               showCheckmark: false,
               selected: widget.selected(choice),
               onSelected: widget.onToggle != null ? (_) => widget.onToggle!(choice) : null,
-              label: Text.rich(
-                TextSpan(
-                  text: "$label ",
-                  style: TextTheme.of(context).labelMedium,
-                  children: [
-                    if (storyCount != null)
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: ColorScheme.of(context).surface,
-                            borderRadius: BorderRadius.circular(48.0),
-                          ),
-                          child: Text(
-                            storyCount.toString(),
-                            style: TextTheme.of(context).labelSmall,
-                            textHeightBehavior: const TextHeightBehavior(
-                              applyHeightToFirstAscent: false,
-                              applyHeightToLastDescent: false,
-                            ),
-                          ),
+              label: Row(
+                mainAxisAlignment: .center,
+                crossAxisAlignment: .center,
+                spacing: 4.0,
+                children: [
+                  Text(
+                    label,
+                    style: TextTheme.of(context).labelMedium,
+                  ),
+                  if (storyCount != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).surface,
+                        borderRadius: BorderRadius.circular(48.0),
+                      ),
+                      child: Text(
+                        storyCount.toString(),
+                        style: TextTheme.of(context).labelSmall,
+                        textHeightBehavior: const TextHeightBehavior(
+                          applyHeightToFirstAscent: false,
+                          applyHeightToLastDescent: false,
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             );
           }),
