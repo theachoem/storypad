@@ -91,8 +91,7 @@ class _PeriodCalendarContent extends StatelessWidget {
   }
 
   Widget buildStoryList(BuildContext context) {
-    if (viewModel.selectedEventStories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (viewModel.selectedEventStories?.items.isEmpty == true) {
+    if (viewModel.selectedEventStories?.items == null || viewModel.selectedEventStories?.items.isEmpty == true) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(

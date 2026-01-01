@@ -90,6 +90,7 @@ class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> 
                 mainAxisAlignment: .center,
                 crossAxisAlignment: .center,
                 spacing: 4.0,
+                mainAxisSize: .min,
                 children: [
                   Text(
                     label,
