@@ -8,7 +8,6 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -325,7 +324,8 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
     bool showWordCount =
         storyViewModel != null &&
         widget.storyViewModel?.draftContent?.wordCount != null &&
-        widget.storyViewModel?.draftContent?.characterCount != null;
+        widget.storyViewModel?.draftContent?.characterCount != null &&
+        context.read<InAppPurchaseProvider>().writingStats;
 
     if (kIsCupertino) {
       return Row(
@@ -377,16 +377,6 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final rewarded = context.read<InAppPurchaseProvider>().writingStats;
-
-    if (!rewarded) {
-      return TextButton.icon(
-        icon: const Icon(SpIcons.lock),
-        label: Text(tr('button.unlock_writing_stats')),
-        onPressed: () => const RewardsRoute(initialFocusedRewardFeature: .writing_stats).push(context),
-      );
-    }
-
     return TextButton.icon(
       style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
       icon: Icon(SpIcons.text),
@@ -404,7 +394,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
           tr(
             'general.character_count_args',
             namedArgs: {
-              'CHAR_COUNT': rewarded ? (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString() : '---',
+              'CHAR_COUNT': (widget.storyViewModel?.draftContent?.characterCount ?? 0).toString(),
             },
           ),
         ),

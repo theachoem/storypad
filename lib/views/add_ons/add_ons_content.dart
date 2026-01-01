@@ -20,7 +20,7 @@ class _AddOnsContent extends StatelessWidget {
               if (viewModel.params.fromRewardsView) {
                 Navigator.maybePop(context);
               } else {
-                const RewardsRoute().push(context);
+                const RewardsRoute(fromAddOnsView: true).push(context);
               }
             },
           ),

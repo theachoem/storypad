@@ -29,9 +29,11 @@ part 'local_widgets/reward_tile.dart';
 class RewardsRoute extends BaseRoute {
   const RewardsRoute({
     this.initialFocusedRewardFeature,
+    this.fromAddOnsView = false,
   });
 
   final RewardFeature? initialFocusedRewardFeature;
+  final bool fromAddOnsView;
 
   @override
   Widget buildPage(BuildContext context) => RewardsView(params: this);

@@ -13,7 +13,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/gen/story_backgrounds.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/rewards/rewards_view.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -288,7 +288,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           HapticFeedback.selectionClick();
 
           if (isLocked(index)) {
-            const RewardsRoute(initialFocusedRewardFeature: .backgrounds).push(context);
+            AddOnsRoute.pushAndNavigateTo(product: .backgrounds, context: context);
             return;
           }
 
