@@ -14,6 +14,7 @@ import 'package:storypad/core/services/remote_config/remote_config_service.dart'
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/core/types/feature_reward.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_sheet.dart';
 
 // This provider securely manages in-app purchases across platforms without storing your actual email.
@@ -27,7 +28,9 @@ class InAppPurchaseProvider extends ChangeNotifier {
   int get purchaseCount => AppProduct.values.where((product) => isActive(product.productIdentifier)).length;
 
   // Add-on features.
-  bool get backgrounds => isActive(AppProduct.backgrounds.productIdentifier);
+  bool get backgrounds =>
+      (HomeView.homeContext != null && earlyAdopterUser(HomeView.homeContext!)) ||
+      isActive(AppProduct.backgrounds.productIdentifier);
   bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
   bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
   bool get template => isActive(AppProduct.templates.productIdentifier);
