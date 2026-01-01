@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 enum AppProduct {
+  backgrounds,
   voice_journal,
   relax_sounds,
   templates,

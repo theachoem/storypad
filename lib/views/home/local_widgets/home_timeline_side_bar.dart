@@ -34,20 +34,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
     List<Widget> buttons = switch (kIAPEnabled) {
       false => [],
       true => [
-        if (!provider.allRewarded)
-          SpFadeIn.bound(
-            child: IconButton(
-              tooltip: tr('page.rewards.title'),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
-              ),
-              icon: Icon(SpIcons.gift, color: ColorScheme.of(context).bootstrap.info.color),
-              onPressed: () => const RewardsRoute().push(context),
-            ),
-          ),
+        if (!provider.allRewarded) const _AddOnButton(),
         SpFadeIn.bound(
           child: IconButton(
             tooltip: tr('page.search.title'),
@@ -143,5 +130,65 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         ],
       ),
     );
+  }
+}
+
+class _AddOnButton extends StatefulWidget {
+  const _AddOnButton();
+
+  @override
+  State<_AddOnButton> createState() => _AddOnButtonState();
+}
+
+class _AddOnButtonState extends State<_AddOnButton> {
+  late bool showBadge = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SpFadeIn.bound(
+      child: buildButton(context),
+    );
+  }
+
+  Widget buildButton(BuildContext context) {
+    Widget button = IconButton(
+      tooltip: tr('page.add_ons.title'),
+      style: IconButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: CircleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      icon: const Icon(SpIcons.addOns),
+      onPressed: () {
+        const AddOnsRoute().push(context);
+
+        setState(() {
+          showBadge = false;
+        });
+      },
+    );
+
+    if (showBadge) {
+      return Stack(
+        children: [
+          button,
+          Positioned(
+            right: 6.5,
+            top: 6.5,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: .circle,
+                color: ColorFromDayService(context: context).get(7),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return button;
+    }
   }
 }

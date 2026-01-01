@@ -15,6 +15,11 @@ class _PinStoryIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!context.read<InAppPurchaseProvider>().pinnedNotes &&
+        !context.read<InAppPurchaseProvider>().shouldShowRewardFeaturesPromo) {
+      return const SizedBox.shrink();
+    }
+
     return GestureDetector(
       onTap: context.read<InAppPurchaseProvider>().pinnedNotes
           ? null

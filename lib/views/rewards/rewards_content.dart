@@ -25,9 +25,15 @@ class _RewardsContent extends StatelessWidget {
         backgroundColor: ColorScheme.of(context).primary,
         foregroundColor: ColorScheme.of(context).onPrimary,
         shape: const StadiumBorder(),
-        label: Text(tr('button.browse_add_ons')),
+        label: Text(tr('button.get_add_ons')),
         icon: const Icon(SpIcons.addOns),
-        onPressed: () => const AddOnsRoute().push(context),
+        onPressed: () {
+          if (viewModel.params.fromAddOnsView) {
+            Navigator.maybePop(context);
+          } else {
+            const AddOnsRoute(fromRewardsView: true).push(context);
+          }
+        },
       ),
       body: Stack(
         children: [
