@@ -242,10 +242,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
         itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
         padding: const EdgeInsets.symmetric(horizontal: 6.0),
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 1.0,
-          ),
+          side: BorderSide(color: Theme.of(context).dividerColor, width: 1.0),
           borderRadius: BorderRadius.circular(8.0),
         ),
         onTap: (index) async {
@@ -268,50 +265,32 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           );
         },
         children: List.generate(widget.backgrounds.length, (index) {
-          return SpFadeIn(
-            child: buildImageItem(
-              background: widget.backgrounds[index],
-              locked: isLocked(index),
-            ),
+          return _ImageItem(
+            background: widget.backgrounds[index],
+            locked: isLocked(index),
           );
         }),
       ),
     );
   }
+}
 
-  Widget buildImageItem({
-    required StoryBackground background,
-    required bool locked,
-  }) {
+class _ImageItem extends StatelessWidget {
+  const _ImageItem({
+    required this.background,
+    required this.locked,
+  });
+
+  final StoryBackground background;
+  final bool locked;
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       children: [
-        Positioned.fill(
-          child: AspectRatio(
-            aspectRatio: 2 / 2.5,
-            child: SpFirestoreStorageDownloaderBuilder(
-              filePath: background.path,
-              builder: (context, file, failed) {
-                if (failed || file == null) return const SizedBox.shrink();
-                return Image.file(
-                  file,
-                  fit: .cover,
-                  alignment: switch (background.align) {
-                    .left => .centerLeft,
-                    .center => .center,
-                    .right => .centerRight,
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-        if (widget.preferences.backgroundImagePath == basename(background.path)) ...[
-          buildSelectedCheck(
-            foregroundColor: switch (background.textColor) {
-              .black => Colors.black.withValues(alpha: 0.7),
-              .white => Colors.white.withValues(alpha: 0.7),
-            },
-          ),
+        buildImage(),
+        if (background.path == basename(background.path)) ...[
+          buildSelectedCheck(),
         ],
         if (locked) ...[
           Positioned.fill(
@@ -328,10 +307,36 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
     );
   }
 
-  Widget buildSelectedCheck({
-    Key? key,
-    Color? foregroundColor,
-  }) {
+  Positioned buildImage() {
+    return Positioned.fill(
+      child: AspectRatio(
+        aspectRatio: 2 / 2.5,
+        child: SpFirestoreStorageDownloaderBuilder(
+          filePath: background.path,
+          builder: (context, file, failed) {
+            if (failed || file == null) return const SizedBox.shrink();
+            return Image.file(
+              file,
+              fit: .cover,
+              filterQuality: .low,
+              alignment: switch (background.align) {
+                .left => .centerLeft,
+                .center => .center,
+                .right => .centerRight,
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildSelectedCheck() {
+    final Color foregroundColor = switch (background.textColor) {
+      .black => Colors.black.withValues(alpha: 0.7),
+      .white => Colors.white.withValues(alpha: 0.7),
+    };
+
     return Positioned(
       key: ValueKey('$foregroundColor'),
       top: 8,
@@ -456,10 +461,10 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
     bool selected = widget.preferences.colorSeed?.toARGB32() == backgroundColor.toARGB32();
 
     ColorScheme colorScheme = AppTheme.isDarkMode(context)
-        ? SpStoryPreferenceTheme.getDarkColorScheme(backgroundColor, DynamicSchemeVariant.tonalSpot)
-        : SpStoryPreferenceTheme.getLightColorScheme(backgroundColor, DynamicSchemeVariant.tonalSpot);
+        ? SpStoryPreferenceThemeConstructor.getDarkColorScheme(backgroundColor, DynamicSchemeVariant.tonalSpot)
+        : SpStoryPreferenceThemeConstructor.getLightColorScheme(backgroundColor, DynamicSchemeVariant.tonalSpot);
 
-    Color? scaffoldBackgroundColor = SpStoryPreferenceTheme.getScaffoldBackgroundColor(
+    Color? scaffoldBackgroundColor = SpStoryPreferenceThemeConstructor.getScaffoldBackgroundColor(
       colorScheme: colorScheme,
       preferences: widget.preferences.copyWith(
         backgroundImagePath: null,

@@ -314,13 +314,12 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
             );
           },
         ),
-      if (preferences.backgroundImagePath == null)
-        SpFadeIn.bound(
-          child: IconButton(
-            onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
-            icon: SpThemeModeIcon(parentContext: context),
-          ),
+      SpFadeIn.bound(
+        child: IconButton(
+          onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+          icon: SpThemeModeIcon(parentContext: context),
         ),
+      ),
     ];
 
     bool showWordCount =

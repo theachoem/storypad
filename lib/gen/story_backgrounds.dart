@@ -25,6 +25,9 @@ class StoryBackground {
   final StoryBackgroundAlign align;
   final StoryBackgroundTextColor textColor;
 
+  bool get forDarkMode => textColor == StoryBackgroundTextColor.white;
+  bool get forLightMode => textColor == StoryBackgroundTextColor.black;
+
   const StoryBackground({
     required this.name,
     required this.path,
