@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/firestore_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/rewards/rewards_view.dart';
 import 'show_add_on_view.dart';
 
 class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -27,10 +28,15 @@ class ShowAddOnViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void purchase(BuildContext context, String productIdentifier) async {
-    await context.read<InAppPurchaseProvider>().purchase(
+    bool purchased = await context.read<InAppPurchaseProvider>().purchase(
       context,
       productIdentifier,
       params.addOn.onPurchased,
     );
+
+    // For the initial purchase, we want to introduce the user to the rewards page where they might unlock some features.
+    if (purchased && context.mounted && context.read<InAppPurchaseProvider>().purchaseCount == 1) {
+      const RewardsRoute(fromAddOnsView: true).push(context);
+    }
   }
 }

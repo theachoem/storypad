@@ -87,7 +87,6 @@ class _AddOnGridItem extends StatelessWidget {
               text: addOn.title,
               children: [
                 if (addOn.designForFemale) ...[
-                  const TextSpan(text: ' '),
                   const WidgetSpan(
                     child: Icon(Icons.female_outlined, size: 16.0),
                     alignment: PlaceholderAlignment.middle,
@@ -96,7 +95,7 @@ class _AddOnGridItem extends StatelessWidget {
               ],
             ),
             style: Theme.of(context).textTheme.titleMedium,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8.0),

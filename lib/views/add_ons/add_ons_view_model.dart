@@ -67,6 +67,23 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     addOns = [
       AddOnObject(
+        type: AppProduct.backgrounds,
+        title: tr('add_ons.backgrounds.title'),
+        subtitle: tr('add_ons.backgrounds.subtitle'),
+        displayPrice: getActiveDeal(AppProduct.backgrounds).displayPrice,
+        displayComparePrice: getActiveDeal(AppProduct.backgrounds).displayComparePrice,
+        badgeLabel: getActiveDeal(AppProduct.backgrounds).badgeLabel,
+        iconData: SpIcons.theme,
+        weekdayColor: 2,
+        demoImages: [
+          '/add_ons_demos/backgrounds/backgrounds_1.jpg',
+          '/add_ons_demos/backgrounds/backgrounds_2.jpg',
+        ],
+        onTry: null,
+        onPurchased: null,
+        onOpen: null,
+      ),
+      AddOnObject(
         type: AppProduct.voice_journal,
         title: tr('add_ons.voice_journal.title'),
         subtitle: tr('add_ons.voice_journal.subtitle'),

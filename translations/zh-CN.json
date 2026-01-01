@@ -3,6 +3,8 @@
   "_meta.language_name": "Chinese (Simplified)",
   "_meta.native_name": "中文 (简体)",
   "_fomula": "公式",
+  "add_ons.backgrounds.subtitle": "使用背景为你的故事营造合适的氛围。",
+  "add_ons.backgrounds.title": "背景",
   "add_ons.markdown_export.subtitle": "兼容 Obsidian、Notion 和 Markdown 编辑器。",
   "add_ons.markdown_export.title": "Markdown 导出",
   "add_ons.period_calendar.subtitle": "追踪你的周期和感受",

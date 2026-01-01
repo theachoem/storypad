@@ -16,7 +16,7 @@ class AddOnObject {
 
   final List<String> demoImages;
   final Future<void> Function(BuildContext context)? onTry;
-  final Future<void> Function(BuildContext context) onOpen;
+  final Future<void> Function(BuildContext context)? onOpen;
   final Future<void> Function()? onPurchased;
 
   AddOnObject({
