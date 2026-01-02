@@ -39,11 +39,13 @@ class RewardObject {
       features: [],
     ),
     RewardObject(
-      rewardedBadge: tr('general.user_type.bronze'),
+      rewardedBadge: tr('general.user_type.pro'),
       purchaseCount: 1,
       rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
       includedRewardedFeatures: [
         .writing_stats,
+        .pinned_notes,
+        .auto_backups,
       ],
       features: [
         RewardFeatureObject(
@@ -54,18 +56,6 @@ class RewardObject {
           videoUrlPath: '/reward_feature_videos/writing_stats.mp4',
           type: .writing_stats,
         ),
-      ],
-    ),
-    RewardObject(
-      rewardedBadge: tr('general.user_type.silver'),
-      purchaseCount: 3,
-      rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
-      includedRewardedFeatures: [
-        .writing_stats,
-        .pinned_notes,
-        .auto_backups,
-      ],
-      features: [
         RewardFeatureObject(
           title: tr('list_tile.reward_pinned_note_feature.title'),
           subtitle: tr('list_tile.reward_pinned_note_feature.subtitle'),
@@ -84,5 +74,33 @@ class RewardObject {
         ),
       ],
     ),
+    // RewardObject(
+    //   rewardedBadge: tr('general.user_type.silver'),
+    //   purchaseCount: 3,
+    //   rewardedIconPath: '/icons/hand_drawn/hand_drawn_trophy_56x56.png',
+    //   includedRewardedFeatures: [
+    //     .writing_stats,
+    //     .pinned_notes,
+    //     .auto_backups,
+    //   ],
+    //   features: [
+    //     RewardFeatureObject(
+    //       title: tr('list_tile.reward_pinned_note_feature.title'),
+    //       subtitle: tr('list_tile.reward_pinned_note_feature.subtitle'),
+    //       iconData: SpIcons.pinOutline,
+    //       dayColor: 2,
+    //       videoUrlPath: '/reward_feature_videos/pinned_notes.mp4',
+    //       type: .pinned_notes,
+    //     ),
+    //     RewardFeatureObject(
+    //       title: tr('list_tile.reward_automatic_backup.title'),
+    //       subtitle: tr('list_tile.reward_automatic_backup.subtitle'),
+    //       iconData: SpIcons.cloudDone,
+    //       dayColor: 3,
+    //       videoUrlPath: '/reward_feature_videos/auto_backups.mp4',
+    //       type: .auto_backups,
+    //     ),
+    //   ],
+    // ),
   ];
 }

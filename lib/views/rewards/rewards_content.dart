@@ -43,16 +43,24 @@ class _RewardsContent extends StatelessWidget {
             ),
             children: [
               _RewardsHeader(currentReward: currentReward),
-              const SizedBox(height: 16),
-              buildPurchaseCards(context, addOnRewards, currentReward),
-              for (int i = 0; i < selectedAddOnRewards.length; i++) ...[
+              if (addOnRewards.length > 1) ...[
                 const SizedBox(height: 16),
-                SpSectionTitle(
-                  title: [
-                    '${selectedAddOnRewards[i].purchaseCount}',
-                    (selectedAddOnRewards[i].purchaseCount > 1 ? tr('general.purchases') : tr('general.purchase')),
-                  ].join(' '),
-                ),
+                buildPurchaseCards(context, addOnRewards, currentReward),
+              ] else ...[
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+              ],
+              for (int i = 0; i < selectedAddOnRewards.length; i++) ...[
+                if (addOnRewards.length > 1) ...[
+                  const SizedBox(height: 16),
+                  SpSectionTitle(
+                    title: [
+                      '${selectedAddOnRewards[i].purchaseCount}',
+                      (selectedAddOnRewards[i].purchaseCount > 1 ? tr('general.purchases') : tr('general.purchase')),
+                    ].join(' '),
+                  ),
+                ],
                 for (int j = 0; j < selectedAddOnRewards[i].features.length; j++) ...[
                   _RewardTile(
                     viewModel: viewModel,
