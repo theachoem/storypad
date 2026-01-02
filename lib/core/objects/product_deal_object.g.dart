@@ -118,6 +118,7 @@ Map<String, dynamic> _$ProductDealObjectToJson(ProductDealObject instance) =>
     };
 
 const _$AppProductEnumMap = {
+  AppProduct.backgrounds: 'backgrounds',
   AppProduct.voice_journal: 'voice_journal',
   AppProduct.relax_sounds: 'relax_sounds',
   AppProduct.templates: 'templates',
