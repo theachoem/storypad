@@ -82,6 +82,7 @@
   "button.try": "노력하다",
   "button.undo": "실행 취소",
   "button.unlock": "잠금 해제",
+  "button.unlock_writing_stats": "글쓰기 통계 잠금 해제",
   "button.unpin_story": "스토리 고정 해제",
   "button.unselect_all": "모두 선택 해제",
   "button.update": "업데이트",

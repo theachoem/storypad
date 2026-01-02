@@ -82,6 +82,7 @@
   "button.try": "尝试",
   "button.undo": "撤消",
   "button.unlock": "解锁",
+  "button.unlock_writing_stats": "解锁写作统计数据",
   "button.unpin_story": "取消固定故事",
   "button.unselect_all": "取消全选",
   "button.update": "更新",

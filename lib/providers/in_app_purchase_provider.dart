@@ -39,9 +39,6 @@ class InAppPurchaseProvider extends ChangeNotifier {
   bool get pinnedNotes => currentReward.includedRewardedFeatures.contains(RewardFeature.pinned_notes);
   bool get autoBackups => currentReward.includedRewardedFeatures.contains(RewardFeature.auto_backups);
 
-  // should not show promo when user has not purchased any add-ons yet to avoid confusion users.
-  bool get shouldShowRewardFeaturesPromo => !pinnedNotes && purchaseCount >= 1;
-
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
   bool get hasAllPurchases => AppProduct.values.every((product) => isActive(product.productIdentifier));
   bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;

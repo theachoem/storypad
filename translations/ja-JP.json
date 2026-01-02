@@ -82,6 +82,7 @@
   "button.try": "試す",
   "button.undo": "元に戻す",
   "button.unlock": "ロックを解除",
+  "button.unlock_writing_stats": "執筆統計のロックを解除",
   "button.unpin_story": "ストーリーのピンを外す",
   "button.unselect_all": "すべて選択解除",
   "button.update": "アップデート",
