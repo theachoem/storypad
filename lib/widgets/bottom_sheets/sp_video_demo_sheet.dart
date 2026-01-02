@@ -90,7 +90,7 @@ class _SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
   void initState() {
     super.initState();
 
-    _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
   void _load() async {
