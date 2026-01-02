@@ -53,20 +53,22 @@ class _RewardsHeader extends StatelessWidget {
               style: TextTheme.of(context).bodyMedium,
               textAlign: .center,
             ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: ColorScheme.of(context).primary,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                currentReward.rewardedBadge,
-                style: TextStyle(
-                  color: ColorScheme.of(context).onPrimary,
+            if (currentReward.purchaseCount >= 1) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: ColorScheme.of(context).primary,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  currentReward.rewardedBadge,
+                  style: TextStyle(
+                    color: ColorScheme.of(context).onPrimary,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
