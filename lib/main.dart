@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +24,10 @@ void main({
   FirebaseOptions? firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
-  _installZeroOffsetPointerGuard();
+
+  // Tempoary workaround until this is fixed:
+  // https://github.com/flutter/flutter/issues/175606#issuecomment-3576240885
+  if (Platform.isIOS) _installZeroOffsetPointerGuard();
 
   // firebase initialize
   await Firebase.initializeApp(options: firebaseOptions);
@@ -54,8 +59,6 @@ void main({
   );
 }
 
-// Tempoary workaround until this is fixed:
-// https://github.com/flutter/flutter/issues/175606#issuecomment-3576240885
 bool _zeroOffsetPointerGuardInstalled = false;
 void _installZeroOffsetPointerGuard() {
   if (_zeroOffsetPointerGuardInstalled) return;
