@@ -36,7 +36,10 @@ class _RewardsHeader extends StatelessWidget {
                 return SizedBox(
                   width: 88,
                   height: 88,
-                  child: Image.file(file),
+                  child: Image.file(
+                    file,
+                    cacheWidth: (88 * MediaQuery.of(context).devicePixelRatio).round(),
+                  ),
                 );
               },
             ),
