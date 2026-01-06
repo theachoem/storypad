@@ -9,7 +9,10 @@ class _HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<DevicePreferencesProvider>(context);
+
     return SliverAppBar(
+      forceMaterialTransparency: themeProvider.preferences.backgroundImagePath != null,
       backgroundColor: viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
       actions: const [SizedBox()],
       automaticallyImplyLeading: false,

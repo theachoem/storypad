@@ -18,7 +18,6 @@ class _EditStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
       endDrawer: viewModel.story != null
@@ -104,7 +103,6 @@ class _EditStoryContent extends StatelessWidget {
           child: BackButton(onPressed: () => Navigator.maybePop(context, viewModel.story)),
         ),
       ),
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       titleSpacing: 0.0,
       actions: [
         if (!viewModel.pagesManager.managingPage) ...[

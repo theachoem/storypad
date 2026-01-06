@@ -19,6 +19,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
+  DevicePreferencesObject backgroundImagePath(String? backgroundImagePath);
+
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
 
   /// Creates a new instance with the provided field values.
@@ -35,6 +37,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     int? colorSeedValue,
+    String? backgroundImagePath,
     double? voicePlaybackSpeed,
   });
 }
@@ -72,6 +75,10 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(colorSeedValue: colorSeedValue);
 
   @override
+  DevicePreferencesObject backgroundImagePath(String? backgroundImagePath) =>
+      call(backgroundImagePath: backgroundImagePath);
+
+  @override
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed) =>
       call(voicePlaybackSpeed: voicePlaybackSpeed);
 
@@ -90,6 +97,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
+    Object? backgroundImagePath = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
@@ -117,6 +125,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
           : colorSeedValue as int?,
+      backgroundImagePath: backgroundImagePath == const $CopyWithPlaceholder()
+          ? _value.backgroundImagePath
+          // ignore: cast_nullable_to_non_nullable
+          : backgroundImagePath as String?,
       voicePlaybackSpeed: voicePlaybackSpeed == const $CopyWithPlaceholder()
           ? _value.voicePlaybackSpeed
           // ignore: cast_nullable_to_non_nullable
@@ -149,6 +161,7 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     json['time_format'],
   ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+  backgroundImagePath: json['background_image_path'] as String?,
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
 );
 
@@ -158,6 +171,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
   'font_weight_index': instance.fontWeightIndex,
   'color_seed_value': instance.colorSeedValue,
+  'background_image_path': instance.backgroundImagePath,
   'font_family': instance.fontFamily,
   'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,

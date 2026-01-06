@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:storypad/widgets/page_theme/sp_page_theme.dart';
 
 import 'show_template_view_model.dart';
 
@@ -46,8 +46,13 @@ class ShowTemplateView extends StatelessWidget {
     return ViewModelProvider<ShowTemplateViewModel>(
       create: (context) => ShowTemplateViewModel(params: params),
       builder: (context, viewModel, child) {
-        return SpStoryPreferenceTheme(
-          preferences: viewModel.template.preferences,
+        return SpPageTheme(
+          fontSize: viewModel.template.preferences.fontSize,
+          fontFamily: viewModel.template.preferences.fontFamily,
+          fontWeight: viewModel.template.preferences.fontWeight,
+          colorSeedValue: viewModel.template.preferences.colorSeedValue,
+          colorTone: viewModel.template.preferences.colorTone,
+          backgroundImagePath: viewModel.template.preferences.backgroundImagePath,
           child: _ShowTemplateContent(viewModel),
         );
       },

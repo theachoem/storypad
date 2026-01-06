@@ -18,7 +18,6 @@ class _ShowStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context, pages),
       endDrawer: viewModel.story != null

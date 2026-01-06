@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
+import 'package:storypad/gen/story_backgrounds.dart';
 
 part 'device_preferences_object.g.dart';
 
@@ -18,6 +19,7 @@ class DevicePreferencesObject {
   @JsonKey(name: 'theme_mode')
   final ThemeMode? _themeMode;
   final int? colorSeedValue;
+  final String? backgroundImagePath;
 
   @JsonKey(name: 'voice_playback_speed')
   final double? _voicePlaybackSpeed;
@@ -35,6 +37,11 @@ class DevicePreferencesObject {
 
   bool get colorSeedCustomized => colorSeed != null;
 
+  StoryBackground? get backgroundImage {
+    if (backgroundImagePath == null) return null;
+    return StoryBackgrounds.byFilename[backgroundImagePath!];
+  }
+
   DevicePreferencesObject({
     String? fontFamily,
     this.fontSize,
@@ -42,6 +49,7 @@ class DevicePreferencesObject {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
+    this.backgroundImagePath,
     double? voicePlaybackSpeed,
   }) : _fontFamily = fontFamily,
        _themeMode = themeMode,

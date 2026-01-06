@@ -21,7 +21,7 @@ import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_keyboard_listener.dart';
-import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:storypad/widgets/page_theme/sp_page_theme.dart';
 
 import 'edit_story_view_model.dart';
 
@@ -103,8 +103,13 @@ class EditStoryView extends StatelessWidget {
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
           child: SpKeyboardListener(
             onKeyEvent: (event) => viewModel.handleKeyEvent(event, context),
-            child: SpStoryPreferenceTheme(
-              preferences: viewModel.story?.preferences,
+            child: SpPageTheme(
+              fontSize: viewModel.story?.preferences.fontSize,
+              fontFamily: viewModel.story?.preferences.fontFamily,
+              fontWeight: viewModel.story?.preferences.fontWeight,
+              colorSeedValue: viewModel.story?.preferences.colorSeedValue,
+              colorTone: viewModel.story?.preferences.colorTone,
+              backgroundImagePath: viewModel.story?.preferences.backgroundImagePath,
               child: _EditStoryContent(viewModel),
             ),
           ),

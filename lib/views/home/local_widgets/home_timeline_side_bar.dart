@@ -19,12 +19,14 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+    final themeProvider = Provider.of<DevicePreferencesProvider>(context);
 
     return Stack(
       fit: StackFit.passthrough,
       clipBehavior: Clip.none,
       children: [
-        buildBackgrounds(context),
+        // when has custom background image, gradient background does not fit, so we hide it.
+        if (themeProvider.preferences.backgroundImagePath == null) buildBackgrounds(context),
         buildButtons(context, iapProvider),
       ],
     );

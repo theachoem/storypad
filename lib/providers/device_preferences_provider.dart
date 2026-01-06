@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart'
-    show Brightness, BuildContext, ChangeNotifier, Color, FontWeight, ThemeMode, View;
-import 'package:storypad/core/constants/app_constants.dart' show kDefaultFontWeight;
+import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
-import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart' show AnalyticsUserProperyService;
+import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -36,20 +35,6 @@ class DevicePreferencesProvider extends ChangeNotifier {
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
     AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
     AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);
-  }
-
-  void setColorSeed(Color color) {
-    _preferences = _preferences.copyWith(
-      // ignore: deprecated_member_use
-      colorSeedValue: _preferences.colorSeedValue == color.value ? null : color.value,
-    );
-
-    storage.writeObject(_preferences);
-    notifyListeners();
-
-    AnalyticsUserProperyService.instance.logSetColorSeedTheme(
-      newColor: _preferences.colorSeed,
-    );
   }
 
   void setThemeMode(ThemeMode? value) {
@@ -102,6 +87,25 @@ class DevicePreferencesProvider extends ChangeNotifier {
     AnalyticsUserProperyService.instance.logSetTimeFormat(
       timeFormat: timeFormat,
     );
+  }
+
+  void setBackground({
+    int? colorSeedValue,
+    String? backgroundImagePath,
+  }) {
+    if (colorSeedValue != null) {
+      AnalyticsUserProperyService.instance.logSetColorSeedTheme(
+        newColor: _preferences.colorSeed,
+      );
+    }
+
+    _preferences = _preferences.copyWith(
+      colorSeedValue: colorSeedValue,
+      backgroundImagePath: backgroundImagePath,
+    );
+
+    storage.writeObject(_preferences);
+    notifyListeners();
   }
 
   void addListenerForVoicePlaybackSpeed(void Function() listener) {

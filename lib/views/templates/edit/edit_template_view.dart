@@ -15,7 +15,7 @@ import 'package:storypad/widgets/pages_toolbar/sp_pages_toolbar.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:storypad/widgets/page_theme/sp_page_theme.dart';
 
 import 'edit_template_view_model.dart';
 
@@ -51,8 +51,13 @@ class EditTemplateView extends StatelessWidget {
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: SpStoryPreferenceTheme(
-            preferences: viewModel.template.preferences,
+          child: SpPageTheme(
+            fontSize: viewModel.template.preferences.fontSize,
+            fontFamily: viewModel.template.preferences.fontFamily,
+            fontWeight: viewModel.template.preferences.fontWeight,
+            colorSeedValue: viewModel.template.preferences.colorSeedValue,
+            colorTone: viewModel.template.preferences.colorTone,
+            backgroundImagePath: viewModel.template.preferences.backgroundImagePath,
             child: _EditTemplateContent(viewModel),
           ),
         );

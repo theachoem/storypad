@@ -9,6 +9,7 @@ class _SettingsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: Text(tr("page.settings.title")),
         actions: [
           SpPopupMenuButton(
@@ -40,12 +41,13 @@ class _SettingsContent extends StatelessWidget {
           buildAppLockTile(context),
           const Divider(),
           ThemeModeTile.globalTheme(),
-          const ColorSeedTile(),
-          const Divider(),
           FontSizeTile.globalTheme(),
           FontFamilyTile.globalTheme(),
           FontWeightTile.globalTheme(),
           TimeFormatTile.globalTheme(),
+          const Divider(),
+          SpBackgroundPicker.globalTheme(),
+          const SizedBox(height: 200),
         ],
       ),
     );

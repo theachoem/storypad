@@ -13,6 +13,7 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/nickname_provider.dart';
@@ -26,6 +27,7 @@ import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:storypad/widgets/page_theme/sp_page_theme.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_floating_relax_sound_tile.dart';
@@ -88,7 +90,9 @@ class HomeView extends StatelessWidget {
         return Builder(
           builder: (context) {
             _homeContext = context;
-            return _HomeContent(viewModel);
+            return SpPageTheme.device(
+              child: _HomeContent(viewModel),
+            );
           },
         );
       },

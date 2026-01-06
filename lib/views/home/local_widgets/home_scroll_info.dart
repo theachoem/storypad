@@ -5,6 +5,7 @@ class _HomeScrollInfo {
   final ScrollController scrollController = ScrollController();
 
   ValueNotifier<int?> scrollingToStoryIdNotifier = ValueNotifier(null);
+  ValueNotifier<double> scrollOffsetNotifer = ValueNotifier(0.0);
 
   bool _scrolling = false;
   double extraExpandedHeight = 0;
@@ -24,6 +25,7 @@ class _HomeScrollInfo {
 
   void dispose() {
     scrollController.dispose();
+    scrollOffsetNotifer.dispose();
     scrollingToStoryIdNotifier.dispose();
   }
 
@@ -40,6 +42,8 @@ class _HomeScrollInfo {
   }
 
   void _listener() {
+    scrollOffsetNotifer.value = scrollController.offset;
+
     if (_scrolling) return;
     final stories = viewModel().stories?.items ?? [];
 
