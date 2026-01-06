@@ -36,12 +36,14 @@ class SpBackgroundPicker extends StatefulWidget {
     required this.colorTone,
     required this.backgroundImagePath,
     required this.onThemeChanged,
+    required this.backgroundColor,
   });
 
   final int? colorSeedValue;
   final int? colorTone;
   final String? backgroundImagePath;
   final OnBackgroundThemeChanged onThemeChanged;
+  final Color backgroundColor;
 
   @override
   State<SpBackgroundPicker> createState() => _SpBackgroundPickerState();
@@ -166,9 +168,9 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
                     begin: .centerLeft,
                     end: .centerRight,
                     colors: [
-                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
-                      Theme.of(context).scaffoldBackgroundColor,
-                      Theme.of(context).scaffoldBackgroundColor,
+                      widget.backgroundColor.withValues(alpha: 0.0),
+                      widget.backgroundColor,
+                      widget.backgroundColor,
                     ],
                   ),
                 ),
@@ -278,7 +280,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
 
   // First 3 backgrounds has no restriction.
   bool isLocked(int index) {
-    return index > 0 && !context.read<InAppPurchaseProvider>().backgrounds;
+    return index > 1 && !context.read<InAppPurchaseProvider>().backgrounds;
   }
 
   @override
@@ -286,6 +288,10 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
     controller.dispose();
     super.dispose();
   }
+
+  double get itemExtent => _backgroundCardHeight * _backgroundCardAspectRatio;
+  EdgeInsets get itemPadding => const EdgeInsets.symmetric(horizontal: 6.0);
+  double get itemWidth => itemExtent - itemPadding.horizontal * 2;
 
   @override
   Widget build(BuildContext context) {
@@ -299,8 +305,8 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
       ),
       child: CarouselView(
         controller: controller,
-        itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
-        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+        itemExtent: itemExtent,
+        padding: itemPadding,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: Theme.of(context).dividerColor, width: 1.0),
           borderRadius: BorderRadius.circular(8.0),
@@ -327,6 +333,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
             background: widget.backgrounds[index],
             locked: isLocked(index),
             selected: isSelected(widget.backgrounds[index]),
+            itemWidth: itemWidth,
           );
         }),
       ),
@@ -339,11 +346,13 @@ class _ImageItem extends StatelessWidget {
     required this.background,
     required this.locked,
     required this.selected,
+    required this.itemWidth,
   });
 
   final StoryBackground background;
   final bool locked;
   final bool selected;
+  final double itemWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -374,6 +383,7 @@ class _ImageItem extends StatelessWidget {
           filePath: background.path,
           builder: (context, file, failed) {
             if (failed || file == null) return const SizedBox.shrink();
+
             return Image.file(
               file,
               fit: .cover,
@@ -383,6 +393,11 @@ class _ImageItem extends StatelessWidget {
                 .center => .center,
                 .right => .centerRight,
               },
+
+              // Each background card is ~86.4px wide (or itemWidth), but BoxFit.cover crops the image based on alignment (left/center/right),
+              // so only a portion of the original image is visible. We multiply by 3 to ensure the displayed area is rendered sharply.
+              // Using cacheWidth improves performance by decoding only the necessary resolution.
+              cacheWidth: (itemWidth * 3 * MediaQuery.of(context).devicePixelRatio).round(),
             );
           },
         ),

@@ -38,6 +38,7 @@ class _GalleryTemplateCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   semanticLabel: template.name,
+                  cacheWidth: (36 * MediaQuery.of(context).devicePixelRatio).round(),
                 );
               },
             ),

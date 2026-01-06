@@ -122,7 +122,7 @@ class DevicePreferencesProvider extends ChangeNotifier {
     _listeners['voice_playback_speed']?.forEach((listener) => listener());
   }
 
-  void toggleThemeMode(
+  Future<void> toggleThemeMode(
     BuildContext context, {
     Duration? delay,
   }) async {

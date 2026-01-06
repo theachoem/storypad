@@ -63,6 +63,7 @@ class SpImage extends StatelessWidget {
         base64.decode(link),
         width: width,
         height: height,
+        cacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
         fit: BoxFit.cover,
       );
     } else if (link.startsWith('http')) {
@@ -71,6 +72,7 @@ class SpImage extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
+        memCacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
         placeholder: (context, url) {
           return SizedBox(
             height: height ?? defaultSize,
@@ -85,6 +87,7 @@ class SpImage extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
+        cacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
       );
     } else {
       return buildImageError(

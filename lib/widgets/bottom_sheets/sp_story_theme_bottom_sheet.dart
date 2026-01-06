@@ -8,6 +8,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
@@ -125,6 +126,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
           const Divider(height: 1),
           const SizedBox(height: 8.0),
           SpBackgroundPicker(
+            backgroundColor: ColorScheme.of(context).surfaceContainerLow,
             colorSeedValue: preferences.colorSeedValue,
             colorTone: preferences.colorTone,
             backgroundImagePath: preferences.backgroundImagePath,
@@ -322,7 +324,20 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
         ),
       SpFadeIn.bound(
         child: IconButton(
-          onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
+          onPressed: () async {
+            await context.read<DevicePreferencesProvider>().toggleThemeMode(context);
+            if (!context.mounted) return;
+
+            // for android, sheet replacement to apply theme mode immediately.
+            // otherwise, just skip.
+            if (kIsCupertino) return;
+
+            SpStoryThemeBottomSheet(
+              onThemeChanged: widget.onThemeChanged,
+              preferences: preferences,
+              storyViewModel: storyViewModel,
+            ).showReplacement(context: HomeView.homeContext!);
+          },
           icon: SpThemeModeIcon(parentContext: context),
         ),
       ),

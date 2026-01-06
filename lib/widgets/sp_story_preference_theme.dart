@@ -64,11 +64,24 @@ class SpStoryPreferenceTheme extends StatelessWidget {
           builder: (context, file, failed) {
             if (file == null) return const SizedBox.shrink();
 
-            return switch (themeConstructor.selectedBackground!.align) {
-              .left => Image.file(file, fit: .cover, alignment: .centerLeft),
-              .center => Image.file(file, fit: .cover, alignment: .center),
-              .right => Image.file(file, fit: .cover, alignment: .centerRight),
-            };
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return Image.file(
+                  file,
+                  fit: .cover,
+
+                  // The image is rendered to fill the widget, but BoxFit.cover crops it (only ~1/3 of the image width is visible).
+                  // To ensure the displayed part stays sharp, we multiply the widget width by 3 when setting cacheWidth.
+                  // Using cacheWidth improves performance by decoding a properly sized image.
+                  cacheWidth: (constraints.maxWidth * 3 * MediaQuery.of(context).devicePixelRatio).round(),
+                  alignment: switch (themeConstructor.selectedBackground!.align) {
+                    .left => .centerLeft,
+                    .center => .center,
+                    .right => .centerRight,
+                  },
+                );
+              },
+            );
           },
         ),
       );
