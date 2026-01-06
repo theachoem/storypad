@@ -72,6 +72,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
       [
         colorSeedValue,
         colorTone,
+        backgroundImagePath,
         fontFamily,
         fontSize,
         fontWeightIndex,
@@ -91,6 +92,7 @@ class StoryPreferencesDbModel extends BaseDbModel {
     return copyWith(
       colorSeedValue: null,
       colorTone: null,
+      backgroundImagePath: null,
       fontFamily: null,
       fontSize: null,
       fontWeightIndex: null,

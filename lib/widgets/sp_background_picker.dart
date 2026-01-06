@@ -22,22 +22,35 @@ import 'package:storypad/widgets/sp_story_preference_theme.dart';
 const double _backgroundCardHeight = 123;
 const double _backgroundCardAspectRatio = 2 / 2.5;
 
+typedef OnBackgroundThemeChanged =
+    void Function({
+      int? colorSeedValue,
+      int? colorTone,
+      String? backgroundImagePath,
+    });
+
 class SpBackgroundPicker extends StatefulWidget {
   const SpBackgroundPicker({
     super.key,
-    required this.preferences,
+    required this.colorSeedValue,
+    required this.colorTone,
+    required this.backgroundImagePath,
     required this.onThemeChanged,
   });
 
-  final StoryPreferencesDbModel preferences;
-  final void Function(StoryPreferencesDbModel preferences) onThemeChanged;
+  final int? colorSeedValue;
+  final int? colorTone;
+  final String? backgroundImagePath;
+  final OnBackgroundThemeChanged onThemeChanged;
 
   @override
   State<SpBackgroundPicker> createState() => _SpBackgroundPickerState();
 }
 
 class _SpBackgroundPickerState extends State<SpBackgroundPicker> with DebounchedCallback {
-  StoryPreferencesDbModel get preferences => widget.preferences;
+  int? get colorSeedValue => widget.colorSeedValue;
+  int? get colorTone => widget.colorTone;
+  String? get backgroundImagePath => widget.backgroundImagePath;
 
   final Map<String, GlobalKey> groupLabelKeys = {};
 
@@ -58,10 +71,10 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
       groupLabelKeys[key] = GlobalKey();
     }
 
-    if (preferences.colorSeed != null) {
+    if (colorSeedValue != null) {
       selectedGroup = 'colors';
     } else {
-      String? selectedGroup = preferences.backgroundImagePath
+      String? selectedGroup = backgroundImagePath
           ?.split('__')
           .where((group) => StoryBackgrounds.all.containsKey(group))
           .firstOrNull;
@@ -94,17 +107,21 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
           const SizedBox(height: 8),
           _ImageBackgroundCarousel(
             key: ValueKey(selectedGroup),
-            preferences: preferences,
-            widget: widget,
+            colorSeedValue: colorSeedValue,
+            colorTone: colorTone,
+            backgroundImagePath: backgroundImagePath,
             groupName: selectedGroup,
             backgrounds: StoryBackgrounds.all[selectedGroup]!,
+            onThemeChanged: widget.onThemeChanged,
           ),
         ],
         if (selectedGroup == 'colors') ...[
           const SizedBox(height: 8),
           _ColorBackgroundsCarousel(
-            preferences: preferences,
-            widget: widget,
+            colorSeedValue: colorSeedValue,
+            colorTone: colorTone,
+            backgroundImagePath: backgroundImagePath,
+            onThemeChanged: widget.onThemeChanged,
           ),
         ],
       ],
@@ -211,16 +228,20 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
 class _ImageBackgroundCarousel extends StatefulWidget {
   const _ImageBackgroundCarousel({
     required super.key,
-    required this.preferences,
-    required this.widget,
     required this.groupName,
     required this.backgrounds,
+    required this.colorSeedValue,
+    required this.colorTone,
+    required this.backgroundImagePath,
+    required this.onThemeChanged,
   });
 
-  final StoryPreferencesDbModel preferences;
-  final SpBackgroundPicker widget;
   final String groupName;
+  final int? colorSeedValue;
+  final int? colorTone;
+  final String? backgroundImagePath;
   final List<StoryBackground> backgrounds;
+  final OnBackgroundThemeChanged onThemeChanged;
 
   @override
   State<_ImageBackgroundCarousel> createState() => _ImageBackgroundCarouselState();
@@ -230,7 +251,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
   late final CarouselController controller;
 
   bool isSelected(StoryBackground background) {
-    return widget.preferences.backgroundImagePath == basename(background.path);
+    return widget.backgroundImagePath == basename(background.path);
   }
 
   @override
@@ -293,14 +314,12 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           }
 
           final background = widget.backgrounds[index];
-          bool selected = widget.preferences.backgroundImagePath == basename(background.path);
+          bool selected = widget.backgroundImagePath == basename(background.path);
 
-          widget.widget.onThemeChanged(
-            widget.preferences.copyWith(
-              colorTone: null,
-              colorSeedValue: null,
-              backgroundImagePath: selected ? null : basename(background.path),
-            ),
+          widget.onThemeChanged(
+            colorTone: null,
+            colorSeedValue: null,
+            backgroundImagePath: selected ? null : basename(background.path),
           );
         },
         children: List.generate(widget.backgrounds.length, (index) {
@@ -393,12 +412,16 @@ class _ImageItem extends StatelessWidget {
 
 class _ColorBackgroundsCarousel extends StatefulWidget {
   const _ColorBackgroundsCarousel({
-    required this.preferences,
-    required this.widget,
+    required this.colorSeedValue,
+    required this.colorTone,
+    required this.backgroundImagePath,
+    required this.onThemeChanged,
   });
 
-  final StoryPreferencesDbModel preferences;
-  final SpBackgroundPicker widget;
+  final int? colorSeedValue;
+  final int? colorTone;
+  final String? backgroundImagePath;
+  final OnBackgroundThemeChanged onThemeChanged;
 
   @override
   State<_ColorBackgroundsCarousel> createState() => _ColorBackgroundsCarouselState();
@@ -424,7 +447,7 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
       int? lastSelectedIndex;
 
       for (int i = 0; i < backgroundColors.length; i++) {
-        bool selected = widget.preferences.colorSeed?.toARGB32() == backgroundColors[i].toARGB32();
+        bool selected = widget.colorSeedValue == backgroundColors[i].toARGB32();
         if (selected) lastSelectedIndex = i;
       }
 
@@ -439,6 +462,8 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
     });
   }
 
+  int get colorToneFallback => widget.colorTone ?? 0;
+
   @override
   void dispose() {
     controller.dispose();
@@ -449,21 +474,19 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
     HapticFeedback.selectionClick();
 
     Color backgroundColor = backgroundColors[index];
-    bool selected = widget.preferences.colorSeed?.toARGB32() == backgroundColor.toARGB32();
+    bool selected = widget.colorSeedValue == backgroundColor.toARGB32();
     int nextColorTone;
 
     if (selected) {
-      nextColorTone = widget.preferences.colorToneFallback + 33 > 99 ? 0 : widget.preferences.colorToneFallback + 33;
+      nextColorTone = colorToneFallback + 33 > 99 ? 0 : colorToneFallback + 33;
     } else {
       nextColorTone = 33;
     }
 
-    widget.widget.onThemeChanged(
-      widget.preferences.copyWith(
-        backgroundImagePath: null,
-        colorSeedValue: nextColorTone == 0 ? null : backgroundColor.toARGB32(),
-        colorTone: nextColorTone == 0 ? null : nextColorTone,
-      ),
+    widget.onThemeChanged(
+      colorSeedValue: nextColorTone == 0 ? null : backgroundColor.toARGB32(),
+      colorTone: nextColorTone == 0 ? null : nextColorTone,
+      backgroundImagePath: null,
     );
   }
 
@@ -498,7 +521,7 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
   }
 
   Widget buildColorItem(ColorSwatch<dynamic> backgroundColor, BuildContext context) {
-    bool selected = widget.preferences.colorSeed?.toARGB32() == backgroundColor.toARGB32();
+    bool selected = widget.colorSeedValue == backgroundColor.toARGB32();
 
     ColorScheme colorScheme = AppTheme.isDarkMode(context)
         ? SpStoryPreferenceThemeConstructor.getDarkColorScheme(backgroundColor, DynamicSchemeVariant.tonalSpot)
@@ -506,10 +529,10 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
 
     Color? scaffoldBackgroundColor = SpStoryPreferenceThemeConstructor.getScaffoldBackgroundColor(
       colorScheme: colorScheme,
-      preferences: widget.preferences.copyWith(
+      preferences: StoryPreferencesDbModel.create().copyWith(
         backgroundImagePath: null,
         colorSeedValue: backgroundColor.toARGB32(),
-        colorTone: selected ? widget.preferences.colorTone : 0,
+        colorTone: selected ? widget.colorTone : 0,
       ),
     );
 
@@ -540,8 +563,8 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
           height: 24,
           child: TweenAnimationBuilder<double>(
             tween: Tween<double>(
-              begin: widget.preferences.colorToneFallback - 33 < 0 ? 0 : widget.preferences.colorToneFallback - 33,
-              end: widget.preferences.colorToneFallback.toDouble(),
+              begin: colorToneFallback - 33 < 0 ? 0 : colorToneFallback - 33,
+              end: colorToneFallback.toDouble(),
             ),
             duration: Durations.long1,
             curve: Curves.easeInOutQuart,

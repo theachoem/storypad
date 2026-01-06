@@ -125,10 +125,16 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
           const Divider(height: 1),
           const SizedBox(height: 8.0),
           SpBackgroundPicker(
-            preferences: preferences,
-            onThemeChanged: (preferences) async {
+            colorSeedValue: preferences.colorSeedValue,
+            colorTone: preferences.colorTone,
+            backgroundImagePath: preferences.backgroundImagePath,
+            onThemeChanged: ({int? colorSeedValue, int? colorTone, String? backgroundImagePath}) async {
               setState(() {
-                this.preferences = preferences;
+                preferences = preferences.copyWith(
+                  colorSeedValue: colorSeedValue,
+                  colorTone: colorTone,
+                  backgroundImagePath: backgroundImagePath,
+                );
               });
 
               debouncedCallback(() {
