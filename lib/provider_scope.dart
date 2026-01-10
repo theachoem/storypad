@@ -6,6 +6,7 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/nickname_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
+import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 
@@ -22,6 +23,9 @@ class ProviderScope extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ListenableProvider<RootProvider>(
+          create: (context) => RootProvider(context),
+        ),
         ListenableProvider<BackupProvider>(
           create: (context) => BackupProvider(),
         ),

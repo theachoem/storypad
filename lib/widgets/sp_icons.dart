@@ -64,6 +64,7 @@ class SpIcons {
   static const IconData checkbox = kIsCupertino ? CupertinoIcons.check_mark_circled : Icons.check_box;
   static const IconData checkboxBlank = kIsCupertino ? CupertinoIcons.circle : Icons.check_box_outline_blank;
   static const IconData expandMore = kIsCupertino ? CupertinoIcons.chevron_down : Icons.expand_more_outlined;
+  static const IconData expandLess = kIsCupertino ? CupertinoIcons.chevron_up : Icons.expand_less_outlined;
   static const IconData fullscreen = kIsCupertino ? CupertinoIcons.fullscreen : Icons.fullscreen_outlined;
   static const IconData fullscreenExit = kIsCupertino ? CupertinoIcons.fullscreen_exit : Icons.fullscreen_exit_outlined;
   static final IconData table = kIsCupertino ? CupertinoIcons.doc_text_search : MdiIcons.table;

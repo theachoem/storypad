@@ -140,6 +140,7 @@ class _SpCalendarState extends State<SpCalendar> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: .min,
       children: [
         const SizedBox(height: 8.0),
         _buildDaysHeader(context),

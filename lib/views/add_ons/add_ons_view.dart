@@ -56,6 +56,9 @@ class AddOnsRoute extends BaseRoute {
   }
 
   @override
+  String? get routeName => 'add_ons';
+
+  @override
   Widget buildPage(BuildContext context) => AddOnsView(params: this);
 }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
 import 'package:firebase_core/firebase_core.dart' show Firebase, FirebaseOptions;
+import 'package:macos_window_utils/window_manipulator.dart' show WindowManipulator;
 import 'package:storypad/app.dart' show App;
 import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLockInitializer;
 import 'package:storypad/core/initializers/backup_initializer.dart' show BackupRepositoryInitializer;
@@ -46,6 +47,13 @@ void main({
   await LegacyStoryPadInitializer.call();
   await OnboardingInitializer.call();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  if (Platform.isMacOS) {
+    await WindowManipulator.initialize();
+    await WindowManipulator.makeTitlebarTransparent();
+    await WindowManipulator.hideTitle();
+    await WindowManipulator.enableFullSizeContentView();
+  }
 
   // initialize & cleanup old assets
   await FirestoreStorageInitializer.call();

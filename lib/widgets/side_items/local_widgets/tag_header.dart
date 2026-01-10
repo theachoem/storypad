@@ -1,48 +1,42 @@
-part of '../root_view.dart';
+part of '../side_items.dart';
 
-class _SideBarItem extends StatelessWidget {
-  const _SideBarItem({
-    required this.onTap,
-    required this.leading,
-    required this.routeName,
-    required this.title,
-    required this.viewModel,
-  });
-
-  final Widget? leading;
-  final String routeName;
-  final String title;
-  final void Function() onTap;
-  final RootViewModel viewModel;
+class TagHeader extends StatelessWidget {
+  const TagHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () => context.read<RootProvider>().navigate(TagsRoute()),
       child: ValueListenableBuilder(
-        valueListenable: viewModel.selectedRootRouteNameNotifier,
+        valueListenable: context.read<RootProvider>().selectedRootRouteNameNotifier,
         child: Row(
           mainAxisAlignment: .start,
           crossAxisAlignment: .center,
-          spacing: 12.0,
           children: [
-            if (leading != null) SizedBox.square(dimension: 32, child: leading),
             Expanded(
               child: Text(
-                title,
-                maxLines: 2,
+                tr('general.tags'),
                 style: TextTheme.of(context).titleMedium,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const SizedBox.square(
+              dimension: 32,
+              child: Icon(
+                SpIcons.edit,
+                size: 20.0,
               ),
             ),
           ],
         ),
         builder: (context, selectedRootRouteName, contents) {
-          bool selected = selectedRootRouteName == routeName;
+          bool selected = selectedRootRouteName == TagsRoute().routeName;
+
           return Container(
             padding: EdgeInsets.only(
-              left: _RootContent.leadingPaddedSize,
-              top: 8.0,
-              bottom: 8.0,
+              left: _leadingPaddedSize + 4.0,
+              top: 4.0,
+              bottom: 4.0,
               right: selected ? 4.0 : 8.0,
             ),
             decoration: BoxDecoration(

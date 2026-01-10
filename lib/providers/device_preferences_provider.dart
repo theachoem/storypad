@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart'
-    show Brightness, BuildContext, ChangeNotifier, Color, FontWeight, ThemeMode, View;
-import 'package:storypad/core/constants/app_constants.dart' show kDefaultFontWeight;
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:macos_window_utils/window_manipulator.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
-import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart' show AnalyticsUserProperyService;
+import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
-class DevicePreferencesProvider extends ChangeNotifier {
+class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserver {
   static DevicePreferencesStorage get storage => DevicePreferencesStorage.appInstance;
 
   DevicePreferencesObject _preferences = storage.preferences;
@@ -126,17 +127,48 @@ class DevicePreferencesProvider extends ChangeNotifier {
     BuildContext context, {
     Duration? delay,
   }) async {
+    if (delay != null) await Future.delayed(delay, () {});
+    setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+  }
+
+  bool get isDarkMode {
     if (themeMode == ThemeMode.system) {
-      Brightness? brightness = View.maybeOf(context)?.platformDispatcher.platformBrightness;
-      bool isDarkMode = brightness == Brightness.dark;
-
-      if (delay != null) await Future.delayed(delay, () {});
-      setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+      Brightness? brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      return brightness == Brightness.dark;
     } else {
-      bool isDarkMode = themeMode == ThemeMode.dark;
-
-      if (delay != null) await Future.delayed(delay, () {});
-      setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+      return themeMode == ThemeMode.dark;
     }
+  }
+
+  DevicePreferencesProvider() {
+    WidgetsBinding.instance.addObserver(this);
+
+    _setPlatformTheme();
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+
+    _setPlatformTheme();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+
+    _setPlatformTheme();
+  }
+
+  void _setPlatformTheme() {
+    if (Platform.isMacOS) {
+      WindowManipulator.overrideMacOSBrightness(dark: isDarkMode);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }

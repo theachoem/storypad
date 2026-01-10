@@ -4,19 +4,14 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/storages/dimissed_surveys_storage.dart';
-import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
+import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class SurveyBanner extends StatefulWidget {
   const SurveyBanner({
     super.key,
-    required this.context,
-    required this.viewModel,
   });
-
-  final BuildContext context;
-  final HomeViewModel viewModel;
 
   @override
   State<SurveyBanner> createState() => _SurveyBannerState();
@@ -45,7 +40,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
       });
     } else {
       setState(() {
-        show = (widget.viewModel.stories?.items.length ?? 0) > 10;
+        show = (HomeViewModel.appInstance.stories?.items.length ?? 0) > 10;
       });
     }
   }

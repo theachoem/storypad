@@ -280,7 +280,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
 
   // First 3 backgrounds has no restriction.
   bool isLocked(int index) {
-    return index > 1 && !context.read<InAppPurchaseProvider>().backgrounds;
+    return index > 2 && !context.read<InAppPurchaseProvider>().backgrounds;
   }
 
   @override

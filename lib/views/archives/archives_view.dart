@@ -42,6 +42,9 @@ class ArchivesRoute extends BaseRoute {
   }
 
   @override
+  String get routeName => pathType.name;
+
+  @override
   Widget buildPage(BuildContext context) => ArchivesView(params: this);
 }
 

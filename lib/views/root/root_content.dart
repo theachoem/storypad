@@ -1,11 +1,13 @@
 part of 'root_view.dart';
 
 class _RootContent extends StatelessWidget {
-  const _RootContent(this.viewModel);
+  const _RootContent(
+    this.viewModel,
+    this.rootProvider,
+  );
 
   final RootViewModel viewModel;
-
-  static const double leadingPaddedSize = 12.0;
+  final RootProvider rootProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +23,25 @@ class _RootContent extends StatelessWidget {
           onPopInvokedWithResult: (didPop, result) {
             if (!SpAppLockWrapper.authenticated(context)) return;
             if (!didPop) {
-              final NavigatorState? navigator = viewModel.navigatorKey.currentState;
+              final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
               if (navigator?.canPop() ?? false) navigator?.maybePop(result);
             }
           },
           child: LayoutBuilder(
             builder: (context, constraints) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                viewModel.setSideBarInfoWithConstraints(constraints);
+                rootProvider.setSideBarInfoWithConstraints(constraints);
               });
 
-              return Row(
-                children: [
-                  _SideBar(viewModel: viewModel),
-                  buildPagesNavigator(context),
-                ],
+              return Scaffold(
+                extendBody: true,
+                extendBodyBehindAppBar: true,
+                body: Row(
+                  children: [
+                    const _SideBar(),
+                    buildPagesNavigator(context),
+                  ],
+                ),
               );
             },
           ),
@@ -47,7 +53,7 @@ class _RootContent extends StatelessWidget {
   Widget buildPagesNavigator(BuildContext context) {
     return Expanded(
       child: ValueListenableBuilder(
-        valueListenable: viewModel.sideBarInfoNotifier,
+        valueListenable: rootProvider.sideBarInfoNotifier,
         builder: (context, sideBarInfo, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
@@ -62,21 +68,21 @@ class _RootContent extends StatelessWidget {
           );
         },
         child: HeroControllerScope(
-          controller: viewModel.heroController,
+          controller: rootProvider.heroController,
           child: Navigator(
-            key: viewModel.navigatorKey,
-            initialRoute: viewModel.initialRoute,
-            onGenerateRoute: (settings) => viewModel.generateRoute(settings),
+            key: rootProvider.navigatorKey,
+            initialRoute: rootProvider.initialRoute,
+            onGenerateRoute: (settings) => rootProvider.generateRoute(settings),
             observers: [
               _RootRouteObserver(
                 onPop: (route, previousRoute) {
                   if (previousRoute?.settings.name == null) return;
-                  viewModel.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
+                  rootProvider.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
                   autoBackupWhenNavigateToHome(previousRoute, context);
                 },
                 onPush: (route, previousRoute) {
                   if (route.settings.name == null) return;
-                  viewModel.selectedRootRouteNameNotifier.value = route.settings.name!;
+                  rootProvider.selectedRootRouteNameNotifier.value = route.settings.name!;
                   autoBackupWhenNavigateToHome(route, context);
                 },
               ),

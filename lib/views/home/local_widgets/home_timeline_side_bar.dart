@@ -31,51 +31,33 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   }
 
   Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
-    List<Widget> buttons = switch (kIAPEnabled) {
-      false => [],
-      true => [
-        if (!provider.allRewarded) const _AddOnButton(),
-        SpFadeIn.bound(
-          child: IconButton(
-            tooltip: tr('page.search.title'),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-            ),
-            icon: const Icon(SpIcons.search),
-            onPressed: () => SearchRoute().push(context),
-          ),
-        ),
-        SpFadeIn.bound(
-          child: IconButton(
-            tooltip: tr('add_ons.relax_sounds.title'),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-            ),
-            icon: const Icon(SpIcons.musicNote),
-            onPressed: () => const RelaxSoundsRoute().push(context),
-          ),
-        ),
-      ],
-    };
+    double baseSideMargin = (Platform.isMacOS ? 12.0 : 8.0);
 
     return Container(
       margin: EdgeInsets.only(
         top: 8.0,
-        left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + 8.0)!,
-        right: AppTheme.getDirectionValue(context, widget.screenPadding.right + 8.0, 0.0)!,
+        left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + baseSideMargin)!,
+        right: AppTheme.getDirectionValue(context, widget.screenPadding.right + baseSideMargin, 0.0)!,
         bottom: widget.screenPadding.bottom + 16.0,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        spacing: 0.0,
+        spacing: Platform.isMacOS ? 8.0 : 0.0,
         children: [
-          ...buttons,
+          if (kIAPEnabled && !provider.allRewarded) const _AddOnButton(),
+          SpFadeIn.bound(
+            child: IconButton(
+              tooltip: tr('page.search.title'),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              icon: const Icon(SpIcons.search),
+              onPressed: () => SearchRoute().push(context),
+            ),
+          ),
           IconButton(
             tooltip: tr('page.calendar.title'),
             style: IconButton.styleFrom(

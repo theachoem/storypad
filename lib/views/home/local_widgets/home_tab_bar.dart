@@ -92,12 +92,29 @@ class _HomeTabBar extends StatelessWidget {
   }
 
   Widget buildOpenEndDrawerButton(BuildContext context) {
-    return Consumer<AppLockProvider>(
-      builder: (context, appLockProvider, child) {
-        return IconButton(
-          onPressed: () => viewModel.openSettings(context),
-          tooltip: tr("button.more_options"),
-          icon: const Icon(SpIcons.moreVert),
+    return ValueListenableBuilder(
+      valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
+      builder: (context, sideBarInfo, child) {
+        bool showEndDrawerButton;
+
+        if (Platform.isMacOS) {
+          showEndDrawerButton = (sideBarInfo?.showSideBar == true);
+        } else {
+          showEndDrawerButton = true;
+        }
+
+        return Visibility(
+          visible: showEndDrawerButton,
+          child: SpFadeIn(
+            // Add delay for a nice txransition when resizing screen which 1 of side bar button / end drawer button
+            // will appear with transition. see [SpDesktopSideBarTogglerButton]
+            delay: Durations.long2,
+            child: IconButton(
+              onPressed: () => viewModel.openSettings(context),
+              tooltip: tr("button.more_options"),
+              icon: const Icon(SpIcons.moreVert),
+            ),
+          ),
         );
       },
     );

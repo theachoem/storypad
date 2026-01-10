@@ -16,6 +16,12 @@ class _RootRouteObserver extends NavigatorObserver {
   }
 
   @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    onPush?.call(newRoute!, oldRoute);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+
+  @override
   void didPush(Route route, Route? previousRoute) {
     onPush?.call(route, previousRoute);
     super.didPush(route, previousRoute);

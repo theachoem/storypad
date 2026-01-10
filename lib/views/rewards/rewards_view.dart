@@ -36,6 +36,9 @@ class RewardsRoute extends BaseRoute {
   final bool fromAddOnsView;
 
   @override
+  String? get routeName => 'rewards';
+
+  @override
   Widget buildPage(BuildContext context) => RewardsView(params: this);
 }
 

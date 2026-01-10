@@ -1,7 +1,14 @@
-part of 'home_end_drawer.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/types/new_badge.dart';
+import 'package:storypad/views/community/community_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
-class _CommunityTile extends StatelessWidget {
-  const _CommunityTile();
+class CommunityTile extends StatelessWidget {
+  const CommunityTile({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

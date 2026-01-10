@@ -1,16 +1,20 @@
-part of 'home_end_drawer.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/views/home/home_view_model.dart';
+import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
-class _HomeEndDrawerHeader extends StatelessWidget {
-  const _HomeEndDrawerHeader(this.viewModel);
-
-  final HomeViewModel viewModel;
+class HomeYearSwitcherHeader extends StatelessWidget {
+  const HomeYearSwitcherHeader({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        viewModel.endDrawerState = HomeEndDrawerState.showYearsView;
-        viewModel.notifyListeners();
+        HomeViewModel.appInstance.endDrawerState = HomeEndDrawerState.showYearsView;
+        HomeViewModel.appInstance.notifyListeners();
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,7 +23,7 @@ class _HomeEndDrawerHeader extends StatelessWidget {
           spacing: 4.0,
           children: [
             Text(
-              viewModel.year.toString(),
+              HomeViewModel.appInstance.year.toString(),
               style: TextTheme.of(context).displayMedium?.copyWith(color: ColorScheme.of(context).primary),
             ),
             Text.rich(

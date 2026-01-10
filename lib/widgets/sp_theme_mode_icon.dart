@@ -9,9 +9,13 @@ class SpThemeModeIcon extends StatefulWidget {
   const SpThemeModeIcon({
     super.key,
     required this.parentContext,
+    this.iconSize = 24.0,
+    this.color,
   });
 
   final BuildContext parentContext;
+  final double iconSize;
+  final Color? color;
 
   @override
   State<SpThemeModeIcon> createState() => _SpThemeModeIconState();
@@ -37,8 +41,18 @@ class _SpThemeModeIconState extends State<SpThemeModeIcon> with DebounchedCallba
 
         return SpAnimatedIcons.fadeScale(
           duration: Durations.long1,
-          firstChild: const Icon(SpIcons.darkMode, key: ValueKey(Brightness.dark)),
-          secondChild: const Icon(SpIcons.lightMode, key: ValueKey(Brightness.light)),
+          firstChild: Icon(
+            SpIcons.darkMode,
+            key: const ValueKey(Brightness.dark),
+            size: widget.iconSize,
+            color: widget.color,
+          ),
+          secondChild: Icon(
+            SpIcons.lightMode,
+            key: const ValueKey(Brightness.light),
+            size: widget.iconSize,
+            color: widget.color,
+          ),
           showFirst: isDarkMode,
         );
       },
