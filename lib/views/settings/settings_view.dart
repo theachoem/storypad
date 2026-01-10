@@ -32,6 +32,9 @@ class SettingsRoute extends BaseRoute {
   }
 
   @override
+  String? get routeName => 'settings';
+
+  @override
   Widget buildPage(BuildContext context) => SettingsView(params: this);
 }
 

@@ -14,6 +14,9 @@ class BackupServicesRoute extends BaseRoute {
   const BackupServicesRoute();
 
   @override
+  String? get routeName => 'backup_services';
+
+  @override
   Widget buildPage(BuildContext context) => BackupServicesView(params: this);
 }
 

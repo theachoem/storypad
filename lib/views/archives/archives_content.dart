@@ -64,7 +64,9 @@ class _ArchivesContent extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () => viewModel.setType(viewModel.type.isArchives ? PathType.bins : PathType.archives),
+      onTap: () => ArchivesRoute(
+        pathType: viewModel.type.isArchives ? PathType.bins : PathType.archives,
+      ).pushReplacement(context),
       child: Wrap(
         spacing: 4.0,
         runSpacing: 4.0,

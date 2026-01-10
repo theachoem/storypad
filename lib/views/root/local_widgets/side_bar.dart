@@ -1,16 +1,12 @@
 part of '../root_view.dart';
 
 class _SideBar extends StatelessWidget {
-  const _SideBar({
-    required this.viewModel,
-  });
-
-  final RootViewModel viewModel;
+  const _SideBar();
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: viewModel.sideBarInfoNotifier,
+      valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
       builder: (context, sideBarInfo, child) {
         bool showSideBar = sideBarInfo?.showSideBar ?? false;
 
@@ -43,7 +39,7 @@ class _SideBar extends StatelessWidget {
                     left: MediaQuery.paddingOf(context).left,
                     bottom: MediaQuery.paddingOf(context).bottom + 32,
                   ),
-                  child: buildSideBarItems(context),
+                  child: const _SideBarItems(),
                 ),
               ),
               SpSideBarTogglerButton.buildViewButton(
@@ -51,76 +47,99 @@ class _SideBar extends StatelessWidget {
                 viewContext: context,
                 open: false,
               ),
+              const _TopOverlay(),
+              const _BottomOverlay(),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget buildSideBarItems(BuildContext context) {
-    final tagsProvider = Provider.of<TagsProvider>(context);
-    final List<TagDbModel> tags = tagsProvider.tags?.items ?? [];
+class _SideBarItems extends StatelessWidget {
+  const _SideBarItems();
 
-    return Column(
-      children: [
-        _SideBarItem(
-          routeName: const HomeRoute().routeName,
-          title: tr('page.home.title'),
-          leading: const Icon(SpIcons.home, size: 24.0),
-          viewModel: viewModel,
-          onTap: () => viewModel.navigate(const HomeRoute()),
-        ),
-        _SideBarItem(
-          routeName: SearchRoute().routeName,
-          title: tr('page.search.title'),
-          leading: const Icon(SpIcons.search, size: 24.0),
-          viewModel: viewModel,
-          onTap: () => viewModel.navigate(SearchRoute()),
-        ),
-        _SideBarItem(
-          routeName: CalendarRoute(
-            initialMonth: DateTime.now().month,
-            initialYear: DateTime.now().year,
-            initialSegment: .mood,
-          ).routeName,
-          title: tr('page.calendar.title'),
-          leading: const Icon(SpIcons.calendar, size: 24.0),
-          viewModel: viewModel,
-          onTap: () => viewModel.navigate(
-            CalendarRoute(
-              initialMonth: DateTime.now().month,
-              initialYear: DateTime.now().year,
-              initialSegment: .mood,
+  @override
+  Widget build(BuildContext context) {
+    final sideItems = SideItems.getMainItems(fromSideBar: true);
+    final moreOptions = SideItems.getMoreOptions(fromSideBar: true);
+
+    return ValueListenableBuilder(
+      valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
+      builder: (context, sideBarInfo, child) {
+        final bool optionsExpanded = sideBarInfo?.optionsExpanded == true;
+
+        if (optionsExpanded) {
+          return Column(
+            children: moreOptions.map((item) {
+              return item.build(context, fromSideBar: true);
+            }).toList(),
+          );
+        } else {
+          return Column(
+            children: sideItems.map((item) {
+              return item.build(context, fromSideBar: true);
+            }).toList(),
+          );
+        }
+      },
+    );
+  }
+}
+
+class _TopOverlay extends StatelessWidget {
+  const _TopOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 1, // 1 for side bar divider
+      height: 32,
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                ColorScheme.of(context).surface,
+                ColorScheme.of(context).surface.withValues(alpha: 0.0),
+              ],
             ),
           ),
         ),
-        _SideBarItem(
-          routeName: LibraryRoute().routeName,
-          title: tr('page.library.title'),
-          leading: const Icon(SpIcons.photo, size: 24.0),
-          viewModel: viewModel,
-          onTap: () => viewModel.navigate(LibraryRoute()),
+      ),
+    );
+  }
+}
+
+class _BottomOverlay extends StatelessWidget {
+  const _BottomOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 1, // 1 for side bar divider
+      height: 32,
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                ColorScheme.of(context).surface.withValues(alpha: 0.0),
+                ColorScheme.of(context).surface,
+              ],
+            ),
+          ),
         ),
-        _SideBarItem(
-          routeName: const RelaxSoundsRoute().routeName,
-          title: tr('general.sounds'),
-          leading: const Icon(SpIcons.musicNote, size: 24.0),
-          viewModel: viewModel,
-          onTap: () => viewModel.navigate(const RelaxSoundsRoute()),
-        ),
-        const SizedBox(height: 12.0),
-        _TagHeader(viewModel),
-        ...tags.map((tag) {
-          return _SideBarItem(
-            routeName: ShowTagRoute(tag: tag, storyViewOnly: false).routeName,
-            title: tag.title,
-            leading: const Icon(SpIcons.tag, size: 24.0),
-            viewModel: viewModel,
-            onTap: () => viewModel.navigate(ShowTagRoute(tag: tag, storyViewOnly: false)),
-          );
-        }),
-      ],
+      ),
     );
   }
 }

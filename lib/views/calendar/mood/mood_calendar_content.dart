@@ -59,8 +59,9 @@ class _CalendarStoriesContent extends StatelessWidget {
 
   Widget buildBigScreenView(BuildContext context) {
     return Row(
+      crossAxisAlignment: .start,
       children: [
-        Flexible(child: buildCalendar(showBottomBorder: false)),
+        Flexible(child: buildCalendar(showBottomBorder: false, scrollable: true)),
         const VerticalDivider(),
         Flexible(child: buildStoryList()),
       ],
@@ -142,8 +143,9 @@ class _CalendarStoriesContent extends StatelessWidget {
 
   Widget buildCalendar({
     required bool showBottomBorder,
+    bool scrollable = false,
   }) {
-    return SpCalendar(
+    Widget child = SpCalendar(
       showBottomBorder: showBottomBorder,
       initialYear: viewModel.year,
       initialMonth: viewModel.month,
@@ -172,5 +174,11 @@ class _CalendarStoriesContent extends StatelessWidget {
         );
       },
     );
+
+    if (scrollable) {
+      return SingleChildScrollView(child: child);
+    } else {
+      return child;
+    }
   }
 }

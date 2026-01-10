@@ -1,7 +1,24 @@
-part of 'home_end_drawer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/views/backup_services/backup_services_view.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
-// No need const constructor for translation to work properly.
-class _BackupTile extends StatelessWidget {
+class BackupTile extends StatelessWidget {
+  // No need const constructor for translation to work properly.
+  // ignore: prefer_const_constructors_in_immutables
+  BackupTile({
+    super.key,
+    required this.onNavigate,
+  });
+
+  final void Function(BaseRoute route) onNavigate;
+
   @override
   Widget build(BuildContext context) {
     BackupProvider provider = Provider.of<BackupProvider>(context);
@@ -18,11 +35,11 @@ class _BackupTile extends StatelessWidget {
       action = FilledButton.icon(
         icon: Icon(SpIcons.googleDrive),
         label: Text(tr('button.connect')),
-        onPressed: () => provider.signIn(context, BackupServiceType.google_drive),
+        onPressed: () => provider.signIn(context, .google_drive),
       );
     } else {
       switch (provider.connectionStatus) {
-        case BackupConnectionStatus.unknownError:
+        case .unknownError:
           leading = Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.unknown_error'));
@@ -32,7 +49,7 @@ class _BackupTile extends StatelessWidget {
             onPressed: () => provider.recheckAndSync(),
           );
           break;
-        case BackupConnectionStatus.noInternet:
+        case .noInternet:
           leading = Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
@@ -42,17 +59,17 @@ class _BackupTile extends StatelessWidget {
             onPressed: () => provider.recheckAndSync(),
           );
           break;
-        case BackupConnectionStatus.needGoogleDrivePermission:
+        case .needGoogleDrivePermission:
           leading = Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
           action = FilledButton.icon(
             icon: Icon(SpIcons.googleDrive),
             label: Text(tr('button.grant_permission')),
-            onPressed: () => provider.requestScope(context, BackupServiceType.google_drive),
+            onPressed: () => provider.requestScope(context, .google_drive),
           );
           break;
-        case BackupConnectionStatus.readyToSync:
+        case .readyToSync:
           leading = Icon(SpIcons.googleDrive);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
@@ -133,7 +150,7 @@ class _BackupTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          onTap: () => const BackupServicesRoute().push(context),
+          onTap: () => onNavigate.call(const BackupServicesRoute()),
           leading: leading,
           title: title,
           subtitle: subtitle,

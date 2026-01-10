@@ -21,11 +21,6 @@ class ArchivesViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  void setType(PathType type) {
-    this.type = type;
-    notifyListeners();
-  }
-
   Future<void> onPopInvokedWithResult(bool didPop, dynamic result, BuildContext context) async {
     if (didPop) return;
 

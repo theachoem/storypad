@@ -9,7 +9,7 @@ import 'package:storypad/views/calendar/period/period_calendar_view.dart';
 import 'package:storypad/views/calendar/mood/mood_calendar_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
-import 'package:storypad/widgets/sp_side_bar_toggler_button.dart';
+import 'package:storypad/widgets/sp_tablet_side_bar_toggler_button.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 import 'calendar_view_model.dart';

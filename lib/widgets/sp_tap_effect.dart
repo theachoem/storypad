@@ -123,6 +123,13 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
       result = buildChild(controller);
     }
 
+    // Handle mouse hover events like InkWell.
+    result = MouseRegion(
+      onEnter: (event) => controller.forward(),
+      onExit: (event) => controller.reverse(),
+      child: result,
+    );
+
     // Handle keyboard events for accessibility.
     // Same behaviour to inkwell.
     return Focus(

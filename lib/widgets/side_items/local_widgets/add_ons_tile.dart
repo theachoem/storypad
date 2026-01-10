@@ -1,7 +1,14 @@
-part of 'home_end_drawer.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/types/new_badge.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
-class _AddOnsTile extends StatelessWidget {
-  const _AddOnsTile();
+class AddOnsTile extends StatelessWidget {
+  const AddOnsTile({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

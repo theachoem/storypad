@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/views/root/root_view.dart';
+import 'package:storypad/widgets/sp_desktop_side_bar_toggler_button.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -38,6 +40,9 @@ class App extends StatelessWidget {
           // Add padding for macOS main menu bar.
           if (Platform.isMacOS) mainMenuPadding = 24;
 
+          // Add padding for ipadOS windowed mode main menu bar.
+          if (Platform.isIOS && WindowedDetectorService.isWindowed(context)) mainMenuPadding = 36;
+
           return MediaQuery(
             data: mediaQuery.copyWith(
               padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + mainMenuPadding),
@@ -59,6 +64,15 @@ class App extends StatelessWidget {
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,
+              builder: (context, child) {
+                if (!Platform.isMacOS) return child!;
+                return Stack(
+                  children: [
+                    child!,
+                    const SpDesktopSideBarTogglerButton(),
+                  ],
+                );
+              },
             ),
           );
         },

@@ -43,10 +43,7 @@ class _HomeScaffold extends StatelessWidget {
             ),
           ),
           buildTimelineSideBar(context),
-          SpSideBarTogglerButton.buildViewButton(
-            viewContext: context,
-            open: true,
-          ),
+          SpSideBarTogglerButton.buildViewButton(viewContext: context, open: true),
           Positioned(
             left: 0,
             right: 0,
@@ -65,11 +62,18 @@ class _HomeScaffold extends StatelessWidget {
         context: viewContext,
         builder: (context, state) {
           return ValueListenableBuilder(
-            valueListenable: context.read<RootViewModel>().sideBarInfoNotifier,
+            valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
             builder: (context, sideBarInfo, child) {
-              bool bigScreen = sideBarInfo?.bigScreen ?? false;
+              bool showTimelineSideButton = viewModel.stories != null && !state.editing;
+
+              if (Platform.isMacOS) {
+                showTimelineSideButton = showTimelineSideButton && !(sideBarInfo?.showSideBar == true);
+              } else {
+                showTimelineSideButton = showTimelineSideButton && (sideBarInfo?.bigScreen == true);
+              }
+
               return Visibility(
-                visible: viewModel.stories != null && !bigScreen && !state.editing,
+                visible: viewModel.stories != null && !state.editing && !showTimelineSideButton,
                 child: _HomeTimelineSideBar(
                   viewModel: viewModel,
                   // when bottom navigation is visible, we should use context for screen padding.

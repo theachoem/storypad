@@ -24,6 +24,9 @@ class CommunityRoute extends BaseRoute {
   CommunityRoute();
 
   @override
+  String? get routeName => 'community';
+
+  @override
   Widget buildPage(BuildContext context) => CommunityView(params: this);
 }
 
