@@ -16,13 +16,23 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
   late final ValueNotifier<RootViewSideBarInfo?> sideBarInfoNotifier;
 
   RootProvider(BuildContext context) {
-    sideBarInfoNotifier = ValueNotifier(
-      getSideBarInfoWith(
-        PlatformDispatcher.instance.views.firstOrNull?.physicalSize.width,
-        PlatformDispatcher.instance.views.firstOrNull?.physicalSize.height,
-        null,
-      ),
-    );
+    // Initialize sideBarInfoNotifier with implicitView width/height so on mobile, there is no sidebar flicker.
+    // On desktop, implicitView can be null, so sideBarInfoNotifier stays null &
+    // is set normally by the RootView LayoutBuilder, which is also the default
+    // behavior when resizing the window.
+    final view = PlatformDispatcher.instance.implicitView;
+
+    if (view != null) {
+      sideBarInfoNotifier = ValueNotifier(
+        getSideBarInfoWith(
+          view.physicalSize.width / view.devicePixelRatio,
+          view.physicalSize.height / view.devicePixelRatio,
+          null,
+        ),
+      );
+    } else {
+      sideBarInfoNotifier = ValueNotifier(null);
+    }
   }
 
   /// For any navigation from sidebar, use this RootProvider#navigate instead of push directly.

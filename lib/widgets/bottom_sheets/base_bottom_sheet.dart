@@ -14,7 +14,9 @@ abstract class BaseBottomSheet {
   String get analyticScreenClass => className;
 
   Color? get barrierColor => null;
+
   bool get showMaterialDragHandle => true;
+  bool get barrierDismissible => true;
 
   double get cupertinoPaddingTop => 16.0;
 
@@ -36,6 +38,8 @@ abstract class BaseBottomSheet {
       barrierColor: barrierColor,
       backgroundColor: getBackgroundColor(context),
       sheetAnimationStyle: .noAnimation,
+      isDismissible: barrierDismissible,
+      enableDrag: barrierDismissible,
       builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -61,6 +65,13 @@ abstract class BaseBottomSheet {
     required BuildContext context,
     bool useRootNavigator = false,
   }) {
+    if (barrierDismissible == false) {
+      assert(
+        showMaterialDragHandle == false,
+        'If barrierDismissible is false, showMaterialDragHandle must also be false to prevent user from dragging down to dismiss the sheet.',
+      );
+    }
+
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
 
     if (kIsCupertino) {
@@ -70,6 +81,7 @@ abstract class BaseBottomSheet {
         context: context,
         fullScreen: fullScreen,
         useRootNavigator: useRootNavigator,
+        barrierDismissible: barrierDismissible,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     } else {
@@ -79,6 +91,7 @@ abstract class BaseBottomSheet {
         showDragHandle: showMaterialDragHandle,
         backgroundColor: getBackgroundColor(context),
         useRootNavigator: useRootNavigator,
+        barrierDismissible: barrierDismissible,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     }
@@ -91,11 +104,14 @@ abstract class BaseBottomSheet {
     Color? barrierColor,
     Color? backgroundColor,
     bool useRootNavigator = false,
+    bool barrierDismissible = true,
   }) {
     return showModalBottomSheet<T>(
       useRootNavigator: useRootNavigator,
       context: context,
       showDragHandle: showDragHandle,
+      isDismissible: barrierDismissible,
+      enableDrag: barrierDismissible,
       isScrollControlled: true,
       barrierColor: barrierColor,
       backgroundColor: backgroundColor,
@@ -143,6 +159,7 @@ abstract class BaseBottomSheet {
     required Widget Function(BuildContext context, double bottomPadding) builder,
     Color? backgroundColor,
     bool useRootNavigator = false,
+    bool barrierDismissible = true,
   }) {
     if (fullScreen) {
       return showCupertinoSheet(
@@ -166,7 +183,7 @@ abstract class BaseBottomSheet {
     return showCupertinoModalPopup(
       context: context,
       semanticsDismissible: true,
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       builder: (context) {
         return MediaQuery.removePadding(

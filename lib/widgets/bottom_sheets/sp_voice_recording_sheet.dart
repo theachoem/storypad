@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,13 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
   bool get fullScreen => false;
 
   @override
-  bool get showMaterialDragHandle => true;
+  bool get showMaterialDragHandle => false;
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  double get cupertinoPaddingTop => 0.0; // we have custom padding here instead.
 
   static Future<void> showQuillRecorder({
     required BuildContext context,
@@ -142,7 +149,17 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
     }
   }
 
-  Future<void> cancelRecording() async {
+  Future<void> cancelRecordingAndPop() async {
+    if (recording) {
+      final result = await showOkCancelAlertDialog(
+        context: context,
+        isDestructiveAction: true,
+        title: tr('dialog.are_you_sure.title'),
+      );
+
+      if (result != OkCancelResult.ok) return;
+    }
+
     await recorder.cancelRecording();
     if (mounted) {
       setState(() => recording = false);
@@ -160,7 +177,7 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
           padding: EdgeInsets.only(
             left: 16.0,
             right: 16.0,
-            top: 16.0,
+            top: 36.0,
             bottom: widget.bottomPadding + 16.0,
           ),
           child: Column(
@@ -170,14 +187,25 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
             ],
           ),
         ),
-        if (kIsCupertino && !hasRecording)
+        if (!hasRecording)
           Positioned(
             right: 8,
-            top: 0,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: recording ? cancelRecording : () => Navigator.of(context).pop(),
-              child: const Icon(CupertinoIcons.xmark),
+            top: 8,
+            child: Builder(
+              builder: (context) {
+                if (kIsCupertino) {
+                  return CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: cancelRecordingAndPop,
+                    child: const Icon(SpIcons.clear),
+                  );
+                } else {
+                  return CloseButton(
+                    style: IconButton.styleFrom(shape: const CircleBorder()),
+                    onPressed: cancelRecordingAndPop,
+                  );
+                }
+              },
             ),
           ),
       ],
