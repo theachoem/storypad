@@ -25,7 +25,7 @@ class RootView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<RootViewModel>(
-      create: (context) => RootViewModel(context),
+      create: (context) => RootViewModel(),
       builder: (context, viewModel, child) {
         final rootProvider = Provider.of<RootProvider>(context);
         return _RootContent(viewModel, rootProvider);
