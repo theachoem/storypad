@@ -7,14 +7,17 @@ import 'package:storypad/widgets/sp_icons.dart';
 class HomeYearSwitcherHeader extends StatelessWidget {
   const HomeYearSwitcherHeader({
     super.key,
+    required this.homeViewModel,
   });
+
+  final HomeViewModel homeViewModel;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        HomeViewModel.appInstance.endDrawerState = HomeEndDrawerState.showYearsView;
-        HomeViewModel.appInstance.notifyListeners();
+        homeViewModel.endDrawerState = HomeEndDrawerState.showYearsView;
+        homeViewModel.notifyListeners();
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,7 +26,7 @@ class HomeYearSwitcherHeader extends StatelessWidget {
           spacing: 4.0,
           children: [
             Text(
-              HomeViewModel.appInstance.year.toString(),
+              homeViewModel.year.toString(),
               style: TextTheme.of(context).displayMedium?.copyWith(color: ColorScheme.of(context).primary),
             ),
             Text.rich(

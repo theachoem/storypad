@@ -148,9 +148,12 @@ class AppTheme extends StatelessWidget {
       appBarTheme: AppBarTheme(
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         backgroundColor: lightMode ? colorScheme.surface : colorScheme.readOnly.surface1,
+        scrolledUnderElevation: 0.0,
       ),
-      tabBarTheme: TabBarThemeData(
-        dividerColor: dividerColor,
+      tabBarTheme: const TabBarThemeData(
+        // Divider is hidden on the tab bar. Setting dividerHeight to 0 causes padding issues,
+        // so we use a transparent color to visually remove the divider without affecting layout.
+        dividerColor: Colors.transparent,
       ),
       drawerTheme: const DrawerThemeData(),
       dividerColor: dividerColor,

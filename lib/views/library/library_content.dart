@@ -11,18 +11,6 @@ class _LibraryContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        buildScaffold(),
-        SpSideBarTogglerButton.buildViewButton(
-          viewContext: context,
-          open: true,
-        ),
-      ],
-    );
-  }
-
-  Widget buildScaffold() {
     return DefaultTabController(
       initialIndex: viewModel.params.initialTabIndex,
       length: 2,

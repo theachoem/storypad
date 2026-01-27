@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_cupertino_full_page_sheet_configurations.dart';
 
 abstract class BaseBottomSheet {
@@ -27,10 +29,13 @@ abstract class BaseBottomSheet {
   Future<T?> showReplacement<T>({
     required BuildContext context,
     bool useRootNavigator = false,
-  }) {
+  }) async {
     if (kIsCupertino) throw UnimplementedError('Replacement bottom sheet is not implemented for Cupertino.');
 
-    return replaceModalBottomSheet<T>(
+    AnalyticsService.instance.logViewSheet(bottomSheet: this);
+    context.read<RootProvider>().setTemporaryHidden(true);
+
+    T? result = await replaceModalBottomSheet<T>(
       useRootNavigator: useRootNavigator,
       context: context,
       showDragHandle: showMaterialDragHandle,
@@ -59,12 +64,15 @@ abstract class BaseBottomSheet {
         );
       },
     );
+
+    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(false);
+    return result;
   }
 
   Future<T?> show<T>({
     required BuildContext context,
     bool useRootNavigator = false,
-  }) {
+  }) async {
     if (barrierDismissible == false) {
       assert(
         showMaterialDragHandle == false,
@@ -73,9 +81,11 @@ abstract class BaseBottomSheet {
     }
 
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
+    context.read<RootProvider>().setTemporaryHidden(true);
 
+    T? result;
     if (kIsCupertino) {
-      return openCupertino(
+      result = await openCupertino(
         paddingTop: cupertinoPaddingTop,
         backgroundColor: getBackgroundColor(context),
         context: context,
@@ -85,7 +95,7 @@ abstract class BaseBottomSheet {
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     } else {
-      return openMaterial(
+      result = await openMaterial(
         context: context,
         barrierColor: barrierColor,
         showDragHandle: showMaterialDragHandle,
@@ -95,6 +105,9 @@ abstract class BaseBottomSheet {
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     }
+
+    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(false);
+    return result;
   }
 
   static Future<T?> openMaterial<T>({

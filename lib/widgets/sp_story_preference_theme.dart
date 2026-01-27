@@ -6,9 +6,10 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/gen/story_backgrounds.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 
-class SpStoryPreferenceTheme extends StatelessWidget {
+class SpStoryPreferenceTheme extends StatefulWidget {
   const SpStoryPreferenceTheme({
     super.key,
     required this.child,
@@ -19,10 +20,25 @@ class SpStoryPreferenceTheme extends StatelessWidget {
   final StoryPreferencesDbModel? preferences;
 
   @override
+  State<SpStoryPreferenceTheme> createState() => _SpStoryPreferenceThemeState();
+}
+
+class _SpStoryPreferenceThemeState extends State<SpStoryPreferenceTheme> {
+  late RootProvider rootProvider = context.read<RootProvider>();
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      rootProvider.setSideBarColorScheme(null);
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<DevicePreferencesProvider>(context);
 
-    TextScaler textScaler = switch (preferences?.fontSize) {
+    TextScaler textScaler = switch (widget.preferences?.fontSize) {
       null => MediaQuery.textScalerOf(context),
       FontSizeOption.small => const TextScaler.linear(0.85),
       FontSizeOption.normal => const TextScaler.linear(1.0),
@@ -33,10 +49,14 @@ class SpStoryPreferenceTheme extends StatelessWidget {
     SpStoryPreferenceThemeConstructor themeConstructor = SpStoryPreferenceThemeConstructor(
       isDarkMode: Theme.of(context).brightness == Brightness.dark,
       context: context,
-      fontFamily: preferences?.fontFamily ?? themeProvider.preferences.fontFamily,
-      fontWeight: preferences?.fontWeight ?? themeProvider.preferences.fontWeight,
-      preferences: preferences,
+      fontFamily: widget.preferences?.fontFamily ?? themeProvider.preferences.fontFamily,
+      fontWeight: widget.preferences?.fontWeight ?? themeProvider.preferences.fontWeight,
+      preferences: widget.preferences,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      rootProvider.setSideBarColorScheme(themeConstructor.colorScheme);
+    });
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: textScaler),
@@ -48,7 +68,7 @@ class SpStoryPreferenceTheme extends StatelessWidget {
             buildImageBackground(themeConstructor),
             if (themeConstructor.overlayScaffoldBackgroundColor != null)
               Positioned.fill(child: Container(color: themeConstructor.overlayScaffoldBackgroundColor)),
-            child,
+            widget.child,
           ],
         ),
       ),
@@ -69,11 +89,6 @@ class SpStoryPreferenceTheme extends StatelessWidget {
                 return Image.file(
                   file,
                   fit: .cover,
-
-                  // The image is rendered to fill the widget, but BoxFit.cover crops it (only ~1/3 of the image width is visible).
-                  // To ensure the displayed part stays sharp, we multiply the widget width by 3 when setting cacheWidth.
-                  // Using cacheWidth improves performance by decoding a properly sized image.
-                  cacheWidth: (constraints.maxWidth * 3 * MediaQuery.of(context).devicePixelRatio).round(),
                   alignment: switch (themeConstructor.selectedBackground!.align) {
                     .left => .centerLeft,
                     .center => .center,

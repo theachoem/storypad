@@ -48,11 +48,23 @@ class _PagesLayoutState extends State<_PagesLayout> {
               children: [
                 SingleChildScrollView(
                   clipBehavior: Clip.none,
-                  padding: widget.builder.padding,
+                  padding: EdgeInsets.only(top: widget.builder.padding.top, bottom: widget.builder.padding.bottom),
                   child: Column(
                     children: [
-                      if (widget.builder.headerBuilder != null) buildHeader(index, constraints.maxWidth),
-                      ConstrainedBox(
+                      if (widget.builder.headerBuilder != null)
+                        buildHeader(
+                          pageIndex: index,
+                          screenWidth: constraints.maxWidth,
+                          padding: EdgeInsets.only(
+                            left: widget.builder.padding.left,
+                            right: widget.builder.padding.right,
+                          ),
+                        ),
+                      Container(
+                        padding: EdgeInsets.only(
+                          left: widget.builder.padding.left,
+                          right: widget.builder.padding.right,
+                        ),
                         constraints: const BoxConstraints(minHeight: 200),
                         child: widget.builder.buildPage(
                           widget.builder.pages[index],
@@ -73,10 +85,17 @@ class _PagesLayoutState extends State<_PagesLayout> {
     );
   }
 
-  Widget buildHeader(int pageIndex, double screenWidth) {
+  Widget buildHeader({
+    required int pageIndex,
+    required double screenWidth,
+    required EdgeInsetsGeometry padding,
+  }) {
     return ValueListenableBuilder(
       valueListenable: pageOffset,
-      child: widget.builder.headerBuilder!(widget.builder.pages[pageIndex]),
+      child: Padding(
+        padding: padding,
+        child: widget.builder.headerBuilder!(widget.builder.pages[pageIndex]),
+      ),
       builder: (context, offset, child) {
         SpPageViewDatas datas = SpPageViewDatas.fromOffset(
           itemIndex: pageIndex,

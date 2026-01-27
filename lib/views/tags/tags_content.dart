@@ -37,57 +37,64 @@ class _TagsContent extends StatelessWidget {
       return buildEmptyBody(context);
     }
 
-    return ReorderableListView.builder(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).padding.bottom,
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-      ),
-      buildDefaultDragHandles: true,
-      itemCount: provider.tags?.items.length ?? 0,
-      onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
-      proxyDecorator: (child, index, animation) {
-        return Container(
-          color: Theme.of(context).colorScheme.readOnly.surface5,
-          child: child,
-        );
-      },
-      itemBuilder: (context, index) {
-        final tag = provider.tags!.items[index];
-        final storyCount = provider.getStoriesCount(tag);
+    return ScrollConfiguration(
+      // On desktop, there is auto added trailing icon.
+      // So it does not look nice with scrollbars at all.
+      // Hiding scrollbars to make it look better. Scrollbar is truely optional anyways for tags view.
+      behavior: const ScrollBehavior().copyWith(scrollbars: false),
+      child: ReorderableListView.builder(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        buildDefaultDragHandles: true,
+        itemCount: provider.tags?.items.length ?? 0,
+        onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
+        proxyDecorator: (child, index, animation) {
+          return Container(
+            color: Theme.of(context).colorScheme.readOnly.surface5,
+            child: child,
+          );
+        },
+        itemBuilder: (context, index) {
+          final tag = provider.tags!.items[index];
+          final storyCount = provider.getStoriesCount(tag);
 
-        return Slidable(
-          closeOnScroll: true,
-          key: ValueKey(tag.id),
-          endActionPane: ActionPane(
-            motion: const DrawerMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (context) => provider.deleteTag(context, tag),
-                backgroundColor: ColorScheme.of(context).error,
-                foregroundColor: ColorScheme.of(context).onError,
-                icon: SpIcons.delete,
-                label: tr("button.delete"),
-              ),
-              SlidableAction(
-                onPressed: (context) => provider.editTag(context, tag),
-                backgroundColor: ColorScheme.of(context).secondary,
-                foregroundColor: ColorScheme.of(context).onSecondary,
-                icon: SpIcons.edit,
-                label: tr("button.edit"),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: buildTile(tag, storyCount, provider, context),
-          ),
-        );
-      },
+          return Slidable(
+            closeOnScroll: true,
+            key: ValueKey(tag.id),
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (context) => provider.deleteTag(context, tag),
+                  backgroundColor: ColorScheme.of(context).error,
+                  foregroundColor: ColorScheme.of(context).onError,
+                  icon: SpIcons.delete,
+                  label: tr("button.delete"),
+                ),
+                SlidableAction(
+                  onPressed: (context) => provider.editTag(context, tag),
+                  backgroundColor: ColorScheme.of(context).secondary,
+                  foregroundColor: ColorScheme.of(context).onSecondary,
+                  icon: SpIcons.edit,
+                  label: tr("button.edit"),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: buildTile(tag, storyCount, provider, context),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget buildTile(TagDbModel tag, int storyCount, TagsProvider provider, BuildContext context) {
+  Widget buildTile(
+    TagDbModel tag,
+    int storyCount,
+    TagsProvider provider,
+    BuildContext context,
+  ) {
     return ListTile(
       tileColor: Colors.transparent,
       contentPadding: !viewModel.checkable

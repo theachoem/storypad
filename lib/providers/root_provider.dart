@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -13,6 +14,7 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final ValueNotifier<String> selectedRootRouteNameNotifier = ValueNotifier('home');
   final HeroController heroController = MaterialApp.createMaterialHeroController();
+
   late final ValueNotifier<RootViewSideBarInfo?> sideBarInfoNotifier;
 
   RootProvider(BuildContext context) {
@@ -83,35 +85,34 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
         constraints.maxWidth,
         constraints.maxHeight,
         sideBarInfoNotifier.value,
-      )?.copyWith(optionsExpanded: false);
+      );
     });
   }
 
   RootViewSideBarInfo? getSideBarInfoWith(double? width, double? height, RootViewSideBarInfo? oldValue) {
     if (width == null || height == null) return oldValue;
 
-    bool bigScreen = width >= 720.0 && height >= 500.0;
-
-    bool showSideBar = oldValue?.showSideBar ?? false;
-    bool manuallyToggled = oldValue?.manuallyToggled ?? false;
-
-    if (manuallyToggled) {
-      // when manually toggled, but screen is now small,
-      // we have to close the sidebar & reset manuallyToggled to false
-      if (!bigScreen && showSideBar) {
-        manuallyToggled = false;
-        showSideBar = false;
-      }
-    } else {
-      showSideBar = bigScreen ? true : false;
-    }
+    bool bigScreen = WindowedDetectorService.isBigWindowFor(width, height);
 
     return RootViewSideBarInfo(
       bigScreen: bigScreen,
-      showSideBar: showSideBar,
-      manuallyToggled: manuallyToggled,
-      optionsExpanded: oldValue?.optionsExpanded ?? false,
+      colorScheme: oldValue?.colorScheme,
+      temporaryHidden: oldValue?.temporaryHidden ?? false,
     );
+  }
+
+  // Allows screens with customizable backgrounds to update the sidebar icon foreground color for visibility.
+  // When a page closes, reset the foreground color to null to restore the default color based on the theme.
+  void setSideBarColorScheme(ColorScheme? colorScheme) {
+    if (colorScheme == sideBarInfoNotifier.value?.colorScheme) return;
+    sideBarInfoNotifier.value = sideBarInfoNotifier.value?.copyWithColorScheme(colorScheme);
+  }
+
+  // (optional) Used by temporary hidden sidebars to show/hide the sidebar.
+  // When opening sheets or dialogs, we can optionally hide the sidebar temporarily for better focus.
+  void setTemporaryHidden(bool temporaryHidden) {
+    if (temporaryHidden == sideBarInfoNotifier.value?.temporaryHidden) return;
+    sideBarInfoNotifier.value = sideBarInfoNotifier.value?.copyWith(temporaryHidden: temporaryHidden);
   }
 
   @override

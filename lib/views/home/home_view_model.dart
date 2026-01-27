@@ -30,8 +30,6 @@ part 'local_widgets/home_scroll_app_bar_info.dart';
 class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
 
-  static final HomeViewModel appInstance = HomeViewModel();
-
   HomeViewModel() {
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');

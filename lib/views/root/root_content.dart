@@ -11,6 +11,8 @@ class _RootContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<IconButtonSideItem> sideItems = SideItems.getSideMenuItems();
+
     return SpAppLockWrapper(
       child: SpOnboardingWrapper(
         onOnboarded: () {
@@ -36,10 +38,15 @@ class _RootContent extends StatelessWidget {
               return Scaffold(
                 extendBody: true,
                 extendBodyBehindAppBar: true,
-                body: Row(
+                body: Stack(
                   children: [
-                    const _SideBar(),
                     buildPagesNavigator(context),
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
+                    ),
                   ],
                 ),
               );
@@ -51,43 +58,52 @@ class _RootContent extends StatelessWidget {
   }
 
   Widget buildPagesNavigator(BuildContext context) {
-    return Expanded(
-      child: ValueListenableBuilder(
-        valueListenable: rootProvider.sideBarInfoNotifier,
-        builder: (context, sideBarInfo, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              padding: EdgeInsets.only(
-                top: MediaQuery.paddingOf(context).top,
-                left: sideBarInfo?.showSideBar == true ? 0.0 : MediaQuery.paddingOf(context).left,
-                bottom: MediaQuery.paddingOf(context).bottom,
-                right: MediaQuery.paddingOf(context).right + 0.0,
-              ),
+    return ValueListenableBuilder(
+      valueListenable: rootProvider.sideBarInfoNotifier,
+      builder: (context, sideBarInfo, child) {
+        double left;
+        double right;
+
+        if (sideBarInfo?.bigScreen ?? false) {
+          left = 88;
+          right = MediaQuery.of(context).padding.right + 88;
+        } else {
+          left = MediaQuery.of(context).padding.left;
+          right = MediaQuery.of(context).padding.right;
+        }
+
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            padding: EdgeInsets.only(
+              top: MediaQuery.paddingOf(context).top,
+              left: left,
+              bottom: MediaQuery.paddingOf(context).bottom,
+              right: right,
             ),
-            child: child!,
-          );
-        },
-        child: HeroControllerScope(
-          controller: rootProvider.heroController,
-          child: Navigator(
-            key: rootProvider.navigatorKey,
-            initialRoute: rootProvider.initialRoute,
-            onGenerateRoute: (settings) => rootProvider.generateRoute(settings),
-            observers: [
-              _RootRouteObserver(
-                onPop: (route, previousRoute) {
-                  if (previousRoute?.settings.name == null) return;
-                  rootProvider.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
-                  autoBackupWhenNavigateToHome(previousRoute, context);
-                },
-                onPush: (route, previousRoute) {
-                  if (route.settings.name == null) return;
-                  rootProvider.selectedRootRouteNameNotifier.value = route.settings.name!;
-                  autoBackupWhenNavigateToHome(route, context);
-                },
-              ),
-            ],
           ),
+          child: child!,
+        );
+      },
+      child: HeroControllerScope(
+        controller: rootProvider.heroController,
+        child: Navigator(
+          key: rootProvider.navigatorKey,
+          initialRoute: rootProvider.initialRoute,
+          onGenerateRoute: (settings) => rootProvider.generateRoute(settings),
+          observers: [
+            _RootRouteObserver(
+              onPop: (route, previousRoute) {
+                if (previousRoute?.settings.name == null) return;
+                rootProvider.selectedRootRouteNameNotifier.value = previousRoute!.settings.name!;
+                autoBackupWhenNavigateToHome(previousRoute, context);
+              },
+              onPush: (route, previousRoute) {
+                if (route.settings.name == null) return;
+                rootProvider.selectedRootRouteNameNotifier.value = route.settings.name!;
+                autoBackupWhenNavigateToHome(route, context);
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -1,27 +1,32 @@
+import 'package:flutter/material.dart';
+
 class RootViewSideBarInfo {
   final bool bigScreen;
-  final bool showSideBar;
-  final bool manuallyToggled;
-  final bool optionsExpanded;
+  final ColorScheme? colorScheme;
+  final bool temporaryHidden;
 
   RootViewSideBarInfo({
     required this.bigScreen,
-    required this.showSideBar,
-    required this.manuallyToggled,
-    required this.optionsExpanded,
+    required this.colorScheme,
+    required this.temporaryHidden,
   });
 
   RootViewSideBarInfo copyWith({
     bool? bigScreen,
-    bool? showSideBar,
-    bool? manuallyToggled,
-    bool? optionsExpanded,
+    bool? temporaryHidden,
   }) {
     return RootViewSideBarInfo(
       bigScreen: bigScreen ?? this.bigScreen,
-      showSideBar: showSideBar ?? this.showSideBar,
-      manuallyToggled: manuallyToggled ?? this.manuallyToggled,
-      optionsExpanded: optionsExpanded ?? this.optionsExpanded,
+      temporaryHidden: temporaryHidden ?? this.temporaryHidden,
+      colorScheme: colorScheme,
+    );
+  }
+
+  RootViewSideBarInfo copyWithColorScheme(ColorScheme? colorScheme) {
+    return RootViewSideBarInfo(
+      bigScreen: bigScreen,
+      colorScheme: colorScheme,
+      temporaryHidden: temporaryHidden,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
 import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';

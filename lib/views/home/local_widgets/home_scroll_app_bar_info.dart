@@ -19,9 +19,10 @@ class _HomeScrollAppBarInfo {
 
   final double indicatorPaddingTop = 12;
   final double indicatorHeight = 40;
-  final double indicatorPaddingBottom = 12;
+  final double indicatorPaddingBottom = 8;
 
   double getTabBarPreferredHeight() => indicatorPaddingTop + indicatorHeight + indicatorPaddingBottom;
+
   double getExpandedHeight() =>
       contentsMarginTop + getContentsHeight() + contentsMarginBottom + getTabBarPreferredHeight() + extraExpandedHeight;
 

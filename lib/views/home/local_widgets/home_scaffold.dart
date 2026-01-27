@@ -28,22 +28,33 @@ class _HomeScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
       extendBody: true,
+      onEndDrawerChanged: (isOpened) {
+        if (isOpened) {
+          context.read<RootProvider>().setTemporaryHidden(true);
+        } else {
+          context.read<RootProvider>().setTemporaryHidden(false);
+        }
+      },
       body: Stack(
         children: [
           RefreshIndicator.adaptive(
             edgeOffset: viewModel.scrollInfo.appBar(context).getExpandedHeight() + MediaQuery.of(context).padding.top,
             onRefresh: () => viewModel.refresh(context),
-            child: CustomScrollView(
-              controller: viewModel.scrollInfo.scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                appBar,
-                body,
-              ],
+            child: ScrollConfiguration(
+              // We want to keep home page clean, so we don't need default scroll bar right now.
+              // User can click on month tabs to navigate.
+              behavior: const ScrollBehavior().copyWith(scrollbars: false),
+              child: CustomScrollView(
+                controller: viewModel.scrollInfo.scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  appBar,
+                  body,
+                ],
+              ),
             ),
           ),
           buildTimelineSideBar(context),
-          SpSideBarTogglerButton.buildViewButton(viewContext: context, open: true),
           Positioned(
             left: 0,
             right: 0,
@@ -64,16 +75,10 @@ class _HomeScaffold extends StatelessWidget {
           return ValueListenableBuilder(
             valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
             builder: (context, sideBarInfo, child) {
-              bool showTimelineSideButton = viewModel.stories != null && !state.editing;
-
-              if (Platform.isMacOS) {
-                showTimelineSideButton = showTimelineSideButton && !(sideBarInfo?.showSideBar == true);
-              } else {
-                showTimelineSideButton = showTimelineSideButton && (sideBarInfo?.bigScreen == true);
-              }
+              bool bigScreen = sideBarInfo?.bigScreen == true;
 
               return Visibility(
-                visible: viewModel.stories != null && !state.editing && !showTimelineSideButton,
+                visible: viewModel.stories != null && !state.editing && !bigScreen,
                 child: _HomeTimelineSideBar(
                   viewModel: viewModel,
                   // when bottom navigation is visible, we should use context for screen padding.

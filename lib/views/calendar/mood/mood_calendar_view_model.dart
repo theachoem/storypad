@@ -30,6 +30,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     evenFeelingVisibleIndexNotifier = ValueNotifier<int>(0);
     evenPeriodicTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       Future.delayed(const Duration(seconds: 1)).then((_) {
+        if (disposed) return;
         evenFeelingVisibleIndexNotifier.value = evenFeelingVisibleIndexNotifier.value + 1;
       });
     });

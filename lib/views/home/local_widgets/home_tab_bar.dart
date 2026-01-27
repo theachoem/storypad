@@ -9,39 +9,50 @@ class _HomeTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> actionButtons = constructActionButtons(context);
-    return Stack(
+    return Row(
       children: [
-        TabBar(
-          indicatorSize: TabBarIndicatorSize.tab,
-          enableFeedback: true,
-          tabAlignment: TabAlignment.start,
-          isScrollable: true,
-          indicatorAnimation: TabIndicatorAnimation.linear,
-          labelColor: Theme.of(context).colorScheme.onPrimary,
-          unselectedLabelColor: Theme.of(context).colorScheme.primary,
-          padding: EdgeInsets.only(
-            left: AppTheme.getDirectionValue(context, 14.0 + actionButtons.length * 44.0, 14.0)!,
-            right: AppTheme.getDirectionValue(context, 14.0, 14.0 + actionButtons.length * 44.0)!,
-            top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
-            bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(
+              left: 14.0,
+              right: 14.0,
+              top: viewModel.scrollInfo.appBar(context).indicatorPaddingTop,
+              bottom: viewModel.scrollInfo.appBar(context).indicatorPaddingBottom,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: TabBar(
+                indicatorSize: TabBarIndicatorSize.tab,
+                enableFeedback: true,
+                tabAlignment: TabAlignment.start,
+                isScrollable: true,
+                indicatorAnimation: TabIndicatorAnimation.linear,
+                labelColor: Theme.of(context).colorScheme.onPrimary,
+                unselectedLabelColor: Theme.of(context).colorScheme.primary,
+                padding: EdgeInsets.zero,
+                indicator: _RoundedIndicator.simple(
+                  height: viewModel.scrollInfo.appBar(context).indicatorHeight - 1.5,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onTap: (index) {
+                  viewModel.scrollInfo.moveToMonthIndex(
+                    targetMonthIndex: index,
+                    context: context,
+                  );
+                },
+                dividerHeight: 0.0,
+                splashBorderRadius: BorderRadius.circular(viewModel.scrollInfo.appBar(context).indicatorHeight / 2),
+                tabs: viewModel.months.map((month) {
+                  return buildMonthTab(context, month);
+                }).toList(),
+              ),
+            ),
           ),
-          indicator: _RoundedIndicator.simple(
-            height: viewModel.scrollInfo.appBar(context).indicatorHeight,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          onTap: (index) {
-            viewModel.scrollInfo.moveToMonthIndex(
-              targetMonthIndex: index,
-              context: context,
-            );
-          },
-          splashBorderRadius: BorderRadius.circular(viewModel.scrollInfo.appBar(context).indicatorHeight / 2),
-          tabs: viewModel.months.map((month) {
-            return buildMonthTab(context, month);
-          }).toList(),
         ),
-        buildIconsButtonsWrapper(context, actionButtons),
+        SizedBox(
+          height: viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight(),
+          child: Center(child: buildOpenEndDrawerButton(context)),
+        ),
       ],
     );
   }
@@ -54,69 +65,11 @@ class _HomeTabBar extends StatelessWidget {
     );
   }
 
-  List<Widget> constructActionButtons(BuildContext context) {
-    return [
-      buildOpenEndDrawerButton(context),
-    ];
-  }
-
-  Widget buildIconsButtonsWrapper(BuildContext context, List<Widget> actionButtons) {
-    return Positioned(
-      top: 0,
-      right: AppTheme.getDirectionValue(context, null, 0),
-      left: AppTheme.getDirectionValue(context, 0, null),
-      bottom: 1,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: AppTheme.getDirectionValue(context, 4.0, 16.0)!,
-          right: AppTheme.getDirectionValue(context, 16.0, 4.0)!,
-        ),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft)!,
-            end: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight)!,
-            stops: [0.0, 0.3],
-            colors: [
-              viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
-              viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
-            ],
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: actionButtons,
-        ),
-      ),
-    );
-  }
-
   Widget buildOpenEndDrawerButton(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
-      builder: (context, sideBarInfo, child) {
-        bool showEndDrawerButton;
-
-        if (Platform.isMacOS) {
-          showEndDrawerButton = (sideBarInfo?.showSideBar == true);
-        } else {
-          showEndDrawerButton = true;
-        }
-
-        return Visibility(
-          visible: showEndDrawerButton,
-          child: SpFadeIn(
-            // Add delay for a nice txransition when resizing screen which 1 of side bar button / end drawer button
-            // will appear with transition. see [SpDesktopSideBarTogglerButton]
-            delay: Durations.long2,
-            child: IconButton(
-              onPressed: () => viewModel.openSettings(context),
-              tooltip: tr("button.more_options"),
-              icon: const Icon(SpIcons.moreVert),
-            ),
-          ),
-        );
-      },
+    return IconButton(
+      onPressed: () => viewModel.openSettings(context),
+      tooltip: tr("button.more_options"),
+      icon: const Icon(SpIcons.moreVert),
     );
   }
 }

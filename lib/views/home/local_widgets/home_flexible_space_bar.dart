@@ -11,22 +11,35 @@ class _HomeFlexibleSpaceBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, appBarConstraints) {
-        return FlexibleSpaceBar(
-          collapseMode: CollapseMode.pin,
-          background: Container(
-            alignment: Alignment.bottomCenter,
-            margin: EdgeInsets.only(
-              left: 16.0 + MediaQuery.of(context).padding.left,
-              right: 16.0 + MediaQuery.of(context).padding.right,
-              bottom:
-                  viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
-                  viewModel.scrollInfo.appBar(context).contentsMarginBottom,
-            ),
-            child: Stack(
-              children: [
-                buildGreetingMessage(context, appBarConstraints),
-                buildYear(context, appBarConstraints),
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: .topCenter,
+              end: .bottomCenter,
+              colors: [
+                viewModel.scrollInfo.appBar(context).getBackgroundColor(context),
+                viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.85),
+                viewModel.scrollInfo.appBar(context).getBackgroundColor(context).withValues(alpha: 0.0),
               ],
+            ),
+          ),
+          child: FlexibleSpaceBar(
+            collapseMode: CollapseMode.pin,
+            background: Container(
+              alignment: Alignment.bottomCenter,
+              margin: EdgeInsets.only(
+                left: 16.0 + MediaQuery.of(context).padding.left,
+                right: 16.0 + MediaQuery.of(context).padding.right,
+                bottom:
+                    viewModel.scrollInfo.appBar(context).getTabBarPreferredHeight() +
+                    viewModel.scrollInfo.appBar(context).contentsMarginBottom,
+              ),
+              child: Stack(
+                children: [
+                  buildGreetingMessage(context, appBarConstraints),
+                  buildYear(context, appBarConstraints),
+                ],
+              ),
             ),
           ),
         );

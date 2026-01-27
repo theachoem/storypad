@@ -19,7 +19,7 @@ class _HomeContent extends StatelessWidget {
       length: viewModel.months.length,
       child: _HomeScaffold(
         viewModel: viewModel,
-        endDrawer: buildEndDrawer(),
+        endDrawer: buildEndDrawer(context),
         appBar: _HomeAppBar(viewModel: viewModel),
         body: buildBody(context),
         bottomNavigationBar: buildBottomNavigationBar(context),
@@ -28,14 +28,34 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
-  Widget buildEndDrawer() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        bool bigScreen = constraints.maxWidth >= 450;
-        return Drawer(
+  Widget buildEndDrawer(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: context.read<RootProvider>().sideBarInfoNotifier,
+      builder: (context, sideBarInfo, child) {
+        bool bigScreen = sideBarInfo?.bigScreen ?? false;
+
+        Widget drawer = Drawer(
           width: bigScreen ? 400 : null,
           child: bigScreen ? const SpNestedNavigation(initialScreen: HomeEndDrawer()) : const HomeEndDrawer(),
         );
+
+        if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              padding: EdgeInsets.only(
+                // On desktop platforms, left/right safe areas are typically handled in the root view to center content.
+                // For the drawer, we intentionally remove left/right padding to allow it to use the full width.
+                left: 0,
+                right: 0,
+                top: MediaQuery.of(context).padding.top,
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+            ),
+            child: drawer,
+          );
+        } else {
+          return drawer;
+        }
       },
     );
   }

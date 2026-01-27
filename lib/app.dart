@@ -10,7 +10,6 @@ import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/views/root/root_view.dart';
-import 'package:storypad/widgets/sp_desktop_side_bar_toggler_button.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -35,17 +34,21 @@ class App extends StatelessWidget {
             FontSizeOption.extraLarge => const TextScaler.linear(1.3),
           };
 
-          double mainMenuPadding = 0;
+          double topMainMenuPadding = 0;
 
           // Add padding for macOS main menu bar.
-          if (Platform.isMacOS) mainMenuPadding = 24;
+          if (Platform.isMacOS) topMainMenuPadding = 24;
 
-          // Add padding for ipadOS windowed mode main menu bar.
-          if (Platform.isIOS && WindowedDetectorService.isWindowed(context)) mainMenuPadding = 36;
+          // Add extra top padding for iPadOS windowed mode main menu bar.
+          // In big window mode, the sidebar is present, so top menu padding has minimal UI impact.
+          // For big windows, apply only a smaller top padding.
+          if (Platform.isIOS && WindowedDetectorService.isWindowed(context)) {
+            topMainMenuPadding = WindowedDetectorService.isBigWindow(context) ? 8 : 36;
+          }
 
           return MediaQuery(
             data: mediaQuery.copyWith(
-              padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + mainMenuPadding),
+              padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + topMainMenuPadding),
               textScaler: textScaler,
               alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24,
             ),
@@ -64,15 +67,6 @@ class App extends StatelessWidget {
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,
-              builder: (context, child) {
-                if (!Platform.isMacOS) return child!;
-                return Stack(
-                  children: [
-                    child!,
-                    const SpDesktopSideBarTogglerButton(),
-                  ],
-                );
-              },
             ),
           );
         },

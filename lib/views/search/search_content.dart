@@ -12,15 +12,7 @@ class _SearchContent extends StatelessWidget {
         return PopScope(
           canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: Stack(
-            children: [
-              buildScaffold(context, state),
-              SpSideBarTogglerButton.buildViewButton(
-                viewContext: context,
-                open: true,
-              ),
-            ],
-          ),
+          child: buildScaffold(context, state),
         );
       },
     );
@@ -70,7 +62,7 @@ class _SearchContent extends StatelessWidget {
         ],
         bottom: visibleTags.isNotEmpty == true
             ? PreferredSize(
-                preferredSize: const Size.fromHeight(34.0 + 12.0 + 1.0),
+                preferredSize: const Size.fromHeight(34.0 + 12.0),
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
@@ -83,7 +75,6 @@ class _SearchContent extends StatelessWidget {
                       onToggle: (TagDbModel tag) => viewModel.toggleTag(tag, context),
                     ),
                     const SizedBox(height: 12.0),
-                    const Divider(height: 1),
                   ],
                 ),
               )

@@ -16,6 +16,7 @@ class _StoryTileAssets extends StatelessWidget {
       child: SizedBox(
         height: 56,
         child: ListView.separated(
+          padding: EdgeInsets.zero,
           scrollDirection: Axis.horizontal,
           itemCount: min(4, assetPaths.length),
           separatorBuilder: (context, index) => const SizedBox(width: 8.0),

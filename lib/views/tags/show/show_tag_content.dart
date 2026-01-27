@@ -12,15 +12,7 @@ class _ShowTagContent extends StatelessWidget {
         return PopScope(
           canPop: !state.editing,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: Stack(
-            children: [
-              buildScaffold(context, state),
-              SpSideBarTogglerButton.buildViewButton(
-                viewContext: context,
-                open: true,
-              ),
-            ],
-          ),
+          child: buildScaffold(context, state),
         );
       },
     );

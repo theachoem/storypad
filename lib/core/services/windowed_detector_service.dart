@@ -36,4 +36,13 @@ class WindowedDetectorService {
 
     return isWidthWindowed || isHeightWindowed;
   }
+
+  static bool isBigWindow(BuildContext context) {
+    final size = getAppWindowSize(context);
+    return isBigWindowFor(size.width, size.height);
+  }
+
+  static bool isBigWindowFor(double width, double height) {
+    return width >= 720.0 && height >= 500.0;
+  }
 }
