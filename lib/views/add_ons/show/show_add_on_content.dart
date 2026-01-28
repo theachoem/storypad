@@ -20,9 +20,24 @@ class _ShowAddOnContent extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          buildContents(context, iapProvider),
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).padding.left,
+              right: MediaQuery.of(context).padding.right,
+            ),
+            child: buildContents(context, iapProvider),
+          ),
           const SizedBox(height: 16.0),
-          _DemoImages(demoImageUrls: viewModel.demoImageUrls, context: context),
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).padding.left,
+              right: MediaQuery.of(context).padding.right,
+            ),
+            child: _DemoImages(
+              demoImageUrls: viewModel.demoImageUrls,
+              context: context,
+            ),
+          ),
           const SizedBox(height: 24.0),
           buildFAQTitle(context),
           const SizedBox(height: 8.0),
@@ -52,7 +67,11 @@ class _ShowAddOnContent extends StatelessWidget {
           style: TextTheme.of(context).titleSmall,
         ),
         minTileHeight: 4.0,
-        childrenPadding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+        childrenPadding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+          bottom: 16.0,
+        ),
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
@@ -66,7 +85,11 @@ class _ShowAddOnContent extends StatelessWidget {
           style: TextTheme.of(context).titleSmall,
         ),
         minTileHeight: 4.0,
-        childrenPadding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+        childrenPadding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+          bottom: 16.0,
+        ),
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
@@ -80,7 +103,11 @@ class _ShowAddOnContent extends StatelessWidget {
           style: TextTheme.of(context).titleSmall,
         ),
         minTileHeight: 4.0,
-        childrenPadding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+        childrenPadding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+          bottom: 16.0,
+        ),
         expandedAlignment: Alignment.centerLeft,
         children: [
           const Text(
@@ -134,7 +161,10 @@ class _ShowAddOnContent extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      padding: EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left + 16.0,
+        right: MediaQuery.of(context).padding.right + 16.0,
+      ),
       child: child,
     );
   }

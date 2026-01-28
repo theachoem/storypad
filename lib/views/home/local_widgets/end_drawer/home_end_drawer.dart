@@ -50,8 +50,7 @@ class HomeEndDrawer extends StatelessWidget {
       }
     }
 
-    final sideItems = SideItems.getMainItems(fromEndDrawer: true);
-    final moreOptions = SideItems.getMoreOptions(fromEndDrawer: true);
+    final sideItems = SideItems.getEndDrawerItems(viewModel);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -72,14 +71,19 @@ class HomeEndDrawer extends StatelessWidget {
           top: MediaQuery.of(context).padding.top,
           bottom: MediaQuery.of(context).padding.bottom + 16.0,
         ),
-        children: [
-          ...sideItems.map((item) {
-            return item.build(context, fromEndDrawer: true);
-          }),
-          ...moreOptions.map((item) {
-            return item.build(context, fromEndDrawer: true);
-          }),
-        ],
+        children: sideItems.map((item) {
+          if (item is CustomSideItem) {
+            return item.builder(context);
+          } else if (item is ListTileSideItem) {
+            return ListTile(
+              leading: item.icon,
+              title: Text(item.title),
+              subtitle: item.subtitle != null ? Text(item.subtitle!) : null,
+              onTap: () => item.onTap(context),
+            );
+          }
+          return const SizedBox.shrink();
+        }).toList(),
       ),
     );
   }

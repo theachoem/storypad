@@ -11,7 +11,10 @@ import 'package:storypad/widgets/sp_icons.dart';
 class SurveyBanner extends StatefulWidget {
   const SurveyBanner({
     super.key,
+    required this.homeViewModel,
   });
+
+  final HomeViewModel homeViewModel;
 
   @override
   State<SurveyBanner> createState() => _SurveyBannerState();
@@ -40,7 +43,7 @@ class _SurveyBannerState extends State<SurveyBanner> {
       });
     } else {
       setState(() {
-        show = (HomeViewModel.appInstance.stories?.items.length ?? 0) > 10;
+        show = (widget.homeViewModel.stories?.items.length ?? 0) > 10;
       });
     }
   }

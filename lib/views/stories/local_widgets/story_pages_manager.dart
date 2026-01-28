@@ -37,6 +37,7 @@ class StoryPagesManager extends StatelessWidget {
         AlignedGridView.extent(
           padding: const EdgeInsetsDirectional.all(16.0).add(
             EdgeInsets.only(
+              top: mediaQueryPadding.top,
               left: mediaQueryPadding.left,
               right: mediaQueryPadding.right,
               bottom: mediaQueryPadding.bottom,

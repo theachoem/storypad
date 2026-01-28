@@ -33,7 +33,6 @@ import 'package:storypad/widgets/sp_loop_animation_builder.dart';
 import 'package:storypad/widgets/sp_measure_size.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
-import 'package:storypad/widgets/sp_tablet_side_bar_toggler_button.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/sp_throwback_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
@@ -77,13 +76,13 @@ class HomeView extends StatelessWidget {
   static Future<void> reload({
     required String debugSource,
   }) async {
-    return HomeViewModel.appInstance.reload(debugSource: debugSource);
+    return _homeContext?.read<HomeViewModel>().reload(debugSource: debugSource);
   }
 
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(
-      create: (context) => HomeViewModel.appInstance,
+      create: (context) => HomeViewModel(),
       builder: (context, viewModel, child) {
         return Builder(
           builder: (context) {

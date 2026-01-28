@@ -60,7 +60,7 @@ class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> 
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    Widget child = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16.0).add(
         EdgeInsets.only(
@@ -118,6 +118,53 @@ class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> 
           }),
         ),
       ),
+    );
+
+    // when wrapWidth is not null, it is not a single row scrollable, so no need for fade effect.
+    if (widget.wrapWidth != null) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        child,
+        Positioned(
+          left: 0,
+          top: 0,
+          bottom: 0,
+          child: Container(
+            width: 16.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Theme.of(context).scaffoldBackgroundColor,
+                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          bottom: 0,
+          child: Container(
+            width: 16.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  Theme.of(context).scaffoldBackgroundColor,
+                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

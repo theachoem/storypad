@@ -18,6 +18,7 @@ class _EditStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
@@ -27,7 +28,21 @@ class _EditStoryContent extends StatelessWidget {
               initialTags: viewModel.story?.validTags ?? [],
             )
           : null,
-      body: buildBody(context, pages),
+      onEndDrawerChanged: (isOpened) {
+        if (isOpened) {
+          context.read<RootProvider>().setTemporaryHidden(true);
+        } else {
+          context.read<RootProvider>().setTemporaryHidden(false);
+        }
+      },
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          padding: MediaQuery.paddingOf(context).copyWith(top: MediaQuery.paddingOf(context).top + kToolbarHeight),
+        ),
+        child: Builder(
+          builder: (context) => buildBody(context, pages),
+        ),
+      ),
       bottomNavigationBar: viewModel.story == null
           ? null
           : SpPagesToolbar(
@@ -63,11 +78,7 @@ class _EditStoryContent extends StatelessWidget {
       viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: (page) => StoryHeader.fromEditStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: 16.0,
-      ),
+      padding: MediaQuery.paddingOf(context),
       pages: pages,
       preferences: viewModel.story!.preferences,
       storyContent: viewModel.draftContent!,

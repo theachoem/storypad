@@ -53,12 +53,12 @@ class _StoryTileFavoriteButton extends StatelessWidget {
                 duration: Durations.medium1,
                 showFirst: starred,
                 firstChild: Icon(
-                  SpIcons.favoriteFilled,
+                  SpIcons.bookmarkFilled,
                   color: ColorScheme.of(context).error,
                   applyTextScaling: true,
                 ),
                 secondChild: Icon(
-                  SpIcons.favorite,
+                  SpIcons.bookmark,
                   color: Theme.of(context).dividerColor,
                   applyTextScaling: true,
                 ),

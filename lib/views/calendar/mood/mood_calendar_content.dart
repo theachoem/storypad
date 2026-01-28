@@ -14,7 +14,7 @@ class _CalendarStoriesContent extends StatelessWidget {
         toolbarHeight: viewModel.params.hasMultipleSegments ? 12.0 : 2.0,
         bottom: viewModel.tags?.isNotEmpty == true
             ? PreferredSize(
-                preferredSize: const Size.fromHeight(34.0 + 12.0 + 1.0),
+                preferredSize: const Size.fromHeight(34.0 + 12.0),
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
@@ -27,7 +27,6 @@ class _CalendarStoriesContent extends StatelessWidget {
                       onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
                     ),
                     const SizedBox(height: 12.0),
-                    const Divider(height: 1),
                   ],
                 ),
               )
@@ -58,13 +57,33 @@ class _CalendarStoriesContent extends StatelessWidget {
   }
 
   Widget buildBigScreenView(BuildContext context) {
-    return Row(
-      crossAxisAlignment: .start,
-      children: [
-        Flexible(child: buildCalendar(showBottomBorder: false, scrollable: true)),
-        const VerticalDivider(),
-        Flexible(child: buildStoryList()),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+        left: MediaQuery.paddingOf(context).left + 16.0,
+        right: MediaQuery.paddingOf(context).right,
+      ),
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(padding: MediaQuery.paddingOf(context).copyWith(left: 0, right: 0)),
+        child: Row(
+          crossAxisAlignment: .start,
+          spacing: 0,
+          children: [
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+                child: buildCalendar(showBottomBorder: false, scrollable: true),
+              ),
+            ),
+            Flexible(child: buildStoryList()),
+          ],
+        ),
+      ),
     );
   }
 

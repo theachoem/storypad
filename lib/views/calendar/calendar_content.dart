@@ -7,17 +7,9 @@ class _CalendarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          appBar: buildAppBar(context),
-          body: buildBody(),
-        ),
-        SpSideBarTogglerButton.buildViewButton(
-          viewContext: context,
-          open: true,
-        ),
-      ],
+    return Scaffold(
+      appBar: buildAppBar(context),
+      body: buildBody(),
     );
   }
 
