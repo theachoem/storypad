@@ -84,6 +84,15 @@ class EditStoryRoute extends BaseRoute {
   }
 
   @override
+  String? get routeName {
+    if (id == null) {
+      return 'stories/new';
+    } else {
+      return 'stories/$id/edit';
+    }
+  }
+
+  @override
   Widget buildPage(BuildContext context) => EditStoryView(params: this);
 }
 

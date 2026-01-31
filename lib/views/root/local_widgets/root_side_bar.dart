@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/providers/root_provider.dart';
+import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/widgets/sp_floating_music_note.dart';
 import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
 import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -18,13 +21,15 @@ class RootSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool bigScreen = WindowedDetectorService.isBigWindow(context);
+
     return SpTwoValueListenableBuilder(
       valueListenable1: rootProvider.sideBarInfoNotifier,
       valueListenable2: rootProvider.selectedRootRouteNameNotifier,
       builder: (context, sideBarInfo, selectedRouteName, child) {
-        bool visible = sideBarInfo?.bigScreen == true;
+        bool visible = bigScreen == true;
 
-        if (sideBarInfo?.temporaryHidden == true) {
+        if (sideBarInfo.temporaryHidden == true) {
           visible = false;
         }
 
@@ -81,7 +86,7 @@ class _SideBarItem extends StatelessWidget {
           : ColorScheme.of(context).onSurface.withValues(alpha: 0.7);
     }
 
-    return IconButton(
+    Widget child = IconButton(
       style: IconButton.styleFrom(
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
@@ -92,5 +97,11 @@ class _SideBarItem extends StatelessWidget {
       icon: Icon(item.iconData),
       selectedIcon: Icon(item.selectedIconData),
     );
+
+    if (item.route is RelaxSoundsRoute) {
+      return SpFloatingMusicNote.wrapIfPlaying(child: child);
+    }
+
+    return child;
   }
 }

@@ -12,11 +12,8 @@ class _PeriodCalendarContent extends StatelessWidget {
         automaticallyImplyLeading: false,
         automaticallyImplyActions: false,
         toolbarHeight: 12,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(height: 1),
-        ),
       ),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: Visibility(
         visible: viewModel.selectedEvent != null,
         child: SpFadeIn.fromBottom(
@@ -42,13 +39,32 @@ class _PeriodCalendarContent extends StatelessWidget {
   }
 
   Widget buildBigScreenView(BuildContext context) {
-    return Row(
-      crossAxisAlignment: .start,
-      children: [
-        Flexible(child: buildCalendar(showBottomBorder: false, scrollable: true)),
-        const VerticalDivider(),
-        Flexible(child: buildStoryList(context)),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+        left: MediaQuery.paddingOf(context).left + 16.0,
+        right: MediaQuery.paddingOf(context).right,
+      ),
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(padding: MediaQuery.paddingOf(context).copyWith(left: 0, right: 0)),
+        child: Row(
+          crossAxisAlignment: .start,
+          children: [
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+                child: buildCalendar(showBottomBorder: false, scrollable: true),
+              ),
+            ),
+            Flexible(child: buildStoryList(context)),
+          ],
+        ),
+      ),
     );
   }
 

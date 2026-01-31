@@ -108,6 +108,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
             spacing: 4.0,
             children: [
               CupertinoTextField(
+                autofocus: index == 0,
                 maxLines: widget.fields[index].maxLines,
                 textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
                 controller: controllers[index],
@@ -130,6 +131,7 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
       );
     } else {
       textField = TextFormField(
+        autofocus: index == 0,
         textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
         controller: controllers[index],
         keyboardType: widget.fields[index].keyboardType,

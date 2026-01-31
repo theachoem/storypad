@@ -9,6 +9,7 @@ import 'package:storypad/core/services/gallery_template_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/templates/gallery/show/show_template_gallery_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
+import 'package:storypad/widgets/sp_fade_in_fade_out_gradient.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -73,6 +74,8 @@ class _GalleryTabState extends State<GalleryTab> {
         padding: EdgeInsets.only(
           top: 16.0,
           bottom: 16.0 + MediaQuery.of(context).padding.bottom,
+          left: MediaQuery.of(context).padding.left,
+          right: MediaQuery.of(context).padding.right,
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 24),
         itemBuilder: (BuildContext context, int index) {
@@ -83,70 +86,81 @@ class _GalleryTabState extends State<GalleryTab> {
           GalleryTemplateCategoryObject category = templates!.keys.elementAt(index);
           List<GalleryTemplateObject> templatesInCategory = templates!.values.elementAt(index);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text.rich(
-                  TextSpan(
-                    text: category.name,
-                    style: TextTheme.of(context).titleMedium,
-                    children: [
-                      if (context.locale.languageCode != 'en')
-                        WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 6.0),
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: ColorScheme.of(context).readOnly.surface2,
-                            ),
-                            child: Text(
-                              'EN',
-                              style: TextTheme.of(context).labelMedium,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  category.description,
-                  style: TextTheme.of(context).bodyMedium,
-                ),
-              ),
-              const SizedBox(height: 12.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (int i = 0; i < templatesInCategory.length; i++)
-                        Container(
-                          width: 170,
-                          margin: EdgeInsets.only(
-                            right: i < templatesInCategory.length - 1 ? 12.0 : 0.0,
-                          ),
-                          child: _GalleryTemplateCard(
-                            template: templatesInCategory[i],
-                            onTap: () => openTemplate(context, templatesInCategory[i]),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          return SpFadeInFadeOutGradient(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: buildTemplatesSection(category, context, templatesInCategory),
           );
         },
       ),
+    );
+  }
+
+  Widget buildTemplatesSection(
+    GalleryTemplateCategoryObject category,
+    BuildContext context,
+    List<GalleryTemplateObject> templatesInCategory,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text.rich(
+            TextSpan(
+              text: category.name,
+              style: TextTheme.of(context).titleMedium,
+              children: [
+                if (context.locale.languageCode != 'en')
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 6.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: ColorScheme.of(context).readOnly.surface2,
+                      ),
+                      child: Text(
+                        'EN',
+                        style: TextTheme.of(context).labelMedium,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            category.description,
+            style: TextTheme.of(context).bodyMedium,
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < templatesInCategory.length; i++)
+                  Container(
+                    width: 170,
+                    margin: EdgeInsets.only(
+                      right: i < templatesInCategory.length - 1 ? 12.0 : 0.0,
+                    ),
+                    child: _GalleryTemplateCard(
+                      template: templatesInCategory[i],
+                      onTap: () => openTemplate(context, templatesInCategory[i]),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

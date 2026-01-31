@@ -122,9 +122,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
               widget.onThemeChanged(preferences);
             },
           ),
-          const SizedBox(height: 4.0),
-          const Divider(height: 1),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 12.0),
           SpBackgroundPicker(
             backgroundColor: ColorScheme.of(context).surfaceContainerLow,
             colorSeedValue: preferences.colorSeedValue,

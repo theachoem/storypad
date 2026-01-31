@@ -8,6 +8,7 @@ import 'package:storypad/views/templates/edit/edit_template_view.dart';
 import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
 import 'package:storypad/views/templates/show/show_template_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
+import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_markdown_body.dart';
 
@@ -106,6 +107,7 @@ class _TemplatesTabState extends State<TemplatesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: buildBody(context),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: params.viewingArchives ? null : buildFAB(context),
     );
   }

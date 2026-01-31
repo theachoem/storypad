@@ -31,6 +31,11 @@ class ShowStoryRoute extends BaseRoute {
   });
 
   @override
+  String get routeName {
+    return 'stories/$id/show';
+  }
+
+  @override
   Widget buildPage(BuildContext context) => ShowStoryView(params: this);
 }
 

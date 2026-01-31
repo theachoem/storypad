@@ -30,11 +30,9 @@ class _CalendarStoriesContent extends StatelessWidget {
                   ],
                 ),
               )
-            : const PreferredSize(
-                preferredSize: Size.fromHeight(1.0),
-                child: Divider(height: 1),
-              ),
+            : null,
       ),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: SpFadeIn.fromBottom(
         delay: Durations.medium1,
         child: FloatingActionButton(

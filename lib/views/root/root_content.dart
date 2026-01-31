@@ -29,28 +29,21 @@ class _RootContent extends StatelessWidget {
               if (navigator?.canPop() ?? false) navigator?.maybePop(result);
             }
           },
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                rootProvider.setSideBarInfoWithConstraints(constraints);
-              });
-
-              return Scaffold(
-                extendBody: true,
-                extendBodyBehindAppBar: true,
-                body: Stack(
-                  children: [
-                    buildPagesNavigator(context),
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
-                    ),
-                  ],
+          child: Scaffold(
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            body: Stack(
+              children: [
+                // Use inner of scaffold context instead of root context.
+                Builder(builder: (context) => buildPagesNavigator(context)),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
       ),
@@ -58,32 +51,30 @@ class _RootContent extends StatelessWidget {
   }
 
   Widget buildPagesNavigator(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: rootProvider.sideBarInfoNotifier,
-      builder: (context, sideBarInfo, child) {
-        double left;
-        double right;
+    double left;
+    double right;
 
-        if (sideBarInfo?.bigScreen ?? false) {
-          left = 88;
-          right = MediaQuery.of(context).padding.right + 88;
-        } else {
-          left = MediaQuery.of(context).padding.left;
-          right = MediaQuery.of(context).padding.right;
-        }
+    bool bigScreen = WindowedDetectorService.isBigWindow(context);
 
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            padding: EdgeInsets.only(
-              top: MediaQuery.paddingOf(context).top,
-              left: left,
-              bottom: MediaQuery.paddingOf(context).bottom,
-              right: right,
-            ),
-          ),
-          child: child!,
-        );
-      },
+    final screenPadding = MediaQuery.paddingOf(context);
+
+    if (bigScreen) {
+      left = 88;
+      right = screenPadding.right + 88;
+    } else {
+      left = screenPadding.left;
+      right = screenPadding.right;
+    }
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        padding: EdgeInsets.only(
+          top: screenPadding.top,
+          left: left,
+          bottom: screenPadding.bottom,
+          right: right,
+        ),
+      ),
       child: HeroControllerScope(
         controller: rootProvider.heroController,
         child: Navigator(
