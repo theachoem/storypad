@@ -45,6 +45,22 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         spacing: Platform.isMacOS ? 8.0 : 0.0,
         children: [
           if (kIAPEnabled && !provider.allRewarded) const _AddOnButton(),
+          if (kIAPEnabled)
+            SpFadeIn.bound(
+              child: SpFloatingMusicNote.wrapIfPlaying(
+                child: IconButton(
+                  tooltip: tr('add_ons.relax_sounds.title'),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    shape: CircleBorder(
+                      side: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  icon: const Icon(SpIcons.musicNote),
+                  onPressed: () => const RelaxSoundsRoute().push(context),
+                ),
+              ),
+            ),
           SpFadeIn.bound(
             child: IconButton(
               tooltip: tr('page.search.title'),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:storypad/widgets/calendar/sp_calendar.dart';
 import 'package:storypad/widgets/calendar/sp_calendar_period_date_cell.dart';
+import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';

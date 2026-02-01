@@ -20,7 +20,8 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 class SpFloatingRelaxSoundsTile extends StatelessWidget {
   const SpFloatingRelaxSoundsTile({
     super.key,
-    this.fromHome = false,
+
+    @Deprecated('home no longer show this tile') this.fromHome = false,
     this.onSaveMix,
   });
 
@@ -31,13 +32,13 @@ class SpFloatingRelaxSoundsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<RelaxSoundsProvider>(context);
 
-    bool shouldShow =
+    bool notPlaying =
         provider.audioPlayersService.playingStates.keys.isEmpty ||
         provider.audioPlayersService.playingStates.values.every(
           (p) => p.processingState == ProcessingState.idle || p.processingState == ProcessingState.loading,
         );
 
-    if (shouldShow) return const SizedBox.shrink();
+    if (notPlaying) return const SizedBox.shrink();
     Color backgroundColor = ColorFromDayService(context: context).get(provider.selectedRelaxSounds.last.dayColor)!;
 
     return SpFadeIn.fromBottom(

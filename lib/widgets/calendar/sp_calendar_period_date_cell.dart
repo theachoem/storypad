@@ -43,11 +43,16 @@ class SpCalendarPeriodDateCell extends StatelessWidget {
           child: Stack(
             children: [
               if (isLastMonthPeriodDate)
-                Center(
-                  child: Icon(
-                    SpIcons.waterDrop,
-                    size: 44,
-                    color: lastMonthDropColor,
+                Positioned.fill(
+                  child: Container(
+                    alignment: .center,
+                    transformAlignment: .center,
+                    transform: Matrix4.identity()..spScale(1.2),
+                    child: Icon(
+                      SpIcons.waterDrop,
+                      size: 32,
+                      color: lastMonthDropColor,
+                    ),
                   ),
                 ),
               if (isPeriodDate)
@@ -56,20 +61,22 @@ class SpCalendarPeriodDateCell extends StatelessWidget {
                   transformAlignment: .center,
                   curve: Curves.bounceOut,
                   duration: Durations.medium3,
-                  transform: Matrix4.identity()..spScale(selected ? 1.2 : 1.0),
+                  transform: Matrix4.identity()..spScale(selected ? 1.3 : 1.2),
                   child: Icon(
                     SpIcons.waterDrop,
-                    size: 44,
+                    size: 32,
                     color: dropColor,
                   ),
                 ),
-
-              Center(
-                child: Text(
-                  DateFormatHelper.d(date, context.locale),
-                  style: TextStyle(
-                    fontWeight: isPeriodDate ? FontWeight.bold : FontWeight.normal,
-                    color: isDisplayMonth ? (isPeriodDate ? colorScheme.onError : null) : theme.disabledColor,
+              Positioned.fill(
+                child: Center(
+                  child: Text(
+                    DateFormatHelper.d(date, context.locale),
+                    textAlign: .center,
+                    style: TextStyle(
+                      fontWeight: isPeriodDate ? FontWeight.bold : FontWeight.normal,
+                      color: isDisplayMonth ? (isPeriodDate ? colorScheme.onError : null) : theme.disabledColor,
+                    ),
                   ),
                 ),
               ),

@@ -120,7 +120,13 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     if (stories?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
     if (stories!.items.isEmpty && !hasThrowback) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0).add(
+          EdgeInsets.only(
+            left: MediaQuery.of(context).padding.left,
+            right: MediaQuery.of(context).padding.right,
+            bottom: MediaQuery.of(context).padding.bottom,
+          ),
+        ),
         child: Text(
           tr('general.no_story_yet'),
           style: Theme.of(context).textTheme.bodyMedium,

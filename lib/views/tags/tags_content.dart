@@ -37,11 +37,7 @@ class _TagsContent extends StatelessWidget {
       return buildEmptyBody(context);
     }
 
-    return ScrollConfiguration(
-      // On desktop, there is auto added trailing icon.
-      // So it does not look nice with scrollbars at all.
-      // Hiding scrollbars to make it look better. Scrollbar is truely optional anyways for tags view.
-      behavior: const ScrollBehavior().copyWith(scrollbars: false),
+    return SpScrollConfiguration(
       child: ReorderableListView.builder(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         buildDefaultDragHandles: true,

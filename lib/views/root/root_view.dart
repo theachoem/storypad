@@ -1,3 +1,4 @@
+import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -21,11 +22,16 @@ class RootView extends StatelessWidget {
     super.key,
   });
 
+  static BuildContext? _rootContext;
+  static BuildContext? get rootContext => _rootContext?.mounted ?? false ? _rootContext : null;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<RootViewModel>(
       create: (context) => RootViewModel(),
       builder: (context, viewModel, child) {
+        _rootContext = context;
+
         final rootProvider = Provider.of<RootProvider>(context);
         return _RootContent(viewModel, rootProvider);
       },

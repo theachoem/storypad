@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:storypad/widgets/sp_fade_in_fade_out_gradient.dart';
 
 class SpScrollableChoiceChips<T> extends StatefulWidget {
   const SpScrollableChoiceChips({
@@ -125,46 +126,9 @@ class SpScrollableChoiceChipsState<T> extends State<SpScrollableChoiceChips<T>> 
       return child;
     }
 
-    return Stack(
-      children: [
-        child,
-        Positioned(
-          left: 0,
-          top: 0,
-          bottom: 0,
-          child: Container(
-            width: 16.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Theme.of(context).scaffoldBackgroundColor,
-                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          bottom: 0,
-          child: Container(
-            width: 16.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-                colors: [
-                  Theme.of(context).scaffoldBackgroundColor,
-                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+    return SpFadeInFadeOutGradient(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: child,
     );
   }
 }

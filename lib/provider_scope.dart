@@ -24,7 +24,7 @@ class ProviderScope extends StatelessWidget {
     return MultiProvider(
       providers: [
         ListenableProvider<RootProvider>(
-          create: (context) => RootProvider(context),
+          create: (context) => RootProvider(),
         ),
         ListenableProvider<BackupProvider>(
           create: (context) => BackupProvider(),

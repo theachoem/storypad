@@ -83,7 +83,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           widget.viewModel.goToNewPage(context);
         },
       ),
-      if (kStoryPad)
+      if (kStoryPad && kSupportCamera)
         IconButton.outlined(
           tooltip: tr("button.take_photo"),
           visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
@@ -120,6 +120,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             );
           },
         ),
+        floatingActionButtonLocation: SpFabLocation.endFloat(context),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 16.0,

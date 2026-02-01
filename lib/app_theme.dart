@@ -115,8 +115,6 @@ class AppTheme extends StatelessWidget {
     scaffoldBackgroundColor ??= colorScheme.surface;
 
     bool darkMode = colorScheme.brightness == Brightness.dark;
-    bool lightMode = !darkMode;
-
     ThemeData baseTheme = darkMode ? ThemeData.dark() : ThemeData.light();
 
     TextStyle calculateTextStyle(TextStyle textStyle, FontWeight defaultFontWeight) {
@@ -147,7 +145,7 @@ class AppTheme extends StatelessWidget {
       ),
       appBarTheme: AppBarTheme(
         titleSpacing: NavigationToolbar.kMiddleSpacing,
-        backgroundColor: lightMode ? colorScheme.surface : colorScheme.readOnly.surface1,
+        backgroundColor: colorScheme.surface,
         scrolledUnderElevation: 0.0,
       ),
       tabBarTheme: const TabBarThemeData(
