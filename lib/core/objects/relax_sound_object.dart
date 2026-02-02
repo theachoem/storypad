@@ -309,14 +309,6 @@ class RelaxSoundObject {
         soundUrlPath: '/relax_sounds/fire/campfire.wav',
         dayColor: 1,
       ),
-      RelaxSoundObject(
-        artist: '@eclectic-kitty',
-        translationKey: 'sounds.sausage_frying',
-        background: .cups_and_pot_near_fire,
-        svgIconUrlPath: '/relax_sounds/fire/sausage_frying.svg',
-        soundUrlPath: '/relax_sounds/fire/sausage_frying.wav',
-        dayColor: 7,
-      ),
     ];
   }
 
