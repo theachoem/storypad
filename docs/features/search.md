@@ -61,7 +61,6 @@ StoryPad's search system enables users to find stories quickly through text sear
 StoryPad uses a **pre-computed search metadata** approach for efficient text search:
 
 1. **Index Generation** (`searchMetadata` field)
-
    - When a story is saved, all page titles and body text are extracted
    - Quill Delta format is converted to plain text using `QuillDeltaToPlainTextService`
    - Combined into a single searchable string

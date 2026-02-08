@@ -179,7 +179,6 @@ Deals are stored in Remote Config as JSON:
   - Calculates display prices
   - Checks if deal is active
 - **`lib/views/add_ons/add_ons_view_model.dart`** – UI integration
-
   - Fetches active deals
   - Displays discount badges ("30% OFF")
   - Shows both original and discounted prices

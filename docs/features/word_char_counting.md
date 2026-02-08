@@ -7,12 +7,10 @@ Accurate counting of words and characters in story pages, showing users only the
 ### Process Flow
 
 1. **Convert Quill Delta to Markdown** → `QuillDeltaToPlainTextService`
-
    - Transforms rich text Delta JSON into markdown-formatted plain text
    - Preserves text content while adding markdown syntax
 
 2. **Filter Structural Elements** → `MarkdownContentFilterService`
-
    - Removes markdown formatting and decorative elements
    - Extracts only actual written content
 
