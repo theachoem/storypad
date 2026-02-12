@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/extensions/font_weight_extension.dart';
 
 part 'theme_object.g.dart';
 
@@ -41,7 +42,7 @@ class ThemeObject {
   }) {
     return ThemeObject(
       fontFamily: fontFamily ?? this.fontFamily,
-      fontWeightIndex: fontWeight?.index ?? fontWeightIndex,
+      fontWeightIndex: fontWeight?.weightIndex ?? fontWeightIndex,
       themeMode: themeMode ?? this.themeMode,
       colorSeedValue: colorSeed?.toARGB32() ?? colorSeedValue,
     );
@@ -55,7 +56,7 @@ class ThemeObject {
     if (removeIfSame) newColorSeed = colorSeed.toARGB32() != colorSeedValue ? colorSeed : null;
     return ThemeObject(
       fontFamily: fontFamily,
-      fontWeightIndex: fontWeight.index,
+      fontWeightIndex: fontWeight.weightIndex,
       themeMode: themeMode,
       colorSeedValue: newColorSeed?.toARGB32(),
     );

@@ -85,7 +85,7 @@ class _TitleToolbar extends StatelessWidget {
           showDefaultLabel: false,
           defaultFontWeight: kTitleDefaultFontWeight,
           fontWeight: currentFontWeight,
-          onChanged: (fontWeight) => onThemeChanged(preferences.copyWith(titleFontWeightIndex: fontWeight.index)),
+          onChanged: (fontWeight) => onThemeChanged(preferences.copyWith(titleFontWeightIndex: fontWeight.weightIndex)),
         ).show(context: context);
       },
     );

@@ -14,7 +14,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:csv/csv.dart';
+import 'package:csv/csv.dart' show csv;
 import 'package:xml/xml.dart';
 
 const String editUrl =
@@ -25,7 +25,7 @@ const String publicCsvUrl =
 
 void main() async {
   final csvString = await _fetchCsvRaw();
-  final csvData = const CsvToListConverter().convert(csvString);
+  final csvData = csv.decode(csvString);
   final transposedCsvData = _transposeCsv(csvData);
 
   if (await Directory('translations').exists()) {

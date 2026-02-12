@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use_from_same_package
 
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/storages/base_object_storages/object_storage.dart';
 import 'package:storypad/core/storages/theme_storage.dart';
@@ -17,7 +18,7 @@ class DevicePreferencesStorage extends ObjectStorage<DevicePreferencesObject> {
       ThemeStorage().remove();
       DevicePreferencesObject newData = DevicePreferencesObject.initial().copyWith(
         fontFamily: legacyData.fontFamily,
-        fontWeightIndex: legacyData.fontWeight.index,
+        fontWeightIndex: legacyData.fontWeight.weightIndex,
         themeMode: legacyData.themeMode,
         // ignore: deprecated_member_use
         colorSeedValue: legacyData.colorSeed?.value,

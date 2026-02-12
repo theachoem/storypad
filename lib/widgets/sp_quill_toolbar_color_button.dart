@@ -2,13 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_quill/internal.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 
 import 'package:flutter_quill/src/toolbar/base_button/base_value_button.dart';
 import 'package:flutter_quill/src/common/utils/color.dart';
 import 'package:flutter_quill/src/editor_toolbar_shared/color.dart';
+
+// ignore: experimental_member_use
+import 'package:flutter_quill/internal.dart';
 
 typedef QuillToolbarColorBaseButton =
     QuillToolbarBaseButton<QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions>;

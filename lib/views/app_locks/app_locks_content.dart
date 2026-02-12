@@ -26,7 +26,7 @@ class _AppLocksContent extends StatelessWidget {
             value: provider.appLock.pin != null,
             onChanged: (value) => provider.togglePIN(context),
           ),
-          if (biometricTile != null) biometricTile,
+          ?biometricTile,
           const Divider(),
           ListTile(
             enabled: provider.appLock.pin != null,

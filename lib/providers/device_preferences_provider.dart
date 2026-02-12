@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
@@ -66,7 +67,7 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   }
 
   void setFontWeight(FontWeight fontWeight) {
-    _preferences = _preferences.copyWith(fontWeightIndex: fontWeight.index);
+    _preferences = _preferences.copyWith(fontWeightIndex: fontWeight.weightIndex);
     storage.writeObject(_preferences);
     notifyListeners();
 

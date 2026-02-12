@@ -14,7 +14,7 @@ import 'dart:convert';
 import 'dart:io';
 
 // ignore: depend_on_referenced_packages
-import 'package:csv/csv.dart';
+import 'package:csv/csv.dart' show csv;
 
 Future<void> main(List<String> arguments) async {
   if (arguments.isEmpty) {
@@ -44,7 +44,7 @@ Future<void> main(List<String> arguments) async {
 
     // Read and parse the CSV file
     final csvContent = await csvFile.readAsString();
-    final csvData = const CsvToListConverter().convert(csvContent);
+    final csvData = csv.decode(csvContent);
 
     if (csvData.isEmpty || csvData[0].isEmpty) {
       print('Error: Invalid CSV format');
@@ -112,8 +112,8 @@ Future<void> main(List<String> arguments) async {
     }
 
     // Write back to CSV
-    final csv = const ListToCsvConverter().convert(csvData);
-    await csvFile.writeAsString(csv);
+    final csvStr = csv.encode(csvData);
+    await csvFile.writeAsString(csvStr);
 
     print('Import completed:');
     print('- Locale: $detectedLocale');
