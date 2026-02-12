@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# A helper function to execute a command and echo it
+function run_command() {
+  sensitive_params=("DEVELOPER_MODE_PASSWORD" "FB_CLIENT_TOKEN" "CLIENT_ID" "CLIENT_SECRET")
+  local masked_command="$1"
+
+  # Mask each sensitive parameter
+  # Replace occurrences like PARAM=... with PARAM=********
+  for param in "${sensitive_params[@]}"; do
+    masked_command=$(echo "$masked_command" | sed -E "s/($param)=([^[:space:]]+)/\1=********/g")
+  done
+
+  echo -e "[EXECUTING] $masked_command\n"
+  eval "$(echo "$1" | tr -d '\n')"
+
+  echo ""
+}
+
+function get_package_name() {
+  case "$1" in
+    storypad) echo "com.tc.writestory" ;;
+    spooky) echo "com.juniorise.spooky" ;;
+    community) echo "com.juniorise.spooky.community" ;;
+    *) echo "❌ Invalid flavor: $1" >&2; exit 1 ;;
+  esac
+}
+
+# Validate flavor inputs
+function validate_flavor_inputs() {
+  COMMAND=$0
+  FLAVOR=$1
+
+  if [ "$FLAVOR" != "--storypad" ] && [ "$FLAVOR" != "--spooky" ] && [ "$FLAVOR" != "--community" ]; then
+    echo "❌ Error: Invalid environment specified: $FLAVOR"
+    echo "Usage: $COMMAND [--storypad | --spooky | --community]"
+    exit 1
+  fi
+}
+
+function get_provision_source_path() {
+  case "$1" in
+    storypad) echo "private_keys/ios_mobileprovision/StoryPad.mobileprovision" ;;
+    spooky) echo "private_keys/ios_mobileprovision/Spooky.mobileprovision" ;;
+    community) echo "private_keys/ios_mobileprovision/Community.mobileprovision" ;;
+    *) echo "❌ Invalid flavor: $1" >&2; exit 1 ;;
+  esac
+}
+
+function get_provision_export_path() {
+  FLAVOR=$1
+
+  echo "bin/.tmp/ios/export_options/$FLAVOR.plist"
+}
+
+# Usage: get_env_key KEY_NAME
+function get_env_key() {
+  grep "^$1=" private_keys/.env | cut -d'=' -f2
+}
