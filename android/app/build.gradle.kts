@@ -69,10 +69,12 @@ android {
             val envKeyAlias = System.getenv("RELEASE_KEY_ALIAS")
             val envKeyPassword = System.getenv("RELEASE_KEY_PASSWORD")
 
-            storeFile = file(envKeystorePath)
-            storePassword = envKeystorePassword
-            keyAlias = envKeyAlias
-            keyPassword = envKeyPassword
+            if (envKeystorePath != null) {
+                storeFile = file(envKeystorePath)
+                storePassword = envKeystorePassword
+                keyAlias = envKeyAlias
+                keyPassword = envKeyPassword
+            }
         }
 
         getByName("debug") {
@@ -81,10 +83,12 @@ android {
             val envKeyAlias = System.getenv("DEBUG_KEY_ALIAS")
             val envKeyPassword = System.getenv("DEBUG_KEY_PASSWORD")
 
-            storeFile = file(envKeystorePath)
-            storePassword = envKeystorePassword
-            keyAlias = envKeyAlias
-            keyPassword = envKeyPassword
+            if (envKeystorePath != null) {
+                storeFile = file(envKeystorePath)
+                storePassword = envKeystorePassword
+                keyAlias = envKeyAlias
+                keyPassword = envKeyPassword
+            }
         }
     }
 

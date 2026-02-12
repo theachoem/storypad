@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
+import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
@@ -116,7 +117,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
             currentFontWeight:
                 preferences.fontWeight ?? context.read<DevicePreferencesProvider>().preferences.fontWeight,
             onChanged: (value) {
-              preferences = preferences.copyWith(fontWeightIndex: value.index);
+              preferences = preferences.copyWith(fontWeightIndex: value.weightIndex);
               setState(() {});
 
               widget.onThemeChanged(preferences);

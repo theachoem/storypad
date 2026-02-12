@@ -105,6 +105,8 @@ class _QuillEditorState extends State<_QuillEditor> {
           SpDateBlockEmbed(),
         ],
         unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
+
+        // ignore: experimental_member_use
         customLeadingBlockBuilder: (node, config) {
           final attribute = config.attrs[Attribute.list.key] ?? config.attrs[Attribute.codeBlock.key];
           final isCheck = attribute == Attribute.checked || attribute == Attribute.unchecked;

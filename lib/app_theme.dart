@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 
@@ -282,7 +283,7 @@ class AppTheme extends StatelessWidget {
       8: FontWeight.w900,
     };
 
-    int index = preferredFontWeight.index + changeBy;
+    int index = preferredFontWeight.weightIndex + changeBy;
     return fontWeights[math.max(math.min(8, index), 0)]!;
   }
 }

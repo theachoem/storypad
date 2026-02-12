@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Before running this script to upgrade, set desired Flutter version first via "asdf set flutter {version}"
+#
+# Below are documentation & troubleshooting.
+# 
+# Troubleshooting #1:
+# - If pods fail with "minimum deployment target" error, check the plugin's
+#   .podspec file for its minimum OS version and update Podfile and Runner.xcworkspace accordingly (for both ios/macos).
+
+source "$(dirname "$0")/helpers"
+
+run_command "asdf install"
+
+run_command "flutter clean"
+run_command "bin/pubspec/upgrade"
+run_command "bin/build_runner"
+
+run_command "rm -f ios/Podfile.lock"
+run_command "rm -f macos/Podfile.lock"
+
+run_command "rm -rf ios/build"
+run_command "rm -rf macos/build"
+run_command "rm -rf ~/Library/Developer/Xcode/DerivedData"
+
+run_command "(cd ios && pod install --repo-update)"
+run_command "(cd macos && pod install --repo-update)"
+
+run_command "bin/flutterfire --community"
+run_command "bin/flutterfire --spooky"
+run_command "bin/flutterfire --storypad"
