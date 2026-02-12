@@ -6,36 +6,49 @@
 # bin/dev --community
 # bin/dev --storypad
 # bin/dev --spooky
+# 
 # bin/dev --community-ios
 # bin/dev --storypad-ios
 # bin/dev --spooky-ios
+# 
+# bin/dev --community-macos
+# bin/dev --storypad-macos
+# bin/dev --spooky-macos
 
-FLAVOR=$1
+INPUT=$1
+FLAVOR=$(echo "$INPUT" | sed -E 's/--([a-z]+)(-ios|-macos)?/\1/')
+BASE_ARG="--target=lib/main_${FLAVOR}.dart --flavor $FLAVOR --dart-define-from-file=private_keys/dart_defines/${FLAVOR}.json"
 
-case "$FLAVOR" in
+# Export keystore paths: android/app/build.gradle.kts:80
+export DEBUG_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_debug.keystore"
+export DEBUG_KEYSTORE_PASSWORD="android"
+export DEBUG_KEY_PASSWORD="android"
+export DEBUG_KEY_ALIAS="androiddebugkey"
+
+case "$INPUT" in
 --storypad)
-  CMD="flutter run --flavor storypad --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart"
+  CMD="flutter run $BASE_ARG"
   ;;
 --spooky)
-  CMD="flutter run --flavor spooky --dart-define-from-file=configs/spooky.json --target=lib/main_spooky.dart"
+  CMD="flutter run $BASE_ARG"
   ;;
 --community | "")
-  CMD="flutter run --flavor community --dart-define-from-file=configs/community.json --target=lib/main_community.dart"
+  CMD="flutter run $BASE_ARG"
   ;;
 --storypad-ios)
-  CMD="flutter run --flavor storypad --dart-define=CUPERTINO=yes --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart"
+  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes"
   ;;
 --storypad-macos)
-  CMD="flutter run --flavor storypad --dart-define=CUPERTINO=yes --dart-define-from-file=configs/storypad.json --target=lib/main_storypad.dart -d macos"
+  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes -d macos"
   ;;
 --spooky-ios)
-  CMD="flutter run --flavor spooky --dart-define=CUPERTINO=yes --dart-define-from-file=configs/spooky.json --target=lib/main_spooky.dart"
+  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes"
   ;;
 --community-ios | "")
-  CMD="flutter run --flavor community --dart-define=CUPERTINO=yes --dart-define-from-file=configs/community.json --target=lib/main_community.dart"
+  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes"
   ;;
 --community-macos | "")
-  CMD="flutter run --flavor community --dart-define=CUPERTINO=yes --dart-define-from-file=configs/community.json --target=lib/main_community.dart -d macos"
+  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes -d macos"
   ;;
 *)
   echo "Invalid option: $FLAVOR"

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-export GOOGLE_APPLICATION_CREDENTIALS="service_account.json"
+export GOOGLE_APPLICATION_CREDENTIALS="../../private_keys/firebase_service_accounts/cloud_storage_service_account.json"
 
 # Handle --clean flag
 if [ "$1" = "--clean" ]; then

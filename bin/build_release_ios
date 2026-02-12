@@ -1,0 +1,132 @@
+#!/bin/bash
+
+# Make sure python > 3.8 is install.
+# 
+# pip3 install codemagic-cli-tools
+# pip3 show codemagic-cli-tools
+# asdf reshim python
+# which xcode-project
+# 
+# reference:
+# https://docs.codemagic.io/knowledge-codemagic/codemagic-cli-tools/
+
+# Usage:
+#   bin/build_release_ios --storypad
+#   bin/build_release_ios --community
+#   bin/build_release_ios --spooky
+
+source "$(dirname "$0")/helpers"
+
+function setup_signing_certificates() {
+  run_command "keychain initialize"
+  run_command "keychain add-certificates
+    --certificate private_keys/ios_certificates/ios_signing_certificate.p12
+    --certificate-password $(get_env_key 'APPLE_CERTIFICATE_PASSWORD')"
+}
+
+# Xcode automatically loads provisioning profiles from ~/Library/MobileDevice/Provisioning Profiles
+# To make Xcode recognize our repo's profile, we copy it into that folder.
+# The file must be named with its UUID, otherwise Xcode won’t detect it.
+function copy_provisioning_profile_to_xcode_home() {
+  FLAVOR=$1
+
+  PROVISION_SOURCE_PATH=$(get_provision_source_path $FLAVOR)
+  DEST_DIR=$HOME/Library/MobileDevice/Provisioning\ Profiles
+
+  # Extract UUID from the .mobileprovision
+  UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin <<< \
+    $(security cms -D -i "$PROVISION_SOURCE_PATH"))
+
+  mkdir -p "$DEST_DIR"
+
+  # Clean up any invalid or corrupted provisioning profiles
+  # Remove files that don't match the UUID pattern or are corrupted
+  find "$DEST_DIR" -name "*.mobileprovision" -type f | while read -r profile; do
+    # Try to read the profile, if it fails, it's corrupted
+    if ! security cms -D -i "$profile" &>/dev/null; then
+      echo "🗑️  Removing corrupted profile: $(basename "$profile")"
+      rm -f "$profile"
+    fi
+  done
+
+  cp "$PROVISION_SOURCE_PATH" "$DEST_DIR/$UUID.mobileprovision"
+
+  echo "✨ Installed provisioning profile: $UUID.mobileprovision"
+  echo ""
+}
+
+function install_provisioning_profile() {
+  FLAVOR=$1
+  PROVISIONING_EXPORT_PATH=$(get_provision_export_path $FLAVOR)
+
+  mkdir -p $(dirname $PROVISIONING_EXPORT_PATH)
+
+  run_command "xcode-project use-profiles \
+    --export-options-plist=$PROVISIONING_EXPORT_PATH \
+    --code-signing-setup-verbose-logging"
+
+  cat $PROVISIONING_EXPORT_PATH
+  echo ""
+}
+
+function build_ipa() {
+  FLAVOR=$1
+  PROVISIONING_EXPORT_PATH=$(get_provision_export_path $FLAVOR)
+
+  run_command "rm -rf build/ios/ipa" # clean previous builds
+  run_command "rm -rf ios/Flutter/Generated.xcconfig" # remove existing generated xcconfig
+  run_command "rm -rf ios/Flutter/GeneratedDartDefines.xcconfig" # remove existing generated dart-defines
+  run_command "flutter pub get" # pod install required pub get first.
+
+  # no actual build, it only generates Generated.xcconfig, Flutter/flutter_export_environment.sh etc.
+  run_command "flutter build ios --release
+    --config-only
+    --flavor=$FLAVOR
+    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json"
+
+  # generates GeneratedDartDefines.xcconfig
+  run_command "(cd ios && source Flutter/flutter_export_environment.sh && ./scripts/extract_dart_defines.sh)"
+
+  # builds ipa
+  run_command "flutter build ipa --release
+    --flavor=$FLAVOR
+    --target=lib/main_$FLAVOR.dart
+    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json
+    --export-options-plist=$PROVISIONING_EXPORT_PATH"
+}
+
+# xcrun CLI will automatically find the actual key at private_keys/AuthKey_<apikey>.p8 
+function upload_ipa_to_app_store() {
+  FLAVOR=$1
+
+  API_ISSUER_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ISSUER_ID')
+  API_KEY_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ID')
+  IPA_FILE=(build/ios/ipa/*.ipa)
+
+  echo "🔑 Issuer ID: $API_ISSUER_ID"
+  echo "🔑 API Key ID: $API_KEY_ID"
+  echo "🔑 IPA File: $IPA_FILE"
+  echo ""
+
+  run_command "xcrun altool --upload-app
+    --type ios
+    --file '$IPA_FILE'
+    --apiKey $API_KEY_ID
+    --apiIssuer $API_ISSUER_ID"
+}
+
+function main(){
+  FLAVOR=${1#--} # eg. --prod -> prod
+
+  echo "Building appbundle for $FLAVOR flavor..."
+  echo ""
+
+  setup_signing_certificates
+  copy_provisioning_profile_to_xcode_home $FLAVOR
+  install_provisioning_profile $FLAVOR
+  build_ipa $FLAVOR
+  upload_ipa_to_app_store $FLAVOR
+}
+
+validate_flavor_inputs $@
+main $@

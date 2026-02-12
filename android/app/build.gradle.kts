@@ -59,53 +59,32 @@ android {
         versionName = flutter.versionName
 
         // --dart-define-from-file=configs/example.json
-        resValue("string", "app_name", dartDefines["APP_NAME"] ?: "Spooky")
+        resValue("string", "app_name", dartDefines["APP_NAME"] ?: "StoryPad C.")
     }
 
     signingConfigs {
-        create("spookyRelease") {
-            val keystoreProperties = loadKeystoreProperties("./keys/spooky/spooky_key.properties")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-            storePassword = keystoreProperties.getProperty("storePassword")
+        create("release") {
+            val envKeystorePath = System.getenv("RELEASE_KEYSTORE_PATH")
+            val envKeystorePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+            val envKeyAlias = System.getenv("RELEASE_KEY_ALIAS")
+            val envKeyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+
+            storeFile = file(envKeystorePath)
+            storePassword = envKeystorePassword
+            keyAlias = envKeyAlias
+            keyPassword = envKeyPassword
         }
 
-        create("storypadRelease") {
-            val keystoreProperties = loadKeystoreProperties("./keys/storypad/storypad_key.properties")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-            storePassword = keystoreProperties.getProperty("storePassword")
-        }
+        getByName("debug") {
+            val envKeystorePath = System.getenv("DEBUG_KEYSTORE_PATH")
+            val envKeystorePassword = System.getenv("DEBUG_KEYSTORE_PASSWORD")
+            val envKeyAlias = System.getenv("DEBUG_KEY_ALIAS")
+            val envKeyPassword = System.getenv("DEBUG_KEY_PASSWORD")
 
-        create("communityRelease") {
-            val keystoreProperties = loadKeystoreProperties("./keys/community/community_key.properties")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-            storePassword = keystoreProperties.getProperty("storePassword")
-        }
-
-        create("spookyDebug") {
-            storeFile = rootProject.file("./keys/spooky/spooky_debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-
-        create("storypadDebug") {
-            storeFile = rootProject.file("./keys/storypad/storypad_debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-
-        create("communityDebug") {
-            storeFile = rootProject.file("./keys/community/community_debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            storeFile = file(envKeystorePath)
+            storePassword = envKeystorePassword
+            keyAlias = envKeyAlias
+            keyPassword = envKeyPassword
         }
     }
 
@@ -115,29 +94,28 @@ android {
             dimension = "app"
             applicationId = "com.juniorise.spooky"
             namespace = "com.juniorise.spooky"
-            signingConfig = signingConfigs.getByName("spookyRelease")
         }
 
         create("storypad") {
             dimension = "app"
             applicationId = "com.tc.writestory"
             namespace = "com.tc.writestory"
-            signingConfig = signingConfigs.getByName("storypadRelease")
         }
 
         create("community") {
             dimension = "app"
             applicationId = "com.juniorise.spooky.community"
-            namespace = "com.juniorise.spooky"
-            signingConfig = signingConfigs.getByName("communityRelease")
+            namespace = "com.juniorise.spooky.community"
         }
     }
 
     buildTypes {
-        getByName("debug") {
-            // signingConfig = signingConfigs.getByName("spookyDebug")
-            // signingConfig = signingConfigs.getByName("storypadDebug")
-            signingConfig = signingConfigs.getByName("communityDebug")
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
+        release {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

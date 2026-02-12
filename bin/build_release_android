@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# Make sure python > 3.8 is install.
+# 
+# pip3 install codemagic-cli-tools
+# pip3 show codemagic-cli-tools
+# asdf reshim python
+# which google-play
+# 
+# reference:
+# https://docs.codemagic.io/knowledge-codemagic/codemagic-cli-tools/
+
+# Usage:
+#   bin/build_release_android --storypad
+#   bin/build_release_android --community
+#   bin/build_release_android --spooky
+
+source "$(dirname "$0")/helpers"
+
+function export_keystore_vars() {
+  FLAVOR=$1
+  FLAVOR_UPPER=$(echo "$FLAVOR" | tr '[:lower:]' '[:upper:]') # eg. storypad -> STORYPAD
+
+  # android/app/build.gradle.kts:69
+  export RELEASE_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_keystore.jks"
+  export RELEASE_KEYSTORE_PASSWORD=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_STORE_PASSWORD")
+  export RELEASE_KEY_PASSWORD=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_KEY_PASSWORD")
+  export RELEASE_KEY_ALIAS=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_KEY_ALIAS")
+
+  # android/app/build.gradle.kts:80
+  export DEBUG_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_debug.keystore"
+  export DEBUG_KEYSTORE_PASSWORD="android"
+  export DEBUG_KEY_PASSWORD="android"
+  export DEBUG_KEY_ALIAS="androiddebugkey"
+
+  echo "🔑 Keystore Path: $RELEASE_KEYSTORE_PATH"
+  echo "🔑 Keystore Password: $RELEASE_KEYSTORE_PASSWORD"
+  echo "🔑 Key Password: $RELEASE_KEY_PASSWORD"
+  echo "🔑 Key Alias: $RELEASE_KEY_ALIAS"
+  echo ""
+}
+
+function build_apk() {
+  FLAVOR=$1
+
+  run_command "(export_keystore_vars $FLAVOR && flutter build apk --release
+    --flavor=$FLAVOR
+    --target=lib/main_$FLAVOR.dart
+    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json)"
+}
+
+function build_appbundle() {
+  FLAVOR=$1
+
+  export_keystore_vars $FLAVOR
+  run_command "(flutter build appbundle --release
+    --flavor=$FLAVOR
+    --target=lib/main_$FLAVOR.dart
+    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json)"
+}
+
+function upload_apk_to_firebase() {
+  FLAVOR=$1
+  APK_PATH="build/app/outputs/flutter-apk/app-${FLAVOR}-release.apk"
+
+  if [ "$FLAVOR" == "storypad" ]; then
+    APP_ID="1:315543702519:android:4e9cf4c1923c1dab74fcf2"
+  elif [ "$FLAVOR" == "spooky" ]; then
+    APP_ID="1:845318918007:android:8d9f8265b46011fd349b72"
+  elif [ "$FLAVOR" == "community" ]; then
+    APP_ID="1:892248434003:android:5e6ee709875438aa63eda6"
+  fi
+
+  run_command "firebase appdistribution:distribute $APK_PATH
+    --app $APP_ID
+    --groups dev-team
+    --token $(get_env_key 'FIREBASE_CLI_TOKEN')"
+}
+
+function upload_appbundle_to_play_store() {
+  FLAVOR=$1
+  APP_PACKAGE_NAME=$(get_package_name $FLAVOR)
+
+  run_command "google-play bundles publish
+      --bundle "build/app/outputs/bundle/${FLAVOR}Release/app-${FLAVOR}-release.aab"
+      --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json"
+      --track internal"
+
+  # run_command "google-play tracks promote-release
+  #     --package-name $APP_PACKAGE_NAME
+  #     --source-track internal
+  #     --target-track alpha
+  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+
+  # run_command "google-play tracks promote-release
+  #     --package-name $APP_PACKAGE_NAME
+  #     --source-track internal
+  #     --target-track beta
+  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+
+  # run_command "google-play tracks promote-release
+  #     --package-name $APP_PACKAGE_NAME
+  #     --source-track internal
+  #     --target-track production
+  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+}
+
+function main(){
+  FLAVOR=${1#--} # eg. --prod -> prod
+
+  if [ "$FLAVOR" == "community" ]; then
+    echo "🚀 Building & releasing $FLAVOR to FDroid"
+    echo ""
+
+    build_apk $FLAVOR
+
+    # TODO: upload to FDroid.
+    # upload_appbundle_to_fdroid $FLAVOR
+  else
+    echo "🚀 Building & releasing $FLAVOR to Play Store"
+    echo ""
+
+    build_appbundle $FLAVOR
+    upload_appbundle_to_play_store $FLAVOR
+  fi
+
+}
+
+validate_flavor_inputs $@
+main $@

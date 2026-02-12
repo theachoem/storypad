@@ -65,10 +65,8 @@ lib/main_storypad.dart
 
 ios/Flutter/GeneratedDartDefines.xcconfig
 
-# Credentials folder / repo.
-/credentials/
+# All credentials and keys repository
+private_keys/
 
-configs/spooky.json
-configs/storypad.json
-
-bin/fastlane/service_accounts
+# Temporary files from bin scripts
+bin/.tmp
