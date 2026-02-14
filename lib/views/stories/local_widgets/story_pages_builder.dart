@@ -9,7 +9,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
-import 'package:storypad/core/rich_text/adapters/quill_editor_builder.dart';
+import 'package:storypad/core/rich_text/flutter_quill/quill_editor_builder.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';

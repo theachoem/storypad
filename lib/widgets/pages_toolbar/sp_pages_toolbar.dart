@@ -6,7 +6,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/rich_text/adapters/quill_toolbar_builder.dart';
+import 'package:storypad/core/rich_text/flutter_quill/quill_toolbar_builder.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';

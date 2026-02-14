@@ -50,6 +50,6 @@ export 'rich_text_serializer.dart';
 export 'rich_text_embed_builder.dart';
 
 // Quill adapter implementation
-export 'adapters/quill_adapter.dart';
-export 'adapters/quill_serializer.dart';
-export 'adapters/quill_embed_builder_adapter.dart';
+export 'flutter_quill/quill_adapter.dart';
+export 'flutter_quill/quill_serializer.dart';
+export 'flutter_quill/quill_embed_builder_adapter.dart';

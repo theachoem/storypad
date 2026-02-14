@@ -4,7 +4,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/rich_text/adapters/quill_adapter.dart';
+import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
