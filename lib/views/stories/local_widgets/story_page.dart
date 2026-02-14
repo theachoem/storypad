@@ -102,7 +102,7 @@ class _StoryPage extends StatelessWidget {
         ],
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-          child: buildQuillEditor(
+          child: editorAdapter.buildEditor(
             context: context,
             controller: page.bodyController,
             focusNode: page.bodyFocusNode,

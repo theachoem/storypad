@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:html_character_entities/html_character_entities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -14,6 +13,9 @@ import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:sqflite/sqflite.dart' as sqlite;
+
+// ignore: implementation_imports
+import 'package:flutter_quill/src/document/document.dart';
 
 class StorypadLegacyDatabase {
   sqlite.Database? _database;

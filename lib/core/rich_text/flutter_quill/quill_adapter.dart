@@ -1,7 +1,55 @@
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:animated_clipper/animated_clipper.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/rich_text/rich_text_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
+import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
+import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
+import 'package:storypad/widgets/sp_color_picker.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_image.dart';
+import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/sp_voice_player.dart';
+
+// ignore: experimental_member_use
+import 'package:flutter_quill/internal.dart';
+
+part 'quill_rich_text_adapter.dart';
+part 'quill_editor_builder.dart';
+part 'quill_toolbar_builder.dart';
+part 'quill_rich_text_color_button.dart';
+part 'quill_context_menu_helper.dart';
+part 'custom_attributes/quill_embed_alignment_attribute.dart';
+part 'custom_attributes/quill_embed_size_attribute.dart';
+part 'custom_embeds/quill_audio_block_embed.dart';
+part 'custom_embeds/quill_image_block_embed.dart';
+part 'custom_embeds/quill_date_block_embed.dart';
+part 'custom_embeds/quill_unknown_embed_builder.dart';
 
 /// Adapter implementation of [RichTextController] using flutter_quill.
 ///
@@ -74,115 +122,12 @@ class QuillRichTextController extends RichTextController {
   }
 
   // ========================================================================
-  // Formatting Operations
-  // ========================================================================
-
-  @override
-  void formatSelection(String attributeKey, dynamic value) {
-    final attribute = _getAttributeFromKey(attributeKey, value);
-    if (attribute != null) {
-      _quillController.formatSelection(attribute);
-    }
-  }
-
-  @override
-  void removeFormat(String attributeKey) {
-    final attribute = _getAttributeFromKey(attributeKey, null);
-    if (attribute != null) {
-      _quillController.formatSelection(attribute);
-    }
-  }
-
-  @override
-  Map<String, dynamic> getSelectionStyle() {
-    final style = _quillController.getSelectionStyle();
-    return _convertAttributesToMap(style.attributes);
-  }
-
-  @override
-  List<Map<String, dynamic>> getAllSelectionStyles() {
-    final styles = _quillController.getAllSelectionStyles();
-    return styles.map((style) => _convertAttributesToMap(style.attributes)).toList();
-  }
-
-  /// Converts Quill attribute key to actual Attribute instance
-  quill.Attribute? _getAttributeFromKey(String key, dynamic value) {
-    switch (key) {
-      case 'bold':
-        return value == true ? quill.Attribute.bold : quill.Attribute.clone(quill.Attribute.bold, null);
-      case 'italic':
-        return value == true ? quill.Attribute.italic : quill.Attribute.clone(quill.Attribute.italic, null);
-      case 'underline':
-        return value == true ? quill.Attribute.underline : quill.Attribute.clone(quill.Attribute.underline, null);
-      case 'strike':
-        return value == true
-            ? quill.Attribute.strikeThrough
-            : quill.Attribute.clone(quill.Attribute.strikeThrough, null);
-      case 'color':
-        return value != null
-            ? quill.Attribute.fromKeyValue('color', value)
-            : quill.Attribute.clone(quill.Attribute.color, null);
-      case 'background':
-        return value != null
-            ? quill.Attribute.fromKeyValue('background', value)
-            : quill.Attribute.clone(quill.Attribute.background, null);
-      case 'link':
-        return value != null
-            ? quill.Attribute.fromKeyValue('link', value.toString())
-            : quill.Attribute.clone(quill.Attribute.link, null);
-      case 'list':
-        if (value == 'bullet') return quill.Attribute.ul;
-        if (value == 'ordered') return quill.Attribute.ol;
-        if (value == 'checked') return quill.Attribute.checked;
-        if (value == 'unchecked') return quill.Attribute.unchecked;
-        return quill.Attribute.clone(quill.Attribute.ul, null);
-      case 'align':
-        if (value == 'left') return quill.Attribute.leftAlignment;
-        if (value == 'center') return quill.Attribute.centerAlignment;
-        if (value == 'right') return quill.Attribute.rightAlignment;
-        if (value == 'justify') return quill.Attribute.justifyAlignment;
-        return quill.Attribute.clone(quill.Attribute.leftAlignment, null);
-      case 'header':
-        if (value == 1) return quill.Attribute.h1;
-        if (value == 2) return quill.Attribute.h2;
-        if (value == 3) return quill.Attribute.h3;
-        return quill.Attribute.clone(quill.Attribute.h1, null);
-      case 'blockquote':
-        return value == true ? quill.Attribute.blockQuote : quill.Attribute.clone(quill.Attribute.blockQuote, null);
-      case 'code-block':
-        return value == true ? quill.Attribute.codeBlock : quill.Attribute.clone(quill.Attribute.codeBlock, null);
-      case 'indent':
-        return value != null
-            ? quill.Attribute.getIndentLevel(value)
-            : quill.Attribute.clone(quill.Attribute.indentL1, null);
-      default:
-        return null;
-    }
-  }
-
-  /// Converts Quill attributes to generic Map format
-  Map<String, dynamic> _convertAttributesToMap(Map<String, quill.Attribute> attributes) {
-    final result = <String, dynamic>{};
-    for (final entry in attributes.entries) {
-      result[entry.key] = entry.value.value;
-    }
-    return result;
-  }
-
-  // ========================================================================
-  // Content Extraction
+  // Content Extraction & Serialization
   // ========================================================================
 
   @override
   String getPlainText() {
     return _quillController.document.toPlainText();
-  }
-
-  @override
-  String toMarkdown() {
-    // Use existing QuillDeltaToPlainTextService for markdown conversion
-    // This will be refactored in Phase 2 to use RichTextSerializer
-    return _quillController.document.toDelta().toJson().toString();
   }
 
   @override
@@ -225,24 +170,12 @@ class QuillRichTextDocument implements RichTextDocument {
   int get length => _document.length;
 
   @override
-  bool get isEmpty => _document.isEmpty();
-
-  @override
-  bool get isNotEmpty => !isEmpty;
-
-  @override
   List<dynamic> toJson() {
     return _document.toDelta().toJson();
   }
 
   @override
   String toPlainText() {
-    return _document.toPlainText();
-  }
-
-  @override
-  String toMarkdown() {
-    // Will be implemented with RichTextSerializer in Phase 2
     return _document.toPlainText();
   }
 }

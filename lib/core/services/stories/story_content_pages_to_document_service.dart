@@ -25,6 +25,6 @@ class StoryContentPagesToDocumentService {
   }
 
   static RichTextDocument _buildDocument(StoryPageDbModel page) {
-    return page.body != null ? QuillRichTextDocument.fromJson(page.body!) : QuillRichTextDocument.empty();
+    return page.body != null ? editorAdapter.createDocument(json: page.body!) : editorAdapter.createEmptyDocument();
   }
 }

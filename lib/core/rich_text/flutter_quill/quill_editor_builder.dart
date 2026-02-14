@@ -1,16 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
-import 'package:storypad/core/rich_text/flutter_quill/quill_context_menu_helper.dart';
-import 'package:storypad/core/rich_text/rich_text_controller.dart';
-import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
-import 'package:storypad/core/types/page_layout_type.dart';
-import 'package:storypad/widgets/custom_embed/sp_audio_block_embed.dart';
-import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
-import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
-import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
+part of 'quill_adapter.dart';
 
 /// Builds a QuillEditor widget from a RichTextController.
 ///
@@ -56,7 +44,7 @@ class _QuillEditorWidget extends StatefulWidget {
   });
 
   final FocusNode bodyFocusNode;
-  final QuillController bodyController;
+  final quill.QuillController bodyController;
   final ScrollController scrollController;
   final bool readOnly;
   final StoryContentDbModel storyContent;
@@ -101,17 +89,17 @@ class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return QuillEditor(
+    return quill.QuillEditor(
       focusNode: widget.bodyFocusNode,
       controller: widget.bodyController,
       scrollController: widget.scrollController,
-      config: QuillEditorConfig(
-        customStyles: DefaultStyles(
-          quote: DefaultTextBlockStyle(
+      config: quill.QuillEditorConfig(
+        customStyles: quill.DefaultStyles(
+          quote: quill.DefaultTextBlockStyle(
             TextTheme.of(context).bodyLarge!.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.8)),
-            const HorizontalSpacing(0.0, 0.0),
-            const VerticalSpacing(4.0, 4.0),
-            const VerticalSpacing(0.0, 0.0),
+            const quill.HorizontalSpacing(0.0, 0.0),
+            const quill.VerticalSpacing(4.0, 4.0),
+            const quill.VerticalSpacing(0.0, 0.0),
             BoxDecoration(
               border: Border(
                 left: BorderSide(
@@ -123,7 +111,7 @@ class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
           ),
         ),
         keyboardAppearance: Theme.of(context).brightness,
-        contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
+        contextMenuBuilder: (context, rawEditorState) => _QuillContextMenuHelper.get(
           rawEditorState,
           editable: !widget.readOnly,
           onEdit: widget.onGoToEdit,
@@ -140,19 +128,19 @@ class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
         paintCursorAboveText: !widget.readOnly,
         placeholder: "...",
         embedBuilders: [
-          SpImageBlockEmbed(
+          _QuillImageBlockEmbed(
             layoutType: widget.layoutType,
             fetchAllImages: () => StoryContentEmbedExtractor.images(widget.storyContent),
           ),
-          SpAudioBlockEmbed(),
-          SpDateBlockEmbed(),
+          _QuillAudioBlockEmbed(),
+          _QuillDateBlockEmbed(),
         ],
-        unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
+        unknownEmbedBuilder: _QuillUnknownEmbedBuilder(),
 
         // ignore: experimental_member_use
         customLeadingBlockBuilder: (node, config) {
-          final attribute = config.attrs[Attribute.list.key] ?? config.attrs[Attribute.codeBlock.key];
-          final isCheck = attribute == Attribute.checked || attribute == Attribute.unchecked;
+          final attribute = config.attrs[quill.Attribute.list.key] ?? config.attrs[quill.Attribute.codeBlock.key];
+          final isCheck = attribute == quill.Attribute.checked || attribute == quill.Attribute.unchecked;
 
           if (isCheck) {
             return Container(

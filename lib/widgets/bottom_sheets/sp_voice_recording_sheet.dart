@@ -3,9 +3,9 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
@@ -42,7 +42,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
 
   static Future<void> showQuillRecorder({
     required BuildContext context,
-    required QuillController controller,
+    required RichTextController controller,
   }) async {
     final result = await const SpVoiceRecordingSheet().show(context: context);
 
@@ -64,13 +64,10 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
       final savedAsset = await asset.save();
 
       if (savedAsset != null && context.mounted) {
-        final index = controller.selection.baseOffset;
-        final length = controller.selection.extentOffset - index;
-
-        final audioEmbed = BlockEmbed('audio', savedAsset.relativeLocalFilePath);
-
-        controller.replaceText(index, length, audioEmbed, null);
-        controller.moveCursorToPosition(index + 1);
+        editorAdapter.insertAudio(
+          controller: controller,
+          audioPath: savedAsset.relativeLocalFilePath,
+        );
       }
     }
   }

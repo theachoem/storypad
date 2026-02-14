@@ -1,18 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
-import 'package:storypad/core/rich_text/rich_text_controller.dart';
-import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_rich_text_color_button.dart';
+part of 'quill_adapter.dart';
 
 /// Builds a QuillToolbar widget from a RichTextController.
 ///
@@ -83,14 +69,14 @@ class _QuillToolbarWidget extends StatelessWidget {
               icon: const Icon(SpIcons.camera),
               onPressed: () => SpImagePickerBottomSheet.showImagePicker(
                 context: context,
-                controller: quillController,
+                controller: controller,
                 source: ImageSource.camera,
               ),
             ),
           IconButton(
-            tooltip: FlutterQuillLocalizations.of(context)?.image,
+            tooltip: quill.FlutterQuillLocalizations.of(context)?.image,
             icon: const Icon(SpIcons.photo),
-            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: quillController),
+            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
           ),
           Consumer<InAppPurchaseProvider>(
             builder: (context, provider, child) {
@@ -111,7 +97,7 @@ class _QuillToolbarWidget extends StatelessWidget {
                       ),
                 onPressed: () {
                   if (provider.voiceJournal) {
-                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: quillController);
+                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
                   } else {
                     AddOnsRoute.pushAndNavigateTo(
                       product: AppProduct.voice_journal,
@@ -130,23 +116,23 @@ class _QuillToolbarWidget extends StatelessWidget {
               color: Theme.of(context).dividerColor,
             ),
           ),
-          QuillSimpleToolbar(
+          quill.QuillSimpleToolbar(
             controller: quillController,
-            config: QuillSimpleToolbarConfig(
+            config: quill.QuillSimpleToolbarConfig(
               color: backgroundColor,
-              buttonOptions: QuillSimpleToolbarButtonOptions(
-                color: QuillToolbarColorButtonOptions(
+              buttonOptions: quill.QuillSimpleToolbarButtonOptions(
+                color: quill.QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    return SpRichTextColorButton(
+                    return _QuillRichTextColorButton(
                       controller: controller,
                       isBackground: false,
                       positionedOnUpper: false,
                     );
                   },
                 ),
-                backgroundColor: QuillToolbarColorButtonOptions(
+                backgroundColor: quill.QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    return SpRichTextColorButton(
+                    return _QuillRichTextColorButton(
                       controller: controller,
                       isBackground: true,
                       positionedOnUpper: false,

@@ -361,7 +361,7 @@ packages:
     source: hosted
     version: "1.0.8"
   dart_quill_delta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dart_quill_delta
       sha256: bddb0b2948bd5b5a328f1651764486d162c59a8ccffd4c63e8b2c5e44be1dac4

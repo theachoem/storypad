@@ -8,48 +8,62 @@
 //
 // - [RichTextController]: Interface for controlling a rich text editor
 // - [RichTextDocument]: Interface for document representation
-// - [RichTextSerializer]: Interface for format conversion
-// - [RichTextEmbedBuilder]: Interface for custom content embeds
+// - [RichTextAdapter]: Unified adapter interface for all editor operations
+// - [editorAdapter]: Global singleton instance for accessing the editor
 //
-// ## Current Implementation
+// ## Architecture
 //
-// The current implementation uses flutter_quill via adapters:
-// - [QuillRichTextController]: Wraps QuillController
-// - [QuillRichTextDocument]: Wraps Quill Document
-// - [QuillSerializer]: Wraps Delta JSON processing
-// - [QuillEmbedBuilderAdapter]: Bridges custom embeds
+// The singleton adapter pattern ensures complete decoupling:
+// ```
+// Business Logic
+//     ↓ (calls editorAdapter.xxx)
+// RichTextAdapter (interface)
+//     ↓ (singleton instance)
+// QuillRichTextAdapter (implementation)
+//     ↓ (uses)
+// flutter_quill package
+// ```
 //
 // ## Usage
 //
 // ```dart
 // // Create controller from JSON (database)
-// final controller = QuillRichTextController.fromJson(
+// final controller = editorAdapter.createController(
 //   json: deltaJson,
 //   selection: TextSelection.collapsed(offset: 0),
 //   readOnly: false,
 // );
 //
-// // Format text
-// controller.formatSelection('bold', true);
+// // Build editor widget
+// editorAdapter.buildEditor(
+//   context: context,
+//   controller: controller,
+//   readOnly: false,
+//   ...
+// );
 //
-// // Insert embed
-// controller.insertEmbed('image', 'path/to/image.jpg');
+// // Build toolbar widget
+// editorAdapter.buildToolbar(
+//   context: context,
+//   controller: controller,
+// );
+//
+// // Insert embeds
+// editorAdapter.insertImage(
+//   controller: controller,
+//   imagePath: 'path/to/image.jpg',
+// );
 //
 // // Serialize for storage
 // final json = controller.serialize();
 //
-// // Convert to plain text
-// final serializer = QuillSerializer();
-// final plainText = serializer.toPlainText(json);
+// // Access document
+// final plainText = controller.document.toPlainText();
 // ```
 
 // Core abstractions
 export 'rich_text_controller.dart';
 export 'rich_text_document.dart';
-export 'rich_text_serializer.dart';
-export 'rich_text_embed_builder.dart';
 
-// Quill adapter implementation
-export 'flutter_quill/quill_adapter.dart';
-export 'flutter_quill/quill_serializer.dart';
-export 'flutter_quill/quill_embed_builder_adapter.dart';
+// Adapter singleton (ONLY interface + instance, NOT concrete implementations)
+export 'rich_text_adapter.dart';

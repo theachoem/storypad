@@ -1,52 +1,51 @@
-import 'package:flutter/material.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
-import 'package:storypad/widgets/sp_color_picker.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
+part of 'quill_adapter.dart';
 
-/// Standalone color button widget for rich text formatting.
+/// Quill-specific color button widget for rich text formatting.
 ///
 /// This widget provides color and background color selection for text,
-/// without depending on flutter_quill's internal toolbar APIs.
-class SpRichTextColorButton extends StatefulWidget {
-  const SpRichTextColorButton({
+/// using flutter_quill's formatting APIs.
+class _QuillRichTextColorButton extends StatefulWidget {
+  const _QuillRichTextColorButton({
     required this.controller,
     required this.isBackground,
     this.positionedOnUpper = true,
-    this.tooltip,
-    super.key,
   });
 
   final RichTextController controller;
   final bool isBackground;
   final bool positionedOnUpper;
-  final String? tooltip;
 
   @override
-  State<SpRichTextColorButton> createState() => _SpRichTextColorButtonState();
+  State<_QuillRichTextColorButton> createState() => _QuillRichTextColorButtonState();
 }
 
-class _SpRichTextColorButtonState extends State<SpRichTextColorButton> {
+class _QuillRichTextColorButtonState extends State<_QuillRichTextColorButton> {
   late bool _isToggledColor;
   late bool _isToggledBackground;
+
+  /// Access to underlying QuillController for formatting operations
+  quill.QuillController get _quillController {
+    return (widget.controller as QuillRichTextController).quillController;
+  }
 
   @override
   void initState() {
     super.initState();
-    final style = widget.controller.getSelectionStyle();
-    _isToggledColor = style.containsKey('color');
-    _isToggledBackground = style.containsKey('background');
+    final style = _quillController.getSelectionStyle();
+    _isToggledColor = style.attributes.containsKey('color');
+    _isToggledBackground = style.attributes.containsKey('background');
     widget.controller.addListener(_handleSelectionChange);
   }
 
   @override
-  void didUpdateWidget(covariant SpRichTextColorButton oldWidget) {
+  void didUpdateWidget(covariant _QuillRichTextColorButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_handleSelectionChange);
       widget.controller.addListener(_handleSelectionChange);
-      final style = widget.controller.getSelectionStyle();
-      _isToggledColor = style.containsKey('color');
-      _isToggledBackground = style.containsKey('background');
+      final style = _quillController.getSelectionStyle();
+      _isToggledColor = style.attributes.containsKey('color');
+      _isToggledBackground = style.attributes.containsKey('background');
     }
   }
 
@@ -57,16 +56,16 @@ class _SpRichTextColorButtonState extends State<SpRichTextColorButton> {
   }
 
   void _handleSelectionChange() {
-    final style = widget.controller.getSelectionStyle();
+    final style = _quillController.getSelectionStyle();
     setState(() {
-      _isToggledColor = style.containsKey('color');
-      _isToggledBackground = style.containsKey('background');
+      _isToggledColor = style.attributes.containsKey('color');
+      _isToggledBackground = style.attributes.containsKey('background');
     });
   }
 
   Color? _getCurrentColor() {
-    final style = widget.controller.getSelectionStyle();
-    final colorValue = widget.isBackground ? style['background'] : style['color'];
+    final style = _quillController.getSelectionStyle();
+    final colorValue = widget.isBackground ? style.attributes['background']?.value : style.attributes['color']?.value;
     if (colorValue == null) return null;
     return _stringToColor(colorValue.toString());
   }
@@ -115,11 +114,12 @@ class _SpRichTextColorButtonState extends State<SpRichTextColorButton> {
 
     if (color == null) {
       // Remove color formatting
-      widget.controller.removeFormat(attributeKey);
+      final attribute = widget.isBackground ? quill.Attribute.background : quill.Attribute.color;
+      _quillController.formatSelection(quill.Attribute.clone(attribute, null));
     } else {
       // Apply color formatting
       final hexColor = '#${_colorToHex(color)}';
-      widget.controller.formatSelection(attributeKey, hexColor);
+      _quillController.formatSelection(quill.Attribute.fromKeyValue(attributeKey, hexColor));
     }
   }
 
@@ -193,7 +193,7 @@ class _SpRichTextColorButtonState extends State<SpRichTextColorButton> {
       },
       builder: (open) {
         return IconButton(
-          tooltip: widget.tooltip ?? defaultTooltip,
+          tooltip: defaultTooltip,
           icon: Icon(iconData, color: displayIconColor),
           style: ButtonStyle(
             backgroundColor: fillColor != null ? WidgetStatePropertyAll(fillColor) : null,
