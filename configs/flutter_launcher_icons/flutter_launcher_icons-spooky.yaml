@@ -8,9 +8,9 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "configs/flutter_launcher_icons/spooky/android_adaptive_pad.png"
   # adaptive_icon_monochrome: "assets/icon/monochrome.png"
 
-  ios: true
-  image_path_ios: "configs/flutter_launcher_icons/spooky/filled_no_pad.png"
-  remove_alpha_channel_ios: true
+  ios: false
+  # image_path_ios: "configs/flutter_launcher_icons/spooky/filled_no_pad.png"
+  # remove_alpha_channel_ios: true
   # image_path_ios_dark_transparent: "assets/icon/icon_dark.png"
   # image_path_ios_tinted_grayscale: "assets/icon/icon_tinted.png"
   # desaturate_tinted_to_grayscale_ios: true

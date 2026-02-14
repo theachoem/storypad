@@ -1,6 +1,8 @@
 # StoryPad Launcher Icons
 
-StoryPad uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) to generate app icons for all flavors. This tool is highly customizable and supports adaptive icons.
+> Move configs file eg. flutter_launcher_icons-storypad_1_0.yml before run.
+
+> StoryPad uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) to generate app icons for all flavors. This tool is highly customizable and supports adaptive icons.
 
 ## How it's implemented here?
 
@@ -26,7 +28,6 @@ StoryPad uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher
    ```
 
 4. **Adjustments for Android**
-
    - We deleted the default icons from android/app/src/main/res, as they are unnecessary when using flavored builds.
    - Additionally, the generated ic_launcher.xml files included the `android:inset="16%"` attribute, which we removed since it wasn’t required.
 
