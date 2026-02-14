@@ -48,7 +48,7 @@ class _OnboardingContent extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 36),
               width: double.infinity,
-              child: Assets.images.storypadLogo512x512.image(
+              child: Assets.images.storypadLogo10720x720.image(
                 width: 120,
                 height: 120,
               ),

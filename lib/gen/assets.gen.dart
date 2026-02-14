@@ -418,12 +418,19 @@ class $AssetsImagesGen {
   $AssetsImagesOnboardingGen get onboarding =>
       const $AssetsImagesOnboardingGen();
 
-  /// File path: assets/images/storypad_logo_512x512.png
-  AssetGenImage get storypadLogo512x512 =>
-      const AssetGenImage('assets/images/storypad_logo_512x512.png');
+  /// File path: assets/images/storypad_logo_1_0_720x720.png
+  AssetGenImage get storypadLogo10720x720 =>
+      const AssetGenImage('assets/images/storypad_logo_1_0_720x720.png');
+
+  /// File path: assets/images/storypad_logo_2_0_720x720.png
+  AssetGenImage get storypadLogo20720x720 =>
+      const AssetGenImage('assets/images/storypad_logo_2_0_720x720.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [storypadLogo512x512];
+  List<AssetGenImage> get values => [
+    storypadLogo10720x720,
+    storypadLogo20720x720,
+  ];
 }
 
 class $AssetsImagesOnboardingGen {
