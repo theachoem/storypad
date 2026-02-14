@@ -1,7 +1,38 @@
-part of 'story_pages_builder.dart';
+part of 'quill_adapter.dart';
 
-class _QuillEditor extends StatefulWidget {
-  const _QuillEditor({
+/// Builds a QuillEditor widget from a RichTextController.
+///
+/// This is an adapter function that bridges the abstraction layer
+/// (RichTextController) to the flutter_quill implementation (QuillEditor).
+Widget buildQuillEditor({
+  required BuildContext context,
+  required RichTextController controller,
+  required FocusNode focusNode,
+  required ScrollController scrollController,
+  required bool readOnly,
+  required StoryContentDbModel storyContent,
+  PageLayoutType? layoutType,
+  VoidCallback? onChanged,
+  VoidCallback? onGoToEdit,
+}) {
+  // Cast to QuillRichTextController to access underlying QuillController
+  final quillController = (controller as QuillRichTextController).quillController;
+
+  return _QuillEditorWidget(
+    bodyFocusNode: focusNode,
+    bodyController: quillController,
+    scrollController: scrollController,
+    readOnly: readOnly,
+    storyContent: storyContent,
+    layoutType: layoutType,
+    onChanged: onChanged,
+    onGoToEdit: onGoToEdit,
+  );
+}
+
+/// Internal QuillEditor widget implementation.
+class _QuillEditorWidget extends StatefulWidget {
+  const _QuillEditorWidget({
     required this.bodyFocusNode,
     required this.bodyController,
     required this.scrollController,
@@ -13,19 +44,19 @@ class _QuillEditor extends StatefulWidget {
   });
 
   final FocusNode bodyFocusNode;
-  final QuillController bodyController;
+  final quill.QuillController bodyController;
   final ScrollController scrollController;
   final bool readOnly;
   final StoryContentDbModel storyContent;
   final PageLayoutType? layoutType;
-  final void Function()? onChanged;
-  final void Function()? onGoToEdit;
+  final VoidCallback? onChanged;
+  final VoidCallback? onGoToEdit;
 
   @override
-  State<_QuillEditor> createState() => _QuillEditorState();
+  State<_QuillEditorWidget> createState() => _QuillEditorWidgetState();
 }
 
-class _QuillEditorState extends State<_QuillEditor> {
+class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
   @override
   void initState() {
     super.initState();
@@ -58,17 +89,17 @@ class _QuillEditorState extends State<_QuillEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return QuillEditor(
+    return quill.QuillEditor(
       focusNode: widget.bodyFocusNode,
       controller: widget.bodyController,
       scrollController: widget.scrollController,
-      config: QuillEditorConfig(
-        customStyles: DefaultStyles(
-          quote: DefaultTextBlockStyle(
+      config: quill.QuillEditorConfig(
+        customStyles: quill.DefaultStyles(
+          quote: quill.DefaultTextBlockStyle(
             TextTheme.of(context).bodyLarge!.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.8)),
-            const HorizontalSpacing(0.0, 0.0),
-            const VerticalSpacing(4.0, 4.0),
-            const VerticalSpacing(0.0, 0.0),
+            const quill.HorizontalSpacing(0.0, 0.0),
+            const quill.VerticalSpacing(4.0, 4.0),
+            const quill.VerticalSpacing(0.0, 0.0),
             BoxDecoration(
               border: Border(
                 left: BorderSide(
@@ -80,7 +111,7 @@ class _QuillEditorState extends State<_QuillEditor> {
           ),
         ),
         keyboardAppearance: Theme.of(context).brightness,
-        contextMenuBuilder: (context, rawEditorState) => QuillContextMenuHelper.get(
+        contextMenuBuilder: (context, rawEditorState) => _QuillContextMenuHelper.get(
           rawEditorState,
           editable: !widget.readOnly,
           onEdit: widget.onGoToEdit,
@@ -97,24 +128,24 @@ class _QuillEditorState extends State<_QuillEditor> {
         paintCursorAboveText: !widget.readOnly,
         placeholder: "...",
         embedBuilders: [
-          SpImageBlockEmbed(
+          _QuillImageBlockEmbed(
             layoutType: widget.layoutType,
             fetchAllImages: () => StoryContentEmbedExtractor.images(widget.storyContent),
           ),
-          SpAudioBlockEmbed(),
-          SpDateBlockEmbed(),
+          _QuillAudioBlockEmbed(),
+          _QuillDateBlockEmbed(),
         ],
-        unknownEmbedBuilder: SpQuillUnknownEmbedBuilder(),
+        unknownEmbedBuilder: _QuillUnknownEmbedBuilder(),
 
         // ignore: experimental_member_use
         customLeadingBlockBuilder: (node, config) {
-          final attribute = config.attrs[Attribute.list.key] ?? config.attrs[Attribute.codeBlock.key];
-          final isCheck = attribute == Attribute.checked || attribute == Attribute.unchecked;
+          final attribute = config.attrs[quill.Attribute.list.key] ?? config.attrs[quill.Attribute.codeBlock.key];
+          final isCheck = attribute == quill.Attribute.checked || attribute == quill.Attribute.unchecked;
 
           if (isCheck) {
             return Container(
               alignment: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight),
-              transform: Matrix4.identity()..spTranslate(-6.0),
+              transform: Matrix4.translationValues(-6.0, 0.0, 0.0),
               child: Checkbox.adaptive(
                 value: config.value,
                 onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,

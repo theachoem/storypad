@@ -1,14 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:provider/provider.dart';
-import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
-import 'package:storypad/widgets/sp_voice_player.dart';
+part of '../quill_adapter.dart';
 
-class SpAudioBlockEmbed extends quill.EmbedBuilder {
-  SpAudioBlockEmbed();
+class _QuillAudioBlockEmbed extends quill.EmbedBuilder {
+  _QuillAudioBlockEmbed();
 
   @override
   String get key => "audio";

@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -28,7 +28,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   static Future<void> showImagePicker({
     required BuildContext context,
-    required QuillController controller,
+    required RichTextController controller,
     required ImageSource source,
   }) async {
     return SpAppLockWrapper.disableAppLockIfHas(
@@ -41,11 +41,10 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
         if (tookAsset == null) return;
 
-        final index = controller.selection.baseOffset;
-        final length = controller.selection.extentOffset - index;
-
-        controller.replaceText(index, length, BlockEmbed.image(tookAsset.relativeLocalFilePath), null);
-        controller.moveCursorToPosition(index + 1);
+        editorAdapter.insertImage(
+          controller: controller,
+          imagePath: tookAsset.relativeLocalFilePath,
+        );
 
         if (source == ImageSource.camera) {
           AnalyticsService.instance.logTakePhoto();
@@ -58,7 +57,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   static Future<void> showQuillPicker<T>({
     required BuildContext context,
-    required QuillController controller,
+    required RichTextController controller,
   }) async {
     await RetrieveLostPhotoService.call();
 
@@ -73,11 +72,10 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
     if (pickAssets is List<AssetDbModel>) {
       for (AssetDbModel pickAsset in pickAssets) {
-        final index = controller.selection.baseOffset;
-        final length = controller.selection.extentOffset - index;
-
-        controller.replaceText(index, length, BlockEmbed.image(pickAsset.relativeLocalFilePath), null);
-        controller.moveCursorToPosition(index + 1);
+        editorAdapter.insertImage(
+          controller: controller,
+          imagePath: pickAsset.relativeLocalFilePath,
+        );
       }
 
       AnalyticsService.instance.logInsertNewPhoto();

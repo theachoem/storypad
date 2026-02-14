@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -10,26 +9,20 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
-import 'package:storypad/core/helpers/quill_context_menu_helper.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';
-import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
-import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
-import 'package:storypad/widgets/custom_embed/sp_audio_block_embed.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_focus_node_builder2.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_page_view_datas.dart';
-import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 part 'story_page.dart';
 part 'add_page_button.dart';
 part 'title_field.dart';
-part 'quill_editor.dart';
 part 'story_page_builder_action.dart';
 
 part 'layouts/pages_layout.dart';

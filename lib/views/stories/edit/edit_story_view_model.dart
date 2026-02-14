@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -78,7 +77,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       pagesManager.pagesMap.first.bodyController.replaceText(
         index,
         length,
-        BlockEmbed.image(params.initialAsset!.relativeLocalFilePath),
+        {'image': params.initialAsset!.relativeLocalFilePath},
         null,
       );
     }

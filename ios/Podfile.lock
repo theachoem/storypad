@@ -1574,16 +1574,16 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.11.1):
+  - purchases_flutter (9.12.0):
     - Flutter
-    - PurchasesHybridCommon (= 17.33.0)
-  - PurchasesHybridCommon (17.33.0):
-    - RevenueCat (= 5.57.1)
+    - PurchasesHybridCommon (= 17.36.0)
+  - PurchasesHybridCommon (17.36.0):
+    - RevenueCat (= 5.58.0)
   - quill_native_bridge_ios (0.0.1):
     - Flutter
   - record_ios (1.2.0):
     - Flutter
-  - RevenueCat (5.57.1)
+  - RevenueCat (5.58.0)
   - SDWebImage (5.21.6):
     - SDWebImage/Core (= 5.21.6)
   - SDWebImage/Core (5.21.6)
@@ -1800,11 +1800,11 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 3b18d1eabc908f9852a36f1e15db0112aa7fbcb3
-  PurchasesHybridCommon: a7454fdf1d3ab71e09149a51c8ab1352be03b22a
+  purchases_flutter: 9d559f16095fbcdb7b4def4cbc60e4a9fbd0ee1b
+  PurchasesHybridCommon: 4767776bf65153d7a43f284439e7560c42d0c80a
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_ios: 412daca2350b228e698fffcd08f1f94ceb1e3844
-  RevenueCat: 1da8d1116fcc89f5084fe1caf91b11e5e61b0f96
+  RevenueCat: 88bb4229115b2badcce0e5a97f3dd8cc952b38c8
   SDWebImage: 1bb6a1b84b6fe87b972a102bdc77dd589df33477
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb

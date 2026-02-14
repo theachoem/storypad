@@ -43,7 +43,7 @@ class _StoryPage extends StatelessWidget {
   void onChange() {
     StoryPageDbModel richPage = page.page.copyWith(
       title: page.titleController.text.trim().isNotEmpty == true ? page.titleController.text.trim() : null,
-      body: page.bodyController.document.toDelta().toJson(),
+      body: page.bodyController.serialize(),
     );
 
     onChanged?.call(richPage);
@@ -102,14 +102,15 @@ class _StoryPage extends StatelessWidget {
         ],
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-          child: _QuillEditor(
-            onChanged: onChanged != null ? () => onChange() : null,
-            bodyFocusNode: page.bodyFocusNode,
-            bodyController: page.bodyController,
+          child: editorAdapter.buildEditor(
+            context: context,
+            controller: page.bodyController,
+            focusNode: page.bodyFocusNode,
             scrollController: page.bodyScrollController,
             readOnly: readOnly,
             storyContent: storyContent,
             layoutType: preferences?.layoutType,
+            onChanged: onChanged != null ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
           ),
         ),

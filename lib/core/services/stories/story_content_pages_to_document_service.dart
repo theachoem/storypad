@@ -1,30 +1,30 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 
 class StoryContentPagesToDocumentService {
-  static Future<List<Document>> forMultiplePages(List<StoryPageDbModel>? richPages) {
+  static Future<List<RichTextDocument>> forMultiplePages(List<StoryPageDbModel>? richPages) {
     return compute(_buildDocuments, richPages);
   }
 
-  static List<Document> forMultiplePagesSync(List<StoryPageDbModel>? richPages) {
+  static List<RichTextDocument> forMultiplePagesSync(List<StoryPageDbModel>? richPages) {
     return _buildDocuments(richPages);
   }
 
-  static Future<Document> forSinglePage(StoryPageDbModel richPage) async {
+  static Future<RichTextDocument> forSinglePage(StoryPageDbModel richPage) async {
     return compute(_buildDocument, richPage);
   }
 
-  static Document forSinglePageSync(StoryPageDbModel richPage) {
+  static RichTextDocument forSinglePageSync(StoryPageDbModel richPage) {
     return _buildDocument(richPage);
   }
 
-  static List<Document> _buildDocuments(List<StoryPageDbModel>? richPages) {
+  static List<RichTextDocument> _buildDocuments(List<StoryPageDbModel>? richPages) {
     if (richPages == null || richPages.isEmpty == true) return [];
     return richPages.map((page) => _buildDocument(page)).toList();
   }
 
-  static Document _buildDocument(StoryPageDbModel page) {
-    return page.body != null ? Document.fromJson(page.body!) : Document();
+  static RichTextDocument _buildDocument(StoryPageDbModel page) {
+    return page.body != null ? editorAdapter.createDocument(json: page.body!) : editorAdapter.createEmptyDocument();
   }
 }

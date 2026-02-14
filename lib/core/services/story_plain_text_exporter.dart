@@ -49,7 +49,7 @@ class StoryPlainTextExporter {
     if (title.isNotEmpty) parts.add(title);
 
     String plainTexts = QuillDeltaToPlainTextService.call(
-      page.bodyController.document.root.toDelta().toJson(),
+      page.bodyController.serialize(),
       markdown: markdown,
     );
 

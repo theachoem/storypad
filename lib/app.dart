@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -63,7 +63,7 @@ class App extends StatelessWidget {
                 DefaultCupertinoLocalizations.delegate,
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
-                FlutterQuillLocalizations.delegate,
+                ...editorAdapter.localizationsDelegates,
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,

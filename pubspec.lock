@@ -361,7 +361,7 @@ packages:
     source: hosted
     version: "1.0.8"
   dart_quill_delta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dart_quill_delta
       sha256: bddb0b2948bd5b5a328f1651764486d162c59a8ccffd4c63e8b2c5e44be1dac4
@@ -1593,10 +1593,10 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "0a218eaca2acf22c481cd7760f7fded3a6e7265f1b711322be90ff86c8a69f9a"
+      sha256: b619973958e9173dad76a28707d4254fb29a087e324b303560e7f6f0af27fba5
       url: "https://pub.dev"
     source: hosted
-    version: "9.11.1"
+    version: "9.12.0"
   quill_native_bridge:
     dependency: transitive
     description:
@@ -1673,10 +1673,10 @@ packages:
     dependency: transitive
     description:
       name: record_android
-      sha256: "3bb3c6abbcb5fc1e86719fc6f0acdee89dfe8078543b92caad11854c487e435a"
+      sha256: "94783f08403aed33ffb68797bf0715b0812eb852f3c7985644c945faea462ba1"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.5.1"
   record_ios:
     dependency: transitive
     description:
@@ -1697,10 +1697,10 @@ packages:
     dependency: transitive
     description:
       name: record_macos
-      sha256: f04d1547ff61ae54b4154e9726f656a17ad993f1a90f8f44bc40de94bafa072f
+      sha256: "084902e63fc9c0c224c29203d6c75f0bdf9b6a40536c9d916393c8f4c4256488"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.1"
   record_platform_interface:
     dependency: transitive
     description:
@@ -2022,10 +2022,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: b1aca26728b7cc7a3af971bb6f601554a8ae9df2e0a006de8450ba06a17ad36a
+      sha256: "580fe5dfb51671ae38191d316e027f6b76272b026370708c2d898799750a02b0"
       url: "https://pub.dev"
     source: hosted
-    version: "6.4.0"
+    version: "6.4.1"
   url_launcher_linux:
     dependency: transitive
     description:

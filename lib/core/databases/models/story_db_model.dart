@@ -1,6 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:flutter_quill/quill_delta.dart';
+import 'package:dart_quill_delta/dart_quill_delta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';

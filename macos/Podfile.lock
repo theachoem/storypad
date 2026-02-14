@@ -1539,16 +1539,16 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.11.1):
+  - purchases_flutter (9.12.0):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 17.33.0)
-  - PurchasesHybridCommon (17.33.0):
-    - RevenueCat (= 5.57.1)
+    - PurchasesHybridCommon (= 17.36.0)
+  - PurchasesHybridCommon (17.36.0):
+    - RevenueCat (= 5.58.0)
   - quill_native_bridge_macos (0.0.1):
     - FlutterMacOS
   - record_macos (1.2.0):
     - FlutterMacOS
-  - RevenueCat (5.57.1)
+  - RevenueCat (5.58.0)
   - share_plus (0.0.1):
     - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
@@ -1749,11 +1749,11 @@ SPEC CHECKSUMS:
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 36b804fe723caaee197521e9417051b8cdb41bee
-  PurchasesHybridCommon: a7454fdf1d3ab71e09149a51c8ab1352be03b22a
+  purchases_flutter: 377f7e197a482dec3d78cb0bb320fd19a08e80b1
+  PurchasesHybridCommon: 4767776bf65153d7a43f284439e7560c42d0c80a
   quill_native_bridge_macos: 2b005cb56902bb740e0cd9620aa399dfac6b4882
   record_macos: 7f227161b93c49e7e34fe681c5891c8622c8cc8b
-  RevenueCat: 1da8d1116fcc89f5084fe1caf91b11e5e61b0f96
+  RevenueCat: 88bb4229115b2badcce0e5a97f3dd8cc952b38c8
   share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0

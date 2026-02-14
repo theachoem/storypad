@@ -1,24 +1,10 @@
-import 'dart:async';
-import 'dart:math';
-import 'package:animated_clipper/animated_clipper.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/types/page_layout_type.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
-import 'package:storypad/widgets/quill/custom_attributes/embed_alignment_attribute.dart';
-import 'package:storypad/widgets/quill/custom_attributes/embed_size_attribute.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_image.dart';
-import 'package:storypad/widgets/sp_images_viewer.dart';
+part of '../quill_adapter.dart';
 
-class SpImageBlockEmbed extends quill.EmbedBuilder {
+class _QuillImageBlockEmbed extends quill.EmbedBuilder {
   final List<String> Function() fetchAllImages;
   final PageLayoutType? layoutType;
 
-  SpImageBlockEmbed({
+  _QuillImageBlockEmbed({
     required this.fetchAllImages,
     required this.layoutType,
   });
@@ -73,7 +59,7 @@ class _QuillImageRenderer extends StatelessWidget {
         double? width;
         double? height;
 
-        if (EmbedSizeAttribute.maxSize.hasApplied(node)) {
+        if (_EmbedSizeAttribute.maxSize.hasApplied(node)) {
           width = double.infinity;
           height = null;
         } else {
@@ -89,7 +75,7 @@ class _QuillImageRenderer extends StatelessWidget {
         return Container(
           width: double.infinity,
           alignment:
-              EmbedAlignmentAttribute.toAlignment(node) ??
+              _EmbedAlignmentAttribute.toAlignment(node) ??
               AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
           child: Stack(
             children: [
@@ -134,29 +120,29 @@ class _QuillImageRenderer extends StatelessWidget {
   Widget buildMoreVertButton(BuildContext context) {
     List<IconButton> buttons = [
       IconButton(
-        isSelected: EmbedAlignmentAttribute.left.hasApplied(node),
+        isSelected: _EmbedAlignmentAttribute.left.hasApplied(node),
         icon: const Icon(Icons.format_align_left),
-        onPressed: EmbedSizeAttribute.maxSize.hasApplied(node)
+        onPressed: _EmbedSizeAttribute.maxSize.hasApplied(node)
             ? null
-            : () => EmbedAlignmentAttribute.left.toggle(controller, node),
+            : () => _EmbedAlignmentAttribute.left.toggle(controller, node),
       ),
       IconButton(
-        isSelected: EmbedAlignmentAttribute.center.hasApplied(node),
+        isSelected: _EmbedAlignmentAttribute.center.hasApplied(node),
         icon: const Icon(Icons.format_align_center),
-        onPressed: EmbedSizeAttribute.maxSize.hasApplied(node)
+        onPressed: _EmbedSizeAttribute.maxSize.hasApplied(node)
             ? null
-            : () => EmbedAlignmentAttribute.center.toggle(controller, node),
+            : () => _EmbedAlignmentAttribute.center.toggle(controller, node),
       ),
       IconButton(
-        isSelected: EmbedAlignmentAttribute.right.hasApplied(node),
+        isSelected: _EmbedAlignmentAttribute.right.hasApplied(node),
         icon: const Icon(Icons.format_align_right),
-        onPressed: EmbedSizeAttribute.maxSize.hasApplied(node)
+        onPressed: _EmbedSizeAttribute.maxSize.hasApplied(node)
             ? null
-            : () => EmbedAlignmentAttribute.right.toggle(controller, node),
+            : () => _EmbedAlignmentAttribute.right.toggle(controller, node),
       ),
       IconButton(
         icon: const Icon(SpIcons.zoomInMap),
-        onPressed: () => EmbedSizeAttribute.toggle(controller, node),
+        onPressed: () => _EmbedSizeAttribute.toggle(controller, node),
       ),
       IconButton(
         color: ColorScheme.of(context).error,

@@ -1,17 +1,12 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/constants/app_constants.dart';
+part of 'quill_adapter.dart';
 
-// ignore: experimental_member_use
-import 'package:flutter_quill/internal.dart';
-
-class QuillContextMenuHelper {
+/// Context menu helper for QuillEditor.
+///
+/// Uses flutter_quill's internal QuillRawEditorState passed by the
+/// contextMenuBuilder callback to access selection actions.
+class _QuillContextMenuHelper {
   static AdaptiveTextSelectionToolbar get(
-    QuillRawEditorState rawEditorState, {
+    quill.QuillRawEditorState rawEditorState, {
     required bool editable,
     void Function()? onEdit,
   }) {
@@ -108,47 +103,6 @@ class QuillContextMenuHelper {
 
     return AdaptiveTextSelectionToolbar.buttonItems(
       buttonItems: buttonItems,
-      anchors: rawEditorState.contextMenuAnchors,
-    );
-  }
-
-  static AdaptiveTextSelectionToolbar toolbar(QuillRawEditorState rawEditorState) {
-    final List<ContextMenuButtonItem> items = [
-      ContextMenuButtonItem(
-        onPressed: () => rawEditorState.controller.formatSelection(Attribute.bold),
-        type: ContextMenuButtonType.custom,
-        label: rawEditorState.context.loc.bold,
-      ),
-      ContextMenuButtonItem(
-        onPressed: () => rawEditorState.controller.formatSelection(Attribute.italic),
-        type: ContextMenuButtonType.custom,
-        label: rawEditorState.context.loc.italic,
-      ),
-      ContextMenuButtonItem(
-        onPressed: () => rawEditorState.controller.formatSelection(Attribute.underline),
-        type: ContextMenuButtonType.custom,
-        label: rawEditorState.context.loc.underline,
-      ),
-      ContextMenuButtonItem(
-        onPressed: () => rawEditorState.controller.formatSelection(Attribute.strikeThrough),
-        type: ContextMenuButtonType.custom,
-        label: rawEditorState.context.loc.strikeThrough,
-      ),
-      ContextMenuButtonItem(
-        type: ContextMenuButtonType.custom,
-        label: rawEditorState.context.loc.clearFormat,
-        onPressed: () {
-          for (final style in rawEditorState.controller.getAllSelectionStyles()) {
-            for (final attr in style.attributes.values) {
-              rawEditorState.controller.formatSelection(Attribute.clone(attr, null));
-            }
-          }
-        },
-      ),
-    ];
-
-    return AdaptiveTextSelectionToolbar.buttonItems(
-      buttonItems: items,
       anchors: rawEditorState.contextMenuAnchors,
     );
   }

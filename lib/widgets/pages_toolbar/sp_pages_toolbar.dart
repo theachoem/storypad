@@ -1,25 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_quill_toolbar_color_button.dart';
 
-part './quill_toolbar.dart';
 part './title_toolbar.dart';
 
 class SpPagesToolbar extends StatefulWidget {
@@ -146,9 +139,9 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
                     padding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
                     ),
-                    child: _QuillToolbar(
-                      controller: widget.pages[index].bodyController,
+                    child: editorAdapter.buildToolbar(
                       context: context,
+                      controller: widget.pages[index].bodyController,
                       backgroundColor: widget.backgroundColor,
                     ),
                   ),

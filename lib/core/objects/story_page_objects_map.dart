@@ -2,12 +2,11 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
-import 'package:storypad/core/services/stories/story_content_pages_to_document_service.dart';
 
 class StoryPageObjectsMap {
   final Map<int, StoryPageObject> _map = {};
@@ -41,13 +40,12 @@ class StoryPageObjectsMap {
     required StoryPageDbModel richPage,
     required bool readOnly,
   }) async {
-    final document = StoryContentPagesToDocumentService.forSinglePageSync(richPage);
     _map[richPage.id] = StoryPageObject(
       key: GlobalKey(),
       page: richPage,
       titleController: TextEditingController(text: richPage.title?.trim()),
-      bodyController: QuillController(
-        document: document,
+      bodyController: editorAdapter.createController(
+        json: richPage.body ?? [],
         selection: const TextSelection.collapsed(offset: 0),
         readOnly: readOnly,
       ),
@@ -63,25 +61,24 @@ class StoryPageObjectsMap {
     StoryPageObjectsMap? initialPagesMap,
   }) async {
     final result = await Isolate.run(() {
-      final documents = StoryContentPagesToDocumentService.forMultiplePagesSync(content.richPages);
       final plainTextResult = GenerateBodyPlainTextService.call(content.richPages);
-      return (documents: documents, richPagesWithCounts: plainTextResult?.richPagesWithCounts);
+      return plainTextResult?.richPagesWithCounts;
     });
 
     StoryPageObjectsMap map = StoryPageObjectsMap();
 
-    for (int i = 0; i < result.documents.length; i++) {
+    for (int i = 0; i < (content.richPages?.length ?? 0); i++) {
       final richPage = content.richPages![i];
 
-      final quillController = QuillController(
-        document: result.documents[i],
+      final richTextController = editorAdapter.createController(
+        json: richPage.body ?? [],
         selection: initialPagesMap?[richPage.id]?.bodyController.selection ?? const TextSelection.collapsed(offset: 0),
         readOnly: readOnly,
       );
 
       map[richPage.id] = StoryPageObject(
         key: GlobalKey(),
-        page: result.richPagesWithCounts?[i] ?? richPage,
+        page: result?[i] ?? richPage,
         titleController: TextEditingController.fromValue(
           TextEditingValue(
             text: richPage.title?.trim() ?? '',
@@ -90,7 +87,7 @@ class StoryPageObjectsMap {
                 TextSelection.collapsed(offset: richPage.title?.length ?? 0),
           ),
         ),
-        bodyController: quillController,
+        bodyController: richTextController,
         bodyScrollController: ScrollController(),
         titleFocusNode: FocusNode(),
         bodyFocusNode: FocusNode(),

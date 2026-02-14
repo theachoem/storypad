@@ -1,13 +1,30 @@
-part of 'sp_pages_toolbar.dart';
+part of 'quill_adapter.dart';
 
-class _QuillToolbar extends StatelessWidget {
-  const _QuillToolbar({
+/// Builds a QuillToolbar widget from a RichTextController.
+///
+/// This is an adapter function that bridges the abstraction layer
+/// (RichTextController) to the flutter_quill implementation (QuillSimpleToolbar).
+Widget buildQuillToolbar({
+  required BuildContext context,
+  required RichTextController controller,
+  Color? backgroundColor,
+}) {
+  return _QuillToolbarWidget(
+    controller: controller,
+    context: context,
+    backgroundColor: backgroundColor,
+  );
+}
+
+/// Internal QuillToolbar widget implementation.
+class _QuillToolbarWidget extends StatelessWidget {
+  const _QuillToolbarWidget({
     required this.controller,
     required this.context,
     required this.backgroundColor,
   });
 
-  final QuillController controller;
+  final RichTextController controller;
   final BuildContext context;
   final Color? backgroundColor;
 
@@ -25,14 +42,17 @@ class _QuillToolbar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Divider(height: 1),
-          buidlToolbar(context),
+          _buildToolbar(context),
           const Divider(height: 1),
         ],
       ),
     );
   }
 
-  Widget buidlToolbar(BuildContext context) {
+  Widget _buildToolbar(BuildContext context) {
+    // Access underlying QuillController for flutter_quill widgets that require it
+    final quillController = (controller as QuillRichTextController).quillController;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(
@@ -50,11 +70,11 @@ class _QuillToolbar extends StatelessWidget {
               onPressed: () => SpImagePickerBottomSheet.showImagePicker(
                 context: context,
                 controller: controller,
-                source: .camera,
+                source: ImageSource.camera,
               ),
             ),
           IconButton(
-            tooltip: FlutterQuillLocalizations.of(context)?.image,
+            tooltip: quill.FlutterQuillLocalizations.of(context)?.image,
             icon: const Icon(SpIcons.photo),
             onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
           ),
@@ -96,26 +116,24 @@ class _QuillToolbar extends StatelessWidget {
               color: Theme.of(context).dividerColor,
             ),
           ),
-          QuillSimpleToolbar(
-            controller: controller,
-            config: QuillSimpleToolbarConfig(
+          quill.QuillSimpleToolbar(
+            controller: quillController,
+            config: quill.QuillSimpleToolbarConfig(
               color: backgroundColor,
-              buttonOptions: QuillSimpleToolbarButtonOptions(
-                color: QuillToolbarColorButtonOptions(
+              buttonOptions: quill.QuillSimpleToolbarButtonOptions(
+                color: quill.QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    extraOptions as QuillToolbarColorButtonExtraOptions;
-                    return SpQuillToolbarColorButton(
-                      controller: extraOptions.controller,
+                    return _QuillRichTextColorButton(
+                      controller: controller,
                       isBackground: false,
                       positionedOnUpper: false,
                     );
                   },
                 ),
-                backgroundColor: QuillToolbarColorButtonOptions(
+                backgroundColor: quill.QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    extraOptions as QuillToolbarColorButtonExtraOptions;
-                    return SpQuillToolbarColorButton(
-                      controller: extraOptions.controller,
+                    return _QuillRichTextColorButton(
+                      controller: controller,
                       isBackground: true,
                       positionedOnUpper: false,
                     );

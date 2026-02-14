@@ -1,15 +1,11 @@
-import 'dart:convert';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
+part of '../quill_adapter.dart';
 
-class SpDateBlockEmbed extends EmbedBuilder {
+class _QuillDateBlockEmbed extends quill.EmbedBuilder {
   @override
   String get key => 'date';
 
   @override
-  Widget build(BuildContext context, EmbedContext embedContext) {
+  Widget build(BuildContext context, quill.EmbedContext embedContext) {
     // bool readOnly = embedContext.readOnly;
     DateTime? date = getDate(embedContext);
 
@@ -45,7 +41,7 @@ class SpDateBlockEmbed extends EmbedBuilder {
     );
   }
 
-  DateTime? getDate(EmbedContext embedContext) {
+  DateTime? getDate(quill.EmbedContext embedContext) {
     DateTime? date;
     dynamic delta = embedContext.node.value.toJson()['date'];
 
