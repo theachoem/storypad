@@ -9,6 +9,10 @@ import 'package:storypad/core/constants/app_constants.dart';
 // ignore: experimental_member_use
 import 'package:flutter_quill/internal.dart';
 
+/// Context menu helper for QuillEditor.
+///
+/// Uses flutter_quill's internal QuillRawEditorState passed by the
+/// contextMenuBuilder callback to access selection actions.
 class QuillContextMenuHelper {
   static AdaptiveTextSelectionToolbar get(
     QuillRawEditorState rawEditorState, {

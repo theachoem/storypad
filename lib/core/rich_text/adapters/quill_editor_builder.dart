@@ -1,7 +1,50 @@
-part of 'story_pages_builder.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/rich_text/adapters/quill_adapter.dart';
+import 'package:storypad/core/rich_text/adapters/quill_context_menu_helper.dart';
+import 'package:storypad/core/rich_text/rich_text_controller.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
+import 'package:storypad/core/types/page_layout_type.dart';
+import 'package:storypad/widgets/custom_embed/sp_audio_block_embed.dart';
+import 'package:storypad/widgets/custom_embed/sp_date_block_embed.dart';
+import 'package:storypad/widgets/custom_embed/sp_image_block_embed.dart';
+import 'package:storypad/widgets/sp_quill_unknown_embed_builder.dart';
 
-class _QuillEditor extends StatefulWidget {
-  const _QuillEditor({
+/// Builds a QuillEditor widget from a RichTextController.
+///
+/// This is an adapter function that bridges the abstraction layer
+/// (RichTextController) to the flutter_quill implementation (QuillEditor).
+Widget buildQuillEditor({
+  required BuildContext context,
+  required RichTextController controller,
+  required FocusNode focusNode,
+  required ScrollController scrollController,
+  required bool readOnly,
+  required StoryContentDbModel storyContent,
+  PageLayoutType? layoutType,
+  VoidCallback? onChanged,
+  VoidCallback? onGoToEdit,
+}) {
+  // Cast to QuillRichTextController to access underlying QuillController
+  final quillController = (controller as QuillRichTextController).quillController;
+
+  return _QuillEditorWidget(
+    bodyFocusNode: focusNode,
+    bodyController: quillController,
+    scrollController: scrollController,
+    readOnly: readOnly,
+    storyContent: storyContent,
+    layoutType: layoutType,
+    onChanged: onChanged,
+    onGoToEdit: onGoToEdit,
+  );
+}
+
+/// Internal QuillEditor widget implementation.
+class _QuillEditorWidget extends StatefulWidget {
+  const _QuillEditorWidget({
     required this.bodyFocusNode,
     required this.bodyController,
     required this.scrollController,
@@ -18,14 +61,14 @@ class _QuillEditor extends StatefulWidget {
   final bool readOnly;
   final StoryContentDbModel storyContent;
   final PageLayoutType? layoutType;
-  final void Function()? onChanged;
-  final void Function()? onGoToEdit;
+  final VoidCallback? onChanged;
+  final VoidCallback? onGoToEdit;
 
   @override
-  State<_QuillEditor> createState() => _QuillEditorState();
+  State<_QuillEditorWidget> createState() => _QuillEditorWidgetState();
 }
 
-class _QuillEditorState extends State<_QuillEditor> {
+class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
   @override
   void initState() {
     super.initState();
@@ -114,7 +157,7 @@ class _QuillEditorState extends State<_QuillEditor> {
           if (isCheck) {
             return Container(
               alignment: AppTheme.getDirectionValue(context, Alignment.centerLeft, Alignment.centerRight),
-              transform: Matrix4.identity()..spTranslate(-6.0),
+              transform: Matrix4.translationValues(-6.0, 0.0, 0.0),
               child: Checkbox.adaptive(
                 value: config.value,
                 onChanged: config.enabled == true ? (value) => config.onCheckboxTap.call(value == true) : null,

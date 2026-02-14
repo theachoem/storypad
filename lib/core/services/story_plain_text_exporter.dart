@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/extensions/quill_controller_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad/core/types/time_format_option.dart';

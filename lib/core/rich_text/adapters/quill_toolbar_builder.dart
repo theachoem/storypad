@@ -1,13 +1,44 @@
-part of 'sp_pages_toolbar.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/rich_text/adapters/quill_adapter.dart';
+import 'package:storypad/core/rich_text/rich_text_controller.dart';
+import 'package:storypad/core/types/app_product.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_rich_text_color_button.dart';
 
-class _QuillToolbar extends StatelessWidget {
-  const _QuillToolbar({
+/// Builds a QuillToolbar widget from a RichTextController.
+///
+/// This is an adapter function that bridges the abstraction layer
+/// (RichTextController) to the flutter_quill implementation (QuillSimpleToolbar).
+Widget buildQuillToolbar({
+  required BuildContext context,
+  required RichTextController controller,
+  Color? backgroundColor,
+}) {
+  return _QuillToolbarWidget(
+    controller: controller,
+    context: context,
+    backgroundColor: backgroundColor,
+  );
+}
+
+/// Internal QuillToolbar widget implementation.
+class _QuillToolbarWidget extends StatelessWidget {
+  const _QuillToolbarWidget({
     required this.controller,
     required this.context,
     required this.backgroundColor,
   });
 
-  final QuillController controller;
+  final RichTextController controller;
   final BuildContext context;
   final Color? backgroundColor;
 
@@ -25,14 +56,17 @@ class _QuillToolbar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Divider(height: 1),
-          buidlToolbar(context),
+          _buildToolbar(context),
           const Divider(height: 1),
         ],
       ),
     );
   }
 
-  Widget buidlToolbar(BuildContext context) {
+  Widget _buildToolbar(BuildContext context) {
+    // Access underlying QuillController for flutter_quill widgets that require it
+    final quillController = (controller as QuillRichTextController).quillController;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(
@@ -49,14 +83,14 @@ class _QuillToolbar extends StatelessWidget {
               icon: const Icon(SpIcons.camera),
               onPressed: () => SpImagePickerBottomSheet.showImagePicker(
                 context: context,
-                controller: controller,
-                source: .camera,
+                controller: quillController,
+                source: ImageSource.camera,
               ),
             ),
           IconButton(
             tooltip: FlutterQuillLocalizations.of(context)?.image,
             icon: const Icon(SpIcons.photo),
-            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
+            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: quillController),
           ),
           Consumer<InAppPurchaseProvider>(
             builder: (context, provider, child) {
@@ -77,7 +111,7 @@ class _QuillToolbar extends StatelessWidget {
                       ),
                 onPressed: () {
                   if (provider.voiceJournal) {
-                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
+                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: quillController);
                   } else {
                     AddOnsRoute.pushAndNavigateTo(
                       product: AppProduct.voice_journal,
@@ -97,15 +131,14 @@ class _QuillToolbar extends StatelessWidget {
             ),
           ),
           QuillSimpleToolbar(
-            controller: controller,
+            controller: quillController,
             config: QuillSimpleToolbarConfig(
               color: backgroundColor,
               buttonOptions: QuillSimpleToolbarButtonOptions(
                 color: QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    extraOptions as QuillToolbarColorButtonExtraOptions;
-                    return SpQuillToolbarColorButton(
-                      controller: extraOptions.controller,
+                    return SpRichTextColorButton(
+                      controller: controller,
                       isBackground: false,
                       positionedOnUpper: false,
                     );
@@ -113,9 +146,8 @@ class _QuillToolbar extends StatelessWidget {
                 ),
                 backgroundColor: QuillToolbarColorButtonOptions(
                   childBuilder: (dynamic options, dynamic extraOptions) {
-                    extraOptions as QuillToolbarColorButtonExtraOptions;
-                    return SpQuillToolbarColorButton(
-                      controller: extraOptions.controller,
+                    return SpRichTextColorButton(
+                      controller: controller,
                       isBackground: true,
                       positionedOnUpper: false,
                     );
