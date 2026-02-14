@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/rich_text/rich_text.dart';
 
 class StoryPageObject {
   final GlobalKey key;
   final TextEditingController titleController;
-  final QuillController bodyController;
+  final RichTextController bodyController;
   final ScrollController bodyScrollController;
   final FocusNode titleFocusNode;
   final FocusNode bodyFocusNode;
