@@ -50,6 +50,7 @@ class SpIcons {
   static const IconData fingerprint = Icons.fingerprint_outlined;
   static final IconData lockQuestion = kIsCupertino ? CupertinoIcons.question_circle : MdiIcons.lockQuestion;
   static const IconData folderOpen = kIsCupertino ? CupertinoIcons.folder_open : Icons.folder_open;
+  static const IconData file = kIsCupertino ? CupertinoIcons.doc : Icons.insert_drive_file;
   static const IconData profile = kIsCupertino ? CupertinoIcons.person : Icons.person;
   static const IconData delete = kIsCupertino ? CupertinoIcons.delete : Icons.delete_outline;
   static const IconData deleteForever = kIsCupertino ? CupertinoIcons.bin_xmark : Icons.delete_forever;

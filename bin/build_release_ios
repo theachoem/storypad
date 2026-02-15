@@ -82,6 +82,7 @@ function build_ipa() {
   run_command "flutter build ios --release
     --config-only
     --flavor=$FLAVOR
+    --dart-define=CUPERTINO=yes
     --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json"
 
   # generates GeneratedDartDefines.xcconfig
@@ -91,6 +92,7 @@ function build_ipa() {
   run_command "flutter build ipa --release
     --flavor=$FLAVOR
     --target=lib/main_$FLAVOR.dart
+    --dart-define=CUPERTINO=yes
     --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json
     --export-options-plist=$PROVISIONING_EXPORT_PATH"
 }
