@@ -105,7 +105,7 @@ android {
             dimension = "app"
             applicationId = "com.tc.writestory"
             namespace = "com.tc.writestory"
-            manifestPlaceholders["appLogo"] = "storypad_logo_2_0"
+            manifestPlaceholders["appLogo"] = "storypad_logo_1_0"
         }
 
         create("community") {

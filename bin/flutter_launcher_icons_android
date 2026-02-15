@@ -1,0 +1,71 @@
+#!/bin/bash -e
+
+# Example usage:
+# bin/flutter_launcher_icons_android storypad storypad_logo_1_0
+# bin/flutter_launcher_icons_android storypad storypad_logo_2_0
+
+FLAVOR=$1
+ICON_NAME=$2
+
+# Setup cleanup trap to remove generated config file on exit (success or failure)
+CONFIG_FILE="flutter_launcher_icons-${FLAVOR}.yaml"
+trap "rm -f $CONFIG_FILE" EXIT
+
+# Validate arguments
+if [ -z "$FLAVOR" ]; then
+  echo "Error: FLAVOR argument is required"
+  echo "Usage: $0 <FLAVOR> <ICON_NAME>"
+  exit 1
+fi
+
+if [ -z "$ICON_NAME" ]; then
+  echo "Error: ICON_NAME argument is required"
+  echo "Usage: $0 <FLAVOR> <ICON_NAME>"
+  exit 1
+fi
+
+# Validate that required files exist
+IMAGE_PATH="configs/flutter_launcher_icons/${ICON_NAME}/${ICON_NAME}_filled_no_pad.png"
+ADAPTIVE_ICON_FOREGROUND_PATH="configs/flutter_launcher_icons/${ICON_NAME}/${ICON_NAME}_android_adaptive_pad.png"
+
+if [ ! -f "$IMAGE_PATH" ]; then
+  echo "Error: Image file not found: $IMAGE_PATH"
+  exit 1
+fi
+
+if [ ! -f "$ADAPTIVE_ICON_FOREGROUND_PATH" ]; then
+  echo "Error: Adaptive foreground image not found: $ADAPTIVE_ICON_FOREGROUND_PATH"
+  exit 1
+fi
+
+CONFIG_YML_TEMPLATE="
+flutter_launcher_icons:
+  image_path: "$IMAGE_PATH"
+  android: "${ICON_NAME}"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "$ADAPTIVE_ICON_FOREGROUND_PATH"
+  # adaptive_icon_monochrome: "assets/icon/monochrome.png"
+
+  ios: false
+"
+
+echo "$CONFIG_YML_TEMPLATE" > "$CONFIG_FILE"
+dart run flutter_launcher_icons
+
+# Copy adaptive foreground image to all drawable directories with the correct name
+for density in hdpi mdpi xhdpi xxhdpi xxxhdpi; do
+  drawable_dir="android/app/src/$FLAVOR/res/drawable-$density"
+  mkdir -p "$drawable_dir"
+  cp "$ADAPTIVE_ICON_FOREGROUND_PATH" "$drawable_dir/${ICON_NAME}_foreground.png"
+done
+
+# Create/update the adaptive icon XML
+mipmap_dir="android/app/src/$FLAVOR/res/mipmap-anydpi-v26"
+mkdir -p "$mipmap_dir"
+
+printf '%s' '<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/'"${ICON_NAME}"'_background" />
+    <foreground android:drawable="@drawable/'"${ICON_NAME}"'_foreground" />
+</adaptive-icon>' > "$mipmap_dir/${ICON_NAME}.xml"

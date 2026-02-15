@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,8 +14,8 @@
 		62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */; };
 		62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */; };
 		62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */; };
-		62A529102F40F2CE00CC37D6 /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62A5290F2F40F2CE00CC37D6 /* storypad_logo_2_0.icon */; };
-		62A529112F40F2CE00CC37D6 /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62A5290E2F40F2CE00CC37D6 /* storypad_logo_1_0.icon */; };
+		62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */; };
+		62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */; };
 		62FA11742E115EB1008E1488 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62FA11732E115EB1008E1488 /* StoreKit.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -69,8 +69,8 @@
 		627B33492D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334B2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334D2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		62A5290E2F40F2CE00CC37D6 /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
-		62A5290F2F40F2CE00CC37D6 /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
+		62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
+		62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
 		62FA11732E115EB1008E1488 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		70582F614C851DBC06F04E2E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -100,7 +100,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		62795B042E4284C4008D1665 /* Exceptions for "StoreKit" folder in "Runner" target */ = {
+		62795B042E4284C4008D1665 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"StoryPad - Timeline Diary.storekit",
@@ -110,18 +110,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		62795B012E4284AD008D1665 /* StoreKit */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				62795B042E4284C4008D1665 /* Exceptions for "StoreKit" folder in "Runner" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = StoreKit;
-			sourceTree = "<group>";
-		};
+		62795B012E4284AD008D1665 /* StoreKit */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (62795B042E4284C4008D1665 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = StoreKit; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,14 +217,15 @@
 			path = Firebase;
 			sourceTree = "<group>";
 		};
-		62A528DD2F40E61C00CC37D6 /* Logo */ = {
+		62DAA0662F41ADA700CC9E4F /* logos */ = {
 			isa = PBXGroup;
 			children = (
-				62A5290E2F40F2CE00CC37D6 /* storypad_logo_1_0.icon */,
-				62A5290F2F40F2CE00CC37D6 /* storypad_logo_2_0.icon */,
+				62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */,
+				62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */,
 			);
-			path = Logo;
-			sourceTree = "<group>";
+			name = logos;
+			path = ../assets/logos;
+			sourceTree = SOURCE_ROOT;
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
@@ -274,13 +264,13 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				62DAA0662F41ADA700CC9E4F /* logos */,
 				623F38B02D80A5FD00156016 /* Runner.entitlements */,
 				62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */,
 				62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */,
 				62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
-				62A528DD2F40E61C00CC37D6 /* Logo */,
 				97C147021CF9000F007C117D /* Info.plist */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
@@ -395,8 +385,8 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */,
 				62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */,
-				62A529102F40F2CE00CC37D6 /* storypad_logo_2_0.icon in Resources */,
-				62A529112F40F2CE00CC37D6 /* storypad_logo_1_0.icon in Resources */,
+				62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */,
+				62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */,
 				62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -413,9 +403,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -464,9 +458,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

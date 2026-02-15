@@ -1,8 +1,8 @@
 # StoryPad Launcher Icons
 
-> Move configs file eg. flutter_launcher_icons-storypad_1_0.yml before run.
-
 > StoryPad uses [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) to generate app icons for all flavors. This tool is highly customizable and supports adaptive icons.
+
+> Note: we used flutter_launcher_icons only for generating android icons. For IOS, we use [Icon Composer](https://developer.apple.com/icon-composer/) instead.
 
 ## How it's implemented here?
 
@@ -24,8 +24,13 @@
    To generate the launcher icons, run:
 
    ```bash
-   dart run flutter_launcher_icons
+   bin/flutter_launcher_icons_android storypad storypad_logo_1_0
+   bin/flutter_launcher_icons_android storypad storypad_logo_2_0
+   bin/flutter_launcher_icons_android spooky spooky
+   bin/flutter_launcher_icons_android community community
    ```
+
+   See [bin/flutter_launcher_icons_android](../../bin/flutter_launcher_icons_android) for more details on how the script works and how it generates the icons.
 
 4. **Adjustments for Android**
    - We deleted the default icons from android/app/src/main/res, as they are unnecessary when using flavored builds.

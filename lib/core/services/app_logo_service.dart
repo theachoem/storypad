@@ -16,9 +16,9 @@ enum AppLogo {
   AssetGenImage get asset {
     switch (this) {
       case .storypad_1_0:
-        return Assets.images.storypadLogo10720x720;
+        return Assets.logos.storypadLogo10.assets.storypadLogo10;
       case .storypad_2_0:
-        return Assets.images.storypadLogo20720x720;
+        return Assets.logos.storypadLogo20.assets.storypadLogo20;
     }
   }
 }
