@@ -960,7 +960,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
 				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "StoryPad MacOS";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = StoryPad;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1173,7 +1173,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
 				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "StoryPad MacOS";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = StoryPad;
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-storypad";
@@ -1377,7 +1377,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
 				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "StoryPad MacOS";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = StoryPad;
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Profile-storypad";

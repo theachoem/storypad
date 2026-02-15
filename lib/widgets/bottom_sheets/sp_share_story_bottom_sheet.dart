@@ -105,8 +105,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
 
   Future<void> loadAssets() async {
     final assetIds = StoryExtractAssetsFromPagesService.call(widget.draftContent.richPages);
-    final assets = await AssetDbModel.db.where(filters: {'ids': assetIds.toList()});
-
+    final assets = assetIds.isNotEmpty ? await AssetDbModel.db.where(filters: {'ids': assetIds.toList()}) : null;
     files = assets?.items.where((a) => a.localFile != null).map((a) => XFile(a.localFilePath)).toList() ?? [];
     setState(() {});
   }

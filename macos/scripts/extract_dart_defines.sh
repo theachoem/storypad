@@ -5,7 +5,13 @@
 # remove this custom implmenentation when flutter fix following issue:
 # https://github.com/flutter/flutter/issues/139289
 
+# Use SRCROOT from Xcode if available, otherwise default to current directory
+SRCROOT=${SRCROOT:-$(pwd)}
+
 OUTPUT_FILE="${SRCROOT}/Flutter/ephemeral/GeneratedDartDefines.xcconfig"
+
+# Create the file if it doesn't exist
+[ ! -f "$OUTPUT_FILE" ] && touch "$OUTPUT_FILE"
 
 # Echo empty to file.
 >"$OUTPUT_FILE"
