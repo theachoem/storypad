@@ -5,8 +5,12 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 class SpImageViewerProvider {
   final ImageProvider provider;
@@ -140,8 +144,9 @@ class _SpImagesViewerState extends State<SpImagesViewer> {
       elevation: 0.0,
       automaticallyImplyLeading: false,
       title: _Title(currentIndexNotifier: currentIndexNotifier, widget: widget),
-      actions: const [
-        CloseButton(),
+      actions: [
+        _SaveButton(currentIndexNotifier: currentIndexNotifier, widget: widget),
+        const CloseButton(),
       ],
     );
   }
@@ -153,6 +158,59 @@ class _SpImagesViewerState extends State<SpImagesViewer> {
       direction: DismissiblePageDismissDirection.vertical,
       isFullScreen: true,
       child: child,
+    );
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({
+    required this.currentIndexNotifier,
+    required this.widget,
+  });
+
+  final ValueNotifier<int> currentIndexNotifier;
+  final SpImagesViewer widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: currentIndexNotifier,
+      builder: (context, currentIndex, child) {
+        final imageProvider = widget.images[currentIndex].provider;
+        String? existFilePath;
+
+        if (imageProvider is SpDbImageProvider) {
+          int? id = AssetType.parseAssetId(imageProvider.relativePath);
+          AssetType? type = AssetType.getTypeFromLink(imageProvider.relativePath);
+
+          if (id != null && type != null) {
+            String filePath = type.getStoragePath(id: id, extension: extension(imageProvider.relativePath));
+            if (File(filePath).existsSync()) existFilePath = filePath;
+          }
+        }
+
+        return Visibility(
+          visible: existFilePath != null,
+          child: Builder(
+            builder: (context) {
+              return IconButton(
+                icon: const Icon(SpIcons.share),
+                onPressed: () {
+                  if (existFilePath == null) return;
+
+                  RenderBox? box = context.findRenderObject() as RenderBox?;
+                  SharePlus.instance.share(
+                    ShareParams(
+                      files: [XFile(existFilePath)],
+                      sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
