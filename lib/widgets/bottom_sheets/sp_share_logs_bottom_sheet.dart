@@ -85,23 +85,35 @@ class SpShareLogsBottomSheet extends BaseBottomSheet {
                 decoration: const InputDecoration(hintText: "..."),
                 initialValue: notifier.value,
                 onChanged: (value) => notifier.value = value,
-                onFieldSubmitted: (value) => SharePlus.instance.share(ShareParams(text: notifier.value.trim())),
               ),
               const SizedBox(height: 16.0),
-              FilledButton.icon(
-                icon: const Icon(SpIcons.share),
-                label: Text(tr("button.share")),
-                onPressed: () => SharePlus.instance.share(
-                  ShareParams(
-                    text: notifier.value.trim(),
-                  ),
-                ),
+              Builder(
+                builder: (context) {
+                  return FilledButton.icon(
+                    icon: const Icon(SpIcons.share),
+                    label: Text(tr("button.share")),
+                    onPressed: () => shareLog(context, notifier),
+                  );
+                },
               ),
               buildBottomPadding(bottomPadding),
             ],
           ),
         );
       },
+    );
+  }
+
+  Future<void> shareLog(BuildContext context, ValueNotifier<String> notifier) async {
+    RenderBox? box = context.findRenderObject() as RenderBox?;
+    await SharePlus.instance.share(
+      ShareParams(
+        text: notifier.value.trim(),
+
+        // iPad requires sharePositionOrigin for proper share sheet positioning
+        // Ensure passing correct button context to have proper positioning.
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+      ),
     );
   }
 }

@@ -33,13 +33,16 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
                 decoration: const InputDecoration(hintText: "..."),
                 initialValue: notifier.value,
                 onChanged: (value) => notifier.value = value,
-                onFieldSubmitted: (value) => shareApp(notifier),
               ),
               const SizedBox(height: 16.0),
-              FilledButton.icon(
-                icon: const Icon(SpIcons.share),
-                label: Text(tr("button.share")),
-                onPressed: () => shareApp(notifier),
+              Builder(
+                builder: (context) {
+                  return FilledButton.icon(
+                    icon: const Icon(SpIcons.share),
+                    label: Text(tr("button.share")),
+                    onPressed: () => shareApp(context, notifier),
+                  );
+                },
               ),
               buildBottomPadding(bottomPadding),
             ],
@@ -49,9 +52,18 @@ class SpShareAppBottomSheet extends BaseBottomSheet {
     );
   }
 
-  // TODO: on ios it does not show share logo well.
-  void shareApp(ValueNotifier<String> notifier) {
+  void shareApp(BuildContext context, ValueNotifier<String> notifier) {
     AnalyticsService.instance.logShareApp();
-    SharePlus.instance.share(ShareParams(text: notifier.value.trim()));
+
+    RenderBox? box = context.findRenderObject() as RenderBox?;
+    SharePlus.instance.share(
+      ShareParams(
+        text: notifier.value.trim(),
+
+        // iPad requires sharePositionOrigin for proper share sheet positioning
+        // Ensure passing correct button context to have proper positioning.
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+      ),
+    );
   }
 }
