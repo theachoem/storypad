@@ -2,9 +2,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_theme_mode_sheet.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 
 class ThemeModeTile extends StatelessWidget {
   const ThemeModeTile({
@@ -38,28 +38,20 @@ class ThemeModeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpPopupMenuButton(
-      smartDx: true,
-      dyGetter: (dy) => dy + 44.0,
-      items: (context) => ThemeMode.values.map((mode) {
-        return SpPopMenuItem(
-          selected: mode == currentThemeMode,
-          title: getLocalizedThemeMode(mode),
-          onPressed: () => onChanged(mode),
-        );
-      }).toList(),
-      builder: (open) {
-        return ListTile(
-          leading: SpAnimatedIcons(
-            duration: Durations.medium4,
-            firstChild: const Icon(SpIcons.darkMode),
-            secondChild: const Icon(SpIcons.lightMode),
-            showFirst: isDarkMode(context),
-          ),
-          title: Text(tr('list_tile.theme_mode.title')),
-          subtitle: Text(getLocalizedThemeMode(currentThemeMode)),
-          onTap: () => open(),
-        );
+    return ListTile(
+      leading: SpAnimatedIcons(
+        duration: Durations.medium4,
+        firstChild: const Icon(SpIcons.darkMode),
+        secondChild: const Icon(SpIcons.lightMode),
+        showFirst: isDarkMode(context),
+      ),
+      title: Text(tr('list_tile.theme_mode.title')),
+      subtitle: Text(getLocalizedThemeMode(currentThemeMode)),
+      onTap: () {
+        SpThemeModeSheet(
+          themeMode: currentThemeMode,
+          onChanged: onChanged,
+        ).show(context: context);
       },
     );
   }
