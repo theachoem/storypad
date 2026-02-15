@@ -161,15 +161,11 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     // Share/save the tar.gz file
     if (Platform.isIOS) {
+      RenderBox? box = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(
         ShareParams(
           title: basename(tarFile.path),
-          sharePositionOrigin: Rect.fromLTWH(
-            0,
-            0,
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height / 2,
-          ),
+          sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
           files: [XFile(tarFile.path)],
         ),
       );

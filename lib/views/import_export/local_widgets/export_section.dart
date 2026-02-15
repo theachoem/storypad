@@ -87,16 +87,20 @@ class _ExportSectionState extends State<_ExportSection> {
             margin: MediaQuery.paddingOf(
               context,
             ).copyWith(top: 0.0, bottom: 0).add(const EdgeInsets.symmetric(horizontal: 16.0)),
-            child: FilledButton(
-              onPressed: widget.viewModel.storyCount == null || widget.viewModel.storyCount == 0
-                  ? null
-                  : () => widget.viewModel.export(context, selectedOption),
-              child: Text(
-                [
-                  tr('button.export'),
-                  if (selectedOption == AppExportOption.markdown) '(.tar.gz)',
-                ].join(' '),
-              ),
+            child: Builder(
+              builder: (context) {
+                return FilledButton(
+                  onPressed: widget.viewModel.storyCount == null || widget.viewModel.storyCount == 0
+                      ? null
+                      : () => widget.viewModel.export(context, selectedOption),
+                  child: Text(
+                    [
+                      tr('button.export'),
+                      if (selectedOption == AppExportOption.markdown) '(.tar.gz)',
+                    ].join(' '),
+                  ),
+                );
+              },
             ),
           ),
           const Divider(height: 32.0),

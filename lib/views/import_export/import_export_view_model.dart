@@ -202,15 +202,11 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     // Share/save the tar.gz file
     if (Platform.isIOS) {
+      RenderBox? box = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(
         ShareParams(
           title: basename(tarFile.path),
-          sharePositionOrigin: Rect.fromLTWH(
-            0,
-            0,
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height / 2,
-          ),
+          sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
           files: [XFile(tarFile.path)],
         ),
       );
@@ -269,15 +265,11 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     // Share/save the text file
     if (Platform.isIOS) {
+      RenderBox? box = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(
         ShareParams(
           title: basename(result.path),
-          sharePositionOrigin: Rect.fromLTWH(
-            0,
-            0,
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height / 2,
-          ),
+          sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
           files: [XFile(result.path)],
         ),
       );
@@ -326,15 +318,11 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
 
       if (context.mounted) {
+        RenderBox? box = context.findRenderObject() as RenderBox?;
         await SharePlus.instance.share(
           ShareParams(
             title: basename(file.path),
-            sharePositionOrigin: Rect.fromLTWH(
-              0,
-              0,
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height / 2,
-            ),
+            sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
             files: [
               XFile(file.path),
             ],
