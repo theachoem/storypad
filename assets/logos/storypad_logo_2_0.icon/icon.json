@@ -29,38 +29,16 @@
     {
       "layers" : [
         {
-          "glass-specializations" : [
-            {
-              "value" : true
-            },
-            {
-              "appearance" : "tinted",
-              "value" : true
-            }
-          ],
+          "glass" : true,
           "image-name" : "storypad_logo_2_0.png",
           "name" : "storypad_logo_2_0",
-          "position-specializations" : [
-            {
-              "value" : {
-                "scale" : 1.4,
-                "translation-in-points" : [
-                  0,
-                  0
-                ]
-              }
-            },
-            {
-              "idiom" : "watchOS",
-              "value" : {
-                "scale" : 1.5,
-                "translation-in-points" : [
-                  0,
-                  0
-                ]
-              }
-            }
-          ]
+          "position" : {
+            "scale" : 1.4,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
         }
       ],
       "shadow" : {

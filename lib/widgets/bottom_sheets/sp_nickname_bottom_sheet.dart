@@ -68,7 +68,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
                   if (kStoryPad) ...[
                     const SizedBox(height: 4.0),
                     buildLogoSelector(context, appLogoNotifier),
-                    const SizedBox(height: 8.0),
+                    kIsCupertino ? const SizedBox(height: 12.0) : const SizedBox(height: 8.0),
                   ],
                   buildSaveButton(context, controller, appLogoNotifier),
                   buildBottomPadding(bottomPadding),
@@ -97,9 +97,12 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     return ValueListenableBuilder(
       valueListenable: appLogoNotifier,
       builder: (context, appLogo, child) {
+        // Make sure male logo is always first to avoid in appropriate display.
+        final logos = {AppLogo.storypad_2_0, ...AppLogo.values};
+
         return Row(
           spacing: 8.0,
-          children: AppLogo.values.map((logo) {
+          children: logos.map((logo) {
             return SpTapEffect(
               onTap: () => appLogoNotifier.value = logo,
               effects: [.scaleDown],
@@ -107,6 +110,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
                 children: [
                   Container(
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16.0),
                       border: Border.all(
                         color: Theme.of(context).dividerColor,
@@ -119,7 +123,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
                       bottom: 4.0,
                       right: 4.0,
                       child: SpFadeIn.fromBottom(
-                        child: const Icon(SpIcons.checkCircle),
+                        child: const Icon(SpIcons.checkCircle, color: Colors.black),
                       ),
                     ),
                 ],
