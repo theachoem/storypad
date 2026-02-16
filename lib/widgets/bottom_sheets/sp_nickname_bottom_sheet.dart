@@ -26,11 +26,16 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     TextEditingController controller,
     ValueNotifier<AppLogo> appLogoNotifier,
   ) async {
-    if (Form.of(context).validate()) {
-      Navigator.maybePop(context, controller.text.trim());
+    bool logoChanged = nickname == controller.text.trim() && appLogoNotifier.value != kAppLogo;
+    bool nicknameChanged = nickname != controller.text.trim() && controller.text.trim().isNotEmpty;
 
-      kAppLogo = appLogoNotifier.value;
-      AppLogoService().set(appLogoNotifier.value);
+    if (logoChanged || nicknameChanged) {
+      bool set = await AppLogoService().set(appLogoNotifier.value);
+
+      if (set) kAppLogo = appLogoNotifier.value;
+      if (context.mounted) Navigator.maybePop(context);
+
+      return;
     }
   }
 

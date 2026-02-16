@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/base_object_storages/enum_storage.dart';
 import 'package:storypad/gen/assets.gen.dart';
 
@@ -8,6 +11,9 @@ enum AppLogo {
   ;
 
   final String logoName;
+
+  String get xcodeLogoName => logoName;
+  String get androidActivityAliasName => 'com.tc.writestory.$logoName';
 
   const AppLogo({
     required this.logoName,
@@ -29,26 +35,49 @@ class _AppLogoStorage extends EnumStorage<AppLogo> {
 }
 
 class AppLogoService {
-  static const _channel = MethodChannel('app_logo');
+  static const _channel = MethodChannel('default_platform_channel');
 
   Future<AppLogo> getCurrent() async {
     return await _AppLogoStorage().readEnum() ?? AppLogo.storypad_1_0;
   }
 
-  Future<void> set(AppLogo logo) async {
-    await _AppLogoStorage().writeEnum(logo);
+  Future<bool> set(AppLogo logo) async {
+    if (logo == AppLogo.values.first) {
+      return reset();
+    }
 
-    // Pass configuration from Dart to keep native code lightweight
-    await _channel.invokeMethod('setAlternateIconName', {
-      'logoName': logo.logoName,
-    });
+    bool set = false;
+    try {
+      await _channel.invokeMethod('AppLogoService.set', {
+        if (Platform.isIOS) 'xcodeLogoName': logo.xcodeLogoName,
+        if (Platform.isAndroid) 'androidActivityAliasName': logo.androidActivityAliasName,
+      });
+
+      set = true;
+    } catch (e) {
+      AppLogger.error(e.toString(), stackTrace: e is Error ? e.stackTrace : null, tag: 'AppLogoService#set');
+      set = false;
+    }
+
+    if (set) await _AppLogoStorage().writeEnum(logo);
+    return set;
   }
 
-  Future<void> reset() async {
-    await _AppLogoStorage().remove();
+  Future<bool> reset() async {
+    bool cleared = false;
 
-    await _channel.invokeMethod('setAlternateIconName', {
-      'logoName': AppLogo.storypad_1_0.logoName, // default
-    });
+    try {
+      await _channel.invokeMethod('AppLogoService.set', {
+        if (Platform.isIOS) 'xcodeLogoName': null,
+        if (Platform.isAndroid) 'androidActivityAliasName': AppLogo.values.first.androidActivityAliasName,
+      });
+      cleared = true;
+    } catch (e) {
+      AppLogger.error(e.toString(), stackTrace: e is Error ? e.stackTrace : null, tag: 'AppLogoService#reset');
+      cleared = false;
+    }
+
+    if (cleared) await _AppLogoStorage().remove();
+    return cleared;
   }
 }
