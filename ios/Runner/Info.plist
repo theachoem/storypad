@@ -104,7 +104,7 @@
             <string>audio</string>
         </array>
         <key>UILaunchStoryboardName</key>
-        <string>$(LAUNCH_SCREEN_STORYBOARD)</string>
+        <string>LaunchScreen</string>
         <key>UIMainStoryboardFile</key>
         <string>Main</string>
         <key>UIStatusBarHidden</key>
