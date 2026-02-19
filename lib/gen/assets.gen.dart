@@ -417,13 +417,18 @@ class $AssetsImagesGen {
   /// Directory path: assets/images/onboarding
   $AssetsImagesOnboardingGen get onboarding =>
       const $AssetsImagesOnboardingGen();
+}
 
-  /// File path: assets/images/storypad_logo_512x512.png
-  AssetGenImage get storypadLogo512x512 =>
-      const AssetGenImage('assets/images/storypad_logo_512x512.png');
+class $AssetsLogosGen {
+  const $AssetsLogosGen();
 
-  /// List of all assets
-  List<AssetGenImage> get values => [storypadLogo512x512];
+  /// Directory path: assets/logos/storypad_logo_1_0.icon
+  $AssetsLogosStorypadLogo10IconGen get storypadLogo10 =>
+      const $AssetsLogosStorypadLogo10IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_2_0.icon
+  $AssetsLogosStorypadLogo20IconGen get storypadLogo20 =>
+      const $AssetsLogosStorypadLogo20IconGen();
 }
 
 class $AssetsImagesOnboardingGen {
@@ -514,12 +519,53 @@ class $AssetsImagesOnboardingGen {
   ];
 }
 
+class $AssetsLogosStorypadLogo10IconGen {
+  const $AssetsLogosStorypadLogo10IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_1_0.icon/Assets
+  $AssetsLogosStorypadLogo10IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo10IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo20IconGen {
+  const $AssetsLogosStorypadLogo20IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_2_0.icon/Assets
+  $AssetsLogosStorypadLogo20IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo20IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo10IconAssetsGen {
+  const $AssetsLogosStorypadLogo10IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_1_0.icon/Assets/storypad_logo_1_0.png
+  AssetGenImage get storypadLogo10 => const AssetGenImage(
+    'assets/logos/storypad_logo_1_0.icon/Assets/storypad_logo_1_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo10];
+}
+
+class $AssetsLogosStorypadLogo20IconAssetsGen {
+  const $AssetsLogosStorypadLogo20IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_2_0.icon/Assets/storypad_logo_2_0.png
+  AssetGenImage get storypadLogo20 => const AssetGenImage(
+    'assets/logos/storypad_logo_2_0.icon/Assets/storypad_logo_2_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo20];
+}
+
 class Assets {
   const Assets._();
 
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const String firestoreStorageMap = 'assets/firestore_storage_map.json';
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsLogosGen logos = $AssetsLogosGen();
   static const $TemplatesGen templates = $TemplatesGen();
   static const $TranslationsGen translations = $TranslationsGen();
 

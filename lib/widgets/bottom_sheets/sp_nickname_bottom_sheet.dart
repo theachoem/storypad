@@ -1,9 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
+import 'package:storypad/core/constants/app_constants.dart' show kAppLogo, kIsCupertino, kStoryPad;
+import 'package:storypad/core/services/app_logo_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
+import 'package:storypad/widgets/sp_two_value_listenable_builder.dart';
 
 class SpNicknameBottomSheet extends BaseBottomSheet {
   const SpNicknameBottomSheet({
@@ -18,75 +24,146 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
   Future<void> save(
     BuildContext context,
     TextEditingController controller,
+    ValueNotifier<AppLogo> appLogoNotifier,
   ) async {
-    if (Form.of(context).validate()) {
-      Navigator.maybePop(context, controller.text.trim());
+    bool logoChanged = nickname == controller.text.trim() && appLogoNotifier.value != kAppLogo;
+    bool nicknameChanged = nickname != controller.text.trim() && controller.text.trim().isNotEmpty;
+
+    if (logoChanged || nicknameChanged) {
+      bool set = await AppLogoService().set(appLogoNotifier.value);
+
+      if (set) kAppLogo = appLogoNotifier.value;
+      if (context.mounted) Navigator.maybePop(context);
+
+      return;
     }
   }
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    return SpDefaultTextController(
-      initialText: nickname,
-      withForm: true,
-      builder: (context, controller) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                tr("dialog.what_should_i_call_you.title"),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
+    return SpSingleStateWidget(
+      initialValue: kAppLogo,
+      builder: (context, appLogoNotifier) {
+        return SpDefaultTextController(
+          initialText: nickname,
+          withForm: true,
+          builder: (context, controller) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    tr("dialog.what_should_i_call_you.title"),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
+                  ),
+                  Text(
+                    tr("dialog.what_should_i_call_you.message"),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextTheme.of(context).bodyLarge,
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16.0),
+                  buildNicknameField(context, controller, appLogoNotifier),
+                  const SizedBox(height: 8.0),
+                  if (kStoryPad) ...[
+                    const SizedBox(height: 4.0),
+                    buildLogoSelector(context, appLogoNotifier),
+                    kIsCupertino ? const SizedBox(height: 12.0) : const SizedBox(height: 8.0),
+                  ],
+                  buildSaveButton(context, controller, appLogoNotifier),
+                  buildBottomPadding(bottomPadding),
+                ],
               ),
-              Text(
-                tr("dialog.what_should_i_call_you.message"),
-                overflow: TextOverflow.ellipsis,
-                style: TextTheme.of(context).bodyLarge,
-                maxLines: 2,
-              ),
-              const SizedBox(height: 16.0),
-              buildNicknameField(context, controller),
-              const SizedBox(height: 8.0),
-              buildSaveButton(context, controller),
-              buildBottomPadding(bottomPadding),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget buildNicknameField(BuildContext context, TextEditingController controller) {
+  Widget buildNicknameField(
+    BuildContext context,
+    TextEditingController controller,
+    ValueNotifier<AppLogo> appLogoNotifier,
+  ) {
     if (kIsCupertino) {
-      return buildCupertinoField(context, controller);
+      return buildCupertinoField(context, controller, appLogoNotifier);
     } else {
-      return buildMaterialField(context, controller);
+      return buildMaterialField(context, controller, appLogoNotifier);
     }
   }
 
-  Widget buildSaveButton(BuildContext context, TextEditingController controller) {
+  Widget buildLogoSelector(BuildContext context, ValueNotifier<AppLogo> appLogoNotifier) {
+    return ValueListenableBuilder(
+      valueListenable: appLogoNotifier,
+      builder: (context, appLogo, child) {
+        // Make sure male logo is always first to avoid in appropriate display.
+        final logos = {AppLogo.storypad_2_0, ...AppLogo.values};
+
+        return Row(
+          spacing: 8.0,
+          children: logos.map((logo) {
+            return SpTapEffect(
+              onTap: () => appLogoNotifier.value = logo,
+              effects: [.scaleDown],
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                      ),
+                    ),
+                    child: logo.asset.image(width: 88, height: 88),
+                  ),
+                  if (appLogo == logo)
+                    Positioned(
+                      bottom: 4.0,
+                      right: 4.0,
+                      child: SpFadeIn.fromBottom(
+                        child: const Icon(SpIcons.checkCircle, color: Colors.black),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget buildSaveButton(
+    BuildContext context,
+    TextEditingController controller,
+    ValueNotifier<AppLogo> appLogoNotifier,
+  ) {
     return SizedBox(
       width: double.infinity,
-      child: ValueListenableBuilder(
-        valueListenable: controller,
-        builder: (context, value, child) {
-          bool unchanged = value.text.trim().isEmpty || value.text.trim() == nickname;
+      child: SpTwoValueListenableBuilder(
+        valueListenable1: controller,
+        valueListenable2: appLogoNotifier,
+        builder: (context, nicknameValue, appLogoValue, child) {
+          bool unchanged =
+              (nicknameValue.text.trim().isEmpty || nicknameValue.text.trim() == nickname) && appLogoValue == kAppLogo;
 
           if (kIsCupertino) {
             return CupertinoButton.filled(
               disabledColor: Theme.of(context).disabledColor,
               sizeStyle: CupertinoButtonSize.medium,
-              onPressed: unchanged ? null : () => save(context, controller),
+              onPressed: unchanged ? null : () => save(context, controller, appLogoNotifier),
               child: nickname == null ? Text(tr("button.save")) : Text(tr("button.update")),
             );
           } else {
             return FilledButton(
-              onPressed: unchanged ? null : () => save(context, controller),
+              onPressed: unchanged ? null : () => save(context, controller, appLogoNotifier),
               child: nickname == null ? Text(tr("button.save")) : Text(tr("button.update")),
             );
           }
@@ -95,14 +172,18 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     );
   }
 
-  TextFormField buildMaterialField(BuildContext context, TextEditingController controller) {
+  TextFormField buildMaterialField(
+    BuildContext context,
+    TextEditingController controller,
+    ValueNotifier<AppLogo> appLogoNotifier,
+  ) {
     return TextFormField(
       validator: (value) {
         if (value == null || value.trim().isEmpty) return tr("general.required");
         return null;
       },
       controller: controller,
-      onFieldSubmitted: (value) => save(context, controller),
+      onFieldSubmitted: (value) => save(context, controller, appLogoNotifier),
       textInputAction: TextInputAction.done,
       keyboardType: TextInputType.name,
       autocorrect: false,
@@ -112,7 +193,11 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     );
   }
 
-  FormField<String> buildCupertinoField(BuildContext context, TextEditingController controller) {
+  FormField<String> buildCupertinoField(
+    BuildContext context,
+    TextEditingController controller,
+    ValueNotifier<AppLogo> appLogoNotifier,
+  ) {
     return FormField<String>(
       validator: (value) {
         if (value == null || value.trim().isEmpty) return tr("general.required");
@@ -121,7 +206,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
       builder: (state) {
         return CupertinoTextField(
           controller: controller,
-          onSubmitted: (value) => save(context, controller),
+          onSubmitted: (value) => save(context, controller, appLogoNotifier),
           textInputAction: TextInputAction.done,
           keyboardType: TextInputType.name,
           placeholder: tr("input.nickname.hint"),

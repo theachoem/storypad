@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
+import 'package:storypad/core/services/app_logo_service.dart';
 
 class ConstantsInitializer {
   static Future<void> call() async {
@@ -16,5 +17,6 @@ class ConstantsInitializer {
 
     /// package:flutter/src/widgets/editable_text.dart [_processTextActions]
     kProcessTextActions = await DefaultProcessTextService().queryTextActions();
+    kAppLogo = await AppLogoService().getCurrent();
   }
 }

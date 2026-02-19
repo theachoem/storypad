@@ -98,18 +98,21 @@ android {
             dimension = "app"
             applicationId = "com.juniorise.spooky"
             namespace = "com.juniorise.spooky"
+            manifestPlaceholders["appLogo"] = "ic_launcher"
         }
 
         create("storypad") {
             dimension = "app"
             applicationId = "com.tc.writestory"
             namespace = "com.tc.writestory"
+            manifestPlaceholders["appLogo"] = "storypad_logo_1_0"
         }
 
         create("community") {
             dimension = "app"
             applicationId = "com.juniorise.spooky.community"
             namespace = "com.juniorise.spooky.community"
+            manifestPlaceholders["appLogo"] = "ic_launcher"
         }
     }
 

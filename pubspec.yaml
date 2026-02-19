@@ -1,5 +1,5 @@
 name: storypad
-version: 2.25.0+609
+version: 2.26.0+625
 publish_to: none
 environment:
   sdk: ^3.11.0
@@ -90,3 +90,5 @@ flutter:
     - assets/images/
     - assets/images/onboarding/
     - assets/emoji-64/
+    - assets/logos/storypad_logo_1_0.icon/Assets/storypad_logo_1_0.png
+    - assets/logos/storypad_logo_2_0.icon/Assets/storypad_logo_2_0.png

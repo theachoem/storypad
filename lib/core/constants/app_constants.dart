@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
+import 'package:storypad/core/services/app_logo_service.dart';
 
 const String kAppName = String.fromEnvironment('APP_NAME');
 const String kRevenueCatAndroidApiKey = String.fromEnvironment('REVENUE_CAT_ANDROID_API_KEY');
@@ -33,6 +34,8 @@ late final Directory kApplicationDirectory;
 late final DeviceInfoObject kDeviceInfo;
 late final PackageInfo kPackageInfo;
 late final List<ProcessTextAction> kProcessTextActions;
+
+late AppLogo kAppLogo;
 
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
 const Map<int, Color> kColorsByDayLight = {
