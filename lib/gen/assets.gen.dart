@@ -429,6 +429,26 @@ class $AssetsLogosGen {
   /// Directory path: assets/logos/storypad_logo_2_0.icon
   $AssetsLogosStorypadLogo20IconGen get storypadLogo20 =>
       const $AssetsLogosStorypadLogo20IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_3_0.icon
+  $AssetsLogosStorypadLogo30IconGen get storypadLogo30 =>
+      const $AssetsLogosStorypadLogo30IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_4_0.icon
+  $AssetsLogosStorypadLogo40IconGen get storypadLogo40 =>
+      const $AssetsLogosStorypadLogo40IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_5_0.icon
+  $AssetsLogosStorypadLogo50IconGen get storypadLogo50 =>
+      const $AssetsLogosStorypadLogo50IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_6_0.icon
+  $AssetsLogosStorypadLogo60IconGen get storypadLogo60 =>
+      const $AssetsLogosStorypadLogo60IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_6_1.icon
+  $AssetsLogosStorypadLogo61IconGen get storypadLogo61 =>
+      const $AssetsLogosStorypadLogo61IconGen();
 }
 
 class $AssetsImagesOnboardingGen {
@@ -535,6 +555,46 @@ class $AssetsLogosStorypadLogo20IconGen {
       const $AssetsLogosStorypadLogo20IconAssetsGen();
 }
 
+class $AssetsLogosStorypadLogo30IconGen {
+  const $AssetsLogosStorypadLogo30IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_3_0.icon/Assets
+  $AssetsLogosStorypadLogo30IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo30IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo40IconGen {
+  const $AssetsLogosStorypadLogo40IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_4_0.icon/Assets
+  $AssetsLogosStorypadLogo40IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo40IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo50IconGen {
+  const $AssetsLogosStorypadLogo50IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_5_0.icon/Assets
+  $AssetsLogosStorypadLogo50IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo50IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo60IconGen {
+  const $AssetsLogosStorypadLogo60IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_6_0.icon/Assets
+  $AssetsLogosStorypadLogo60IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo60IconAssetsGen();
+}
+
+class $AssetsLogosStorypadLogo61IconGen {
+  const $AssetsLogosStorypadLogo61IconGen();
+
+  /// Directory path: assets/logos/storypad_logo_6_1.icon/Assets
+  $AssetsLogosStorypadLogo61IconAssetsGen get assets =>
+      const $AssetsLogosStorypadLogo61IconAssetsGen();
+}
+
 class $AssetsLogosStorypadLogo10IconAssetsGen {
   const $AssetsLogosStorypadLogo10IconAssetsGen();
 
@@ -557,6 +617,66 @@ class $AssetsLogosStorypadLogo20IconAssetsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [storypadLogo20];
+}
+
+class $AssetsLogosStorypadLogo30IconAssetsGen {
+  const $AssetsLogosStorypadLogo30IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_3_0.icon/Assets/storypad_logo_3_0.png
+  AssetGenImage get storypadLogo30 => const AssetGenImage(
+    'assets/logos/storypad_logo_3_0.icon/Assets/storypad_logo_3_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo30];
+}
+
+class $AssetsLogosStorypadLogo40IconAssetsGen {
+  const $AssetsLogosStorypadLogo40IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_4_0.icon/Assets/storypad_logo_4_0.png
+  AssetGenImage get storypadLogo40 => const AssetGenImage(
+    'assets/logos/storypad_logo_4_0.icon/Assets/storypad_logo_4_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo40];
+}
+
+class $AssetsLogosStorypadLogo50IconAssetsGen {
+  const $AssetsLogosStorypadLogo50IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_5_0.icon/Assets/storypad_logo_5_0.png
+  AssetGenImage get storypadLogo50 => const AssetGenImage(
+    'assets/logos/storypad_logo_5_0.icon/Assets/storypad_logo_5_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo50];
+}
+
+class $AssetsLogosStorypadLogo60IconAssetsGen {
+  const $AssetsLogosStorypadLogo60IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_6_0.icon/Assets/storypad_logo_6_0.png
+  AssetGenImage get storypadLogo60 => const AssetGenImage(
+    'assets/logos/storypad_logo_6_0.icon/Assets/storypad_logo_6_0.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo60];
+}
+
+class $AssetsLogosStorypadLogo61IconAssetsGen {
+  const $AssetsLogosStorypadLogo61IconAssetsGen();
+
+  /// File path: assets/logos/storypad_logo_6_1.icon/Assets/storypad_logo_6_1.png
+  AssetGenImage get storypadLogo61 => const AssetGenImage(
+    'assets/logos/storypad_logo_6_1.icon/Assets/storypad_logo_6_1.png',
+  );
+
+  /// List of all assets
+  List<AssetGenImage> get values => [storypadLogo61];
 }
 
 class Assets {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/storypad_logo_4_0_background" />
+    <foreground>
+        <inset android:drawable="@drawable/storypad_logo_4_0_foreground" android:inset="16%" />
+    </foreground>
+</adaptive-icon>

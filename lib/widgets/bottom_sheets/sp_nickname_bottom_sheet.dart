@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kAppLogo, kIsCupertino, kStoryPad;
 import 'package:storypad/core/services/app_logo_service.dart';
+import 'package:storypad/core/types/app_logo.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -105,36 +106,39 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
         // Make sure male logo is always first to avoid in appropriate display.
         final logos = {AppLogo.storypad_2_0, ...AppLogo.values};
 
-        return Row(
-          spacing: 8.0,
-          children: logos.map((logo) {
-            return SpTapEffect(
-              onTap: () => appLogoNotifier.value = logo,
-              effects: [.scaleDown],
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.0),
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor,
+        return SingleChildScrollView(
+          scrollDirection: .horizontal,
+          child: Row(
+            spacing: 8.0,
+            children: logos.map((logo) {
+              return SpTapEffect(
+                onTap: () => appLogoNotifier.value = logo,
+                effects: [.scaleDown],
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.0),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor,
+                        ),
                       ),
+                      child: logo.asset.image(width: 72, height: 72),
                     ),
-                    child: logo.asset.image(width: 88, height: 88),
-                  ),
-                  if (appLogo == logo)
-                    Positioned(
-                      bottom: 4.0,
-                      right: 4.0,
-                      child: SpFadeIn.fromBottom(
-                        child: const Icon(SpIcons.checkCircle, color: Colors.black),
+                    if (appLogo == logo)
+                      Positioned(
+                        bottom: 4.0,
+                        right: 4.0,
+                        child: SpFadeIn.fromBottom(
+                          child: const Icon(SpIcons.checkCircle, color: Colors.black),
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          }).toList(),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         );
       },
     );

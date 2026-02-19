@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
-        <!-- Default app logo alias for launcher -->
+        <!-- App logo alias for storypad_logo_1_0 -->
         <activity-alias
             android:name="com.tc.writestory.storypad_logo_1_0"
             android:targetActivity="com.tc.writestory.MainActivity"
@@ -14,11 +14,76 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- App logo alias for alternate app icon -->
+        <!-- App logo alias for storypad_logo_2_0 -->
         <activity-alias
             android:name="com.tc.writestory.storypad_logo_2_0"
             android:targetActivity="com.tc.writestory.MainActivity"
             android:icon="@mipmap/storypad_logo_2_0"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- App logo alias for storypad_logo_3_0 -->
+        <activity-alias
+            android:name="com.tc.writestory.storypad_logo_3_0"
+            android:targetActivity="com.tc.writestory.MainActivity"
+            android:icon="@mipmap/storypad_logo_3_0"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- App logo alias for storypad_logo_4_0 -->
+        <activity-alias
+            android:name="com.tc.writestory.storypad_logo_4_0"
+            android:targetActivity="com.tc.writestory.MainActivity"
+            android:icon="@mipmap/storypad_logo_4_0"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- App logo alias for storypad_logo_5_0 -->
+        <activity-alias
+            android:name="com.tc.writestory.storypad_logo_5_0"
+            android:targetActivity="com.tc.writestory.MainActivity"
+            android:icon="@mipmap/storypad_logo_5_0"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- App logo alias for storypad_logo_6_0 -->
+        <activity-alias
+            android:name="com.tc.writestory.storypad_logo_6_0"
+            android:targetActivity="com.tc.writestory.MainActivity"
+            android:icon="@mipmap/storypad_logo_6_0"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- App logo alias for storypad_logo_6_1 -->
+        <activity-alias
+            android:name="com.tc.writestory.storypad_logo_6_1"
+            android:targetActivity="com.tc.writestory.MainActivity"
+            android:icon="@mipmap/storypad_logo_6_1"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
