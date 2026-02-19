@@ -35,7 +35,7 @@ late final DeviceInfoObject kDeviceInfo;
 late final PackageInfo kPackageInfo;
 late final List<ProcessTextAction> kProcessTextActions;
 
-late AppLogo kAppLogo;
+AppLogo? kAppLogo;
 
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
 const Map<int, Color> kColorsByDayLight = {

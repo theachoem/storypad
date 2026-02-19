@@ -11,10 +11,8 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5B157C66F203FAE7144A4775 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 449818C4FE513B8C9198E925 /* Pods_RunnerTests.framework */; };
-		62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */; };
-		62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */; };
-		62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */; };
 		622062132F44212700233A92 /* AppLogoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622062112F44212700233A92 /* AppLogoService.swift */; };
+		62C5D5902F475AE200D9F2E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */; };
 		62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */; };
 		62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */; };
 		62FA11742E115EB1008E1488 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62FA11732E115EB1008E1488 /* StoreKit.framework */; };
@@ -63,14 +61,12 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		449818C4FE513B8C9198E925 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BF635C63D3E535710490F1B /* Pods-RunnerTests.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-spooky.xcconfig"; sourceTree = "<group>"; };
-		62160D4E2D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenCommunity.storyboard; sourceTree = "<group>"; };
-		62160D4F2D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenSpooky.storyboard; sourceTree = "<group>"; };
-		62160D502D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenStorypad.storyboard; sourceTree = "<group>"; };
 		622062112F44212700233A92 /* AppLogoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogoService.swift; sourceTree = "<group>"; };
 		623F38B02D80A5FD00156016 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		627B33492D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334B2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334D2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		62C5D58F2F475AE200D9F2E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
 		62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
 		62FA11732E115EB1008E1488 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -287,9 +283,7 @@
 			children = (
 				62DAA0662F41ADA700CC9E4F /* logos */,
 				623F38B02D80A5FD00156016 /* Runner.entitlements */,
-				62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */,
-				62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */,
-				62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */,
+				62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C147021CF9000F007C117D /* Info.plist */,
@@ -405,11 +399,9 @@
 			files = (
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
-				62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */,
-				62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */,
 				62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */,
 				62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */,
-				62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */,
+				62C5D5902F475AE200D9F2E4 /* LaunchScreen.storyboard in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -594,28 +586,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */ = {
+		62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				62160D4E2D4174F500777544 /* Base */,
+				62C5D58F2F475AE200D9F2E4 /* Base */,
 			);
-			name = LaunchScreenCommunity.storyboard;
-			sourceTree = "<group>";
-		};
-		62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				62160D4F2D4174F500777544 /* Base */,
-			);
-			name = LaunchScreenSpooky.storyboard;
-			sourceTree = "<group>";
-		};
-		62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				62160D502D4174F500777544 /* Base */,
-			);
-			name = LaunchScreenStorypad.storyboard;
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -696,7 +672,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -843,7 +818,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -952,7 +926,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1057,7 +1030,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1163,7 +1135,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1264,7 +1235,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1360,7 +1330,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1516,7 +1485,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1546,7 +1514,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
+import 'package:storypad/widgets/sp_splash_screen_wrapper.dart';
 
 import 'root_view_model.dart';
 
@@ -28,7 +29,13 @@ class RootView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<RootViewModel>(
-      create: (context) => RootViewModel(),
+      create: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          SpSplashScreenWrapper.markAsLoaded(context);
+        });
+
+        return RootViewModel();
+      },
       builder: (context, viewModel, child) {
         _rootContext = context;
 

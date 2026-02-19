@@ -42,7 +42,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
     return SpSingleStateWidget(
-      initialValue: kAppLogo,
+      initialValue: kAppLogo!,
       builder: (context, appLogoNotifier) {
         return SpDefaultTextController(
           initialText: nickname,

@@ -48,7 +48,7 @@ class _OnboardingContent extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 36),
               width: double.infinity,
-              child: kAppLogo.asset.image(width: 120, height: 120),
+              child: kAppLogo!.asset.image(width: 120, height: 120),
             ),
             Container(
               margin: const EdgeInsets.only(top: 16),
