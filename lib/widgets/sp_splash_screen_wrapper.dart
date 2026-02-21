@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/services/app_logo_service.dart';
 
 class SpSplashScreenWrapper extends StatefulWidget {
@@ -106,28 +105,15 @@ class _SpSplashScreenWrapperState extends State<SpSplashScreenWrapper> with Sing
         child: Container(
           decoration: BoxDecoration(color: backgroundColor),
           alignment: .center,
-          child: AnimatedBuilder(
-            animation: animation,
-            builder: (context, child) {
-              if (initialized) {
-                return Transform(
-                  alignment: .center,
-                  transform: Matrix4.identity()..spTranslate(0, 12 * (1 - animation.value), 0),
-                  child: child,
-                );
-              }
-              return child!;
-            },
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                color: logoBackgroundColor,
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: kAppLogo!.asset.provider(),
-                  fit: BoxFit.cover,
-                ),
+          child: Container(
+            width: 170,
+            height: 170,
+            decoration: BoxDecoration(
+              color: logoBackgroundColor,
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: kAppLogo!.asset.provider(),
+                fit: BoxFit.cover,
               ),
             ),
           ),
