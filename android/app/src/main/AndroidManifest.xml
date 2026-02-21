@@ -16,7 +16,7 @@
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
-        android:icon="@mipmap/${appLogo}"
+        android:icon="@mipmap/storypad_logo_3_0"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:usesCleartextTraffic="true"

@@ -5,11 +5,9 @@ import 'package:storypad/core/constants/app_constants.dart' show kAppLogo, kIsCu
 import 'package:storypad/core/services/app_logo_service.dart';
 import 'package:storypad/core/types/app_logo.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_app_logo_picker.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/sp_two_value_listenable_builder.dart';
 
 class SpNicknameBottomSheet extends BaseBottomSheet {
@@ -31,9 +29,7 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     bool nicknameChanged = nickname != controller.text.trim() && controller.text.trim().isNotEmpty;
 
     if (logoChanged || nicknameChanged) {
-      bool set = await AppLogoService().set(appLogoNotifier.value);
-
-      if (set) kAppLogo = appLogoNotifier.value;
+      await AppLogoService().set(appLogoNotifier.value);
       if (context.mounted) Navigator.maybePop(context);
 
       return;
@@ -103,42 +99,9 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     return ValueListenableBuilder(
       valueListenable: appLogoNotifier,
       builder: (context, appLogo, child) {
-        // Make sure male logo is always first to avoid in appropriate display.
-        final logos = {AppLogo.storypad_2_0, ...AppLogo.values};
-
-        return SingleChildScrollView(
-          scrollDirection: .horizontal,
-          child: Row(
-            spacing: 8.0,
-            children: logos.map((logo) {
-              return SpTapEffect(
-                onTap: () => appLogoNotifier.value = logo,
-                effects: [.scaleDown],
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor,
-                        ),
-                      ),
-                      child: logo.asset.image(width: 72, height: 72),
-                    ),
-                    if (appLogo == logo)
-                      Positioned(
-                        bottom: 4.0,
-                        right: 4.0,
-                        child: SpFadeIn.fromBottom(
-                          child: const Icon(SpIcons.checkCircle, color: Colors.black),
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+        return SpAppLogoPicker(
+          selectedAppLogo: appLogo,
+          onLogoSelected: (logo) => appLogoNotifier.value = logo,
         );
       },
     );

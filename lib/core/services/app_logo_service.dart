@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/services.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/base_object_storages/enum_storage.dart';
 import 'package:storypad/core/types/app_logo.dart';
@@ -35,7 +35,10 @@ class AppLogoService {
       set = false;
     }
 
-    if (set) await _AppLogoStorage().writeEnum(logo);
+    if (set) {
+      await _AppLogoStorage().writeEnum(logo);
+      kAppLogo = logo;
+    }
     return set;
   }
 
@@ -53,7 +56,11 @@ class AppLogoService {
       cleared = false;
     }
 
-    if (cleared) await _AppLogoStorage().remove();
+    if (cleared) {
+      await _AppLogoStorage().remove();
+      kAppLogo = AppLogo.storypad_1_0;
+    }
+
     return cleared;
   }
 }
