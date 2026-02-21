@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -12,8 +13,10 @@ import 'package:storypad/views/settings/local_widgets/color_seed_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/views/settings/local_widgets/theme_mode_tile.dart';
+import 'package:storypad/widgets/sp_app_logo_picker.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/sp_section_title.dart';
 
 import 'settings_view_model.dart';
 

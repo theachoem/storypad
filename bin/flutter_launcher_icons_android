@@ -25,13 +25,7 @@ if [ -z "$ICON_NAME" ]; then
 fi
 
 # Validate that required files exist
-IMAGE_PATH="configs/flutter_launcher_icons/${ICON_NAME}/${ICON_NAME}_filled_no_pad.png"
-ADAPTIVE_ICON_FOREGROUND_PATH="configs/flutter_launcher_icons/${ICON_NAME}/${ICON_NAME}_android_adaptive_pad.png"
-
-if [ ! -f "$IMAGE_PATH" ]; then
-  echo "Error: Image file not found: $IMAGE_PATH"
-  exit 1
-fi
+ADAPTIVE_ICON_FOREGROUND_PATH="assets/logos/${ICON_NAME}.icon/Assets/${ICON_NAME}.png"
 
 if [ ! -f "$ADAPTIVE_ICON_FOREGROUND_PATH" ]; then
   echo "Error: Adaptive foreground image not found: $ADAPTIVE_ICON_FOREGROUND_PATH"
@@ -40,9 +34,9 @@ fi
 
 CONFIG_YML_TEMPLATE="
 flutter_launcher_icons:
-  image_path: "$IMAGE_PATH"
   android: "${ICON_NAME}"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  image_path_android: "$ADAPTIVE_ICON_FOREGROUND_PATH"
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "$ADAPTIVE_ICON_FOREGROUND_PATH"
   # adaptive_icon_monochrome: "assets/icon/monochrome.png"
@@ -67,5 +61,13 @@ mkdir -p "$mipmap_dir"
 printf '%s' '<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/'"${ICON_NAME}"'_background" />
-    <foreground android:drawable="@drawable/'"${ICON_NAME}"'_foreground" />
+    <foreground>
+        <inset android:drawable="@drawable/'"${ICON_NAME}"'_foreground" android:inset="16%" />
+    </foreground>
 </adaptive-icon>' > "$mipmap_dir/${ICON_NAME}.xml"
+
+# Generate AndroidManifest.xml with all available logo aliases
+dart run bin/flutter_launcher_icons/generate_android_manifest.dart "$FLAVOR" "$ICON_NAME"
+
+# Update app_logo enum
+dart run bin/flutter_launcher_icons/update_app_logo.dart

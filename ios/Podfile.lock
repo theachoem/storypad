@@ -1377,8 +1377,6 @@ PODS:
     - Flutter
   - flutter_keyboard_visibility_temp_fork (0.0.1):
     - Flutter
-  - flutter_native_splash (2.4.3):
-    - Flutter
   - flutter_secure_storage_darwin (10.0.0):
     - Flutter
     - FlutterMacOS
@@ -1574,16 +1572,16 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.12.0):
+  - purchases_flutter (9.12.1):
     - Flutter
-    - PurchasesHybridCommon (= 17.36.0)
-  - PurchasesHybridCommon (17.36.0):
-    - RevenueCat (= 5.58.0)
+    - PurchasesHybridCommon (= 17.39.0)
+  - PurchasesHybridCommon (17.39.0):
+    - RevenueCat (= 5.59.0)
   - quill_native_bridge_ios (0.0.1):
     - Flutter
   - record_ios (1.2.0):
     - Flutter
-  - RevenueCat (5.58.0)
+  - RevenueCat (5.59.0)
   - SDWebImage (5.21.6):
     - SDWebImage/Core (= 5.21.6)
   - SDWebImage/Core (5.21.6)
@@ -1616,7 +1614,6 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_custom_tabs_ios (from `.symlinks/plugins/flutter_custom_tabs_ios/ios`)
   - flutter_keyboard_visibility_temp_fork (from `.symlinks/plugins/flutter_keyboard_visibility_temp_fork/ios`)
-  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage_darwin (from `.symlinks/plugins/flutter_secure_storage_darwin/darwin`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -1705,8 +1702,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_custom_tabs_ios/ios"
   flutter_keyboard_visibility_temp_fork:
     :path: ".symlinks/plugins/flutter_keyboard_visibility_temp_fork/ios"
-  flutter_native_splash:
-    :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_secure_storage_darwin:
     :path: ".symlinks/plugins/flutter_secure_storage_darwin/darwin"
   google_sign_in_ios:
@@ -1777,7 +1772,6 @@ SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_custom_tabs_ios: 69d941c779f706a754aca7c62e59a8f34d6951de
   flutter_keyboard_visibility_temp_fork: 95b2d534bacf6ac62e7fcbe5c2a9e2c2a17ce06f
-  flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_secure_storage_darwin: acdb3f316ed05a3e68f856e0353b133eec373a23
   google_sign_in_ios: 000870aa06da9b28d1d0bf7ef70ff0213059dd28
   GoogleAdsOnDeviceConversion: d68c69dd9581a0f5da02617b6f377e5be483970f
@@ -1800,11 +1794,11 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 9d559f16095fbcdb7b4def4cbc60e4a9fbd0ee1b
-  PurchasesHybridCommon: 4767776bf65153d7a43f284439e7560c42d0c80a
+  purchases_flutter: 5a777e426b6ddf01c7c3cdfcc99e3e67ca037ce6
+  PurchasesHybridCommon: 482a3741b7c94cdae1cae1a5d06c5be2fdd2cf8e
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_ios: 412daca2350b228e698fffcd08f1f94ceb1e3844
-  RevenueCat: 88bb4229115b2badcce0e5a97f3dd8cc952b38c8
+  RevenueCat: e6722311bff00ecb66d7a1129138843bff94d742
   SDWebImage: 1bb6a1b84b6fe87b972a102bdc77dd589df33477
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb

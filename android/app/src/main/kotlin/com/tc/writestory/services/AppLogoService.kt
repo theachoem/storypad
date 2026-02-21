@@ -11,15 +11,17 @@ object AppLogoService {
       val packageManager = context.packageManager
       val packageName = context.packageName
 
-      // Get all activity aliases from manifest
+      // Get all activity components (including aliases and disabled ones)
       val packageInfo = packageManager.getPackageInfo(
           packageName,
           PackageManager.GET_ACTIVITIES or PackageManager.GET_DISABLED_COMPONENTS
       )
       
-      val mainActivity = "com.tc.writestory.MainActivity"
+      val mainActivityName = "$packageName.MainActivity"
+      
+      // Get all activity-alias components (exclude the main activity itself)
       val aliases = packageInfo.activities
-          ?.filter { it.targetActivity == mainActivity && it.name != mainActivity }
+          ?.filter { it.name != mainActivityName }
           ?.map { it.name }
           ?: emptyList()
 

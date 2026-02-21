@@ -1,33 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/services.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/base_object_storages/enum_storage.dart';
-import 'package:storypad/gen/assets.gen.dart';
-
-enum AppLogo {
-  storypad_1_0(logoName: 'storypad_logo_1_0'),
-  storypad_2_0(logoName: 'storypad_logo_2_0')
-  ;
-
-  final String logoName;
-
-  String get xcodeLogoName => logoName;
-  String get androidActivityAliasName => 'com.tc.writestory.$logoName';
-
-  const AppLogo({
-    required this.logoName,
-  });
-
-  AssetGenImage get asset {
-    switch (this) {
-      case .storypad_1_0:
-        return Assets.logos.storypadLogo10.assets.storypadLogo10;
-      case .storypad_2_0:
-        return Assets.logos.storypadLogo20.assets.storypadLogo20;
-    }
-  }
-}
+import 'package:storypad/core/types/app_logo.dart';
 
 class _AppLogoStorage extends EnumStorage<AppLogo> {
   @override
@@ -59,7 +35,10 @@ class AppLogoService {
       set = false;
     }
 
-    if (set) await _AppLogoStorage().writeEnum(logo);
+    if (set) {
+      await _AppLogoStorage().writeEnum(logo);
+      kAppLogo = logo;
+    }
     return set;
   }
 
@@ -77,7 +56,11 @@ class AppLogoService {
       cleared = false;
     }
 
-    if (cleared) await _AppLogoStorage().remove();
+    if (cleared) {
+      await _AppLogoStorage().remove();
+      kAppLogo = AppLogo.storypad_1_0;
+    }
+
     return cleared;
   }
 }

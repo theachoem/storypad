@@ -46,6 +46,17 @@ class _SettingsContent extends StatelessWidget {
           FontFamilyTile.globalTheme(),
           FontWeightTile.globalTheme(),
           TimeFormatTile.globalTheme(),
+          if (kStoryPad) ...[
+            const Divider(),
+            SpSectionTitle(title: tr('general.app_icon')),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: SpAppLogoPicker(
+                selectedAppLogo: kAppLogo!,
+                onLogoSelected: (logo) => viewModel.setAppLogo(logo),
+              ),
+            ),
+          ],
         ],
       ),
     );

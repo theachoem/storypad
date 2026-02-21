@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,12 +19,27 @@ import 'package:storypad/core/initializers/licenses_initializer.dart' show Licen
 import 'package:storypad/core/initializers/onboarding_initializer.dart' show OnboardingInitializer;
 import 'package:storypad/core/initializers/theme_initializer.dart' show ThemeInitializer;
 import 'package:storypad/provider_scope.dart' show ProviderScope;
+import 'package:storypad/widgets/sp_splash_screen_wrapper.dart';
 
 void main({
   FirebaseOptions? firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SpSplashScreenWrapper.ensureInitialized();
 
+  runApp(
+    SpSplashScreenWrapper(
+      onLoad: () => _initializeApp(firebaseOptions: firebaseOptions),
+      app: const ProviderScope(
+        child: App(),
+      ),
+    ),
+  );
+}
+
+Future<void> _initializeApp({
+  FirebaseOptions? firebaseOptions,
+}) async {
   // Tempoary workaround until this is fixed:
   // https://github.com/flutter/flutter/issues/175606#issuecomment-3576240885
   if (Platform.isIOS) _installZeroOffsetPointerGuard();
@@ -59,12 +73,6 @@ void main({
   await FirestoreStorageInitializer.call();
 
   LicensesInitializer.call();
-
-  runApp(
-    const ProviderScope(
-      child: App(),
-    ),
-  );
 }
 
 bool _zeroOffsetPointerGuardInstalled = false;

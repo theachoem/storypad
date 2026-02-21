@@ -11,12 +11,15 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5B157C66F203FAE7144A4775 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 449818C4FE513B8C9198E925 /* Pods_RunnerTests.framework */; };
-		62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */; };
-		62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */; };
-		62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */; };
 		622062132F44212700233A92 /* AppLogoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622062112F44212700233A92 /* AppLogoService.swift */; };
-		62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */; };
-		62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */; };
+		62C5D5902F475AE200D9F2E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */; };
+		62F3254D2F49A21B005979EE /* storypad_logo_6_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F3254B2F49A21B005979EE /* storypad_logo_6_0.icon */; };
+		62F3254E2F49A21B005979EE /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F325472F49A21B005979EE /* storypad_logo_2_0.icon */; };
+		62F3254F2F49A21B005979EE /* storypad_logo_6_1.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F3254C2F49A21B005979EE /* storypad_logo_6_1.icon */; };
+		62F325502F49A21B005979EE /* storypad_logo_5_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F3254A2F49A21B005979EE /* storypad_logo_5_0.icon */; };
+		62F325512F49A21B005979EE /* storypad_logo_4_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F325492F49A21B005979EE /* storypad_logo_4_0.icon */; };
+		62F325522F49A21B005979EE /* storypad_logo_3_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F325482F49A21B005979EE /* storypad_logo_3_0.icon */; };
+		62F325532F49A21B005979EE /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62F325462F49A21B005979EE /* storypad_logo_1_0.icon */; };
 		62FA11742E115EB1008E1488 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62FA11732E115EB1008E1488 /* StoreKit.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -63,16 +66,19 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		449818C4FE513B8C9198E925 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BF635C63D3E535710490F1B /* Pods-RunnerTests.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-spooky.xcconfig"; sourceTree = "<group>"; };
-		62160D4E2D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenCommunity.storyboard; sourceTree = "<group>"; };
-		62160D4F2D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenSpooky.storyboard; sourceTree = "<group>"; };
-		62160D502D4174F500777544 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenStorypad.storyboard; sourceTree = "<group>"; };
 		622062112F44212700233A92 /* AppLogoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogoService.swift; sourceTree = "<group>"; };
 		623F38B02D80A5FD00156016 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		627B33492D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334B2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		627B334D2D21CBD800133393 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
-		62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
+		62C5D58F2F475AE200D9F2E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		62F325462F49A21B005979EE /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
+		62F325472F49A21B005979EE /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
+		62F325482F49A21B005979EE /* storypad_logo_3_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_3_0.icon; sourceTree = "<group>"; };
+		62F325492F49A21B005979EE /* storypad_logo_4_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_4_0.icon; sourceTree = "<group>"; };
+		62F3254A2F49A21B005979EE /* storypad_logo_5_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_5_0.icon; sourceTree = "<group>"; };
+		62F3254B2F49A21B005979EE /* storypad_logo_6_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_6_0.icon; sourceTree = "<group>"; };
+		62F3254C2F49A21B005979EE /* storypad_logo_6_1.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_6_1.icon; sourceTree = "<group>"; };
 		62FA11732E115EB1008E1488 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		70582F614C851DBC06F04E2E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -241,8 +247,13 @@
 		62DAA0662F41ADA700CC9E4F /* logos */ = {
 			isa = PBXGroup;
 			children = (
-				62DAA0642F41ADA700CC9E4F /* storypad_logo_1_0.icon */,
-				62DAA0652F41ADA700CC9E4F /* storypad_logo_2_0.icon */,
+				62F325462F49A21B005979EE /* storypad_logo_1_0.icon */,
+				62F325472F49A21B005979EE /* storypad_logo_2_0.icon */,
+				62F325482F49A21B005979EE /* storypad_logo_3_0.icon */,
+				62F325492F49A21B005979EE /* storypad_logo_4_0.icon */,
+				62F3254A2F49A21B005979EE /* storypad_logo_5_0.icon */,
+				62F3254B2F49A21B005979EE /* storypad_logo_6_0.icon */,
+				62F3254C2F49A21B005979EE /* storypad_logo_6_1.icon */,
 			);
 			name = logos;
 			path = ../assets/logos;
@@ -287,9 +298,7 @@
 			children = (
 				62DAA0662F41ADA700CC9E4F /* logos */,
 				623F38B02D80A5FD00156016 /* Runner.entitlements */,
-				62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */,
-				62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */,
-				62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */,
+				62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C147021CF9000F007C117D /* Info.plist */,
@@ -405,11 +414,14 @@
 			files = (
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
-				62160D512D4174F500777544 /* LaunchScreenStorypad.storyboard in Resources */,
-				62160D522D4174F500777544 /* LaunchScreenCommunity.storyboard in Resources */,
-				62DAA0672F41ADA700CC9E4F /* storypad_logo_1_0.icon in Resources */,
-				62DAA0682F41ADA700CC9E4F /* storypad_logo_2_0.icon in Resources */,
-				62160D532D4174F500777544 /* LaunchScreenSpooky.storyboard in Resources */,
+				62F3254D2F49A21B005979EE /* storypad_logo_6_0.icon in Resources */,
+				62F3254E2F49A21B005979EE /* storypad_logo_2_0.icon in Resources */,
+				62F3254F2F49A21B005979EE /* storypad_logo_6_1.icon in Resources */,
+				62F325502F49A21B005979EE /* storypad_logo_5_0.icon in Resources */,
+				62F325512F49A21B005979EE /* storypad_logo_4_0.icon in Resources */,
+				62F325522F49A21B005979EE /* storypad_logo_3_0.icon in Resources */,
+				62F325532F49A21B005979EE /* storypad_logo_1_0.icon in Resources */,
+				62C5D5902F475AE200D9F2E4 /* LaunchScreen.storyboard in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -594,28 +606,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		62160D4B2D4174F500777544 /* LaunchScreenCommunity.storyboard */ = {
+		62C5D58E2F475AE200D9F2E4 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				62160D4E2D4174F500777544 /* Base */,
+				62C5D58F2F475AE200D9F2E4 /* Base */,
 			);
-			name = LaunchScreenCommunity.storyboard;
-			sourceTree = "<group>";
-		};
-		62160D4C2D4174F500777544 /* LaunchScreenSpooky.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				62160D4F2D4174F500777544 /* Base */,
-			);
-			name = LaunchScreenSpooky.storyboard;
-			sourceTree = "<group>";
-		};
-		62160D4D2D4174F500777544 /* LaunchScreenStorypad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				62160D502D4174F500777544 /* Base */,
-			);
-			name = LaunchScreenStorypad.storyboard;
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -685,6 +681,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-spooky";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -696,7 +693,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -830,6 +826,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -843,7 +840,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -939,6 +935,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -952,7 +949,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1044,6 +1040,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1057,7 +1054,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenStorypad;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1154,6 +1150,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-community";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1163,7 +1160,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1255,6 +1251,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-community";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1264,7 +1261,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1351,6 +1347,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-community";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1360,7 +1357,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenCommunity;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1505,6 +1501,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-spooky";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1516,7 +1513,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1535,6 +1531,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-spooky";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1546,7 +1543,6 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LAUNCH_SCREEN_STORYBOARD = LaunchScreenSpooky;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -18,7 +18,7 @@ class _DoneButton extends StatelessWidget {
               (viewModel.flowType == EditingFlowType.create && lastSavedAt != null) ||
               (viewModel.flowType == EditingFlowType.update),
           child: SpFadeIn.bound(
-            child: OutlinedButton.icon(
+            child: FilledButton.tonalIcon(
               icon: SpAnimatedIcons(
                 firstChild: const Icon(SpIcons.save),
                 secondChild: const Icon(SpIcons.check),

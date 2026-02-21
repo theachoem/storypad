@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash -e
 
 # Generate story backgrounds
 echo "Generating story backgrounds..."

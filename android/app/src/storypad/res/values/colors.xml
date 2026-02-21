@@ -2,4 +2,9 @@
 <resources>
     <color name="storypad_logo_1_0_background">#FFFFFF</color>
     <color name="storypad_logo_2_0_background">#FFFFFF</color>
+    <color name="storypad_logo_3_0_background">#FFFFFF</color>
+    <color name="storypad_logo_4_0_background">#FFFFFF</color>
+    <color name="storypad_logo_5_0_background">#FFFFFF</color>
+    <color name="storypad_logo_6_0_background">#FFFFFF</color>
+    <color name="storypad_logo_6_1_background">#FFFFFF</color>
 </resources>
