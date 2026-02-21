@@ -24,7 +24,10 @@ class SpAppLogoPicker extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemExtent: 72,
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          side: BorderSide(color: Theme.of(context).dividerColor),
+        ),
         onTap: (value) {
           onLogoSelected.call(logos.elementAt(value));
         },

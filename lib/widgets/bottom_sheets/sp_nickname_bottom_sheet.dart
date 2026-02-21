@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kAppLogo, kIsCupertino, kStoryPad;
 import 'package:storypad/core/services/app_logo_service.dart';
 import 'package:storypad/core/types/app_logo.dart';
+import 'package:storypad/providers/nickname_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_logo_picker.dart';
 import 'package:storypad/widgets/sp_default_text_controller.dart';
@@ -29,6 +31,8 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     bool nicknameChanged = nickname != controller.text.trim() && controller.text.trim().isNotEmpty;
 
     if (logoChanged || nicknameChanged) {
+      context.read<NicknameProvider>().setNickname(controller.text.trim());
+
       await AppLogoService().set(appLogoNotifier.value);
       if (context.mounted) Navigator.maybePop(context);
 

@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
+import 'package:storypad/core/types/app_logo.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
@@ -83,6 +84,17 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     return FirebaseAnalytics.instance.setUserProperty(
       name: 'time_format',
       value: timeFormat.label,
+    );
+  }
+
+  Future<void> logSetAppLogo({
+    required AppLogo? newAppLogo,
+  }) {
+    debug('logSetAppLogo', {'value': newAppLogo?.name ?? 'default'});
+
+    return FirebaseAnalytics.instance.setUserProperty(
+      name: 'app_logo',
+      value: newAppLogo?.name ?? 'default',
     );
   }
 }
