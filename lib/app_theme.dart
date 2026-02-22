@@ -166,7 +166,7 @@ class AppTheme extends StatelessWidget {
         ),
       ),
       textTheme: GoogleFonts.getTextTheme(
-        fontFamily,
+        GoogleFonts.asMap().keys.contains(fontFamily) ? fontFamily : kDefaultFontFamily,
         TextTheme(
           displayLarge: calculateTextStyle(baseTheme.textTheme.displayLarge!, FontWeight.w400),
           displayMedium: calculateTextStyle(baseTheme.textTheme.displayMedium!, FontWeight.w400),
