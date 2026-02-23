@@ -60,7 +60,7 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
       assert(key == this);
 
       // Download asset if needed
-      if (asset != null && localFile == null) {
+      if (asset != null && localFile == null && currentUser != null) {
         final downloader = GoogleDriveAssetDownloaderService();
         localFile = File(
           await downloader.downloadAsset(

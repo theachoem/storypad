@@ -150,6 +150,7 @@ class GoogleDriveAssetDownloaderService {
     } catch (e) {
       // Clean up partial downloads
       final downloadedFile = File(localFilePath);
+
       if (downloadedFile.existsSync()) {
         try {
           downloadedFile.deleteSync();
@@ -159,7 +160,12 @@ class GoogleDriveAssetDownloaderService {
       }
 
       debugPrint('❌ Error downloading asset: $e');
-      rethrow;
+
+      if (e is StateError) {
+        rethrow;
+      } else {
+        throw StateError('Failed to download asset: $e');
+      }
     }
   }
 }
