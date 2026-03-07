@@ -29,6 +29,7 @@ class _DemoImages extends StatelessWidget {
               onTap: () => SpImagesViewer.fromString(
                 initialIndex: index,
                 images: demoImageUrls!,
+                context: context,
               ).show(context),
               child: Material(
                 clipBehavior: Clip.hardEdge,

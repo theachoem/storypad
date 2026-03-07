@@ -226,11 +226,13 @@ class _QuillImageRenderer extends StatelessWidget {
       SpImagesViewer.fromString(
         images: images,
         initialIndex: images.indexOf(link),
+        context: context,
       ).show(context);
     } else {
       SpImagesViewer.fromString(
         images: [link],
         initialIndex: 0,
+        context: context,
       ).show(context);
     }
   }

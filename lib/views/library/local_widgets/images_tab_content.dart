@@ -219,6 +219,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
               SpImagesViewer.fromString(
                 images: embedLinks,
                 initialIndex: embedLinks.indexOf(asset.relativeLocalFilePath),
+                context: context,
               ).show(context);
             },
           ),

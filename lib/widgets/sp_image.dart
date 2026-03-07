@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
+import 'package:storypad/widgets/asset_db/sp_db_asset_loader.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 class SpImage extends StatelessWidget {
@@ -33,28 +31,29 @@ class SpImage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Check if this is a relative asset path (images/ or audio/)
     if (link.startsWith("images/") || link.startsWith("audio/")) {
-      return Consumer<BackupProvider>(
-        builder: (context, provider, child) {
-          return Image(
-            key: ValueKey(provider.currentUser?.accessToken),
+      return SpDbAssetLoader.withUser(
+        relativePath: link,
+        builder: (context, file, error) {
+          if (error != null) {
+            return errorWidget?.call(context, link, error) ??
+                buildImageError(width ?? defaultSize, height ?? defaultSize, context, error);
+          }
+
+          if (file == null) {
+            return SizedBox(
+              height: height ?? defaultSize,
+              width: width ?? defaultSize,
+            );
+          }
+
+          return Image.file(
+            file,
             width: width,
             height: height,
             fit: BoxFit.cover,
-            image: SpDbImageProvider(relativePath: link, currentUser: provider.currentUser),
-            errorBuilder: (context, error, strackTrace) =>
-                errorWidget?.call(context, link, error) ??
-                buildImageError(width ?? defaultSize, height ?? defaultSize, context, error),
-            loadingBuilder: (context, child, loadingProgress) {
-              return Stack(
-                children: [
-                  SizedBox(
-                    height: height ?? defaultSize,
-                    width: width ?? defaultSize,
-                  ),
-                  child,
-                ],
-              );
-            },
+            cacheWidth: width != null && width != double.infinity
+                ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+                : null,
           );
         },
       );
@@ -63,7 +62,9 @@ class SpImage extends StatelessWidget {
         base64.decode(link),
         width: width,
         height: height,
-        cacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
+        cacheWidth: width != null && width != double.infinity
+            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            : null,
         fit: BoxFit.cover,
       );
     } else if (link.startsWith('http')) {
@@ -72,7 +73,9 @@ class SpImage extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
-        memCacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
+        memCacheWidth: width != null && width != double.infinity
+            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            : null,
         placeholder: (context, url) {
           return SizedBox(
             height: height ?? defaultSize,
@@ -87,7 +90,9 @@ class SpImage extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
-        cacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
+        cacheWidth: width != null && width != double.infinity
+            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            : null,
       );
     } else {
       return buildImageError(
