@@ -15,9 +15,11 @@ import 'package:storypad/widgets/sp_two_value_listenable_builder.dart';
 class SpNicknameBottomSheet extends BaseBottomSheet {
   const SpNicknameBottomSheet({
     required this.nickname,
+    this.showLogoSelectorOnly = false,
   });
 
   final String? nickname;
+  final bool showLogoSelectorOnly;
 
   @override
   bool get fullScreen => false;
@@ -30,10 +32,9 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
     bool logoChanged = nickname == controller.text.trim() && appLogoNotifier.value != kAppLogo;
     bool nicknameChanged = nickname != controller.text.trim() && controller.text.trim().isNotEmpty;
 
-    if (logoChanged || nicknameChanged) {
-      context.read<NicknameProvider>().setNickname(controller.text.trim());
-
-      await AppLogoService().set(appLogoNotifier.value);
+    if (nicknameChanged || logoChanged) {
+      if (nicknameChanged) context.read<NicknameProvider>().setNickname(controller.text.trim());
+      if (logoChanged) await AppLogoService().set(appLogoNotifier.value);
       if (context.mounted) Navigator.maybePop(context);
 
       return;
@@ -56,21 +57,23 @@ class SpNicknameBottomSheet extends BaseBottomSheet {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    tr("dialog.what_should_i_call_you.title"),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
-                  ),
-                  Text(
-                    tr("dialog.what_should_i_call_you.message"),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextTheme.of(context).bodyLarge,
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 16.0),
-                  buildNicknameField(context, controller, appLogoNotifier),
-                  const SizedBox(height: 8.0),
+                  if (!showLogoSelectorOnly) ...[
+                    Text(
+                      tr("dialog.what_should_i_call_you.title"),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
+                    ),
+                    Text(
+                      tr("dialog.what_should_i_call_you.message"),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextTheme.of(context).bodyLarge,
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 16.0),
+                    buildNicknameField(context, controller, appLogoNotifier),
+                    const SizedBox(height: 8.0),
+                  ],
                   if (kStoryPad) ...[
                     const SizedBox(height: 4.0),
                     buildLogoSelector(context, appLogoNotifier),
