@@ -118,7 +118,15 @@ class QuillRichTextController extends RichTextController {
     Object data,
     TextSelection? textSelection,
   ) {
-    _quillController.replaceText(index, length, data, textSelection);
+    final Object quillData;
+    if (data is Map<String, dynamic>) {
+      final type = data.keys.first;
+      final value = data.values.first as String;
+      quillData = quill.Embeddable(type, value);
+    } else {
+      quillData = data;
+    }
+    _quillController.replaceText(index, length, quillData, textSelection);
   }
 
   // ========================================================================
