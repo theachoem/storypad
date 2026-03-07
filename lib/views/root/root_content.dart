@@ -20,14 +20,13 @@ class _RootContent extends StatelessWidget {
           // reset to show new badge back.
           NewBadgeStorage().remove();
         },
-        child: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
+        child: NavigatorPopHandler(
+          enabled: true,
+          onPopWithResult: (result) {
             if (!SpAppLockWrapper.authenticated(context)) return;
-            if (!didPop) {
-              final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
-              if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-            }
+
+            final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
+            if (navigator?.canPop() ?? false) navigator?.maybePop(result);
           },
           child: Scaffold(
             extendBody: true,

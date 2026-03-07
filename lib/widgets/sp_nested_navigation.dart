@@ -30,13 +30,10 @@ class SpNestedNavigationState extends State<SpNestedNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          final NavigatorState? navigator = widget.navigatorKey?.currentState;
-          if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-        }
+    return NavigatorPopHandler(
+      onPopWithResult: (result) {
+        final NavigatorState? navigator = widget.navigatorKey?.currentState;
+        if (navigator?.canPop() ?? false) navigator?.maybePop(result);
       },
       child: HeroControllerScope(
         controller: heroController,
