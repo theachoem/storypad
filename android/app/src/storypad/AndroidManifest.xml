@@ -6,7 +6,7 @@
             android:name="com.tc.writestory.storypad_logo_1_0"
             android:targetActivity="com.tc.writestory.MainActivity"
             android:icon="@mipmap/storypad_logo_1_0"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
