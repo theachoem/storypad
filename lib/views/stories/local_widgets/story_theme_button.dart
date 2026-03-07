@@ -17,6 +17,7 @@ class StoryThemeButton extends StatelessWidget {
     return Hero(
       tag: "page.theme.title",
       child: IconButton(
+        color: Theme.of(context).appBarTheme.foregroundColor,
         tooltip: tr("page.theme.title"),
         icon: const Icon(SpIcons.moreVert),
         onPressed: () async {
