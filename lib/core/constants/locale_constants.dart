@@ -21,6 +21,7 @@ const kSupportedLocales = [
   Locale("vi", "VN"),
   Locale("zh", "CN"),
   Locale("ru", "RU"),
+  Locale("uk", "UA"),
 ];
 
 const kLanguageNames = {
@@ -41,6 +42,7 @@ const kLanguageNames = {
   "vi-VN": "Vietnamese (Vietnam)",
   "zh-CN": "Chinese (Simplified)",
   "ru-RU": "Russian",
+  "uk-UA": "Ukrainian",
 };
 
 const kNativeLanguageNames = {
@@ -61,4 +63,5 @@ const kNativeLanguageNames = {
   "vi-VN": "Tiếng Việt (Việt Nam)",
   "zh-CN": "中文 (简体)",
   "ru-RU": "Русский",
+  "uk-UA": "Українська",
 };
