@@ -18,12 +18,28 @@ object AppLogoService {
       )
       
       val mainActivityName = "$packageName.MainActivity"
+      val mainActivityComponent = ComponentName(packageName, mainActivityName)
       
-      // Get all activity-alias components (exclude the main activity itself)
+      // Restrict to activity-alias entries that explicitly target MainActivity.
+      // packageInfo.activities may include regular activities from dependencies
+      // (e.g. Google Sign-In), and disabling them can break sign-in flows.
       val aliases = packageInfo.activities
+          ?.filter { it.targetActivity == mainActivityName }
           ?.filter { it.name != mainActivityName }
           ?.map { it.name }
           ?: emptyList()
+
+      if (aliases.isEmpty()) {
+        result.error("FAILED", "No app logo activity aliases found", null)
+        return
+      }
+
+      aliasName?.let {
+        if (!aliases.contains(it)) {
+          result.error("FAILED", "Invalid app logo alias: $it", null)
+          return
+        }
+      }
 
       // Disable all aliases
       aliases.forEach { alias ->
@@ -34,10 +50,22 @@ object AppLogoService {
         )
       }
 
-      // Enable specific alias if provided
-      aliasName?.let {
+      if (aliasName == null) {
+        // Fall back to the default launcher declared on MainActivity.
         packageManager.setComponentEnabledSetting(
-            ComponentName(packageName, it),
+            mainActivityComponent,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+      } else {
+        // Use alias launcher icon and hide the default launcher entry.
+        packageManager.setComponentEnabledSetting(
+            mainActivityComponent,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        packageManager.setComponentEnabledSetting(
+            ComponentName(packageName, aliasName),
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
             PackageManager.DONT_KILL_APP
         )

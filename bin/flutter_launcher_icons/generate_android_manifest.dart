@@ -41,7 +41,7 @@ void main(List<String> args) {
     manifestDir.createSync(recursive: true);
   }
 
-  final manifestContent = _generateManifest(packageName, logos, logos[0]);
+  final manifestContent = _generateManifest(packageName, logos);
 
   File(manifestPath).writeAsStringSync(manifestContent);
 
@@ -103,18 +103,16 @@ List<String> _getAvailableLogos() {
 }
 
 /// Generate AndroidManifest.xml content with all activity-alias entries
-String _generateManifest(String packageName, List<String> logos, String enabledIcon) {
+String _generateManifest(String packageName, List<String> logos) {
   final aliases = <String>[];
 
   for (final logo in logos) {
-    final enabled = logo == enabledIcon ? 'true' : 'false';
-
     aliases.add('''        <!-- App logo alias for $logo -->
         <activity-alias
             android:name="$packageName.$logo"
             android:targetActivity="$packageName.MainActivity"
             android:icon="@mipmap/$logo"
-            android:enabled="$enabled"
+            android:enabled="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
