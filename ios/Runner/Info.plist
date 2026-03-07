@@ -33,6 +33,7 @@
             <string>vi-VN</string>
             <string>zh-CN</string>
             <string>ru-RU</string>
+            <string>uk-UA</string>
         </array>
         <key>CFBundleName</key>
         <string>${APP_NAME}</string>

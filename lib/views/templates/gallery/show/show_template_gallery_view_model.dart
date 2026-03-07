@@ -86,7 +86,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
     if (result?.items.isNotEmpty == true) {
       OkCancelResult userAction = await showOkCancelAlertDialog(
         context: context,
-        title: tr('dialog.template_already_save.tite'),
+        title: tr('dialog.template_already_save.title'),
         message: tr('dialog.template_already_save.message'),
       );
 
