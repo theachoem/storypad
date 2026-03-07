@@ -1,14 +1,10 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
-import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/widgets/asset_db/sp_db_asset_loader.dart';
 
 class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
   final String relativePath;
@@ -42,66 +38,8 @@ class SpDbImageProvider extends ImageProvider<SpDbImageProvider> {
     SpDbImageProvider key, {
     required ImageDecoderCallback decode,
   }) async {
-    int? id = AssetType.parseAssetId(relativePath);
-    AssetType? type = AssetType.getTypeFromLink(relativePath);
-
-    if (id == null || type == null) {
-      throw StateError('$relativePath is invalid.');
-    }
-
-    String filePath = type.getStoragePath(id: id, extension: extension(relativePath));
-    File file = File(filePath);
-    if (file.existsSync()) return decode(await ui.ImmutableBuffer.fromFilePath(file.path));
-
-    AssetDbModel? asset = await AssetDbModel.db.find(id);
-    File? localFile = asset?.localFile;
-
-    try {
-      assert(key == this);
-
-      // Download asset if needed
-      if (asset != null && localFile == null && currentUser != null) {
-        final downloader = GoogleDriveAssetDownloaderService();
-        localFile = File(
-          await downloader.downloadAsset(
-            asset: asset,
-            currentUser: currentUser,
-            localFile: localFile,
-          ),
-        );
-      }
-
-      // Validate content type for images
-      if (localFile != null && localFile.existsSync()) {
-        final contentType = _getContentType(localFile);
-        if (contentType != null && !contentType.startsWith('image/')) {
-          throw StateError('Invalid content type: $contentType');
-        }
-        return decode(await ui.ImmutableBuffer.fromFilePath(localFile.path));
-      } else {
-        throw StateError('$relativePath cannot be loaded.');
-      }
-    } catch (e) {
-      if (asset != null && File(asset.localFilePath).existsSync()) {
-        File(asset.localFilePath).deleteSync();
-      }
-
-      rethrow;
-    }
-  }
-
-  /// Get content type from file extension
-  String? _getContentType(File file) {
-    final extension = file.path.split('.').last.toLowerCase();
-    const imageExtensions = {
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'png': 'image/png',
-      'gif': 'image/gif',
-      'webp': 'image/webp',
-      'bmp': 'image/bmp',
-    };
-    return imageExtensions[extension];
+    final file = await SpDbAssetLoader.load(relativePath, currentUser);
+    return decode(await ui.ImmutableBuffer.fromFilePath(file.path));
   }
 
   @override

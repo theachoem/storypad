@@ -138,6 +138,7 @@ class _AssetTile extends StatelessWidget {
     SpImagesViewer.fromString(
       images: imageLinks,
       initialIndex: 0,
+      context: context,
     ).show(context);
   }
 }

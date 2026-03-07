@@ -5,10 +5,12 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -41,6 +43,7 @@ class SpImagesViewer extends StatefulWidget {
   factory SpImagesViewer.fromString({
     required List<String> images,
     required int initialIndex,
+    required BuildContext context,
   }) {
     List<(String, ImageProvider)> providers = [];
 
@@ -49,7 +52,10 @@ class SpImagesViewer extends StatefulWidget {
 
       // Check if this is a relative asset path (images/ or audio/)
       if (imageUrl.startsWith('images/') || imageUrl.startsWith('audio/')) {
-        imageProvider = SpDbImageProvider(relativePath: imageUrl, currentUser: null);
+        imageProvider = SpDbImageProvider(
+          relativePath: imageUrl,
+          currentUser: context.read<BackupProvider>().currentUser,
+        );
       } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);
       } else if (File(imageUrl).existsSync()) {
@@ -270,6 +276,9 @@ class _Images extends StatelessWidget {
                         child: Text(
                           error.toString(),
                           textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                          ),
                         ),
                       ),
                     ],
