@@ -147,6 +147,9 @@ class AppTheme extends StatelessWidget {
       appBarTheme: AppBarTheme(
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
+        actionsIconTheme: IconThemeData(color: colorScheme.onSurface),
         scrolledUnderElevation: 0.0,
       ),
       tabBarTheme: const TabBarThemeData(

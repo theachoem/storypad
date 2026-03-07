@@ -18,15 +18,11 @@ class _EditStoryContent extends StatelessWidget {
     List<StoryPageObject> pages = constructPages();
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
       endDrawer: viewModel.story != null
-          ? TagsEndDrawer(
-              onUpdated: (tags) => viewModel.setTags(tags),
-              initialTags: viewModel.story?.validTags ?? [],
-            )
+          ? TagsEndDrawer(onUpdated: (tags) => viewModel.setTags(tags), initialTags: viewModel.story?.validTags ?? [])
           : null,
       onEndDrawerChanged: (isOpened) {
         if (isOpened) {
@@ -35,14 +31,7 @@ class _EditStoryContent extends StatelessWidget {
           context.read<RootProvider>().setTemporaryHidden(false);
         }
       },
-      body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          padding: MediaQuery.paddingOf(context).copyWith(top: MediaQuery.paddingOf(context).top + kToolbarHeight),
-        ),
-        child: Builder(
-          builder: (context) => buildBody(context, pages),
-        ),
-      ),
+      body: buildBody(context, pages),
       bottomNavigationBar: viewModel.story == null
           ? null
           : SpPagesToolbar(
@@ -78,7 +67,7 @@ class _EditStoryContent extends StatelessWidget {
       viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: (page) => StoryHeader.fromEditStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      padding: MediaQuery.paddingOf(context),
+      padding: MediaQuery.paddingOf(context).copyWith(top: 0.0),
       pages: pages,
       preferences: viewModel.story!.preferences,
       storyContent: viewModel.draftContent!,
@@ -107,16 +96,35 @@ class _EditStoryContent extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       forceMaterialTransparency: true,
+      titleSpacing: 0.0,
+      // On large screens, its side padding prevents the divider
+      // from spanning the full width of the screen. To avoid this visual
+      // inconsistency, we hide the divider when the window is large.
+      bottom: WindowedDetectorService.isBigWindow(context) || !viewModel.pagesManager.pageScrollController.hasClients
+          ? null
+          : PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: ListenableBuilder(
+                listenable: viewModel.pagesManager.pageScrollController,
+                builder: (BuildContext context, Widget? child) {
+                  return Opacity(
+                    opacity: viewModel.pagesManager.pageScrollController.offset.clamp(0.0, 8.0) / 8.0,
+                    child: const Divider(height: 1),
+                  );
+                },
+              ),
+            ),
       leading: SpAnimatedIcons.fadeScale(
         showFirst: viewModel.pagesManager.managingPage,
         firstChild: CloseButton(onPressed: () => viewModel.pagesManager.toggleManagingPage()),
         secondChild: Hero(
           tag: 'back-button',
-          child: BackButton(onPressed: () => Navigator.maybePop(context, viewModel.story)),
+          child: BackButton(
+            color: Theme.of(context).appBarTheme.foregroundColor,
+            onPressed: () => Navigator.maybePop(context, viewModel.story),
+          ),
         ),
       ),
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      titleSpacing: 0.0,
       actions: [
         if (!viewModel.pagesManager.managingPage) ...[
           _DoneButton(viewModel: viewModel),

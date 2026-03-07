@@ -7,6 +7,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
