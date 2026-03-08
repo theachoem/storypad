@@ -62,6 +62,7 @@ class _ShowAddOnContent extends StatelessWidget {
   List<Widget> buildFAQs(BuildContext context) {
     return [
       ExpansionTile(
+        shape: const RoundedRectangleBorder(),
         title: Text(
           '1. Is it a lifetime purchase?',
           style: TextTheme.of(context).titleSmall,
@@ -80,6 +81,7 @@ class _ShowAddOnContent extends StatelessWidget {
         ],
       ),
       ExpansionTile(
+        shape: const RoundedRectangleBorder(),
         title: Text(
           '2. Will my purchase work on all my devices?',
           style: TextTheme.of(context).titleSmall,
@@ -98,6 +100,7 @@ class _ShowAddOnContent extends StatelessWidget {
         ],
       ),
       ExpansionTile(
+        shape: const RoundedRectangleBorder(),
         title: Text(
           '3. Do I need to connect with Google Drive to purchase?',
           style: TextTheme.of(context).titleSmall,
