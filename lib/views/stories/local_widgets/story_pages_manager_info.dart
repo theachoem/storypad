@@ -12,18 +12,21 @@ class StoryPagesManagerInfo {
   }) {
     pageScrollController = ScrollController(initialScrollOffset: initialScrollOffset);
     pageController = PageController(initialPage: initialPageIndex ?? 0);
+    pageScrollOffsetNotifier = ValueNotifier(initialScrollOffset);
+    currentPageIndexNotifier = ValueNotifier(initialPageIndex);
 
-    currentPageIndexNotifier.value = initialPageIndex;
-    pageController.addListener(() {
-      currentPageIndexNotifier.value = pageController.page?.toInt();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      pageController.addListener(() => currentPageIndexNotifier.value = pageController.page?.toInt());
+      pageScrollController.addListener(() => pageScrollOffsetNotifier.value = pageScrollController.offset);
     });
   }
 
   late final ScrollController pageScrollController;
   late final PageController pageController;
+  late final ValueNotifier<double> pageScrollOffsetNotifier;
 
   // only use for pages layout.
-  final ValueNotifier<int?> currentPageIndexNotifier = ValueNotifier(null);
+  late final ValueNotifier<int?> currentPageIndexNotifier;
   final ValueNotifier<bool> draggingNotifier = ValueNotifier(false);
 
   StoryPageObjectsMap pagesMap = StoryPageObjectsMap();
@@ -76,6 +79,7 @@ class StoryPagesManagerInfo {
 
   void dispose() {
     pageScrollController.dispose();
+    pageScrollOffsetNotifier.dispose();
     pageController.dispose();
     draggingNotifier.dispose();
     currentPageIndexNotifier.dispose();

@@ -14,6 +14,7 @@ class _ImagesTabContent extends StatefulWidget {
 class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeepAliveClientMixin {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
+  List<Map<String, dynamic>>? groupedAssets;
 
   int? selectedTagId;
   Map<String, dynamic> get filters => {
@@ -35,9 +36,8 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
 
   Future<void> _load() async {
     assets = await AssetDbModel.db.where(filters: filters);
-    storiesCount = StoryDbModel.db.getStoryCountByAssets(
-      assetIds: assets?.items.map((e) => e.id).toList() ?? [],
-    );
+    storiesCount = StoryDbModel.db.getStoryCountByAssets(assetIds: assets?.items.map((e) => e.id).toList() ?? []);
+    groupedAssets = _groupAssetsByDay(assets?.items ?? []);
 
     if (mounted) {
       setState(() {});
@@ -89,11 +89,9 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
   }
 
   Widget buildBody(BuildContext context, BackupProvider provider) {
-    if (assets == null) return const Center(child: CircularProgressIndicator.adaptive());
-    if (assets?.items.isEmpty == true) return _EmptyBody(context: context);
+    if (groupedAssets == null) return const Center(child: CircularProgressIndicator.adaptive());
+    if (groupedAssets!.isEmpty) return _EmptyBody(context: context);
 
-    // Group assets by day
-    final groupedAssets = _groupAssetsByDay(assets!.items);
     return KeyedSubtree(
       key: ValueKey(filters.values.join("-")),
       child: SpFadeIn.fromBottom(
@@ -104,9 +102,9 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
             right: MediaQuery.of(context).padding.right + 16.0,
           ),
           separatorBuilder: (context, index) => const SizedBox(height: 12.0),
-          itemCount: groupedAssets.length,
+          itemCount: groupedAssets!.length,
           itemBuilder: (context, dayIndex) {
-            final dayEntry = groupedAssets[dayIndex];
+            final dayEntry = groupedAssets![dayIndex];
             final dayLabel = dayEntry['label'] as String;
             final dayAssets = dayEntry['assets'] as List<AssetDbModel>;
 
@@ -131,7 +129,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
                   crossAxisSpacing: 8.0,
                   padding: EdgeInsets.zero,
                   gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: widget.constraints.maxWidth ~/ 120,
+                    crossAxisCount: max(1, widget.constraints.maxWidth ~/ 120),
                   ),
                   itemBuilder: (context, assetIndex) {
                     return _buildItem(
@@ -204,7 +202,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
       items: (context) {
         return [
           if (storiesCount[asset.id] == 0)
-            _buildDeleteButton(context, provider, asset, storiesCount[asset.id]!)
+            _buildDeleteButton(context, provider, asset, 0)
           else
             SpPopMenuItem(
               leadingIconData: SpIcons.book,
@@ -241,10 +239,14 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
               children: [
                 Stack(
                   children: [
-                    SpImage(
-                      link: asset.relativeLocalFilePath,
-                      width: double.infinity,
-                      height: 120,
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SpImage(
+                          link: asset.relativeLocalFilePath,
+                          width: constraints.maxWidth,
+                          height: 120,
+                        );
+                      },
                     ),
                     _ImageStatus(context: context, asset: asset, provider: provider),
                     const _BlackOverlay(),

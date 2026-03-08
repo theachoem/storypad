@@ -91,7 +91,7 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     draftContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
 
     bool alreadyHasPage = draftContent?.richPages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent?.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    if (!alreadyHasPage) draftContent = draftContent?.addRichPage();
   }
 
   @override

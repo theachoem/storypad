@@ -260,10 +260,6 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
         _customerInfo = null;
         notifyListeners();
       }
-    } else if (currentUser == null && _customerInfo != null) {
-      await Purchases.logOut();
-      _customerInfo = null;
-      notifyListeners();
     }
   }
 

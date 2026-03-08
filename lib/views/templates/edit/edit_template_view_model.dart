@@ -29,7 +29,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     draftContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
 
     bool alreadyHasPage = draftContent!.richPages?.isNotEmpty == true;
-    if (!alreadyHasPage) draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
     pagesManager = StoryPagesManagerInfo(
       initialPageIndex: 0,
@@ -63,7 +63,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   void addNewPage() async {
     HapticFeedback.selectionClick();
 
-    draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    draftContent = draftContent!.addRichPage();
     pagesManager.pagesMap.add(richPage: draftContent!.richPages!.last, readOnly: false);
 
     if (hasDataWritten) {
