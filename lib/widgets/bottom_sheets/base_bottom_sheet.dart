@@ -33,6 +33,8 @@ abstract class BaseBottomSheet {
     if (kIsCupertino) throw UnimplementedError('Replacement bottom sheet is not implemented for Cupertino.');
 
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
+
+    bool previousTemporaryHidden = context.read<RootProvider>().sideBarInfoNotifier.value.temporaryHidden;
     context.read<RootProvider>().setTemporaryHidden(true);
 
     T? result = await replaceModalBottomSheet<T>(
@@ -65,7 +67,7 @@ abstract class BaseBottomSheet {
       },
     );
 
-    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(false);
+    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(previousTemporaryHidden);
     return result;
   }
 
@@ -81,6 +83,8 @@ abstract class BaseBottomSheet {
     }
 
     AnalyticsService.instance.logViewSheet(bottomSheet: this);
+
+    bool previousTemporaryHidden = context.read<RootProvider>().sideBarInfoNotifier.value.temporaryHidden;
     context.read<RootProvider>().setTemporaryHidden(true);
 
     T? result;
@@ -106,7 +110,7 @@ abstract class BaseBottomSheet {
       );
     }
 
-    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(false);
+    if (context.mounted) context.read<RootProvider>().setTemporaryHidden(previousTemporaryHidden);
     return result;
   }
 
