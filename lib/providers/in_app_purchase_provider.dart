@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/objects/product_deal_object.dart';
 import 'package:storypad/core/objects/reward_object.dart';
@@ -20,7 +21,7 @@ import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_shee
 // It authenticates using your Google account via SSO, then immediately hashes your email locally.
 // Only this hashed identifier is stored in RevenueCat and Firebase - your real email never leaves your device.
 // This design ensures strong privacy protection while enabling purchase restoration and cross-device support.
-class InAppPurchaseProvider extends ChangeNotifier {
+class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   // Some feature unlocked base on credits.
@@ -125,10 +126,18 @@ class InAppPurchaseProvider extends ChangeNotifier {
   Future<void> revalidateCustomerInfo(BuildContext context) async {
     if (!kIAPEnabled) return;
 
+    try {
+      _customerInfo ??= await Purchases.getCustomerInfo();
+      if (!context.mounted) return;
+    } catch (e, s) {
+      AppLogger.error('$runtimeType#revalidateCustomerInfo error Purchases.getCustomerInfo: $e', stackTrace: s);
+    }
+
     await _logoutIfInvalid(context);
     if (!context.mounted) return;
 
     GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+
     if (currentUser != null) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
       if (_customerInfo?.originalAppUserId == hash) return;
@@ -224,7 +233,7 @@ class InAppPurchaseProvider extends ChangeNotifier {
     if (currentUser != null && context.mounted) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
 
-      MessengerService.of(context).showLoading(
+      await MessengerService.of(context).showLoading(
         debugSource: '$runtimeType#_loginIfNot',
         future: () async {
           try {

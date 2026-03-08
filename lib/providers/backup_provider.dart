@@ -213,6 +213,11 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     _lastSyncedAtByYear = null;
     _lastDbUpdatedAtByYear = null;
 
+    step1Message = null;
+    step2Message = null;
+    step3Message = null;
+    step4Message = null;
+
     if (result?.error != null) {
       AppLogger.d('Sign-out had issues: ${result!.error!.message}');
     }
