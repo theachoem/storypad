@@ -14,6 +14,8 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/asset_db/sp_db_image_provider.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
+Color _foregroundColor = Colors.grey[400]!;
+
 class SpImageViewerProvider {
   final ImageProvider provider;
   final String tag;
@@ -147,12 +149,13 @@ class _SpImagesViewerState extends State<SpImagesViewer> {
   AppBar buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
+      foregroundColor: _foregroundColor,
       elevation: 0.0,
       automaticallyImplyLeading: false,
       title: _Title(currentIndexNotifier: currentIndexNotifier, widget: widget),
       actions: [
         _SaveButton(currentIndexNotifier: currentIndexNotifier, widget: widget),
-        const CloseButton(),
+        CloseButton(color: _foregroundColor),
       ],
     );
   }
@@ -200,6 +203,7 @@ class _SaveButton extends StatelessWidget {
           child: Builder(
             builder: (context) {
               return IconButton(
+                color: _foregroundColor,
                 icon: const Icon(SpIcons.share),
                 onPressed: () {
                   if (existFilePath == null) return;
@@ -268,7 +272,7 @@ class _Images extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.broken_image,
-                        color: Colors.grey[400],
+                        color: _foregroundColor,
                         size: 40.0,
                       ),
                       Padding(
@@ -277,7 +281,7 @@ class _Images extends StatelessWidget {
                           error.toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.grey[400],
+                            color: _foregroundColor,
                           ),
                         ),
                       ),
