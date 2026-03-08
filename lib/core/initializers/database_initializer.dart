@@ -53,8 +53,12 @@ class DatabaseInitializer {
   }
 
   // With the new asset embedding approach, we can export and import stories more reliably.
-  static Future<void> migrateEmbedAssetsToUseRelativeFilePaths() async {
-    var assets = await AssetDbModel.db.where(filters: {'version': 1}).then((e) => e?.items ?? <AssetDbModel>[]);
+  static Future<void> migrateEmbedAssetsToUseRelativeFilePaths({
+    List<int>? assetIds,
+  }) async {
+    var assets = assetIds != null
+        ? await AssetDbModel.db.where(filters: {'ids': assetIds}).then((e) => e?.items ?? <AssetDbModel>[])
+        : await AssetDbModel.db.where(filters: {'version': 1}).then((e) => e?.items ?? <AssetDbModel>[]);
 
     for (int i = 0; i < assets.length; i++) {
       AssetDbModel asset = assets[i];

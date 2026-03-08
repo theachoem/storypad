@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/initializers/database_initializer.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -25,12 +27,12 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     StoryDbModel? initialStory,
   }) async {
     story = initialStory ?? await StoryDbModel.db.find(params.id);
+    story = await _migrateEmbedAssetsToRelativeFilePathIfExists(story);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 
     StoryContentDbModel content = story!.generateDraftContent();
-
     bool alreadyHasPage = content.richPages?.isNotEmpty == true;
-    if (!alreadyHasPage) content = content.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    if (!alreadyHasPage) content = content.addRichPage();
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
@@ -126,5 +128,36 @@ class ShowStoryViewModel extends BaseStoryViewModel {
         goToEditPage(context);
       }
     }
+  }
+
+  // Migrate legacy embed asset paths (storypad://assets/xxx) to the new relative file paths if they still exist.
+  //
+  // This migration was originally performed in database_initializer.dart#migrateEmbedAssetsToUseRelativeFilePaths.
+  // However, some edge cases may leave certain stories with the old embed
+  // asset paths (for example, stories that were missed during the initial migration).
+  //
+  // This function acts as a safety net to ensure those remaining stories
+  // are migrated properly when they are accessed.
+  Future<StoryDbModel?> _migrateEmbedAssetsToRelativeFilePathIfExists(StoryDbModel? story) async {
+    if (story == null) return null;
+
+    List<String>? assetPaths = story.draftContent != null || story.latestContent != null
+        ? StoryContentEmbedExtractor.images(story.draftContent ?? story.latestContent)
+        : null;
+
+    const String legacyPrefix = 'storypad://assets/';
+    Set<int>? needMigrationAssetIds = assetPaths
+        ?.where((a) => a.contains(legacyPrefix))
+        .map((a) => int.tryParse(a.replaceAll(legacyPrefix, '')))
+        .whereType<int>()
+        .toSet();
+
+    if (needMigrationAssetIds != null && needMigrationAssetIds.isNotEmpty) {
+      await DatabaseInitializer.migrateEmbedAssetsToUseRelativeFilePaths(assetIds: needMigrationAssetIds.toList());
+      debugPrint('Migrated ${needMigrationAssetIds.length} to latest for story: ${story.id}');
+      return StoryDbModel.db.find(params.id);
+    }
+
+    return story;
   }
 }

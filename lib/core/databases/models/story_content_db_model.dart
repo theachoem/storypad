@@ -94,10 +94,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     );
   }
 
-  StoryContentDbModel addRichPage({
-    int? crossAxisCount,
-    int? mainAxisCount,
-  }) {
+  StoryContentDbModel addRichPage() {
     return copyWith(
       richPages: [
         ...richPages ?? [],

@@ -16,6 +16,7 @@ import 'package:storypad/core/services/gallery_template_usage_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
+import 'package:storypad/views/templates/edit/edit_template_view.dart';
 import 'package:storypad/views/templates/stories/template_stories_view.dart';
 
 import 'show_template_gallery_view.dart';
@@ -91,6 +92,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
       );
 
       if (userAction == OkCancelResult.cancel) return;
+      if (!context.mounted) return;
     }
 
     final now = DateTime.now();
@@ -108,10 +110,14 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
       permanentlyDeletedAt: null,
     );
 
-    await TemplateDbModel.db.set(newTemplate);
-    if (!context.mounted) return;
+    var newResult = await EditTemplateRoute(
+      flowType: .create,
+      initialTemplate: newTemplate,
+    ).push(context);
 
-    MessengerService.of(context).showSuccess();
+    if (context.mounted && newResult is TemplateDbModel) {
+      MessengerService.of(context).showSuccess();
+    }
   }
 
   void useTemplate(BuildContext context) async {

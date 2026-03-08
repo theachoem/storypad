@@ -31,6 +31,7 @@ class _RootContent extends StatelessWidget {
           child: Scaffold(
             extendBody: true,
             extendBodyBehindAppBar: true,
+            resizeToAvoidBottomInset: false,
             body: Stack(
               children: [
                 // Use inner of scaffold context instead of root context.

@@ -213,7 +213,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   Future<void> addNewPage() async {
     HapticFeedback.selectionClick();
 
-    draftContent = draftContent!.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    draftContent = draftContent!.addRichPage();
     pagesManager.pagesMap.add(richPage: draftContent!.richPages!.last, readOnly: false);
     await saveDraft(debugSource: '$runtimeType#addNewPage');
     notifyListeners();

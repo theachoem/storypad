@@ -100,15 +100,15 @@ class _EditStoryContent extends StatelessWidget {
       // On large screens, its side padding prevents the divider
       // from spanning the full width of the screen. To avoid this visual
       // inconsistency, we hide the divider when the window is large.
-      bottom: WindowedDetectorService.isBigWindow(context) || !viewModel.pagesManager.pageScrollController.hasClients
+      bottom: WindowedDetectorService.isBigWindow(context)
           ? null
           : PreferredSize(
               preferredSize: const Size.fromHeight(1),
-              child: ListenableBuilder(
-                listenable: viewModel.pagesManager.pageScrollController,
-                builder: (BuildContext context, Widget? child) {
+              child: ValueListenableBuilder(
+                valueListenable: viewModel.pagesManager.pageScrollOffsetNotifier,
+                builder: (BuildContext context, double offset, Widget? child) {
                   return Opacity(
-                    opacity: viewModel.pagesManager.pageScrollController.offset.clamp(0.0, 8.0) / 8.0,
+                    opacity: offset.clamp(0.0, 8.0) / 8.0,
                     child: const Divider(height: 1),
                   );
                 },

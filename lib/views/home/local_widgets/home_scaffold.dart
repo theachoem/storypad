@@ -24,10 +24,14 @@ class _HomeScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       drawerEnableOpenDragGesture: false,
       endDrawerEnableOpenDragGesture: false,
-      // For end drawer, we don't use modifed padding by root content, we want original screen padding instead
-      // because end drawer is on top of content.
+      // For end drawer, we don't use modified padding by root content, we want original screen padding instead
+      // because end drawer is on top of content. Plus, left padding is not needed for end drawer.
       endDrawer: endDrawer != null
-          ? MediaQuery(data: MediaQuery.of(RootView.rootContext ?? context), child: endDrawer!)
+          ? MediaQuery.removePadding(
+              context: RootView.rootContext ?? context,
+              removeLeft: true,
+              child: endDrawer!,
+            )
           : null,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,

@@ -15,10 +15,11 @@ class TagsEndDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      // For end drawer, we don't use modifed padding by root content, we want original screen padding instead
-      // because end drawer is on top of content.
-      data: MediaQuery.of(RootView.rootContext ?? context),
+    // For end drawer, we don't use modified padding by root content, we want original screen padding instead
+    // because end drawer is on top of content. Plus, left padding is not needed for end drawer.
+    return MediaQuery.removePadding(
+      context: RootView.rootContext ?? context,
+      removeLeft: true,
       child: Drawer(
         child: Theme(
           data: Theme.of(context).copyWith(scaffoldBackgroundColor: Theme.of(context).colorScheme.surface),

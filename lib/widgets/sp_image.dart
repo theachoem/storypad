@@ -50,7 +50,7 @@ class SpImage extends StatelessWidget {
             file,
             width: width,
             height: height,
-            fit: BoxFit.cover,
+            fit: BoxFit.fitWidth,
             cacheWidth: width != null && width != double.infinity
                 ? (width! * MediaQuery.of(context).devicePixelRatio).round()
                 : null,

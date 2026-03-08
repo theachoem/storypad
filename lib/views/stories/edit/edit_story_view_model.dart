@@ -57,7 +57,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
     StoryContentDbModel content = story!.generateDraftContent();
     bool alreadyHasPage = content.richPages?.isNotEmpty == true;
-    if (!alreadyHasPage) content = content.addRichPage(crossAxisCount: 2, mainAxisCount: 1);
+    if (!alreadyHasPage) content = content.addRichPage();
 
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: content,
