@@ -93,7 +93,7 @@ class _SpDbAssetLoaderState extends State<SpDbAssetLoader> with AutomaticKeepAli
       setState(() {});
     } catch (e) {
       error = e;
-      setState(() {});
+      if (mounted) setState(() {});
     }
   }
 

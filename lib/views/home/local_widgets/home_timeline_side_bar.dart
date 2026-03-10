@@ -16,6 +16,14 @@ class _HomeTimelineSideBar extends StatefulWidget {
 }
 
 class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
+  ValueNotifier<bool> showAddOnBadgeNotifer = ValueNotifier<bool>(true);
+
+  @override
+  void dispose() {
+    showAddOnBadgeNotifer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
@@ -31,7 +39,13 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
   }
 
   Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
-    double baseSideMargin = (Platform.isMacOS ? 12.0 : 8.0);
+    final double baseSideMargin = (Platform.isMacOS ? 12.0 : 8.0);
+
+    final items = SideItems.getTimelineSideBarItems(
+      homeViewModel: widget.viewModel,
+      iapProvider: provider,
+      showBadgeNotifer: showAddOnBadgeNotifer,
+    );
 
     return Container(
       margin: EdgeInsets.only(
@@ -43,53 +57,53 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         spacing: Platform.isMacOS ? 8.0 : 0.0,
-        children: [
-          if (kIAPEnabled && !provider.allRewarded) const _AddOnButton(),
-          if (kIAPEnabled)
-            SpFadeIn.bound(
-              child: SpFloatingMusicNote.wrapIfPlaying(
-                child: IconButton(
-                  tooltip: tr('add_ons.relax_sounds.title'),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    shape: CircleBorder(
-                      side: BorderSide(color: Theme.of(context).dividerColor),
-                    ),
-                  ),
-                  icon: const Icon(SpIcons.musicNote),
-                  onPressed: () => const RelaxSoundsRoute().push(context),
-                ),
-              ),
-            ),
-          SpFadeIn.bound(
-            child: IconButton(
-              tooltip: tr('page.search.title'),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                shape: CircleBorder(
-                  side: BorderSide(color: Theme.of(context).dividerColor),
-                ),
-              ),
-              icon: const Icon(SpIcons.search),
-              onPressed: () => SearchRoute().push(context),
-            ),
-          ),
-          IconButton(
-            tooltip: tr('page.calendar.title'),
-            style: IconButton.styleFrom(
-              backgroundColor: ColorScheme.of(context).surface,
-              shape: CircleBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
-            ),
-            icon: const Icon(SpIcons.calendar),
-            onPressed: () => CalendarRoute(
-              initialMonth: null,
-              initialYear: widget.viewModel.year,
-              initialSegment: .mood,
-            ).push(context),
-          ),
-        ],
+        children: items.map((item) => _buildTimelineButton(context, item)).toList(),
       ),
     );
+  }
+
+  Widget _buildTimelineButton(BuildContext context, TimelineSideBarItem item) {
+    Widget button = IconButton(
+      tooltip: item.tooltip,
+      style: IconButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: CircleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      icon: Icon(item.icon),
+      onPressed: () => item.onTap(context),
+    );
+
+    if (item.showBadgeNotifer != null) {
+      button = ValueListenableBuilder<bool>(
+        valueListenable: item.showBadgeNotifer!,
+        child: button,
+        builder: (context, showBadge, child) {
+          if (!showBadge) return child!;
+
+          return Stack(
+            children: [
+              child!,
+              Positioned(
+                right: 6.5,
+                top: 6.5,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    color: ColorFromDayService(context: context).get(7),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    return item.wrap?.call(context, button) ?? button;
   }
 
   Widget buildBackgrounds(BuildContext context) {
@@ -128,65 +142,5 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         ],
       ),
     );
-  }
-}
-
-class _AddOnButton extends StatefulWidget {
-  const _AddOnButton();
-
-  @override
-  State<_AddOnButton> createState() => _AddOnButtonState();
-}
-
-class _AddOnButtonState extends State<_AddOnButton> {
-  late bool showBadge = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return SpFadeIn.bound(
-      child: buildButton(context),
-    );
-  }
-
-  Widget buildButton(BuildContext context) {
-    Widget button = IconButton(
-      tooltip: tr('page.add_ons.title'),
-      style: IconButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        shape: CircleBorder(
-          side: BorderSide(color: Theme.of(context).dividerColor),
-        ),
-      ),
-      icon: const Icon(SpIcons.addOns),
-      onPressed: () {
-        const AddOnsRoute().push(context);
-
-        setState(() {
-          showBadge = false;
-        });
-      },
-    );
-
-    if (showBadge) {
-      return Stack(
-        children: [
-          button,
-          Positioned(
-            right: 6.5,
-            top: 6.5,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: .circle,
-                color: ColorFromDayService(context: context).get(7),
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      return button;
-    }
   }
 }

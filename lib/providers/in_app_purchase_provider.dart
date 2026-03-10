@@ -256,10 +256,22 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
 
       if (_customerInfo?.originalAppUserId != hash) {
-        await Purchases.logOut();
+        try {
+          await Purchases.logOut();
+        } catch (e) {
+          AppLogger.error('$runtimeType#_logoutIfInvalid error Purchases.logOut: $e');
+        }
         _customerInfo = null;
         notifyListeners();
       }
+    } else if (currentUser == null && _customerInfo != null) {
+      try {
+        await Purchases.logOut();
+      } catch (e) {
+        AppLogger.error('$runtimeType#_logoutIfInvalid error Purchases.logOut: $e');
+      }
+      _customerInfo = null;
+      notifyListeners();
     }
   }
 

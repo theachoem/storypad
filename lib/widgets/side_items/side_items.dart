@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart';
@@ -21,6 +22,8 @@ import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/views/tags/tags_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_floating_music_note.dart';
 import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -149,6 +152,54 @@ class SideItems {
         subtitle: tr('list_tile.share_app.subtitle'),
         icon: const Icon(SpIcons.share),
         onTap: (context) => SpShareAppBottomSheet().show(context: context),
+      ),
+    ];
+  }
+
+  static List<TimelineSideBarItem> getTimelineSideBarItems({
+    required HomeViewModel homeViewModel,
+    required InAppPurchaseProvider iapProvider,
+    required ValueNotifier<bool> showBadgeNotifer,
+  }) {
+    return [
+      if (kIAPEnabled && !iapProvider.allRewarded)
+        TimelineSideBarItem(
+          icon: SpIcons.addOns,
+          tooltip: tr('page.add_ons.title'),
+          showBadgeNotifer: showBadgeNotifer,
+          wrap: (context, child) => SpFadeIn.bound(child: child),
+          onTap: (context) {
+            const AddOnsRoute().push(context);
+            showBadgeNotifer.value = false;
+          },
+        ),
+      if (kIAPEnabled)
+        TimelineSideBarItem(
+          icon: SpIcons.musicNote,
+          tooltip: tr('add_ons.relax_sounds.title'),
+          wrap: (context, child) {
+            return SpFadeIn.bound(
+              child: SpFloatingMusicNote.wrapIfPlaying(child: child),
+            );
+          },
+          onTap: (context) => const RelaxSoundsRoute().push(context),
+        ),
+      TimelineSideBarItem(
+        icon: SpIcons.search,
+        tooltip: tr('page.search.title'),
+        wrap: (context, child) => SpFadeIn.bound(child: child),
+        onTap: (context) => SearchRoute().push(context),
+      ),
+      TimelineSideBarItem(
+        icon: SpIcons.calendar,
+        tooltip: tr('page.calendar.title'),
+        onTap: (context) {
+          CalendarRoute(
+            initialMonth: null,
+            initialYear: homeViewModel.year,
+            initialSegment: .mood,
+          ).push(context);
+        },
       ),
     ];
   }

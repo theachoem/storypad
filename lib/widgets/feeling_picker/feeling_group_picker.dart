@@ -82,17 +82,24 @@ class _FeelingGroupPickerState extends State<_FeelingGroupPicker> {
         await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return _FeelingGroupItemPicker(
-                group: group,
-                feeling: feeling,
-                onPicked: (context, feeling) {
-                  if (this.feeling == feeling) feeling = null;
-                  setState(() => this.feeling = feeling);
-                  return widget.onPicked(feeling);
-                },
-                onHeightChanged: (childHeight) {
-                  widget.onHeightChanged(childHeight);
-                },
+              return MediaQuery.removeViewPadding(
+                context: context,
+                removeLeft: true,
+                removeTop: true,
+                removeRight: true,
+                removeBottom: true,
+                child: _FeelingGroupItemPicker(
+                  group: group,
+                  feeling: feeling,
+                  onPicked: (context, feeling) {
+                    if (this.feeling == feeling) feeling = null;
+                    setState(() => this.feeling = feeling);
+                    return widget.onPicked(feeling);
+                  },
+                  onHeightChanged: (childHeight) {
+                    widget.onHeightChanged(childHeight);
+                  },
+                ),
               );
             },
           ),

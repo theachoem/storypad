@@ -44,4 +44,20 @@ class CustomSideItem extends BaseSideItem {
   }) => CustomSideItem(builder: (context) => builder(context));
 }
 
+class TimelineSideBarItem {
+  const TimelineSideBarItem({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.wrap,
+    this.showBadgeNotifer,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final void Function(BuildContext context) onTap;
+  final Widget Function(BuildContext context, Widget child)? wrap;
+  final ValueNotifier<bool>? showBadgeNotifer;
+}
+
 abstract class BaseSideItem {}
