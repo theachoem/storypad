@@ -65,14 +65,18 @@ class _SearchContent extends StatelessWidget {
                 preferredSize: const Size.fromHeight(34.0 + 12.0),
                 child: Column(
                   crossAxisAlignment: .start,
+                  mainAxisAlignment: .start,
                   children: [
-                    SpScrollableChoiceChips<TagDbModel>(
-                      key: viewModel.tagsChipsKey,
-                      choices: visibleTags,
-                      storiesCount: (TagDbModel tag) => tag.storiesCount,
-                      toLabel: (TagDbModel tag) => tag.title,
-                      selected: (TagDbModel tag) => viewModel.tagSelected(tag),
-                      onToggle: (TagDbModel tag) => viewModel.toggleTag(tag, context),
+                    SizedBox(
+                      width: .infinity,
+                      child: SpScrollableChoiceChips<TagDbModel>(
+                        key: viewModel.tagsChipsKey,
+                        choices: visibleTags,
+                        storiesCount: (TagDbModel tag) => tag.storiesCount,
+                        toLabel: (TagDbModel tag) => tag.title,
+                        selected: (TagDbModel tag) => viewModel.tagSelected(tag),
+                        onToggle: (TagDbModel tag) => viewModel.toggleTag(tag, context),
+                      ),
                     ),
                     const SizedBox(height: 12.0),
                   ],
