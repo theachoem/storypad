@@ -25,16 +25,26 @@ class StoryObjectBox extends BaseObjectBox {
   @Id(assignable: true)
   int id;
   int version;
+
+  @Index()
   String type;
 
+  @Index()
   int year;
+
+  @Index()
   int month;
+
+  @Index()
   int day;
   int? hour;
   int? minute;
   int? second;
 
+  @Index()
   bool? starred;
+
+  @Index()
   bool? pinned;
   String? feeling;
 
@@ -63,14 +73,20 @@ class StoryObjectBox extends BaseObjectBox {
   List<String>? tags;
   List<int>? assets;
 
+  @Index()
   int? templateId;
+
+  @Index()
   String? galleryTemplateId;
+
+  @Index()
   int? eventId;
   int? wordCount;
   int? characterCount;
 
   // for query
   String? searchMetadata;
+
   String? preferences;
 
   @override
@@ -182,9 +198,11 @@ class AssetObjectBox extends BaseObjectBox {
   String originalSource;
   String cloudDestinations;
 
+  @Index()
   int? version;
 
   // 'image', 'audio', etc.
+  @Index()
   String? type;
 
   // JSON metadata for flexible storage (duration, transcription, etc.)
@@ -239,9 +257,15 @@ class AssetObjectBox extends BaseObjectBox {
 class EventObjectBox extends BaseObjectBox {
   @Id(assignable: true)
   int id;
+
+  @Index()
   int year;
+
+  @Index()
   int month;
   int day;
+
+  @Index()
   String eventType; // "period"
 
   @override
@@ -340,6 +364,8 @@ class TemplateObjectBox extends BaseObjectBox {
   String? name;
   String? content;
   String? note;
+
+  @Index()
   String? galleryTemplateId;
   String? preferences;
 
@@ -352,6 +378,7 @@ class TemplateObjectBox extends BaseObjectBox {
   DateTime updatedAt;
 
   @Property(type: PropertyType.date)
+  @Index()
   DateTime? archivedAt;
 
   @override
