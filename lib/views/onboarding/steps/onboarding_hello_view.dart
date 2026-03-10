@@ -38,7 +38,7 @@ class _OnboardingHelloViewState extends State<OnboardingHelloView> {
   }
 
   void push() {
-    if (context.mounted) {
+    if (mounted) {
       OnboardingStep1Route().pushReplacement(context);
     }
   }
