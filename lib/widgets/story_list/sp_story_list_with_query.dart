@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
@@ -88,13 +88,13 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
   @override
   void initState() {
     load(debugSource: '$runtimeType#initState');
-    BackupRepository.appInstance.restoreService.addListener(_restoreServiceListener);
+    BackupProvider.repoInstance.restoreService.addListener(_restoreServiceListener);
     super.initState();
   }
 
   @override
   void dispose() {
-    BackupRepository.appInstance.restoreService.removeListener(_restoreServiceListener);
+    BackupProvider.repoInstance.restoreService.removeListener(_restoreServiceListener);
     super.dispose();
   }
 

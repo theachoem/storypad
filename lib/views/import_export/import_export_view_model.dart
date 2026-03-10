@@ -300,6 +300,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         databases: BackupRepository.databases,
         storyFilter: filtered ? exportFilter : null,
         lastUpdatedAt: lastDbUpdatedAt,
+        hasCompression: false,
       ),
     );
 

@@ -58,7 +58,7 @@ class SpAssetInfoSheet extends BaseBottomSheet {
                 title: Text(tr("list_tile.file_size.title")),
                 subtitle: Text(fileSize),
               ),
-            if (context.read<BackupProvider>().currentUser != null)
+            if (context.read<BackupProvider>().currentGoogleUser != null)
               ListTile(
                 leading: Icon(SpIcons.googleDrive),
                 title: Text(
@@ -67,16 +67,16 @@ class SpAssetInfoSheet extends BaseBottomSheet {
                     namedArgs: {
                       'URL':
                           asset.getGoogleDriveForEmails()?.contains(
-                                context.read<BackupProvider>().currentUser!.email,
+                                context.read<BackupProvider>().currentGoogleUser!.email,
                               ) ==
                               true
-                          ? context.read<BackupProvider>().currentUser!.email
+                          ? context.read<BackupProvider>().currentGoogleUser!.email
                           : tr('general.na'),
                     },
                   ),
                 ),
                 subtitle: Text(
-                  asset.getGoogleDriveUrlForEmail(context.read<BackupProvider>().currentUser!.email) ??
+                  asset.getGoogleDriveUrlForEmail(context.read<BackupProvider>().currentGoogleUser!.email) ??
                       tr('general.na'),
                 ),
               ),

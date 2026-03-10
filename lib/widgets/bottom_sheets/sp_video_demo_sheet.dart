@@ -13,12 +13,14 @@ class SpVideoDemoSheet extends BaseBottomSheet {
     required this.demoSubtitle,
     required this.demoBackgroundColor,
     required this.controller,
+    required this.primaryButton,
   });
 
   final String demoTitle;
   final String demoSubtitle;
   final Color? demoBackgroundColor;
   final VideoPlayerController controller;
+  final Widget? primaryButton;
 
   static Future<T?> showVideoSheet<T>({
     required BuildContext context,
@@ -28,6 +30,7 @@ class SpVideoDemoSheet extends BaseBottomSheet {
     required Color? demoBackgroundColor,
     required double demoWidth,
     required double demoAspectRatio,
+    required Widget? primaryButton,
   }) async {
     File? file;
     VideoPlayerController? controller;
@@ -58,6 +61,7 @@ class SpVideoDemoSheet extends BaseBottomSheet {
       demoTitle: demoTitle,
       demoSubtitle: demoSubtitle,
       demoBackgroundColor: demoBackgroundColor,
+      primaryButton: primaryButton,
     ).show(context: context, useRootNavigator: true);
   }
 
@@ -122,7 +126,7 @@ class _SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
                   runAlignment: .center,
                   children: [
                     SizedBox(
-                      width: 270,
+                      width: 240,
                       child: ClipRRect(
                         clipBehavior: .hardEdge,
                         borderRadius: BorderRadius.circular(12),
@@ -153,7 +157,8 @@ class _SpVideoDemoSheetState extends State<_SpVideoDemoSheet> {
                   textAlign: .center,
                 ),
               ),
-              SizedBox(height: MediaQuery.paddingOf(context).bottom + 24.0),
+              if (widget.params.primaryButton != null) ...[const SizedBox(height: 8.0), widget.params.primaryButton!],
+              SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.0),
             ],
           ),
         ),

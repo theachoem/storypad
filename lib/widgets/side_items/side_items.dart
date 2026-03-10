@@ -162,7 +162,7 @@ class SideItems {
     required ValueNotifier<bool> showBadgeNotifer,
   }) {
     return [
-      if (kIAPEnabled && !iapProvider.allRewarded)
+      if (kIAPEnabled && iapProvider.initialized && !iapProvider.allRewarded)
         TimelineSideBarItem(
           icon: SpIcons.addOns,
           tooltip: tr('page.add_ons.title'),

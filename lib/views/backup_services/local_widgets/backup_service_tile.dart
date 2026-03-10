@@ -54,60 +54,44 @@ class BackupServiceTile extends StatelessWidget {
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       onPressed = () => provider.signIn(context, service.serviceType);
     } else {
+      trailing = Icon(
+        SpIcons.keyboardRight,
+        color: ColorScheme.of(context).bootstrap.success.color,
+      );
+
+      subtitle = Text(service.currentUser?.identifier ?? '...');
+      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
+
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
-          trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.unknown_error'));
-          onPressed = () => provider.recheckAndSync();
           break;
         case BackupConnectionStatus.noInternet:
-          trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
-          onPressed = () => provider.recheckAndSync();
           break;
         case BackupConnectionStatus.needGoogleDrivePermission:
-          trailing = Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
-          onPressed = () => provider.requestScope(context, service.serviceType);
           break;
         case BackupConnectionStatus.readyToSync:
-          trailing = Icon(
-            SpIcons.cloudUpload,
-            color: ColorScheme.of(context).primary,
-          );
-          subtitle = Text(
-            tr('list_tile.backup.some_data_has_not_sync_subtitle'),
-          );
+          subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
           onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case null:
-          trailing = const SizedBox.square(
-            dimension: 24,
-            child: CircularProgressIndicator.adaptive(),
-          );
-          subtitle = Text(tr('list_tile.backup.setting_up_connection'));
           break;
+      }
+
+      if (provider.allYearSynced) {
+        subtitle = Text(
+          DateFormatHelper.yMEd_jmNullable(
+                provider.lastSyncedAt,
+                context.locale,
+              ) ??
+              '...',
+        );
       }
     }
 
-    if (provider.allYearSynced) {
-      subtitle = Text(
-        DateFormatHelper.yMEd_jmNullable(
-              provider.lastSyncedAt,
-              context.locale,
-            ) ??
-            '...',
-      );
-
-      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
-
-      trailing = Icon(
-        SpIcons.cloudDone,
-        color: ColorScheme.of(context).bootstrap.success.color,
-      );
-    }
-
-    if (provider.syncing) {
+    if (service.isSignedIn && provider.syncing) {
       trailing = const SizedBox.square(
         dimension: 24,
         child: CircularProgressIndicator.adaptive(),

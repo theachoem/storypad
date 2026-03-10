@@ -11,7 +11,7 @@ import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/repositories/backup_repository.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -35,7 +35,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     AnalyticsService.instance.logViewHome(year: year);
     reload(debugSource: 'HomeViewModel#_constructor');
 
-    BackupRepository.appInstance.restoreService.addListener(_restoreServiceListener);
+    BackupProvider.repoInstance.restoreService.addListener(_restoreServiceListener);
   }
 
   int year = DateTime.now().year;
@@ -331,7 +331,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   @override
   void dispose() {
     scrollInfo.dispose();
-    BackupRepository.appInstance.restoreService.removeListener(_restoreServiceListener);
+    BackupProvider.repoInstance.restoreService.removeListener(_restoreServiceListener);
     super.dispose();
   }
 }

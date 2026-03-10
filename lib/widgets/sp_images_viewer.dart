@@ -56,7 +56,7 @@ class SpImagesViewer extends StatefulWidget {
       if (imageUrl.startsWith('images/') || imageUrl.startsWith('audio/')) {
         imageProvider = SpDbImageProvider(
           relativePath: imageUrl,
-          currentUser: context.read<BackupProvider>().currentUser,
+          currentUser: context.read<BackupProvider>().currentGoogleUser,
         );
       } else if (imageUrl.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(imageUrl);

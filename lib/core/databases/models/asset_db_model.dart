@@ -30,6 +30,25 @@ class AssetDbModel extends BaseDbModel {
 
   final List<int>? tags;
   final int? version;
+
+  // {
+  //   "google_drive": {
+  //     "user@example.com": {
+  //       "file_id": "abc123xyz",
+  //       "file_name": "1762500783746.jpg"
+  //     },
+  //     "another@example.com": {
+  //       "file_id": "def456",
+  //       "file_name": "1762500783746.jpg"
+  //     }
+  //   },
+  //   "web_dav": {
+  //     "storypad": {
+  //       "file_id": "ghi789",
+  //       "file_name": "1762500783746.jpg"
+  //     }
+  //   }
+  // }
   final Map<String, Map<String, Map<String, String>>> cloudDestinations;
 
   @JsonKey(fromJson: _assetTypeFromJson, toJson: _assetTypeToJson)

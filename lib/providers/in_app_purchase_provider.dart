@@ -48,6 +48,9 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
 
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
   bool get allRewarded => currentReward.features.length == rewards.last.features.length;
   List<RewardObject> get rewards => RewardObject.rewards;
   RewardObject get currentReward {
@@ -72,7 +75,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool earlyAdopterUser(BuildContext context) {
     if (!kIAPEnabled) return false;
 
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser == null) return false;
 
     final currentUserHash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
@@ -82,20 +85,30 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> _initialize(BuildContext context) async {
-    if (!kIAPEnabled) return;
+    if (kIAPEnabled) {
+      await Purchases.setLogLevel(LogLevel.verbose);
+      PurchasesConfiguration? configuration;
 
-    await Purchases.setLogLevel(LogLevel.verbose);
-    PurchasesConfiguration? configuration;
+      if (Platform.isAndroid) {
+        configuration = PurchasesConfiguration(kRevenueCatAndroidApiKey);
+      } else if (Platform.isIOS) {
+        configuration = PurchasesConfiguration(kRevenueCatIosApiKey);
+      }
 
-    if (Platform.isAndroid) {
-      configuration = PurchasesConfiguration(kRevenueCatAndroidApiKey);
-    } else if (Platform.isIOS) {
-      configuration = PurchasesConfiguration(kRevenueCatIosApiKey);
+      if (configuration != null) {
+        await Purchases.configure(configuration);
+
+        try {
+          _customerInfo ??= await Purchases.getCustomerInfo();
+          if (!context.mounted) return;
+        } catch (e, s) {
+          AppLogger.error('$runtimeType#revalidateCustomerInfo error Purchases.getCustomerInfo: $e', stackTrace: s);
+        }
+      }
     }
 
-    if (configuration != null) {
-      await Purchases.configure(configuration);
-    }
+    _initialized = true;
+    notifyListeners();
   }
 
   StoreProduct? getProduct(String productIdentifier) {
@@ -126,18 +139,10 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   Future<void> revalidateCustomerInfo(BuildContext context) async {
     if (!kIAPEnabled) return;
 
-    try {
-      _customerInfo ??= await Purchases.getCustomerInfo();
-      if (!context.mounted) return;
-    } catch (e, s) {
-      AppLogger.error('$runtimeType#revalidateCustomerInfo error Purchases.getCustomerInfo: $e', stackTrace: s);
-    }
-
     await _logoutIfInvalid(context);
     if (!context.mounted) return;
 
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
-
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser != null) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);
       if (_customerInfo?.originalAppUserId == hash) return;
@@ -208,7 +213,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     await _loginIfNot(context);
 
     if (!context.mounted) return;
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser == null) return;
 
     try {
@@ -224,10 +229,10 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     if (!kIAPEnabled) return;
     if (_customerInfo != null) return;
 
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
     if (currentUser == null) {
       await SpConnectWithGoogleDriveSheet().show(context: context);
-      if (context.mounted) currentUser = context.read<BackupProvider>().currentUser;
+      if (context.mounted) currentUser = context.read<BackupProvider>().currentGoogleUser;
     }
 
     if (currentUser != null && context.mounted) {
@@ -250,7 +255,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> _logoutIfInvalid(BuildContext context) async {
     if (!kIAPEnabled) return;
-    GoogleUserObject? currentUser = context.read<BackupProvider>().currentUser;
+    GoogleUserObject? currentUser = context.read<BackupProvider>().currentGoogleUser;
 
     if (currentUser != null && _customerInfo != null) {
       String hash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(currentUser.email);

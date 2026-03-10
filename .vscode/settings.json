@@ -19,5 +19,8 @@
   },
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "search.exclude": {
+    "**/.pub-cache/*": true
   }
 }

@@ -45,7 +45,7 @@ class _VoicePlaybackContent extends StatelessWidget {
   final double bottomPadding;
 
   Future<String> _downloadAudio(BuildContext context) async {
-    final currentUser = context.read<BackupProvider>().currentUser;
+    final currentUser = context.read<BackupProvider>().currentGoogleUser;
     final downloader = GoogleDriveAssetDownloaderService();
 
     return downloader.downloadAsset(

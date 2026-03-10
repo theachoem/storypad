@@ -22,6 +22,33 @@ class _ShowBackupServiceContent extends StatelessWidget {
             ],
           ),
         ),
+        actions: [
+          if (viewModel.params.service.currentUser != null)
+            SpPopupMenuButton(
+              items: (context) {
+                return [
+                  SpPopMenuItem(
+                    titleStyle: TextStyle(color: ColorScheme.of(context).error),
+                    leadingIconData: Icons.logout,
+                    title: tr('button.sign_out'),
+                    onPressed: () => viewModel.signOut(context),
+                  ),
+                ];
+              },
+              builder: (callback) {
+                return IconButton(
+                  tooltip: tr('button.more_options'),
+                  onPressed: callback,
+                  icon: const Icon(SpIcons.moreVert),
+                );
+              },
+            ),
+          // IconButton(
+          //   icon: const Icon(SpIcons.moreVert),
+          //   onPressed: () => viewModel.signOut(context),
+          //   tooltip: tr('button.sign_out'),
+          // ),
+        ],
       ),
       body: RefreshIndicator.adaptive(
         onRefresh: () => viewModel.load(),
@@ -41,17 +68,20 @@ class _ShowBackupServiceContent extends StatelessWidget {
 
     return ListView(
       children: [
-        ListTile(
-          leading: viewModel.params.service.currentUser?.photoUrl != null
-              ? CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                    viewModel.params.service.currentUser!.photoUrl!,
-                  ),
-                )
-              : const Icon(SpIcons.profile),
-          title: Text(viewModel.params.service.currentUser?.email ?? tr('list_tile.backup.unsignin_subtitle')),
-          subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
+        buildProfileTile(lastSyncAt),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _SyncButton(viewModel: viewModel),
         ),
+        if (context.read<InAppPurchaseProvider>().autoBackups && viewModel.params.service.currentUser != null)
+          SwitchListTile.adaptive(
+            value: viewModel.params.service.autoBackupEnabled,
+            title: Text(tr('list_tile.reward_automatic_backup.title')),
+            onChanged: (value) {
+              viewModel.setAutoBackupEnabled(context, value);
+            },
+          ),
+        const Divider(),
         if (viewModel.error != null) ..._buildErrorSection(context),
         if (viewModel.error == null && viewModel.yearlyBackups!.isEmpty)
           Padding(
@@ -118,6 +148,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
               );
             },
           ),
+
         // We want to display actual filerrs in store in each service instead,
         // but because limitation with API, we will show all backups for now.
         // const ListTile(
@@ -135,16 +166,23 @@ class _ShowBackupServiceContent extends StatelessWidget {
         //   title: Text("appDataFolder/audio"),
         //   trailing: Text("50mb"),
         // ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(foregroundColor: ColorScheme.of(context).error),
-            label: Text(tr('button.sign_out')),
-            icon: const Icon(Icons.logout),
-            onPressed: () => viewModel.signOut(context),
-          ),
-        ),
       ],
+    );
+  }
+
+  ListTile buildProfileTile(String? lastSyncAt) {
+    return ListTile(
+      leading: viewModel.params.service.currentUser?.photoUrl != null
+          ? CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(
+                viewModel.params.service.currentUser!.photoUrl!,
+              ),
+            )
+          : const Icon(SpIcons.profile),
+      title: Text(
+        viewModel.params.service.currentUser?.identifier ?? tr('list_tile.backup.unsignin_subtitle'),
+      ),
+      subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
     );
   }
 
@@ -186,5 +224,37 @@ class _ShowBackupServiceContent extends StatelessWidget {
       ),
       const SizedBox(height: 16),
     ];
+  }
+}
+
+class _SyncButton extends StatefulWidget {
+  const _SyncButton({
+    required this.viewModel,
+  });
+
+  final ShowBackupServiceViewModel viewModel;
+
+  @override
+  State<_SyncButton> createState() => _SyncButtonState();
+}
+
+class _SyncButtonState extends State<_SyncButton> {
+  bool syncing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      label: Text(tr('button.sync')),
+      icon: syncing ? const CircularProgressIndicator.adaptive() : const Icon(SpIcons.refresh),
+      onPressed: syncing
+          ? null
+          : () async {
+              syncing = true;
+              setState(() {});
+              await widget.viewModel.sync(context);
+              syncing = false;
+              setState(() {});
+            },
+    );
   }
 }

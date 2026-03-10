@@ -25,7 +25,7 @@ class SpShareLogsBottomSheet extends BaseBottomSheet {
     required BuildContext context,
     bool useRootNavigator = false,
   }) async {
-    backupEmail = context.read<BackupProvider>().currentUser?.email;
+    backupEmail = context.read<BackupProvider>().currentGoogleUser?.email;
     emailHash = EmailHasherService(secretKey: kEmailHasherSecreyKey).hmacEmail(backupEmail ?? "");
 
     rcatAnonymous = await Purchases.isAnonymous;

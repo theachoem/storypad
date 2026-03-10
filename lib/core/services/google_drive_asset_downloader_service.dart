@@ -6,6 +6,19 @@ import 'package:http/http.dart' as http;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 
+class GoogleDriveAssetDownloaderException {
+  final String message;
+  final StackTrace? stackTrace;
+
+  GoogleDriveAssetDownloaderException(
+    this.message, {
+    this.stackTrace,
+  });
+
+  @override
+  String toString() => 'GoogleDriveAssetDownloaderException: $message';
+}
+
 /// Service for downloading assets from Google Drive with authentication.
 ///
 /// This service provides a reusable pattern for downloading various asset types
@@ -33,7 +46,7 @@ class GoogleDriveAssetDownloaderService {
   /// Downloads an asset from Google Drive if not already cached locally.
   ///
   /// Returns the local file path if successful.
-  /// Throws [StateError] with a descriptive message if download fails.
+  /// Throws [GoogleDriveAssetDownloaderException] with a descriptive message if download fails.
   ///
   /// Parameters:
   /// - [asset]: The asset model containing metadata and download URLs
@@ -42,9 +55,9 @@ class GoogleDriveAssetDownloaderService {
   /// - [localFile]: Optional cached file - if exists and valid, returns immediately
   ///
   /// Throws:
-  /// - [StateError] if user doesn't have permission to download
-  /// - [StateError] if network request fails
-  /// - [StateError] if file can't be saved locally
+  /// - [GoogleDriveAssetDownloaderException] if user doesn't have permission to download
+  /// - [GoogleDriveAssetDownloaderException] if network request fails
+  /// - [GoogleDriveAssetDownloaderException] if file can't be saved locally
   Future<String> downloadAsset({
     required AssetDbModel asset,
     required GoogleUserObject? currentUser,
@@ -75,20 +88,22 @@ class GoogleDriveAssetDownloaderService {
 
       // Check if user has permission to download
       if (uploadedEmails.isNotEmpty && !uploadedEmails.contains(currentUser?.email)) {
-        throw StateError(
+        throw GoogleDriveAssetDownloaderException(
           'Login with ${uploadedEmails.join(" or ")} to access this ${asset.type.name}.',
         );
       }
 
       // If no user or no Google Drive access, can't download
       if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
-        throw StateError('${asset.relativeLocalFilePath} cannot be loaded.');
+        throw GoogleDriveAssetDownloaderException('${asset.relativeLocalFilePath} cannot be loaded.');
       }
 
       // Get download URL from Google Drive
       final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
       if (downloadUrl == null) {
-        throw StateError('${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.');
+        throw GoogleDriveAssetDownloaderException(
+          '${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.',
+        );
       }
 
       // Download file from Google Drive
@@ -102,8 +117,15 @@ class GoogleDriveAssetDownloaderService {
       _downloadingByPath[localFilePath]?.complete(path);
       return path;
     } catch (e) {
-      _downloadingByPath[localFilePath]?.completeError(e);
+      final completer = _downloadingByPath[localFilePath];
+
+      // ignore: null_argument_to_non_null_type
+      if (completer != null && !completer.isCompleted) completer.complete();
+
       rethrow;
+    } finally {
+      // Clean up the completer after completion to prevent memory leaks
+      _downloadingByPath.remove(localFilePath);
     }
   }
 
@@ -122,19 +144,19 @@ class GoogleDriveAssetDownloaderService {
 
       // Handle authentication errors
       if (response.statusCode == 403) {
-        throw StateError('Access denied. Please sign in to download this asset.');
+        throw GoogleDriveAssetDownloaderException('Access denied. Please sign in to download this asset.');
       }
 
       // Handle other HTTP errors
       if (response.statusCode != 200) {
-        throw StateError(
+        throw GoogleDriveAssetDownloaderException(
           'Failed to download asset. Status: ${response.statusCode}',
         );
       }
 
       // Validate file size
       if (response.bodyBytes.length > maxDownloadSize) {
-        throw StateError(
+        throw GoogleDriveAssetDownloaderException(
           'Asset is too large (${response.bodyBytes.length ~/ (1024 * 1024)}MB). '
           'Maximum allowed: ${maxDownloadSize ~/ (1024 * 1024)}MB',
         );
@@ -161,10 +183,10 @@ class GoogleDriveAssetDownloaderService {
 
       debugPrint('❌ Error downloading asset: $e');
 
-      if (e is StateError) {
+      if (e is GoogleDriveAssetDownloaderException) {
         rethrow;
       } else {
-        throw StateError('Failed to download asset: $e');
+        throw GoogleDriveAssetDownloaderException('Failed to download asset: $e');
       }
     }
   }

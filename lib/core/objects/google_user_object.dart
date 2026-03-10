@@ -2,18 +2,27 @@
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 
 part 'google_user_object.g.dart';
 
 @CopyWith()
 @JsonSerializable()
-class GoogleUserObject {
+class GoogleUserObject extends CloudServiceUser {
   final String id;
   final String email;
+
+  @override
   final String? displayName;
+
+  @override
   final String? photoUrl;
+
   final String? accessToken;
   final DateTime? refreshedAt;
+
+  @override
+  final bool? autoBackupEnabled;
 
   GoogleUserObject({
     required this.id,
@@ -22,8 +31,11 @@ class GoogleUserObject {
     required this.photoUrl,
     required this.accessToken,
     required this.refreshedAt,
+    required this.autoBackupEnabled,
   });
 
+  @override
+  String get identifier => email;
   String? get bigImageUrl => _maximizeImage(photoUrl);
 
   static const int RENEWAL_THRESHOLD_MINUTES = 55;

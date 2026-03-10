@@ -71,6 +71,20 @@ class _RewardTile extends StatelessWidget {
             ),
           ),
           onTap: () {
+            Widget? primaryButton;
+
+            if (rewarded && feature.type == RewardFeature.auto_backups) {
+              primaryButton = Builder(
+                builder: (context) {
+                  return FilledButton(
+                    child: Text(tr("button.open")),
+                    onPressed: () =>
+                        ShowBackupServiceRoute(service: BackupProvider.repoInstance.googleDriveService).push(context),
+                  );
+                },
+              );
+            }
+
             SpVideoDemoSheet.showVideoSheet(
               context: context,
               videoUrlPath: feature.videoUrlPath,
@@ -79,6 +93,7 @@ class _RewardTile extends StatelessWidget {
               demoBackgroundColor: ColorFromDayService(context: context).get(feature.dayColor),
               demoWidth: 270,
               demoAspectRatio: 0.4596888260254597,
+              primaryButton: primaryButton,
             );
           },
         ),

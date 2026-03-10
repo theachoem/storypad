@@ -19,6 +19,8 @@ abstract class _$GoogleUserObjectCWProxy {
 
   GoogleUserObject refreshedAt(DateTime? refreshedAt);
 
+  GoogleUserObject autoBackupEnabled(bool? autoBackupEnabled);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GoogleUserObject(...).copyWith.fieldName(value)`.
   ///
@@ -33,6 +35,7 @@ abstract class _$GoogleUserObjectCWProxy {
     String? photoUrl,
     String? accessToken,
     DateTime? refreshedAt,
+    bool? autoBackupEnabled,
   });
 }
 
@@ -65,6 +68,10 @@ class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
       call(refreshedAt: refreshedAt);
 
   @override
+  GoogleUserObject autoBackupEnabled(bool? autoBackupEnabled) =>
+      call(autoBackupEnabled: autoBackupEnabled);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GoogleUserObject(...).copyWith.fieldName(value)`.
   ///
@@ -79,6 +86,7 @@ class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
     Object? photoUrl = const $CopyWithPlaceholder(),
     Object? accessToken = const $CopyWithPlaceholder(),
     Object? refreshedAt = const $CopyWithPlaceholder(),
+    Object? autoBackupEnabled = const $CopyWithPlaceholder(),
   }) {
     return GoogleUserObject(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -105,6 +113,10 @@ class _$GoogleUserObjectCWProxyImpl implements _$GoogleUserObjectCWProxy {
           ? _value.refreshedAt
           // ignore: cast_nullable_to_non_nullable
           : refreshedAt as DateTime?,
+      autoBackupEnabled: autoBackupEnabled == const $CopyWithPlaceholder()
+          ? _value.autoBackupEnabled
+          // ignore: cast_nullable_to_non_nullable
+          : autoBackupEnabled as bool?,
     );
   }
 }
@@ -130,6 +142,7 @@ GoogleUserObject _$GoogleUserObjectFromJson(Map<String, dynamic> json) =>
       refreshedAt: json['refreshed_at'] == null
           ? null
           : DateTime.parse(json['refreshed_at'] as String),
+      autoBackupEnabled: json['auto_backup_enabled'] as bool?,
     );
 
 Map<String, dynamic> _$GoogleUserObjectToJson(GoogleUserObject instance) =>
@@ -140,4 +153,5 @@ Map<String, dynamic> _$GoogleUserObjectToJson(GoogleUserObject instance) =>
       'photo_url': instance.photoUrl,
       'access_token': instance.accessToken,
       'refreshed_at': instance.refreshedAt?.toIso8601String(),
+      'auto_backup_enabled': instance.autoBackupEnabled,
     };

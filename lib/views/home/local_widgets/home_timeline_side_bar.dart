@@ -26,39 +26,41 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
 
   @override
   Widget build(BuildContext context) {
-    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
-
     return Stack(
       fit: StackFit.passthrough,
       clipBehavior: Clip.none,
       children: [
         buildBackgrounds(context),
-        buildButtons(context, iapProvider),
+        buildButtons(context),
       ],
     );
   }
 
-  Widget buildButtons(BuildContext context, InAppPurchaseProvider provider) {
+  Widget buildButtons(BuildContext context) {
     final double baseSideMargin = (Platform.isMacOS ? 12.0 : 8.0);
 
-    final items = SideItems.getTimelineSideBarItems(
-      homeViewModel: widget.viewModel,
-      iapProvider: provider,
-      showBadgeNotifer: showAddOnBadgeNotifer,
-    );
+    return Consumer<InAppPurchaseProvider>(
+      builder: (context, provider, child) {
+        final items = SideItems.getTimelineSideBarItems(
+          homeViewModel: widget.viewModel,
+          iapProvider: provider,
+          showBadgeNotifer: showAddOnBadgeNotifer,
+        );
 
-    return Container(
-      margin: EdgeInsets.only(
-        top: 8.0,
-        left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + baseSideMargin)!,
-        right: AppTheme.getDirectionValue(context, widget.screenPadding.right + baseSideMargin, 0.0)!,
-        bottom: widget.screenPadding.bottom + 16.0,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: Platform.isMacOS ? 8.0 : 0.0,
-        children: items.map((item) => _buildTimelineButton(context, item)).toList(),
-      ),
+        return Container(
+          margin: EdgeInsets.only(
+            top: 8.0,
+            left: AppTheme.getDirectionValue(context, 0.0, widget.screenPadding.left + baseSideMargin)!,
+            right: AppTheme.getDirectionValue(context, widget.screenPadding.right + baseSideMargin, 0.0)!,
+            bottom: widget.screenPadding.bottom + 16.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: Platform.isMacOS ? 8.0 : 0.0,
+            children: items.map((item) => _buildTimelineButton(context, item)).toList(),
+          ),
+        );
+      },
     );
   }
 

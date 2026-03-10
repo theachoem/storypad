@@ -16,8 +16,4 @@ class BackupServicesViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   late final List<BackupCloudService> services;
-
-  Future<void> syncServices(BuildContext context) async {
-    await context.read<BackupProvider>().recheckAndSync();
-  }
 }

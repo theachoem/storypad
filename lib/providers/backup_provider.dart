@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
+import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/storages/backup_import_history_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
@@ -56,8 +65,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       // Auto sync if applicable.
       // Wait 1 second before calling to ensure home context is ready.
       Future.delayed(const Duration(seconds: 1), () {
-        if (HomeView.homeContext?.read<InAppPurchaseProvider>().autoBackups == true) {
-          recheckAndSync(setupConnection: false);
+        if (HomeView.homeContext?.mounted == true) {
+          autoSync(setupConnection: false, context: HomeView.homeContext!);
         }
       });
     });
@@ -68,10 +77,27 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     notifyListeners();
   }
 
-  BackupRepository get repository => BackupRepository.appInstance;
+  static final BackupRepository repoInstance = _createRepoInstance();
+  static BackupRepository _createRepoInstance() {
+    return BackupRepository(
+      restoreService: RestoreBackupService(),
+      step1ImagesUploader: BackupImagesUploaderService(),
+      step2LatestBackupChecker: BackupLatestCheckerService(),
+      step3LatestBackupImporter: BackupImporterService(),
+      step4NewBackupUploader: BackupUploaderService(),
+      internetChecker: InternetCheckerService(),
+      googleDriveService: GoogleDriveCloudService(),
+      importHistoryStorage: BackupImportHistoryStorage(),
+    );
+  }
 
-  GoogleUserObject? get currentUser => repository.currentUser;
+  BackupRepository get repository => repoInstance;
+
+  GoogleUserObject? get currentGoogleUser => repository.currentGoogleUser;
   bool get isSignedIn => repository.isSignedIn;
+
+  /// Get all authenticated cloud service users for asset downloads
+  List<CloudServiceUser> get availableUsers => repository.availableUsers;
 
   Stream<BackupSyncMessage?> get step1MessageStream => repository.step1MessageStream;
   Stream<BackupSyncMessage?> get step2MessageStream => repository.step2MessageStream;
@@ -92,7 +118,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       ) ==
       true;
 
-  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync && currentUser?.email != null;
+  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync;
 
   DateTime? get lastSyncedAt => _lastSyncedAtByYear?.values.whereType<DateTime>().fold<DateTime?>(
     null,
@@ -114,6 +140,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   bool get syncing => _syncing;
 
   List<BackupCloudService> get services => repository.services;
+  List<BackupCloudService> get autoBackupServices =>
+      repository.services.where((service) => service.autoBackupEnabled).toList();
 
   Future<void> _setupConnection() async {
     final connectionResult = await repository.checkConnection();
@@ -125,9 +153,22 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
   }
 
+  Future<void> autoSync({
+    bool setupConnection = true,
+    required BuildContext context,
+  }) async {
+    if (!context.read<InAppPurchaseProvider>().autoBackups) return;
+    return recheckAndSync(
+      setupConnection: setupConnection,
+      services: autoBackupServices,
+    );
+  }
+
   Future<void> recheckAndSync({
     bool setupConnection = true,
+    required List<BackupCloudService> services,
   }) async {
+    if (services.isEmpty) return;
     if (_syncing) return;
 
     _syncing = true;
@@ -136,7 +177,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
     if (setupConnection) await _setupConnection();
     if (readyToSynced) {
-      await _syncBackupAcrossDevices(currentUser!.email);
+      await _syncBackupAcrossDevices(services: services);
     }
 
     _syncing = false;
@@ -147,21 +188,18 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     BuildContext context,
     BackupServiceType serviceType,
   ) async {
-    final result = await MessengerService.of(context).showLoading<BackupResult<bool>>(
-      debugSource: '$runtimeType#signIn',
-      future: () => repository.signIn(serviceType),
-    );
+    final result = await repository.signIn(serviceType);
 
-    if (result?.isSuccess == true) {
+    if (result.isSuccess == true) {
       if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
       AnalyticsService.instance.logSignInWithGoogle();
 
       _connectionStatus = BackupConnectionStatus.readyToSync;
       _lastSyncedAtByYear = null;
       _lastDbUpdatedAtByYear = null;
-    } else if (result?.error != null) {
+    } else if (result.error != null) {
       // Handle sign-in error - could show user-friendly message
-      AppLogger.d('Sign-in failed: ${result!.error!.message}');
+      AppLogger.d('Sign-in failed: ${result.error!.message}');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result.error!.message)),
@@ -193,7 +231,9 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     notifyListeners();
-    await recheckAndSync();
+    await recheckAndSync(
+      services: [repository.getService(serviceType)],
+    );
   }
 
   Future<void> signOut(
@@ -243,7 +283,9 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   ///    - Auth failures trigger connection status update
   ///    - Failed services retry on next sync
   ///
-  Future<void> _syncBackupAcrossDevices(String email) async {
+  Future<void> _syncBackupAcrossDevices({
+    required List<BackupCloudService> services,
+  }) async {
     // Get current state of all years in local database
     _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
     notifyListeners();

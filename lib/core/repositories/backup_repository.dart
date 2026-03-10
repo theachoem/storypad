@@ -10,6 +10,7 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
@@ -75,28 +76,24 @@ class BackupRepository {
        _internetChecker = internetChecker,
        _importHistoryStorage = importHistoryStorage;
 
-  static final BackupRepository appInstance = _createInstance();
-
-  static BackupRepository _createInstance() {
-    return BackupRepository(
-      restoreService: RestoreBackupService(),
-      step1ImagesUploader: BackupImagesUploaderService(),
-      step2LatestBackupChecker: BackupLatestCheckerService(),
-      step3LatestBackupImporter: BackupImporterService(),
-      step4NewBackupUploader: BackupUploaderService(),
-      internetChecker: InternetCheckerService(),
-      googleDriveService: GoogleDriveCloudService(),
-      importHistoryStorage: BackupImportHistoryStorage(),
-    );
-  }
-
   Future<void> initialize() async {
     await googleDriveService.initialize();
   }
 
   // currentUser & isSignedIn are load in initializer - before rendering UI.
-  GoogleUserObject? get currentUser => googleDriveService.currentUser;
-  bool get isSignedIn => currentUser != null;
+  GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser;
+  bool get isSignedIn => availableUsers.isNotEmpty;
+
+  /// Get all authenticated cloud service users for asset downloads
+  List<CloudServiceUser> get availableUsers {
+    final users = <CloudServiceUser>[];
+
+    if (googleDriveService.currentUser != null) {
+      users.add(googleDriveService.currentUser!);
+    }
+
+    return users;
+  }
 
   Stream<BackupSyncMessage?> get step1MessageStream => _step1ImagesUploader.message;
   Stream<BackupSyncMessage?> get step2MessageStream => _step2LatestBackupChecker.message;
