@@ -52,6 +52,11 @@ class _ShowBackupServiceContent extends StatelessWidget {
           title: Text(viewModel.params.service.currentUser?.email ?? tr('list_tile.backup.unsignin_subtitle')),
           subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
         ),
+        SwitchListTile.adaptive(
+          value: true,
+          title: Text(tr('list_tile.auto_backup.title')),
+          onChanged: (value) {},
+        ),
         if (viewModel.error != null) ..._buildErrorSection(context),
         if (viewModel.error == null && viewModel.yearlyBackups!.isEmpty)
           Padding(

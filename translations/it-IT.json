@@ -277,6 +277,7 @@
   "input.year.hint": "per esempio. 2004",
   "list_tile.archived_at.title": "Archiviato",
   "list_tile.ask_for_locale_suggestion.subtitle": "Noti un errore o hai bisogno di una nuova lingua? Condividi i tuoi suggerimenti con noi!",
+  "list_tile.auto_backup.title": "Backup automatico",
   "list_tile.backup.no_internet_subtitle": "Connettiti a Internet per controllare lo stato del backup.",
   "list_tile.backup.no_permission_subtitle": "Concedi l'autorizzazione per effettuare il backup delle tue storie su Google Drive.",
   "list_tile.backup.setting_up_connection": "Impostazione della connessione di backup al tuo Google Drive...",

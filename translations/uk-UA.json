@@ -277,6 +277,7 @@
   "input.year.hint": "Наприклад, 2004",
   "list_tile.archived_at.title": "Заархівовано",
   "list_tile.ask_for_locale_suggestion.subtitle": "Помітили помилку або потрібна нова мова? Поділіться з нами своїми пропозиціями!",
+  "list_tile.auto_backup.title": "Copia de seguridad automatica",
   "list_tile.backup.no_internet_subtitle": "Підключіться до Інтернету, щоб перевірити стан резервного копіювання.",
   "list_tile.backup.no_permission_subtitle": "Надайте дозвіл на резервне копіювання ваших розповідей у Google Drive.",
   "list_tile.backup.setting_up_connection": "Налаштування резервного підключення до вашого Google Drive...",

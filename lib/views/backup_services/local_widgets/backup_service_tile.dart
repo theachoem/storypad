@@ -56,25 +56,22 @@ class BackupServiceTile extends StatelessWidget {
     } else {
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = null;
           subtitle = Text(tr('list_tile.backup.unknown_error'));
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case BackupConnectionStatus.noInternet:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = null;
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
-          onPressed = () => provider.recheckAndSync();
+          onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case BackupConnectionStatus.needGoogleDrivePermission:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = null;
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
-          onPressed = () => provider.requestScope(context, service.serviceType);
+          onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case BackupConnectionStatus.readyToSync:
-          trailing = Icon(
-            SpIcons.cloudUpload,
-            color: ColorScheme.of(context).primary,
-          );
+          trailing = null;
           subtitle = Text(
             tr('list_tile.backup.some_data_has_not_sync_subtitle'),
           );
@@ -100,7 +97,6 @@ class BackupServiceTile extends StatelessWidget {
       );
 
       onPressed = () => ShowBackupServiceRoute(service: service).push(context);
-
       trailing = Icon(
         SpIcons.cloudDone,
         color: ColorScheme.of(context).bootstrap.success.color,
