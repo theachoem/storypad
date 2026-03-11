@@ -335,7 +335,7 @@ class GoogleDriveCloudService extends BackupCloudService {
         if (backupsFolderId != null) {
           drive.FileList fileList = await client.files.list(
             spaces: "appDataFolder",
-            q: "name contains 'Backup::3::' and '$backupsFolderId' in parents",
+            q: "(name contains 'Backup__3__' or name contains 'Backup::3::') and '$backupsFolderId' in parents",
           );
 
           if (fileList.files != null && fileList.files!.isNotEmpty) {
