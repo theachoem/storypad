@@ -1209,7 +1209,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.37):
     - BoringSSL-GRPC/Interface (= 0.0.37)
   - BoringSSL-GRPC/Interface (0.0.37)
-  - cloud_firestore (6.1.3):
+  - cloud_firestore (6.2.0):
     - Firebase/Firestore (= 12.9.0)
     - firebase_core
     - Flutter
@@ -1263,22 +1263,22 @@ PODS:
   - Firebase/Storage (12.9.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 12.9.0)
-  - firebase_analytics (12.1.3):
+  - firebase_analytics (12.2.0):
     - firebase_core
     - FirebaseAnalytics (= 12.9.0)
     - Flutter
-  - firebase_core (4.5.0):
+  - firebase_core (4.6.0):
     - Firebase/CoreOnly (= 12.9.0)
     - Flutter
-  - firebase_crashlytics (5.0.8):
+  - firebase_crashlytics (5.1.0):
     - Firebase/Crashlytics (= 12.9.0)
     - firebase_core
     - Flutter
-  - firebase_remote_config (6.2.0):
+  - firebase_remote_config (6.3.0):
     - Firebase/RemoteConfig (= 12.9.0)
     - firebase_core
     - Flutter
-  - firebase_storage (13.1.0):
+  - firebase_storage (13.2.0):
     - Firebase/Storage (= 12.9.0)
     - firebase_core
     - Flutter
@@ -1563,25 +1563,25 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - ObjectBox (5.2.0)
+  - ObjectBox (5.3.0-beta.4)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 5.2.0)
+    - ObjectBox (= 5.3.0-beta.4)
   - package_info_plus (0.4.5):
     - Flutter
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (9.13.1):
+  - purchases_flutter (9.15.1):
     - Flutter
-    - PurchasesHybridCommon (= 17.42.0)
-  - PurchasesHybridCommon (17.42.0):
-    - RevenueCat (= 5.60.0)
+    - PurchasesHybridCommon (= 17.53.0)
+  - PurchasesHybridCommon (17.53.0):
+    - RevenueCat (= 5.66.0)
   - quill_native_bridge_ios (0.0.1):
     - Flutter
   - record_ios (1.2.0):
     - Flutter
-  - RevenueCat (5.60.0)
+  - RevenueCat (5.66.0)
   - SDWebImage (5.21.7):
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
@@ -1742,17 +1742,17 @@ SPEC CHECKSUMS:
   audio_service: aa99a6ba2ae7565996015322b0bb024e1d25c6fd
   audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
-  cloud_firestore: d5c7f731e71034665afe74e3a1d0ff334f9b7799
+  cloud_firestore: 698d4d849c58da2ef2b3b8b9db27d2cd56614e7e
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Firebase: 065f2bb395062046623036d8e6dc857bc2521d56
-  firebase_analytics: 6903a46192a92993abde88152a14ce1df1c0de2f
-  firebase_core: afac1aac13c931e0401c7e74ed1276112030efab
-  firebase_crashlytics: a316d8dddba772359d93dc38d303ed964579b7a6
-  firebase_remote_config: 8fc76417b5b60cf25e6ce2c88a86a8a63c71370a
-  firebase_storage: 85d65a656f88f9bdf1fb0d7f537ae7ebf4266709
+  firebase_analytics: 8288e2480a2b2a5eb2cc3c474e4a4327e8dc520b
+  firebase_core: 8e6f58412ca227827c366b92e7cee047a2148c60
+  firebase_crashlytics: c399f9682c474beb06a89c11dfab04db537f3cd2
+  firebase_remote_config: cd42a29a61e8610230e7f74d5646d6392fd7368d
+  firebase_storage: 8d16922c017c49812f7bbe64a86f756f99a44c74
   FirebaseABTesting: a399ffe546392a39b19a5c2fb28bd8ea178a6f47
   FirebaseAnalytics: cd7d01d352f3c237c9a0e31552c257cd0b0c0352
   FirebaseAppCheckInterop: 4bade10286cc977e516f75d2d8312cbdfa534789
@@ -1789,16 +1789,16 @@ SPEC CHECKSUMS:
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  ObjectBox: 946c1e8586aaa61e21b6661bab4948d06fdd51c4
-  objectbox_flutter_libs: 4d609454f39d002fc850b3019e180fc4760cdf36
+  ObjectBox: eccb95ea2054c39d81dfa2d4ccc5f1e31187228a
+  objectbox_flutter_libs: ed1510f71602e4a0d3f2a721324e468d066fdbb9
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 0c05be8e6d5afbd2dc581ce7f823015ff1b5831a
-  PurchasesHybridCommon: c0a62a03bd15e40af1c3cd111f5f4f50cac751c7
+  purchases_flutter: eaa65afecf3a856e8729efceab7a01b8685e2eab
+  PurchasesHybridCommon: 53d966ac5c39df13c3c759289bb3ef3e2f9f1622
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_ios: 412daca2350b228e698fffcd08f1f94ceb1e3844
-  RevenueCat: 88010b2d5fc8fb7405d2e11dacd65ac74c9d21d1
+  RevenueCat: a3cf721ad8b1b56a930d748a40342aba16c09bbb
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
