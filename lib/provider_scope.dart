@@ -42,7 +42,7 @@ class ProviderScope extends StatelessWidget {
           create: (context) => InAppUpdateProvider(),
         ),
         ListenableProvider<InAppPurchaseProvider>(
-          create: (context) => InAppPurchaseProvider(context),
+          create: (context) => InAppPurchaseProvider(),
         ),
         ListenableProvider<NicknameProvider>(
           create: (context) => NicknameProvider(),

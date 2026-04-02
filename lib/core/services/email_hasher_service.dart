@@ -24,4 +24,11 @@ class EmailHasherService {
 
     return digest.toString();
   }
+
+  /// Check if a string looks like a valid legacy email hash.
+  /// Legacy hashes are SHA-256 HMAC outputs: exactly 64 lowercase hex characters.
+  static bool isValidEmailHash(String? value) {
+    if (value == null || value.isEmpty) return false;
+    return value.length == 64 && RegExp(r'^[a-f0-9]{64}$').hasMatch(value);
+  }
 }

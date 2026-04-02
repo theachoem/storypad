@@ -191,7 +191,6 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     final result = await repository.signIn(serviceType);
 
     if (result.isSuccess == true) {
-      if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
       AnalyticsService.instance.logSignInWithGoogle();
 
       _connectionStatus = BackupConnectionStatus.readyToSync;
@@ -245,8 +244,6 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       future: () => repository.signOut(serviceType),
     );
 
-    // Always update UI state even if sign-out had issues
-    if (context.mounted) context.read<InAppPurchaseProvider>().revalidateCustomerInfo(context);
     AnalyticsService.instance.logSignOut();
 
     _connectionStatus = null;
