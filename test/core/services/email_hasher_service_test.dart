@@ -45,5 +45,45 @@ void main() {
 
       expect(hash1, isNot(equals(hash2)));
     });
+
+    test('isValidEmailHash accepts valid 64-char hex hash', () {
+      const validHash = '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      expect(EmailHasherService.isValidEmailHash(validHash), isTrue);
+    });
+
+    test('isValidEmailHash rejects uppercase hex', () {
+      // Should only accept lowercase to match SHA256 digest.toString() output
+      const invalidHash = '1234567890ABCDEF1234567890abcdef1234567890abcdef1234567890abcdef';
+      expect(EmailHasherService.isValidEmailHash(invalidHash), isFalse);
+    });
+
+    test('isValidEmailHash rejects non-hex characters', () {
+      const invalidHash = 'z234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      expect(EmailHasherService.isValidEmailHash(invalidHash), isFalse);
+    });
+
+    test('isValidEmailHash rejects wrong length', () {
+      const tooShort = '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcde';
+      const tooLong = '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef00';
+
+      expect(EmailHasherService.isValidEmailHash(tooShort), isFalse);
+      expect(EmailHasherService.isValidEmailHash(tooLong), isFalse);
+    });
+
+    test('isValidEmailHash rejects null or empty', () {
+      expect(EmailHasherService.isValidEmailHash(null), isFalse);
+      expect(EmailHasherService.isValidEmailHash(''), isFalse);
+    });
+
+    test('isValidEmailHash validates real hmacEmail output', () {
+      final realHash = hasher.hmacEmail('test@example.com');
+      expect(EmailHasherService.isValidEmailHash(realHash), isTrue);
+    });
+
+    test('isValidEmailHash with RevenueCat anonymous ID format', () {
+      // RevenueCat anonymous IDs start with '$RCAnonymousID:' and are much longer
+      const rcAnonId = '\$RCAnonymousID:fa0feebeb1d34d2fb9e1e5fbd1903be7';
+      expect(EmailHasherService.isValidEmailHash(rcAnonId), isFalse);
+    });
   });
 }

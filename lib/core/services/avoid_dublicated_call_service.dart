@@ -6,18 +6,23 @@ class AvoidDublicatedCallService<T> {
   Completer<T>? _completer;
 
   Future<T> run(Future<T> Function() callback) async {
-    final result = await _execute(callback);
-    _completer = null;
-    return result;
+    return _execute(callback);
   }
 
   Future<T> _execute(Future<T> Function() callback) {
     if (_completer != null) return _completer!.future;
     _completer = Completer<T>();
 
-    callback().then((value) {
-      return _completer?.complete(value);
-    });
+    callback()
+        .then((value) {
+          _completer?.complete(value);
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          _completer?.completeError(error, stackTrace);
+        })
+        .whenComplete(() {
+          _completer = null;
+        });
 
     return _completer!.future;
   }
