@@ -190,8 +190,8 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
             SpPopMenuItem(
               title: tr('button.save_as_template'),
               leadingIconData: SpIcons.lightBulb,
-              trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
-              titleStyle: context.read<InAppPurchaseProvider>().template
+              trailingIconData: !context.read<InAppPurchaseProvider>().isProUser ? SpIcons.lock : null,
+              titleStyle: context.read<InAppPurchaseProvider>().isProUser
                   ? null
                   : TextStyle(color: Theme.of(context).disabledColor),
               onPressed: () => storyViewModel.saveAsTemplate(context),
@@ -397,9 +397,9 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final rewarded = context.read<InAppPurchaseProvider>().writingStats;
+    final isProUser = context.read<InAppPurchaseProvider>().isProUser;
 
-    if (!rewarded) {
+    if (!isProUser) {
       return TextButton.icon(
         icon: const Icon(SpIcons.lock),
         label: Text(tr('button.unlock_writing_stats')),

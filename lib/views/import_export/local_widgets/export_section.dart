@@ -46,14 +46,14 @@ class _ExportSectionState extends State<_ExportSection> {
             child: Icon(SpIcons.markdown),
             builder: (context, provider, child) {
               return GestureDetector(
-                onTap: provider.markdownExport
+                onTap: provider.isProUser
                     ? null
                     : () => const PaywallRoute(initialFocus: .markdownExport).push(context),
                 child: RadioListTile(
-                  enabled: provider.markdownExport,
+                  enabled: provider.isProUser,
                   secondary: Builder(
                     builder: (context) {
-                      if (provider.markdownExport) return Icon(SpIcons.markdown);
+                      if (provider.isProUser) return Icon(SpIcons.markdown);
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [

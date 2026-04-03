@@ -46,7 +46,7 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
   void _setSegments() {
     _segments = [
       CalendarSegmentId.mood,
-      if (provider.periodCalendar) CalendarSegmentId.period,
+      if (provider.isProUser) CalendarSegmentId.period,
     ];
   }
 

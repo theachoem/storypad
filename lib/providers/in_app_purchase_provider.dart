@@ -5,44 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/objects/product_deal_object.dart';
-import 'package:storypad/core/objects/reward_object.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/core/types/feature_reward.dart';
 
 // Uses RevenueCat anonymous ID for purchases. No account login required.
 // Legacy users who were logged in with email hash are migrated on initialization.
 class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
-  // Some feature unlocked base on credits.
-  int get purchaseCount => AppProduct.values.where((product) => isActive(product.productIdentifier)).length;
-
-  // Add-on features.
-  bool get backgrounds => isActive(AppProduct.backgrounds.productIdentifier);
-  bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
-  bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
-  bool get template => isActive(AppProduct.templates.productIdentifier);
-  bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
-  bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
-
-  // Reward features.
-  bool get writingStats => currentReward.includedRewardedFeatures.contains(RewardFeature.writing_stats);
-  bool get pinnedNotes => currentReward.includedRewardedFeatures.contains(RewardFeature.pinned_notes);
-  bool get autoBackups => currentReward.includedRewardedFeatures.contains(RewardFeature.auto_backups);
-
-  bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
-  bool get hasAllPurchases => AppProduct.values.every((product) => isActive(product.productIdentifier));
-  bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
-
-  bool get isProUser => hasAnyPurchases || hasActiveDeals;
-
-  List<ProductDealObject> get activeDeals => ProductDealObject.getActiveDeals().values.toList();
+  bool get hasAnyLegacyPurchases => AppLegacyProduct.values.any((product) => isActive(product.productIdentifier));
+  bool get isProUser => isActive(AppProduct.pro.productIdentifier) || hasAnyLegacyPurchases;
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
@@ -52,20 +28,6 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   Completer<void>? _initCompleter;
 
   final _purchaseGuard = AvoidDublicatedCallService<bool>();
-
-  bool get allRewarded => currentReward.features.length == rewards.last.features.length;
-  List<RewardObject> get rewards => RewardObject.rewards;
-  RewardObject get currentReward {
-    RewardObject lastMatch = rewards.first;
-    for (final reward in rewards) {
-      if (purchaseCount >= reward.purchaseCount) {
-        lastMatch = reward;
-      } else {
-        break;
-      }
-    }
-    return lastMatch;
-  }
 
   InAppPurchaseProvider() {
     _initCompleter = Completer<void>();

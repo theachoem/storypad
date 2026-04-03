@@ -73,7 +73,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: _SyncButton(viewModel: viewModel),
         ),
-        if (context.read<InAppPurchaseProvider>().autoBackups && viewModel.params.service.currentUser != null)
+        if (context.read<InAppPurchaseProvider>().isProUser && viewModel.params.service.currentUser != null)
           SwitchListTile.adaptive(
             value: viewModel.params.service.autoBackupEnabled,
             title: Text(tr('list_tile.reward_automatic_backup.title')),

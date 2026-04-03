@@ -178,7 +178,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   Future<void> saveAsTemplate(BuildContext context) async {
     if (story == null) return;
 
-    if (!context.read<InAppPurchaseProvider>().template) {
+    if (!context.read<InAppPurchaseProvider>().isProUser) {
       const PaywallRoute(initialFocus: .templates).push(context);
       return;
     }

@@ -16,7 +16,7 @@ class _PinStoryIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: context.read<InAppPurchaseProvider>().pinnedNotes
+      onTap: context.read<InAppPurchaseProvider>().isProUser
           ? null
           : () => const PaywallRoute(initialFocus: .pinnedNotes).push(context),
       child: Stack(
@@ -29,7 +29,7 @@ class _PinStoryIconButton extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 allPinned ? Icon(SpIcons.pinSlash) : Icon(SpIcons.pin),
-                if (!context.read<InAppPurchaseProvider>().pinnedNotes)
+                if (!context.read<InAppPurchaseProvider>().isProUser)
                   const Positioned(
                     bottom: -4,
                     right: -12,
@@ -38,7 +38,7 @@ class _PinStoryIconButton extends StatelessWidget {
               ],
             ),
             color: allPinned ? null : ColorScheme.of(context).primary,
-            onPressed: !context.read<InAppPurchaseProvider>().pinnedNotes
+            onPressed: !context.read<InAppPurchaseProvider>().isProUser
                 ? null
                 : stories.isEmpty
                 ? null

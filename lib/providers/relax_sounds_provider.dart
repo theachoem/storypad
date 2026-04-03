@@ -90,7 +90,7 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     double? initialVolume,
   }) async {
     final iapProvider = context.read<InAppPurchaseProvider>();
-    if (!sound.free && !iapProvider.relaxSound) return openPaywall(context);
+    if (!sound.free && !iapProvider.isProUser) return openPaywall(context);
 
     if (isSoundSelected(sound)) {
       await audioPlayersService.removeAnAudio(sound.soundUrlPath);

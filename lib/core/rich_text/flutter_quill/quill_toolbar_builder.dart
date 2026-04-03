@@ -82,7 +82,7 @@ class _QuillToolbarWidget extends StatelessWidget {
             builder: (context, provider, child) {
               return IconButton(
                 tooltip: tr('button.record_voice'),
-                icon: provider.voiceJournal
+                icon: provider.isProUser
                     ? const Icon(SpIcons.voice)
                     : const Stack(
                         clipBehavior: Clip.none,
@@ -96,7 +96,7 @@ class _QuillToolbarWidget extends StatelessWidget {
                         ],
                       ),
                 onPressed: () {
-                  if (provider.voiceJournal) {
+                  if (provider.isProUser) {
                     SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
                   } else {
                     const PaywallRoute(initialFocus: .voiceJournal).push(context);

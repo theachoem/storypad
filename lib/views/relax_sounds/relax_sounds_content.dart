@@ -22,7 +22,7 @@ class _RelaxSoundsContent extends StatelessWidget {
               ],
               bottom: TabBar(
                 onTap: (index) {
-                  if (index == 1 && !context.read<InAppPurchaseProvider>().relaxSound) {
+                  if (index == 1 && !context.read<InAppPurchaseProvider>().isProUser) {
                     DefaultTabController.of(context).animateTo(0);
                     const PaywallRoute(initialFocus: .voiceJournal).push(context);
                   }
@@ -36,7 +36,7 @@ class _RelaxSoundsContent extends StatelessWidget {
                           TextSpan(
                             text: "${tr('general.sound_mixes')} ",
                             children: [
-                              if (!iapProvider.relaxSound)
+                              if (!iapProvider.isProUser)
                                 const WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
                                   child: Icon(
@@ -59,7 +59,7 @@ class _RelaxSoundsContent extends StatelessWidget {
               },
             ),
             body: TabBarView(
-              physics: context.read<InAppPurchaseProvider>().relaxSound ? null : const NeverScrollableScrollPhysics(),
+              physics: context.read<InAppPurchaseProvider>().isProUser ? null : const NeverScrollableScrollPhysics(),
               children: [
                 _SoundsTab(viewModel: viewModel),
                 _MixesTab(viewModel: viewModel),

@@ -33,13 +33,13 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
                 ),
                 SpPopMenuItem(
                   leadingIconData: SpIcons.save,
-                  trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
+                  trailingIconData: !context.read<InAppPurchaseProvider>().isProUser ? SpIcons.lock : null,
                   title: tr('button.save_template'),
-                  titleStyle: context.read<InAppPurchaseProvider>().template
+                  titleStyle: context.read<InAppPurchaseProvider>().isProUser
                       ? null
                       : TextStyle(color: Theme.of(context).disabledColor),
                   onPressed: () {
-                    if (context.read<InAppPurchaseProvider>().template) {
+                    if (context.read<InAppPurchaseProvider>().isProUser) {
                       viewModel.saveTemplate(context);
                     } else {
                       const PaywallRoute(initialFocus: .templates).push(context);
