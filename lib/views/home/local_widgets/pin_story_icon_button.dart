@@ -18,7 +18,7 @@ class _PinStoryIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: context.read<InAppPurchaseProvider>().pinnedNotes
           ? null
-          : () => const RewardsRoute(initialFocusedRewardFeature: .pinned_notes).push(context),
+          : () => const PaywallRoute(initialFocus: .pinnedNotes).push(context),
       child: Stack(
         children: [
           IconButton.outlined(

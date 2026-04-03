@@ -39,6 +39,9 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
   bool get hasAllPurchases => AppProduct.values.every((product) => isActive(product.productIdentifier));
   bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
+
+  bool get isProUser => hasAnyPurchases || hasActiveDeals;
+
   List<ProductDealObject> get activeDeals => ProductDealObject.getActiveDeals().values.toList();
 
   CustomerInfo? _customerInfo;

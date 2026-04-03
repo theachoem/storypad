@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/types/new_badge.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_new_badge_builder.dart';
 
@@ -28,7 +28,7 @@ class AddOnsTile extends StatelessWidget {
             ),
           ),
           onTap: () async {
-            await const AddOnsRoute().push(context);
+            await const PaywallRoute(initialFocus: .templates).push(context);
             hideBadge();
           },
         );

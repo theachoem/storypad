@@ -50,7 +50,7 @@ class HomeEndDrawer extends StatelessWidget {
       }
     }
 
-    final sideItems = SideItems.getEndDrawerItems(viewModel);
+    final sideItems = SideItems.getEndDrawerItems(context, viewModel);
 
     return Scaffold(
       extendBodyBehindAppBar: true,

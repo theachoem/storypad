@@ -45,10 +45,7 @@ class _TemplatesContent extends StatelessWidget {
         onTap: (index) {
           if (index == 0 && !context.read<InAppPurchaseProvider>().template) {
             DefaultTabController.of(context).animateTo(1);
-            AddOnsRoute.pushAndNavigateTo(
-              product: AppProduct.templates,
-              context: context,
-            );
+            const PaywallRoute(initialFocus: .templates).push(context);
           }
         },
         tabs: [

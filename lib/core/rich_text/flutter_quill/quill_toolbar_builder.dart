@@ -99,10 +99,7 @@ class _QuillToolbarWidget extends StatelessWidget {
                   if (provider.voiceJournal) {
                     SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
                   } else {
-                    AddOnsRoute.pushAndNavigateTo(
-                      product: AppProduct.voice_journal,
-                      context: context,
-                    );
+                    const PaywallRoute(initialFocus: .voiceJournal).push(context);
                   }
                 },
               );

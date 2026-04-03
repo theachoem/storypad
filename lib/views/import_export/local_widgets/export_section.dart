@@ -48,7 +48,7 @@ class _ExportSectionState extends State<_ExportSection> {
               return GestureDetector(
                 onTap: provider.markdownExport
                     ? null
-                    : () => AddOnsRoute.pushAndNavigateTo(product: AppProduct.markdown_export, context: context),
+                    : () => const PaywallRoute(initialFocus: .markdownExport).push(context),
                 child: RadioListTile(
                   enabled: provider.markdownExport,
                   secondary: Builder(

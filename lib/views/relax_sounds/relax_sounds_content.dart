@@ -24,10 +24,7 @@ class _RelaxSoundsContent extends StatelessWidget {
                 onTap: (index) {
                   if (index == 1 && !context.read<InAppPurchaseProvider>().relaxSound) {
                     DefaultTabController.of(context).animateTo(0);
-                    AddOnsRoute.pushAndNavigateTo(
-                      product: AppProduct.relax_sounds,
-                      context: context,
-                    );
+                    const PaywallRoute(initialFocus: .voiceJournal).push(context);
                   }
                 },
                 tabs: [

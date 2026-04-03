@@ -42,10 +42,7 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
                     if (context.read<InAppPurchaseProvider>().template) {
                       viewModel.saveTemplate(context);
                     } else {
-                      AddOnsRoute.pushAndNavigateTo(
-                        product: AppProduct.templates,
-                        context: context,
-                      );
+                      const PaywallRoute(initialFocus: .templates).push(context);
                     }
                   },
                 ),
