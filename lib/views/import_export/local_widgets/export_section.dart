@@ -48,7 +48,7 @@ class _ExportSectionState extends State<_ExportSection> {
               return GestureDetector(
                 onTap: provider.isProUser
                     ? null
-                    : () => const PaywallRoute(initialFocus: .markdownExport).push(context),
+                    : () => const PaywallRoute(initialFocus: .markdown_export).push(context),
                 child: RadioListTile(
                   enabled: provider.isProUser,
                   secondary: Builder(

@@ -212,7 +212,7 @@ Template screenshots for the add-on showcase:
 
 UI text is localized:
 
-- Add-on metadata: `add_ons.templates.title`, `add_ons.templates.subtitle`
+- Add-on metadata: `paywall_features.templates.title`, `add_ons.templates.subtitle`
 - Page title: `page.templates.title`
 - Empty state: `page.templates.empty_message`
 - Buttons: `button.new_template`, `button.use_template`

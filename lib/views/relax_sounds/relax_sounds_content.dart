@@ -14,7 +14,7 @@ class _RelaxSoundsContent extends StatelessWidget {
           return Scaffold(
             extendBody: true,
             appBar: AppBar(
-              title: Text(tr('add_ons.relax_sounds.title')),
+              title: Text(tr('paywall_features.relax_sounds.title')),
               automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
               actions: [
                 if (CupertinoSheetRoute.hasParentSheet(context))
@@ -24,7 +24,7 @@ class _RelaxSoundsContent extends StatelessWidget {
                 onTap: (index) {
                   if (index == 1 && !context.read<InAppPurchaseProvider>().isProUser) {
                     DefaultTabController.of(context).animateTo(0);
-                    const PaywallRoute(initialFocus: .voiceJournal).push(context);
+                    const PaywallRoute(initialFocus: .relax_sounds).push(context);
                   }
                 },
                 tabs: [

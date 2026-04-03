@@ -403,7 +403,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
       return TextButton.icon(
         icon: const Icon(SpIcons.lock),
         label: Text(tr('button.unlock_writing_stats')),
-        onPressed: () => const PaywallRoute(initialFocus: .writingStats).push(context),
+        onPressed: () => const PaywallRoute(initialFocus: .writing_stats).push(context),
       );
     }
 

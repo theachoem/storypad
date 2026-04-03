@@ -225,7 +225,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
       },
     );
 
-    if (restored && context.mounted) await MessengerService.of(context).showSuccess();
+    if (restored && isProUser && context.mounted) await MessengerService.of(context).showSuccess();
   }
 
   Future<void> presentCodeRedemptionSheet(BuildContext context) async {

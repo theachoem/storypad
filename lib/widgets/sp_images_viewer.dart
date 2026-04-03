@@ -155,7 +155,12 @@ class _SpImagesViewerState extends State<SpImagesViewer> {
       title: _Title(currentIndexNotifier: currentIndexNotifier, widget: widget),
       actions: [
         _SaveButton(currentIndexNotifier: currentIndexNotifier, widget: widget),
-        CloseButton(color: _foregroundColor),
+        CloseButton(
+          color: Colors.white,
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.black.withValues(alpha: 0.3),
+          ),
+        ),
       ],
     );
   }

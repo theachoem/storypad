@@ -23,7 +23,7 @@ class _LibraryContent extends StatelessWidget {
                 onTap: (index) {
                   if (index == 1 && !context.read<InAppPurchaseProvider>().isProUser) {
                     DefaultTabController.of(context).animateTo(0);
-                    const PaywallRoute(initialFocus: .voiceJournal).push(context);
+                    const PaywallRoute(initialFocus: .voice_journal).push(context);
                   }
                 },
                 tabs: [

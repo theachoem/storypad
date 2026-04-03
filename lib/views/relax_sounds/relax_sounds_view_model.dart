@@ -62,7 +62,7 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
 
   void saveMix(BuildContext context) async {
     if (!context.read<InAppPurchaseProvider>().isProUser) {
-      const PaywallRoute(initialFocus: .relaxSounds).push(context);
+      const PaywallRoute(initialFocus: .relax_sounds).push(context);
       return;
     }
 
@@ -129,7 +129,7 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
     Iterable<RelaxSoundObject> sounds,
   ) async {
     if (!context.read<InAppPurchaseProvider>().isProUser) {
-      const PaywallRoute(initialFocus: .relaxSounds).push(context);
+      const PaywallRoute(initialFocus: .relax_sounds).push(context);
       return;
     }
 

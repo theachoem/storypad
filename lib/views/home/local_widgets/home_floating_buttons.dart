@@ -95,7 +95,7 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
           },
         ),
       IconButton.outlined(
-        tooltip: tr("add_ons.templates.title"),
+        tooltip: tr("paywall_features.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),
         icon: const Icon(SpIcons.lightBulb, color: Colors.yellow),
         color: Colors.white,

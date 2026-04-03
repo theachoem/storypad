@@ -105,7 +105,7 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
   }
 
   Future<void> openPaywall(BuildContext context) async {
-    const PaywallRoute(initialFocus: .relaxSounds).push(context);
+    const PaywallRoute(initialFocus: .relax_sounds).push(context);
   }
 
   Future<void> playAll({

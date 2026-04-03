@@ -145,7 +145,7 @@ Sound files are stored in Firebase Storage:
 All sound names and UI text are localized:
 
 - Keys: `sounds.*` (e.g., `sounds.ocean_waves`, `sounds.forest_birds`)
-- Add-on metadata: `add_ons.relax_sounds.title`, `add_ons.relax_sounds.subtitle`
+- Add-on metadata: `paywall_features.relax_sounds.title`, `add_ons.relax_sounds.subtitle`
 
 ## User Flow
 

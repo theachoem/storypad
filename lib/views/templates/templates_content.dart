@@ -36,7 +36,7 @@ class _TemplatesContent extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        viewModel.params.viewingArchives ? tr('general.path_type.archives') : tr("add_ons.templates.title"),
+        viewModel.params.viewingArchives ? tr('general.path_type.archives') : tr("paywall_features.templates.title"),
       ),
       actions: [
         if (!viewModel.params.viewingArchives) buildActions(),
