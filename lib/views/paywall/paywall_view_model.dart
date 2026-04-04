@@ -5,7 +5,6 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/paywall_feature_object.dart';
 import 'package:storypad/core/services/firestore_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
@@ -104,26 +103,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/relax_sounds/relax_sound_4.jpg',
         ],
         onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.period_calendar,
-        title: tr('paywall_features.period_calendar.title'),
-        subtitle: tr('paywall_features.period_calendar.subtitle'),
-        iconData: SpIcons.waterDrop,
-        weekdayColor: 7,
-        demoImages: [
-          '/feature_demos/period_calendar/period_calendar_1.jpg',
-          '/feature_demos/period_calendar/period_calendar_2.jpg',
-          '/feature_demos/period_calendar/period_calendar_3.jpg',
-        ],
-        designForFemale: true,
-        onOpen: (BuildContext context) async {
-          CalendarRoute(
-            initialMonth: DateTime.now().month,
-            initialYear: DateTime.now().year,
-            initialSegment: .period,
-          ).push(context);
-        },
       ),
       PaywallFeatureObject(
         type: PaywallFeature.markdown_export,

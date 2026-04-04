@@ -11,8 +11,6 @@ class _RootContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<IconButtonSideItem> sideItems = SideItems.getSideMenuItems();
-
     return SpAppLockWrapper(
       child: SpOnboardingWrapper(
         onOnboarded: () {
@@ -40,7 +38,7 @@ class _RootContent extends StatelessWidget {
                   left: 0,
                   top: 0,
                   bottom: 0,
-                  child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
+                  child: RootSideBar(rootProvider: rootProvider),
                 ),
               ],
             ),

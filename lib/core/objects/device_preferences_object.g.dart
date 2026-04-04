@@ -13,6 +13,10 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject fontWeightIndex(int? fontWeightIndex);
 
+  DevicePreferencesObject enableRelaxSounds(bool? enableRelaxSounds);
+
+  DevicePreferencesObject enablePeriodCalendar(bool? enablePeriodCalendar);
+
   DevicePreferencesObject themeMode(ThemeMode? themeMode);
 
   DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat);
@@ -32,6 +36,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     String? fontFamily,
     FontSizeOption? fontSize,
     int? fontWeightIndex,
+    bool? enableRelaxSounds,
+    bool? enablePeriodCalendar,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     int? colorSeedValue,
@@ -58,6 +64,14 @@ class _$DevicePreferencesObjectCWProxyImpl
   @override
   DevicePreferencesObject fontWeightIndex(int? fontWeightIndex) =>
       call(fontWeightIndex: fontWeightIndex);
+
+  @override
+  DevicePreferencesObject enableRelaxSounds(bool? enableRelaxSounds) =>
+      call(enableRelaxSounds: enableRelaxSounds);
+
+  @override
+  DevicePreferencesObject enablePeriodCalendar(bool? enablePeriodCalendar) =>
+      call(enablePeriodCalendar: enablePeriodCalendar);
 
   @override
   DevicePreferencesObject themeMode(ThemeMode? themeMode) =>
@@ -87,6 +101,8 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontSize = const $CopyWithPlaceholder(),
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
+    Object? enableRelaxSounds = const $CopyWithPlaceholder(),
+    Object? enablePeriodCalendar = const $CopyWithPlaceholder(),
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
@@ -105,6 +121,14 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.fontWeightIndex
           // ignore: cast_nullable_to_non_nullable
           : fontWeightIndex as int?,
+      enableRelaxSounds: enableRelaxSounds == const $CopyWithPlaceholder()
+          ? _value.enableRelaxSounds
+          // ignore: cast_nullable_to_non_nullable
+          : enableRelaxSounds as bool?,
+      enablePeriodCalendar: enablePeriodCalendar == const $CopyWithPlaceholder()
+          ? _value.enablePeriodCalendar
+          // ignore: cast_nullable_to_non_nullable
+          : enablePeriodCalendar as bool?,
       themeMode: themeMode == const $CopyWithPlaceholder()
           ? _value.themeMode
           // ignore: cast_nullable_to_non_nullable
@@ -143,6 +167,8 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   fontFamily: json['font_family'] as String?,
   fontSize: $enumDecodeNullable(_$FontSizeOptionEnumMap, json['font_size']),
   fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
+  enableRelaxSounds: json['enable_relax_sounds'] as bool?,
+  enablePeriodCalendar: json['enable_period_calendar'] as bool?,
   themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
   timeFormat: $enumDecodeNullable(
     _$TimeFormatOptionEnumMap,
@@ -158,6 +184,8 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
   'font_weight_index': instance.fontWeightIndex,
   'color_seed_value': instance.colorSeedValue,
+  'enable_relax_sounds': instance.enableRelaxSounds,
+  'enable_period_calendar': instance.enablePeriodCalendar,
   'font_family': instance.fontFamily,
   'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,

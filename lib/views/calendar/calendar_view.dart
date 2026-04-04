@@ -44,7 +44,7 @@ class CalendarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<CalendarViewModel>(
-      create: (context) => CalendarViewModel(params: params, context: context),
+      create: (context) => CalendarViewModel(params: params, viewContext: context),
       builder: (context, viewModel, child) {
         return _CalendarContent(viewModel);
       },

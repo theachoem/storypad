@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
+import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/core/types/app_logo.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -84,6 +85,18 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     return FirebaseAnalytics.instance.setUserProperty(
       name: 'time_format',
       value: timeFormat.label,
+    );
+  }
+
+  Future<void> logToggleAddOn({
+    required AddOnType addOn,
+    required bool enabled,
+  }) {
+    debug('logToggleAddOn', {'add_on': addOn.name, 'enabled': enabled.toString()});
+
+    return FirebaseAnalytics.instance.setUserProperty(
+      name: 'add_on_${addOn.name}',
+      value: enabled.toString(),
     );
   }
 

@@ -23,9 +23,11 @@ import 'package:storypad/widgets/bottom_sheets/sp_android_redemption_sheet.dart'
 // service account ID is used as a RevenueCat identity alias, enabling cross-platform
 // purchase sharing. Legacy email-hash users are migrated on initialization.
 class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
-  bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
+  bool isActive(String productIdentifier) =>
+      !kIAPEnabled ? false : _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   bool get hasAnyLegacyPurchases => AppLegacyProduct.values.any((product) => isActive(product.productIdentifier));
+  bool get periodCalendar => isActive(AppLegacyProduct.period_calendar.productIdentifier);
   bool get isProUser => isActive(AppProduct.storypad_pro_lifetime.productIdentifier) || hasAnyLegacyPurchases;
 
   CustomerInfo? _customerInfo;

@@ -14,6 +14,7 @@ import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/welcome_message_service.dart';
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/nickname_provider.dart';

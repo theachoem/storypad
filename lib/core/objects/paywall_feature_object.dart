@@ -11,7 +11,6 @@ enum PaywallFeature {
   writing_stats,
   backgrounds,
   auto_backups,
-  period_calendar,
 }
 
 class PaywallFeatureObject {
