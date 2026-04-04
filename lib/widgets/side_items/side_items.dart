@@ -86,10 +86,11 @@ class SideItems {
         CustomSideItem.custom(
           builder: (context) {
             return ListTile(
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
               tileColor: Theme.of(context).colorScheme.secondary,
               textColor: Theme.of(context).colorScheme.onSecondary,
               iconColor: Theme.of(context).colorScheme.onSecondary,
-              trailing: const Icon(SpIcons.star),
+              trailing: Icon(SpIcons.starCircle),
               title: Text(tr('list_tile.upgrade_to_pro.title')),
               subtitle: Text(tr('list_tile.upgrade_to_pro.subtitle')),
               onTap: () => const PaywallRoute().push(context),

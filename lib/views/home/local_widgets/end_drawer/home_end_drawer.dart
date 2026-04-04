@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view_model.dart' show HomeViewModel;
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/home/years/home_years_view.dart' show HomeYearsRoute, HomeYearsView;
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/sp_theme_mode_icon.dart';
 
 class HomeEndDrawer extends StatelessWidget {
@@ -58,6 +61,22 @@ class HomeEndDrawer extends StatelessWidget {
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
+          if (context.read<InAppPurchaseProvider>().isProUser)
+            SpTapEffect(
+              onTap: () => const PaywallRoute().push(context),
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  "Pro",
+                  style: TextTheme.of(context).labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
+                ),
+              ),
+            ),
           IconButton(
             icon: SpThemeModeIcon(parentContext: context),
             onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),

@@ -39,7 +39,17 @@ class SyncResponse {
   });
 }
 
+enum UserChangeType {
+  signIn,
+  signOut,
+}
+
 class BackupRepository {
+  /// Broadcasts whenever a cloud service user signs in or out.
+  /// Consumers can re-read [services] to get the latest authenticated users.
+  final StreamController<UserChangeType> _userChangesController = StreamController<UserChangeType>.broadcast();
+  Stream<UserChangeType> get userChanges => _userChangesController.stream;
+
   static final List<BaseDbAdapter> databases = [
     PreferenceDbModel.db,
     StoryDbModel.db,
@@ -127,6 +137,7 @@ class BackupRepository {
   Future<BackupResult<bool>> signIn(BackupServiceType serviceType) async {
     try {
       final result = await getService(serviceType).signIn();
+      if (result) _userChangesController.add(UserChangeType.signIn);
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
@@ -144,6 +155,7 @@ class BackupRepository {
     try {
       await getService(serviceType).signOut();
       await _importHistoryStorage.clearService(serviceType);
+      _userChangesController.add(UserChangeType.signOut);
       return const BackupResult.success(null);
     } catch (e) {
       return BackupResult.failure(
@@ -443,6 +455,7 @@ class BackupRepository {
   }
 
   void dispose() {
+    _userChangesController.close();
     _step1ImagesUploader.controller.close();
     _step2LatestBackupChecker.controller.close();
     _step3LatestBackupImporter.controller.close();
