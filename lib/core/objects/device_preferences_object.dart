@@ -25,6 +25,10 @@ class DevicePreferencesObject {
   @JsonKey(name: 'time_format')
   final TimeFormatOption? _timeFormat;
 
+  // Add ons
+  final bool? enableRelaxSounds;
+  final bool? enablePeriodCalendar;
+
   String get fontFamily => _fontFamily ?? kDefaultFontFamily;
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
   TimeFormatOption get timeFormat => _timeFormat ?? TimeFormatOption.h12;
@@ -39,6 +43,8 @@ class DevicePreferencesObject {
     String? fontFamily,
     this.fontSize,
     this.fontWeightIndex,
+    this.enableRelaxSounds,
+    this.enablePeriodCalendar,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     this.colorSeedValue,

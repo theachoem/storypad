@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
+import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 
 class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserver {
   static DevicePreferencesStorage get storage => DevicePreferencesStorage.appInstance;
@@ -15,6 +18,10 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   DevicePreferencesObject _preferences = storage.preferences;
   DevicePreferencesObject get preferences => _preferences;
   ThemeMode get themeMode => preferences.themeMode;
+
+  bool get enableRelaxSounds => preferences.enableRelaxSounds ?? true;
+  bool enablePeriodCalendar(BuildContext context) =>
+      preferences.enablePeriodCalendar ?? context.read<InAppPurchaseProvider>().periodCalendar;
 
   final Map<String, List<void Function()>> _listeners = {};
 
@@ -104,6 +111,30 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     AnalyticsUserProperyService.instance.logSetTimeFormat(
       timeFormat: timeFormat,
     );
+  }
+
+  void toggleAddOn(AddOnType addOn, bool enabled) {
+    switch (addOn) {
+      case .relax_sounds:
+        _preferences = _preferences.copyWith(enableRelaxSounds: enabled);
+        break;
+      case .period_calendar:
+        _preferences = _preferences.copyWith(enablePeriodCalendar: enabled);
+        break;
+    }
+
+    storage.writeObject(_preferences);
+    AnalyticsUserProperyService.instance.logToggleAddOn(addOn: addOn, enabled: enabled);
+    _listeners['add_on']?.forEach((listener) => listener());
+  }
+
+  void addListenerForAddOnChanges(void Function() listener) {
+    _listeners['add_on'] ??= [];
+    _listeners['add_on']!.add(listener);
+  }
+
+  void removeListenerForAddOnChanges(void Function() listener) {
+    _listeners['add_on']?.remove(listener);
   }
 
   void addListenerForVoicePlaybackSpeed(void Function() listener) {

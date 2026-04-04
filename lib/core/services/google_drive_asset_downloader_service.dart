@@ -146,7 +146,9 @@ class GoogleDriveAssetDownloaderService {
 
       // Handle authentication errors
       if (response.statusCode == 401) {
-        throw GoogleDriveAssetDownloaderException('Authentication expired. Please sign in again to download this asset.');
+        throw GoogleDriveAssetDownloaderException(
+          'Authentication expired. Please sign in again to download this asset.',
+        );
       }
 
       if (response.statusCode == 403) {

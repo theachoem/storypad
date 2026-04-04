@@ -5,6 +5,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
+import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/community/community_view.dart';
@@ -31,7 +32,9 @@ part 'side_item.dart';
 const double _leadingPaddedSize = 12.0;
 
 class SideItems {
-  static List<IconButtonSideItem> getSideMenuItems() {
+  static List<IconButtonSideItem> getSideMenuItems({
+    required bool enableRelaxSounds,
+  }) {
     return [
       IconButtonSideItem(
         route: const HomeRoute(),
@@ -65,7 +68,7 @@ class SideItems {
         selectedIconData: SpIcons.tag,
         onTap: (context, route) => context.read<RootProvider>().navigate(route),
       ),
-      if (kIAPEnabled)
+      if (kIAPEnabled && enableRelaxSounds)
         IconButtonSideItem(
           route: const RelaxSoundsRoute(),
           title: tr('general.sounds'),
@@ -133,6 +136,12 @@ class SideItems {
       ),
       CustomSideItem.divider(),
       ListTileSideItem(
+        title: tr('page.add_ons.title'),
+        subtitle: null,
+        icon: const Icon(SpIcons.addOns),
+        onTap: (context) => const AddOnsRoute().push(context),
+      ),
+      ListTileSideItem(
         title: tr('page.settings.title'),
         subtitle: null,
         icon: const Icon(SpIcons.setting),
@@ -164,9 +173,10 @@ class SideItems {
     required HomeViewModel homeViewModel,
     required InAppPurchaseProvider iapProvider,
     required ValueNotifier<bool> showBadgeNotifer,
+    required bool enableRelaxSounds,
   }) {
     return [
-      if (kIAPEnabled)
+      if (kIAPEnabled && enableRelaxSounds)
         TimelineSideBarItem(
           icon: SpIcons.musicNote,
           tooltip: tr('paywall_features.relax_sounds.title'),

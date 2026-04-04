@@ -93,6 +93,9 @@ class $TranslationsGen {
   /// File path: translations/ru-RU.json
   String get ruRU => 'translations/ru-RU.json';
 
+  /// File path: translations/tr.json
+  String get tr => 'translations/tr.json';
+
   /// File path: translations/uk-UA.json
   String get ukUA => 'translations/uk-UA.json';
 
@@ -119,6 +122,7 @@ class $TranslationsGen {
     plPL,
     ptBR,
     ruRU,
+    tr,
     ukUA,
     viVN,
     zhCN,
