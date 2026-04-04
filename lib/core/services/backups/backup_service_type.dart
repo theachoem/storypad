@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 enum BackupServiceType {
-  google_drive(id: 'google_drive', displayName: 'Google Drive')
+  google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true)
   ;
 
   final String id;
   final String displayName;
+  final bool hasGlobalUserId;
 
   bool get googleDrive => this == google_drive;
 
   const BackupServiceType({
     required this.id,
     required this.displayName,
+    required this.hasGlobalUserId,
   });
 
   /// Get the icon for this service type

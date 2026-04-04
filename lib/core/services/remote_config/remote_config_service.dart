@@ -9,10 +9,8 @@ part './remote_config_object.dart';
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
     bugReportUrl,
-    productDeals,
     faqUrl,
     featureFlags,
-    latestRedeemMessage,
     localizationSupportUrl,
     policyPrivacyUrl,
     redditUrl,
@@ -46,12 +44,6 @@ class RemoteConfigService {
     'https://storypad.me#footer',
   );
 
-  static const productDeals = _RemoteConfigObject<Map>(
-    'PRODUCT_DEALS',
-    _RemoteConfigValueType.json,
-    {},
-  );
-
   static const faqUrl = _RemoteConfigObject<String>(
     'FAQ_URL',
     _RemoteConfigValueType.string,
@@ -64,12 +56,6 @@ class RemoteConfigService {
     {},
   );
 
-  // eg. Last reward: Nov 5 — [@abc_user](https://www.tiktok.com/@abc_user/video/123456)
-  static const latestRedeemMessage = _RemoteConfigObject<String>(
-    'LATEST_REDEEM_MESSAGE',
-    _RemoteConfigValueType.string,
-    '',
-  );
   static const localizationSupportUrl = _RemoteConfigObject<String>(
     'LOCALIZATION_SUPPORT_URL',
     _RemoteConfigValueType.string,

@@ -108,7 +108,7 @@ class _PagesLayoutState extends State<_PagesLayout> {
             Transform(
               transform: Matrix4.identity()
                 ..spTranslate(datas.translateX1)
-                ..spTranslate(datas.translateX2 ?? 0),
+                ..spTranslate(datas.translateX2),
               child: Opacity(
                 opacity: datas.opacity,
                 child: child!,

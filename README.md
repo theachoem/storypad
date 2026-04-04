@@ -21,14 +21,17 @@
 - **Privacy first** – PIN, FaceID, fingerprint lock; data stays on your device
 - **Backup & sync** – private Google Drive sync & offline local export
 - **Themes & customization** – 20+ color themes, dark/light mode, fonts & layouts
-- **Export & share** – text, markdown, or full backups
-- **Add-ons** – enhance your writing experience (one-time purchase):
+- **Export & share** – text, markdown, or full backups with attachments (images, audio, etc.)
+- **StoryPad Pro** (one-time purchase):
   - **Customize Backgrounds** – Personalize your writing space with themed backgrounds for enhanced focus & creativity
   - **Templates**– Create your own daily writing templates
   - **Relaxing Sounds** – Set the mood before you write or read
   - **Period Calendar** – Track your period and create related story entries
   - **Voice Journal** – Record and organize voice notes
   - **Markdown Export** – Export entries in markdown format, fully compatible with Obsidian, Notion, and other editors
+  - **Writing Stats** – View word and character count for your story
+  - **Pinned Notes** – Keep important entries at the top of your timeline for easy access
+  - **Auto Backup** – Keep your stories safe with automatic Google Drive sync
 - **Available in 20+ languages** – and fully open source for transparency
 
 ## ⚙️ Setup & Run

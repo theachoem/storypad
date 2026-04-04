@@ -116,4 +116,5 @@ class SpIcons {
   static const IconData waterDrop = Icons.water_drop;
   static const IconData download = kIsCupertino ? CupertinoIcons.cloud_download : Icons.download_outlined;
   static final IconData sideBarLeft = kIsCupertino ? CupertinoIcons.sidebar_left : MdiIcons.dockLeft;
+  static final IconData starCircle = kIsCupertino ? CupertinoIcons.star_circle : MdiIcons.starCircleOutline;
 }

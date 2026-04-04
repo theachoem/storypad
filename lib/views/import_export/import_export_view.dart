@@ -1,10 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/import_export/export_assets/export_assets_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,11 @@ part 'import_export_content.dart';
 part 'local_widgets/export_section.dart';
 
 class ImportExportRoute extends BaseRoute {
-  const ImportExportRoute();
+  const ImportExportRoute({
+    this.initialExportOption,
+  });
+
+  final AppExportOption? initialExportOption;
 
   @override
   Widget buildPage(BuildContext context) => ImportExportView(params: this);

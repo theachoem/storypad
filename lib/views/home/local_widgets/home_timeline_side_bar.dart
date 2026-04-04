@@ -16,11 +16,11 @@ class _HomeTimelineSideBar extends StatefulWidget {
 }
 
 class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
-  ValueNotifier<bool> showAddOnBadgeNotifer = ValueNotifier<bool>(true);
+  ValueNotifier<bool> showProBadgeNotifier = ValueNotifier<bool>(true);
 
   @override
   void dispose() {
-    showAddOnBadgeNotifer.dispose();
+    showProBadgeNotifier.dispose();
     super.dispose();
   }
 
@@ -44,7 +44,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         final items = SideItems.getTimelineSideBarItems(
           homeViewModel: widget.viewModel,
           iapProvider: provider,
-          showBadgeNotifer: showAddOnBadgeNotifer,
+          showBadgeNotifer: showProBadgeNotifier,
         );
 
         return Container(

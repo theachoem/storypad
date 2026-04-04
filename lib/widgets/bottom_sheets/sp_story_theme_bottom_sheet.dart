@@ -10,7 +10,7 @@ import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
-import 'package:storypad/views/rewards/rewards_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
@@ -190,8 +190,8 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
             SpPopMenuItem(
               title: tr('button.save_as_template'),
               leadingIconData: SpIcons.lightBulb,
-              trailingIconData: !context.read<InAppPurchaseProvider>().template ? SpIcons.lock : null,
-              titleStyle: context.read<InAppPurchaseProvider>().template
+              trailingIconData: !context.read<InAppPurchaseProvider>().isProUser ? SpIcons.lock : null,
+              titleStyle: context.read<InAppPurchaseProvider>().isProUser
                   ? null
                   : TextStyle(color: Theme.of(context).disabledColor),
               onPressed: () => storyViewModel.saveAsTemplate(context),
@@ -397,13 +397,13 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final rewarded = context.read<InAppPurchaseProvider>().writingStats;
+    final isProUser = context.read<InAppPurchaseProvider>().isProUser;
 
-    if (!rewarded) {
+    if (!isProUser) {
       return TextButton.icon(
         icon: const Icon(SpIcons.lock),
         label: Text(tr('button.unlock_writing_stats')),
-        onPressed: () => const RewardsRoute(initialFocusedRewardFeature: .writing_stats).push(context),
+        onPressed: () => const PaywallRoute(initialFocus: .writing_stats).push(context),
       );
     }
 

@@ -13,7 +13,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/gen/story_backgrounds.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -280,7 +280,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
 
   // First 3 backgrounds has no restriction.
   bool isLocked(int index) {
-    return index > 2 && !context.read<InAppPurchaseProvider>().backgrounds;
+    return index > 2 && !context.read<InAppPurchaseProvider>().isProUser;
   }
 
   @override
@@ -315,7 +315,7 @@ class _ImageBackgroundCarouselState extends State<_ImageBackgroundCarousel> {
           HapticFeedback.selectionClick();
 
           if (isLocked(index)) {
-            AddOnsRoute.pushAndNavigateTo(product: .backgrounds, context: context);
+            const PaywallRoute(initialFocus: .backgrounds).push(context);
             return;
           }
 

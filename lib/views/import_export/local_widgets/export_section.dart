@@ -12,7 +12,7 @@ class _ExportSection extends StatefulWidget {
 }
 
 class _ExportSectionState extends State<_ExportSection> {
-  AppExportOption selectedOption = .storyPadJson;
+  late AppExportOption selectedOption = widget.viewModel.params.initialExportOption ?? .storyPadJson;
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +46,14 @@ class _ExportSectionState extends State<_ExportSection> {
             child: Icon(SpIcons.markdown),
             builder: (context, provider, child) {
               return GestureDetector(
-                onTap: provider.markdownExport
+                onTap: provider.isProUser
                     ? null
-                    : () => AddOnsRoute.pushAndNavigateTo(product: AppProduct.markdown_export, context: context),
+                    : () => const PaywallRoute(initialFocus: .markdown_export).push(context),
                 child: RadioListTile(
-                  enabled: provider.markdownExport,
+                  enabled: provider.isProUser,
                   secondary: Builder(
                     builder: (context) {
-                      if (provider.markdownExport) return Icon(SpIcons.markdown);
+                      if (provider.isProUser) return Icon(SpIcons.markdown);
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [

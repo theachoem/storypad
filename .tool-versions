@@ -2,3 +2,4 @@ java openjdk-21
 ruby 3.3.5
 flutter 3.41.6-stable
 python 3.12.9
+nodejs 24.9.0

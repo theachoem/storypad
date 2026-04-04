@@ -41,7 +41,7 @@ class SpAndroidRedemptionSheet extends BaseBottomSheet {
   Widget buildStepsCarousel(BuildContext context) {
     final steps = [
       (
-        title: 'Tap "Purchase" on any add-on',
+        title: 'Tap "Purchase"',
         imagePath: '/android_redemption_flow/1_purchase_dialog.png',
       ),
       (

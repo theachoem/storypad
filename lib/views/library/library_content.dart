@@ -21,12 +21,9 @@ class _LibraryContent extends StatelessWidget {
               title: Text(tr("page.library.title_with_app_name")),
               bottom: TabBar(
                 onTap: (index) {
-                  if (index == 1 && !context.read<InAppPurchaseProvider>().voiceJournal) {
+                  if (index == 1 && !context.read<InAppPurchaseProvider>().isProUser) {
                     DefaultTabController.of(context).animateTo(0);
-                    AddOnsRoute.pushAndNavigateTo(
-                      product: AppProduct.voice_journal,
-                      context: context,
-                    );
+                    const PaywallRoute(initialFocus: .voice_journal).push(context);
                   }
                 },
                 tabs: [
@@ -34,7 +31,7 @@ class _LibraryContent extends StatelessWidget {
                   Tab(
                     icon: Consumer<InAppPurchaseProvider>(
                       builder: (context, provider, child) {
-                        return provider.voiceJournal
+                        return provider.isProUser
                             ? const Icon(SpIcons.voice)
                             : const Stack(
                                 clipBehavior: Clip.none,
@@ -62,7 +59,7 @@ class _LibraryContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return TabBarView(
-      physics: context.read<InAppPurchaseProvider>().voiceJournal ? null : const NeverScrollableScrollPhysics(),
+      physics: context.read<InAppPurchaseProvider>().isProUser ? null : const NeverScrollableScrollPhysics(),
       children: [
         _ImagesTabContent(constraints: constraints),
         _VoicesTabContent(constraints: constraints),

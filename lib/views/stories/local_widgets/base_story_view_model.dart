@@ -16,10 +16,9 @@ import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
-import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/templates/edit/edit_template_view.dart';
 
 part 'story_pages_manager_info.dart';
@@ -179,8 +178,8 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   Future<void> saveAsTemplate(BuildContext context) async {
     if (story == null) return;
 
-    if (!context.read<InAppPurchaseProvider>().template) {
-      AddOnsRoute.pushAndNavigateTo(product: AppProduct.templates, context: context);
+    if (!context.read<InAppPurchaseProvider>().isProUser) {
+      const PaywallRoute(initialFocus: .templates).push(context);
       return;
     }
 

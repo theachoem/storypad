@@ -139,7 +139,7 @@ class _SoundsTab extends StatelessWidget {
   ) {
     PlayerState? state = provider.playerStateFor(relaxSound.soundUrlPath);
 
-    if (!relaxSound.free && !iapProvider.relaxSound) {
+    if (!relaxSound.free && !iapProvider.isProUser) {
       return Positioned(
         top: 8.0,
         right: 8.0,

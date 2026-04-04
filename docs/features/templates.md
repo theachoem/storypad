@@ -1,14 +1,14 @@
-# Templates Add-on
+# Templates (StoryPad Pro)
 
 ## Description
 
-Create your own daily writing templates. The Templates add-on allows you to design reusable writing structures that help you maintain consistency and establish productive writing habits.
+Create your own daily writing templates. The Templates allows you to design reusable writing structures that help you maintain consistency and establish productive writing habits.
 
 ## Screenshots
 
-|                                                                                     |                                                                                     |                                                                                     |                                                                                     |
-| :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: |
-| ![Screenshot 1](../../../firestore_storages/add_ons_demos/templates/template_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/templates/template_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/templates/template_3.jpg) | ![Screenshot 4](../../../firestore_storages/add_ons_demos/templates/template_4.jpg) |
+|                                                                                  |                                                                                  |                                                                                  |                                                                                  |
+| :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
+| ![Screenshot 1](../../firestore_storages/feature_demos/templates/template_1.jpg) | ![Screenshot 2](../../firestore_storages/feature_demos/templates/template_2.jpg) | ![Screenshot 3](../../firestore_storages/feature_demos/templates/template_3.jpg) | ![Screenshot 4](../../firestore_storages/feature_demos/templates/template_4.jpg) |
 
 ## Features
 
@@ -201,27 +201,11 @@ Gallery templates are stored as YAML files:
 - Structure: Categories containing multiple template examples
 - Icons: Referenced from `/icons/hand_drawn/` directory
 
-### Demo Assets
-
-Template screenshots for the add-on showcase:
-
-- Path: `/add_ons_demos/templates/`
-- Files: `template_1.jpg`, `template_2.jpg`, `template_3.jpg`, `template_4.jpg`
-
-### Translations
-
-UI text is localized:
-
-- Add-on metadata: `add_ons.templates.title`, `add_ons.templates.subtitle`
-- Page title: `page.templates.title`
-- Empty state: `page.templates.empty_message`
-- Buttons: `button.new_template`, `button.use_template`
-
 ## User Flow
 
 ### Browsing Gallery Templates
 
-1. Navigate to Add-ons → Templates
+1. From home, click "Pencial" icon → "Templates"
 2. Switch to "Gallery" tab
 3. Browse template categories (Daily Reflection, Creative Writing, etc.)
 4. Tap any template card to preview full content
@@ -229,7 +213,7 @@ UI text is localized:
 
 ### Creating a Template
 
-1. Navigate to Add-ons → Templates
+1. From home, click "Pencial" icon → "Templates"
 2. Switch to "My Templates" tab
 3. Tap "New Template" button
 4. Design your template content
@@ -325,14 +309,6 @@ AnalyticsService.instance.logUseGalleryTemplate(
   source: 'my_templates',
 );
 ```
-
-## Purchase Verification
-
-The add-on checks purchase status via:
-
-- `InAppPurchaseProvider.template` getter
-- Product identifier: `AppProduct.templates`
-- Supports both purchased and reward-unlocked access
 
 ## Integration with Stories
 

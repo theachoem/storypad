@@ -157,7 +157,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     bool setupConnection = true,
     required BuildContext context,
   }) async {
-    if (!context.read<InAppPurchaseProvider>().autoBackups) return;
+    if (!context.read<InAppPurchaseProvider>().isProUser) return;
     return recheckAndSync(
       setupConnection: setupConnection,
       services: autoBackupServices,

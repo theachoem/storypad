@@ -1,20 +1,20 @@
-# Relaxing Sounds Add-on
+# Relaxing Sounds (StoryPad Pro)
 
 ## Description
 
-Set the mood before you write or read. The Relaxing Sounds add-on provides ambient audio to help you focus and create the perfect atmosphere for your writing sessions.
+Set the mood before you write or read. The Relaxing Sounds allows you to provide ambient audio to help you focus and create the perfect atmosphere for your writing sessions.
 
 ## Screenshots
 
-|                                       Screenshot 1                                        |                                       Screenshot 2                                        |                                       Screenshot 3                                        |                                       Screenshot 4                                        |
-| :---------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: |
-| ![Screenshot 1](../../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_3.jpg) | ![Screenshot 4](../../../firestore_storages/add_ons_demos/relax_sounds/relax_sound_4.jpg) |
+|                                      Screenshot 1                                      |                                      Screenshot 2                                      |                                      Screenshot 3                                      |                                      Screenshot 4                                      |
+| :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
+| ![Screenshot 1](../../firestore_storages/feature_demos/relax_sounds/relax_sound_1.jpg) | ![Screenshot 2](../../firestore_storages/feature_demos/relax_sounds/relax_sound_2.jpg) | ![Screenshot 3](../../firestore_storages/feature_demos/relax_sounds/relax_sound_3.jpg) | ![Screenshot 4](../../firestore_storages/feature_demos/relax_sounds/relax_sound_4.jpg) |
 
 ## Features
 
 ### Sound Library
 
-The add-on includes a variety of nature and ambient sounds:
+The library includes a variety of nature and ambient sounds:
 
 **Nature Sounds:**
 
@@ -140,27 +140,12 @@ Sound files are stored in Firebase Storage:
 - Categories: `activity/`, `animal/`, `body/`, etc.
 - Demo images: `/add_ons_demos/relax_sounds/`
 
-### Translations
-
-All sound names and UI text are localized:
-
-- Keys: `sounds.*` (e.g., `sounds.ocean_waves`, `sounds.forest_birds`)
-- Add-on metadata: `add_ons.relax_sounds.title`, `add_ons.relax_sounds.subtitle`
-
 ## User Flow
 
-1. **Access:** Navigate to Add-ons → Relaxing Sounds
+1. **Access:** From home, click "Music" icon → "Relaxing Sounds"
 2. **Browse:** View available sounds in categorized tabs
 3. **Select:** Tap sounds to add them to your current mix
 4. **Adjust:** Use sliders to set individual sound volumes
 5. **Play:** Control playback with play/pause button
 6. **Save:** Save your custom mix for future use
 7. **Manage:** View, rename, delete, or reorder saved mixes
-
-## Purchase Verification
-
-The add-on checks purchase status via:
-
-- `InAppPurchaseProvider.relaxSound` getter
-- Product identifier: `AppProduct.relax_sounds`
-- Supports both purchased and reward-unlocked access

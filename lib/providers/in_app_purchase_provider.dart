@@ -5,135 +5,180 @@ import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/objects/product_deal_object.dart';
-import 'package:storypad/core/objects/reward_object.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/email_hasher_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/storages/selected_purchase_sync_provider_storage.dart';
+import 'package:storypad/core/repositories/backup_repository.dart' show UserChangeType;
 import 'package:storypad/core/types/app_product.dart';
-import 'package:storypad/core/types/feature_reward.dart';
+import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_android_redemption_sheet.dart';
 
 // Uses RevenueCat anonymous ID for purchases. No account login required.
-// Legacy users who were logged in with email hash are migrated on initialization.
+// When a user connects a cloud service (e.g. Google Drive), their globally-unique
+// service account ID is used as a RevenueCat identity alias, enabling cross-platform
+// purchase sharing. Legacy email-hash users are migrated on initialization.
 class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
-  // Some feature unlocked base on credits.
-  int get purchaseCount => AppProduct.values.where((product) => isActive(product.productIdentifier)).length;
-
-  // Add-on features.
-  bool get backgrounds => isActive(AppProduct.backgrounds.productIdentifier);
-  bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
-  bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
-  bool get template => isActive(AppProduct.templates.productIdentifier);
-  bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
-  bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
-
-  // Reward features.
-  bool get writingStats => currentReward.includedRewardedFeatures.contains(RewardFeature.writing_stats);
-  bool get pinnedNotes => currentReward.includedRewardedFeatures.contains(RewardFeature.pinned_notes);
-  bool get autoBackups => currentReward.includedRewardedFeatures.contains(RewardFeature.auto_backups);
-
-  bool get hasAnyPurchases => AppProduct.values.any((product) => isActive(product.productIdentifier));
-  bool get hasAllPurchases => AppProduct.values.every((product) => isActive(product.productIdentifier));
-  bool get hasActiveDeals => ProductDealObject.getActiveDeals().isNotEmpty;
-  List<ProductDealObject> get activeDeals => ProductDealObject.getActiveDeals().values.toList();
+  bool get hasAnyLegacyPurchases => AppLegacyProduct.values.any((product) => isActive(product.productIdentifier));
+  bool get isProUser => isActive(AppProduct.storypad_pro_lifetime.productIdentifier) || hasAnyLegacyPurchases;
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
+  StreamSubscription<void>? _userChangesSubscription;
 
   bool _initialized = false;
   bool get initialized => _initialized;
-  Completer<void>? _initCompleter;
+  final Completer<void> _initializerCompleter = Completer<void>();
+
+  /// The service type ID of the provider currently selected to drive RevenueCat identity.
+  /// Defaults to the first connected provider with a valid global ID.
+  /// Can be changed explicitly via [setSelectedPurchaseSyncProvider].
+  BackupServiceType? _selectedSyncProvider;
+  BackupServiceType? get selectedSyncProvider => _selectedSyncProvider;
+  final _selectedProviderStorage = SelectedPurchaseSyncProviderStorage();
 
   final _purchaseGuard = AvoidDublicatedCallService<bool>();
 
-  bool get allRewarded => currentReward.features.length == rewards.last.features.length;
-  List<RewardObject> get rewards => RewardObject.rewards;
-  RewardObject get currentReward {
-    RewardObject lastMatch = rewards.first;
-    for (final reward in rewards) {
-      if (purchaseCount >= reward.purchaseCount) {
-        lastMatch = reward;
-      } else {
-        break;
-      }
-    }
-    return lastMatch;
-  }
-
   InAppPurchaseProvider() {
-    _initCompleter = Completer<void>();
-    _initialize()
-        .then((_) {
-          _initCompleter?.complete();
-        })
-        .catchError((Object error, StackTrace stackTrace) {
-          _initCompleter?.completeError(error, stackTrace);
-        });
+    _initialize().then((_) => _initializerCompleter.complete()).catchError((Object error, StackTrace stackTrace) {
+      _initializerCompleter.completeError(error, stackTrace);
+    });
   }
 
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
-    await _initCompleter?.future;
+    await _initializerCompleter.future;
   }
 
   Future<void> _initialize() async {
     try {
-      if (kIAPEnabled) {
-        await Purchases.setLogLevel(LogLevel.verbose);
-        PurchasesConfiguration? configuration;
+      if (!kIAPEnabled) return;
 
-        if (Platform.isAndroid) {
-          configuration = PurchasesConfiguration(kRevenueCatAndroidApiKey);
-        } else if (Platform.isIOS) {
-          configuration = PurchasesConfiguration(kRevenueCatIosApiKey);
-        }
+      await Purchases.setLogLevel(LogLevel.verbose);
+      PurchasesConfiguration? configuration;
 
-        if (configuration != null) {
-          await Purchases.configure(configuration);
+      if (Platform.isAndroid) {
+        configuration = PurchasesConfiguration(kRevenueCatAndroidApiKey);
+      } else if (Platform.isIOS) {
+        configuration = PurchasesConfiguration(kRevenueCatIosApiKey);
+      }
 
-          // Listen for real-time customer info updates (cross-device, deferred, etc.)
-          Purchases.addCustomerInfoUpdateListener((customerInfo) {
-            _customerInfo = customerInfo;
-            notifyListeners();
-          });
+      if (configuration == null) return;
+      await Purchases.configure(configuration);
 
-          try {
-            _customerInfo = await Purchases.getCustomerInfo();
-          } catch (e, s) {
-            AppLogger.error('$runtimeType#_initialize error Purchases.getCustomerInfo: $e', stackTrace: s);
-          }
+      try {
+        _customerInfo = await Purchases.getCustomerInfo();
+      } catch (e, s) {
+        AppLogger.error('$runtimeType#_initialize error Purchases.getCustomerInfo: $e', stackTrace: s);
+      }
 
-          // Migrate legacy users who were logged in with email hash.
-          await _migrateLegacyUser();
+      // Load previously persisted provider selection.
+      _selectedSyncProvider = await _selectedProviderStorage.readEnum();
+
+      // Check network connectivity before attempting logout/sync
+      final hasNetwork = await InternetCheckerService().check();
+      if (hasNetwork) {
+        // Migrate legacy users who were logged in with email hash.
+        bool migrated = await _migrateLegacyUser();
+
+        // BackupProvider.repoInstance is pre-initialized before UI by BackupRepositoryInitializer,
+        // so current cloud users are available synchronously here.
+        await _syncCloudUserLogins();
+
+        // When recently migrated, also trigger a purchases sync to send store reciepts to RevenueCat
+        // to transfer legacy purchases to new user.
+        if (migrated) {
+          await Purchases.syncPurchases();
+          _customerInfo = await Purchases.getCustomerInfo();
         }
       }
+
+      // Listen for real-time customer info updates (cross-device, deferred, etc.)
+      Purchases.addCustomerInfoUpdateListener((customerInfo) {
+        _customerInfo = customerInfo;
+        notifyListeners();
+      });
+
+      // Keep RevenueCat identity in sync whenever cloud service users change.
+      _userChangesSubscription = BackupProvider.repoInstance.userChanges.listen((type) {
+        _syncCloudUserLogins(changeType: type);
+      });
     } finally {
       _initialized = true;
       notifyListeners();
     }
   }
 
+  Future<void> _syncCloudUserLogins({
+    UserChangeType? changeType,
+  }) async {
+    final services = BackupProvider.repoInstance.services;
+    final eligibleServices = services.where((s) => s.serviceType.hasGlobalUserId).toList();
+
+    // Resolve the active service: prefer the user's selection, fall back to first available.
+    BackupCloudService? activeService = eligibleServices
+        .where((s) => s.serviceType == _selectedSyncProvider)
+        .firstOrNull;
+
+    if (activeService == null) {
+      // No global service connected — revert to anonymous if currently identified.
+      _selectedSyncProvider = null;
+      await _selectedProviderStorage.remove();
+
+      final appUserId = _customerInfo?.originalAppUserId;
+      if (appUserId != null && !appUserId.startsWith('\$RCAnonymousID:')) {
+        try {
+          _customerInfo = await Purchases.logOut();
+          AppLogger.d('$runtimeType#_syncCloudUserLogins logged out, switched to anonymous');
+        } catch (e, s) {
+          AppLogger.error('$runtimeType#_syncCloudUserLogins logOut error: $e', stackTrace: s);
+        }
+      }
+
+      notifyListeners();
+    } else {
+      // Selected provider is gone (signed out) — fall back to first available.
+      _selectedSyncProvider = activeService.serviceType;
+      await _selectedProviderStorage.writeEnum(_selectedSyncProvider!);
+
+      AppLogger.d(
+        '$runtimeType#_syncCloudUserLogins selected provider unavailable, defaulted to "$_selectedSyncProvider"',
+      );
+
+      final appUserId = activeService.currentUser?.globalId;
+      if (appUserId != null && _customerInfo?.originalAppUserId != appUserId) {
+        try {
+          final result = await Purchases.logIn(appUserId);
+          _customerInfo = result.customerInfo;
+
+          AppLogger.d(
+            '$runtimeType#_syncCloudUserLogins logged in as "$appUserId" (new RC user: ${result.created})',
+          );
+        } catch (e, s) {
+          AppLogger.error('$runtimeType#_syncCloudUserLogins logIn("$appUserId") error: $e', stackTrace: s);
+        }
+      }
+
+      notifyListeners();
+    }
+  }
+
   /// Legacy users were logged in with an email hash ID (SHA256 HMAC - 64 char hex).
   /// Detect this and log them out so they use anonymous ID, then sync purchases.
-  Future<void> _migrateLegacyUser() async {
+  Future<bool> _migrateLegacyUser() async {
     final appUserId = _customerInfo?.originalAppUserId;
-    if (appUserId == null) return;
-
-    // Check network connectivity before attempting logout/sync
-    final hasNetwork = await InternetCheckerService().check();
-    if (!hasNetwork) {
-      AppLogger.d('$runtimeType#_migrateLegacyUser skipping migration (no network) - will retry on next launch');
-      return;
-    }
+    if (appUserId == null) return false;
 
     // Anonymous IDs from RevenueCat start with '$RCAnonymousID:'.
     // Legacy email hashes are 64-char hex strings (SHA256 HMAC).
     final isLegacyHash = EmailHasherService.isValidEmailHash(appUserId);
-    if (!isLegacyHash) return;
+    if (!isLegacyHash) return false;
 
     AppLogger.d(
       '$runtimeType#_migrateLegacyUser detected legacy email hash user "$appUserId", migrating to anonymous...',
@@ -141,19 +186,41 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
 
     try {
       await Purchases.logOut();
-      await Purchases.syncPurchases();
-
-      // Fetch fresh customer info after logout and sync
-      _customerInfo = await Purchases.getCustomerInfo();
-
       AppLogger.d('$runtimeType#_migrateLegacyUser migration complete');
+      return true;
     } catch (e, s) {
       AppLogger.error('$runtimeType#_migrateLegacyUser error: $e', stackTrace: s);
+      return false;
     }
+  }
+
+  /// Updates the selected backup provider used to drive RevenueCat identity and persists the choice.
+  /// Pass null to clear the selection (falls back to default on next sync).
+  Future<void> setSelectedPurchaseSyncProvider(BackupServiceType? serviceType) async {
+    _selectedSyncProvider = serviceType;
+
+    if (serviceType != null) {
+      await _selectedProviderStorage.writeEnum(serviceType);
+    } else {
+      await _selectedProviderStorage.remove();
+    }
+
+    await _syncCloudUserLogins();
   }
 
   StoreProduct? getProduct(String productIdentifier) {
     return storeProducts?.where((storeProduct) => storeProduct.identifier == productIdentifier).firstOrNull;
+  }
+
+  ({String? displayPrice, String? displayComparePrice, String? badgeLabel}) getActiveDeal(AppProduct product) {
+    final storeProduct = getProduct(product.productIdentifier);
+    if (storeProduct == null) return (displayPrice: null, displayComparePrice: null, badgeLabel: null);
+
+    return (
+      displayPrice: '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}',
+      displayComparePrice: null,
+      badgeLabel: null,
+    );
   }
 
   Future<List<StoreProduct>?> fetchAndCacheProducts({
@@ -178,17 +245,15 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     return storeProducts;
   }
 
-  Future<bool> purchase(
-    BuildContext context,
-    String productIdentifier,
-    Future<void> Function()? onPurchased,
-  ) async {
+  Future<bool> purchase(BuildContext context) async {
     if (!kIAPEnabled) return false;
+
+    final productToPurchase = AppProduct.storypad_pro_lifetime.productIdentifier;
 
     return _purchaseGuard.run(() async {
       await _ensureInitialized();
 
-      if (isActive(productIdentifier)) return false;
+      if (isActive(productToPurchase)) return false;
       if (!context.mounted) return false;
 
       bool success = false;
@@ -197,9 +262,10 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
         debugSource: '$runtimeType#purchase',
         future: () async {
           // Use cached product if available, otherwise fetch.
-          StoreProduct? storeProduct = getProduct(productIdentifier);
+          StoreProduct? storeProduct = getProduct(productToPurchase);
+
           storeProduct ??= await Purchases.getProducts(
-            [productIdentifier],
+            [productToPurchase],
             productCategory: ProductCategory.nonSubscription,
           ).then((e) => e.firstOrNull);
 
@@ -208,13 +274,11 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
           try {
             PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
             _customerInfo = result.customerInfo;
-            if (isActive(productIdentifier)) {
-              await onPurchased?.call();
-              success = true;
-            }
+            if (isActive(productToPurchase)) success = true;
             notifyListeners();
           } on PlatformException catch (e, s) {
             PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
+
             if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
               AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
               if (context.mounted) await MessengerService.of(context).showError();
@@ -243,6 +307,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
       debugSource: '$runtimeType#restorePurchase',
       future: () async {
         try {
+          await Purchases.syncPurchases();
           _customerInfo = await Purchases.restorePurchases();
           notifyListeners();
           restored = true;
@@ -260,14 +325,24 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
       },
     );
 
-    if (restored && context.mounted) await MessengerService.of(context).showSuccess();
+    if (restored && isProUser && context.mounted) await MessengerService.of(context).showSuccess();
   }
 
   Future<void> presentCodeRedemptionSheet(BuildContext context) async {
-    if (!kIAPEnabled || !Platform.isIOS) return;
+    if (!kIAPEnabled || !Platform.isIOS || !Platform.isAndroid) return;
 
-    await _ensureInitialized();
-    await Purchases.presentCodeRedemptionSheet();
-    if (context.mounted) await restorePurchase(context);
+    if (Platform.isIOS) {
+      await _ensureInitialized();
+      await Purchases.presentCodeRedemptionSheet();
+      if (context.mounted) await restorePurchase(context);
+    } else {
+      SpAndroidRedemptionSheet().show(context: context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _userChangesSubscription?.cancel();
+    super.dispose();
   }
 }

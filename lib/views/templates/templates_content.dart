@@ -21,7 +21,7 @@ class _TemplatesContent extends StatelessWidget {
 
     return DefaultTabController(
       length: 2,
-      initialIndex: context.read<InAppPurchaseProvider>().template ? 0 : 1,
+      initialIndex: context.read<InAppPurchaseProvider>().isProUser ? 0 : 1,
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -36,19 +36,16 @@ class _TemplatesContent extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        viewModel.params.viewingArchives ? tr('general.path_type.archives') : tr("add_ons.templates.title"),
+        viewModel.params.viewingArchives ? tr('general.path_type.archives') : tr("paywall_features.templates.title"),
       ),
       actions: [
         if (!viewModel.params.viewingArchives) buildActions(),
       ],
       bottom: TabBar(
         onTap: (index) {
-          if (index == 0 && !context.read<InAppPurchaseProvider>().template) {
+          if (index == 0 && !context.read<InAppPurchaseProvider>().isProUser) {
             DefaultTabController.of(context).animateTo(1);
-            AddOnsRoute.pushAndNavigateTo(
-              product: AppProduct.templates,
-              context: context,
-            );
+            const PaywallRoute(initialFocus: .templates).push(context);
           }
         },
         tabs: [
@@ -59,7 +56,7 @@ class _TemplatesContent extends StatelessWidget {
                   TextSpan(
                     text: "${tr('general.my_templates')} ",
                     children: [
-                      if (!iapProvider.template)
+                      if (!iapProvider.isProUser)
                         const WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: Icon(
@@ -92,7 +89,7 @@ class _TemplatesContent extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return TabBarView(
-      physics: context.read<InAppPurchaseProvider>().template ? null : const NeverScrollableScrollPhysics(),
+      physics: context.read<InAppPurchaseProvider>().isProUser ? null : const NeverScrollableScrollPhysics(),
       children: [
         TemplatesTab(
           params: viewModel.params,

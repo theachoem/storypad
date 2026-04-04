@@ -11,7 +11,7 @@ enum CalendarSegmentId {
       case CalendarSegmentId.mood:
         return tr('general.mood');
       case CalendarSegmentId.period:
-        return tr('add_ons.period_calendar.title');
+        return tr('paywall_features.period_calendar.title');
     }
   }
 }

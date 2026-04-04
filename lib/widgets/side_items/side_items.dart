@@ -5,26 +5,24 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
 import 'package:storypad/views/archives/archives_view.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/community/community_view.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/search/search_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_share_app_bottom_sheet.dart';
 import 'package:storypad/widgets/side_items/local_widgets/backup_tile.dart';
 import 'package:storypad/widgets/side_items/local_widgets/home_year_switcher_header.dart';
 import 'package:storypad/views/library/library_view.dart';
-import 'package:storypad/views/rewards/rewards_view.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/views/tags/tags_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_floating_music_note.dart';
-import 'package:storypad/widgets/sp_gift_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 part 'local_widgets/tag_header.dart';
@@ -78,11 +76,31 @@ class SideItems {
     ];
   }
 
-  static List<BaseSideItem> getEndDrawerItems(HomeViewModel homeViewModel) {
+  static List<BaseSideItem> getEndDrawerItems(BuildContext context, HomeViewModel homeViewModel) {
+    bool showProBanner = kIAPEnabled && !context.read<InAppPurchaseProvider>().isProUser;
+
     return [
       CustomSideItem.custom(builder: (context) => SurveyBanner(homeViewModel: homeViewModel)),
       CustomSideItem.custom(builder: (context) => HomeYearSwitcherHeader(homeViewModel: homeViewModel)),
-      CustomSideItem.divider(),
+      if (showProBanner) ...[
+        CustomSideItem.custom(
+          builder: (context) {
+            return ListTile(
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              tileColor: Theme.of(context).colorScheme.secondary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+              iconColor: Theme.of(context).colorScheme.onSecondary,
+              trailing: Icon(SpIcons.starCircle),
+              title: Text(tr('list_tile.upgrade_to_pro.title')),
+              subtitle: Text(tr('list_tile.upgrade_to_pro.subtitle')),
+              onTap: () => const PaywallRoute().push(context),
+            );
+          },
+        ),
+      ] else ...[
+        CustomSideItem.divider(),
+      ],
+      // CustomSideItem.divider(),
       ListTileSideItem(
         title: tr('page.tags.title'),
         subtitle: null,
@@ -114,27 +132,13 @@ class SideItems {
         },
       ),
       CustomSideItem.divider(),
-      if (kIAPEnabled)
-        ListTileSideItem(
-          title: tr('page.add_ons.title'),
-          subtitle: null,
-          icon: const Icon(SpIcons.addOns),
-          onTap: (context) => const AddOnsRoute().push(context),
-        ),
-      if (kIAPEnabled)
-        ListTileSideItem(
-          title: tr('page.rewards.title'),
-          subtitle: null,
-          icon: const SpGiftAnimatedIcon(),
-          onTap: (context) => const RewardsRoute().push(context),
-        ),
       ListTileSideItem(
         title: tr('page.settings.title'),
         subtitle: null,
         icon: const Icon(SpIcons.setting),
         onTap: (context) => SettingsRoute().push(context),
       ),
-      if (kIAPEnabled) CustomSideItem.divider(),
+      CustomSideItem.divider(),
       ListTileSideItem(
         title: tr('page.community.title'),
         subtitle: null,
@@ -162,21 +166,10 @@ class SideItems {
     required ValueNotifier<bool> showBadgeNotifer,
   }) {
     return [
-      if (kIAPEnabled && iapProvider.initialized && !iapProvider.allRewarded)
-        TimelineSideBarItem(
-          icon: SpIcons.addOns,
-          tooltip: tr('page.add_ons.title'),
-          showBadgeNotifer: showBadgeNotifer,
-          wrap: (context, child) => SpFadeIn.bound(child: child),
-          onTap: (context) {
-            const AddOnsRoute().push(context);
-            showBadgeNotifer.value = false;
-          },
-        ),
       if (kIAPEnabled)
         TimelineSideBarItem(
           icon: SpIcons.musicNote,
-          tooltip: tr('add_ons.relax_sounds.title'),
+          tooltip: tr('paywall_features.relax_sounds.title'),
           wrap: (context, child) {
             return SpFadeIn.bound(
               child: SpFloatingMusicNote.wrapIfPlaying(child: child),

@@ -126,7 +126,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> exportMarkdown(BuildContext context) async {
-    if (!context.read<InAppPurchaseProvider>().markdownExport) return;
+    if (!context.read<InAppPurchaseProvider>().isProUser) return;
 
     AnalyticsService.instance.logExportOfflineBackup();
 

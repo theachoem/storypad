@@ -7,9 +7,8 @@ import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/multi_audio_notification_service.dart';
 import 'package:storypad/core/services/multi_audio_player_service.dart';
 import 'package:storypad/core/services/relax_sound_timer_service.dart';
-import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/add_ons/add_ons_view.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 
 class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
   Map<String, RelaxSoundObject> get relaxSounds => RelaxSoundObject.defaultSoundsList();
@@ -91,7 +90,7 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     double? initialVolume,
   }) async {
     final iapProvider = context.read<InAppPurchaseProvider>();
-    if (!sound.free && !iapProvider.relaxSound) return openAddOn(context);
+    if (!sound.free && !iapProvider.isProUser) return openPaywall(context);
 
     if (isSoundSelected(sound)) {
       await audioPlayersService.removeAnAudio(sound.soundUrlPath);
@@ -105,11 +104,8 @@ class RelaxSoundsProvider extends ChangeNotifier with DebounchedCallback {
     refreshCanSaveMix();
   }
 
-  Future<void> openAddOn(BuildContext context) async {
-    return AddOnsRoute.pushAndNavigateTo(
-      product: AppProduct.relax_sounds,
-      context: context,
-    );
+  Future<void> openPaywall(BuildContext context) async {
+    const PaywallRoute(initialFocus: .relax_sounds).push(context);
   }
 
   Future<void> playAll({
