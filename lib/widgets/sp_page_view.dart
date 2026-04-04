@@ -30,24 +30,28 @@ class _SpPageViewState extends State<SpPageView> {
   void initState() {
     offsetNotifier = ValueNotifier(0);
     initializeController().then((value) {
-      widget.controller.addListener(() {
-        if (widget.controller.hasClients) offsetNotifier.value = widget.controller.offset;
-      });
+      widget.controller.addListener(_listener);
     });
     super.initState();
+  }
+
+  void _listener() {
+    if (widget.controller.hasClients) offsetNotifier.value = widget.controller.offset;
   }
 
   @override
   void dispose() {
     super.dispose();
+    widget.controller.removeListener(_listener);
     offsetNotifier.dispose();
   }
 
   double get width => MediaQuery.of(context).size.width;
   PageController get controller => widget.controller;
 
+  late final Completer<bool> completer = Completer<bool>();
   Future<bool> initializeController() {
-    Completer<bool> completer = Completer<bool>();
+    if (completer.isCompleted) return Future.value(true);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       completer.complete(true);
     });

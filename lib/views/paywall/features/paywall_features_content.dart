@@ -59,7 +59,6 @@ class _PaywallFeaturesContent extends StatelessWidget {
             color: Theme.of(context).scaffoldBackgroundColor,
             child: _Page(
               viewModel: viewModel,
-              context: context,
               feature: feature,
               topPadding: CupertinoSheetRoute.hasParentSheet(context) ? 0.0 : 8.0,
             ),
@@ -71,10 +70,13 @@ class _PaywallFeaturesContent extends StatelessWidget {
 }
 
 class _Page extends StatelessWidget {
-  const _Page({required this.viewModel, required this.context, required this.feature, required this.topPadding});
+  const _Page({
+    required this.viewModel,
+    required this.feature,
+    required this.topPadding,
+  });
 
   final PaywallFeaturesViewModel viewModel;
-  final BuildContext context;
   final PaywallFeatureObject feature;
   final double topPadding;
 
@@ -153,7 +155,7 @@ class _Page extends StatelessWidget {
                 onPressed: () {
                   Navigator.maybePop(
                     context,
-                    PaywalFeatureNextAction(
+                    PaywallFeatureNextAction(
                       focusFeature: feature,
                       action: (BuildContext context) => feature.onOpen!(context),
                     ),

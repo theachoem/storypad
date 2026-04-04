@@ -19,8 +19,7 @@ class SpPurchaseSyncProviderSheet extends BaseBottomSheet {
   Widget build(BuildContext context, double bottomPadding) {
     final backupProvider = Provider.of<BackupProvider>(context);
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
-
-    final eligibleServices = BackupProvider.repoInstance.services.where((s) => s.serviceType.hasGlobalUserId).toList();
+    final eligibleServices = backupProvider.services.where((s) => s.serviceType.hasGlobalUserId).toList();
 
     return Column(
       mainAxisSize: .min,
@@ -67,7 +66,7 @@ class SpPurchaseSyncProviderSheet extends BaseBottomSheet {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 child: Text(
-                  'Optional',
+                  tr('general.optional'),
                   style: TextTheme.of(context).labelSmall?.copyWith(
                     color: ColorScheme.of(context).onSurfaceVariant,
                   ),

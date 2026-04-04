@@ -54,7 +54,7 @@ class _FeatureTile extends StatelessWidget {
               ),
             ).show(context: context);
 
-            if (context.mounted && nextAction is PaywalFeatureNextAction) {
+            if (context.mounted && nextAction is PaywallFeatureNextAction) {
               nextAction.action.call(context);
 
               if (nextAction.focusFeature != null) {
@@ -68,11 +68,11 @@ class _FeatureTile extends StatelessWidget {
   }
 }
 
-class PaywalFeatureNextAction {
+class PaywallFeatureNextAction {
   final Future<void> Function(BuildContext) action;
   final PaywallFeatureObject? focusFeature;
 
-  PaywalFeatureNextAction({
+  PaywallFeatureNextAction({
     required this.action,
     required this.focusFeature,
   });

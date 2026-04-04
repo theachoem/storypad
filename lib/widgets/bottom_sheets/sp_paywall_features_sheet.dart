@@ -8,7 +8,7 @@ class SpPaywallFeaturesSheet extends BaseBottomSheet {
     required this.params,
   });
 
-  PaywallFeaturesRoute params;
+  final PaywallFeaturesRoute params;
 
   @override
   bool get fullScreen => true;

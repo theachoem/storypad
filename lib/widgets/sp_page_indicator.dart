@@ -28,8 +28,19 @@ class _SpPageIndicatorState extends State<SpPageIndicator> {
   @override
   void initState() {
     super.initState();
+
     // Re-build whenever the controller scrolls
-    widget.controller.addListener(() => setState(() {}));
+    widget.controller.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_listener);
+    super.dispose();
+  }
+
+  void _listener() {
+    if (widget.controller.hasClients) setState(() {});
   }
 
   @override
