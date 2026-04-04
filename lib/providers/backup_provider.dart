@@ -25,10 +25,6 @@ import 'package:storypad/views/home/home_view.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   BackupProvider() {
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
     step1MessageStream.listen((message) {
       AppLogger.d(
         '$runtimeType: step1 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
@@ -65,24 +61,15 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       database.addGlobalListener(_databaseListener);
     }
 
-    // Restore sync state from persisted import history so the UI shows the
-    // correct "synced" status immediately — before the auto-sync runs.
-    await _restoreSyncState();
-    await _setupConnection();
-
-    // Auto sync if applicable.
-    // Wait 1 second before calling to ensure home context is ready.
-    Future.delayed(const Duration(seconds: 1), () {
-      if (HomeView.homeContext?.mounted == true) {
-        autoSync(setupConnection: false, context: HomeView.homeContext!);
-      }
+    _setupConnection().then((_) {
+      // Auto sync if applicable.
+      // Wait 1 second before calling to ensure home context is ready.
+      Future.delayed(const Duration(seconds: 1), () {
+        if (HomeView.homeContext?.mounted == true) {
+          autoSync(setupConnection: false, context: HomeView.homeContext!);
+        }
+      });
     });
-  }
-
-  Future<void> _restoreSyncState() async {
-    _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
-    _lastSyncedAtByYear = await repository.getLastSyncedAtByYear();
-    notifyListeners();
   }
 
   Future<void> _databaseListener() async {
