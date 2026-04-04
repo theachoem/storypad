@@ -45,6 +45,13 @@ class QuillRichTextAdapter implements RichTextAdapter {
     );
   }
 
+  /// Filters out non-insert operations (delete/retain) from a Delta JSON list.
+  /// Document.fromJson only accepts insert operations; delete/retain ops can
+  /// appear in corrupted data from backups, cloud sync, or legacy migration.
+  List<dynamic> _sanitizeDeltaJson(List<dynamic> json) {
+    return json.whereType<Map<String, dynamic>>().where((op) => op.containsKey('insert')).toList();
+  }
+
   @override
   RichTextController createController({
     required List<dynamic> json,
@@ -54,8 +61,11 @@ class QuillRichTextAdapter implements RichTextAdapter {
     // Handle empty JSON - flutter_quill doesn't accept empty deltas
     if (json.isEmpty) return createEmptyController(readOnly: readOnly);
 
+    final sanitized = _sanitizeDeltaJson(json);
+    if (sanitized.isEmpty) return createEmptyController(readOnly: readOnly);
+
     return QuillRichTextController.fromJson(
-      json: json,
+      json: sanitized,
       selection: selection,
       readOnly: readOnly,
     );
@@ -77,11 +87,12 @@ class QuillRichTextAdapter implements RichTextAdapter {
     required List<dynamic> json,
   }) {
     // Handle empty JSON - flutter_quill doesn't accept empty deltas
-    if (json.isEmpty) {
-      return createEmptyDocument();
-    }
+    if (json.isEmpty) return createEmptyDocument();
 
-    return QuillRichTextDocument.fromJson(json);
+    final sanitized = _sanitizeDeltaJson(json);
+    if (sanitized.isEmpty) return createEmptyDocument();
+
+    return QuillRichTextDocument.fromJson(sanitized);
   }
 
   @override

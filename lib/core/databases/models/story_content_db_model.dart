@@ -5,6 +5,7 @@ import 'package:storypad/core/mixins/comparable.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/services/markdown_body_shortener_service.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
@@ -136,7 +137,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   }
 
   String? get displayShortBody {
-    return plainText != null ? MarkdownBodyShortenerService.call(plainText!) : null;
+    return plainText != null ? MarkdownBodyShortenerService.call(plainText!.sanitizeUtf16) : null;
   }
 
   factory StoryContentDbModel.dublicate(StoryContentDbModel oldContent) {

@@ -7,6 +7,7 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
+import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
@@ -357,7 +358,7 @@ class SpStoryLabels extends StatelessWidget {
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag) {
     return buildPin(
       context: context,
-      title: "# ${tag.title}",
+      title: "# ${tag.title.sanitizeUtf16}",
       onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
     );
   }
