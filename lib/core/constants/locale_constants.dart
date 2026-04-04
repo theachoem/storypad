@@ -22,6 +22,7 @@ const kSupportedLocales = [
   Locale("zh", "CN"),
   Locale("ru", "RU"),
   Locale("uk", "UA"),
+  Locale("tr"),
 ];
 
 const kLanguageNames = {
@@ -43,6 +44,7 @@ const kLanguageNames = {
   "zh-CN": "Chinese (Simplified)",
   "ru-RU": "Russian",
   "uk-UA": "Ukrainian",
+  "tr": "Turkish",
 };
 
 const kNativeLanguageNames = {
@@ -64,4 +66,5 @@ const kNativeLanguageNames = {
   "zh-CN": "中文 (简体)",
   "ru-RU": "Русский",
   "uk-UA": "Українська",
+  "tr": "Türkçe",
 };
