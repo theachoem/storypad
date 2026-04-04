@@ -119,8 +119,10 @@ class GoogleDriveAssetDownloaderService {
     } catch (e) {
       final completer = _downloadingByPath[localFilePath];
 
-      // ignore: null_argument_to_non_null_type
-      if (completer != null && !completer.isCompleted) completer.complete();
+      // Propagate the error to any waiters
+      if (completer != null && !completer.isCompleted) {
+        completer.completeError(e);
+      }
 
       rethrow;
     } finally {
@@ -143,6 +145,10 @@ class GoogleDriveAssetDownloaderService {
       );
 
       // Handle authentication errors
+      if (response.statusCode == 401) {
+        throw GoogleDriveAssetDownloaderException('Authentication expired. Please sign in again to download this asset.');
+      }
+
       if (response.statusCode == 403) {
         throw GoogleDriveAssetDownloaderException('Access denied. Please sign in to download this asset.');
       }
