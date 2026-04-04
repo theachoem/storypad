@@ -454,6 +454,28 @@ class BackupRepository {
     return result;
   }
 
+  /// Returns the most recently synced (imported or uploaded) timestamp per year,
+  /// derived from the persisted [BackupImportHistoryStorage].
+  /// Used to restore sync state on app restart without a network call.
+  Future<Map<int, DateTime?>> getLastSyncedAtByYear() async {
+    final dbByYear = await getLastDbUpdatedAtByYear();
+    final Map<int, DateTime?> result = {};
+
+    for (final service in services) {
+      for (final year in dbByYear.keys) {
+        final history = await _importHistoryStorage.getImportHistoryByYear(service.serviceType, year);
+        if (history.isEmpty) continue;
+        final latest = history.first; // most recent first
+        final current = result[year];
+        if (current == null || latest.isAfter(current)) {
+          result[year] = latest;
+        }
+      }
+    }
+
+    return result;
+  }
+
   void dispose() {
     _userChangesController.close();
     _step1ImagesUploader.controller.close();
