@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:storypad/app_theme.dart';
@@ -218,16 +217,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (allPinned) {
       await state.unpinAll(context);
     } else {
-      int pinnedCount = pinnedStories?.items.length ?? 0;
-      pinnedCount += state.selectedStories.length;
-
-      if (pinnedCount >= 3) {
-        MessengerService.of(context).showSnackBar(
-          tr('snack_bar.pinned_limited_reach'),
-          success: false,
-        );
-        return;
-      }
       await state.pinAll(context);
     }
 
