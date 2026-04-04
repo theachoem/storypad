@@ -798,8 +798,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "66eac662ad0749266bfd8be08ae2e563220b898e"
-      resolved-ref: "66eac662ad0749266bfd8be08ae2e563220b898e"
+      ref: "6c24caecc077414134d99d71cc4f901a1c2adf5a"
+      resolved-ref: "6c24caecc077414134d99d71cc4f901a1c2adf5a"
       url: "https://github.com/theachoem/flutter-quill.git"
     source: git
     version: "11.5.0"
