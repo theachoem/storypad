@@ -26,7 +26,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   bool get hasAnyLegacyPurchases => AppLegacyProduct.values.any((product) => isActive(product.productIdentifier));
-  bool get isProUser => !isActive(AppProduct.pro.productIdentifier) || hasAnyLegacyPurchases;
+  bool get isProUser => isActive(AppProduct.storypad_pro_lifetime.productIdentifier) || hasAnyLegacyPurchases;
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
@@ -121,7 +121,12 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     final services = BackupProvider.repoInstance.services;
     final eligibleServices = services.where((s) => s.serviceType.hasGlobalUserId).toList();
 
-    if (eligibleServices.isEmpty) {
+    // Resolve the active service: prefer the user's selection, fall back to first available.
+    BackupCloudService? activeService = eligibleServices
+        .where((s) => s.serviceType == _selectedSyncProvider)
+        .firstOrNull;
+
+    if (activeService == null) {
       // No global service connected — revert to anonymous if currently identified.
       _selectedSyncProvider = null;
       await _selectedProviderStorage.remove();
@@ -135,39 +140,33 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
           AppLogger.error('$runtimeType#_syncCloudUserLogins logOut error: $e', stackTrace: s);
         }
       }
+
+      notifyListeners();
     } else {
-      // Resolve the active service: prefer the user's selection, fall back to first available.
-      BackupCloudService? activeService = eligibleServices
-          .where((s) => s.serviceType == _selectedSyncProvider)
-          .firstOrNull;
+      // Selected provider is gone (signed out) — fall back to first available.
+      _selectedSyncProvider = activeService.serviceType;
+      await _selectedProviderStorage.writeEnum(_selectedSyncProvider!);
 
-      if (activeService == null) {
-        // Selected provider is gone (signed out) — fall back to first available.
-        activeService = eligibleServices.first;
-        _selectedSyncProvider = activeService.serviceType;
-        await _selectedProviderStorage.writeEnum(_selectedSyncProvider!);
-
-        AppLogger.d(
-          '$runtimeType#_syncCloudUserLogins selected provider unavailable, defaulted to "$_selectedSyncProvider"',
-        );
-      }
+      AppLogger.d(
+        '$runtimeType#_syncCloudUserLogins selected provider unavailable, defaulted to "$_selectedSyncProvider"',
+      );
 
       final appUserId = activeService.currentUser?.globalId;
-      if (appUserId == null || _customerInfo?.originalAppUserId == appUserId) return;
+      if (appUserId != null && _customerInfo?.originalAppUserId != appUserId) {
+        try {
+          final result = await Purchases.logIn(appUserId);
+          _customerInfo = result.customerInfo;
 
-      try {
-        final result = await Purchases.logIn(appUserId);
-        _customerInfo = result.customerInfo;
-
-        AppLogger.d(
-          '$runtimeType#_syncCloudUserLogins logged in as "$appUserId" (new RC user: ${result.created})',
-        );
-      } catch (e, s) {
-        AppLogger.error('$runtimeType#_syncCloudUserLogins logIn("$appUserId") error: $e', stackTrace: s);
+          AppLogger.d(
+            '$runtimeType#_syncCloudUserLogins logged in as "$appUserId" (new RC user: ${result.created})',
+          );
+        } catch (e, s) {
+          AppLogger.error('$runtimeType#_syncCloudUserLogins logIn("$appUserId") error: $e', stackTrace: s);
+        }
       }
-    }
 
-    notifyListeners();
+      notifyListeners();
+    }
   }
 
   /// Legacy users were logged in with an email hash ID (SHA256 HMAC - 64 char hex).
@@ -213,6 +212,17 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     return storeProducts?.where((storeProduct) => storeProduct.identifier == productIdentifier).firstOrNull;
   }
 
+  ({String? displayPrice, String? displayComparePrice, String? badgeLabel}) getActiveDeal(AppProduct product) {
+    final storeProduct = getProduct(product.productIdentifier);
+    if (storeProduct == null) return (displayPrice: null, displayComparePrice: null, badgeLabel: null);
+
+    return (
+      displayPrice: '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}',
+      displayComparePrice: null,
+      badgeLabel: null,
+    );
+  }
+
   Future<List<StoreProduct>?> fetchAndCacheProducts({
     required String debugSource,
   }) async {
@@ -235,17 +245,15 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     return storeProducts;
   }
 
-  Future<bool> purchase(
-    BuildContext context,
-    String productIdentifier,
-    Future<void> Function()? onPurchased,
-  ) async {
+  Future<bool> purchase(BuildContext context) async {
     if (!kIAPEnabled) return false;
+
+    final productToPurchase = AppProduct.storypad_pro_lifetime.productIdentifier;
 
     return _purchaseGuard.run(() async {
       await _ensureInitialized();
 
-      if (isActive(productIdentifier)) return false;
+      if (isActive(productToPurchase)) return false;
       if (!context.mounted) return false;
 
       bool success = false;
@@ -254,10 +262,10 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
         debugSource: '$runtimeType#purchase',
         future: () async {
           // Use cached product if available, otherwise fetch.
-          StoreProduct? storeProduct = getProduct(productIdentifier);
+          StoreProduct? storeProduct = getProduct(productToPurchase);
 
           storeProduct ??= await Purchases.getProducts(
-            [productIdentifier],
+            [productToPurchase],
             productCategory: ProductCategory.nonSubscription,
           ).then((e) => e.firstOrNull);
 
@@ -266,11 +274,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
           try {
             PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
             _customerInfo = result.customerInfo;
-
-            if (isActive(productIdentifier)) {
-              await onPurchased?.call();
-              success = true;
-            }
+            if (isActive(productToPurchase)) success = true;
             notifyListeners();
           } on PlatformException catch (e, s) {
             PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);

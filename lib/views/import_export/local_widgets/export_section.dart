@@ -12,7 +12,7 @@ class _ExportSection extends StatefulWidget {
 }
 
 class _ExportSectionState extends State<_ExportSection> {
-  AppExportOption selectedOption = .storyPadJson;
+  late AppExportOption selectedOption = widget.viewModel.params.initialExportOption ?? .storyPadJson;
 
   @override
   Widget build(BuildContext context) {

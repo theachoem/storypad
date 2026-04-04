@@ -25,9 +25,7 @@ class PaywallFeatureObject {
   final bool designForFemale;
 
   final List<String> demoImages;
-  final Future<void> Function(BuildContext context)? onTry;
   final Future<void> Function(BuildContext context)? onOpen;
-  final Future<void> Function()? onPurchased;
 
   PaywallFeatureObject({
     required this.type,
@@ -36,9 +34,7 @@ class PaywallFeatureObject {
     required this.iconData,
     required this.weekdayColor,
     required this.demoImages,
-    required this.onTry,
     required this.onOpen,
-    required this.onPurchased,
     this.designForFemale = false,
   });
 

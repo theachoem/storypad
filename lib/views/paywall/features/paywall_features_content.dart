@@ -31,7 +31,12 @@ class _PaywallFeaturesContent extends StatelessWidget {
               backgroundColor: ColorScheme.of(context).primary,
               foregroundColor: ColorScheme.of(context).onPrimary,
               shape: const StadiumBorder(),
-              label: Text(tr('button.purchase_for_args', namedArgs: {'PRICE': '\$4.99'})),
+              label: Text(
+                tr(
+                  'button.purchase_for_args',
+                  namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+                ),
+              ),
               icon: const Icon(SpIcons.star),
               onPressed: () => viewModel.purchase(context),
             ),

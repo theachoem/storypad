@@ -8,8 +8,11 @@ void main() async {
 
   // Keys that are intentionally unused or reserved for future use
   const exceptionalUnusedKeys = {
-    '_fomula',
+    '_formula',
     'button.maybe_later',
+    'button.less',
+    'button.more',
+    'button.try',
     'dialog.lookings_back.subtitle.other',
   };
 

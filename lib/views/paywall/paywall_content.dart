@@ -18,24 +18,34 @@ class _PaywallContent extends StatelessWidget {
         ],
       ),
       body: buildBody(context, iapProvider),
-      bottomNavigationBar: Column(
-        mainAxisSize: .min,
-        spacing: 8.0,
-        children: [
-          if (!iapProvider.isProUser)
-            FloatingActionButton.extended(
-              heroTag: null,
-              backgroundColor: ColorScheme.of(context).primary,
-              foregroundColor: ColorScheme.of(context).onPrimary,
-              shape: const StadiumBorder(),
-              label: Text(tr('button.purchase_for_args', namedArgs: {'PRICE': '\$4.99'})),
-              icon: const Icon(SpIcons.star),
-              onPressed: () => iapProvider.purchase(context, AppProduct.pro.productIdentifier, null),
+      bottomNavigationBar: iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice == null
+          ? null
+          : SpFadeIn.fromBottom(
+              duration: Durations.long1,
+              child: Column(
+                mainAxisSize: .min,
+                spacing: 8.0,
+                children: [
+                  if (!iapProvider.isProUser)
+                    FloatingActionButton.extended(
+                      heroTag: null,
+                      backgroundColor: ColorScheme.of(context).primary,
+                      foregroundColor: ColorScheme.of(context).onPrimary,
+                      shape: const StadiumBorder(),
+                      label: Text(
+                        tr(
+                          'button.purchase_for_args',
+                          namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+                        ),
+                      ),
+                      icon: const Icon(SpIcons.star),
+                      onPressed: () => iapProvider.purchase(context),
+                    ),
+                  const _RestoreAndRedeemTexts(),
+                  SizedBox(height: MediaQuery.paddingOf(context).bottom),
+                ],
+              ),
             ),
-          const _RestoreAndRedeemTexts(),
-          SizedBox(height: MediaQuery.paddingOf(context).bottom),
-        ],
-      ),
     );
   }
 

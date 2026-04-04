@@ -43,6 +43,7 @@ class SpPurchaseSyncProviderSheet extends BaseBottomSheet {
           ),
         ),
         const Divider(height: 1),
+        const SizedBox(height: 8),
         ...eligibleServices.map((service) {
           return buildServiceTile(service, iapProvider, context, backupProvider);
         }),
@@ -109,7 +110,13 @@ class SpPurchaseSyncProviderSheet extends BaseBottomSheet {
               ? SpFadeIn.fromBottom(child: Icon(SpIcons.checkCircle, color: ColorScheme.of(context).primary))
               : null
         : FilledButton.tonal(
-            onPressed: () => backupProvider.signIn(context, service.serviceType),
+            onPressed: () async {
+              await backupProvider.signIn(context, service.serviceType);
+
+              // Disable auto-backup when connecting via this sheet to avoid unintended backups.
+              // Users connecting here are doing so for purchase sync, not backup.
+              backupProvider.repository.getService(service.serviceType).setAutoBackupEnabled(false);
+            },
             child: Text(tr('button.connect')),
           );
 

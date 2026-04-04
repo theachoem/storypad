@@ -15,7 +15,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6757280549",
       "localizations" : [
@@ -30,7 +30,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6756936811",
       "localizations" : [
@@ -45,7 +45,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6754039959",
       "localizations" : [
@@ -60,7 +60,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6748109452",
       "localizations" : [
@@ -75,7 +75,22 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "9.99",
+      "familyShareable" : true,
+      "internalID" : "6761650718",
+      "localizations" : [
+        {
+          "description" : "Unlock all features and benefits",
+          "displayName" : "StoryPad Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "storypad_pro_lifetime",
+      "referenceName" : "storypad_pro_lifetime",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6748109594",
       "localizations" : [
@@ -90,7 +105,7 @@
       "type" : "NonConsumable"
     },
     {
-      "displayPrice" : "1.19",
+      "displayPrice" : "0.99",
       "familyShareable" : true,
       "internalID" : "6755052252",
       "localizations" : [
@@ -113,7 +128,7 @@
     "_developerTeamID" : "XF9U464CCP",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 788995686.74861896,
+    "_lastSynchronizedDate" : 796994414.76246095,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",

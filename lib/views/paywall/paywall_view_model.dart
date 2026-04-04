@@ -1,16 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:purchases_flutter/models/store_product_wrapper.dart';
-import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/paywall_feature_object.dart';
 import 'package:storypad/core/services/firestore_storage_service.dart';
-import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
-import 'package:storypad/views/library/library_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -52,20 +48,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
     });
   }
 
-  StoreProduct? getProduct(String productIdentifier) =>
-      context.mounted ? context.read<InAppPurchaseProvider>().getProduct(productIdentifier) : null;
-
-  ({String? displayPrice, String? displayComparePrice, String? badgeLabel}) getActiveDeal() {
-    final storeProduct = getProduct(AppProduct.pro.productIdentifier);
-    if (storeProduct == null) return (displayPrice: null, displayComparePrice: null, badgeLabel: null);
-
-    return (
-      displayPrice: '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}',
-      displayComparePrice: null,
-      badgeLabel: null,
-    );
-  }
-
   Future<void> load(BuildContext context) async {
     await context.read<InAppPurchaseProvider>().fetchAndCacheProducts(debugSource: '$runtimeType#load');
 
@@ -80,8 +62,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/backgrounds/backgrounds_1.jpg',
           '/feature_demos/backgrounds/backgrounds_2.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
         onOpen: null,
       ),
       PaywallFeatureObject(
@@ -95,11 +75,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/voice_journal/voice_journal_2.jpg',
           '/feature_demos/voice_journal/voice_journal_3.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: (BuildContext context) => LibraryRoute(
-          initialTabIndex: 1,
-        ).push(context),
+        onOpen: null,
       ),
       PaywallFeatureObject(
         type: PaywallFeature.templates,
@@ -113,8 +89,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/templates/template_3.jpg',
           '/feature_demos/templates/template_4.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
         onOpen: (BuildContext context) => const TemplatesRoute().push(context),
       ),
       PaywallFeatureObject(
@@ -129,8 +103,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/relax_sounds/relax_sound_3.jpg',
           '/feature_demos/relax_sounds/relax_sound_4.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
         onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
       ),
       PaywallFeatureObject(
@@ -144,19 +116,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/period_calendar/period_calendar_2.jpg',
           '/feature_demos/period_calendar/period_calendar_3.jpg',
         ],
-        onTry: null,
         designForFemale: true,
-        onPurchased: () async {
-          var eventCount = await EventDbModel.db.count(
-            filters: {'event_type': 'period'},
-            debugSource: '$runtimeType#onPurchased',
-          );
-          if (eventCount == 0) {
-            await EventDbModel.period(date: DateTime.now().subtract(const Duration(days: 2))).createIfNotExist();
-            await EventDbModel.period(date: DateTime.now().subtract(const Duration(days: 1))).createIfNotExist();
-            await EventDbModel.period(date: DateTime.now()).createIfNotExist();
-          }
-        },
         onOpen: (BuildContext context) async {
           CalendarRoute(
             initialMonth: DateTime.now().month,
@@ -178,9 +138,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/markdown_export/markdown_export_4.jpg',
           '/feature_demos/markdown_export/markdown_export_5.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: (BuildContext context) => const ImportExportRoute().push(context),
+        onOpen: (BuildContext context) => const ImportExportRoute(initialExportOption: .markdown).push(context),
       ),
       PaywallFeatureObject(
         type: PaywallFeature.writing_stats,
@@ -192,9 +150,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/writing_stats/writing_stats_1.jpg',
           '/feature_demos/writing_stats/writing_stats_2.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: (BuildContext context) => const ImportExportRoute().push(context),
+        onOpen: null,
       ),
       PaywallFeatureObject(
         type: PaywallFeature.pinned_notes,
@@ -206,9 +162,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/pinned_notes/pinned_notes_1.jpg',
           '/feature_demos/pinned_notes/pinned_notes_2.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: (BuildContext context) => const ImportExportRoute().push(context),
+        onOpen: null,
       ),
       PaywallFeatureObject(
         type: PaywallFeature.auto_backups,
@@ -219,9 +173,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         demoImages: [
           '/feature_demos/auto_backups/auto_backups_1.jpg',
         ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: (BuildContext context) => const ImportExportRoute().push(context),
+        onOpen: null,
       ),
     ];
 

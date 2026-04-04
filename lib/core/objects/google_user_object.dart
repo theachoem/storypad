@@ -41,8 +41,11 @@ class GoogleUserObject extends CloudServiceUser {
   @override
   String get identifier => email;
 
+  /// The globally-unique platform account ID for this user (e.g. Google account ID).
+  /// Used as a RevenueCat identity alias prefix. Returns null for local/dev services
+  /// where IDs are not globally unique across users.
   @override
-  String? get globalId => id;
+  String? get globalId => serviceType.hasGlobalUserId ? "${serviceType.id}_$id" : null;
 
   String? get bigImageUrl => _maximizeImage(photoUrl);
 

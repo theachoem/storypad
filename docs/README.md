@@ -7,7 +7,6 @@ Welcome to Storypad's documentation! This documentation is organized to be easil
 - [Features](./features/) - User guides and implementation details for all features
 - [Architecture](./architecture/) - System design and architecture decisions
 - [Development](./development/) - Setup and configuration guides
-- [Product](./product/) - Product management and strategy
 - [UI](./ui/) - UI components and design guidelines
 
 ## Searching the Documentation

@@ -1,10 +1,10 @@
-# Period Calendar Add-on
+# Period Calendar (StoryPad Pro)
 
 One-time purchase, lifetime access.
 
 ## Description
 
-Track your period cycle with ease, right inside your StoryPad journal. The Period Calendar add-on gives you a beautiful, intuitive way to monitor your cycle while keeping all your personal notes in one place. It's more than just a tracker—it's a seamless part of your journaling experience.
+Track your period cycle with ease, right inside your StoryPad journal. The Period Calendar feature gives you a beautiful, intuitive way to monitor your cycle while keeping all your personal notes in one place. It's more than just a tracker—it's a seamless part of your journaling experience.
 
 ## Why You'll Love It
 
@@ -15,9 +15,9 @@ Track your period cycle with ease, right inside your StoryPad journal. The Perio
 
 ## Screenshots
 
-|                                                                                                  |                                                                                                  |                                                                                                  |
-| :----------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------: |
-| ![Screenshot 1](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_1.jpg) | ![Screenshot 2](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_2.jpg) | ![Screenshot 3](../../../firestore_storages/add_ons_demos/period_calendar/period_calendar_3.jpg) |
+|                                                                                               |                                                                                               |                                                                                               |
+| :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: |
+| ![Screenshot 1](../../firestore_storages/feature_demos/period_calendar/period_calendar_1.jpg) | ![Screenshot 2](../../firestore_storages/feature_demos/period_calendar/period_calendar_2.jpg) | ![Screenshot 3](../../firestore_storages/feature_demos/period_calendar/period_calendar_3.jpg) |
 
 ## Features
 
@@ -59,7 +59,3 @@ Your period data is stored locally on your device and securely backed up to your
 - Integrates with the existing calendar UI components
 - Follows the app's theming system for consistent appearance
 - Available as a one-time in-app purchase
-
-## Support
-
-If you have any questions or issues with the Period Calendar add-on, please contact our support team through the app's settings menu.
