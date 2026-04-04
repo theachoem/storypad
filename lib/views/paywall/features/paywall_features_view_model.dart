@@ -14,30 +14,31 @@ class PaywallFeaturesViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   PaywallFeaturesViewModel({
     required this.params,
-  });
+  }) {
+    preloadUrls();
+  }
 
   late final PageController pageController = PageController(initialPage: params.initialPage);
 
-  Map<PaywallFeature, Completer<List<String>>> demoImageUrls = {};
-
-  void load() {
+  void preloadUrls() {
+    // getDownloadUrl already handle completer to prevent duplicate download for same urlPath
+    // So UI, can call getDownloadURL again to get this preloaded completer.
     for (var feature in params.features) {
-      fetchDemoImageUrlsFor(feature);
+      for (String urlPath in feature.demoImages) {
+        FirestoreStorageService.instance.getDownloadURL(urlPath);
+      }
     }
   }
 
   Future<List<String>> fetchDemoImageUrlsFor(PaywallFeatureObject feature) async {
-    if (demoImageUrls[feature.type] != null) return demoImageUrls[feature.type]!.future;
-    demoImageUrls[feature.type] = Completer<List<String>>();
-
     List<String> urls = [];
+
     for (String urlPath in feature.demoImages) {
       String? imageUrl = await FirestoreStorageService.instance.getDownloadURL(urlPath);
       if (imageUrl != null) urls.add(imageUrl);
     }
 
-    demoImageUrls[feature.type]?.complete(urls);
-    return demoImageUrls[feature.type]!.future;
+    return urls;
   }
 
   void purchase(BuildContext context) async {

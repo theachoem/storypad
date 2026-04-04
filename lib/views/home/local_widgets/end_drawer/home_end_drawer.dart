@@ -10,6 +10,7 @@ import 'package:storypad/views/home/years/home_years_view.dart' show HomeYearsRo
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_pro_badge.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/sp_theme_mode_icon.dart';
 
@@ -21,6 +22,7 @@ class HomeEndDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HomeViewModel>(context);
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
 
     if (viewModel.endDrawerState == HomeEndDrawerState.showYearsView) {
       if (viewModel.showFadeInYearEndDrawer) {
@@ -61,20 +63,12 @@ class HomeEndDrawer extends StatelessWidget {
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
-          if (context.read<InAppPurchaseProvider>().isProUser)
+          if (iapProvider.isProUser)
             SpTapEffect(
               onTap: () => const PaywallRoute().push(context),
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Text(
-                  "Pro",
-                  style: TextTheme.of(context).labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
-                ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.0),
+                child: SpProBadge(),
               ),
             ),
           IconButton(

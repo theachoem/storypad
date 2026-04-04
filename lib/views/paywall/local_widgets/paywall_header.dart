@@ -55,20 +55,7 @@ class _PaywallHeader extends StatelessWidget {
             ),
             if (iapProvider.isProUser) ...[
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: ColorScheme.of(context).primary,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  // tr('general.user_type.free')
-                  tr('general.user_type.pro'),
-                  style: TextStyle(
-                    color: ColorScheme.of(context).onPrimary,
-                  ),
-                ),
-              ),
+              const SpProBadge(),
             ],
           ],
         ),

@@ -7,6 +7,8 @@ class _PaywallFeaturesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+
     return Scaffold(
       appBar: CupertinoSheetRoute.hasParentSheet(context)
           ? AppBar(
@@ -23,15 +25,16 @@ class _PaywallFeaturesContent extends StatelessWidget {
         crossAxisAlignment: .center,
         spacing: 16.0,
         children: [
-          FloatingActionButton.extended(
-            heroTag: null,
-            backgroundColor: ColorScheme.of(context).primary,
-            foregroundColor: ColorScheme.of(context).onPrimary,
-            shape: const StadiumBorder(),
-            label: Text(tr('button.purchase_for_args', namedArgs: {'PRICE': '\$4.99'})),
-            icon: const Icon(SpIcons.star),
-            onPressed: () => viewModel.purchase(context),
-          ),
+          if (!iapProvider.isProUser)
+            FloatingActionButton.extended(
+              heroTag: null,
+              backgroundColor: ColorScheme.of(context).primary,
+              foregroundColor: ColorScheme.of(context).onPrimary,
+              shape: const StadiumBorder(),
+              label: Text(tr('button.purchase_for_args', namedArgs: {'PRICE': '\$4.99'})),
+              icon: const Icon(SpIcons.star),
+              onPressed: () => viewModel.purchase(context),
+            ),
           SpPageIndicator(
             controller: viewModel.pageController,
             pageCount: viewModel.params.features.length,
@@ -97,6 +100,7 @@ class _Page extends StatelessWidget {
               return _DemoImages(
                 demoImageUrls: asyncSnapshot.data,
                 context: context,
+                skeletonCount: feature.demoImages.length,
               );
             },
           ),
@@ -135,6 +139,24 @@ class _Page extends StatelessWidget {
             style: TextTheme.of(context).bodyMedium,
             textAlign: TextAlign.center,
           ),
+          if (iapProvider.isProUser && feature.onOpen != null) ...[
+            const SizedBox(height: 16.0),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                child: Text(tr('button.open')),
+                onPressed: () {
+                  Navigator.maybePop(
+                    context,
+                    PaywalFeatureNextAction(
+                      focusFeature: feature,
+                      action: (BuildContext context) => feature.onOpen!(context),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ],
       ),
     );

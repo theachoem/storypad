@@ -26,7 +26,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
 
   bool get hasAnyLegacyPurchases => AppLegacyProduct.values.any((product) => isActive(product.productIdentifier));
-  bool get isProUser => isActive(AppProduct.pro.productIdentifier) || hasAnyLegacyPurchases;
+  bool get isProUser => !isActive(AppProduct.pro.productIdentifier) || hasAnyLegacyPurchases;
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;

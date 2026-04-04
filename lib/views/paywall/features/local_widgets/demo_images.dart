@@ -4,9 +4,11 @@ class _DemoImages extends StatelessWidget {
   const _DemoImages({
     required this.demoImageUrls,
     required this.context,
+    required this.skeletonCount,
   });
 
   final List<String>? demoImageUrls;
+  final int skeletonCount;
   final BuildContext context;
 
   double get height => 320.0;
@@ -23,11 +25,9 @@ class _DemoImages extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
           mainAxisSize: .min,
+          spacing: 12.0,
           children: List.generate(demoImageUrls?.length ?? 0, (index) {
-            return Container(
-              margin: EdgeInsets.only(right: index != (demoImageUrls!.length - 1) ? 12.0 : 0),
-              child: buildDemo(index, context),
-            );
+            return buildDemo(index, context);
           }),
         ),
       ),
@@ -61,27 +61,23 @@ class _DemoImages extends StatelessWidget {
     return Container(
       alignment: .center,
       height: height,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        spacing: 12.0,
-        mainAxisAlignment: .center,
-        crossAxisAlignment: .center,
-        children: [
-          Container(
-            width: height * 0.45,
-            decoration: BoxDecoration(
-              color: ColorScheme.of(context).readOnly.surface1,
-              borderRadius: BorderRadiusGeometry.circular(8.0),
-            ),
-          ),
-          Container(
-            width: height * 0.45,
-            decoration: BoxDecoration(
-              color: ColorScheme.of(context).readOnly.surface1,
-              borderRadius: BorderRadiusGeometry.circular(8.0),
-            ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: .horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          spacing: 12.0,
+          mainAxisAlignment: .center,
+          crossAxisAlignment: .center,
+          children: List.generate(skeletonCount, (index) {
+            return Container(
+              width: height * 0.45,
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).readOnly.surface1,
+                borderRadius: BorderRadiusGeometry.circular(8.0),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

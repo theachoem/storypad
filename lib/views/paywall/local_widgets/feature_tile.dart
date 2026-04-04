@@ -46,14 +46,34 @@ class _FeatureTile extends StatelessWidget {
               right: MediaQuery.of(context).padding.right,
             ),
           ),
-          onTap: () => SpPaywallFeaturesSheet(
-            params: PaywallFeaturesRoute(
-              features: viewModel.features ?? [],
-              initialPage: viewModel.features?.indexWhere((element) => element.type == feature.type) ?? 0,
-            ),
-          ).show(context: context),
+          onTap: () async {
+            final nextAction = await SpPaywallFeaturesSheet(
+              params: PaywallFeaturesRoute(
+                features: viewModel.features ?? [],
+                initialPage: viewModel.features?.indexWhere((element) => element.type == feature.type) ?? 0,
+              ),
+            ).show(context: context);
+
+            if (context.mounted && nextAction is PaywalFeatureNextAction) {
+              nextAction.action.call(context);
+
+              if (nextAction.focusFeature != null) {
+                viewModel.focusOn(nextAction.focusFeature!.type);
+              }
+            }
+          },
         ),
       ],
     );
   }
+}
+
+class PaywalFeatureNextAction {
+  final Future<void> Function(BuildContext) action;
+  final PaywallFeatureObject? focusFeature;
+
+  PaywalFeatureNextAction({
+    required this.action,
+    required this.focusFeature,
+  });
 }

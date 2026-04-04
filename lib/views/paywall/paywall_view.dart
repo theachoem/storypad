@@ -16,6 +16,7 @@ import 'package:storypad/widgets/bottom_sheets/sp_paywall_features_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_purchase_sync_provider_sheet.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_pro_badge.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 import 'paywall_view_model.dart';
@@ -23,6 +24,10 @@ import 'paywall_view_model.dart';
 part 'paywall_content.dart';
 part 'local_widgets/paywall_header.dart';
 part 'local_widgets/feature_tile.dart';
+part 'local_widgets/purchase_sync_avatar_button.dart';
+part 'local_widgets/restore_and_redeem_texts.dart';
+part 'local_widgets/term_privacy_texts.dart';
+part 'local_widgets/paywall_gradient_bg_overlay.dart';
 
 class PaywallRoute extends BaseRoute {
   const PaywallRoute({

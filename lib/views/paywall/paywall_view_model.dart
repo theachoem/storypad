@@ -5,6 +5,7 @@ import 'package:purchases_flutter/models/store_product_wrapper.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/paywall_feature_object.dart';
+import 'package:storypad/core/services/firestore_storage_service.dart';
 import 'package:storypad/core/types/app_product.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
@@ -21,6 +22,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
   final List<GlobalKey> featureKeys = List.generate(PaywallFeature.values.length, (_) => GlobalKey());
 
   late final ValueNotifier<PaywallFeature?> focusingFeatureNotifer = ValueNotifier(params.initialFocus);
+  List<PaywallFeatureObject>? features;
 
   PaywallViewModel({
     required this.params,
@@ -29,30 +31,26 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
     load(context).then((_) {
       if (focusingFeatureNotifer.value != null) {
         Future.delayed(Durations.long2, () {
-          Scrollable.ensureVisible(
-            featureKeys[focusingFeatureNotifer.value!.index].currentContext!,
-            curve: Curves.ease,
-            duration: Durations.medium1,
-
-            // when feature is at the top 5, align 0.0 (mostly no scroll), else align 0.5 (scroll to middle)
-            alignment: focusingFeatureNotifer.value!.index < 5 ? 0.0 : 0.5,
-          );
-
-          Future.delayed(Durations.long2, () {
-            if (!disposed) focusingFeatureNotifer.value = null;
-          });
+          focusOn(focusingFeatureNotifer.value!);
         });
       }
     });
   }
 
-  @override
-  void dispose() {
-    focusingFeatureNotifer.dispose();
-    super.dispose();
-  }
+  Future<void> focusOn(PaywallFeature focusFeature) async {
+    await Scrollable.ensureVisible(
+      featureKeys[focusFeature.index].currentContext!,
+      curve: Curves.ease,
+      duration: Durations.medium1,
 
-  List<PaywallFeatureObject>? features;
+      // when feature is at the top 5, align 0.0 (mostly no scroll), else align 0.5 (scroll to middle)
+      alignment: focusFeature.index < 5 ? 0.0 : 0.5,
+    );
+
+    Future.delayed(Durations.long2, () {
+      if (!disposed) focusingFeatureNotifer.value = null;
+    });
+  }
 
   StoreProduct? getProduct(String productIdentifier) =>
       context.mounted ? context.read<InAppPurchaseProvider>().getProduct(productIdentifier) : null;
@@ -227,6 +225,24 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
       ),
     ];
 
+    preloadUrls();
+
     notifyListeners();
+  }
+
+  void preloadUrls() {
+    // getDownloadUrl already handle completer to prevent duplicate download for same urlPath
+    // So UI, can call getDownloadURL again to get this preloaded completer.
+    for (PaywallFeatureObject feature in features ?? []) {
+      for (String urlPath in feature.demoImages) {
+        FirestoreStorageService.instance.getDownloadURL(urlPath);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    focusingFeatureNotifer.dispose();
+    super.dispose();
   }
 }
