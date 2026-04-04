@@ -35,7 +35,7 @@ class _StoryTileContents extends StatelessWidget {
               margin: const EdgeInsets.only(right: 16.0),
               width: double.infinity,
               child: Text(
-                content!.title!,
+                content!.title!.sanitizeUtf16,
                 style: TextTheme.of(context).titleMedium,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
