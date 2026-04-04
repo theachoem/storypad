@@ -52,9 +52,12 @@ class _SpPageViewState extends State<SpPageView> {
   late final Completer<bool> completer = Completer<bool>();
   Future<bool> initializeController() {
     if (completer.isCompleted) return Future.value(true);
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (completer.isCompleted) return;
       completer.complete(true);
     });
+
     return completer.future;
   }
 
