@@ -204,9 +204,11 @@ class BackupUploaderService {
           final year = entry.key;
           final file = entry.value;
 
-          if (file.lastUpdatedAt != null) {
-            await importHistoryStorage.markAsImported(cloudService.serviceType, year, file.lastUpdatedAt!);
-          }
+          // Prefer the timestamp from the uploaded file's name (returned by Drive API).
+          // Fall back to the local DB timestamp used to build the filename, which is
+          // identical to what Drive will return when the file is listed next time.
+          final importedAt = file.lastUpdatedAt ?? yearsToUpload[year];
+          if (importedAt != null) await importHistoryStorage.markAsImported(cloudService.serviceType, year, importedAt);
         }
       }
 

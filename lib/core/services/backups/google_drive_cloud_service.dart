@@ -344,7 +344,15 @@ class GoogleDriveCloudService extends BackupCloudService {
               final cloudFile = CloudFileObject.fromGoogleDrive(file);
               final year = cloudFile.year;
               if (year != null) {
-                yearlyBackups[year] = cloudFile;
+                // When duplicates exist for the same year, keep the one with the newest
+                // filename timestamp. This prevents non-deterministic ordering from
+                // causing endless re-uploads when multiple files exist for a year.
+                final existing = yearlyBackups[year];
+                final existingTs = existing?.lastUpdatedAt;
+                final newTs = cloudFile.lastUpdatedAt;
+                final isNewer =
+                    existing == null || (newTs != null && (existingTs == null || newTs.isAfter(existingTs)));
+                if (isNewer) yearlyBackups[year] = cloudFile;
               }
             }
             return yearlyBackups;
