@@ -128,6 +128,10 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
         .where((s) => s.serviceType == _selectedSyncProvider)
         .firstOrNull;
 
+    // On first launch (no saved selection) or when the selected provider was removed,
+    // auto-select the first available eligible service.
+    activeService ??= eligibleServices.firstOrNull;
+
     if (activeService == null) {
       // No global service connected — revert to anonymous if currently identified.
       _selectedSyncProvider = null;
