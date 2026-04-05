@@ -1,8 +1,6 @@
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
-import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
-import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/root/local_widgets/root_side_bar.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
