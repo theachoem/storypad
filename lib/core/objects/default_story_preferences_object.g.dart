@@ -1,91 +1,83 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'story_editing_preferences_object.dart';
+part of 'default_story_preferences_object.dart';
 
 // **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
-abstract class _$StoryEditingPreferencesObjectCWProxy {
-  StoryEditingPreferencesObject defaultColorSeedValue(
+abstract class _$DefaultStoryPreferencesObjectCWProxy {
+  DefaultStoryPreferencesObject defaultColorSeedValue(
     int? defaultColorSeedValue,
   );
 
-  StoryEditingPreferencesObject defaultColorTone(int? defaultColorTone);
+  DefaultStoryPreferencesObject defaultColorTone(int? defaultColorTone);
 
-  StoryEditingPreferencesObject defaultBackgroundImagePath(
+  DefaultStoryPreferencesObject defaultBackgroundImagePath(
     String? defaultBackgroundImagePath,
   );
 
-  StoryEditingPreferencesObject enableTitle(bool? enableTitle);
-
-  StoryEditingPreferencesObject defaultLayoutType(
+  DefaultStoryPreferencesObject defaultLayoutType(
     PageLayoutType? defaultLayoutType,
   );
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryEditingPreferencesObject(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DefaultStoryPreferencesObject(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// StoryEditingPreferencesObject(...).copyWith(id: 12, name: "My name")
+  /// DefaultStoryPreferencesObject(...).copyWith(id: 12, name: "My name")
   /// ```
-  StoryEditingPreferencesObject call({
+  DefaultStoryPreferencesObject call({
     int? defaultColorSeedValue,
     int? defaultColorTone,
     String? defaultBackgroundImagePath,
-    bool? enableTitle,
     PageLayoutType? defaultLayoutType,
   });
 }
 
 /// Callable proxy for `copyWith` functionality.
-/// Use as `instanceOfStoryEditingPreferencesObject.copyWith(...)` or call `instanceOfStoryEditingPreferencesObject.copyWith.fieldName(value)` for a single field.
-class _$StoryEditingPreferencesObjectCWProxyImpl
-    implements _$StoryEditingPreferencesObjectCWProxy {
-  const _$StoryEditingPreferencesObjectCWProxyImpl(this._value);
+/// Use as `instanceOfDefaultStoryPreferencesObject.copyWith(...)` or call `instanceOfDefaultStoryPreferencesObject.copyWith.fieldName(value)` for a single field.
+class _$DefaultStoryPreferencesObjectCWProxyImpl
+    implements _$DefaultStoryPreferencesObjectCWProxy {
+  const _$DefaultStoryPreferencesObjectCWProxyImpl(this._value);
 
-  final StoryEditingPreferencesObject _value;
+  final DefaultStoryPreferencesObject _value;
 
   @override
-  StoryEditingPreferencesObject defaultColorSeedValue(
+  DefaultStoryPreferencesObject defaultColorSeedValue(
     int? defaultColorSeedValue,
   ) => call(defaultColorSeedValue: defaultColorSeedValue);
 
   @override
-  StoryEditingPreferencesObject defaultColorTone(int? defaultColorTone) =>
+  DefaultStoryPreferencesObject defaultColorTone(int? defaultColorTone) =>
       call(defaultColorTone: defaultColorTone);
 
   @override
-  StoryEditingPreferencesObject defaultBackgroundImagePath(
+  DefaultStoryPreferencesObject defaultBackgroundImagePath(
     String? defaultBackgroundImagePath,
   ) => call(defaultBackgroundImagePath: defaultBackgroundImagePath);
 
   @override
-  StoryEditingPreferencesObject enableTitle(bool? enableTitle) =>
-      call(enableTitle: enableTitle);
-
-  @override
-  StoryEditingPreferencesObject defaultLayoutType(
+  DefaultStoryPreferencesObject defaultLayoutType(
     PageLayoutType? defaultLayoutType,
   ) => call(defaultLayoutType: defaultLayoutType);
 
   @override
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryEditingPreferencesObject(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DefaultStoryPreferencesObject(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// StoryEditingPreferencesObject(...).copyWith(id: 12, name: "My name")
+  /// DefaultStoryPreferencesObject(...).copyWith(id: 12, name: "My name")
   /// ```
-  StoryEditingPreferencesObject call({
+  DefaultStoryPreferencesObject call({
     Object? defaultColorSeedValue = const $CopyWithPlaceholder(),
     Object? defaultColorTone = const $CopyWithPlaceholder(),
     Object? defaultBackgroundImagePath = const $CopyWithPlaceholder(),
-    Object? enableTitle = const $CopyWithPlaceholder(),
     Object? defaultLayoutType = const $CopyWithPlaceholder(),
   }) {
-    return StoryEditingPreferencesObject(
+    return DefaultStoryPreferencesObject(
       defaultColorSeedValue:
           defaultColorSeedValue == const $CopyWithPlaceholder()
           ? _value.defaultColorSeedValue
@@ -100,10 +92,6 @@ class _$StoryEditingPreferencesObjectCWProxyImpl
           ? _value.defaultBackgroundImagePath
           // ignore: cast_nullable_to_non_nullable
           : defaultBackgroundImagePath as String?,
-      enableTitle: enableTitle == const $CopyWithPlaceholder()
-          ? _value.enableTitle
-          // ignore: cast_nullable_to_non_nullable
-          : enableTitle as bool?,
       defaultLayoutType: defaultLayoutType == const $CopyWithPlaceholder()
           ? _value.defaultLayoutType
           // ignore: cast_nullable_to_non_nullable
@@ -112,36 +100,34 @@ class _$StoryEditingPreferencesObjectCWProxyImpl
   }
 }
 
-extension $StoryEditingPreferencesObjectCopyWith
-    on StoryEditingPreferencesObject {
+extension $DefaultStoryPreferencesObjectCopyWith
+    on DefaultStoryPreferencesObject {
   /// Returns a callable class used to build a new instance with modified fields.
-  /// Example: `instanceOfStoryEditingPreferencesObject.copyWith(...)` or `instanceOfStoryEditingPreferencesObject.copyWith.fieldName(...)`.
+  /// Example: `instanceOfDefaultStoryPreferencesObject.copyWith(...)` or `instanceOfDefaultStoryPreferencesObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$StoryEditingPreferencesObjectCWProxy get copyWith =>
-      _$StoryEditingPreferencesObjectCWProxyImpl(this);
+  _$DefaultStoryPreferencesObjectCWProxy get copyWith =>
+      _$DefaultStoryPreferencesObjectCWProxyImpl(this);
 }
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-StoryEditingPreferencesObject _$StoryEditingPreferencesObjectFromJson(
+DefaultStoryPreferencesObject _$DefaultStoryPreferencesObjectFromJson(
   Map<String, dynamic> json,
-) => StoryEditingPreferencesObject(
+) => DefaultStoryPreferencesObject(
   defaultColorSeedValue: (json['default_color_seed_value'] as num?)?.toInt(),
   defaultColorTone: (json['default_color_tone'] as num?)?.toInt(),
   defaultBackgroundImagePath: json['default_background_image_path'] as String?,
-  enableTitle: json['enable_title'] as bool?,
   defaultLayoutType: $enumDecodeNullable(
     _$PageLayoutTypeEnumMap,
     json['default_layout_type'],
   ),
 );
 
-Map<String, dynamic> _$StoryEditingPreferencesObjectToJson(
-  StoryEditingPreferencesObject instance,
+Map<String, dynamic> _$DefaultStoryPreferencesObjectToJson(
+  DefaultStoryPreferencesObject instance,
 ) => <String, dynamic>{
-  'enable_title': instance.enableTitle,
   'default_color_seed_value': instance.defaultColorSeedValue,
   'default_color_tone': instance.defaultColorTone,
   'default_background_image_path': instance.defaultBackgroundImagePath,

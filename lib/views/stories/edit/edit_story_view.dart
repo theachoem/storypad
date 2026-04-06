@@ -108,7 +108,7 @@ class EditStoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<EditStoryViewModel>(
-      create: (context) => EditStoryViewModel(params: params),
+      create: (context) => EditStoryViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return PopScope(
           canPop: false,

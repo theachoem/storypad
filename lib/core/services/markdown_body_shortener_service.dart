@@ -1,5 +1,8 @@
+import 'dart:math';
+
 class MarkdownBodyShortenerService {
   static String call(String markdown, {int maxCharacterCount = 200}) {
+    maxCharacterCount = max(maxCharacterCount, 50);
     String body = markdown.trim();
 
     if (body.split("\n").length > 10) body = "${body.split("\n").getRange(0, 10).join("\n")}...";

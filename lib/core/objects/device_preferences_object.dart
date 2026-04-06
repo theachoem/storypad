@@ -2,10 +2,9 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/objects/story_editing_preferences_object.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/font_size_option.dart';
-import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
 part 'device_preferences_object.g.dart';
@@ -23,7 +22,7 @@ class DevicePreferencesObject {
   final TimeFormatOption timeFormat;
 
   final StoryTilePreferencesObject storyTilePreferences;
-  final StoryEditingPreferencesObject storyEditingPreferences;
+  final DefaultStoryPreferencesObject defaultStoryPreferences;
 
   // Add ons
   final bool? enableRelaxSounds;
@@ -44,17 +43,14 @@ class DevicePreferencesObject {
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
     double? voicePlaybackSpeed,
-    bool? enablePageTitle,
-    PageLayoutType? defaultStoryLayoutType,
-    int? defaultStoryDisplayCharacterCount,
     StoryTilePreferencesObject? storyTilePreferences,
-    StoryEditingPreferencesObject? storyEditingPreferences,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,
        timeFormat = timeFormat ?? TimeFormatOption.h12,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
        storyTilePreferences = storyTilePreferences ?? StoryTilePreferencesObject(),
-       storyEditingPreferences = storyEditingPreferences ?? StoryEditingPreferencesObject();
+       defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject();
 
   factory DevicePreferencesObject.initial() {
     return DevicePreferencesObject();

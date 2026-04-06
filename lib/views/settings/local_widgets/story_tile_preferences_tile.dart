@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
@@ -12,7 +13,7 @@ class StoryTilePreferencesTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(SpIcons.tune),
-      title: const Text("List Style"),
+      title: Text(tr("list_tile.story_tile_preferences.title")),
       onTap: () async {
         final result = await const SpStoryTilePreferencesSheet().show(context: context);
 

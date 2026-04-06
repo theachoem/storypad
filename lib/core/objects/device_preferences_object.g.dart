@@ -29,8 +29,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     StoryTilePreferencesObject? storyTilePreferences,
   );
 
-  DevicePreferencesObject storyEditingPreferences(
-    StoryEditingPreferencesObject? storyEditingPreferences,
+  DevicePreferencesObject defaultStoryPreferences(
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   );
 
   /// Creates a new instance with the provided field values.
@@ -51,7 +51,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     int? colorSeedValue,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
-    StoryEditingPreferencesObject? storyEditingPreferences,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   });
 }
 
@@ -105,9 +105,9 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(storyTilePreferences: storyTilePreferences);
 
   @override
-  DevicePreferencesObject storyEditingPreferences(
-    StoryEditingPreferencesObject? storyEditingPreferences,
-  ) => call(storyEditingPreferences: storyEditingPreferences);
+  DevicePreferencesObject defaultStoryPreferences(
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
+  ) => call(defaultStoryPreferences: defaultStoryPreferences);
 
   @override
   /// Creates a new instance with the provided field values.
@@ -128,7 +128,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
-    Object? storyEditingPreferences = const $CopyWithPlaceholder(),
+    Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
       fontFamily: fontFamily == const $CopyWithPlaceholder()
@@ -171,11 +171,11 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.storyTilePreferences
           // ignore: cast_nullable_to_non_nullable
           : storyTilePreferences as StoryTilePreferencesObject?,
-      storyEditingPreferences:
-          storyEditingPreferences == const $CopyWithPlaceholder()
-          ? _value.storyEditingPreferences
+      defaultStoryPreferences:
+          defaultStoryPreferences == const $CopyWithPlaceholder()
+          ? _value.defaultStoryPreferences
           // ignore: cast_nullable_to_non_nullable
-          : storyEditingPreferences as StoryEditingPreferencesObject?,
+          : defaultStoryPreferences as DefaultStoryPreferencesObject?,
     );
   }
 }
@@ -212,10 +212,10 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
       : StoryTilePreferencesObject.fromJson(
           json['story_tile_preferences'] as Map<String, dynamic>,
         ),
-  storyEditingPreferences: json['story_editing_preferences'] == null
+  defaultStoryPreferences: json['default_story_preferences'] == null
       ? null
-      : StoryEditingPreferencesObject.fromJson(
-          json['story_editing_preferences'] as Map<String, dynamic>,
+      : DefaultStoryPreferencesObject.fromJson(
+          json['default_story_preferences'] as Map<String, dynamic>,
         ),
 );
 
@@ -230,7 +230,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'voice_playback_speed': instance.voicePlaybackSpeed,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
-  'story_editing_preferences': instance.storyEditingPreferences.toJson(),
+  'default_story_preferences': instance.defaultStoryPreferences.toJson(),
   'enable_relax_sounds': instance.enableRelaxSounds,
   'enable_period_calendar': instance.enablePeriodCalendar,
 };

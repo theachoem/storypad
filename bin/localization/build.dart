@@ -152,7 +152,7 @@ Future<String> _fetchCsvRaw() async {
     return file.readAsString();
   }
 
-  final response = await http.get(Uri.parse(publicCsvUrl));
+  final response = await http.get(Uri.parse("$publicCsvUrl&t=${DateTime.now().millisecondsSinceEpoch}"));
   if (response.statusCode != 200) throw response.statusCode;
 
   final decodedBody = utf8.decode(response.bodyBytes);

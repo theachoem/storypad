@@ -8,6 +8,7 @@ class _StoryTileContents extends StatelessWidget {
     required this.hasTitle,
     required this.content,
     required this.hasBody,
+    required this.displayShortBody,
     required this.preferences,
   });
 
@@ -17,6 +18,7 @@ class _StoryTileContents extends StatelessWidget {
   final bool hasTitle;
   final StoryContentDbModel? content;
   final bool hasBody;
+  final String? displayShortBody;
   final StoryTilePreferencesObject preferences;
 
   @override
@@ -27,18 +29,6 @@ class _StoryTileContents extends StatelessWidget {
     final audioPaths = (story.draftContent ?? story.latestContent) != null
         ? StoryContentEmbedExtractor.audio(story.draftContent ?? story.latestContent)
         : null;
-
-    final shortBody = content?.displayShortBody(maxCharacterCount: preferences.displayCharacterCount);
-    final showBody = hasBody && preferences.displayCharacterCount > 0;
-
-    String? displayBody;
-    if (showBody && shortBody != null) {
-      if (shortBody.length > preferences.displayCharacterCount) {
-        displayBody = "${shortBody.substring(0, preferences.displayCharacterCount).trim()}...";
-      } else {
-        displayBody = shortBody;
-      }
-    }
 
     return Expanded(
       child: Column(
@@ -55,7 +45,7 @@ class _StoryTileContents extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-          if (showBody && displayBody != null)
+          if (hasBody)
             Container(
               width: double.infinity,
               margin: hasTitle
@@ -65,7 +55,7 @@ class _StoryTileContents extends StatelessWidget {
                       const EdgeInsets.only(left: 24.0),
                       const EdgeInsets.only(right: 24.0),
                     ),
-              child: SpMarkdownBody(body: displayBody),
+              child: SpMarkdownBody(body: displayShortBody!),
             ),
           if (assetPaths?.isNotEmpty == true) ...[
             SizedBox(height: MediaQuery.textScalerOf(context).scale(6)),

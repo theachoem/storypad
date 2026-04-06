@@ -15,8 +15,6 @@ class _DemoImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (demoImageUrls == null) return buildSkelaton(context);
-
     return Container(
       height: height,
       alignment: .center,
@@ -26,7 +24,7 @@ class _DemoImages extends StatelessWidget {
         child: Row(
           mainAxisSize: .min,
           spacing: 12.0,
-          children: List.generate(demoImageUrls?.length ?? 0, (index) {
+          children: List.generate(demoImageUrls?.length ?? skeletonCount, (index) {
             return buildDemo(index, context);
           }),
         ),
@@ -35,7 +33,9 @@ class _DemoImages extends StatelessWidget {
   }
 
   Widget buildDemo(int index, BuildContext context) {
-    final imageUrl = demoImageUrls![index];
+    final imageUrl = demoImageUrls?.elementAtOrNull(index);
+    if (imageUrl == null) return buildLoading(context);
+
     return SpFadeIn(
       child: GestureDetector(
         onTap: () => SpImagesViewer.fromString(
@@ -51,33 +51,19 @@ class _DemoImages extends StatelessWidget {
             imageUrl: imageUrl,
             filterQuality: FilterQuality.high,
             height: height,
+            progressIndicatorBuilder: (context, url, progress) => buildLoading(context),
           ),
         ),
       ),
     );
   }
 
-  Widget buildSkelaton(BuildContext context) {
+  Container buildLoading(BuildContext context) {
     return Container(
-      alignment: .center,
-      height: height,
-      child: SingleChildScrollView(
-        scrollDirection: .horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          spacing: 12.0,
-          mainAxisAlignment: .center,
-          crossAxisAlignment: .center,
-          children: List.generate(skeletonCount, (index) {
-            return Container(
-              width: height * 0.45,
-              decoration: BoxDecoration(
-                color: ColorScheme.of(context).readOnly.surface1,
-                borderRadius: BorderRadiusGeometry.circular(8.0),
-              ),
-            );
-          }),
-        ),
+      width: height * 0.45,
+      decoration: BoxDecoration(
+        color: ColorScheme.of(context).readOnly.surface1,
+        borderRadius: BorderRadiusGeometry.circular(8.0),
       ),
     );
   }

@@ -100,6 +100,44 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     );
   }
 
+  Future<void> logSetStoryTilePreferences({
+    required bool showTime,
+    required bool showPageCount,
+    required bool showTagLabels,
+    required bool showVoiceCount,
+    required int displayCharacterCount,
+  }) async {
+    debug('logSetStoryTilePreferences', {
+      'show_time': showTime.toString(),
+      'show_page_count': showPageCount.toString(),
+      'show_tag_labels': showTagLabels.toString(),
+      'show_voice_count': showVoiceCount.toString(),
+      'display_character_count': displayCharacterCount.toString(),
+    });
+
+    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_time', value: showTime.toString());
+    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_page_count', value: showPageCount.toString());
+    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_tag_labels', value: showTagLabels.toString());
+    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_voice_count', value: showVoiceCount.toString());
+    await FirebaseAnalytics.instance.setUserProperty(name: 'list_char_count', value: displayCharacterCount.toString());
+  }
+
+  Future<void> logSetDefaultStoryPreferences({
+    required String defaultLayoutType,
+    required bool hasColorSeed,
+    required bool hasBackground,
+  }) async {
+    debug('logSetDefaultStoryPreferences', {
+      'default_layout_type': defaultLayoutType,
+      'has_color_seed': hasColorSeed.toString(),
+      'has_background': hasBackground.toString(),
+    });
+
+    await FirebaseAnalytics.instance.setUserProperty(name: 'default_default_layout', value: defaultLayoutType);
+    await FirebaseAnalytics.instance.setUserProperty(name: 'default_has_color_seed', value: hasColorSeed.toString());
+    await FirebaseAnalytics.instance.setUserProperty(name: 'default_has_background', value: hasBackground.toString());
+  }
+
   Future<void> logSetAppLogo({
     required AppLogo? newAppLogo,
   }) {

@@ -19,36 +19,38 @@ class _PaywallFeaturesContent extends StatelessWidget {
             )
           : null,
       floatingActionButtonLocation: .centerFloat,
-      floatingActionButton: Column(
-        mainAxisSize: .min,
-        mainAxisAlignment: .center,
-        crossAxisAlignment: .center,
-        spacing: 16.0,
-        children: [
-          if (!iapProvider.isProUser)
-            FloatingActionButton.extended(
-              heroTag: null,
-              backgroundColor: ColorScheme.of(context).primary,
-              foregroundColor: ColorScheme.of(context).onPrimary,
-              shape: const StadiumBorder(),
-              label: Text(
-                tr(
-                  'button.purchase_for_args',
-                  namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+      floatingActionButton: iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice != null
+          ? Column(
+              mainAxisSize: .min,
+              mainAxisAlignment: .center,
+              crossAxisAlignment: .center,
+              spacing: 16.0,
+              children: [
+                if (!iapProvider.isProUser)
+                  FloatingActionButton.extended(
+                    heroTag: null,
+                    backgroundColor: ColorScheme.of(context).primary,
+                    foregroundColor: ColorScheme.of(context).onPrimary,
+                    shape: const StadiumBorder(),
+                    label: Text(
+                      tr(
+                        'button.purchase_for_args',
+                        namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+                      ),
+                    ),
+                    icon: const Icon(SpIcons.star),
+                    onPressed: () => viewModel.purchase(context),
+                  ),
+                SpPageIndicator(
+                  controller: viewModel.pageController,
+                  pageCount: viewModel.params.features.length,
+                  maxVisiblePages: 4,
+                  activeColor: ColorScheme.of(context).primary,
+                  inactiveColor: ColorScheme.of(context).primary.withValues(alpha: 0.5),
                 ),
-              ),
-              icon: const Icon(SpIcons.star),
-              onPressed: () => viewModel.purchase(context),
-            ),
-          SpPageIndicator(
-            controller: viewModel.pageController,
-            pageCount: viewModel.params.features.length,
-            maxVisiblePages: 4,
-            activeColor: ColorScheme.of(context).primary,
-            inactiveColor: ColorScheme.of(context).primary.withValues(alpha: 0.5),
-          ),
-        ],
-      ),
+              ],
+            )
+          : null,
       body: SpPageView(
         controller: viewModel.pageController,
         itemCount: viewModel.params.features.length,
