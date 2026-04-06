@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
@@ -26,7 +27,6 @@ class StoryHeader extends StatelessWidget {
     required this.currentPageIndexNotifier,
     required this.setFeeling,
     required this.onToggleShowDayCount,
-    required this.onToggleShowTime,
     required this.onToggleManagingPage,
     required this.onChangeDate,
     required this.onSizeChange,
@@ -40,7 +40,6 @@ class StoryHeader extends StatelessWidget {
   final ValueNotifier<int?>? currentPageIndexNotifier;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function() onToggleShowDayCount;
-  final Future<void> Function() onToggleShowTime;
   final Future<void> Function(DateTime) onChangeDate;
   final void Function() onToggleManagingPage;
   final void Function(Size size) onSizeChange;
@@ -62,7 +61,6 @@ class StoryHeader extends StatelessWidget {
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
       onToggleShowDayCount: viewModel.toggleShowDayCount,
-      onToggleShowTime: viewModel.toggleShowTime,
       readOnly: false,
       dateReadOnly: viewModel.story?.eventId != null,
       onChangeDate: viewModel.changeDate,
@@ -88,7 +86,6 @@ class StoryHeader extends StatelessWidget {
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
       onToggleShowDayCount: viewModel.toggleShowDayCount,
-      onToggleShowTime: viewModel.toggleShowTime,
       readOnly: true,
       dateReadOnly: true,
       onChangeDate: viewModel.changeDate,
@@ -143,11 +140,11 @@ class StoryHeader extends StatelessWidget {
           currentPagesCount: draftContent.richPages?.length,
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           onToggleShowDayCount: onToggleShowDayCount,
-          onToggleShowTime: onToggleShowTime,
           onChangeDate: onChangeDate,
           setFeeling: setFeeling,
           onToggleManagingPage: onToggleManagingPage,
           draftActions: draftActions,
+          preferences: StoryTilePreferencesObject.editing(),
         ),
       ],
     );

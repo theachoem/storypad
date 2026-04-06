@@ -2,6 +2,8 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
@@ -10,29 +12,21 @@ part 'device_preferences_object.g.dart';
 @CopyWith()
 @JsonSerializable()
 class DevicePreferencesObject {
-  @JsonKey(name: 'font_family')
-  final String? _fontFamily;
+  final String fontFamily;
   final FontSizeOption? fontSize;
   final int? fontWeightIndex;
 
-  @JsonKey(name: 'theme_mode')
-  final ThemeMode? _themeMode;
+  final ThemeMode themeMode;
   final int? colorSeedValue;
+  final double voicePlaybackSpeed;
+  final TimeFormatOption timeFormat;
 
-  @JsonKey(name: 'voice_playback_speed')
-  final double? _voicePlaybackSpeed;
-
-  @JsonKey(name: 'time_format')
-  final TimeFormatOption? _timeFormat;
+  final StoryTilePreferencesObject storyTilePreferences;
+  final DefaultStoryPreferencesObject defaultStoryPreferences;
 
   // Add ons
   final bool? enableRelaxSounds;
   final bool? enablePeriodCalendar;
-
-  String get fontFamily => _fontFamily ?? kDefaultFontFamily;
-  ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
-  TimeFormatOption get timeFormat => _timeFormat ?? TimeFormatOption.h12;
-  double get voicePlaybackSpeed => _voicePlaybackSpeed ?? 1.0;
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
@@ -49,10 +43,14 @@ class DevicePreferencesObject {
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
     double? voicePlaybackSpeed,
-  }) : _fontFamily = fontFamily,
-       _themeMode = themeMode,
-       _timeFormat = timeFormat,
-       _voicePlaybackSpeed = voicePlaybackSpeed;
+    StoryTilePreferencesObject? storyTilePreferences,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
+  }) : fontFamily = fontFamily ?? kDefaultFontFamily,
+       themeMode = themeMode ?? ThemeMode.system,
+       timeFormat = timeFormat ?? TimeFormatOption.h12,
+       voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
+       storyTilePreferences = storyTilePreferences ?? StoryTilePreferencesObject(),
+       defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject();
 
   factory DevicePreferencesObject.initial() {
     return DevicePreferencesObject();

@@ -74,14 +74,16 @@ class _StoryPage extends StatelessWidget {
   }
 
   Widget buildEditor(BuildContext context) {
+    bool showHideTitle = readOnly && page.titleController.text.trim().isEmpty == true;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       spacing: 0.0,
       children: [
-        if (readOnly && page.titleController.text.trim().isEmpty) ...[
-          const SizedBox(height: 8),
+        if (showHideTitle) ...[
+          const SizedBox(height: 12),
         ] else ...[
           VisibilityDetector(
             key: ValueKey('page-title-${page.id}'),

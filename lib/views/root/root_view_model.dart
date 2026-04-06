@@ -10,6 +10,7 @@ class RootViewModel extends ChangeNotifier with DebounchedCallback {
   // but it is good enough for most cases. User can still click backup button manually to ensure data is backed up.
   void autoBackupWhenNavigateToHome(Route<dynamic> route, BuildContext context) {
     debouncedCallback(duration: const Duration(seconds: 1), () {
+      if (!context.mounted) return;
       if (route.settings.name == const HomeRoute().routeName) {
         final backupProvider = context.read<BackupProvider>();
         if (backupProvider.readyToSynced && !backupProvider.allYearSynced) {

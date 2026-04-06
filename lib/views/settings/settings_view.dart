@@ -13,9 +13,12 @@ import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/settings/local_widgets/color_seed_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
+import 'package:storypad/views/settings/local_widgets/default_story_preferences_tile.dart';
+import 'package:storypad/views/settings/local_widgets/story_tile_preferences_tile.dart';
 import 'package:storypad/views/settings/local_widgets/theme_mode_tile.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
+import 'package:storypad/widgets/sp_section_title.dart';
 
 import 'settings_view_model.dart';
 

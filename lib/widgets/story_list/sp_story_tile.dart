@@ -6,6 +6,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/extensions/string_extension.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
@@ -35,6 +36,7 @@ class SpStoryTile extends StatelessWidget {
   const SpStoryTile({
     super.key,
     required this.story,
+    required this.preferences,
     required this.showMonogram,
     required this.onTap,
     required this.listContext,
@@ -42,6 +44,7 @@ class SpStoryTile extends StatelessWidget {
   });
 
   final StoryDbModel story;
+  final StoryTilePreferencesObject preferences;
   final bool showMonogram;
   final bool viewOnly;
   final void Function()? onTap;
@@ -130,10 +133,10 @@ class SpStoryTile extends StatelessWidget {
     SpStoryListMultiEditWrapperState? multiEditState,
   ]) {
     StoryContentDbModel? content = story.draftContent ?? story.latestContent;
+    String? displayShortBody = content?.displayShortBody(maxCharacterCount: preferences.displayCharacterCount);
 
     bool hasTitle = content?.title?.trim().isNotEmpty == true;
-    bool hasBody = content?.displayShortBody != null && content?.displayShortBody?.trim().isNotEmpty == true;
-
+    bool hasBody = displayShortBody != null && displayShortBody.trim().isNotEmpty == true;
     List<SpPopMenuItem> menus = buildPopUpMenus(context);
 
     return SpPopupMenuButton(
@@ -185,6 +188,8 @@ class SpStoryTile extends StatelessWidget {
                       hasTitle: hasTitle,
                       content: content,
                       hasBody: hasBody,
+                      displayShortBody: displayShortBody,
+                      preferences: preferences,
                     ),
                   ],
                 ),

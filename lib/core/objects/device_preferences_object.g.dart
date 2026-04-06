@@ -25,6 +25,14 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
 
+  DevicePreferencesObject storyTilePreferences(
+    StoryTilePreferencesObject? storyTilePreferences,
+  );
+
+  DevicePreferencesObject defaultStoryPreferences(
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
+  );
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -42,6 +50,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     TimeFormatOption? timeFormat,
     int? colorSeedValue,
     double? voicePlaybackSpeed,
+    StoryTilePreferencesObject? storyTilePreferences,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   });
 }
 
@@ -90,6 +100,16 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(voicePlaybackSpeed: voicePlaybackSpeed);
 
   @override
+  DevicePreferencesObject storyTilePreferences(
+    StoryTilePreferencesObject? storyTilePreferences,
+  ) => call(storyTilePreferences: storyTilePreferences);
+
+  @override
+  DevicePreferencesObject defaultStoryPreferences(
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
+  ) => call(defaultStoryPreferences: defaultStoryPreferences);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -107,6 +127,8 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
+    Object? storyTilePreferences = const $CopyWithPlaceholder(),
+    Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
       fontFamily: fontFamily == const $CopyWithPlaceholder()
@@ -145,6 +167,15 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.voicePlaybackSpeed
           // ignore: cast_nullable_to_non_nullable
           : voicePlaybackSpeed as double?,
+      storyTilePreferences: storyTilePreferences == const $CopyWithPlaceholder()
+          ? _value.storyTilePreferences
+          // ignore: cast_nullable_to_non_nullable
+          : storyTilePreferences as StoryTilePreferencesObject?,
+      defaultStoryPreferences:
+          defaultStoryPreferences == const $CopyWithPlaceholder()
+          ? _value.defaultStoryPreferences
+          // ignore: cast_nullable_to_non_nullable
+          : defaultStoryPreferences as DefaultStoryPreferencesObject?,
     );
   }
 }
@@ -176,20 +207,32 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
+  storyTilePreferences: json['story_tile_preferences'] == null
+      ? null
+      : StoryTilePreferencesObject.fromJson(
+          json['story_tile_preferences'] as Map<String, dynamic>,
+        ),
+  defaultStoryPreferences: json['default_story_preferences'] == null
+      ? null
+      : DefaultStoryPreferencesObject.fromJson(
+          json['default_story_preferences'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$DevicePreferencesObjectToJson(
   DevicePreferencesObject instance,
 ) => <String, dynamic>{
+  'font_family': instance.fontFamily,
   'font_size': _$FontSizeOptionEnumMap[instance.fontSize],
   'font_weight_index': instance.fontWeightIndex,
+  'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
   'color_seed_value': instance.colorSeedValue,
+  'voice_playback_speed': instance.voicePlaybackSpeed,
+  'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
+  'story_tile_preferences': instance.storyTilePreferences.toJson(),
+  'default_story_preferences': instance.defaultStoryPreferences.toJson(),
   'enable_relax_sounds': instance.enableRelaxSounds,
   'enable_period_calendar': instance.enablePeriodCalendar,
-  'font_family': instance.fontFamily,
-  'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
-  'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
-  'voice_playback_speed': instance.voicePlaybackSpeed,
 };
 
 const _$FontSizeOptionEnumMap = {

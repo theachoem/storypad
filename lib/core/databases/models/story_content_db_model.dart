@@ -136,8 +136,10 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     );
   }
 
-  String? get displayShortBody {
-    return plainText != null ? MarkdownBodyShortenerService.call(plainText!.sanitizeUtf16) : null;
+  String? displayShortBody({int maxCharacterCount = 200}) {
+    return plainText != null
+        ? MarkdownBodyShortenerService.call(plainText!.sanitizeUtf16, maxCharacterCount: maxCharacterCount)
+        : null;
   }
 
   factory StoryContentDbModel.dublicate(StoryContentDbModel oldContent) {

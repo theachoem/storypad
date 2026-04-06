@@ -11,6 +11,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/types/path_type.dart';
 
 part 'story_db_model.g.dart';
@@ -123,7 +124,6 @@ class StoryDbModel extends BaseDbModel {
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences.showDayCount ?? false;
-  bool get preferredShowTime => preferences.showTime ?? false;
 
   String? get preferredFontFamily => preferences.fontFamily;
   int? get preferredFontWeightIndex => preferences.fontWeightIndex;
@@ -280,6 +280,7 @@ class StoryDbModel extends BaseDbModel {
     int? initialEventId,
     GalleryTemplateObject? galleryTemplate,
     TemplateDbModel? template,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   }) {
     List<int> tags = initialTagIds ?? template?.tags ?? [];
 
@@ -301,7 +302,8 @@ class StoryDbModel extends BaseDbModel {
       feeling: null,
       wordCount: null,
       characterCount: null,
-      preferences: template?.preferences ?? StoryPreferencesDbModel.create(),
+      preferences:
+          template?.preferences ?? defaultStoryPreferences?.toStoryPreference() ?? StoryPreferencesDbModel.create(),
       latestContent: templateContent ?? StoryContentDbModel.create(),
       draftContent: templateContent,
       updatedAt: now,

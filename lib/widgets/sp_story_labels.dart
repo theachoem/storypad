@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/feeling_object.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
@@ -38,8 +39,8 @@ class SpStoryLabels extends StatelessWidget {
   const SpStoryLabels({
     super.key,
     required this.story,
+    required this.preferences,
     required this.onToggleShowDayCount,
-    required this.onToggleShowTime,
     required this.onChangeDate,
     required this.onToggleManagingPage,
     this.setFeeling,
@@ -51,6 +52,7 @@ class SpStoryLabels extends StatelessWidget {
   });
 
   final StoryDbModel story;
+  final StoryTilePreferencesObject preferences;
 
   // sometime current pages count from current state & story is different.
   // example in edit view, there pages are store in seperated state.
@@ -66,7 +68,6 @@ class SpStoryLabels extends StatelessWidget {
   final bool fromStoryTile;
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
-  final Future<void> Function()? onToggleShowTime;
   final Future<void> Function(String? feeling)? setFeeling;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
@@ -128,7 +129,7 @@ class SpStoryLabels extends StatelessWidget {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = [];
 
-    bool showTime = story.preferredShowTime || !fromStoryTile;
+    bool showTime = preferences.showTime || !fromStoryTile;
     if (showTime) {
       children.add(
         Consumer<DevicePreferencesProvider>(
@@ -143,7 +144,8 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (voicesCount != null && voicesCount! > 0) {
+    bool showVoiceCount = preferences.showVoiceCount;
+    if (showVoiceCount && voicesCount != null && voicesCount! > 0) {
       children.add(
         buildPin(
           leadingIconData: SpIcons.voice,
@@ -155,7 +157,8 @@ class SpStoryLabels extends StatelessWidget {
     }
 
     int pageCount = currentPagesCount ?? (story.draftContent ?? story.latestContent)?.richPages?.length ?? 0;
-    if (pageCount > 1) {
+    bool showPageCount = preferences.showPageCount || !fromStoryTile;
+    if (pageCount > 1 && showPageCount) {
       children.add(
         buildPin(
           leadingIconData: SpIcons.managingPage,
@@ -194,7 +197,8 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    children.addAll(buildTags(tagProvider, context));
+    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
+    if (showTagLabels) children.addAll(buildTags(tagProvider, context));
 
     if (story.inArchives) {
       children.add(
@@ -339,7 +343,6 @@ class SpStoryLabels extends StatelessWidget {
     final newTime = await StoryTimePickerService(
       context: context,
       story: story,
-      onToggleShowTime: onToggleShowTime,
     ).showPicker();
 
     if (newTime != null) {

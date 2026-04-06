@@ -2,12 +2,15 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
 import 'edit_story_view.dart';
 
@@ -19,6 +22,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
   EditStoryViewModel({
     required this.params,
+    required BuildContext context,
   }) : super(
          initialPageScrollOffet: params.initialPageScrollOffet,
          initialPageIndex: params.initialPageIndex,
@@ -26,6 +30,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
     init(
       initialStory: params.story,
       initialPagesMap: params.pagesMap,
+      defaultStoryPreferences: context.read<DevicePreferencesProvider>().preferences.defaultStoryPreferences,
     ).then((_) => requestFocus());
   }
 
@@ -39,6 +44,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
   Future<void> init({
     StoryDbModel? initialStory,
     StoryPageObjectsMap? initialPagesMap,
+    DefaultStoryPreferencesObject? defaultStoryPreferences,
   }) async {
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
@@ -53,6 +59,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialEventId: params.initialEventId,
       galleryTemplate: params.galleryTemplate,
       template: params.template,
+      defaultStoryPreferences: defaultStoryPreferences,
     );
 
     StoryContentDbModel content = story!.generateDraftContent();

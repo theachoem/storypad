@@ -253,7 +253,7 @@ class _SyncButtonState extends State<_SyncButton> {
               setState(() {});
               await widget.viewModel.sync(context);
               syncing = false;
-              setState(() {});
+              if (mounted) setState(() {});
             },
     );
   }

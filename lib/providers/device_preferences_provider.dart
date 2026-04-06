@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/add_on_type.dart';
@@ -110,6 +112,32 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
 
     AnalyticsUserProperyService.instance.logSetTimeFormat(
       timeFormat: timeFormat,
+    );
+  }
+
+  void setStoryTilePreferences(StoryTilePreferencesObject preferences) {
+    _preferences = _preferences.copyWith(storyTilePreferences: preferences);
+    storage.writeObject(_preferences);
+    notifyListeners();
+
+    AnalyticsUserProperyService.instance.logSetStoryTilePreferences(
+      showTime: preferences.showTime,
+      showPageCount: preferences.showPageCount,
+      showTagLabels: preferences.showTagLabels,
+      showVoiceCount: preferences.showVoiceCount,
+      displayCharacterCount: preferences.displayCharacterCount,
+    );
+  }
+
+  // No need to notify listeners as it only used when create new story.
+  void setDefaultStoryPreferences(DefaultStoryPreferencesObject preferences) {
+    _preferences = _preferences.copyWith(defaultStoryPreferences: preferences);
+    storage.writeObject(_preferences);
+
+    AnalyticsUserProperyService.instance.logSetDefaultStoryPreferences(
+      defaultLayoutType: preferences.defaultLayoutType.name,
+      hasColorSeed: preferences.defaultColorSeedValue != null,
+      hasBackground: preferences.defaultBackgroundImagePath != null,
     );
   }
 
