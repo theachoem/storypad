@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
+import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/add_on_type.dart';
@@ -111,6 +112,12 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     AnalyticsUserProperyService.instance.logSetTimeFormat(
       timeFormat: timeFormat,
     );
+  }
+
+  void setStoryTilePreferences(StoryTilePreferencesObject preferences) {
+    _preferences = _preferences.copyWith(storyTilePreferences: preferences);
+    storage.writeObject(_preferences);
+    notifyListeners();
   }
 
   void toggleAddOn(AddOnType addOn, bool enabled) {

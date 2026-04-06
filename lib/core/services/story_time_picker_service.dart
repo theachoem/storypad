@@ -8,12 +8,10 @@ import 'package:storypad/widgets/sp_single_state_widget.dart';
 class StoryTimePickerService {
   final BuildContext context;
   final StoryDbModel story;
-  final Future<void> Function()? onToggleShowTime;
 
   StoryTimePickerService({
     required this.context,
     required this.story,
-    required this.onToggleShowTime,
   });
 
   Future<TimeOfDay?> showPicker() async {
@@ -43,13 +41,7 @@ class StoryTimePickerService {
           onTap: () => Navigator.maybePop(context),
           child: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: .min,
-                children: [
-                  child!,
-                  buildShowTimeOnHomeCheckBox(),
-                ],
-              ),
+              child: child!,
             ),
           ),
         );
@@ -77,7 +69,7 @@ class StoryTimePickerService {
                 removeTop: true,
                 removeBottom: false,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     _buildCupertinoNavigator(context, notifier),
                     CupertinoTimerPicker(
@@ -88,54 +80,11 @@ class StoryTimePickerService {
                       mode: CupertinoTimerPickerMode.hm,
                       onTimerDurationChanged: (duration) => notifier.value = _durationToTimeOfDay(duration),
                     ),
-                    buildShowTimeOnHomeCheckBox(),
                   ],
                 ),
               ),
             );
           },
-        );
-      },
-    );
-  }
-
-  Widget buildShowTimeOnHomeCheckBox() {
-    return SpSingleStateWidget.listen(
-      initialValue: story.preferredShowTime,
-      builder: (context, value, notifier) {
-        return Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(8.0),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8.0),
-            onTap: () {
-              if (onToggleShowTime != null) {
-                onToggleShowTime!();
-                notifier.value = !value;
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Row(
-                mainAxisAlignment: .center,
-                crossAxisAlignment: .center,
-                mainAxisSize: .min,
-                spacing: 4.0,
-                children: [
-                  Checkbox.adaptive(
-                    value: value,
-                    onChanged: (newValue) {
-                      if (onToggleShowTime != null) {
-                        onToggleShowTime!();
-                        notifier.value = newValue ?? false;
-                      }
-                    },
-                  ),
-                  Text(tr("button.show_time_on_home")),
-                ],
-              ),
-            ),
-          ),
         );
       },
     );

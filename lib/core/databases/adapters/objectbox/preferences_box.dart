@@ -8,7 +8,7 @@ import 'package:storypad/objectbox.g.dart';
 part './helpers/defined_preference.dart';
 
 class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
-  _DefinedPreference get nickname => _DefinedPreference(id: 2, key: 'nickname');
+  _DefinedPreference get nickname => _DefinedPreference<String>(id: 2, key: 'nickname');
 
   @override
   String get tableName => "preferences";

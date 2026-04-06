@@ -43,6 +43,8 @@ class _SettingsContent extends StatelessWidget {
           const ColorSeedTile(),
           if (kStoryPad) const AppIconTile(),
           const Divider(),
+          const StoryTilePreferencesTile(),
+          const Divider(),
           FontSizeTile.globalTheme(),
           FontFamilyTile.globalTheme(),
           FontWeightTile.globalTheme(),

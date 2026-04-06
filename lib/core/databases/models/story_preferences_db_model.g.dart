@@ -9,8 +9,6 @@ part of 'story_preferences_db_model.dart';
 abstract class _$StoryPreferencesDbModelCWProxy {
   StoryPreferencesDbModel showDayCount(bool? showDayCount);
 
-  StoryPreferencesDbModel showTime(bool? showTime);
-
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue);
 
   StoryPreferencesDbModel colorTone(int? colorTone);
@@ -40,7 +38,6 @@ abstract class _$StoryPreferencesDbModelCWProxy {
   /// ```
   StoryPreferencesDbModel call({
     bool? showDayCount,
-    bool? showTime,
     int? colorSeedValue,
     int? colorTone,
     String? backgroundImagePath,
@@ -65,9 +62,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
   @override
   StoryPreferencesDbModel showDayCount(bool? showDayCount) =>
       call(showDayCount: showDayCount);
-
-  @override
-  StoryPreferencesDbModel showTime(bool? showTime) => call(showTime: showTime);
 
   @override
   StoryPreferencesDbModel colorSeedValue(int? colorSeedValue) =>
@@ -119,7 +113,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
   /// ```
   StoryPreferencesDbModel call({
     Object? showDayCount = const $CopyWithPlaceholder(),
-    Object? showTime = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorTone = const $CopyWithPlaceholder(),
     Object? backgroundImagePath = const $CopyWithPlaceholder(),
@@ -136,10 +129,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
           ? _value.showDayCount
           // ignore: cast_nullable_to_non_nullable
           : showDayCount as bool?,
-      showTime: showTime == const $CopyWithPlaceholder()
-          ? _value.showTime
-          // ignore: cast_nullable_to_non_nullable
-          : showTime as bool?,
       colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
@@ -201,7 +190,6 @@ StoryPreferencesDbModel _$StoryPreferencesDbModelFromJson(
   Map<String, dynamic> json,
 ) => StoryPreferencesDbModel(
   showDayCount: json['show_day_count'] as bool?,
-  showTime: json['show_time'] as bool?,
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   colorTone: (json['color_tone'] as num?)?.toInt(),
   backgroundImagePath: json['background_image_path'] as String?,
@@ -218,7 +206,6 @@ Map<String, dynamic> _$StoryPreferencesDbModelToJson(
   StoryPreferencesDbModel instance,
 ) => <String, dynamic>{
   'show_day_count': instance.showDayCount,
-  'show_time': instance.showTime,
   'color_seed_value': instance.colorSeedValue,
   'color_tone': instance.colorTone,
   'background_image_path': instance.backgroundImagePath,

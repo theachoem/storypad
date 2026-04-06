@@ -123,7 +123,6 @@ class StoryDbModel extends BaseDbModel {
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences.showDayCount ?? false;
-  bool get preferredShowTime => preferences.showTime ?? false;
 
   String? get preferredFontFamily => preferences.fontFamily;
   int? get preferredFontWeightIndex => preferences.fontWeightIndex;

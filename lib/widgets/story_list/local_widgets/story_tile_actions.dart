@@ -222,18 +222,6 @@ class StoryTileActions {
     );
   }
 
-  Future<void> toggleShowTime() async {
-    StoryDbModel? updatedStory = await story.updatePreferences(
-      preferences: story.preferences.copyWith(showTime: !story.preferredShowTime),
-    );
-
-    if (updatedStory == null) return;
-
-    AnalyticsService.instance.logToggleShowTime(
-      story: updatedStory,
-    );
-  }
-
   Future<void> changeDate(DateTime newDateTime) async {
     final updatedStory = story.copyWith(
       year: newDateTime.year,

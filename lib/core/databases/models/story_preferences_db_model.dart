@@ -22,7 +22,6 @@ PageLayoutType _layoutTypeFromJson(dynamic layoutType) {
 @JsonSerializable()
 class StoryPreferencesDbModel extends BaseDbModel {
   final bool? showDayCount;
-  final bool? showTime;
 
   final int? colorSeedValue;
   final int? colorTone;
@@ -49,7 +48,6 @@ class StoryPreferencesDbModel extends BaseDbModel {
 
   StoryPreferencesDbModel({
     required this.showDayCount,
-    required this.showTime,
     required this.colorSeedValue,
     required this.colorTone,
     required this.backgroundImagePath,
@@ -106,7 +104,6 @@ class StoryPreferencesDbModel extends BaseDbModel {
   factory StoryPreferencesDbModel.create() {
     return StoryPreferencesDbModel(
       showDayCount: false,
-      showTime: true,
       colorSeedValue: null,
       colorTone: null,
       backgroundImagePath: null,
