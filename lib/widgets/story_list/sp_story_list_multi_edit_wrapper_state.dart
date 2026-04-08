@@ -60,7 +60,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.putBack(runCallbacks: i == selectedStories.length - 1);
+            await record?.putBack();
           }
           await HomeView.reload(debugSource: '$runtimeType#putBackAll');
         },
@@ -89,7 +89,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.moveToBin(runCallbacks: i == selectedStories.length - 1);
+            await record?.moveToBin();
           }
           await HomeView.reload(debugSource: '$runtimeType#moveToBinAll');
         },
@@ -110,7 +110,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
 
       // must run callbacks on each story since pinning changes
       // depend on individual story tile. See home view.
-      await record?.setPinned(false, runCallbacks: true);
+      await record?.setPinned(false);
     }
 
     await AnalyticsService.instance.logUnpinAllStories(count: selectedStories.length);
@@ -125,7 +125,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
 
       // must run callbacks on each story since pinning changes
       // depend on individual story tile. See home view.
-      await record?.setPinned(true, runCallbacks: true);
+      await record?.setPinned(true);
     }
 
     await AnalyticsService.instance.logPinAllStories(count: selectedStories.length);
@@ -147,7 +147,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.archive(runCallbacks: i == selectedStories.length - 1);
+            await record?.archive();
           }
 
           await HomeView.reload(debugSource: '$runtimeType#archiveAll');
@@ -179,7 +179,7 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
         future: () async {
           for (int i = 0; i < state.selectedStories.length; i++) {
             int id = state.selectedStories.elementAt(i);
-            await StoryDbModel.db.delete(id, runCallbacks: i == state.selectedStories.length - 1);
+            await StoryDbModel.db.delete(id);
           }
           await HomeView.reload(debugSource: '$runtimeType#putBackAll');
         },
