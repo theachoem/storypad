@@ -59,8 +59,12 @@ class _SettingsContent extends StatelessWidget {
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.advanced")),
-            const StoryTilePreferencesTile(),
-            const DefaultStoryPreferencesTile(),
+
+            // ignore: prefer_const_constructors, no need to make sure locals switching work.
+            StoryTilePreferencesTile(),
+
+            // ignore: prefer_const_constructors, no need to make sure locals switching work.
+            DefaultStoryPreferencesTile(),
           ],
           const SizedBox(height: 120),
         ],

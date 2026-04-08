@@ -83,7 +83,9 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
 
       this.selectedGroup = selectedGroup != null && allGroups.containsKey(selectedGroup)
           ? selectedGroup
-          : allGroups.keys.first;
+          : (context.read<InAppPurchaseProvider>().isProUser
+                ? allGroups.keys.elementAt(1)
+                : allGroups.keys.first); // default to cute when user is pro.
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

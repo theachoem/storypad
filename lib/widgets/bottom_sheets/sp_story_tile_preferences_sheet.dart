@@ -14,7 +14,6 @@ import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
@@ -150,99 +149,69 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: Text(tr("list_tile.story_tile_preferences.title")),
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
-          if (resettable)
+          if (changed)
             IconButton(
-              icon: const Icon(SpIcons.refresh),
-              onPressed: () => setState(() => storyTilePreferences = defaultStoryTilePreferences),
+              tooltip: tr("button.done"),
+              icon: Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
+              onPressed: changed ? () => Navigator.maybePop(context, storyTilePreferences) : null,
             ),
+          IconButton(
+            icon: const Icon(SpIcons.refresh),
+            onPressed: resettable ? () => setState(() => storyTilePreferences = defaultStoryTilePreferences) : null,
+          ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
       ),
-      bottomNavigationBar: Visibility(
-        visible: changed,
-        child: SpFadeIn.fromBottom(
-          child: Column(
-            mainAxisSize: .min,
-            children: [
-              const Divider(height: 1),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ).add(EdgeInsets.only(bottom: widget.bottomPadding)),
-                child: FilledButton.icon(
-                  label: Text(tr("button.save")),
-                  onPressed: () => Navigator.maybePop(context, storyTilePreferences),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
       body: ListView(
         controller: PrimaryScrollController.maybeOf(context),
         children: [
-          const SizedBox(height: 8.0),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0),
-            padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Column(
-              children: [
-                SwitchListTile.adaptive(
-                  secondary: const Icon(SpIcons.timer),
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 12.0),
-                  title: Text(tr("list_tile.show_time.title")),
-                  value: storyTilePreferences.showTime,
-                  onChanged: (value) {
-                    storyTilePreferences = storyTilePreferences.copyWith(showTime: value);
-                    setState(() {});
-                  },
-                ),
-                SwitchListTile.adaptive(
-                  secondary: const Icon(SpIcons.voice),
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 12.0),
-                  title: Text(tr("list_tile.show_voice_count.title")),
-                  value: storyTilePreferences.showVoiceCount,
-                  onChanged: (value) {
-                    storyTilePreferences = storyTilePreferences.copyWith(showVoiceCount: value);
-                    setState(() {});
-                  },
-                ),
-                SwitchListTile.adaptive(
-                  secondary: const Icon(SpIcons.tag),
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 12.0),
-                  title: Text(tr("list_tile.show_tag_labels.title")),
-                  value: storyTilePreferences.showTagLabels,
-                  onChanged: (value) {
-                    storyTilePreferences = storyTilePreferences.copyWith(showTagLabels: value);
-                    setState(() {});
-                  },
-                ),
-                SwitchListTile.adaptive(
-                  secondary: Icon(SpIcons.managingPage),
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 12.0),
-                  title: Text(tr("list_tile.show_page_count.title")),
-                  value: storyTilePreferences.showPageCount,
-                  onChanged: (value) {
-                    storyTilePreferences = storyTilePreferences.copyWith(showPageCount: value);
-                    setState(() {});
-                  },
-                ),
-                _CharacterCountSlider(
-                  preferences: storyTilePreferences,
-                  onChanged: (value) {
-                    storyTilePreferences = storyTilePreferences.copyWith(displayCharacterCount: value);
-                    setState(() {});
-                  },
-                ),
-              ],
-            ),
+          SwitchListTile.adaptive(
+            secondary: const Icon(SpIcons.timer),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_time.title")),
+            value: storyTilePreferences.showTime,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showTime: value);
+              setState(() {});
+            },
+          ),
+          SwitchListTile.adaptive(
+            secondary: const Icon(SpIcons.voice),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_voice_count.title")),
+            value: storyTilePreferences.showVoiceCount,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showVoiceCount: value);
+              setState(() {});
+            },
+          ),
+          SwitchListTile.adaptive(
+            secondary: const Icon(SpIcons.tag),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_tag_labels.title")),
+            value: storyTilePreferences.showTagLabels,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showTagLabels: value);
+              setState(() {});
+            },
+          ),
+          SwitchListTile.adaptive(
+            secondary: Icon(SpIcons.managingPage),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_page_count.title")),
+            value: storyTilePreferences.showPageCount,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showPageCount: value);
+              setState(() {});
+            },
+          ),
+          _CharacterCountSlider(
+            preferences: storyTilePreferences,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(displayCharacterCount: value);
+              setState(() {});
+            },
           ),
           const SizedBox(height: 16.0),
           SpSectionTitle(title: tr("general.preview")),
@@ -325,7 +294,7 @@ class _CharacterCountSliderState extends State<_CharacterCountSlider> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.only(left: 20.0, right: 24.0),
+          contentPadding: const EdgeInsets.only(left: 16.0, right: 24.0),
           leading: Icon(SpIcons.text),
           title: Text(tr("list_tile.preview_char_count.title")),
           trailing: Text(
