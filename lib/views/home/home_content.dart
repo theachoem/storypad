@@ -79,6 +79,7 @@ class _HomeContent extends StatelessWidget {
               onPressed: stories.isEmpty ? null : () => state.archiveAll(context),
             ),
             IconButton.outlined(
+              color: ColorScheme.of(context).error,
               tooltip: "${tr("button.move_to_bin")} (${state.selectedStories.length})",
               icon: const Icon(SpIcons.delete),
               onPressed: stories.isEmpty ? null : () => state.moveToBinAll(context),
