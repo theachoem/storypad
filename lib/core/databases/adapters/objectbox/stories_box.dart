@@ -112,12 +112,22 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   }) async {
     AppLogger.info("Triggering $tableName#getStoryCountsByYear 🍎");
 
-    List<StoryObjectBox>? stories = await buildQuery(filters: filters).build().findAsync();
+    Map<String, dynamic> filtersWithoutYear = {...filters ?? {}}
+      ..removeWhere((key, value) => key == 'year' || key == 'years');
 
-    Map<int, int>? storyCountsByYear = stories.fold<Map<int, int>>({}, (counts, story) {
-      counts[story.year] = (counts[story.year] ?? 0) + 1;
-      return counts;
-    });
+    List<int> years = (buildQuery(
+      filters: filtersWithoutYear,
+    ).build().property(StoryObjectBox_.year)..distinct = true).find();
+
+    Map<int, int> storyCountsByYear = {};
+    for (int i = 0; i < years.length; i++) {
+      storyCountsByYear[years[i]] = buildQuery(
+        filters: {
+          ...filtersWithoutYear,
+          'year': years[i],
+        },
+      ).build().count();
+    }
 
     storyCountsByYear[DateTime.now().year] ??= 0;
     return SplayTreeMap<int, int>.from(storyCountsByYear, (a, b) => b.compareTo(a));
