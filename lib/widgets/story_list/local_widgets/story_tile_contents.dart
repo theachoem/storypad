@@ -34,6 +34,17 @@ class _StoryTileContents extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (preferences.showTime) ...[
+            Consumer<DevicePreferencesProvider>(
+              builder: (context, provider, child) {
+                return Text(
+                  provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
+                  style: TextTheme.of(context).labelMedium,
+                );
+              },
+            ),
+            SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
+          ],
           if (hasTitle)
             Container(
               margin: const EdgeInsets.only(right: 16.0),

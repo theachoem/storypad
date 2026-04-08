@@ -129,7 +129,7 @@ class SpStoryLabels extends StatelessWidget {
     TagsProvider tagProvider = Provider.of<TagsProvider>(context);
     List<Widget> children = [];
 
-    bool showTime = preferences.showTime || !fromStoryTile;
+    bool showTime = !fromStoryTile;
     if (showTime) {
       children.add(
         Consumer<DevicePreferencesProvider>(

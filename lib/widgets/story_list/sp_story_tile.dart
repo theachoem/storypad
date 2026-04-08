@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -11,6 +12,7 @@ import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
