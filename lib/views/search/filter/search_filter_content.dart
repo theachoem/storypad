@@ -38,8 +38,8 @@ class _SearchFilterContent extends StatelessWidget {
         tristate: true,
         value: viewModel.searchFilter.starred,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-        secondary: const Icon(SpIcons.favorite),
-        title: Text(tr("button.star")),
+        secondary: const Icon(SpIcons.bookmark),
+        title: Text(tr("button.bookmark")),
         onChanged: (value) => viewModel.setStarred(value),
       ),
     ];

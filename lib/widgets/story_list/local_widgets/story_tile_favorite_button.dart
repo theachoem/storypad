@@ -37,7 +37,7 @@ class _StoryTileFavoriteButton extends StatelessWidget {
       initialValue: story.starred == true,
       builder: (context, notifier) {
         return IconButton(
-          tooltip: tr("button.star"),
+          tooltip: tr("button.bookmark"),
           padding: const EdgeInsets.all(16.0),
           iconSize: 18.0,
           onPressed: toggleStarred == null

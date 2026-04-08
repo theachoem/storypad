@@ -3,6 +3,7 @@ _meta.language_name,English,Arabic,German (Germany),Spanish (Latin America),Span
 _meta.native_name,English,العربية,Deutsch (Deutschland),Español (Latinoamérica),Español (España),Français (France),हिन्दी (भारत),Bahasa Indonesia,Italiano (Italia),日本語 (日本),ភាសាខ្មែរ,한국어 (대한민국),Polski (Polska),Português (Brasil),Tiếng Việt (Việt Nam),中文 (简体),Русский,Українська,Türkçe
 _formula,Formula,صيغة,Formel,Fórmula,Fórmula,Formule,FORMULA,Rumus,Formula,式,រូបមន្ត,공식,Formuła,Fórmula,Công thức,公式,Формула,Формула,Formül
 button.archive,Archive,أرشيف,Archiv,Archivo,Archivo,Archive,पुरालेख,Arsip,Archivio,アーカイブ,លាក់បឋម,보관,Archiwum,Arquivo,Lưu trữ,归档,В Архив,Архів,Arşiv
+button.bookmark,Bookmark,إضافة إلى المفضلة,Lesezeichen,Marcador,Marcador,Signet,बुकमार्क,Tandai,Segnalibro,ブックマーク,ចំណាំ,서표,Zakładka w książce,Adicionar aos favoritos,Đánh dấu trang,书签,Добавить в закладки,Закладка,Yer imi
 button.cancel,Cancel,يلغي,Stornieren,Cancelar,Cancelar,Annuler,रद्द करना,Membatalkan,Cancellare,キャンセル,បោះបង់,취소,Anulować,Cancelar,Hủy bỏ,取消,Отмена,Скасувати,İptal etmek
 button.clear,Clear,واضح,Klar,Claro,Claro,Clair,स्पष्ट,Jernih,Chiaro,初期化,ជម្រះ,초기화,Jasne,Claro,Thông thoáng,清除,Очистить,Очистити,Temizlemek
 button.connect,Connect,يتصل,Verbinden,Conectar,Conectar,Connecter,जोड़ना,Menghubungkan,Collegare,接続する,ភ្ជាប់,연결하다,Łączyć,Conectar,Kết nối,连接,Соединить,З'єднати,Bağlamak
@@ -61,7 +62,6 @@ button.show_day_count_on_home,Show days-ago label on home,إظهار ملصق ا
 button.show_time_on_home,Show time on home,عرض الوقت على الصفحة الرئيسية,Sendezeit auf der Startseite,Mostrar la hora en casa,Mostrar la hora en casa,L'heure du spectacle à la maison,घर पर समय दिखाएँ,Waktu tayang di rumah,Mostra l'ora in casa,ホームで時間を表示,បង្ហាញម៉ោងនៅផ្ទះ,홈에서 쇼타임,Pokaż czas na stronie głównej,Hora de mostrar em casa,Hiển thị thời gian trên trang chủ,在家观看节目,Sendezeit auf der Startseite,Показувати час на головній сторінці,Evde gösteri zamanı
 button.sign_out,Sign Out,تسجيل الخروج,Abmelden,Desconectar,Desconectar,Se déconnecter,साइन आउट,Keluar,Disconnessione,ログアウト,ចេញ,로그아웃,Wyloguj się,Sair,Đăng xuất,退出,Выйти,Вийти,Oturumu Kapat
 button.skip,Skip,يتخطى,Überspringen,Saltar,Saltar,Sauter,छोडना,Melewati,Saltare,スキップ,រំលង,건너뛰다,Pominąć,Pular,Nhảy,跳过,Пропустить,Пропустити,Atlamak
-button.star,Star,نجم,Stern,Estrella,Estrella,Étoile,तारा,Bintang,Stella,お気に入り,តារា,즐겨찾기,Gwiazda,Estrela,Ngôi sao,收藏,Пометить,Зірка,Yıldız
 button.stop,Stop,قف,Stoppen,Detener,Detener,Arrêt,रुकना,Berhenti,Fermare,停止,ឈប់,멈추다,Zatrzymywać się,Parar,Dừng lại,停止,Остановить,Зупинити,Durmak
 button.suggest,Suggest,يقترح,Vorschlagen,Sugerir,Sugerir,Suggérer,सुझाव देना,Menyarankan,Suggerire,提案,ណែនាំ,제안,Sugerować,Sugerir,Gợi ý,建议,Пожелать,Рекомендувати,Tavsiye etmek
 button.switch,Switch,يُحوّل,Schalten,Cambiar,Cambiar,Changer,बदलना,Mengalihkan,Interruttore,切り替え,ប្តូរ,전환,Przełącznik,Trocar,Công tắc,切换,Переключить,Перемкнути,Anahtar
