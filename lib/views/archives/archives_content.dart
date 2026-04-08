@@ -26,6 +26,7 @@ class _ArchivesContent extends StatelessWidget {
                 bottom: years == null
                     ? null
                     : TabBar(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         isScrollable: true,
                         tabAlignment: TabAlignment.start,
                         onTap: (_) => state.turnOffEditing(),
