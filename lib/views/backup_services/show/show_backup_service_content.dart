@@ -245,7 +245,9 @@ class _SyncButtonState extends State<_SyncButton> {
   Widget build(BuildContext context) {
     return FilledButton.icon(
       label: Text(tr('button.sync')),
-      icon: syncing ? const CircularProgressIndicator.adaptive() : const Icon(SpIcons.refresh),
+      icon: syncing
+          ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator.adaptive())
+          : const Icon(SpIcons.refresh),
       onPressed: syncing
           ? null
           : () async {
