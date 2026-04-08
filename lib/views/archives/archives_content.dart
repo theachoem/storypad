@@ -7,34 +7,59 @@ class _ArchivesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpStoryListMultiEditWrapper.withListener(
-      builder: (BuildContext context, SpStoryListMultiEditWrapperState state) {
-        return PopScope(
-          canPop: !state.editing,
-          onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: Scaffold(
-            appBar: AppBar(
-              title: buildTitle(context),
-              actions: [
-                buildEditButton(context, state),
-                buildMoreEditingOptionsButton(context),
-              ],
-            ),
-            bottomNavigationBar: buildBottomNavigationBar(context),
-            body: SpStoryList.withQuery(
-              key: ValueKey(viewModel.editedKey),
-              viewOnly: true,
-              filter: SearchFilterObject(
-                years: {},
-                types: {viewModel.type},
-                tagId: null,
-                assetId: null,
+    final years = viewModel.years;
+
+    return DefaultTabController(
+      length: years?.length ?? 1,
+      child: SpStoryListMultiEditWrapper.withListener(
+        builder: (BuildContext context, SpStoryListMultiEditWrapperState state) {
+          return PopScope(
+            canPop: !state.editing,
+            onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+            child: Scaffold(
+              appBar: AppBar(
+                title: buildTitle(context),
+                actions: [
+                  buildEditButton(context, state),
+                  buildMoreEditingOptionsButton(context),
+                ],
+                bottom: years == null
+                    ? null
+                    : TabBar(
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        onTap: (_) => state.turnOffEditing(),
+                        tabs: years.map((y) => Tab(text: y.toString())).toList(),
+                      ),
               ),
+              bottomNavigationBar: buildBottomNavigationBar(context),
+              body: buildBody(years),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
+  }
+
+  Widget buildBody(List<int>? years) {
+    if (years == null) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    } else {
+      return TabBarView(
+        children: years.map((year) {
+          return SpStoryList.withQuery(
+            key: ValueKey('${viewModel.editedKey}_$year'),
+            viewOnly: true,
+            filter: SearchFilterObject(
+              years: {year},
+              types: {viewModel.type},
+              tagId: null,
+              assetId: null,
+            ),
+          );
+        }).toList(),
+      );
+    }
   }
 
   Widget buildEditButton(BuildContext context, SpStoryListMultiEditWrapperState state) {
@@ -51,40 +76,11 @@ class _ArchivesContent extends StatelessWidget {
   }
 
   Widget buildTitle(BuildContext context) {
-    Widget buildType({
-      required PathType type,
-    }) {
-      return Text(
-        type.localized,
-        style: TextTheme.of(context).titleLarge?.copyWith(
-          fontWeight: FontWeight.w800,
-          color: type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: () => ArchivesRoute(
-        pathType: viewModel.type.isArchives ? PathType.bins : PathType.archives,
-      ).pushReplacement(context),
-      child: Wrap(
-        spacing: 4.0,
-        runSpacing: 4.0,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        runAlignment: WrapAlignment.center,
-        alignment: WrapAlignment.center,
-        children: [
-          SpCrossFade(
-            showFirst: viewModel.type == PathType.bins,
-            firstChild: buildType(type: PathType.bins),
-            secondChild: buildType(type: PathType.archives),
-          ),
-          Icon(
-            SpIcons.swapHoriz,
-            size: 24.0,
-            color: viewModel.type.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
-          ),
-        ],
+    return Text(
+      viewModel.params.pathType.localized,
+      style: TextTheme.of(context).titleLarge?.copyWith(
+        fontWeight: FontWeight.w800,
+        color: viewModel.params.pathType.isArchives ? ColorScheme.of(context).primary : ColorScheme.of(context).error,
       ),
     );
   }
