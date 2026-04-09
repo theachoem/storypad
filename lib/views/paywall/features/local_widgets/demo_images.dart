@@ -12,6 +12,13 @@ class _DemoImages extends StatelessWidget {
   final BuildContext context;
 
   double get height => 320.0;
+  double get width {
+    if (demoImageUrls != null && demoImageUrls!.any((url) => url.contains('backgrounds'))) {
+      return height * 1;
+    }
+
+    return height * 9 / 20;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +67,7 @@ class _DemoImages extends StatelessWidget {
 
   Container buildLoading(BuildContext context) {
     return Container(
-      width: height * 0.45,
+      width: width,
       decoration: BoxDecoration(
         color: ColorScheme.of(context).readOnly.surface1,
         borderRadius: BorderRadiusGeometry.circular(8.0),

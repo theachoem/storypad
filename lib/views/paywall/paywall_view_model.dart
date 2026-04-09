@@ -37,9 +37,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
       featureKeys[focusFeature.index].currentContext!,
       curve: Curves.ease,
       duration: Durations.medium1,
-
-      // when feature is at the top 5, align 0.0 (mostly no scroll), else align 0.5 (scroll to middle)
-      alignment: focusFeature.index < 5 ? 0.0 : 0.5,
+      alignment: 0.5,
     );
 
     Future.delayed(Durations.long2, () {
