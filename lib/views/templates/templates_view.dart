@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/storages/previously_visited_template_tab.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/templates/local_widgets/gallery_tab.dart';
@@ -27,6 +28,12 @@ class TemplatesRoute extends BaseRoute {
   final bool viewingArchives;
 
   @override
+  Future<T?> push<T extends Object?>(BuildContext context, {bool rootNavigator = false}) {
+    PreviouslyVisitedTemplateTabIndexStorage.appInstance.ensureInitialized();
+    return super.push(context, rootNavigator: rootNavigator);
+  }
+
+  @override
   Widget buildPage(BuildContext context) => TemplatesView(params: this);
 }
 
@@ -41,7 +48,7 @@ class TemplatesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<TemplatesViewModel>(
-      create: (context) => TemplatesViewModel(params: params),
+      create: (context) => TemplatesViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _TemplatesContent(viewModel);
       },

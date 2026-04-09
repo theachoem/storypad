@@ -170,7 +170,13 @@ class SpStoryTile extends StatelessWidget {
           onTap: onTap,
           onLongPressed: onLongPress,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            // color: story.day.isEven ? Colors.red : Colors.blue,
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 12.0,
+              bottom: 12.0,
+            ),
             child: Stack(
               clipBehavior: Clip.none,
               children: [

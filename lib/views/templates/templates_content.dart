@@ -21,7 +21,7 @@ class _TemplatesContent extends StatelessWidget {
 
     return DefaultTabController(
       length: 2,
-      initialIndex: context.read<InAppPurchaseProvider>().isProUser ? 0 : 1,
+      initialIndex: viewModel.initialTabIndex,
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -95,12 +95,14 @@ class _TemplatesContent extends StatelessWidget {
           params: viewModel.params,
           appBarActionsLoaderCallback: (List<IconButton> icons) {
             viewModel.appBarActionsNotifier.value = icons;
+            viewModel.setCurrentIndex(0);
           },
         ),
         GalleryTab(
           params: viewModel.params,
           appBarActionsLoaderCallback: (List<IconButton> icons) {
             viewModel.appBarActionsNotifier.value = icons;
+            viewModel.setCurrentIndex(1);
           },
         ),
       ],
