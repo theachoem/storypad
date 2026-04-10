@@ -196,8 +196,7 @@ class _ContentState extends State<_Content> {
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Divider(height: 1),
-              if (!allowMultiple) buildProBanner(context),
+              if (!allowMultiple) buildProBanner(context) else const Divider(height: 1),
               Container(
                 padding: EdgeInsets.only(
                   left: 8.0,
