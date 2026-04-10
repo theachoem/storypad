@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
@@ -20,7 +19,6 @@ import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
@@ -157,8 +155,6 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     bool setupConnection = true,
     required BuildContext context,
   }) async {
-    if (!context.read<InAppPurchaseProvider>().isProUser) return;
-
     return recheckAndSync(
       setupConnection: setupConnection,
       services: autoBackupServices,

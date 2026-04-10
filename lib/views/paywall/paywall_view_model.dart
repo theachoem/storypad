@@ -141,17 +141,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onOpen: null,
       ),
-      PaywallFeatureObject(
-        type: PaywallFeature.auto_backups,
-        title: tr('paywall_features.auto_backups.title'),
-        subtitle: tr('paywall_features.auto_backups.subtitle'),
-        iconData: SpIcons.cloudDone,
-        weekdayColor: 4,
-        demoImages: [
-          '/feature_demos/auto_backups/auto_backups_1.jpg',
-        ],
-        onOpen: null,
-      ),
     ];
 
     preloadUrls();
