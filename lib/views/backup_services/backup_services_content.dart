@@ -10,6 +10,19 @@ class _BackupServicesContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(tr('page.backups.title')),
+        actions: [
+          Consumer<BackupProvider>(
+            builder: (context, backupProvider, child) {
+              return IconButton(
+                tooltip: tr("button.refresh"),
+                onPressed: backupProvider.syncing
+                    ? null
+                    : () => backupProvider.recheckAndSync(services: viewModel.services),
+                icon: const Icon(Icons.refresh),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [

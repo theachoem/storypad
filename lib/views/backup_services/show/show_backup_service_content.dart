@@ -76,7 +76,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
         if (viewModel.params.service.currentUser != null)
           SwitchListTile.adaptive(
             value: viewModel.params.service.autoBackupEnabled,
-            title: Text(tr('paywall_features.auto_backups.title')),
+            title: Text(tr('list_tile.auto_backups.title')),
             onChanged: (value) {
               viewModel.setAutoBackupEnabled(context, value);
             },

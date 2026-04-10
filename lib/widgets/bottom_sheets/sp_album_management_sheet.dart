@@ -62,29 +62,47 @@ class _ContentState extends State<_Content> {
     return Scaffold(
       appBar: AppBar(
         leading: CloseButton(onPressed: () => Navigator.maybePop(context)),
-        actions: [
-          IconButton(
-            icon: Icon(SpIcons.addPhoto, color: ColorScheme.of(context).primary),
-            onPressed: () async {
-              if (_paths.length >= 2 && !context.read<InAppPurchaseProvider>().isProUser) {
-                const PaywallRoute(initialFocus: .image_album).push(context);
-                return;
-              }
+      ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Divider(height: 1),
+          Container(
+            padding: EdgeInsets.only(
+              left: 8.0,
+              top: 8.0,
+              bottom: MediaQuery.of(context).padding.bottom + 8.0,
+              right: 16.0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 8.0,
+              children: [
+                IconButton.outlined(
+                  icon: Icon(SpIcons.addPhoto, color: ColorScheme.of(context).primary),
+                  onPressed: () async {
+                    if (_paths.length >= 2 && !context.read<InAppPurchaseProvider>().isProUser) {
+                      const PaywallRoute(initialFocus: .image_album).push(context);
+                      return;
+                    }
 
-              final picked = await SpImagePickerBottomSheet.showAlbumPicker(context: context);
-              if (picked != null && picked.isNotEmpty) {
-                setState(() {
-                  _paths = {
-                    ..._paths,
-                    ...picked.map((a) => a.relativeLocalFilePath),
-                  }.toList();
-                });
-              }
-            },
-          ),
-          IconButton(
-            icon: Icon(SpIcons.save, color: ColorScheme.of(context).primary),
-            onPressed: () => Navigator.pop(context, _paths.toSet().toList()),
+                    final picked = await SpImagePickerBottomSheet.showAlbumPicker(context: context);
+                    if (picked != null && picked.isNotEmpty) {
+                      setState(() {
+                        _paths = {
+                          ..._paths,
+                          ...picked.map((a) => a.relativeLocalFilePath),
+                        }.toList();
+                      });
+                    }
+                  },
+                ),
+                IconButton.filled(
+                  icon: const Icon(SpIcons.save),
+                  onPressed: () => Navigator.pop(context, _paths.toSet().toList()),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -146,7 +164,7 @@ class _ContentState extends State<_Content> {
                   ),
                 ReorderableDragStartListener(
                   index: index,
-                  child: const Icon(Icons.drag_handle),
+                  child: const Icon(SpIcons.dragIndicator),
                 ),
               ],
             ),

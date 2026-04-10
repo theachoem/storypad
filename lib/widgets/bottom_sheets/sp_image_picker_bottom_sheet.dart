@@ -24,10 +24,7 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
     required this.assets,
-    required this.allowMultiple,
   });
-
-  final bool allowMultiple;
 
   @override
   bool get fullScreen => true;
@@ -76,7 +73,6 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
     final pickAssets = await SpImagePickerBottomSheet(
       assets: assets,
-      allowMultiple: context.read<InAppPurchaseProvider>().isProUser,
     ).show(context: context);
 
     if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
@@ -105,7 +101,6 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
     final result = await SpImagePickerBottomSheet(
       assets: assets,
-      allowMultiple: context.read<InAppPurchaseProvider>().isProUser,
     ).show(context: context);
 
     return result is List<AssetDbModel> ? result : null;
@@ -144,7 +139,8 @@ class _Content extends StatefulWidget {
 
 class _ContentState extends State<_Content> {
   List<AssetDbModel> get assets => widget.params.assets;
-  bool get allowMultiple => widget.params.allowMultiple;
+
+  bool get allowMultiple => context.read<InAppPurchaseProvider>().isProUser;
 
   Map<int, AssetDbModel> selectedAssets = {};
 
@@ -201,7 +197,7 @@ class _ContentState extends State<_Content> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(height: 1),
-              if (!context.read<InAppPurchaseProvider>().isProUser) buildProBanner(context),
+              if (!allowMultiple) buildProBanner(context),
               Container(
                 padding: EdgeInsets.only(
                   left: 8.0,

@@ -45,7 +45,7 @@ Albums reuse the existing `"image"` embed key with pipe-delimited (`|`) paths:
 | `lib/widgets/bottom_sheets/sp_album_management_sheet.dart`                    | Reorder, delete, add, preview photos             |
 | `lib/core/rich_text/flutter_quill/custom_embeds/quill_image_block_embed.dart` | Quill embed renderer (single + album)            |
 | `lib/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart`                 | Image picker, joins paths with `\|`              |
-| `lib/core/services/asset_link_parser.dart`                                    | Splits on `\|` when extracting asset IDs/sources |
+| `lib/core/services/assets/asset_link_parser.dart`                             | Splits on `\|` when extracting asset IDs/sources |
 | `lib/core/services/quill/quill_delta_to_plain_text_service.dart`              | Splits on `\|` for markdown export               |
 
 ## User Flow

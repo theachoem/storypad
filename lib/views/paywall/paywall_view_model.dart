@@ -62,6 +62,19 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         onOpen: null,
       ),
       PaywallFeatureObject(
+        type: PaywallFeature.image_album,
+        title: tr('paywall_features.image_album.title'),
+        subtitle: tr('paywall_features.image_album.subtitle'),
+        iconData: SpIcons.photo,
+        weekdayColor: 4,
+        demoImages: [
+          '/feature_demos/image_album/image_album_1.jpg',
+          '/feature_demos/image_album/image_album_2.jpg',
+          '/feature_demos/image_album/image_album_3.jpg',
+        ],
+        onOpen: null,
+      ),
+      PaywallFeatureObject(
         type: PaywallFeature.voice_journal,
         title: tr('paywall_features.voice_journal.title'),
         subtitle: tr('paywall_features.voice_journal.subtitle'),
@@ -87,20 +100,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/templates/template_4.jpg',
         ],
         onOpen: (BuildContext context) => const TemplatesRoute().push(context),
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.relax_sounds,
-        title: tr('paywall_features.relax_sounds.title'),
-        subtitle: tr('paywall_features.relax_sounds.subtitle'),
-        iconData: SpIcons.musicNote,
-        weekdayColor: 4,
-        demoImages: [
-          '/feature_demos/relax_sounds/relax_sound_1.jpg',
-          '/feature_demos/relax_sounds/relax_sound_2.jpg',
-          '/feature_demos/relax_sounds/relax_sound_3.jpg',
-          '/feature_demos/relax_sounds/relax_sound_4.jpg',
-        ],
-        onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
       ),
       PaywallFeatureObject(
         type: PaywallFeature.markdown_export,
@@ -140,6 +139,20 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/pinned_notes/pinned_notes_2.jpg',
         ],
         onOpen: null,
+      ),
+      PaywallFeatureObject(
+        type: PaywallFeature.relax_sounds,
+        title: tr('paywall_features.relax_sounds.title'),
+        subtitle: tr('paywall_features.relax_sounds.subtitle'),
+        iconData: SpIcons.musicNote,
+        weekdayColor: 4,
+        demoImages: [
+          '/feature_demos/relax_sounds/relax_sound_1.jpg',
+          '/feature_demos/relax_sounds/relax_sound_2.jpg',
+          '/feature_demos/relax_sounds/relax_sound_3.jpg',
+          '/feature_demos/relax_sounds/relax_sound_4.jpg',
+        ],
+        onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
       ),
     ];
 
