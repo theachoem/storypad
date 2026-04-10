@@ -105,21 +105,13 @@ class QuillRichTextAdapter implements RichTextAdapter {
     required RichTextController controller,
     required String imagePath,
   }) {
-    if (controller is! QuillRichTextController) {
-      throw ArgumentError('Controller must be a QuillRichTextController');
-    }
-
-    final quillController = controller.quillController;
-    final index = quillController.selection.baseOffset;
-    final length = quillController.selection.extentOffset - index;
-
-    quillController.replaceText(
-      index,
-      length,
-      quill.BlockEmbed.image(imagePath),
-      null,
+    controller.insertEmbed(
+      embedType: quill.BlockEmbed.imageType,
+      value: imagePath,
+      attributes: {
+        _EmbedSizeAttribute.maxSize.key: _EmbedSizeAttribute.maxSize.value,
+      },
     );
-    quillController.moveCursorToPosition(index + 1);
   }
 
   @override
@@ -127,22 +119,9 @@ class QuillRichTextAdapter implements RichTextAdapter {
     required RichTextController controller,
     required String audioPath,
   }) {
-    if (controller is! QuillRichTextController) {
-      throw ArgumentError('Controller must be a QuillRichTextController');
-    }
-
-    final quillController = controller.quillController;
-    final index = quillController.selection.baseOffset;
-    final length = quillController.selection.extentOffset - index;
-
-    final audioEmbed = quill.BlockEmbed('audio', audioPath);
-
-    quillController.replaceText(
-      index,
-      length,
-      audioEmbed,
-      null,
+    controller.insertEmbed(
+      embedType: 'audio',
+      value: audioPath,
     );
-    quillController.moveCursorToPosition(index + 1);
   }
 }

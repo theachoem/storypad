@@ -151,17 +151,20 @@ class QuillDeltaToPlainTextService {
 
         if (embedType == 'image' || embedType == 'audio') {
           if (includeMarkdownEmbeds) {
-            final url = insert[embedType].toString();
+            final raw = insert[embedType].toString();
+            final urls = raw.split('|').where((s) => s.isNotEmpty);
 
-            if (AssetType.values
-                .map((e) => e.subDirectory)
-                .any((subDirectory) => url.startsWith(subDirectory.relativePath))) {
-              // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
-              // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
-              currentLineText += '![$embedType]($embedRelativePath$url)';
-            } else {
-              // Markdown image syntax: ![alt text](url)
-              currentLineText += '![$embedType]($url)';
+            for (final url in urls) {
+              if (AssetType.values
+                  .map((e) => e.subDirectory)
+                  .any((subDirectory) => url.startsWith(subDirectory.relativePath))) {
+                // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
+                // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
+                currentLineText += '![$embedType]($embedRelativePath$url)';
+              } else {
+                // Markdown image syntax: ![alt text](url)
+                currentLineText += '![$embedType]($url)';
+              }
             }
           }
           // Skip images and audio - don't include in text output

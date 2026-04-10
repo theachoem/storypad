@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/services/asset_file_matcher_service.dart';
+import 'package:storypad/core/services/assets/asset_file_matcher_service.dart';
 
 void main() {
   group('AssetFileMatcherService', () {

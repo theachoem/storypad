@@ -6,11 +6,11 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/rich_text/rich_text.dart';
-import 'package:storypad/core/services/retrieve_lost_photo_service.dart';
+import 'package:storypad/core/services/assets/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
-import 'package:storypad/core/services/insert_file_to_db_service.dart';
+import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -70,16 +70,32 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       assets: assets,
     ).show(context: context);
 
-    if (pickAssets is List<AssetDbModel>) {
-      for (AssetDbModel pickAsset in pickAssets) {
-        editorAdapter.insertImage(
-          controller: controller,
-          imagePath: pickAsset.relativeLocalFilePath,
-        );
-      }
+    if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
+      // Image embed support multiple images by joining paths with '|', and parsing them in the embed builder.
+      // See docs/features/album-embed.md for details.
+      final imagePath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
+
+      editorAdapter.insertImage(
+        controller: controller,
+        imagePath: imagePath,
+      );
 
       AnalyticsService.instance.logInsertNewPhoto();
     }
+  }
+
+  static Future<List<AssetDbModel>?> pickImages({
+    required BuildContext context,
+  }) async {
+    await RetrieveLostPhotoService.call();
+
+    final assets = await AssetDbModel.db
+        .where(filters: {'type': AssetType.image})
+        .then((e) => e?.items ?? <AssetDbModel>[]);
+    if (!context.mounted) return null;
+
+    final result = await SpImagePickerBottomSheet(assets: assets).show(context: context);
+    return result is List<AssetDbModel> ? result : null;
   }
 
   Future<void> _insertFromPhotoLibrary(BuildContext context) async {

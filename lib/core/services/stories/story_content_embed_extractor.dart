@@ -1,5 +1,5 @@
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/services/asset_link_parser.dart';
+import 'package:storypad/core/services/assets/asset_link_parser.dart';
 
 /// Extract embed sources from story content.
 ///

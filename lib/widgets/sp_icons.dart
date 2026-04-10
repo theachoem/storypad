@@ -80,6 +80,7 @@ class SpIcons {
   static const IconData fontSize = kIsCupertino ? CupertinoIcons.textformat_size : Icons.format_size_outlined;
   static const IconData warning = kIsCupertino ? CupertinoIcons.exclamationmark : Icons.error_outline;
   static const IconData refresh = kIsCupertino ? CupertinoIcons.refresh : Icons.refresh;
+  static const IconData reorder = kIsCupertino ? CupertinoIcons.arrow_up_arrow_down : Icons.reorder;
   static const IconData calendar = kIsCupertino ? CupertinoIcons.calendar : Icons.calendar_month;
   static const IconData history = kIsCupertino ? CupertinoIcons.time : Icons.history_outlined;
   static const IconData home = kIsCupertino ? CupertinoIcons.home : Icons.home_outlined;
@@ -110,6 +111,8 @@ class SpIcons {
   static const IconData timer = kIsCupertino ? CupertinoIcons.timer : Icons.timer_outlined;
   static const IconData lightBulb = kIsCupertino ? CupertinoIcons.lightbulb : Icons.lightbulb_outline;
   static const IconData zoomInMap = kIsCupertino ? CupertinoIcons.rectangle_expand_vertical : Icons.zoom_in_map;
+  static const IconData zoomIn = kIsCupertino ? CupertinoIcons.zoom_in : Icons.zoom_in_outlined;
+  static const IconData zoomOut = kIsCupertino ? CupertinoIcons.zoom_out : Icons.zoom_out_outlined;
   static const IconData addOns = kIsCupertino ? CupertinoIcons.square_grid_2x2 : Icons.grid_view_rounded;
   static const IconData verifiedFilled = !kIsCupertino ? CupertinoIcons.checkmark_seal_fill : Icons.verified;
   static const IconData gift = kIsCupertino ? CupertinoIcons.gift : Icons.card_giftcard_outlined;

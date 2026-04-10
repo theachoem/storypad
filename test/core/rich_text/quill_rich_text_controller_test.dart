@@ -188,6 +188,67 @@ void main() {
       expect(hasImage, isTrue);
     });
 
+    test('insertEmbed inserts embed with attributes at cursor', () {
+      final controller = QuillRichTextController.fromJson(
+        json: [
+          {'insert': 'Hello'},
+          {'insert': '\n'},
+        ],
+        selection: const TextSelection.collapsed(offset: 5),
+        readOnly: false,
+      );
+
+      controller.insertEmbed(
+        embedType: 'image',
+        value: 'images/2.jpg|images/3.jpg',
+        attributes: {
+          'custom-embed-alignment': 'left',
+          'custom-embed-size': 'max',
+        },
+      );
+
+      final serialized = controller.serialize();
+      final embedOp = serialized.firstWhere((op) => op['insert'] is Map && op['insert']['image'] != null);
+      expect(embedOp['insert'], {'image': 'images/2.jpg|images/3.jpg'});
+      expect(embedOp['attributes'], {
+        'custom-embed-alignment': 'left',
+        'custom-embed-size': 'max',
+      });
+    });
+
+    test('replaceEmbed preserves existing attributes', () {
+      final controller = QuillRichTextController.fromJson(
+        json: [
+          {
+            'insert': {'image': 'images/1.jpg'},
+            'attributes': {
+              'custom-embed-alignment': 'left',
+              'custom-embed-size': 'max',
+            },
+          },
+          {'insert': '\n'},
+        ],
+        selection: const TextSelection.collapsed(offset: 0),
+        readOnly: false,
+      );
+
+      controller.replaceEmbed(
+        offset: 0,
+        length: 1,
+        embedType: 'image',
+        value: 'images/2.jpg|images/3.jpg',
+      );
+
+      final serialized = controller.serialize();
+      expect(serialized[0]['insert'], {
+        'image': 'images/2.jpg|images/3.jpg',
+      });
+      expect(serialized[0]['attributes'], {
+        'custom-embed-alignment': 'left',
+        'custom-embed-size': 'max',
+      });
+    });
+
     test('selection getter returns current selection', () {
       final controller = QuillRichTextController.fromJson(
         json: [

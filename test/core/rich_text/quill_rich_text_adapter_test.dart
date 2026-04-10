@@ -300,16 +300,29 @@ void main() {
         expect(controller.selection.baseOffset, equals(5));
       });
 
-      test('throws ArgumentError if controller is not QuillRichTextController', () {
-        final mockController = _MockRichTextController();
-
-        expect(
-          () => adapter.insertImage(
-            controller: mockController,
-            imagePath: 'images/test.jpg',
-          ),
-          throwsA(isA<ArgumentError>()),
+      test('applies max-size attribute by default on first insert', () {
+        final controller = adapter.createController(
+          json: [
+            {'insert': 'Test'},
+            {'insert': '\n'},
+          ],
+          selection: const TextSelection.collapsed(offset: 4),
+          readOnly: false,
         );
+
+        adapter.insertImage(
+          controller: controller,
+          imagePath: 'images/test.jpg',
+        );
+
+        final serialized = controller.serialize();
+        final imageOp = serialized.firstWhere((op) {
+          final insert = op['insert'];
+          return insert is Map && insert['image'] == 'images/test.jpg';
+        });
+
+        expect(imageOp['attributes'], isA<Map>());
+        expect(imageOp['attributes']['custom-embed-size'], equals('max'));
       });
 
       test('handles various image paths correctly', () {
@@ -400,18 +413,6 @@ void main() {
 
         // Cursor should be after the audio (position 5: "Test" + audio)
         expect(controller.selection.baseOffset, equals(5));
-      });
-
-      test('throws ArgumentError if controller is not QuillRichTextController', () {
-        final mockController = _MockRichTextController();
-
-        expect(
-          () => adapter.insertAudio(
-            controller: mockController,
-            audioPath: 'audio/test.m4a',
-          ),
-          throwsA(isA<ArgumentError>()),
-        );
       });
 
       test('handles various audio paths correctly', () {
@@ -567,4 +568,14 @@ class _MockRichTextController extends RichTextController {
 
   @override
   List serialize() => throw UnimplementedError();
+
+  @override
+  void insertEmbed({required String embedType, required String value, Map<String, dynamic>? attributes}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void replaceEmbed({required int offset, required int length, required String embedType, required String value}) {
+    throw UnimplementedError();
+  }
 }

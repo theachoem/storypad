@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
-import 'package:storypad/core/services/asset_file_matcher_service.dart';
+import 'package:storypad/core/services/assets/asset_file_matcher_service.dart';
 import 'package:storypad/core/storages/base_object_storages/bool_storage.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 

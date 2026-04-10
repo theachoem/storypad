@@ -12,12 +12,14 @@ class SpImage extends StatelessWidget {
     required this.link,
     required this.width,
     required this.height,
+    this.fit = BoxFit.cover,
     this.errorWidget,
   });
 
   final String link;
   final double? width;
   final double? height;
+  final BoxFit? fit;
   final LoadingErrorWidgetBuilder? errorWidget;
 
   double get defaultSize => 50;
@@ -50,7 +52,7 @@ class SpImage extends StatelessWidget {
             file,
             width: width,
             height: height,
-            fit: BoxFit.fitWidth,
+            fit: fit ?? BoxFit.fitWidth,
             cacheWidth: width != null && width != double.infinity
                 ? (width! * MediaQuery.of(context).devicePixelRatio).round()
                 : null,
@@ -65,14 +67,14 @@ class SpImage extends StatelessWidget {
         cacheWidth: width != null && width != double.infinity
             ? (width! * MediaQuery.of(context).devicePixelRatio).round()
             : null,
-        fit: BoxFit.cover,
+        fit: fit ?? BoxFit.cover,
       );
     } else if (link.startsWith('http')) {
       return CachedNetworkImage(
         imageUrl: link,
         width: width,
         height: height,
-        fit: BoxFit.cover,
+        fit: fit ?? BoxFit.cover,
         memCacheWidth: width != null && width != double.infinity
             ? (width! * MediaQuery.of(context).devicePixelRatio).round()
             : null,
@@ -89,7 +91,7 @@ class SpImage extends StatelessWidget {
         File(link),
         width: width,
         height: height,
-        fit: BoxFit.cover,
+        fit: fit ?? BoxFit.cover,
         cacheWidth: width != null && width != double.infinity
             ? (width! * MediaQuery.of(context).devicePixelRatio).round()
             : null,
