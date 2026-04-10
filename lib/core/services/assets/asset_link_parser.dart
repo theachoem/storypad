@@ -35,9 +35,12 @@ class AssetLinkParser {
       final insert = node['insert'] as Map;
       for (final value in insert.values) {
         if (value is String) {
-          final assetId = value.split("/").last.split(".").first;
-          final assetIdInt = int.tryParse(assetId);
-          if (assetIdInt != null) ids.add(assetIdInt);
+          for (final path in value.split('|')) {
+            if (path.isEmpty) continue;
+            final assetId = path.split("/").last.split(".").first;
+            final assetIdInt = int.tryParse(assetId);
+            if (assetIdInt != null) ids.add(assetIdInt);
+          }
         }
       }
     }
@@ -85,11 +88,13 @@ class AssetLinkParser {
 
       final insert = node['insert'] as Map;
       if (insert[embedType] is String) {
-        final path = insert[embedType] as String;
-        // Include: local asset paths (images/, audio/) or external URLs (http://, https://)
-        // Exclude: empty strings and other invalid values
-        if (path.isNotEmpty) {
-          links.add(path);
+        final raw = insert[embedType] as String;
+        for (final path in raw.split('|')) {
+          // Include: local asset paths (images/, audio/) or external URLs (http://, https://)
+          // Exclude: empty strings and other invalid values
+          if (path.isNotEmpty) {
+            links.add(path);
+          }
         }
       }
     }

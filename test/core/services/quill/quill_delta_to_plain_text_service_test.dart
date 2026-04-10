@@ -169,6 +169,70 @@ void main() {
         // The default toPlainText for unknown embeds is the unicode object replacement char
         expect(result, '\uFFFC\n');
       });
+
+      group('Album embed (pipe-delimited format)', () {
+        test('single image embed is unchanged with includeMarkdownEmbeds=true', () {
+          const delta = '[{"insert":{"image":"images/1.jpg"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+          );
+          expect(result, '![image](images/1.jpg)\n');
+        });
+
+        test('album embed emits one markdown entry per image', () {
+          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg|images/3.jpg"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+          );
+          expect(result, '![image](images/1.jpg)![image](images/2.jpg)![image](images/3.jpg)\n');
+        });
+
+        test('album embed with embedRelativePath prefix applies to each image', () {
+          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+            embedRelativePath: '../',
+          );
+          expect(result, '![image](../images/1.jpg)![image](../images/2.jpg)\n');
+        });
+
+        test('album embed with external URLs is not prefixed', () {
+          const delta = '[{"insert":{"image":"https://a.com/1.jpg|https://b.com/2.jpg"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+            embedRelativePath: '../',
+          );
+          expect(result, '![image](https://a.com/1.jpg)![image](https://b.com/2.jpg)\n');
+        });
+
+        test('album embed without includeMarkdownEmbeds produces only newline', () {
+          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: false,
+          );
+          expect(result, '\n');
+        });
+
+        test('trailing pipe in album embed is ignored', () {
+          const delta = '[{"insert":{"image":"images/1.jpg|"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+          );
+          expect(result, '![image](images/1.jpg)\n');
+        });
+      });
     });
 
     group('Complex Document', () {

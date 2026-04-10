@@ -7,7 +7,7 @@ import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
-import 'package:storypad/core/services/asset_orphaned_fixer_service.dart';
+import 'package:storypad/core/services/assets/asset_orphaned_fixer_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/computed_initial_tags_for_assets_storage.dart';
 

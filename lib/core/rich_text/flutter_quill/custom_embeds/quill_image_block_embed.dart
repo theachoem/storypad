@@ -39,21 +39,39 @@ class _QuillImageRenderer extends StatelessWidget {
   final bool readOnly;
   final List<String> Function() fetchAllImages;
 
+  static List<String> _parsePaths(String value) => value.split('|').where((s) => s.isNotEmpty).toList();
+
   void remove() {
     if (readOnly) return;
+    controller.replaceText(node.documentOffset, node.length, '', controller.selection);
+  }
 
-    controller.replaceText(
-      node.documentOffset,
-      node.length,
-      '',
-      controller.selection,
+  void _updatePaths(List<String> newPaths) {
+    if (readOnly) return;
+    if (newPaths.isEmpty) {
+      remove();
+      return;
+    }
+
+    final op = node.toDelta().operations.first;
+    final attributes = op.attributes == null ? null : Map<String, dynamic>.from(op.attributes!);
+    final delta = QuillRichTextController._buildEmbedDelta(
+      embedType: quill.BlockEmbed.imageType,
+      value: newPaths.join('|'),
+      attributes: attributes,
     );
+    controller.replaceText(node.documentOffset, node.length, delta, controller.selection);
   }
 
   @override
   Widget build(BuildContext context) {
-    String link = node.value.data;
+    final List<String> paths = _parsePaths(node.value.data);
+    if (paths.length > 1) return _buildAlbum(context, paths);
+    final String link = paths.isNotEmpty ? paths.first : node.value.data;
+    return _buildSingle(context, link);
+  }
 
+  Widget _buildSingle(BuildContext context, String link) {
     return LayoutBuilder(
       builder: (context, constraints) {
         double? width;
@@ -117,8 +135,51 @@ class _QuillImageRenderer extends StatelessWidget {
     );
   }
 
+  Widget _buildAlbum(BuildContext context, List<String> paths) {
+    final isMaxSize = _EmbedSizeAttribute.maxSize.hasApplied(node);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double? maxWidth;
+        if (!isMaxSize) {
+          if (layoutType == PageLayoutType.grid) {
+            maxWidth = MediaQuery.textScalerOf(context).scale(180);
+          } else {
+            maxWidth = MediaQuery.textScalerOf(context).scale(300);
+          }
+        }
+
+        return Container(
+          width: double.infinity,
+          alignment:
+              _EmbedAlignmentAttribute.toAlignment(node) ??
+              AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
+          child: Stack(
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
+                child: SpAlbumGrid(
+                  paths: paths,
+                  onTap: readOnly ? (index) => _viewImageAt(context, paths, index) : null,
+                ),
+              ),
+              if (!readOnly)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: buildMoreVertButton(context),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget buildMoreVertButton(BuildContext context) {
-    List<IconButton> buttons = [
+    final paths = _parsePaths(node.value.data);
+    final isAlbum = paths.length > 1;
+
+    final List<IconButton> buttons = [
       IconButton(
         isSelected: _EmbedAlignmentAttribute.left.hasApplied(node),
         icon: const Icon(Icons.format_align_left),
@@ -141,8 +202,17 @@ class _QuillImageRenderer extends StatelessWidget {
             : () => _EmbedAlignmentAttribute.right.toggle(controller, node),
       ),
       IconButton(
-        icon: const Icon(SpIcons.zoomInMap),
+        icon: Icon(_EmbedSizeAttribute.maxSize.hasApplied(node) ? SpIcons.zoomOut : SpIcons.zoomIn),
         onPressed: () => _EmbedSizeAttribute.toggle(controller, node),
+      ),
+
+      IconButton(
+        icon: isAlbum ? const Icon(SpIcons.edit) : const Icon(SpIcons.addPhoto),
+        onPressed: () async {
+          final result = await SpAlbumManagementSheet(paths: paths).show<List<String>?>(context: context);
+          if (!context.mounted) return;
+          if (result is List<String>) _updatePaths(result);
+        },
       ),
       IconButton(
         color: ColorScheme.of(context).error,
@@ -151,7 +221,7 @@ class _QuillImageRenderer extends StatelessWidget {
       ),
     ];
 
-    int rowCount = (buttons.length / 4).ceilToDouble().toInt();
+    int rowCount = (buttons.length / 3).ceilToDouble().toInt();
 
     double itemSize = 48;
     double padding = 4.0;
@@ -235,5 +305,14 @@ class _QuillImageRenderer extends StatelessWidget {
         context: context,
       ).show(context);
     }
+  }
+
+  Future<void> _viewImageAt(BuildContext context, List<String> paths, int index) async {
+    Feedback.forTap(context);
+    SpImagesViewer.fromString(
+      images: paths,
+      initialIndex: index,
+      context: context,
+    ).show(context);
   }
 }

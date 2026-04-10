@@ -50,4 +50,35 @@ abstract class RichTextController extends ChangeNotifier {
   ///
   /// Returns format compatible with [RichTextDocument.fromJson()]
   List<dynamic> serialize();
+
+  // ========================================================================
+  // Embed Operations
+  // ========================================================================
+
+  /// Inserts an embed at the current cursor position.
+  ///
+  /// [embedType]: The embed type key (e.g., 'image', 'audio')
+  /// [value]: The embed value (e.g., file path or pipe-delimited paths)
+  /// [attributes]: Optional formatting attributes to apply (e.g., size, alignment)
+  void insertEmbed({
+    required String embedType,
+    required String value,
+    Map<String, dynamic>? attributes,
+  });
+
+  /// Replaces an embed's data at [offset] while preserving its existing attributes.
+  ///
+  /// This is used when the embed value changes (e.g., album paths updated)
+  /// but the formatting (alignment, size) should be kept.
+  ///
+  /// [offset]: The document offset of the embed
+  /// [length]: The length of the embed (typically 1)
+  /// [embedType]: The embed type key (e.g., 'image')
+  /// [value]: The new embed value
+  void replaceEmbed({
+    required int offset,
+    required int length,
+    required String embedType,
+    required String value,
+  });
 }

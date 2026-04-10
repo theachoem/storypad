@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill/quill_delta.dart' as quill_delta;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
@@ -25,10 +26,12 @@ import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
+import 'package:storypad/widgets/sp_album_grid.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
@@ -151,6 +154,71 @@ class QuillRichTextController extends RichTextController {
     _quillController.removeListener(_onQuillControllerChanged);
     _quillController.dispose();
     super.dispose();
+  }
+
+  // ========================================================================
+  // Embed Operations
+  // ========================================================================
+
+  @override
+  void insertEmbed({
+    required String embedType,
+    required String value,
+    Map<String, dynamic>? attributes,
+  }) {
+    final index = _quillController.selection.baseOffset;
+    final length = _quillController.selection.extentOffset - index;
+
+    final delta = _buildEmbedDelta(
+      embedType: embedType,
+      value: value,
+      attributes: attributes,
+    );
+
+    _quillController.replaceText(index, length, delta, null);
+    _quillController.moveCursorToPosition(index + 1);
+  }
+
+  @override
+  void replaceEmbed({
+    required int offset,
+    required int length,
+    required String embedType,
+    required String value,
+  }) {
+    final line = _quillController.document.queryChild(offset).node;
+    Map<String, dynamic>? attributes;
+
+    if (line is quill.Line) {
+      for (final child in line.children) {
+        if (child is quill.Embed && child.documentOffset == offset) {
+          final op = child.toDelta().operations.first;
+          attributes = op.attributes == null ? null : Map<String, dynamic>.from(op.attributes!);
+          break;
+        }
+      }
+    }
+
+    final delta = _buildEmbedDelta(
+      embedType: embedType,
+      value: value,
+      attributes: attributes,
+    );
+
+    _quillController.replaceText(offset, length, delta, _quillController.selection);
+  }
+
+  static quill_delta.Delta _buildEmbedDelta({
+    required String embedType,
+    required String value,
+    Map<String, dynamic>? attributes,
+  }) {
+    return quill_delta.Delta.fromJson([
+      {
+        'insert': {embedType: value},
+        if (attributes != null && attributes.isNotEmpty) 'attributes': Map<String, dynamic>.from(attributes),
+      },
+    ]);
   }
 }
 

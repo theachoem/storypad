@@ -10,7 +10,7 @@ enum PaywallFeature {
   templates,
   writing_stats,
   backgrounds,
-  auto_backups,
+  image_album,
 }
 
 class PaywallFeatureObject {
