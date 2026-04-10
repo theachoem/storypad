@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/assets/retrieve_lost_photo_service.dart';
@@ -11,15 +12,22 @@ import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
     required this.assets,
+    required this.allowMultiple,
   });
+
+  final bool allowMultiple;
 
   @override
   bool get fullScreen => true;
@@ -68,6 +76,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
     final pickAssets = await SpImagePickerBottomSheet(
       assets: assets,
+      allowMultiple: context.read<InAppPurchaseProvider>().isProUser,
     ).show(context: context);
 
     if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
@@ -84,7 +93,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     }
   }
 
-  static Future<List<AssetDbModel>?> pickImages({
+  static Future<List<AssetDbModel>?> showAlbumPicker({
     required BuildContext context,
   }) async {
     await RetrieveLostPhotoService.call();
@@ -94,9 +103,50 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return null;
 
-    final result = await SpImagePickerBottomSheet(assets: assets).show(context: context);
+    final result = await SpImagePickerBottomSheet(
+      assets: assets,
+      allowMultiple: context.read<InAppPurchaseProvider>().isProUser,
+    ).show(context: context);
+
     return result is List<AssetDbModel> ? result : null;
   }
+
+  @override
+  Widget build(BuildContext context, double bottomPadding) {
+    if (kIsCupertino) {
+      return _Content(params: this);
+    } else {
+      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
+      return DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: maxChildSize,
+        builder: (context, controller) {
+          return PrimaryScrollController(
+            controller: controller,
+            child: _Content(params: this),
+          );
+        },
+      );
+    }
+  }
+}
+
+class _Content extends StatefulWidget {
+  const _Content({
+    required this.params,
+  });
+
+  final SpImagePickerBottomSheet params;
+
+  @override
+  State<_Content> createState() => _ContentState();
+}
+
+class _ContentState extends State<_Content> {
+  List<AssetDbModel> get assets => widget.params.assets;
+  bool get allowMultiple => widget.params.allowMultiple;
+
+  Map<int, AssetDbModel> selectedAssets = {};
 
   Future<void> _insertFromPhotoLibrary(BuildContext context) async {
     FilePickerResult? result;
@@ -104,7 +154,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     try {
       result = await SpAppLockWrapper.disableAppLockIfHas(
         context,
-        callback: () => FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: true, withData: true),
+        callback: () => FilePicker.platform.pickFiles(
+          type: FileType.image,
+          allowMultiple: allowMultiple,
+          withData: true,
+        ),
       );
     } catch (e) {
       debugPrint(e.toString());
@@ -127,25 +181,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   }
 
   @override
-  Widget build(BuildContext context, double bottomPadding) {
-    if (kIsCupertino) {
-      return buildScaffold(context);
-    } else {
-      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
-      return DraggableScrollableSheet(
-        expand: false,
-        maxChildSize: maxChildSize,
-        builder: (context, controller) {
-          return PrimaryScrollController(
-            controller: controller,
-            child: buildScaffold(context),
-          );
-        },
-      );
-    }
-  }
-
-  Widget buildScaffold(BuildContext context) {
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -165,6 +201,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(height: 1),
+              if (!context.read<InAppPurchaseProvider>().isProUser) buildProBanner(context),
               Container(
                 padding: EdgeInsets.only(
                   left: 8.0,
@@ -174,12 +211,20 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: 8.0,
                   children: [
                     OutlinedButton.icon(
                       icon: const Icon(SpIcons.addPhoto),
-                      label: const Text("Insert from Device"),
+                      label: Text(tr("button.insert_from_device")),
                       onPressed: () => _insertFromPhotoLibrary(context),
                     ),
+                    if (allowMultiple)
+                      FilledButton(
+                        onPressed: selectedAssets.isNotEmpty
+                            ? () => Navigator.maybePop(context, selectedAssets.values.toList())
+                            : null,
+                        child: Text(tr("button.done")),
+                      ),
                   ],
                 ),
               ),
@@ -187,6 +232,43 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
           ),
         );
       },
+    );
+  }
+
+  Widget buildProBanner(BuildContext context) {
+    return SpTapEffect(
+      onTap: () => const PaywallRoute(initialFocus: .image_album).push(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context).dividerColor,
+            ),
+          ),
+        ),
+        child: Text.rich(
+          TextSpan(
+            text: "${tr("general.select_multiple_photo_at_once_with_storypad_pro")} ",
+            style: TextTheme.of(context).bodyMedium?.copyWith(
+              color: ColorScheme.of(context).secondary,
+            ),
+            children: [
+              WidgetSpan(
+                alignment: .middle,
+                child: Icon(
+                  SpIcons.star,
+                  size: 16.0,
+                  color: ColorScheme.of(context).secondary,
+                ),
+              ),
+            ],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 
@@ -221,18 +303,58 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: constraints.maxWidth ~/ 120),
         itemBuilder: (BuildContext context, int index) {
           final asset = assets[index];
+
           return GestureDetector(
-            onTap: () => Navigator.pop(context, [asset]),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: SpImage(
-                link: asset.relativeLocalFilePath,
-                width: double.infinity,
-                height: 120,
-              ),
+            onTap: () {
+              if (allowMultiple) {
+                if (selectedAssets.containsKey(asset.id)) {
+                  selectedAssets.remove(asset.id);
+                } else {
+                  selectedAssets[asset.id] = asset;
+                }
+                setState(() {});
+              } else {
+                Navigator.maybePop(context, [asset]);
+              }
+            },
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: SpImage(
+                    link: asset.relativeLocalFilePath,
+                    width: double.infinity,
+                    height: 120,
+                  ),
+                ),
+                if (selectedAssets.containsKey(asset.id)) buildSelectedCheck(),
+              ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget buildSelectedCheck() {
+    final Color foregroundColor = Colors.white.withValues(alpha: 0.7);
+
+    return Positioned(
+      key: ValueKey('$foregroundColor'),
+      top: 8,
+      right: 8,
+      child: SpFadeIn.fromBottom(
+        child: Container(
+          padding: const EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.5),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            SpIcons.checkCircle,
+            color: foregroundColor,
+          ),
+        ),
       ),
     );
   }

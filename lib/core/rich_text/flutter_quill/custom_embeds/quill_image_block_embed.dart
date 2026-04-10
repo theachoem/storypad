@@ -205,26 +205,15 @@ class _QuillImageRenderer extends StatelessWidget {
         icon: Icon(_EmbedSizeAttribute.maxSize.hasApplied(node) ? SpIcons.zoomOut : SpIcons.zoomIn),
         onPressed: () => _EmbedSizeAttribute.toggle(controller, node),
       ),
-      if (!isAlbum)
-        IconButton(
-          icon: const Icon(SpIcons.addPhoto),
-          onPressed: () async {
-            final picked = await SpImagePickerBottomSheet.pickImages(context: context);
-            if (!context.mounted) return;
-            if (picked != null && picked.isNotEmpty) {
-              _updatePaths([...paths, ...picked.map((a) => a.relativeLocalFilePath)]);
-            }
-          },
-        ),
-      if (isAlbum)
-        IconButton(
-          icon: const Icon(SpIcons.edit),
-          onPressed: () async {
-            final result = await SpAlbumManagementSheet(paths: paths).show<List<String>?>(context: context);
-            if (!context.mounted) return;
-            if (result is List<String>) _updatePaths(result);
-          },
-        ),
+
+      IconButton(
+        icon: isAlbum ? const Icon(SpIcons.edit) : const Icon(SpIcons.addPhoto),
+        onPressed: () async {
+          final result = await SpAlbumManagementSheet(paths: paths).show<List<String>?>(context: context);
+          if (!context.mounted) return;
+          if (result is List<String>) _updatePaths(result);
+        },
+      ),
       IconButton(
         color: ColorScheme.of(context).error,
         icon: const Icon(SpIcons.delete),

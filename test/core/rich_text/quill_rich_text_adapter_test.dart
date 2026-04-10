@@ -543,39 +543,3 @@ void main() {
     });
   });
 }
-
-// Mock class for testing error handling
-class _MockRichTextController extends RichTextController {
-  @override
-  RichTextDocument get document => throw UnimplementedError();
-
-  @override
-  String getPlainText() => throw UnimplementedError();
-
-  @override
-  bool get readOnly => throw UnimplementedError();
-
-  @override
-  void replaceText(int index, int length, Object data, TextSelection? textSelection) {
-    throw UnimplementedError();
-  }
-
-  @override
-  TextSelection get selection => throw UnimplementedError();
-
-  @override
-  set selection(TextSelection value) => throw UnimplementedError();
-
-  @override
-  List serialize() => throw UnimplementedError();
-
-  @override
-  void insertEmbed({required String embedType, required String value, Map<String, dynamic>? attributes}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  void replaceEmbed({required int offset, required int length, required String embedType, required String value}) {
-    throw UnimplementedError();
-  }
-}
