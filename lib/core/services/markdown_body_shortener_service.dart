@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:storypad/core/extensions/string_extension.dart';
 
 class MarkdownBodyShortenerService {
   static String call(String markdown, {int maxCharacterCount = 200}) {
@@ -6,12 +7,12 @@ class MarkdownBodyShortenerService {
     String body = markdown.trim();
 
     if (body.split("\n").length > 10) body = "${body.split("\n").getRange(0, 10).join("\n")}...";
-    if (body.length <= maxCharacterCount) return body;
+    if (body.length <= maxCharacterCount) return body.sanitizeUtf16;
 
     String extract = body.substring(0, maxCharacterCount);
     var result = trimBody(extract);
 
-    return result;
+    return result.sanitizeUtf16;
   }
 
   static String trimBody(String body) {
