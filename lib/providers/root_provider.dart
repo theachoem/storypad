@@ -30,7 +30,11 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
     );
 
     if (route.routeName == const HomeRoute().routeName) {
-      navigatorKey.currentState?.popUntil((r) => r.isFirst);
+      if (selectedRootRouteNameNotifier.value == route.routeName) {
+        HomeView.scrollToTop();
+      } else {
+        navigatorKey.currentState?.popUntil((r) => r.isFirst);
+      }
     } else if (alreadySelected) {
       navigatorKey.currentState?.popUntil((r) => r.settings.name == route.routeName);
     } else {

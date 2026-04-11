@@ -23,10 +23,10 @@ class SpAlbumManagementSheet extends BaseBottomSheet {
     if (kIsCupertino) {
       return _Content(paths: paths, bottomPadding: bottomPadding);
     } else {
-      double maxChildSize = 1 - View.of(context).viewPadding.top / MediaQuery.of(context).size.height;
       return DraggableScrollableSheet(
         expand: false,
-        maxChildSize: maxChildSize,
+        initialChildSize: 0.9,
+        maxChildSize: 0.9,
         builder: (context, controller) {
           return PrimaryScrollController(
             controller: controller,

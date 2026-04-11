@@ -81,6 +81,10 @@ class HomeView extends StatelessWidget {
     return _homeContext?.read<HomeViewModel>().reload(debugSource: debugSource);
   }
 
+  static void scrollToTop() {
+    _homeContext!.read<HomeViewModel>().scrollInfo.scrollToTop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>(

@@ -12,7 +12,15 @@ class RootViewModel extends ChangeNotifier with DebounchedCallback {
     debouncedCallback(duration: const Duration(seconds: 1), () {
       if (!context.mounted) return;
       if (route.settings.name == const HomeRoute().routeName) {
-        final backupProvider = context.read<BackupProvider>();
+        BackupProvider? backupProvider;
+
+        try {
+          backupProvider = context.read<BackupProvider>();
+        } catch (e) {
+          // There are case where backup provider might not be available yet.
+          return;
+        }
+
         if (backupProvider.readyToSynced && !backupProvider.allYearSynced) {
           backupProvider.autoSync(context: context);
         }

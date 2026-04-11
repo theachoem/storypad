@@ -87,6 +87,16 @@ class _HomeScrollInfo {
     return allStories.where((e) => e.id == storyId).firstOrNull;
   }
 
+  Future<void> scrollToTop() async {
+    // No need to set _scrolling = true here because we want to trigger
+    // the listener so tab will be reset to first tab.
+    await scrollController.animateTo(
+      0,
+      duration: Durations.medium3,
+      curve: Curves.ease,
+    );
+  }
+
   Future<void> moveToStory({
     required int targetStoryId,
   }) async {
