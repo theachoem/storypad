@@ -9,6 +9,8 @@
   "button.clear": "ជម្រះ",
   "button.connect": "ភ្ជាប់",
   "button.continue_editing": "បន្តការកែសម្រួល",
+  "button.cursor_left": "ផ្លាស់ទីទៅឆ្វេង",
+  "button.cursor_right": "ផ្លាស់ទីទៅស្តាំ",
   "button.delete": "លុប",
   "button.delete_from_google_drive": "លុបចេញពី Google Drive",
   "button.dimiss": "បដិសេធ",

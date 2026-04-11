@@ -9,6 +9,8 @@
   "button.clear": "Claro",
   "button.connect": "Conectar",
   "button.continue_editing": "Continuar editando",
+  "button.cursor_left": "Muévase a la izquierda",
+  "button.cursor_right": "Muévase a la derecha",
   "button.delete": "Borrar",
   "button.delete_from_google_drive": "Eliminar de Google Drive",
   "button.dimiss": "Despedir",

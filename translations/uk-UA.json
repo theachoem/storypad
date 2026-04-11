@@ -9,6 +9,8 @@
   "button.clear": "Очистити",
   "button.connect": "З'єднати",
   "button.continue_editing": "Продовжити редагування",
+  "button.cursor_left": "Рухатися ліворуч",
+  "button.cursor_right": "Рухатися праворуч",
   "button.delete": "Видалити",
   "button.delete_from_google_drive": "Видалити з Google Drive",
   "button.dimiss": "Відхилити",

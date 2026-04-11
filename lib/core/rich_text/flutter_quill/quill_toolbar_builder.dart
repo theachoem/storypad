@@ -172,6 +172,37 @@ class _QuillToolbarWidget extends StatelessWidget {
               showSuperscript: false,
             ),
           ),
+          Container(
+            width: 1,
+            height: 16,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).dividerColor,
+            ),
+          ),
+          ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              final pos = controller.selection.baseOffset;
+              final docLength = controller.document.length;
+
+              return Row(
+                mainAxisSize: .min,
+                children: [
+                  IconButton(
+                    tooltip: tr('button.cursor_left'),
+                    icon: const Icon(SpIcons.keyboardLeft),
+                    onPressed: pos > 0 ? () => controller.moveCursorLeft() : null,
+                  ),
+                  IconButton(
+                    tooltip: tr('button.cursor_right'),
+                    icon: const Icon(SpIcons.keyboardRight),
+                    onPressed: pos < docLength - 1 ? () => controller.moveCursorRight() : null,
+                  ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );

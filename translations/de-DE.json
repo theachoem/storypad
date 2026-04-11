@@ -9,6 +9,8 @@
   "button.clear": "Klar",
   "button.connect": "Verbinden",
   "button.continue_editing": "Bearbeiten Sie weiter",
+  "button.cursor_left": "Nach links bewegen",
+  "button.cursor_right": "Nach rechts bewegen",
   "button.delete": "Löschen",
   "button.delete_from_google_drive": "Von Google Drive löschen",
   "button.dimiss": "Zurückweisen",

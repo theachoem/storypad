@@ -81,4 +81,14 @@ abstract class RichTextController extends ChangeNotifier {
     required String embedType,
     required String value,
   });
+
+  // ========================================================================
+  // Cursor Navigation
+  // ========================================================================
+
+  /// Moves the cursor one position to the left.
+  void moveCursorLeft();
+
+  /// Moves the cursor one position to the right.
+  void moveCursorRight();
 }

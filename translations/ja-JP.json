@@ -9,6 +9,8 @@
   "button.clear": "初期化",
   "button.connect": "接続する",
   "button.continue_editing": "編集を続ける",
+  "button.cursor_left": "左へ移動",
+  "button.cursor_right": "右に進む",
   "button.delete": "削除",
   "button.delete_from_google_drive": "Googleドライブから削除",
   "button.dimiss": "却下する",

@@ -208,6 +208,27 @@ class QuillRichTextController extends RichTextController {
     _quillController.replaceText(offset, length, delta, _quillController.selection);
   }
 
+  // ========================================================================
+  // Cursor Navigation
+  // ========================================================================
+
+  @override
+  void moveCursorLeft() {
+    final pos = _quillController.selection.baseOffset;
+    if (pos > 0) {
+      _quillController.moveCursorToPosition(pos - 1);
+    }
+  }
+
+  @override
+  void moveCursorRight() {
+    final pos = _quillController.selection.extentOffset;
+    final docLength = _quillController.document.length;
+    if (pos < docLength - 1) {
+      _quillController.moveCursorToPosition(pos + 1);
+    }
+  }
+
   static quill_delta.Delta _buildEmbedDelta({
     required String embedType,
     required String value,

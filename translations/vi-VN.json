@@ -9,6 +9,8 @@
   "button.clear": "Thông thoáng",
   "button.connect": "Kết nối",
   "button.continue_editing": "Tiếp tục chỉnh sửa",
+  "button.cursor_left": "Di chuyển sang trái",
+  "button.cursor_right": "Di chuyển sang phải",
   "button.delete": "Xóa bỏ",
   "button.delete_from_google_drive": "Xóa khỏi Google Drive",
   "button.dimiss": "Miễn nhiệm",
