@@ -9,6 +9,8 @@
   "button.clear": "초기화",
   "button.connect": "연결하다",
   "button.continue_editing": "편집 계속하기",
+  "button.cursor_left": "왼쪽으로 이동",
+  "button.cursor_right": "오른쪽으로 이동하세요",
   "button.delete": "삭제",
   "button.delete_from_google_drive": "Google 드라이브에서 삭제",
   "button.dimiss": "해고하다",

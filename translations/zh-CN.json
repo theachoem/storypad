@@ -9,6 +9,8 @@
   "button.clear": "清除",
   "button.connect": "连接",
   "button.continue_editing": "继续编辑",
+  "button.cursor_left": "向左移动",
+  "button.cursor_right": "向右移动",
   "button.delete": "删除",
   "button.delete_from_google_drive": "从 Google 云端硬盘中删除",
   "button.dimiss": "关闭",

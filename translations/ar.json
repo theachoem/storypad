@@ -9,6 +9,8 @@
   "button.clear": "واضح",
   "button.connect": "يتصل",
   "button.continue_editing": "متابعة التحرير",
+  "button.cursor_left": "تحرك يسارًا",
+  "button.cursor_right": "تحرك يميناً",
   "button.delete": "يمسح",
   "button.delete_from_google_drive": "حذف من جوجل درايف",
   "button.dimiss": "رفض",
