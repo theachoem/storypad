@@ -27,6 +27,7 @@ class SpTapEffect extends StatefulWidget {
     super.key,
     required this.child,
     required this.onTap,
+    this.onTapUp,
     this.duration = const Duration(milliseconds: 100),
     this.vibrate = false,
     this.behavior = HitTestBehavior.opaque,
@@ -43,6 +44,7 @@ class SpTapEffect extends StatefulWidget {
   final double scaleActive;
   final SpTapEffectBorderOption? borderOption;
   final List<SpTapEffectType> effects;
+  final void Function(TapUpDetails?)? onTapUp;
   final void Function()? onTap;
   final void Function()? onLongPressed;
   final Curve curve;
@@ -85,15 +87,12 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
     super.dispose();
   }
 
-  void onTap() {
-    if (widget.onTap != null) widget.onTap!();
-    Feedback.forTap(context);
-  }
-
   void onTapCancel() => controller.reverse();
   void onTapDown() => controller.forward();
-  void onTapUp() {
-    onTap();
+  void onTapUp(TapUpDetails? details) {
+    if (widget.onTapUp != null) widget.onTapUp!(details);
+    if (widget.onTap != null) widget.onTap!();
+    Feedback.forTap(context);
     controller.reverse();
   }
 
@@ -105,7 +104,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     Widget result;
 
-    if (widget.onTap != null) {
+    if (widget.onTap != null || widget.onTapUp != null) {
       result = GestureDetector(
         behavior: widget.behavior,
         onLongPress: widget.onLongPressed != null
@@ -115,7 +114,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
               }
             : null,
         onTapDown: (detail) => onTapDown(),
-        onTapUp: (detail) => onTapUp(),
+        onTapUp: (detail) => onTapUp(detail),
         onTapCancel: () => onTapCancel(),
         child: buildChild(controller),
       );
@@ -137,7 +136,7 @@ class _SpTapEffectState extends State<SpTapEffect> with SingleTickerProviderStat
         if (widget.onTap != null &&
             (HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.enter) ||
                 HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.space))) {
-          onTap();
+          onTapUp(null);
           return KeyEventResult.handled;
         }
         return KeyEventResult.ignored;

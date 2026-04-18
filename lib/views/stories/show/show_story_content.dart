@@ -100,20 +100,6 @@ class _ShowStoryContent extends StatelessWidget {
             onPressed: () => viewModel.goToEditPage(context),
             icon: const Icon(SpIcons.edit),
           ),
-          Hero(
-            tag: "stories.share_button",
-            child: IconButton(
-              icon: const Icon(SpIcons.share),
-              onPressed: () {
-                if (viewModel.story == null || viewModel.draftContent == null) return;
-                SpShareStoryBottomSheet(
-                  story: viewModel.story!,
-                  draftContent: viewModel.draftContent!,
-                  pagesManager: viewModel.pagesManager,
-                ).show(context: context);
-              },
-            ),
-          ),
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),

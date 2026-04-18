@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart' show OkCancelResult, showO
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
 import 'package:storypad/core/databases/models/collection_db_model.dart' show CollectionDbModel;
-import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
@@ -11,7 +10,6 @@ import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
 class TagsProvider extends ChangeNotifier with DebounchedCallback {
   TagsProvider() {
-    StoryDbModel.db.addGlobalListener(_dbListener);
     TagDbModel.db.addGlobalListener(_dbListener);
     setAllTags(TagDbModel.db.getInitialTagsAndClear());
     _reindex(notifyUi: null);
@@ -45,11 +43,14 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
       for (int i = 0; i < tags!.items.length; i++) {
         TagDbModel tag = tags!.items[i];
 
-        if (tag.index != i) {
+        if (tag.index != i + 1) {
           tag =
               await TagDbModel.db.set(
-                tag.copyWith(index: i, updatedAt: DateTime.now()),
+                tag.copyWith(index: i + 1, updatedAt: DateTime.now()),
                 debugSource: '$runtimeType#setup',
+
+                // This is consider silent update, so no need to alert listeners for now.
+                runCallbacks: false,
               ) ??
               tag;
           _tags = _tags!.replaceElement(tag);
@@ -166,7 +167,6 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
 
   @override
   void dispose() {
-    StoryDbModel.db.removeGlobalListener(_dbListener);
     TagDbModel.db.removeGlobalListener(_dbListener);
     super.dispose();
   }

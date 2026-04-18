@@ -16,6 +16,7 @@ import 'package:storypad/views/settings/local_widgets/font_family_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_share_story_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_info_sheet.dart';
 import 'package:storypad/widgets/sp_background_picker.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
@@ -299,9 +300,27 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
 
   Widget buildHeader(BuildContext context) {
     BaseStoryViewModel? storyViewModel = widget.storyViewModel;
+    StoryDbModel? story = storyViewModel?.story;
 
     List<Widget> startActions = [
       buildMoreOptionsButton(context),
+      if (storyViewModel != null && story != null)
+        Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(SpIcons.share),
+              onPressed: () {
+                if (storyViewModel.draftContent != null) {
+                  SpShareStoryBottomSheet(
+                    story: story,
+                    draftContent: storyViewModel.draftContent!,
+                    pagesManager: storyViewModel.pagesManager,
+                  ).show(context: context);
+                }
+              },
+            );
+          },
+        ),
       SpFadeIn.bound(
         child: IconButton(
           onPressed: () async {

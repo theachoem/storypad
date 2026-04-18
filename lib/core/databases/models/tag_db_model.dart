@@ -90,6 +90,8 @@ class TagDbModel extends BaseDbModel {
     );
   }
 
+  bool exist() => db.exist(id);
+
   @override
   Map<String, dynamic> toJson() => _$TagDbModelToJson(this);
   factory TagDbModel.fromJson(Map<String, dynamic> json) {

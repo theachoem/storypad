@@ -10,6 +10,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/tags/tags_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_section_title.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -18,10 +19,12 @@ enum _SheetSegment { stickers, tags }
 class SpStoryTagsBottomSheet extends BaseBottomSheet {
   final List<int> initialTags;
   final Future<bool> Function(List<int> tags) onUpdated;
+  final bool showTagAsInitialSegment;
 
   SpStoryTagsBottomSheet({
     required this.initialTags,
     required this.onUpdated,
+    this.showTagAsInitialSegment = false,
   });
 
   @override
@@ -38,7 +41,7 @@ class SpStoryTagsBottomSheet extends BaseBottomSheet {
     List<int> selectedTags = initialTags;
 
     return SpSingleStateWidget<_SheetSegment>.listen(
-      initialValue: _SheetSegment.stickers,
+      initialValue: showTagAsInitialSegment ? .tags : .stickers,
       builder: (context, segment, notifier) {
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -176,7 +179,7 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
     setState(() {});
 
     // Must save persist the emoji tag before saving to stories.
-    await tag.save();
+    if (!tag.exist()) await tag.save();
 
     final success = await widget.onUpdated(newTags);
     if (!success) {
@@ -197,16 +200,19 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
-    return ListView(
-      padding: EdgeInsets.only(bottom: widget.bottomPadding + 16.0),
-      children: stickersByCategory!.entries.map((entry) {
+    return ListView.separated(
+      padding: EdgeInsets.only(bottom: widget.bottomPadding + 16.0, top: 16.0),
+      itemCount: stickersByCategory!.entries.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 16.0),
+      itemBuilder: (context, index) {
+        final entry = stickersByCategory!.entries.elementAt(index);
         return _StickerCategorySection(
           category: entry.key,
           tags: entry.value,
           selectedTags: selectedTags,
           onToggle: _onToggle,
         );
-      }).toList(),
+      },
     );
   }
 }
@@ -227,17 +233,12 @@ class _StickerCategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
+      spacing: 4.0,
       children: [
+        SpSectionTitle(title: category.title),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-          child: Text(
-            category.title,
-            style: TextTheme.of(context).titleSmall,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: LayoutBuilder(
             builder: (context, constraints) {
               const minTileSize = 44.0;
@@ -300,7 +301,7 @@ class _StickerChip extends StatelessWidget {
           color: isSelected ? colorScheme.surface : Colors.transparent,
           border: Border.all(
             color: isSelected ? colorScheme.primary : colorScheme.outlineVariant.withValues(alpha: 0.7),
-            width: isSelected ? 1.5 : 1.0,
+            width: isSelected ? 2 : 1.0,
           ),
         ),
         child: Text(

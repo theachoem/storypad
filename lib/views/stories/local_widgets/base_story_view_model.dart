@@ -63,7 +63,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   }
 
   Future<bool> setTags(List<int> tags, BuildContext context) async {
-    final orderedTags = await _reorderTagsWithEmojisFirst(tags, context);
+    final orderedTags = await _cleanTags(tags, context);
     story = story!.copyWith(updatedAt: DateTime.now(), tags: orderedTags.map((e) => e.toString()).toList());
     notifyListeners();
 
@@ -79,9 +79,11 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     return true;
   }
 
-  /// Reorders tag IDs so emoji tags (categoryId != null) come first, sorted by
+  /// 1. Reorders tag IDs so emoji tags (categoryId != null) come first, sorted by
   /// their categoryId. Non-emoji tags follow after.
-  Future<List<int>> _reorderTagsWithEmojisFirst(List<int> tagIds, BuildContext context) async {
+  ///
+  /// 2. Ensure all tags exist.
+  Future<List<int>> _cleanTags(List<int> tagIds, BuildContext context) async {
     if (tagIds.isEmpty) return tagIds;
 
     final emojiTags = context.read<TagsProvider>().emojiTags;
@@ -99,7 +101,9 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     }
 
     emojiTagIds.sort((a, b) => (emojiTagMap[a]?.categoryId ?? 0).compareTo(emojiTagMap[b]?.categoryId ?? 0));
-    return [...emojiTagIds, ...nonEmojiTagIds];
+    final allTagIds = [...emojiTagIds, ...nonEmojiTagIds];
+
+    return allTagIds.where(context.read<TagsProvider>().allTags!.items.map((t) => t.id).toSet().contains).toList();
   }
 
   Future<void> changePreferences(StoryPreferencesDbModel preferences) async {

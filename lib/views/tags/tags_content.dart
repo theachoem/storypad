@@ -35,7 +35,7 @@ class _TagsContent extends StatelessWidget {
         ),
         isFullScreen: true,
         barLeading: const Icon(SpIcons.search),
-        barHintText: tr("button.search"),
+        barHintText: tr("input.tag.hint"),
         suggestionsBuilder: (context, controller) {
           final query = controller.text.trim();
           final allItems = provider.tags?.items ?? [];
@@ -90,7 +90,7 @@ class _TagsContent extends StatelessWidget {
                           }
                         },
                       ),
-                    ...filtered.map((tag) => buildTile(tag, viewModel.getStoriesCount(tag), provider, context)),
+                    ...filtered.map((tag) => buildTile(tag, viewModel.getStoriesCount(tag), provider, context, false)),
                   ],
                 );
               },
@@ -149,7 +149,7 @@ class _TagsContent extends StatelessWidget {
             ),
             child: Material(
               color: Colors.transparent,
-              child: buildTile(tag, storyCount, provider, context),
+              child: buildTile(tag, storyCount, provider, context, true),
             ),
           );
         },
@@ -162,7 +162,21 @@ class _TagsContent extends StatelessWidget {
     int storyCount,
     TagsProvider provider,
     BuildContext context,
+    bool reorderable,
   ) {
+    Widget? trailing;
+
+    if (reorderable) {
+      trailing =
+          [
+            TargetPlatform.linux,
+            TargetPlatform.windows,
+            TargetPlatform.macOS,
+          ].contains(Theme.of(context).platform)
+          ? null
+          : const Icon(SpIcons.dragIndicator);
+    }
+
     return ListTile(
       key: ValueKey(tag.id),
       tileColor: Colors.transparent,
@@ -182,14 +196,7 @@ class _TagsContent extends StatelessWidget {
           : null,
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
-      trailing:
-          [
-            TargetPlatform.linux,
-            TargetPlatform.windows,
-            TargetPlatform.macOS,
-          ].contains(Theme.of(context).platform)
-          ? null
-          : const Icon(SpIcons.dragIndicator),
+      trailing: trailing,
       onTap: () {
         if (viewModel.checkable) {
           viewModel.onToggle(tag, !viewModel.selectedTags.contains(tag.id)).then((_) {

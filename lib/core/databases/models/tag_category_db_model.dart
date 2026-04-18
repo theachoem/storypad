@@ -67,8 +67,8 @@ class TagCategoryDbModel extends BaseDbModel {
   String get title {
     if (system) {
       return {
-        1: tr("general.tag_category.feeling"),
-        2: tr("general.tag_category.activity"),
+        1: tr("general.tag_category.feeling_title"),
+        2: tr("general.tag_category.activity_title"),
       }[id]!;
     }
 

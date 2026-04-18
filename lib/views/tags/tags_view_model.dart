@@ -27,6 +27,7 @@ class TagsViewModel extends ChangeNotifier with DisposeAwareMixin {
     storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
       tagIds: tagsProvider.tags?.items.map((e) => e.id).toList() ?? [],
     );
+    notifyListeners();
   }
 
   bool get checkable => params.initialSelectedTags != null && params.onToggleTags != null;

@@ -98,8 +98,11 @@ class SpCalendarDateCell extends StatelessWidget {
           color: backgroundColor,
         ),
         alignment: Alignment.center,
-        child: buildFeelings(
-          feelings: feelings!.where((feeling) => feeling != 'exist_but_not_set').toList(),
+        padding: const EdgeInsets.all(4.0),
+        child: FittedBox(
+          child: buildFeelings(
+            feelings: feelings!.where((feeling) => feeling != 'exist_but_not_set').toList(),
+          ),
         ),
       );
     } else if (hasStoriesButNoFeelings) {
@@ -147,10 +150,13 @@ class SpCalendarDateCell extends StatelessWidget {
       return Text(
         feelings.first,
         strutStyle: const StrutStyle(
-          fontSize: 24,
+          fontSize: 56,
           height: 1.0,
         ),
-        style: const TextStyle(fontSize: 24, height: 1.0),
+        style: const TextStyle(
+          fontSize: 56,
+          height: 1.0,
+        ),
       );
     }
 
@@ -167,11 +173,11 @@ class SpCalendarDateCell extends StatelessWidget {
             child: Text(
               emoji,
               strutStyle: const StrutStyle(
-                fontSize: 24,
+                fontSize: 56,
                 height: 1.0,
               ),
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 100,
                 height: 1.0,
               ),
             ),

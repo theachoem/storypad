@@ -24,17 +24,19 @@ This system replaces the legacy `feeling` field on stories. Instead of a single 
 
 ### Database Layer
 
-- **`TagsBox`** — ObjectBox adapter for tags, supports `category_id` and `emoji_tag_only` filters in `buildQuery`
-  - `fetchEmojiTags()` — Returns `Map<int, String>` (tagId → emoji) for all emoji tags across all categories; used by `TagsProvider` and calendar
+- **`TagsBox`** — ObjectBox adapter for tags, supports `category_id` and `created_year` filters in `buildQuery`
 - **`TagCategoriesBox`** — ObjectBox adapter for tag categories
   - `getSuggestTagsByCategory({selectedTagIds})` — Returns a map of categories to their tags (suggested in defined order, then selected non-suggested extras)
 
 ### Provider
 
 - **`TagsProvider`** — ChangeNotifier that holds the current tag list and emoji lookup
-  - `emojiTagById` — `Map<int, String>` refreshed on load and on any tag DB change; used by calendar and story export to resolve tag IDs → emojis
+  - `tags` — normal text tags (`categoryId == null`)
+  - `emojiTags` — sticker tags (`categoryId != null`)
+  - `emojiById` — `Map<int, String>` (tagId → emoji) derived from `emojiTags`; used by calendar and story export
+  - `setAllTags(allTags)` — splits a combined tag list into `tags`/`emojiTags` and rebuilds `emojiById`
   - `createTag(title)` — Optimistic insert: adds to local list immediately, rolls back on failure
-  - Listens to both `StoryDbModel` and `TagDbModel` global listeners (debounced)
+  - Listens to `TagDbModel` global listener (debounced)
 
 ### ID Generation (`TagIdGeneratorService`)
 
@@ -86,18 +88,18 @@ When saving tags to a story, `BaseStoryViewModel.setTags()` automatically reorde
 
 ## Key Files
 
-| File                                                            | Purpose                                    |
-| --------------------------------------------------------------- | ------------------------------------------ |
-| `lib/core/databases/models/tag_db_model.dart`                   | Tag data model                             |
-| `lib/core/databases/models/tag_category_db_model.dart`          | Tag category model with system categories  |
-| `lib/core/services/tag_id_generator_service.dart`               | Time/emoji ID generation                   |
-| `lib/core/databases/adapters/objectbox/tags_box.dart`           | Tag DB operations                          |
-| `lib/core/databases/adapters/objectbox/tag_categories_box.dart` | Category DB + `getSuggestTagsByCategory()` |
-| `lib/widgets/bottom_sheets/sp_story_tags_bottom_sheet.dart`     | Tags/Stickers bottom sheet UI              |
-| `lib/widgets/sp_story_labels.dart`                              | Inline sticker display in story header     |
-| `lib/views/stories/local_widgets/story_header.dart`             | Passes `onToggleTags` to labels            |
-| `lib/views/stories/local_widgets/base_story_view_model.dart`    | `setTags()` with emoji-first reordering    |
-| `lib/providers/tags_provider.dart`                              | `emojiTagById` map, `createTag()` API      |
+| File                                                            | Purpose                                            |
+| --------------------------------------------------------------- | -------------------------------------------------- |
+| `lib/core/databases/models/tag_db_model.dart`                   | Tag data model                                     |
+| `lib/core/databases/models/tag_category_db_model.dart`          | Tag category model with system categories          |
+| `lib/core/services/tag_id_generator_service.dart`               | Time/emoji ID generation                           |
+| `lib/core/databases/adapters/objectbox/tags_box.dart`           | Tag DB operations                                  |
+| `lib/core/databases/adapters/objectbox/tag_categories_box.dart` | Category DB + `getSuggestTagsByCategory()`         |
+| `lib/widgets/bottom_sheets/sp_story_tags_bottom_sheet.dart`     | Tags/Stickers bottom sheet UI                      |
+| `lib/widgets/sp_story_labels.dart`                              | Inline sticker display in story header             |
+| `lib/views/stories/local_widgets/story_header.dart`             | Passes `onToggleTags` to labels                    |
+| `lib/views/stories/local_widgets/base_story_view_model.dart`    | `setTags()` with emoji-first reordering            |
+| `lib/providers/tags_provider.dart`                              | `emojiById` map, `setAllTags()`, `createTag()` API |
 
 ## Translation Keys
 

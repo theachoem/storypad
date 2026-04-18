@@ -196,9 +196,6 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
-    if (showTagLabels) children.addAll(buildTags(tagProvider, context));
-
     if (story.inArchives) {
       children.add(
         buildPin(
@@ -209,6 +206,7 @@ class SpStoryLabels extends StatelessWidget {
         ),
       );
     }
+
     if (story.inBins) {
       children.add(
         buildPin(
@@ -221,19 +219,29 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
+    if (showTagLabels) children.addAll(buildTags(tagProvider, context));
+
     final emojis = (story.validTags?.map((tag) => tagProvider.getEmojiTag(tag)) ?? []).whereType<String>();
+
     if (emojis.isNotEmpty) {
       children.add(
         SpTapEffect(
           duration: Durations.medium3,
           curve: Curves.easeInOutCubicEmphasized,
           behavior: .translucent,
-          onTap: onToggleTags != null ? () => _openTagsSheet(context) : null,
+          onTap: onToggleTags != null
+              ? () => SpStoryTagsBottomSheet(
+                  initialTags: story.validTags ?? [],
+                  onUpdated: onToggleTags!,
+                  showTagAsInitialSegment: false,
+                ).show(context: context)
+              : null,
           child: Row(
             mainAxisSize: .min,
             children: emojis.map((emoji) {
               return Container(
-                padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(2)),
+                padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(1)),
                 height: MediaQuery.textScalerOf(context).scale(20),
                 width: MediaQuery.textScalerOf(context).scale(20),
                 alignment: .center,
@@ -259,25 +267,44 @@ class SpStoryLabels extends StatelessWidget {
 
     if (emojis.isEmpty && onToggleTags != null) {
       children.add(
-        SpTapEffect(
-          scaleActive: 2.5,
-          duration: Durations.medium3,
-          curve: Curves.easeInOutCubicEmphasized,
-          effects: [.scaleDown],
-          behavior: .translucent,
-          onTap: () => _openTagsSheet(context),
-          child: SizedBox(
-            height: MediaQuery.textScalerOf(context).scale(20),
-            child: Align(
-              alignment: .center,
-              widthFactor: 1.0,
-              child: Icon(
-                SpIcons.addFeeling,
-                size: MediaQuery.textScalerOf(context).scale(18.0),
-                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+        Builder(
+          builder: (context) {
+            return SpTapEffect(
+              duration: Durations.medium3,
+              curve: Curves.easeInOutCubicEmphasized,
+              behavior: .translucent,
+              onTap: null,
+              onTapUp: (details) {
+                SpStoryTagsBottomSheet(
+                  initialTags: story.validTags ?? [],
+                  onUpdated: onToggleTags!,
+                  showTagAsInitialSegment: false,
+                ).show(context: context);
+              },
+              child: Container(
+                height: MediaQuery.textScalerOf(context).scale(20),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(4)),
+                child: Row(
+                  mainAxisAlignment: .center,
+                  crossAxisAlignment: .center,
+                  mainAxisSize: .min,
+                  spacing: MediaQuery.textScalerOf(context).scale(6.0),
+                  children: [
+                    Icon(
+                      SpIcons.addFeeling,
+                      size: MediaQuery.textScalerOf(context).scale(18.0),
+                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                    ),
+                    Icon(
+                      SpIcons.tag,
+                      size: MediaQuery.textScalerOf(context).scale(18.0),
+                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       );
     }
@@ -360,14 +387,6 @@ class SpStoryLabels extends StatelessWidget {
     }
   }
 
-  void _openTagsSheet(BuildContext context) {
-    if (onToggleTags == null) return;
-    SpStoryTagsBottomSheet(
-      initialTags: story.validTags ?? [],
-      onUpdated: onToggleTags!,
-    ).show(context: context);
-  }
-
   List<Widget> buildTags(TagsProvider tagProvider, BuildContext context) {
     final tags =
         tagProvider.tags?.items
@@ -384,7 +403,17 @@ class SpStoryLabels extends StatelessWidget {
     return buildPin(
       context: context,
       title: "# ${tag.title.sanitizeUtf16}",
-      onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+      onTap: () {
+        if (onToggleTags != null) {
+          SpStoryTagsBottomSheet(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            showTagAsInitialSegment: true,
+          ).show(context: context);
+        } else {
+          provider.viewTag(context: context, tag: tag, storyViewOnly: false);
+        }
+      },
     );
   }
 

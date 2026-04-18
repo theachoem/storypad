@@ -118,20 +118,6 @@ class _EditStoryContent extends StatelessWidget {
         if (!viewModel.pagesManager.managingPage) ...[
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
-          Hero(
-            tag: "stories.share_button",
-            child: IconButton(
-              icon: const Icon(SpIcons.share),
-              onPressed: () {
-                if (viewModel.story == null || viewModel.draftContent == null) return;
-                SpShareStoryBottomSheet(
-                  story: viewModel.story!,
-                  draftContent: viewModel.draftContent!,
-                  pagesManager: viewModel.pagesManager,
-                ).show(context: context);
-              },
-            ),
-          ),
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),
