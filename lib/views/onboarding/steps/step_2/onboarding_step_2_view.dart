@@ -9,8 +9,6 @@ import 'package:storypad/views/onboarding/local_widgets/fade_in_builder.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/views/onboarding/local_widgets/story_details_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/visible_when_notified.dart';
-import 'package:storypad/widgets/feeling_picker/sp_feeling_button.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';

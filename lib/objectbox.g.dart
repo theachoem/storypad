@@ -215,7 +215,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 5548558812249966101),
     name: 'TagObjectBox',
-    lastPropertyId: const obx_int.IdUid(10, 1120015455933452719),
+    lastPropertyId: const obx_int.IdUid(11, 6622617203849334669),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -672,11 +672,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(8, 4141544638649465889),
+    lastEntityId: const obx_int.IdUid(9, 419456903475856603),
     lastIndexId: const obx_int.IdUid(17, 8988225225053088376),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
-    retiredEntityUids: const [114680069077451626],
+    retiredEntityUids: const [114680069077451626, 419456903475856603],
     retiredIndexUids: const [4439843768253498140],
     retiredPropertyUids: const [
       7351525936100002271,
@@ -690,6 +690,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
       8536407145733065373,
       4928182202971877211,
       8623820136669220816,
+      6622617203849334669,
+      4253592364122996012,
+      7934408466890046801,
+      7747415329836042242,
+      4458731407009078384,
+      6272534886584588071,
+      3294491619270889894,
+      5674426136259592087,
+      2218941453863587655,
+      2340920246315442710,
+      1623317357095888655,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -957,7 +968,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
             ? null
             : fbb.writeString(object.lastSavedDeviceId!);
-        fbb.startTable(11);
+        fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
         fbb.addInt64(2, object.version);

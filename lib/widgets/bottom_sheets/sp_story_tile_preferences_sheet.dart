@@ -9,7 +9,6 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -94,7 +93,9 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
 
     return story.copyWith(
       tags: tagIds,
-      feeling: FeelingObject.feelignGroups.values.lastOrNull?.firstOrNull,
+      // TODO: add feeling back.
+      // feeling: FeelingObject.feelignGroups.values.lastOrNull?.firstOrNull,
+      feeling: null,
       latestContent: story.latestContent!.copyWith(
         title: "My Journal Entry ✨",
         plainText: body,
@@ -124,7 +125,8 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
     final story = StoryDbModel.fromDate(now);
 
     return story.copyWith(
-      feeling: FeelingObject.feelignGroups.values.firstOrNull?.firstOrNull,
+      // TODO: add feeling back.
+      // feeling: FeelingObject.feelignGroups.values.firstOrNull?.firstOrNull,
       latestContent: story.latestContent!.copyWith(
         title: null,
         plainText: body,

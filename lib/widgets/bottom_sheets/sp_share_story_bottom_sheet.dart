@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
@@ -118,7 +116,10 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         .where((e) => widget.story.validTags?.contains(e.id) == true)
         .toList();
 
-    final feeling = FeelingObject.feelingsByKey[widget.story.feeling];
+    // TODO: add feeling back.
+    // final feeling = FeelingObject.feelingsByKey[widget.story.feeling];
+    // ignore: prefer_const_declarations
+    final feeling = null;
 
     List<StoryPageObject> pages = List.generate(widget.draftContent.richPages?.length ?? 0, (index) {
       final page = widget.draftContent.richPages![index];

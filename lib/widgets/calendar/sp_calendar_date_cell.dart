@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -31,11 +29,15 @@ class SpCalendarDateCell extends StatelessWidget {
   final bool isDisplayMonth;
   final VoidCallback? onTap;
 
-  bool get hasFeelings =>
-      isDisplayMonth && feelings != null && feelings!.any((feeling) => FeelingObject.feelingsByKey[feeling] != null);
+  // TODO: add feeling back.
+  // bool get hasFeelings =>
+  //     isDisplayMonth && feelings != null && feelings!.any((feeling) => FeelingObject.feelingsByKey[feeling] != null);
+  bool get hasFeelings => false;
 
-  bool get hasStoriesButNoFeelings =>
-      isDisplayMonth && feelings != null && feelings!.every((feeling) => FeelingObject.feelingsByKey[feeling] == null);
+  // TODO: add feeling back.
+  // bool get hasStoriesButNoFeelings =>
+  //     isDisplayMonth && feelings != null && feelings!.every((feeling) => FeelingObject.feelingsByKey[feeling] == null);
+  bool get hasStoriesButNoFeelings => true;
 
   @override
   Widget build(BuildContext context) {
@@ -89,20 +91,22 @@ class SpCalendarDateCell extends StatelessWidget {
     }
 
     if (hasFeelings) {
-      return AnimatedContainer(
-        key: const ValueKey('has-stories-has-feeling'),
-        duration: Durations.medium1,
-        curve: Curves.ease,
-        margin: const EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: backgroundColor,
-        ),
-        alignment: Alignment.center,
-        child: buildFeelings(
-          feelings: feelings?.where((feeling) => FeelingObject.feelingsByKey[feeling] != null).toList() ?? [],
-        ),
-      );
+      // TODO: add feeling back.
+      // return AnimatedContainer(
+      //   key: const ValueKey('has-stories-has-feeling'),
+      //   duration: Durations.medium1,
+      //   curve: Curves.ease,
+      //   margin: const EdgeInsets.all(10.0),
+      //   decoration: BoxDecoration(
+      //     shape: BoxShape.circle,
+      //     color: backgroundColor,
+      //   ),
+      //   alignment: Alignment.center,
+      //   child: buildFeelings(
+      //     feelings: feelings?.where((feeling) => FeelingObject.feelingsByKey[feeling] != null).toList() ?? [],
+      //   ),
+      // );
+      return const SizedBox();
     } else if (hasStoriesButNoFeelings) {
       return AnimatedContainer(
         key: const ValueKey('has-stories-no-feeling'),
@@ -141,30 +145,31 @@ class SpCalendarDateCell extends StatelessWidget {
     }
   }
 
-  Widget buildFeelings({
-    required List<String> feelings,
-  }) {
-    if (feelings.length == 1) {
-      final feeling = FeelingObject.feelingsByKey[feelings.first]!;
-      return feeling.image64.image(width: 26);
-    }
+  // TODO: add feeling back.
+  // Widget buildFeelings({
+  //   required List<String> feelings,
+  // }) {
+  //   if (feelings.length == 1) {
+  //     final feeling = FeelingObject.feelingsByKey[feelings.first]!;
+  //     return feeling.image64.image(width: 26);
+  //   }
 
-    return ValueListenableBuilder<int>(
-      valueListenable: feelingVisibleIndexNotifier,
-      builder: (context, visibleIndex, child) {
-        int index = visibleIndex % feelings.length;
+  //   return ValueListenableBuilder<int>(
+  //     valueListenable: feelingVisibleIndexNotifier,
+  //     builder: (context, visibleIndex, child) {
+  //       int index = visibleIndex % feelings.length;
 
-        final feelingKey = feelings[index];
-        final feeling = FeelingObject.feelingsByKey[feelingKey]!;
+  //       final feelingKey = feelings[index];
+  //       final feeling = FeelingObject.feelingsByKey[feelingKey]!;
 
-        return KeyedSubtree(
-          key: ValueKey(feelingKey),
-          child: SpFadeIn.flip(
-            duration: const Duration(seconds: 1),
-            child: feeling.image64.image(width: 26),
-          ),
-        );
-      },
-    );
-  }
+  //       return KeyedSubtree(
+  //         key: ValueKey(feelingKey),
+  //         child: SpFadeIn.flip(
+  //           duration: const Duration(seconds: 1),
+  //           child: feeling.image64.image(width: 26),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
