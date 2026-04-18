@@ -17,11 +17,13 @@ import 'mood_calendar_view.dart';
 
 class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final MoodCalendarView params;
+  late final TagsProvider tagsProvider;
 
   MoodCalendarViewModel({
     required this.params,
     required BuildContext context,
   }) {
+    tagsProvider = context.read<TagsProvider>();
     oddFeelingVisibleIndexNotifier = ValueNotifier<int>(0);
     oddPeriodicTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       oddFeelingVisibleIndexNotifier.value = oddFeelingVisibleIndexNotifier.value + 1;
@@ -35,7 +37,12 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       });
     });
 
-    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
+      month: month,
+      year: year,
+      emojiById: context.read<TagsProvider>().emojiById,
+    );
+
     _tags = [...context.read<TagsProvider>().tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
@@ -94,7 +101,11 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   // only reload feeling when listen to DB.
   // story query list already know how to refresh their own list, so we don't have to refresh for them.
   Future<void> _reloadFeeling() async {
-    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(month: month, year: year);
+    feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
+      month: month,
+      year: year,
+      emojiById: tagsProvider.emojiById,
+    );
     notifyListeners();
   }
 
@@ -133,6 +144,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         month: month,
         year: year,
         tagId: selectedTagId,
+        emojiById: tagsProvider.emojiById,
       );
     }
 

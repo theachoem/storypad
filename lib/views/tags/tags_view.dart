@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fuzzy/fuzzy.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
@@ -20,12 +21,14 @@ class TagsRoute extends BaseRoute {
 
   final bool storyViewOnly;
   final List<int>? initialSelectedTags;
+  final double? bottomPadding;
   final Future<bool> Function(List<int> selectedTags)? onToggleTags;
 
   TagsRoute({
     this.storyViewOnly = false,
     this.initialSelectedTags,
     this.onToggleTags,
+    this.bottomPadding,
   });
 
   @override
@@ -40,13 +43,22 @@ class TagsView extends StatelessWidget {
 
   final TagsRoute params;
 
+  bool get _checkable => params.initialSelectedTags != null && params.onToggleTags != null;
+
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<TagsViewModel>(
+    final content = ViewModelProvider<TagsViewModel>(
       create: (context) => TagsViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _TagsContent(viewModel);
       },
+    );
+
+    if (_checkable) return content;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(tr('page.tags.title'))),
+      body: content,
     );
   }
 }

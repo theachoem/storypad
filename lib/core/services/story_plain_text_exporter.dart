@@ -10,14 +10,14 @@ class StoryPlainTextExporter {
   final Locale locale;
   final TimeFormatOption timeFormat;
   final List<TagDbModel> tags;
-  final String? feeling;
+  final List<String> emojis;
   final bool markdown;
 
   StoryPlainTextExporter({
     required this.displayPathDate,
     required this.pages,
     required this.tags,
-    required this.feeling,
+    required this.emojis,
     required this.timeFormat,
     required this.locale,
     required this.markdown,
@@ -32,8 +32,8 @@ class StoryPlainTextExporter {
       headerParts.add(tagNames);
     }
 
-    if (feeling != null) {
-      headerParts.add(feeling!);
+    if (emojis.isNotEmpty) {
+      headerParts.add(emojis.join(' '));
     }
 
     final header = headerParts.isNotEmpty ? "${headerParts.join('\n')}\n\n" : '';

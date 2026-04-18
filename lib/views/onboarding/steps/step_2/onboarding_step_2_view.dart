@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/gen/assets.gen.dart';
-import 'package:storypad/views/onboarding/local_widgets/click_animation.dart';
 import 'package:storypad/views/onboarding/local_widgets/fade_in_builder.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/views/onboarding/local_widgets/story_details_screenshot.dart';

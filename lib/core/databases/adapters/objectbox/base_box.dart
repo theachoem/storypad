@@ -83,6 +83,10 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     );
   }
 
+  bool exist(int id) {
+    return box.contains(id);
+  }
+
   @override
   Future<T?> find(
     int id, {

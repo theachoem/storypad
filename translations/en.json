@@ -429,5 +429,15 @@
   "sounds.thunder": "Thunder",
   "sounds.ticking_clock": "Ticking clock",
   "sounds.typing": "Typing",
-  "sounds.wind_chime": "Wind chime"
+  "sounds.wind_chime": "Wind chime",
+  "general": {
+    "stickers": "Stickers",
+    "tag_category": {
+      "feeling": "Feeling",
+      "activity": "Activity",
+      "location": "Location",
+      "people": "People",
+      "energy": "Energy"
+    }
+  }
 }

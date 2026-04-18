@@ -9,23 +9,94 @@ class _TagsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<TagsProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(tr("page.tags.title")),
-        actions: [
-          IconButton(
-            tooltip: tr("page.new_tag.title"),
-            icon: const Icon(SpIcons.add),
-            onPressed: () => provider.addTag(context),
+    return Column(
+      children: [
+        buildSearchBar(context, provider),
+        const Divider(height: 1),
+        Expanded(
+          child: RefreshIndicator.adaptive(
+            onRefresh: () => viewModel.load(),
+            child: buildBody(context, provider),
           ),
-        ],
-      ),
-      body: RefreshIndicator.adaptive(
-        onRefresh: () => provider.reload(),
-        child: buildBody(
-          context,
-          provider,
         ),
+      ],
+    );
+  }
+
+  Widget buildSearchBar(BuildContext context, TagsProvider provider) {
+    return Container(
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8.0, bottom: 12.0),
+      child: SearchAnchor.bar(
+        barBackgroundColor: WidgetStatePropertyAll(ColorScheme.of(context).surface),
+        barElevation: const WidgetStatePropertyAll(0.0),
+        barShape: WidgetStatePropertyAll(
+          StadiumBorder(side: BorderSide(color: Theme.of(context).dividerColor)),
+        ),
+        isFullScreen: true,
+        barLeading: const Icon(SpIcons.search),
+        barHintText: tr("button.search"),
+        suggestionsBuilder: (context, controller) {
+          final query = controller.text.trim();
+          final allItems = provider.tags?.items ?? [];
+
+          final bool allowCreate =
+              query.isNotEmpty && !allItems.any((t) => t.title.toLowerCase() == query.toLowerCase());
+
+          List<TagDbModel> filtered;
+          if (query.isEmpty) {
+            filtered = allItems;
+          } else {
+            final fuzzy = Fuzzy<TagDbModel>(
+              allItems,
+              options: FuzzyOptions(
+                isCaseSensitive: false,
+                keys: [WeightedKey(name: 'title', getter: (t) => t.title, weight: 1)],
+              ),
+            );
+            final results = fuzzy.search(query);
+            results.sort((a, b) => a.score.compareTo(b.score));
+            filtered = results.map((r) => r.item).toList();
+          }
+
+          return [
+            ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, _) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (allowCreate)
+                      ListTile(
+                        contentPadding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                        leading: const Icon(SpIcons.add),
+                        title: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: '${tr("page.new_tag.title")}: '),
+                              TextSpan(
+                                text: '"$query"',
+                                style: const TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () async {
+                          final tag = await provider.createTag(query);
+                          if (tag != null && context.mounted) {
+                            if (viewModel.checkable) await viewModel.onToggle(tag, true);
+                            controller.closeView(null);
+                            if (context.mounted) viewModel.load();
+                          }
+                        },
+                      ),
+                    ...filtered.map((tag) => buildTile(tag, viewModel.getStoriesCount(tag), provider, context)),
+                  ],
+                );
+              },
+            ),
+          ];
+        },
       ),
     );
   }
@@ -33,16 +104,17 @@ class _TagsContent extends StatelessWidget {
   Widget buildBody(BuildContext context, TagsProvider provider) {
     if (provider.tags?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
 
-    if (provider.tags?.items.isEmpty == true) {
-      return buildEmptyBody(context);
-    }
+    final items = provider.tags!.items;
+    if (items.isEmpty) return buildEmptyBody(context);
 
     return SpScrollConfiguration(
       child: ReorderableListView.builder(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        padding: EdgeInsets.only(
+          bottom: (viewModel.params.bottomPadding ?? MediaQuery.of(context).padding.bottom) + 16.0,
+        ),
         buildDefaultDragHandles: true,
-        itemCount: provider.tags?.items.length ?? 0,
-        onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
+        itemCount: items.length,
+        onReorder: (oldIndex, newIndex) => provider.reorder(oldIndex, newIndex),
         proxyDecorator: (child, index, animation) {
           return Container(
             color: Theme.of(context).colorScheme.readOnly.surface5,
@@ -50,8 +122,8 @@ class _TagsContent extends StatelessWidget {
           );
         },
         itemBuilder: (context, index) {
-          final tag = provider.tags!.items[index];
-          final storyCount = provider.getStoriesCount(tag);
+          final tag = items[index];
+          final storyCount = viewModel.getStoriesCount(tag);
 
           return Slidable(
             closeOnScroll: true,
@@ -92,10 +164,22 @@ class _TagsContent extends StatelessWidget {
     BuildContext context,
   ) {
     return ListTile(
+      key: ValueKey(tag.id),
       tileColor: Colors.transparent,
-      contentPadding: !viewModel.checkable
-          ? const EdgeInsets.only(left: 16.0, right: 16.0)
-          : const EdgeInsets.only(left: 4.0, right: 16.0),
+      contentPadding: EdgeInsets.only(
+        left: viewModel.checkable ? 4.0 : 16.0,
+        right: 16.0,
+      ),
+      leading: viewModel.checkable
+          ? Checkbox.adaptive(
+              tristate: false,
+              value: viewModel.selectedTags.contains(tag.id),
+              onChanged: (value) async {
+                await viewModel.onToggle(tag, value!);
+                if (context.mounted) viewModel.load();
+              },
+            )
+          : null,
       title: Text(tag.title),
       subtitle: Text(plural("plural.story", storyCount)),
       trailing:
@@ -106,21 +190,19 @@ class _TagsContent extends StatelessWidget {
           ].contains(Theme.of(context).platform)
           ? null
           : const Icon(SpIcons.dragIndicator),
-      onTap: () => provider.viewTag(
-        context: context,
-        tag: tag,
-        storyViewOnly: viewModel.params.storyViewOnly,
-      ),
-      leading: !viewModel.checkable
-          ? null
-          : Checkbox.adaptive(
-              tristate: false,
-              value: viewModel.selectedTags.contains(tag.id),
-              onChanged: (value) async {
-                await viewModel.onToggle(tag, value!);
-                if (context.mounted) context.read<TagsProvider>().reload();
-              },
-            ),
+      onTap: () {
+        if (viewModel.checkable) {
+          viewModel.onToggle(tag, !viewModel.selectedTags.contains(tag.id)).then((_) {
+            if (context.mounted) viewModel.load();
+          });
+        } else {
+          provider.viewTag(
+            context: context,
+            tag: tag,
+            storyViewOnly: viewModel.params.storyViewOnly,
+          );
+        }
+      },
     );
   }
 

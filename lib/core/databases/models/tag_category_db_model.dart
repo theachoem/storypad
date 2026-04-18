@@ -69,17 +69,19 @@ class TagCategoryDbModel extends BaseDbModel {
       return {
         1: tr("general.tag_category.feeling"),
         2: tr("general.tag_category.activity"),
-        3: tr("general.tag_category.location"),
-        4: tr("general.tag_category.people"),
-        5: tr("general.tag_category.energy"),
       }[id]!;
     }
 
     return _title;
   }
 
+  static List<TagCategoryDbModel> systemCategories = [
+    TagCategoryDbModel.feeling(),
+    TagCategoryDbModel.activity(),
+  ];
+
   factory TagCategoryDbModel.feeling() => TagCategoryDbModel.system(1, "Feeling", multiSelect: false);
-  factory TagCategoryDbModel.activity() => TagCategoryDbModel.system(2, "Activity", multiSelect: false);
+  factory TagCategoryDbModel.activity() => TagCategoryDbModel.system(2, "Activity", multiSelect: true);
   factory TagCategoryDbModel.system(int id, String title, {bool multiSelect = false}) {
     return TagCategoryDbModel(
       id: id,

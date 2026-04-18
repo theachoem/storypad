@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
@@ -54,6 +55,7 @@ class BackupRepository {
     PreferenceDbModel.db,
     StoryDbModel.db,
     TagDbModel.db,
+    TagCategoryDbModel.db,
     EventDbModel.db,
     TemplateDbModel.db,
     AssetDbModel.db,

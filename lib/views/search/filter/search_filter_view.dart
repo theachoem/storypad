@@ -43,7 +43,7 @@ class SearchFilterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<SearchFilterViewModel>(
-      create: (context) => SearchFilterViewModel(params: params),
+      create: (context) => SearchFilterViewModel(params: params, context: context),
       builder: (context, viewModel, child) {
         return _SearchFilterContent(viewModel);
       },

@@ -28,6 +28,7 @@ class StoryHeader extends StatelessWidget {
     required this.setFeeling,
     required this.onToggleShowDayCount,
     required this.onToggleManagingPage,
+    required this.onToggleTags,
     required this.onChangeDate,
     required this.onSizeChange,
     required this.page,
@@ -39,6 +40,7 @@ class StoryHeader extends StatelessWidget {
   final SpStoryLabelsDraftActions? draftActions;
   final ValueNotifier<int?>? currentPageIndexNotifier;
   final Future<void> Function(String? feeling) setFeeling;
+  final Future<bool> Function(List<int> tags) onToggleTags;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function(DateTime) onChangeDate;
   final void Function() onToggleManagingPage;
@@ -60,6 +62,7 @@ class StoryHeader extends StatelessWidget {
       story: viewModel.story!,
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
+      onToggleTags: (tags) => viewModel.setTags(tags, context),
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       readOnly: false,
       dateReadOnly: viewModel.story?.eventId != null,
@@ -85,6 +88,7 @@ class StoryHeader extends StatelessWidget {
       story: viewModel.story!,
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
+      onToggleTags: (tags) => viewModel.setTags(tags, context),
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       readOnly: true,
       dateReadOnly: true,
@@ -142,6 +146,7 @@ class StoryHeader extends StatelessWidget {
           onToggleShowDayCount: onToggleShowDayCount,
           onChangeDate: onChangeDate,
           setFeeling: setFeeling,
+          onToggleTags: onToggleTags,
           onToggleManagingPage: onToggleManagingPage,
           draftActions: draftActions,
           preferences: StoryTilePreferencesObject.editing(),

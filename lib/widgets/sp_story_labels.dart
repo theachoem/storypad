@@ -14,6 +14,7 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_tags_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -40,6 +41,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onChangeDate,
     required this.onToggleManagingPage,
     this.setFeeling,
+    this.onToggleTags,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -65,6 +67,7 @@ class SpStoryLabels extends StatelessWidget {
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function(String? feeling)? setFeeling;
+  final Future<bool> Function(List<int> tags)? onToggleTags;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -218,55 +221,65 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (story.feeling != null || setFeeling != null) {
-      // TODO: add feeling back.
-      // children.add(
-      //   SpFloatingPopUpButton(
-      //     estimatedFloatingWidth: 300,
-      //     bottomToTop: false,
-      //     margin: 12.0,
-      //     dyGetter: (dy) => dy + 32,
-      //     pathBuilder: PathBuilders.slideDown,
-      //     floatingBuilder: (void Function() callback) {
-      //       return SpFeelingPicker(
-      //         feeling: story.feeling,
-      //         onPicked: (feeling) async {
-      //           await setFeeling?.call(feeling);
-      //           callback();
-      //         },
-      //       );
-      //     },
-      //     builder: (callback) {
-      //       return SpTapEffect(
-      //         scaleActive: 2.5,
-      //         duration: Durations.medium3,
-      //         curve: Curves.easeInOutCubicEmphasized,
-      //         effects: [.scaleDown],
-      //         behavior: .translucent,
-      //         onTap: fromStoryTile ? null : callback,
-      //         child: SizedBox(
-      //           width: MediaQuery.textScalerOf(context).scale(20),
-      //           height: MediaQuery.textScalerOf(context).scale(20),
-      //           child: Align(
-      //             alignment: .center,
-      //             widthFactor: 1.0,
-      //             child:
-      //                 FeelingObject.feelingsByKey[story.feeling]?.image64.image(
-      //                   width: MediaQuery.textScalerOf(context).scale(18.0),
-      //                   key: ValueKey('feeling-${story.feeling}'),
-      //                 ) ??
-      //                 Icon(
-      //                   SpIcons.addFeeling,
-      //                   key: const ValueKey('feeling-none'),
-      //                   size: MediaQuery.textScalerOf(context).scale(18.0),
-      //                   color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
-      //                 ),
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // );
+    final emojis = (story.validTags?.map((tag) => tagProvider.getEmojiTag(tag)) ?? []).whereType<String>();
+    if (emojis.isNotEmpty) {
+      children.add(
+        SpTapEffect(
+          duration: Durations.medium3,
+          curve: Curves.easeInOutCubicEmphasized,
+          behavior: .translucent,
+          onTap: onToggleTags != null ? () => _openTagsSheet(context) : null,
+          child: Row(
+            mainAxisSize: .min,
+            children: emojis.map((emoji) {
+              return Container(
+                padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(2)),
+                height: MediaQuery.textScalerOf(context).scale(20),
+                width: MediaQuery.textScalerOf(context).scale(20),
+                alignment: .center,
+                child: FittedBox(
+                  child: Text(
+                    emoji,
+                    textAlign: .center,
+                    softWrap: true,
+                    style: const TextStyle(fontSize: 40, height: 1.0),
+                    strutStyle: const StrutStyle(
+                      forceStrutHeight: true,
+                      fontSize: 40,
+                      height: 1.0,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    }
+
+    if (emojis.isEmpty && onToggleTags != null) {
+      children.add(
+        SpTapEffect(
+          scaleActive: 2.5,
+          duration: Durations.medium3,
+          curve: Curves.easeInOutCubicEmphasized,
+          effects: [.scaleDown],
+          behavior: .translucent,
+          onTap: () => _openTagsSheet(context),
+          child: SizedBox(
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Align(
+              alignment: .center,
+              widthFactor: 1.0,
+              child: Icon(
+                SpIcons.addFeeling,
+                size: MediaQuery.textScalerOf(context).scale(18.0),
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
+              ),
+            ),
+          ),
+        ),
+      );
     }
 
     if (story.event?.period == true) {
@@ -347,8 +360,20 @@ class SpStoryLabels extends StatelessWidget {
     }
   }
 
+  void _openTagsSheet(BuildContext context) {
+    if (onToggleTags == null) return;
+    SpStoryTagsBottomSheet(
+      initialTags: story.validTags ?? [],
+      onUpdated: onToggleTags!,
+    ).show(context: context);
+  }
+
   List<Widget> buildTags(TagsProvider tagProvider, BuildContext context) {
-    final tags = tagProvider.tags?.items.where((e) => story.validTags?.contains(e.id) == true).toList() ?? [];
+    final tags =
+        tagProvider.tags?.items
+            .where((e) => e.categoryId == null && e.emoji == null && story.validTags?.contains(e.id) == true)
+            .toList() ??
+        [];
     final children = tags.map((tag) {
       return buildTag(context, tagProvider, tag);
     }).toList();

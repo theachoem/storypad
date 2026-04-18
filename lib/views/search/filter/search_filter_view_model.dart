@@ -1,21 +1,26 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/providers/tags_provider.dart';
 import 'search_filter_view.dart';
 
 class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
   final SearchFilterRoute params;
+  late final TagsProvider tagsProvider;
 
   late SearchFilterObject searchFilter;
 
   SearchFilterViewModel({
     required this.params,
+    required BuildContext context,
   }) {
+    tagsProvider = context.read<TagsProvider>();
     searchFilter = params.initialTune;
     load();
   }
@@ -33,7 +38,7 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
         },
       );
 
-      tags = await TagDbModel.db.where().then((e) => e?.items);
+      tags = [...tagsProvider.tags?.items ?? []];
       if (tags?.isNotEmpty == true) tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
       await _resetTagsCount();

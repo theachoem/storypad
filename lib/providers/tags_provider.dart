@@ -4,51 +4,79 @@ import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
 import 'package:storypad/core/databases/models/collection_db_model.dart' show CollectionDbModel;
 import 'package:storypad/core/databases/models/story_db_model.dart' show StoryDbModel;
 import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
+import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
 import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagRoute;
 import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
-class TagsProvider extends ChangeNotifier {
+class TagsProvider extends ChangeNotifier with DebounchedCallback {
   TagsProvider() {
-    StoryDbModel.db.addGlobalListener(reload);
-    setup();
+    StoryDbModel.db.addGlobalListener(_dbListener);
+    TagDbModel.db.addGlobalListener(_dbListener);
+    setAllTags(TagDbModel.db.getInitialTagsAndClear());
+    _reindex(notifyUi: null);
   }
 
-  CollectionDbModel<TagDbModel>? tags = TagDbModel.db.initialTags;
-  Map<int, int> storiesCountByTagId = {};
+  CollectionDbModel<TagDbModel>? _tags;
+  CollectionDbModel<TagDbModel>? _emojiTags;
 
-  int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id] ?? 0;
+  CollectionDbModel<TagDbModel>? get tags => _tags;
+  CollectionDbModel<TagDbModel>? get emojiTags => _emojiTags;
+  CollectionDbModel<TagDbModel>? get allTags => CollectionDbModel(items: [...?tags?.items, ...?emojiTags?.items]);
 
-  Future<void> setup() async {
-    storiesCountByTagId.clear();
+  Map<int, String> _emojiById = {};
+  Map<int, String> get emojiById => _emojiById;
+
+  String? getEmojiTag(int tagId) => _emojiById[tagId];
+
+  void setAllTags(CollectionDbModel<TagDbModel>? allTags) {
+    _tags = CollectionDbModel(items: allTags?.items.where((tag) => tag.categoryId == null).toList() ?? []);
+    _emojiTags = CollectionDbModel(items: allTags?.items.where((tag) => tag.categoryId != null).toList() ?? []);
+    _emojiById = {for (var tag in _emojiTags?.items ?? <TagDbModel>[]) tag.id: ?tag.emoji};
+  }
+
+  // pass null to allow reindex to notify only when needed.
+  Future<void> _reindex({
+    bool? notifyUi,
+  }) async {
+    bool? shouldNotify = notifyUi;
 
     if (tags != null) {
       for (int i = 0; i < tags!.items.length; i++) {
         TagDbModel tag = tags!.items[i];
 
         if (tag.index != i) {
-          tag = await TagDbModel.db.set(tag.copyWith(index: i, updatedAt: DateTime.now())) ?? tag;
-          tags = tags!.replaceElement(tag);
+          tag =
+              await TagDbModel.db.set(
+                tag.copyWith(index: i, updatedAt: DateTime.now()),
+                debugSource: '$runtimeType#setup',
+              ) ??
+              tag;
+          _tags = _tags!.replaceElement(tag);
+          shouldNotify ??= true;
         }
       }
     }
 
-    storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
-      tagIds: tags?.items.map((e) => e.id).toList() ?? [],
-    );
+    if (shouldNotify == true) notifyListeners();
+  }
 
-    notifyListeners();
+  Future<void> _dbListener() async {
+    debouncedCallback(() {
+      reload();
+    });
   }
 
   Future<void> reload() async {
-    tags = await TagDbModel.db.where();
-    await setup();
+    final allTags = await TagDbModel.db.where();
+    setAllTags(allTags);
+    await _reindex(notifyUi: true);
   }
 
   Future<void> reorder(int oldIndex, int newIndex) async {
     if (tags == null) return;
 
-    tags = tags!.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    _tags = tags!.reorder(oldIndex: oldIndex, newIndex: newIndex);
     notifyListeners();
 
     AnalyticsService.instance.logReorderTags(
@@ -59,11 +87,12 @@ class TagsProvider extends ChangeNotifier {
     for (int i = 0; i < length; i++) {
       final item = tags!.items[i];
       if (item.index != i) {
-        await TagDbModel.db.set(item.copyWith(index: i, updatedAt: DateTime.now()));
+        await TagDbModel.db.set(
+          item.copyWith(index: i, updatedAt: DateTime.now()),
+          debugSource: '$runtimeType#reorder',
+        );
       }
     }
-
-    await reload();
   }
 
   Future<bool> deleteTag(BuildContext context, TagDbModel tag) async {
@@ -75,9 +104,10 @@ class TagsProvider extends ChangeNotifier {
     );
 
     if (result == OkCancelResult.ok) {
-      await TagDbModel.db.delete(tag.id);
-      await reload();
+      _tags = tags?.removeElement(tag);
+      notifyListeners();
 
+      await TagDbModel.db.delete(tag.id);
       AnalyticsService.instance.logDeleteTag(
         tag: tag,
       );
@@ -93,27 +123,33 @@ class TagsProvider extends ChangeNotifier {
 
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
-      await TagDbModel.db.set(newTag);
-      await reload();
-
+      await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
       AnalyticsService.instance.logEditTag(
         tag: tag,
       );
     }
   }
 
-  Future<void> addTag(BuildContext context) async {
-    final result = await EditTagRoute(tag: null, allTags: tags?.items ?? []).push(context);
+  Future<TagDbModel?> createTag(String title) async {
+    final trimmed = title.trim();
+    if (trimmed.isEmpty) return null;
+    if (tags?.items.any((tag) => tag.title.toLowerCase() == trimmed.toLowerCase()) == true) return null;
 
-    if (result is List<String> && result.isNotEmpty) {
-      TagDbModel newTag = TagDbModel.fromNow().copyWith(title: result.first);
-      TagDbModel? tag = await TagDbModel.db.set(newTag);
-      await reload();
+    final newTag = TagDbModel.fromNow().copyWith(title: trimmed, index: 0);
 
-      if (tag == null) return;
-      AnalyticsService.instance.logAddTag(
-        tag: tag,
-      );
+    _tags ??= CollectionDbModel(items: []);
+    _tags = _tags?.addElement(newTag, 0);
+    notifyListeners();
+
+    final tag = await TagDbModel.db.set(newTag, debugSource: '$runtimeType#createTag');
+
+    if (tag != null) {
+      AnalyticsService.instance.logAddTag(tag: tag);
+      return tag;
+    } else {
+      _tags = _tags?.removeElement(newTag);
+      notifyListeners();
+      return null;
     }
   }
 
@@ -130,7 +166,8 @@ class TagsProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    StoryDbModel.db.removeGlobalListener(reload);
+    StoryDbModel.db.removeGlobalListener(_dbListener);
+    TagDbModel.db.removeGlobalListener(_dbListener);
     super.dispose();
   }
 }

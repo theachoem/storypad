@@ -1,11 +1,13 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/storages/search_filter_storage.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
@@ -19,10 +21,13 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   final SearchRoute params;
   final TextEditingController queryController = TextEditingController();
   final tagsChipsKey = GlobalKey<SpScrollableChoiceChipsState<TagDbModel>>();
+  late final TagsProvider tagsProvider;
 
   SearchViewModel({
     required this.params,
+    required BuildContext context,
   }) {
+    tagsProvider = context.read<TagsProvider>();
     StoryDbModel.db.reindexSearchMetadata().then((_) {
       load();
     });
@@ -54,7 +59,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
       return initialFilter.copyWith(tagId: value?.tagId);
     });
 
-    _tags = await TagDbModel.db.where().then((e) => e?.items ?? []);
+    _tags = [...tagsProvider.tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
 
     await _resetTagsCount();

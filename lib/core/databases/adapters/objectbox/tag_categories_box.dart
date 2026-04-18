@@ -21,34 +21,51 @@ class TagCategoriesBox extends BaseBox<TagCategoryObjectBox, TagCategoryDbModel>
   QueryDateProperty<TagCategoryObjectBox> get permanentlyDeletedAtProperty =>
       TagCategoryObjectBox_.permanentlyDeletedAt;
 
-  // newly suggest tags can be already used by user with different suggested category,
-  // so in that case, we don't need to suggest it again, keep user's existing tags in the category they want.
-  Future<Map<TagCategoryDbModel, List<TagDbModel>>>? getAllTagsByCategory() async {
-    List<TagCategoryDbModel> categories = [
-      TagCategoryDbModel.feeling(),
-      TagCategoryDbModel.activity(),
-    ];
-
-    final usedEmojis = TagDbModel.db.box
-        .query(TagObjectBox_.emoji.notNull())
-        .build()
-        .property(TagObjectBox_.emoji)
-        .find()
-        .toSet();
+  Future<Map<TagCategoryDbModel, List<TagDbModel>>> getSuggestTagsByCategory({
+    Set<int>? selectedTagIds,
+  }) async {
+    List<TagCategoryDbModel> categories = TagCategoryDbModel.systemCategories;
 
     Future<List<TagDbModel>> getTagsForCategory(TagCategoryDbModel category) async {
       final existing = await TagDbModel.db
           .where(filters: {'category_id': category.id})
           .then((e) => e?.items ?? <TagDbModel>[]);
 
-      final suggestions = category.suggestTags().where((tag) {
+      final suggested = category.suggestTags();
+      final suggestedEmojiSet = suggested.map((tag) => tag.emoji).whereType<String>().toSet();
+
+      final existingByEmoji = {
+        for (final tag in existing)
+          if (tag.emoji != null) tag.emoji!: tag,
+      };
+
+      // Always show all suggested emojis first, in the defined category order.
+      // If a suggested emoji already exists in this category, reuse the existing DB tag.
+      final orderedSuggested = <TagDbModel>[];
+      for (final tag in suggested) {
         final emoji = tag.emoji;
-        return emoji != null && !usedEmojis.contains(emoji);
+        if (emoji == null) continue;
+
+        final existingTag = existingByEmoji.remove(emoji);
+        if (existingTag != null) {
+          orderedSuggested.add(existingTag);
+        } else {
+          orderedSuggested.add(tag);
+        }
+      }
+
+      // Append only selected non-suggested stickers.
+      final selectedExtras = existing.where((tag) {
+        final selected = selectedTagIds?.contains(tag.id) == true;
+        if (!selected) return false;
+
+        final emoji = tag.emoji;
+        return emoji == null || !suggestedEmojiSet.contains(emoji);
       });
 
       return [
-        ...suggestions,
-        ...existing,
+        ...orderedSuggested,
+        ...selectedExtras,
       ];
     }
 

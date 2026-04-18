@@ -116,10 +116,9 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         .where((e) => widget.story.validTags?.contains(e.id) == true)
         .toList();
 
-    // TODO: add feeling back.
-    // final feeling = FeelingObject.feelingsByKey[widget.story.feeling];
-    // ignore: prefer_const_declarations
-    final feeling = null;
+    final emojis = widget.story.validTags?.map((tagId) {
+      return context.read<TagsProvider>().emojiById[tagId];
+    }).whereType<String>();
 
     List<StoryPageObject> pages = List.generate(widget.draftContent.richPages?.length ?? 0, (index) {
       final page = widget.draftContent.richPages![index];
@@ -132,7 +131,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       tags: tags ?? [],
       timeFormat: context.read<DevicePreferencesProvider>().preferences.timeFormat,
       locale: context.locale,
-      feeling: feeling?.translation(context),
+      emojis: emojis?.isNotEmpty == true ? emojis!.toList() : [],
       markdown: option == _ShareOption.markdown,
     ).export();
   }
