@@ -42,6 +42,8 @@ class StoryDbModel extends BaseDbModel {
 
   final bool? starred;
   final bool? pinned;
+
+  @Deprecated('We have moved to tags instead')
   final String? feeling;
 
   @JsonKey(fromJson: tagsFromJson)
@@ -89,7 +91,7 @@ class StoryDbModel extends BaseDbModel {
   List<int>? get validTags => tags?.map((e) => int.tryParse(e)).whereType<int>().toList();
 
   StoryDbModel({
-    this.version = 2,
+    this.version = 3,
     required this.type,
     required this.id,
     required this.starred,

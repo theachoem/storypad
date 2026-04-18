@@ -1,45 +1,42 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tag_db_model.dart';
+part of 'tag_category_db_model.dart';
 
 // **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
-abstract class _$TagDbModelCWProxy {
-  TagDbModel id(int id);
+abstract class _$TagCategoryDbModelCWProxy {
+  TagCategoryDbModel id(int id);
 
-  TagDbModel version(int version);
+  TagCategoryDbModel version(int version);
 
-  TagDbModel title(String title);
+  TagCategoryDbModel title(String title);
 
-  TagDbModel emoji(String? emoji);
+  TagCategoryDbModel multiSelect(bool multiSelect);
 
-  TagDbModel categoryId(int? categoryId);
+  TagCategoryDbModel createdAt(DateTime createdAt);
 
-  TagDbModel createdAt(DateTime createdAt);
+  TagCategoryDbModel updatedAt(DateTime updatedAt);
 
-  TagDbModel updatedAt(DateTime updatedAt);
+  TagCategoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
-  TagDbModel lastSavedDeviceId(String? lastSavedDeviceId);
+  TagCategoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
-  TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
-
-  TagDbModel index(int? index);
+  TagCategoryDbModel index(int? index);
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagCategoryDbModel(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// TagDbModel(...).copyWith(id: 12, name: "My name")
+  /// TagCategoryDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
-  TagDbModel call({
+  TagCategoryDbModel call({
     int id,
     int version,
     String title,
-    String? emoji,
-    int? categoryId,
+    bool multiSelect,
     DateTime createdAt,
     DateTime updatedAt,
     String? lastSavedDeviceId,
@@ -49,65 +46,64 @@ abstract class _$TagDbModelCWProxy {
 }
 
 /// Callable proxy for `copyWith` functionality.
-/// Use as `instanceOfTagDbModel.copyWith(...)` or call `instanceOfTagDbModel.copyWith.fieldName(value)` for a single field.
-class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
-  const _$TagDbModelCWProxyImpl(this._value);
+/// Use as `instanceOfTagCategoryDbModel.copyWith(...)` or call `instanceOfTagCategoryDbModel.copyWith.fieldName(value)` for a single field.
+class _$TagCategoryDbModelCWProxyImpl implements _$TagCategoryDbModelCWProxy {
+  const _$TagCategoryDbModelCWProxyImpl(this._value);
 
-  final TagDbModel _value;
-
-  @override
-  TagDbModel id(int id) => call(id: id);
+  final TagCategoryDbModel _value;
 
   @override
-  TagDbModel version(int version) => call(version: version);
+  TagCategoryDbModel id(int id) => call(id: id);
 
   @override
-  TagDbModel title(String title) => call(title: title);
+  TagCategoryDbModel version(int version) => call(version: version);
 
   @override
-  TagDbModel emoji(String? emoji) => call(emoji: emoji);
+  TagCategoryDbModel title(String title) => call(title: title);
 
   @override
-  TagDbModel categoryId(int? categoryId) => call(categoryId: categoryId);
+  TagCategoryDbModel multiSelect(bool multiSelect) =>
+      call(multiSelect: multiSelect);
 
   @override
-  TagDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
+  TagCategoryDbModel createdAt(DateTime createdAt) =>
+      call(createdAt: createdAt);
 
   @override
-  TagDbModel updatedAt(DateTime updatedAt) => call(updatedAt: updatedAt);
+  TagCategoryDbModel updatedAt(DateTime updatedAt) =>
+      call(updatedAt: updatedAt);
 
   @override
-  TagDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
+  TagCategoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       call(lastSavedDeviceId: lastSavedDeviceId);
 
   @override
-  TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
+  TagCategoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-  TagDbModel index(int? index) => call(index: index);
+  TagCategoryDbModel index(int? index) => call(index: index);
 
   @override
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagCategoryDbModel(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// TagDbModel(...).copyWith(id: 12, name: "My name")
+  /// TagCategoryDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
-  TagDbModel call({
+  TagCategoryDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
-    Object? emoji = const $CopyWithPlaceholder(),
-    Object? categoryId = const $CopyWithPlaceholder(),
+    Object? multiSelect = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
   }) {
-    return TagDbModel(
+    return TagCategoryDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
@@ -120,14 +116,11 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
           ? _value.title
           // ignore: cast_nullable_to_non_nullable
           : title as String,
-      emoji: emoji == const $CopyWithPlaceholder()
-          ? _value.emoji
+      multiSelect:
+          multiSelect == const $CopyWithPlaceholder() || multiSelect == null
+          ? _value.multiSelect
           // ignore: cast_nullable_to_non_nullable
-          : emoji as String?,
-      categoryId: categoryId == const $CopyWithPlaceholder()
-          ? _value.categoryId
-          // ignore: cast_nullable_to_non_nullable
-          : categoryId as int?,
+          : multiSelect as bool,
       createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
@@ -152,44 +145,43 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
   }
 }
 
-extension $TagDbModelCopyWith on TagDbModel {
+extension $TagCategoryDbModelCopyWith on TagCategoryDbModel {
   /// Returns a callable class used to build a new instance with modified fields.
-  /// Example: `instanceOfTagDbModel.copyWith(...)` or `instanceOfTagDbModel.copyWith.fieldName(...)`.
+  /// Example: `instanceOfTagCategoryDbModel.copyWith(...)` or `instanceOfTagCategoryDbModel.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$TagDbModelCWProxy get copyWith => _$TagDbModelCWProxyImpl(this);
+  _$TagCategoryDbModelCWProxy get copyWith =>
+      _$TagCategoryDbModelCWProxyImpl(this);
 }
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
-  id: (json['id'] as num).toInt(),
-  version: (json['version'] as num).toInt(),
-  title: json['title'] as String,
-  emoji: json['emoji'] as String?,
-  categoryId: (json['category_id'] as num?)?.toInt(),
-  createdAt: DateTime.parse(json['created_at'] as String),
-  updatedAt: DateTime.parse(json['updated_at'] as String),
-  lastSavedDeviceId: json['last_saved_device_id'] as String?,
-  permanentlyDeletedAt: json['permanently_deleted_at'] == null
-      ? null
-      : DateTime.parse(json['permanently_deleted_at'] as String),
-  index: (json['index'] as num?)?.toInt(),
-)..storiesCount = (json['stories_count'] as num?)?.toInt();
+TagCategoryDbModel _$TagCategoryDbModelFromJson(Map<String, dynamic> json) =>
+    TagCategoryDbModel(
+      id: (json['id'] as num).toInt(),
+      version: (json['version'] as num).toInt(),
+      title: json['title'] as String,
+      multiSelect: json['multi_select'] as bool,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      lastSavedDeviceId: json['last_saved_device_id'] as String?,
+      permanentlyDeletedAt: json['permanently_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['permanently_deleted_at'] as String),
+      index: (json['index'] as num?)?.toInt(),
+    );
 
-Map<String, dynamic> _$TagDbModelToJson(
-  TagDbModel instance,
+Map<String, dynamic> _$TagCategoryDbModelToJson(
+  TagCategoryDbModel instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'index': instance.index,
   'version': instance.version,
-  'title': instance.title,
-  'emoji': instance.emoji,
+  'multi_select': instance.multiSelect,
   'created_at': instance.createdAt.toIso8601String(),
-  'category_id': instance.categoryId,
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
-  'stories_count': instance.storiesCount,
+  'title': instance.title,
 };

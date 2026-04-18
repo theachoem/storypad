@@ -27,6 +27,7 @@ class DatabaseInitializer {
 
   static Future<void> migrateData() async {
     await StoryDbModel.db.migrateDataToV2();
+    await StoryDbModel.db.migrateFeelingToTags();
     await moveExistingAssetToSupportDirectory();
     await computeStoryTagsForAsset();
     await migrateEmbedAssetsToUseRelativeFilePaths();
