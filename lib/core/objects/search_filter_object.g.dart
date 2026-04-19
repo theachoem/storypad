@@ -13,6 +13,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject tagId(int? tagId);
 
+  SearchFilterObject tagIds(Set<int> tagIds);
+
   SearchFilterObject assetId(int? assetId);
 
   SearchFilterObject query(String? query);
@@ -46,6 +48,7 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<int> years,
     Set<PathType> types,
     int? tagId,
+    Set<int> tagIds,
     int? assetId,
     String? query,
     String? galleryTemplateId,
@@ -77,25 +80,25 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject tagId(int? tagId) => call(tagId: tagId);
 
   @override
+  SearchFilterObject tagIds(Set<int> tagIds) => call(tagIds: tagIds);
+
+  @override
   SearchFilterObject assetId(int? assetId) => call(assetId: assetId);
 
   @override
   SearchFilterObject query(String? query) => call(query: query);
 
   @override
-  SearchFilterObject galleryTemplateId(String? galleryTemplateId) =>
-      call(galleryTemplateId: galleryTemplateId);
+  SearchFilterObject galleryTemplateId(String? galleryTemplateId) => call(galleryTemplateId: galleryTemplateId);
 
   @override
-  SearchFilterObject templateId(int? templateId) =>
-      call(templateId: templateId);
+  SearchFilterObject templateId(int? templateId) => call(templateId: templateId);
 
   @override
   SearchFilterObject eventId(int? eventId) => call(eventId: eventId);
 
   @override
-  SearchFilterObject excludeYears(Set<int>? excludeYears) =>
-      call(excludeYears: excludeYears);
+  SearchFilterObject excludeYears(Set<int>? excludeYears) => call(excludeYears: excludeYears);
 
   @override
   SearchFilterObject month(int? month) => call(month: month);
@@ -124,6 +127,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? years = const $CopyWithPlaceholder(),
     Object? types = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
+    Object? tagIds = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
     Object? query = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
@@ -149,6 +153,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.tagId
           // ignore: cast_nullable_to_non_nullable
           : tagId as int?,
+      tagIds: tagIds == const $CopyWithPlaceholder() || tagIds == null
+          ? _value.tagIds
+          // ignore: cast_nullable_to_non_nullable
+          : tagIds as Set<int>,
       assetId: assetId == const $CopyWithPlaceholder()
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
@@ -201,55 +209,48 @@ extension $SearchFilterObjectCopyWith on SearchFilterObject {
   /// Returns a callable class used to build a new instance with modified fields.
   /// Example: `instanceOfSearchFilterObject.copyWith(...)` or `instanceOfSearchFilterObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$SearchFilterObjectCWProxy get copyWith =>
-      _$SearchFilterObjectCWProxyImpl(this);
+  _$SearchFilterObjectCWProxy get copyWith => _$SearchFilterObjectCWProxyImpl(this);
 }
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
-    SearchFilterObject(
-      years: (json['years'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
-          .toSet(),
-      types: (json['types'] as List<dynamic>)
-          .map((e) => $enumDecode(_$PathTypeEnumMap, e))
-          .toSet(),
-      tagId: (json['tag_id'] as num?)?.toInt(),
-      assetId: (json['asset_id'] as num?)?.toInt(),
-      query: json['query'] as String?,
-      galleryTemplateId: json['gallery_template_id'] as String?,
-      templateId: (json['template_id'] as num?)?.toInt(),
-      eventId: (json['event_id'] as num?)?.toInt(),
-      excludeYears: (json['exclude_years'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toSet(),
-      month: (json['month'] as num?)?.toInt(),
-      day: (json['day'] as num?)?.toInt(),
-      starred: json['starred'] as bool?,
-      pinned: json['pinned'] as bool?,
-      limit: (json['limit'] as num?)?.toInt(),
-    );
+SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) => SearchFilterObject(
+  years: (json['years'] as List<dynamic>).map((e) => (e as num).toInt()).toSet(),
+  types: (json['types'] as List<dynamic>).map((e) => $enumDecode(_$PathTypeEnumMap, e)).toSet(),
+  tagIds: (json['tag_ids'] as List<dynamic>?)?.map((e) => (e as num).toInt()).toSet() ?? {},
+  tagId: (json['tag_id'] as num?)?.toInt(),
+  assetId: (json['asset_id'] as num?)?.toInt(),
+  query: json['query'] as String?,
+  galleryTemplateId: json['gallery_template_id'] as String?,
+  templateId: (json['template_id'] as num?)?.toInt(),
+  eventId: (json['event_id'] as num?)?.toInt(),
+  excludeYears: (json['exclude_years'] as List<dynamic>?)?.map((e) => (e as num).toInt()).toSet(),
+  month: (json['month'] as num?)?.toInt(),
+  day: (json['day'] as num?)?.toInt(),
+  starred: json['starred'] as bool?,
+  pinned: json['pinned'] as bool?,
+  limit: (json['limit'] as num?)?.toInt(),
+);
 
-Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
-    <String, dynamic>{
-      'years': instance.years.toList(),
-      'exclude_years': instance.excludeYears?.toList(),
-      'query': instance.query,
-      'month': instance.month,
-      'day': instance.day,
-      'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
-      'tag_id': instance.tagId,
-      'gallery_template_id': instance.galleryTemplateId,
-      'template_id': instance.templateId,
-      'event_id': instance.eventId,
-      'asset_id': instance.assetId,
-      'starred': instance.starred,
-      'pinned': instance.pinned,
-      'limit': instance.limit,
-    };
+Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) => <String, dynamic>{
+  'years': instance.years.toList(),
+  'exclude_years': instance.excludeYears?.toList(),
+  'query': instance.query,
+  'month': instance.month,
+  'day': instance.day,
+  'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
+  'tag_id': instance.tagId,
+  'tag_ids': instance.tagIds.toList(),
+  'gallery_template_id': instance.galleryTemplateId,
+  'template_id': instance.templateId,
+  'event_id': instance.eventId,
+  'asset_id': instance.assetId,
+  'starred': instance.starred,
+  'pinned': instance.pinned,
+  'limit': instance.limit,
+};
 
 const _$PathTypeEnumMap = {
   PathType.docs: 'docs',

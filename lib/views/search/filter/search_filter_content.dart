@@ -22,16 +22,21 @@ class _SearchFilterContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context) {
+    final tagsByCategory = viewModel.tagsByCategory;
+
     final children = [
       if (viewModel.years?.isNotEmpty == true) ...[
         _Title(title: tr("general.years")),
         buildYears(context),
         const SizedBox(height: 12.0),
       ],
-      if (viewModel.params.filterTagModifiable && viewModel.tags?.isNotEmpty == true) ...[
-        _Title(title: tr("general.tags")),
-        buildTags(context),
-        const SizedBox(height: 12.0),
+      if (viewModel.params.filterTagModifiable && tagsByCategory != null) ...[
+        for (final entry in tagsByCategory.entries)
+          if (entry.value.isNotEmpty) ...[
+            _Title(title: entry.key?.title ?? tr("general.tags")),
+            buildTagChips(context, entry.key, entry.value),
+            const SizedBox(height: 12.0),
+          ],
       ],
       const Divider(),
       CheckboxListTile.adaptive(
@@ -64,12 +69,14 @@ class _SearchFilterContent extends StatelessWidget {
     );
   }
 
-  Widget buildTags(BuildContext context) {
+  Widget buildTagChips(BuildContext context, TagCategoryDbModel? category, List<TagDbModel> tags) {
+    final bool isEmoji = category != null;
+
     return SpScrollableChoiceChips<TagDbModel>(
       wrapWidth: 800,
-      choices: viewModel.tags ?? [],
+      choices: tags,
       storiesCount: (TagDbModel tag) => tag.storiesCount,
-      toLabel: (TagDbModel tag) => tag.title,
+      toLabel: (TagDbModel tag) => isEmoji ? (tag.emoji ?? '') : tag.title,
       selected: (TagDbModel tag) => viewModel.tagSelected(tag),
       onToggle: (TagDbModel tag) => viewModel.toggleTag(tag),
     );

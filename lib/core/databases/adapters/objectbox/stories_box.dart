@@ -468,6 +468,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    List<int>? tags = filters?["tags"];
     String? galleryTemplateId = filters?["gallery_template_id"];
     int? template = filters?["template"];
     int? eventId = filters?["event_id"];
@@ -479,10 +480,18 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? selectedYears = filters?["selected_years"];
     List<int>? yearsRange = filters?["years_range"];
 
-    Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.id.notNull();
 
     if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+
+    if (tags != null && tags.isNotEmpty) {
+      // AND logic: story must have ALL specified tags.
+      for (final t in tags) {
+        conditions = conditions.and(StoryObjectBox_.tags.containsElement(t.toString()));
+      }
+    }
+
     if (galleryTemplateId != null) {
       conditions = conditions.and(StoryObjectBox_.galleryTemplateId.equals(galleryTemplateId));
     }
