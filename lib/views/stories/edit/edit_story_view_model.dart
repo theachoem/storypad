@@ -9,6 +9,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -79,12 +80,14 @@ class EditStoryViewModel extends BaseStoryViewModel {
     );
 
     if (params.initialAsset?.relativeLocalFilePath != null) {
+      final asset = params.initialAsset!;
       final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
       final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
+      final embedKey = asset.type == AssetType.audio ? 'audio' : 'image';
       pagesManager.pagesMap.first.bodyController.replaceText(
         index,
         length,
-        {'image': params.initialAsset!.relativeLocalFilePath},
+        {embedKey: asset.relativeLocalFilePath},
         null,
       );
     }

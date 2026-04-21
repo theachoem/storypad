@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,12 +16,14 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer_state.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 
@@ -150,6 +153,33 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialYear: year,
     ).push(context);
     await _checkNewStoryResult(addedStory);
+  }
+
+  Future<void> goToNewPageWithVoice(BuildContext context) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final result = await const SpVoiceRecordingSheet().show(context: context);
+        if (result is! VoiceRecordingResult) return;
+        if (HomeView.homeContext?.mounted != true) return;
+
+        final asset = await InsertFileToDbService.insertAudio(
+          result.filePath,
+          await File(result.filePath).readAsBytes(),
+          durationInMs: result.durationInMs,
+        );
+
+        if (asset == null) return;
+
+        final addedStory = await EditStoryRoute(
+          id: null,
+          initialYear: year,
+          initialAsset: asset,
+        ).push(HomeView.homeContext!);
+
+        await _checkNewStoryResult(addedStory);
+      },
+    );
   }
 
   void takePhoto(BuildContext context) async {
