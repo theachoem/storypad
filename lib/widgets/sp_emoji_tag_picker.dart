@@ -1,12 +1,9 @@
 import 'dart:async';
-
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
-import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
@@ -80,7 +77,6 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
 
   Future<void> _onPickCustomEmoji(String emoji, TagCategoryDbModel category) async {
     // 1 emoji = 1 tag: deterministic ID guarantees no duplicates across categories.
-    // If the tag already exists (any category), reuse it as-is.
     final tag = TagDbModel.emoji(emoji, categoryId: category.id);
 
     final isSelected = selectedTags.contains(tag.id);
@@ -101,8 +97,24 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
 
     setState(() => selectedTags = newTags.toSet());
 
-    // Save only if not already persisted (preserves original categoryId if already exists).
-    if (!tag.exist()) await tag.save();
+    // Persist logic:
+    // - Suggested emojis (appear in any system category's suggestTags): preserve original categoryId.
+    // - Custom (non-suggested) emojis that already exist: update categoryId to the tapped category.
+    // - New emojis: save under the tapped category.
+    final allSuggestedEmojis = TagCategoryDbModel.systemCategories
+        .expand((c) => c.suggestTags().map((t) => t.emoji).whereType<String>())
+        .toSet();
+    final isSuggested = allSuggestedEmojis.contains(emoji);
+
+    if (!tag.exist()) {
+      await tag.save();
+    } else if (!isSuggested) {
+      // Custom emoji already exists in a different category — migrate it to the tapped category.
+      final existing = await TagDbModel.db.find(tag.id);
+      if (existing != null && existing.categoryId != category.id) {
+        await TagDbModel.db.set(existing.copyWith(categoryId: category.id));
+      }
+    }
 
     final success = await widget.onUpdated(newTags);
     if (!success) setState(() => selectedTags = widget.initialTags.toSet());
@@ -215,6 +227,7 @@ class _EmojiPicker extends StatelessWidget {
                       ),
                     );
                   }),
+
                   // "+" button to open custom emoji picker
                   SpTapEffect(
                     scaleActive: 1.3,

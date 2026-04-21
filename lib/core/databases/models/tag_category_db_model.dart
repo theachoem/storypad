@@ -43,11 +43,12 @@ class TagCategoryDbModel extends BaseDbModel {
   }) : _title = title,
        index = index ?? 0;
 
-  static List<String> suggestFeelings =
-      "😄 😁 😆 🤩 🥳 😂 😌 😇 😊 🙂 🫠 😴 🥱 🤒 🤢 😶 😑 😐 🤬 😡 😤 😫 😰 😟 😬 😭 😢 😔 🙁 ☹️".split(" ");
+  static List<String> suggestFeelings = "😄 🥳 🥰 😂 😈 😌 😊 😐 🤔 🧐 😶 😴 😔 😢 😭 😰 🤯 😤 😡 🤒 🥵 🥶 😋".split(
+    " ",
+  );
 
   static List<String> suggestActivities =
-      "🚶 🚲 🚆 🚗 ✈️ 🚿 🧹 🛒 🍳 🏠 🏊 🏋️ 🚴 🧘 🏃 🎧 📖 🎬 🎨 🎮 🏫 💼 📝 📚 💻 👪 💬 🥂 👥 👫".split(" ");
+      "🏃 🚴 🚶 🏋️ 🏊 🧘 ⚽ 💻 📖 📝 🎓 🎨 💼 🍳 🧹 🛒 ☕ 🛌 🛁 🌱 🎮 📺 🎧 🍽️ 🎤 💃 📸 🚗 ✈️ 💇".split(" ");
 
   List<TagDbModel> suggestTags() {
     switch (id) {

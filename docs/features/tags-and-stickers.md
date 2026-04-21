@@ -53,25 +53,49 @@ This guarantees no collision between normal tags and emoji sticker tags.
 
 ### Story Header (Sticker Display)
 
-In `SpStoryLabels`, sticker emojis are displayed inline in the story header area. If no stickers are selected, an add-sticker button (reaction icon) is shown. Tapping any sticker or the add button opens the tag sheet.
+In `SpStoryLabels`, sticker emojis and text tags are displayed inline in the story header. Two separate floating popup buttons appear when editing:
 
-### `SpStoryTagsBottomSheet`
+- **Tag button** (shown first) — opens `SpFloatingTagPicker`
+- **Sticker button** — opens `SpEmojiTagPicker`
 
-A full-screen bottom sheet with two tabs:
+If no stickers are selected, only a small add-sticker icon button is shown. Once at least one sticker is selected, it appears as a tappable inline emoji that opens the picker.
 
-1. **Stickers Tab** — Grid of emoji stickers organized by category (Feeling, Activity). Uses `getSuggestTagsByCategory()` to show suggestions (in defined order) then any selected non-suggested extras. Tapping a sticker toggles it and persists to DB.
+### `SpFloatingTagPicker`
 
-2. **Tags Tab** — List of normal text tags (`categoryId == null`) with fuzzy search. Includes a "New Tag" button at the bottom.
+An inline floating popup for managing text tags. Features:
+
+- Fuzzy search with `Fuzzy<TagDbModel>` weighted on `title`
+- Slidable list items (swipe to delete)
+- Inline tag creation and edit sub-page (`_EditTagView`) using `SpNestedNavigation` for in-place navigation
+- Story count per tag displayed in the list
+
+### `SpEmojiTagPicker`
+
+An inline floating popup (max 288×320) for managing sticker emoji tags. Features:
+
+- Sections per category, each showing its preset emoji grid
+- **`+` button** in each category section — pushes `_EmojiKeyboardPage` inside the same `SpNestedNavigation` container (no new overlay)
+- **`_EmojiKeyboardPage`** — full `EmojiPicker` (from `emoji_picker_flutter`) with a back button; pops with the selected emoji string
+- Single-select categories replace the previously selected sticker in that category; multi-select categories accumulate selections
+
+#### Custom Emoji ("1 Emoji = 1 Tag") Rule
+
+When a user picks any emoji via the keyboard:
+
+1. `TagDbModel.emoji(emoji, categoryId: category.id)` is constructed — the ID is **deterministic** (`TagIdGeneratorService.emojiId`), so the same emoji always resolves to the same tag ID regardless of which category it was picked from.
+2. If the tag already exists in DB (`tag.exist()`): it is reused as-is — **original `categoryId` is preserved**, no duplicate is created.
+3. If it doesn't exist: it is saved under the category where `+` was tapped.
+4. The tag is toggled in the story and the grid is refreshed.
 
 ### Tag Ordering
 
-When saving tags to a story, `BaseStoryViewModel.setTags()` automatically reorders the tag IDs: emoji/sticker tags (sorted by `categoryId`) come first, followed by normal text tags. This keeps the sticker display in the story header consistent regardless of toggle order.
+When saving tags to a story, `BaseStoryViewModel.setTags()` automatically reorders the tag IDs: emoji/sticker tags (sorted by `categoryId`) come first, followed by normal text tags. Tag IDs are validated against a **fresh DB read** (not the debounced in-memory snapshot) so newly created custom emoji tags are never filtered out.
 
 ### Integration Points
 
-- **Show Story Page** — Tags sheet is accessible from the story header sticker area
-- **Edit Story Page** — Same access via story header
-- **Story Tile** — Sticker emojis shown inline (read-only, no tap to open sheet)
+- **Show Story Page** — tag and sticker buttons in the story header
+- **Edit Story Page** — same access via story header
+- **Story Tile** — sticker emojis shown inline (read-only)
 - Both pages no longer use the end drawer for tags; the tag button was removed from the AppBar
 
 ## Migration
@@ -95,16 +119,16 @@ When saving tags to a story, `BaseStoryViewModel.setTags()` automatically reorde
 | `lib/core/services/tag_id_generator_service.dart`               | Time/emoji ID generation                           |
 | `lib/core/databases/adapters/objectbox/tags_box.dart`           | Tag DB operations                                  |
 | `lib/core/databases/adapters/objectbox/tag_categories_box.dart` | Category DB + `getSuggestTagsByCategory()`         |
-| `lib/widgets/bottom_sheets/sp_story_tags_bottom_sheet.dart`     | Tags/Stickers bottom sheet UI                      |
-| `lib/widgets/sp_story_labels.dart`                              | Inline sticker display in story header             |
+| `lib/widgets/sp_floating_tag_picker.dart`                       | Floating text tag picker with fuzzy search         |
+| `lib/widgets/sp_emoji_tag_picker.dart`                          | Floating sticker picker with custom emoji support  |
+| `lib/widgets/sp_story_labels.dart`                              | Inline sticker/tag display in story header         |
 | `lib/views/stories/local_widgets/story_header.dart`             | Passes `onToggleTags` to labels                    |
 | `lib/views/stories/local_widgets/base_story_view_model.dart`    | `setTags()` with emoji-first reordering            |
 | `lib/providers/tags_provider.dart`                              | `emojiById` map, `setAllTags()`, `createTag()` API |
 
 ## Translation Keys
 
-- `general.stickers` — "Stickers" tab label
 - `general.tag_category.feeling` — "Feeling" category name
 - `general.tag_category.activity` — "Activity" category name
-- `page.tags.title` — "Tags" tab label (existing)
+- `page.tags.title` — "Tags" label (existing)
 - `page.new_tag.title` — "New Tag" button (existing)
