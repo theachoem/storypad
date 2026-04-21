@@ -14,7 +14,7 @@ class SpAlbumGrid extends StatelessWidget {
   final void Function(int index)? onTap;
 
   // Tweak album visuals here.
-  double get gap => 4;
+  double get gap => 8;
   double get outerRadius => 8;
   double get innerRadius => 4;
 

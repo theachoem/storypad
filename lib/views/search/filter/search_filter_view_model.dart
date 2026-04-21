@@ -52,6 +52,12 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
 
       tagsByCategory = grouped;
       await _resetTagsCount();
+
+      tagsByCategory = {
+        for (final entry in grouped.entries)
+          entry.key: entry.value.where((tag) => tag.storiesCount != null && tag.storiesCount! > 0).toList()
+            ..sort((a, b) => b.storiesCount!.compareTo(a.storiesCount!)),
+      };
     } else {
       years = await StoryDbModel.db.getStoryCountsByYear(
         filters: {
