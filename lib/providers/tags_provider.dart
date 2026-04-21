@@ -7,12 +7,14 @@ import 'package:storypad/core/databases/models/collection_db_model.dart' show Co
 import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagRoute;
 import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
 
 class TagsProvider extends ChangeNotifier with DebounchedCallback {
   TagsProvider() {
     TagDbModel.db.addGlobalListener(_dbListener);
+    BackupProvider.repoInstance.restoreService.addListener(_dbListener);
     setAllTags(TagDbModel.db.getInitialTagsAndClear());
     _reindex(notifyUi: null);
   }
@@ -167,6 +169,8 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     if (trimmed.isEmpty) return null;
     if (tags?.items.any((tag) => tag.title.toLowerCase() == trimmed.toLowerCase()) == true) return null;
 
+    // We already set index to start from 1 in provider.
+    // So new tag will be added to 0 to make it appear at the top, and then reindex will update it to 1.
     final newTag = TagDbModel.fromNow().copyWith(title: trimmed, index: 0);
 
     _tags ??= CollectionDbModel(items: []);
@@ -199,6 +203,7 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
   @override
   void dispose() {
     TagDbModel.db.removeGlobalListener(_dbListener);
+    BackupProvider.repoInstance.restoreService.removeListener(_dbListener);
     super.dispose();
   }
 }

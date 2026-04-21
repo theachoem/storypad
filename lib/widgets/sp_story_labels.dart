@@ -275,7 +275,7 @@ class SpStoryLabels extends StatelessWidget {
       }).toList(),
     );
 
-    if (onToggleTags != null && emojis.length < 2) {
+    if (onToggleTags != null && emojis.isEmpty) {
       children.add(
         SpFloatingPopUpButton(
           estimatedFloatingWidth: 288,

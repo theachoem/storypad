@@ -99,7 +99,8 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
             return results.map((r) => r.item).toList();
           }();
 
-    final allowCreate = _query.isNotEmpty && !tags.any((t) => t.title.toLowerCase() == _query.toLowerCase());
+    final allowCreate =
+        _query.isNotEmpty && (tags.isEmpty || !tags.any((t) => t.title.toLowerCase() == _query.toLowerCase()));
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
@@ -160,7 +161,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
         const SizedBox(height: _PADDING),
         const Divider(height: 1),
 
-        if (tags.isEmpty) ...[
+        if (!allowCreate && tags.isEmpty) ...[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
             child: Column(
