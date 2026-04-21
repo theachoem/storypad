@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -32,10 +31,10 @@ class SpCalendarDateCell extends StatelessWidget {
   final VoidCallback? onTap;
 
   bool get hasFeelings =>
-      isDisplayMonth && feelings != null && feelings!.any((feeling) => FeelingObject.feelingsByKey[feeling] != null);
+      isDisplayMonth && feelings != null && feelings!.any((feeling) => feeling != 'exist_but_not_set');
 
   bool get hasStoriesButNoFeelings =>
-      isDisplayMonth && feelings != null && feelings!.every((feeling) => FeelingObject.feelingsByKey[feeling] == null);
+      isDisplayMonth && feelings != null && feelings!.every((feeling) => feeling == 'exist_but_not_set');
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +78,9 @@ class SpCalendarDateCell extends StatelessWidget {
   }
 
   Widget _buildDateContent(BuildContext context) {
-    Color? backgroundColor = isSelected ? Theme.of(context).colorScheme.primary : null;
+    Color? backgroundColor = isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1) : null;
     Color foregroundColor = isSelected
-        ? Theme.of(context).colorScheme.onPrimary
+        ? Theme.of(context).colorScheme.primary
         : Theme.of(context).colorScheme.onSurface;
 
     if (!isDisplayMonth) {
@@ -99,8 +98,11 @@ class SpCalendarDateCell extends StatelessWidget {
           color: backgroundColor,
         ),
         alignment: Alignment.center,
-        child: buildFeelings(
-          feelings: feelings?.where((feeling) => FeelingObject.feelingsByKey[feeling] != null).toList() ?? [],
+        padding: const EdgeInsets.all(4.0),
+        child: FittedBox(
+          child: buildFeelings(
+            feelings: feelings!.where((feeling) => feeling != 'exist_but_not_set').toList(),
+          ),
         ),
       );
     } else if (hasStoriesButNoFeelings) {
@@ -145,23 +147,40 @@ class SpCalendarDateCell extends StatelessWidget {
     required List<String> feelings,
   }) {
     if (feelings.length == 1) {
-      final feeling = FeelingObject.feelingsByKey[feelings.first]!;
-      return feeling.image64.image(width: 26);
+      return Text(
+        feelings.first,
+        strutStyle: const StrutStyle(
+          fontSize: 56,
+          height: 1.0,
+        ),
+        style: const TextStyle(
+          fontSize: 56,
+          height: 1.0,
+        ),
+      );
     }
 
     return ValueListenableBuilder<int>(
       valueListenable: feelingVisibleIndexNotifier,
       builder: (context, visibleIndex, child) {
         int index = visibleIndex % feelings.length;
-
-        final feelingKey = feelings[index];
-        final feeling = FeelingObject.feelingsByKey[feelingKey]!;
+        final emoji = feelings[index];
 
         return KeyedSubtree(
-          key: ValueKey(feelingKey),
+          key: ValueKey(emoji),
           child: SpFadeIn.flip(
             duration: const Duration(seconds: 1),
-            child: feeling.image64.image(width: 26),
+            child: Text(
+              emoji,
+              strutStyle: const StrutStyle(
+                fontSize: 56,
+                height: 1.0,
+              ),
+              style: const TextStyle(
+                fontSize: 100,
+                height: 1.0,
+              ),
+            ),
           ),
         );
       },

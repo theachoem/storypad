@@ -20,17 +20,6 @@ class _ShowStoryContent extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context, pages),
       backgroundColor: Colors.transparent,
-      endDrawerEnableOpenDragGesture: false,
-      endDrawer: viewModel.story != null
-          ? TagsEndDrawer(onUpdated: (tags) => viewModel.setTags(tags), initialTags: viewModel.story?.validTags ?? [])
-          : null,
-      onEndDrawerChanged: (isOpened) {
-        if (isOpened) {
-          context.read<RootProvider>().setTemporaryHidden(true);
-        } else {
-          context.read<RootProvider>().setTemporaryHidden(false);
-        }
-      },
       body: buildBody(context, pages),
     );
   }
@@ -111,7 +100,6 @@ class _ShowStoryContent extends StatelessWidget {
             onPressed: () => viewModel.goToEditPage(context),
             icon: const Icon(SpIcons.edit),
           ),
-          const StoryEndDrawerButton(),
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),

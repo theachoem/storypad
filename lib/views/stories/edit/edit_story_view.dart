@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
@@ -9,10 +8,7 @@ import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
-import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
-import 'package:storypad/views/stories/local_widgets/tags_end_drawer.dart';
-import 'package:storypad/views/stories/local_widgets/story_end_drawer_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/stories/local_widgets/story_theme_button.dart';

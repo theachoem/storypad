@@ -26,8 +26,7 @@ class _OnboardingStep2Content extends StatelessWidget {
               child: const StoryDetailsScreenshot(),
             ),
           ),
-          buildFeelingButton(),
-          buildFeelingClickAnimation(),
+
           buildToolbar(isDarkMode),
         ],
       ),
@@ -55,44 +54,6 @@ class _OnboardingStep2Content extends StatelessWidget {
                           ? Assets.images.onboarding.toolbarDark1690x70
                           : Assets.images.onboarding.toolbarLight1690x70)
                       .image(height: 44),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildFeelingClickAnimation() {
-    return VisibleWhenNotified(
-      notifier: viewModel.feelingClickedNotifier,
-      child: ClickAnimation(
-        clickDuration: viewModel.feelingClickDuration,
-        top: 43,
-        right: -8.5,
-      ),
-    );
-  }
-
-  Widget buildFeelingButton() {
-    return Positioned(
-      top: 57,
-      right: 0,
-      child: VisibleWhenNotified(
-        notifier: viewModel.showFeelingButtonNotifier,
-        child: SpFadeIn(
-          duration: viewModel.feelingButtonFadeInDuration,
-          child: Transform(
-            transform: Matrix4.identity()
-              ..spScale(0.74)
-              ..spTranslate(9.0, 0.0),
-            child: ValueListenableBuilder(
-              valueListenable: viewModel.selectedFeelingNotifier,
-              builder: (context, feeling, child) {
-                return SpFeelingButton(
-                  feeling: feeling,
-                  onPicked: (feeling) async => viewModel.selectedFeelingNotifier.value = feeling,
-                );
-              },
             ),
           ),
         ),

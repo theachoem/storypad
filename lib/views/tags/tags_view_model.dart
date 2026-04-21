@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -8,12 +9,25 @@ import 'tags_view.dart';
 
 class TagsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final TagsRoute params;
+  late final TagsProvider tagsProvider;
 
   TagsViewModel({
     required this.params,
     required BuildContext context,
   }) {
-    context.read<TagsProvider>().reload();
+    tagsProvider = context.read<TagsProvider>();
+    load();
+  }
+
+  Map<int, int> storiesCountByTagId = {};
+  int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id] ?? 0;
+
+  Future<void> load() async {
+    await tagsProvider.reload();
+    storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
+      tagIds: tagsProvider.tags?.items.map((e) => e.id).toList() ?? [],
+    );
+    notifyListeners();
   }
 
   bool get checkable => params.initialSelectedTags != null && params.onToggleTags != null;

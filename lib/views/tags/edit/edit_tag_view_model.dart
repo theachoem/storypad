@@ -11,9 +11,5 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   });
 
   TagDbModel? get tag => params.tag;
-  List<String> get tagTitles => params.allTags.map((e) => e.title).toList();
-
-  bool isTagExist(String title) {
-    return tagTitles.map((e) => e.toLowerCase()).contains(title.trim().toLowerCase());
-  }
+  List<String> get tagTitles => params.tags.map((e) => e.title).toList();
 }

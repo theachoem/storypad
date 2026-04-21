@@ -8,7 +8,6 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/extensions/string_extension.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
@@ -16,9 +15,10 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
-import 'package:storypad/widgets/feeling_picker/sp_feeling_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_emoji_tag_picker.dart';
+import 'package:storypad/widgets/sp_floating_tag_picker.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
@@ -44,6 +44,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onChangeDate,
     required this.onToggleManagingPage,
     this.setFeeling,
+    this.onToggleTags,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -69,6 +70,7 @@ class SpStoryLabels extends StatelessWidget {
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function(String? feeling)? setFeeling;
+  final Future<bool> Function(List<int> tags)? onToggleTags;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -197,9 +199,6 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
-    if (showTagLabels) children.addAll(buildTags(tagProvider, context));
-
     if (story.inArchives) {
       children.add(
         buildPin(
@@ -210,6 +209,7 @@ class SpStoryLabels extends StatelessWidget {
         ),
       );
     }
+
     if (story.inBins) {
       children.add(
         buildPin(
@@ -222,52 +222,100 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (story.feeling != null || setFeeling != null) {
+    // Tags labels including its add button
+    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
+    final tagLabels = buildTags(tagProvider, context);
+    if (showTagLabels) children.addAll(tagLabels);
+    if (onToggleTags != null && tagLabels.isEmpty) {
       children.add(
         SpFloatingPopUpButton(
-          estimatedFloatingWidth: 300,
+          estimatedFloatingWidth: 288,
           bottomToTop: false,
-          margin: 12.0,
-          dyGetter: (dy) => dy + 32,
+          dyGetter: (dy) => dy + 24,
           pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (void Function() callback) {
-            return SpFeelingPicker(
-              feeling: story.feeling,
-              onPicked: (feeling) async {
-                await setFeeling?.call(feeling);
-                callback();
-              },
-            );
-          },
-          builder: (callback) {
-            return SpTapEffect(
-              scaleActive: 2.5,
-              duration: Durations.medium3,
-              curve: Curves.easeInOutCubicEmphasized,
-              effects: [.scaleDown],
-              behavior: .translucent,
-              onTap: fromStoryTile ? null : callback,
-              child: SizedBox(
-                width: MediaQuery.textScalerOf(context).scale(20),
-                height: MediaQuery.textScalerOf(context).scale(20),
-                child: Align(
-                  alignment: .center,
-                  widthFactor: 1.0,
-                  child:
-                      FeelingObject.feelingsByKey[story.feeling]?.image64.image(
-                        width: MediaQuery.textScalerOf(context).scale(18.0),
-                        key: ValueKey('feeling-${story.feeling}'),
-                      ) ??
-                      Icon(
-                        SpIcons.addFeeling,
-                        key: const ValueKey('feeling-none'),
-                        size: MediaQuery.textScalerOf(context).scale(18.0),
-                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
-                      ),
-                ),
+          floatingBuilder: (close) => SpFloatingTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => _buildIconButton(
+            context: context,
+            icon: SpIcons.tag,
+            tooltip: tr('page.tags.title'),
+            onTap: open,
+          ),
+        ),
+      );
+    }
+
+    // Emoji labels including its add button
+    final emojis = (story.validTags?.map((tag) => tagProvider.getEmojiTag(tag)) ?? []).whereType<String>();
+    final emojiRow = Row(
+      mainAxisSize: .min,
+      children: emojis.map((emoji) {
+        return Container(
+          padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(1)),
+          height: MediaQuery.textScalerOf(context).scale(20),
+          width: MediaQuery.textScalerOf(context).scale(20),
+          alignment: .center,
+          child: FittedBox(
+            child: Text(
+              emoji,
+              textAlign: .center,
+              softWrap: true,
+              style: const TextStyle(fontSize: 40, height: 1.0),
+              strutStyle: const StrutStyle(
+                forceStrutHeight: true,
+                fontSize: 40,
+                height: 1.0,
               ),
-            );
-          },
+            ),
+          ),
+        );
+      }).toList(),
+    );
+
+    if (onToggleTags != null && emojis.isEmpty) {
+      children.add(
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 288,
+          bottomToTop: false,
+          dyGetter: (dy) => dy + 24,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (close) => SpEmojiTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => _buildIconButton(
+            context: context,
+            icon: SpIcons.addFeeling,
+            tooltip: tr('general.stickers'),
+            onTap: open,
+          ),
+        ),
+      );
+    }
+
+    if (emojis.isNotEmpty) {
+      children.add(
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 288,
+          bottomToTop: false,
+          dyGetter: (dy) => dy + 24,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (close) => SpEmojiTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => SpTapEffect(
+            duration: Durations.medium3,
+            curve: Curves.easeInOutCubicEmphasized,
+            behavior: .translucent,
+            onTap: onToggleTags != null ? open : null,
+            child: emojiRow,
+          ),
         ),
       );
     }
@@ -351,7 +399,11 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   List<Widget> buildTags(TagsProvider tagProvider, BuildContext context) {
-    final tags = tagProvider.tags?.items.where((e) => story.validTags?.contains(e.id) == true).toList() ?? [];
+    final tags =
+        tagProvider.tags?.items
+            .where((e) => e.categoryId == null && e.emoji == null && story.validTags?.contains(e.id) == true)
+            .toList() ??
+        [];
     final children = tags.map((tag) {
       return buildTag(context, tagProvider, tag);
     }).toList();
@@ -359,10 +411,57 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag) {
+    if (onToggleTags != null) {
+      return SpFloatingPopUpButton(
+        estimatedFloatingWidth: 288,
+        bottomToTop: false,
+        dyGetter: (dy) => dy + 24,
+        pathBuilder: PathBuilders.slideDown,
+        floatingBuilder: (close) => SpFloatingTagPicker(
+          initialTags: story.validTags ?? [],
+          onUpdated: onToggleTags!,
+          close: close,
+        ),
+        builder: (open) => buildPin(
+          context: context,
+          title: "# ${tag.title.sanitizeUtf16}",
+          onTap: open,
+        ),
+      );
+    }
+
     return buildPin(
       context: context,
       title: "# ${tag.title.sanitizeUtf16}",
       onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+    );
+  }
+
+  Widget _buildIconButton({
+    required BuildContext context,
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback onTap,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4.0),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Icon(
+              icon,
+              size: MediaQuery.textScalerOf(context).scale(14.0),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

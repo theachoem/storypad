@@ -12,6 +12,8 @@ import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_category_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
@@ -52,6 +54,110 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     AppLogger.info('🤾‍♀️ Migrated Stories: $count');
+  }
+
+  Future<void> migrateFeelingToTags() async {
+    final legacyFeelingToEmojiMap = {
+      // FeelingGroup.joy
+      'positive_feelings': "😊",
+      'smiling_halo': "😇",
+      'cheerfulness': "😀",
+      'beaming': "😄",
+      'smiling_broadly': "😁",
+      'laughter': "😆",
+      'really_funny': "😂",
+      'winking': "😜",
+      'in_love': "😍",
+      'lovely': "🥰",
+      'blowing': "😘",
+      'cuteness': "😛",
+      'annoy_someone': "😝",
+      'savoring_food': "😋",
+      'crazy': "😉",
+      'zany': "🤪",
+      'something_cool': "😎",
+      'excited': "🤩",
+      'getting_rich': "🤑",
+
+      // FeelingGroup.sadness
+      'crying': "😢",
+      'loudly_crying': "😭",
+      'downcast': "😞",
+      'disappointed': "😔",
+      'tired': "😫",
+
+      // FeelingGroup.fear
+      'nervousness': "😬",
+      'fearful': "😨",
+      'worry': "😖",
+      'grinning_sweat': "😅",
+
+      // FeelingGroup.anger
+      'serious': "🤬",
+      'pouting': "😡",
+      'mistrust': "🤨",
+
+      // FeelingGroup.neutral
+      'neutral': "😐",
+      'slightly_smiling': "🙂",
+      'confused': "😕",
+      'expressionless': "😑",
+      'head_bandage': "🤕",
+      'medical_mask': "😷",
+      'speechlessness': "😶",
+      'flushed': "😳",
+      'rolling_eyes': "🙄",
+
+      // FeelingGroup.other
+      'nerd': "🤓",
+      'monocle': "🧐",
+      'sleeping': "😴",
+      'dizzy': "😵",
+      'suggestive_smile': "😏",
+      'wow': "😮",
+      'devil': "😈",
+      'drooling': "🤤",
+      'vomiting': "🤮",
+      'nauseated': "🤢",
+    };
+
+    final conditions = StoryObjectBox_.id
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
+        .and(StoryObjectBox_.feeling.notNull());
+
+    final queryBuilder = box.query(conditions);
+    final query = queryBuilder.build();
+
+    if (query.count() == 0) {
+      AppLogger.info('No stories to migrate from feeling to tags');
+      return;
+    }
+
+    final boxes = await query.findAsync();
+    List<StoryObjectBox> stories = [];
+    Map<String, TagDbModel> tags = {};
+
+    int migratedCount = 0;
+
+    for (var story in boxes) {
+      final emoji = legacyFeelingToEmojiMap[story.feeling];
+
+      if (emoji != null) {
+        final tag = TagDbModel.emoji(emoji, categoryId: TagCategoryDbModel.feeling().id);
+        story.tags = {...?story.tags, tag.id.toString()}.toList();
+        tags[tag.id.toString()] = tag;
+        migratedCount++;
+      }
+
+      story.feeling = null;
+      stories.add(story);
+    }
+
+    await box.putManyAsync(stories);
+    await TagDbModel.db.setAll(tags.values.toList());
+
+    AppLogger.info('🤾‍♀️ Migrated Feeling to Tags: $migratedCount');
   }
 
   /// Regenerates searchMetadata for stories that don't have it (legacy data from older versions).
@@ -200,11 +306,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
   // - empty mean has story but no feeling
   // - null mean no story
-  // - non-empty mean has story with feeling
+  // - non-empty mean has story with feeling (emoji strings)
   Map<int, List<String>> getStoryFeelingByMonth({
     required int month,
     required int year,
     int? tagId,
+    Map<int, String> emojiById = const {},
   }) {
     AppLogger.info("Triggering $tableName#getStoryFeelingByMonth 🍎");
     Map<int, List<String>> storyFeelingByMonth = {};
@@ -219,12 +326,19 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     final result = buildQuery(filters: filters).build().find();
 
     for (final story in result) {
-      if (story.feeling != null) {
+      final List<String> storyFeelings = (story.tags ?? [])
+          .map((tagStr) => int.tryParse(tagStr))
+          .whereType<int>()
+          .map((id) => emojiById[id])
+          .whereType<String>()
+          .toSet()
+          .toList();
+
+      if (storyFeelings.isNotEmpty) {
         storyFeelingByMonth[story.day] ??= [];
-        storyFeelingByMonth[story.day]!.add(story.feeling!);
-      } else if (story.feeling == null && storyFeelingByMonth[story.day] == null) {
-        storyFeelingByMonth[story.day] ??= [];
-        storyFeelingByMonth[story.day]!.add('exist_but_not_set');
+        storyFeelingByMonth[story.day]!.addAll(storyFeelings);
+      } else if (storyFeelingByMonth[story.day] == null) {
+        storyFeelingByMonth[story.day] = ['exist_but_not_set'];
       }
     }
 
@@ -354,6 +468,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? month = filters?["month"];
     int? day = filters?["day"];
     int? tag = filters?["tag"];
+    List<int>? tags = filters?["tags"];
     String? galleryTemplateId = filters?["gallery_template_id"];
     int? template = filters?["template"];
     int? eventId = filters?["event_id"];
@@ -365,10 +480,18 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? selectedYears = filters?["selected_years"];
     List<int>? yearsRange = filters?["years_range"];
 
-    Condition<StoryObjectBox>? conditions = StoryObjectBox_.id.notNull();
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.id.notNull();
 
     if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
+
+    if (tags != null && tags.isNotEmpty) {
+      // AND logic: story must have ALL specified tags.
+      for (final t in tags) {
+        conditions = conditions.and(StoryObjectBox_.tags.containsElement(t.toString()));
+      }
+    }
+
     if (galleryTemplateId != null) {
       conditions = conditions.and(StoryObjectBox_.galleryTemplateId.equals(galleryTemplateId));
     }

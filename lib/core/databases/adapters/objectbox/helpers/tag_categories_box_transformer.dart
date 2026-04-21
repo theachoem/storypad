@@ -1,25 +1,25 @@
-part of '../tags_box.dart';
+part of '../tag_categories_box.dart';
 
-List<TagDbModel> _objectsToModels(Map<String, dynamic> options) {
-  List<TagObjectBox> objects = options['objects'];
+List<TagCategoryDbModel> _objectsToModels(Map<String, dynamic> options) {
+  List<TagCategoryObjectBox> objects = options['objects'];
   return objects.map((object) => _objectToModel({'object': object})).toList();
 }
 
-List<TagObjectBox> _modelsToObjects(Map<String, dynamic> options) {
-  List<TagDbModel> models = options['models'];
+List<TagCategoryObjectBox> _modelsToObjects(Map<String, dynamic> options) {
+  List<TagCategoryDbModel> models = options['models'];
   return models.map((model) => _modelToObject({'model': model})).toList();
 }
 
-TagObjectBox _modelToObject(Map<String, dynamic> options) {
-  TagDbModel model = options['model'];
+TagCategoryObjectBox _modelToObject(Map<String, dynamic> options) {
+  TagCategoryDbModel model = options['model'];
 
-  return TagObjectBox(
+  return TagCategoryObjectBox(
     id: model.id,
     title: model.title,
+    multiSelect: model.multiSelect,
+    system: model.system,
     index: model.index,
     version: model.version,
-    emoji: model.emoji,
-    categoryId: model.categoryId,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
     lastSavedDeviceId: model.lastSavedDeviceId,
@@ -27,16 +27,15 @@ TagObjectBox _modelToObject(Map<String, dynamic> options) {
   );
 }
 
-TagDbModel _objectToModel(Map<String, dynamic> options) {
-  TagObjectBox object = options['object'];
+TagCategoryDbModel _objectToModel(Map<String, dynamic> options) {
+  TagCategoryObjectBox object = options['object'];
 
-  return TagDbModel(
+  return TagCategoryDbModel(
     id: object.id,
     version: object.version,
     index: object.index,
     title: object.title,
-    emoji: object.emoji,
-    categoryId: object.categoryId,
+    multiSelect: object.multiSelect,
     createdAt: object.createdAt,
     updatedAt: object.updatedAt,
     lastSavedDeviceId: object.lastSavedDeviceId,

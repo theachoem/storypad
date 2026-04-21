@@ -14,6 +14,7 @@ class SearchFilterObject {
   final int? day;
   final Set<PathType> types;
   final int? tagId;
+  final Set<int> tagIds;
   final String? galleryTemplateId;
   final int? templateId;
   final int? eventId;
@@ -25,8 +26,9 @@ class SearchFilterObject {
   SearchFilterObject({
     required this.years,
     required this.types,
-    required this.tagId,
     required this.assetId,
+    this.tagId,
+    Set<int>? tagIds,
     this.query,
     this.galleryTemplateId,
     this.templateId,
@@ -37,7 +39,7 @@ class SearchFilterObject {
     this.starred,
     this.pinned,
     this.limit,
-  });
+  }) : tagIds = tagIds ?? {};
 
   Map<String, dynamic>? toDatabaseFilter() {
     Map<String, dynamic> filters = {};
@@ -47,6 +49,7 @@ class SearchFilterObject {
     if (month != null) filters['month'] = month;
     if (day != null) filters['day'] = day;
     if (tagId != null) filters['tag'] = tagId;
+    if (tagIds.isNotEmpty) filters['tags'] = tagIds.toList();
     if (excludeYears != null) filters['exclude_years'] = excludeYears?.toList();
     if (galleryTemplateId != null) filters['gallery_template_id'] = galleryTemplateId;
     if (templateId != null) filters['template'] = templateId;

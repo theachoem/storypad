@@ -215,7 +215,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 5548558812249966101),
     name: 'TagObjectBox',
-    lastPropertyId: const obx_int.IdUid(10, 1120015455933452719),
+    lastPropertyId: const obx_int.IdUid(12, 2093176491331659474),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -234,12 +234,6 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(3, 7863427692914238443),
         name: 'version',
         type: 6,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 6417690656797806340),
-        name: 'starred',
-        type: 1,
         flags: 0,
       ),
       obx_int.ModelProperty(
@@ -276,6 +270,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(10, 1120015455933452719),
         name: 'lastSavedDeviceId',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 2093176491331659474),
+        name: 'categoryId',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -627,6 +627,76 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(10, 6875722368332154421),
+    name: 'TagCategoryObjectBox',
+    lastPropertyId: const obx_int.IdUid(10, 1586171392323133748),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 8447154602269222328),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 2122632392509580275),
+        name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 4800807500656422913),
+        name: 'multiSelect',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 2424685804451881967),
+        name: 'system',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 7305675005364225177),
+        name: 'index',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 5615958948791855505),
+        name: 'version',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 8290431425631655667),
+        name: 'createdAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 2832184903213716384),
+        name: 'updatedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 1747783703445985427),
+        name: 'permanentlyDeletedAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 1586171392323133748),
+        name: 'lastSavedDeviceId',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -672,11 +742,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(8, 4141544638649465889),
+    lastEntityId: const obx_int.IdUid(10, 6875722368332154421),
     lastIndexId: const obx_int.IdUid(17, 8988225225053088376),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
-    retiredEntityUids: const [114680069077451626],
+    retiredEntityUids: const [114680069077451626, 419456903475856603],
     retiredIndexUids: const [4439843768253498140],
     retiredPropertyUids: const [
       7351525936100002271,
@@ -690,6 +760,18 @@ obx_int.ModelDefinition getObjectBoxModel() {
       8536407145733065373,
       4928182202971877211,
       8623820136669220816,
+      6622617203849334669,
+      4253592364122996012,
+      7934408466890046801,
+      7747415329836042242,
+      4458731407009078384,
+      6272534886584588071,
+      3294491619270889894,
+      5674426136259592087,
+      2218941453863587655,
+      2340920246315442710,
+      1623317357095888655,
+      6417690656797806340,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -957,17 +1039,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
             ? null
             : fbb.writeString(object.lastSavedDeviceId!);
-        fbb.startTable(11);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
         fbb.addInt64(2, object.version);
-        fbb.addBool(3, object.starred);
         fbb.addOffset(4, emojiOffset);
         fbb.addInt64(5, object.createdAt.millisecondsSinceEpoch);
         fbb.addInt64(6, object.updatedAt.millisecondsSinceEpoch);
         fbb.addInt64(7, object.index);
         fbb.addInt64(8, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
         fbb.addOffset(9, lastSavedDeviceIdOffset);
+        fbb.addInt64(11, object.categoryId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -996,14 +1078,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
           8,
           0,
         );
-        final starredParam = const fb.BoolReader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          10,
-        );
         final emojiParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
+        final categoryIdParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          26,
+        );
         final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
@@ -1021,8 +1103,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           title: titleParam,
           index: indexParam,
           version: versionParam,
-          starred: starredParam,
           emoji: emojiParam,
+          categoryId: categoryIdParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
@@ -1482,6 +1564,98 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    TagCategoryObjectBox: obx_int.EntityDefinition<TagCategoryObjectBox>(
+      model: _entities[7],
+      toOneRelations: (TagCategoryObjectBox object) => [],
+      toManyRelations: (TagCategoryObjectBox object) => {},
+      getId: (TagCategoryObjectBox object) => object.id,
+      setId: (TagCategoryObjectBox object, int id) {
+        object.id = id;
+      },
+      objectToFB: (TagCategoryObjectBox object, fb.Builder fbb) {
+        final titleOffset = fbb.writeString(object.title);
+        final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
+            ? null
+            : fbb.writeString(object.lastSavedDeviceId!);
+        fbb.startTable(11);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, titleOffset);
+        fbb.addBool(2, object.multiSelect);
+        fbb.addBool(3, object.system);
+        fbb.addInt64(4, object.index);
+        fbb.addInt64(5, object.version);
+        fbb.addInt64(6, object.createdAt.millisecondsSinceEpoch);
+        fbb.addInt64(7, object.updatedAt.millisecondsSinceEpoch);
+        fbb.addInt64(8, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
+        fbb.addOffset(9, lastSavedDeviceIdOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final permanentlyDeletedAtValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 20);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final multiSelectParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          8,
+          false,
+        );
+        final systemParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          10,
+          false,
+        );
+        final indexParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          12,
+        );
+        final versionParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          14,
+          0,
+        );
+        final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
+        );
+        final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
+        );
+        final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final lastSavedDeviceIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 22);
+        final object = TagCategoryObjectBox(
+          id: idParam,
+          title: titleParam,
+          multiSelect: multiSelectParam,
+          system: systemParam,
+          index: indexParam,
+          version: versionParam,
+          createdAt: createdAtParam,
+          updatedAt: updatedAtParam,
+          permanentlyDeletedAt: permanentlyDeletedAtParam,
+          lastSavedDeviceId: lastSavedDeviceIdParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1652,38 +1826,38 @@ class TagObjectBox_ {
     _entities[1].properties[2],
   );
 
-  /// See [TagObjectBox.starred].
-  static final starred = obx.QueryBooleanProperty<TagObjectBox>(
-    _entities[1].properties[3],
-  );
-
   /// See [TagObjectBox.emoji].
   static final emoji = obx.QueryStringProperty<TagObjectBox>(
-    _entities[1].properties[4],
+    _entities[1].properties[3],
   );
 
   /// See [TagObjectBox.createdAt].
   static final createdAt = obx.QueryDateProperty<TagObjectBox>(
-    _entities[1].properties[5],
+    _entities[1].properties[4],
   );
 
   /// See [TagObjectBox.updatedAt].
   static final updatedAt = obx.QueryDateProperty<TagObjectBox>(
-    _entities[1].properties[6],
+    _entities[1].properties[5],
   );
 
   /// See [TagObjectBox.index].
   static final index = obx.QueryIntegerProperty<TagObjectBox>(
-    _entities[1].properties[7],
+    _entities[1].properties[6],
   );
 
   /// See [TagObjectBox.permanentlyDeletedAt].
   static final permanentlyDeletedAt = obx.QueryDateProperty<TagObjectBox>(
-    _entities[1].properties[8],
+    _entities[1].properties[7],
   );
 
   /// See [TagObjectBox.lastSavedDeviceId].
   static final lastSavedDeviceId = obx.QueryStringProperty<TagObjectBox>(
+    _entities[1].properties[8],
+  );
+
+  /// See [TagObjectBox.categoryId].
+  static final categoryId = obx.QueryIntegerProperty<TagObjectBox>(
     _entities[1].properties[9],
   );
 }
@@ -1940,4 +2114,55 @@ class EventObjectBox_ {
   static final lastSavedDeviceId = obx.QueryStringProperty<EventObjectBox>(
     _entities[6].properties[8],
   );
+}
+
+/// [TagCategoryObjectBox] entity fields to define ObjectBox queries.
+class TagCategoryObjectBox_ {
+  /// See [TagCategoryObjectBox.id].
+  static final id = obx.QueryIntegerProperty<TagCategoryObjectBox>(
+    _entities[7].properties[0],
+  );
+
+  /// See [TagCategoryObjectBox.title].
+  static final title = obx.QueryStringProperty<TagCategoryObjectBox>(
+    _entities[7].properties[1],
+  );
+
+  /// See [TagCategoryObjectBox.multiSelect].
+  static final multiSelect = obx.QueryBooleanProperty<TagCategoryObjectBox>(
+    _entities[7].properties[2],
+  );
+
+  /// See [TagCategoryObjectBox.system].
+  static final system = obx.QueryBooleanProperty<TagCategoryObjectBox>(
+    _entities[7].properties[3],
+  );
+
+  /// See [TagCategoryObjectBox.index].
+  static final index = obx.QueryIntegerProperty<TagCategoryObjectBox>(
+    _entities[7].properties[4],
+  );
+
+  /// See [TagCategoryObjectBox.version].
+  static final version = obx.QueryIntegerProperty<TagCategoryObjectBox>(
+    _entities[7].properties[5],
+  );
+
+  /// See [TagCategoryObjectBox.createdAt].
+  static final createdAt = obx.QueryDateProperty<TagCategoryObjectBox>(
+    _entities[7].properties[6],
+  );
+
+  /// See [TagCategoryObjectBox.updatedAt].
+  static final updatedAt = obx.QueryDateProperty<TagCategoryObjectBox>(
+    _entities[7].properties[7],
+  );
+
+  /// See [TagCategoryObjectBox.permanentlyDeletedAt].
+  static final permanentlyDeletedAt =
+      obx.QueryDateProperty<TagCategoryObjectBox>(_entities[7].properties[8]);
+
+  /// See [TagCategoryObjectBox.lastSavedDeviceId].
+  static final lastSavedDeviceId =
+      obx.QueryStringProperty<TagCategoryObjectBox>(_entities[7].properties[9]);
 }

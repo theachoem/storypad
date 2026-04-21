@@ -18,6 +18,7 @@ import 'package:storypad/core/services/stories/story_extract_assets_from_pages_s
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/templates/edit/edit_template_view.dart';
 
@@ -61,8 +62,9 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     return draftContent!.hasChanges(latestContent);
   }
 
-  Future<bool> setTags(List<int> tags) async {
-    story = story!.copyWith(updatedAt: DateTime.now(), tags: tags.toSet().map((e) => e.toString()).toList());
+  Future<bool> setTags(List<int> tags, BuildContext context) async {
+    final orderedTags = await _cleanTags(tags, context);
+    story = story!.copyWith(updatedAt: DateTime.now(), tags: orderedTags.map((e) => e.toString()).toList());
     notifyListeners();
 
     if (hasDataWritten) {
@@ -75,6 +77,33 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     );
 
     return true;
+  }
+
+  /// 1. Reorders tag IDs so emoji tags (categoryId != null) come first, sorted by
+  /// their categoryId. Non-emoji tags follow after.
+  ///
+  /// 2. Ensure all tags exist.
+  Future<List<int>> _cleanTags(List<int> tagIds, BuildContext context) async {
+    if (tagIds.isEmpty) return tagIds;
+
+    final emojiTags = context.read<TagsProvider>().emojiTags;
+    final emojiTagMap = {for (var t in emojiTags?.items ?? []) t.id: t};
+
+    final emojiTagIds = <int>[];
+    final nonEmojiTagIds = <int>[];
+
+    for (final id in tagIds) {
+      if (emojiTagMap[id]?.categoryId != null) {
+        emojiTagIds.add(id);
+      } else {
+        nonEmojiTagIds.add(id);
+      }
+    }
+
+    emojiTagIds.sort((a, b) => (emojiTagMap[a]?.categoryId ?? 0).compareTo(emojiTagMap[b]?.categoryId ?? 0));
+    final allTagIds = [...emojiTagIds, ...nonEmojiTagIds];
+
+    return allTagIds.where(context.read<TagsProvider>().allTags!.items.map((t) => t.id).toSet().contains).toList();
   }
 
   Future<void> changePreferences(StoryPreferencesDbModel preferences) async {

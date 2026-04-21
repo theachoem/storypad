@@ -51,7 +51,7 @@ class _TagsContent extends StatelessWidget {
         },
         itemBuilder: (context, index) {
           final tag = provider.tags!.items[index];
-          final storyCount = provider.getStoriesCount(tag);
+          final storyCount = viewModel.getStoriesCount(tag);
 
           return Slidable(
             closeOnScroll: true,

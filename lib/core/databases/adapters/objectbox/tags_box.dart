@@ -20,37 +20,17 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   @override
   QueryDateProperty<TagObjectBox> get permanentlyDeletedAtProperty => TagObjectBox_.permanentlyDeletedAt;
 
-  CollectionDbModel<TagDbModel>? initialTags;
+  CollectionDbModel<TagDbModel>? _initialTags;
+  CollectionDbModel<TagDbModel>? getInitialTagsAndClear() {
+    final tags = _initialTags;
+    _initialTags = null;
+    return tags;
+  }
 
   @override
   Future<void> initilize() async {
     await super.initilize();
-    initialTags = await where();
-  }
-
-  @override
-  Future<CollectionDbModel<TagDbModel>?> where({
-    Map<String, dynamic>? filters,
-    Map<String, dynamic>? options,
-    bool returnDeleted = false,
-  }) async {
-    CollectionDbModel<TagDbModel>? result = await super.where(
-      filters: filters,
-      returnDeleted: returnDeleted,
-    );
-
-    List<TagDbModel> items = result?.items ?? [];
-
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].starred == null) {
-        items[i] = items[i].copyWith(starred: true);
-        update(items[i], runCallbacks: i == items.length - 1);
-      }
-    }
-
-    return CollectionDbModel(
-      items: items,
-    );
+    _initialTags = await where();
   }
 
   @override
@@ -60,9 +40,15 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   }) {
     int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
+    int? categoryId = filters?["category_id"];
 
     Condition<TagObjectBox> conditions = TagObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(TagObjectBox_.permanentlyDeletedAt.isNull());
+
+    if (categoryId != null) {
+      conditions = conditions.and(TagObjectBox_.categoryId.equals(categoryId));
+    }
+
     if (createdYear != null) {
       conditions = conditions.and(
         TagObjectBox_.createdAt.betweenDate(
@@ -73,7 +59,6 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     }
 
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
-
     queryBuilder.order(TagObjectBox_.index, flags: order ?? 0);
 
     return queryBuilder;

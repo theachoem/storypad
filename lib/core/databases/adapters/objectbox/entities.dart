@@ -139,6 +139,60 @@ class StoryObjectBox extends BaseObjectBox {
 }
 
 @Entity()
+class TagCategoryObjectBox extends BaseObjectBox {
+  @Id(assignable: true)
+  int id;
+
+  String title;
+  bool multiSelect;
+  bool system;
+
+  int? index;
+  int version;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? permanentlyDeletedAt;
+
+  @override
+  String? lastSavedDeviceId;
+
+  TagCategoryObjectBox({
+    required this.id,
+    required this.title,
+    required this.multiSelect,
+    required this.system,
+    required this.index,
+    required this.version,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.permanentlyDeletedAt,
+    this.lastSavedDeviceId,
+  });
+
+  @override
+  void toPermanentlyDeleted({
+    DateTime? deletedAt,
+  }) {
+    updatedAt = DateTime.now();
+    permanentlyDeletedAt = deletedAt ?? DateTime.now();
+  }
+
+  @override
+  void touch() {
+    updatedAt = DateTime.now();
+  }
+}
+
+@Entity()
 class TagObjectBox extends BaseObjectBox {
   @Id(assignable: true)
   int id;
@@ -146,8 +200,9 @@ class TagObjectBox extends BaseObjectBox {
 
   int? index;
   int version;
-  bool? starred;
   String? emoji;
+
+  int? categoryId;
 
   @override
   @Property(type: PropertyType.date)
@@ -169,8 +224,8 @@ class TagObjectBox extends BaseObjectBox {
     required this.title,
     required this.index,
     required this.version,
-    required this.starred,
     required this.emoji,
+    required this.categoryId,
     required this.createdAt,
     required this.updatedAt,
     required this.permanentlyDeletedAt,

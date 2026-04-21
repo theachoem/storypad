@@ -1,5 +1,5 @@
 name: storypad
-version: 2.28.1+683
+version: 2.29.0+702
 publish_to: none
 environment:
   sdk: ^3.11.0
@@ -20,6 +20,7 @@ dependencies:
   dismissible_page: 1.0.2
   dynamic_color: 1.8.1
   easy_localization: 3.0.8
+  emoji_picker_flutter: ^4.4.0
   file_picker: 10.3.10
   firebase_analytics: 12.2.0
   firebase_core: 4.6.0

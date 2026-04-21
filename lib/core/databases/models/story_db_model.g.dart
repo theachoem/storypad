@@ -368,7 +368,7 @@ extension $StoryDbModelCopyWith on StoryDbModel {
 // **************************************************************************
 
 StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
-  version: (json['version'] as num?)?.toInt() ?? 2,
+  version: (json['version'] as num?)?.toInt() ?? 3,
   type: $enumDecode(_$PathTypeEnumMap, json['type']),
   id: (json['id'] as num).toInt(),
   starred: json['starred'] as bool?,

@@ -19,18 +19,7 @@ class _EditStoryContent extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      endDrawerEnableOpenDragGesture: false,
       appBar: buildAppBar(context),
-      endDrawer: viewModel.story != null
-          ? TagsEndDrawer(onUpdated: (tags) => viewModel.setTags(tags), initialTags: viewModel.story?.validTags ?? [])
-          : null,
-      onEndDrawerChanged: (isOpened) {
-        if (isOpened) {
-          context.read<RootProvider>().setTemporaryHidden(true);
-        } else {
-          context.read<RootProvider>().setTemporaryHidden(false);
-        }
-      },
       body: buildBody(context, pages),
       bottomNavigationBar: viewModel.story == null
           ? null
@@ -129,7 +118,6 @@ class _EditStoryContent extends StatelessWidget {
         if (!viewModel.pagesManager.managingPage) ...[
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
-          const StoryEndDrawerButton(),
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),

@@ -15,11 +15,11 @@ part 'edit_tag_content.dart';
 class EditTagRoute extends BaseRoute {
   EditTagRoute({
     required this.tag,
-    required this.allTags,
+    required this.tags,
   });
 
   final TagDbModel? tag;
-  final List<TagDbModel> allTags;
+  final List<TagDbModel> tags;
 
   @override
   String get className => tag == null ? 'NewTagRoute' : 'EditTagRoute';

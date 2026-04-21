@@ -28,11 +28,13 @@ class SpTextInputsPage extends StatefulWidget {
     this.appBar,
     this.saveButtonLabel,
     required this.fields,
+    this.contentOnly = false,
   });
 
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
   final String? saveButtonLabel;
+  final bool contentOnly;
 
   @override
   State<SpTextInputsPage> createState() => _SpTextInputsPageState();
@@ -63,19 +65,27 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
     return Form(
       child: Builder(
         builder: (context) {
+          if (widget.contentOnly) {
+            return buildContent(context);
+          }
+
           return Scaffold(
             appBar: widget.appBar,
-            body: ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
-                const SizedBox(height: 16.0),
-                buildSaveButton(context),
-              ],
-            ),
+            body: buildContent(context),
           );
         },
       ),
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
+        const SizedBox(height: 16.0),
+        buildSaveButton(context),
+      ],
     );
   }
 

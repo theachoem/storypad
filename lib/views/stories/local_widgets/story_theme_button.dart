@@ -15,7 +15,7 @@ class StoryThemeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: "page.theme.title",
+      tag: "stories.theme_button",
       child: IconButton(
         color: Theme.of(context).appBarTheme.foregroundColor,
         tooltip: tr("page.theme.title"),

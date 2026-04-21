@@ -19,9 +19,6 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   final Duration toolbarFadeInDuration = const Duration(milliseconds: 750);
 
   final ValueNotifier<bool> showStoryDetailsPageNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> showFeelingButtonNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> feelingClickedNotifier = ValueNotifier(false);
-  final ValueNotifier<String?> selectedFeelingNotifier = ValueNotifier(null);
   final ValueNotifier<bool> showToolbarNotifier = ValueNotifier(false);
   final ScrollController toolbarScrollController = ScrollController();
 
@@ -51,9 +48,6 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void resetAnimations() {
     showStoryDetailsPageNotifier.value = false;
-    showFeelingButtonNotifier.value = false;
-    feelingClickedNotifier.value = false;
-    selectedFeelingNotifier.value = null;
     showToolbarNotifier.value = false;
   }
 
@@ -68,21 +62,18 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> showFeelingClickAnimation() async {
     if (disposed) return;
 
-    feelingClickedNotifier.value = true;
     await Future.delayed(feelingClickDuration);
     await Future.delayed(const Duration(milliseconds: 100));
   }
 
   Future<void> selectedFeeling() async {
     if (disposed) return;
-    selectedFeelingNotifier.value = "positive_feelings";
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
   Future<void> showFeelingButton() async {
     if (disposed) return;
 
-    showFeelingButtonNotifier.value = true;
     await Future.delayed(feelingButtonFadeInDuration);
   }
 
@@ -107,9 +98,6 @@ class OnboardingStep2ViewModel extends ChangeNotifier with DisposeAwareMixin {
   @override
   void dispose() {
     showStoryDetailsPageNotifier.dispose();
-    showFeelingButtonNotifier.dispose();
-    feelingClickedNotifier.dispose();
-    selectedFeelingNotifier.dispose();
     showToolbarNotifier.dispose();
     toolbarScrollController.dispose();
     super.dispose();

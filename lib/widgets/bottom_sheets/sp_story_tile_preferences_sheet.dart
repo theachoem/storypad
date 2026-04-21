@@ -9,7 +9,8 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/objects/feeling_object.dart';
+import 'package:storypad/core/databases/models/tag_category_db_model.dart';
+import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -23,6 +24,13 @@ class SpStoryTilePreferencesSheet extends BaseBottomSheet {
 
   @override
   bool get fullScreen => true;
+
+  @override
+  Future<T?> show<T>({required BuildContext context, bool useRootNavigator = false}) async {
+    await _StoryTilePreferencesSheetContentState._ensureDemoFeelingTag();
+    if (!context.mounted) return null;
+    return super.show(context: context, useRootNavigator: useRootNavigator);
+  }
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
@@ -66,15 +74,31 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
   late var defaultStoryTilePreferences = StoryTilePreferencesObject();
   late var initialStoryTilePreferences = storyTilePreferences;
 
-  late final firstTag = context.read<TagsProvider>().tags?.items.firstOrNull;
-  late final tagIds = firstTag != null ? [firstTag!.id.toString()] : null;
-  late final story = _buildMockStory(tagIds: tagIds);
+  // Ensure a demo feeling emoji tag exists. ID is deterministic so we can use it
+  // immediately without waiting for the DB write.
+  static TagDbModel get _demoFeeling1Tag => TagCategoryDbModel.feeling().suggestTags()[8];
+  static TagDbModel get _demoFeeling2Tag => TagCategoryDbModel.feeling().suggestTags()[7];
+  static TagDbModel get _demoActivityTag => TagCategoryDbModel.activity().suggestTags()[1];
+
+  static Future<void> _ensureDemoFeelingTag() async {
+    if (!TagDbModel.db.exist(_demoFeeling1Tag.id)) await TagDbModel.db.set(_demoFeeling1Tag);
+    if (!TagDbModel.db.exist(_demoFeeling2Tag.id)) await TagDbModel.db.set(_demoFeeling2Tag);
+    if (!TagDbModel.db.exist(_demoActivityTag.id)) await TagDbModel.db.set(_demoActivityTag);
+  }
+
+  late final story = _buildMockStory();
   late final simpleStory = _buildSimpleMockStory();
 
   bool get changed => jsonEncode(storyTilePreferences.toJson()) != jsonEncode(initialStoryTilePreferences.toJson());
   bool get resettable => jsonEncode(storyTilePreferences.toJson()) != jsonEncode(defaultStoryTilePreferences.toJson());
 
-  static StoryDbModel _buildMockStory({List<String>? tagIds}) {
+  @override
+  void initState() {
+    super.initState();
+    _ensureDemoFeelingTag();
+  }
+
+  StoryDbModel _buildMockStory() {
     const body =
         "Today was a wonderful day. I spent time reading a good book "
         "and took a long walk in the park. The weather was perfect "
@@ -93,8 +117,11 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
     final story = StoryDbModel.fromDate(now);
 
     return story.copyWith(
-      tags: tagIds,
-      feeling: FeelingObject.feelignGroups.values.lastOrNull?.firstOrNull,
+      tags: [
+        ?context.read<TagsProvider>().tags?.items.firstOrNull?.id.toString(),
+        _demoFeeling2Tag.id.toString(),
+      ],
+      feeling: null,
       latestContent: story.latestContent!.copyWith(
         title: "My Journal Entry ✨",
         plainText: body,
@@ -118,13 +145,17 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
     );
   }
 
-  static StoryDbModel _buildSimpleMockStory() {
+  StoryDbModel _buildSimpleMockStory() {
     const body = "Grateful for a quiet morning.";
     final now = DateTime.now();
     final story = StoryDbModel.fromDate(now);
+    final tags = [
+      _demoFeeling1Tag.id.toString(),
+      _demoActivityTag.id.toString(),
+    ];
 
     return story.copyWith(
-      feeling: FeelingObject.feelignGroups.values.firstOrNull?.firstOrNull,
+      tags: tags,
       latestContent: story.latestContent!.copyWith(
         title: null,
         plainText: body,

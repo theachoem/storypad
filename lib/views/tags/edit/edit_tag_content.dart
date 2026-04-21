@@ -28,7 +28,7 @@ class _EditTagContent extends StatelessWidget {
           hintText: tr("input.tag.hint"),
           validator: (value) {
             if (value == null || value.trim().isEmpty == true) return tr("input.message.required");
-            if (viewModel.isTagExist(value) == true) return tr("input.message.already_exist");
+            if (context.read<TagsProvider>().isTagExist(value) == true) return tr("input.message.already_exist");
             return null;
           },
         ),
