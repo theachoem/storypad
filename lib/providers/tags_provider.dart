@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart' show OkCancelResult, showOkCancelAlertDialog;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
@@ -62,10 +64,18 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     if (shouldNotify == true) notifyListeners();
   }
 
+  Completer<void>? _dbListenerCompleter;
   Future<void> _dbListener() async {
-    debouncedCallback(() {
-      reload();
+    if (_dbListenerCompleter == null || _dbListenerCompleter!.isCompleted) {
+      _dbListenerCompleter = Completer<void>();
+    }
+
+    debouncedCallback(() async {
+      await reload();
+      _dbListenerCompleter?.complete();
     });
+
+    return _dbListenerCompleter!.future;
   }
 
   Future<void> reload() async {

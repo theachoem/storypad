@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
@@ -73,21 +78,56 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
     debouncedCallback(_load);
   }
 
+  Future<void> _onPickCustomEmoji(String emoji, TagCategoryDbModel category) async {
+    // 1 emoji = 1 tag: deterministic ID guarantees no duplicates across categories.
+    // If the tag already exists (any category), reuse it as-is.
+    final tag = TagDbModel.emoji(emoji, categoryId: category.id);
+
+    final isSelected = selectedTags.contains(tag.id);
+    List<int> newTags;
+
+    if (isSelected) {
+      newTags = ({...selectedTags}..remove(tag.id)).toList();
+    } else if (category.multiSelect) {
+      newTags = ({...selectedTags, tag.id}).toList();
+    } else {
+      final others = emojisByCategory?[category]?.map((e) => e.id).where((id) => id != tag.id).toSet() ?? {};
+      newTags =
+          ({...selectedTags}
+                ..removeAll(others)
+                ..add(tag.id))
+              .toList();
+    }
+
+    setState(() => selectedTags = newTags.toSet());
+
+    // Save only if not already persisted (preserves original categoryId if already exists).
+    if (!tag.exist()) await tag.save();
+
+    final success = await widget.onUpdated(newTags);
+    if (!success) setState(() => selectedTags = widget.initialTags.toSet());
+
+    _load();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: ColorScheme.of(context).surfaceContainerHighest,
-      elevation: 4,
-      shadowColor: Colors.black38,
-      borderRadius: BorderRadius.circular(12),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
-        child: _buildContents(),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
+      child: Material(
+        clipBehavior: .hardEdge,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: SpNestedNavigation(
+          initialScreen: _buildMainPage(context),
+        ),
       ),
     );
   }
 
-  Widget _buildContents() {
+  Widget _buildMainPage(BuildContext context) {
     if (emojisByCategory == null) return const SizedBox.shrink();
 
     return Scrollbar(
@@ -105,6 +145,7 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
               tags: entry.value,
               selectedTags: selectedTags,
               onToggle: _onToggle,
+              onPickCustomEmoji: (emoji) => _onPickCustomEmoji(emoji, entry.key),
             );
           }).toList(),
         ),
@@ -118,12 +159,14 @@ class _EmojiPicker extends StatelessWidget {
   final List<TagDbModel> tags;
   final Set<int> selectedTags;
   final Future<void> Function(TagDbModel) onToggle;
+  final Future<void> Function(String emoji) onPickCustomEmoji;
 
   const _EmojiPicker({
     required this.category,
     required this.tags,
     required this.selectedTags,
     required this.onToggle,
+    required this.onPickCustomEmoji,
   });
 
   @override
@@ -144,33 +187,106 @@ class _EmojiPicker extends StatelessWidget {
               return Wrap(
                 spacing: gap,
                 runSpacing: gap,
-                children: tags.map((tag) {
-                  final isSelected = selectedTags.contains(tag.id);
+                children: [
+                  ...tags.map((tag) {
+                    final isSelected = selectedTags.contains(tag.id);
 
-                  return SpTapEffect(
+                    return SpTapEffect(
+                      scaleActive: 1.3,
+                      effects: [.scaleDown],
+                      onTap: () => onToggle(tag),
+                      child: Container(
+                        width: itemWidth,
+                        height: itemWidth,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isSelected
+                              ? ColorScheme.of(context).surface.withValues(alpha: 0.5)
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected
+                                ? ColorScheme.of(context).onSurface
+                                : Theme.of(context).disabledColor.withValues(alpha: 0.1),
+                            width: isSelected ? 2 : 1.0,
+                          ),
+                        ),
+                        child: Text(tag.emoji ?? '', style: const TextStyle(fontSize: 22.0)),
+                      ),
+                    );
+                  }),
+                  // "+" button to open custom emoji picker
+                  SpTapEffect(
                     scaleActive: 1.3,
                     effects: [.scaleDown],
-                    onTap: () => onToggle(tag),
+                    onTap: () async {
+                      final emoji = await Navigator.of(context).push<String>(
+                        MaterialPageRoute(builder: (_) => const _CustomEmojiPicker()),
+                      );
+                      if (emoji != null) await onPickCustomEmoji(emoji);
+                    },
                     child: Container(
                       width: itemWidth,
                       height: itemWidth,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? ColorScheme.of(context).surface.withValues(alpha: 0.5) : Colors.transparent,
                         border: Border.all(
-                          color: isSelected
-                              ? ColorScheme.of(context).onSurface
-                              : Theme.of(context).disabledColor.withValues(alpha: 0.1),
-                          width: isSelected ? 2 : 1.0,
+                          color: Theme.of(context).disabledColor.withValues(alpha: 0.15),
+                          width: 1.0,
                         ),
                       ),
-                      child: Text(tag.emoji ?? '', style: const TextStyle(fontSize: 22.0)),
+                      child: Icon(
+                        SpIcons.add,
+                        size: itemWidth * 0.45,
+                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CustomEmojiPicker extends StatelessWidget {
+  const _CustomEmojiPicker();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(4.0),
+          child: BackButton(),
+        ),
+        Expanded(
+          child: EmojiPicker(
+            onEmojiSelected: (_, emoji) => Navigator.of(context).pop(emoji.emoji),
+            config: Config(
+              emojiViewConfig: EmojiViewConfig(
+                columns: 7,
+                emojiSizeMax: 28.0,
+                backgroundColor: ColorScheme.of(context).surface,
+              ),
+              categoryViewConfig: CategoryViewConfig(
+                backgroundColor: ColorScheme.of(context).surfaceContainerHighest,
+                indicatorColor: ColorScheme.of(context).primary,
+                iconColor: ColorScheme.of(context).onSurface.withValues(alpha: 0.4),
+                iconColorSelected: ColorScheme.of(context).primary,
+              ),
+              searchViewConfig: SearchViewConfig(
+                backgroundColor: ColorScheme.of(context).surfaceContainerHighest,
+                buttonIconColor: ColorScheme.of(context).onSurface,
+              ),
+              bottomActionBarConfig: const BottomActionBarConfig(enabled: false),
+            ),
           ),
         ),
       ],

@@ -103,13 +103,20 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
-      child: SpNestedNavigation(
-        initialScreen: buildPage(
-          context: context,
-          tags: tags,
-          allowCreate: allowCreate,
-          provider: provider,
-          filtered: filtered,
+      child: Material(
+        clipBehavior: .hardEdge,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: SpNestedNavigation(
+          initialScreen: buildPage(
+            context: context,
+            tags: tags,
+            allowCreate: allowCreate,
+            provider: provider,
+            filtered: filtered,
+          ),
         ),
       ),
     );
@@ -122,171 +129,165 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
     required TagsProvider provider,
     required List<TagDbModel> filtered,
   }) {
-    return Material(
-      color: ColorScheme.of(context).surfaceContainerHighest,
-      elevation: 4,
-      shadowColor: Colors.black38,
-      borderRadius: BorderRadius.circular(12),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: _PADDING),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: _PADDING),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (text) => setState(() => _query = text),
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: tr('input.tag.hint'),
-                hintStyle: TextStyle(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: ColorScheme.of(context).outline),
-                ),
-                suffixIconConstraints: const BoxConstraints(maxWidth: 32.0),
-                suffixIcon: _query.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.only(right: 12.0),
-                        child: Icon(SpIcons.add),
-                      )
-                    : null,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: _PADDING),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: _PADDING),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (text) => setState(() => _query = text),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: tr('input.tag.hint'),
+              hintStyle: TextStyle(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: ColorScheme.of(context).outline),
               ),
-              style: TextTheme.of(context).bodySmall,
+              suffixIconConstraints: const BoxConstraints(maxWidth: 32.0),
+              suffixIcon: _query.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 12.0),
+                      child: Icon(SpIcons.add),
+                    )
+                  : null,
+            ),
+            style: TextTheme.of(context).bodySmall,
+          ),
+        ),
+        const SizedBox(height: _PADDING),
+        const Divider(height: 1),
+
+        if (tags.isEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 12.0,
+              children: [
+                const Icon(SpIcons.tag, size: 24.0),
+                Text(
+                  tr("page.tags.empty_message"),
+                  textAlign: TextAlign.center,
+                  style: TextTheme.of(context).bodyMedium,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: _PADDING),
-          const Divider(height: 1),
-
-          if (tags.isEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 12.0,
-                children: [
-                  const Icon(SpIcons.tag, size: 24.0),
-                  Text(
-                    tr("page.tags.empty_message"),
-                    textAlign: TextAlign.center,
-                    style: TextTheme.of(context).bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ] else ...[
-            Flexible(
-              child: MediaQuery.removePadding(
-                removeTop: true,
-                removeLeft: true,
-                removeBottom: true,
-                removeRight: true,
-                context: context,
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  interactive: true,
-                  child: ReorderableListView(
-                    shrinkWrap: true,
-                    buildDefaultDragHandles: true,
-                    padding: EdgeInsets.zero,
-                    onReorder: (oldIndex, newIndex) {
-                      if (allowCreate) {
-                        oldIndex -= 1;
-                        newIndex -= 1;
-                      }
-                      if (oldIndex < 0 || newIndex < 0) return;
-                      provider.reorder(oldIndex, newIndex);
-                    },
-                    children: [
-                      if (allowCreate)
-                        ListTile(
-                          key: const ValueKey('create'),
-                          dense: true,
-                          horizontalTitleGap: 4.0,
-                          onTap: () => _create(provider),
-                          leading: _creating
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator.adaptive(),
-                                )
-                              : const Icon(SpIcons.add, size: 16),
-                          title: Text.rich(
-                            style: TextTheme.of(context).bodySmall,
-                            TextSpan(
-                              children: [
-                                TextSpan(text: '${tr("page.new_tag.title")}: '),
-                                TextSpan(
-                                  text: _query,
-                                  style: const TextStyle(fontStyle: FontStyle.italic, fontWeight: .bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ...filtered.map(
-                        (tag) => Slidable(
-                          closeOnScroll: true,
-                          key: ValueKey(tag.id),
-                          endActionPane: ActionPane(
-                            motion: const DrawerMotion(),
+        ] else ...[
+          Flexible(
+            child: MediaQuery.removePadding(
+              removeTop: true,
+              removeLeft: true,
+              removeBottom: true,
+              removeRight: true,
+              context: context,
+              child: Scrollbar(
+                thumbVisibility: true,
+                interactive: true,
+                child: ReorderableListView(
+                  shrinkWrap: true,
+                  buildDefaultDragHandles: true,
+                  padding: EdgeInsets.zero,
+                  onReorder: (oldIndex, newIndex) {
+                    if (allowCreate) {
+                      oldIndex -= 1;
+                      newIndex -= 1;
+                    }
+                    if (oldIndex < 0 || newIndex < 0) return;
+                    provider.reorder(oldIndex, newIndex);
+                  },
+                  children: [
+                    if (allowCreate)
+                      ListTile(
+                        key: const ValueKey('create'),
+                        dense: true,
+                        horizontalTitleGap: 4.0,
+                        onTap: () => _create(provider),
+                        leading: _creating
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator.adaptive(),
+                              )
+                            : const Icon(SpIcons.add, size: 16),
+                        title: Text.rich(
+                          style: TextTheme.of(context).bodySmall,
+                          TextSpan(
                             children: [
-                              SlidableAction(
-                                onPressed: (context) => provider.deleteTag(context, tag),
-                                backgroundColor: ColorScheme.of(context).error,
-                                foregroundColor: ColorScheme.of(context).onError,
-                                icon: SpIcons.delete,
-                                label: tr("button.delete"),
-                              ),
-                              SlidableAction(
-                                onPressed: (context) async {
-                                  final result = await Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => _EditTagView(tag: tag)),
-                                  );
-
-                                  if (result is List<String> && result.isNotEmpty) {
-                                    TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
-                                    await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
-                                    AnalyticsService.instance.logEditTag(tag: newTag);
-                                  }
-                                },
-                                backgroundColor: ColorScheme.of(context).secondary,
-                                foregroundColor: ColorScheme.of(context).onSecondary,
-                                icon: SpIcons.edit,
-                                label: tr("button.edit"),
+                              TextSpan(text: '${tr("page.new_tag.title")}: '),
+                              TextSpan(
+                                text: _query,
+                                style: const TextStyle(fontStyle: FontStyle.italic, fontWeight: .bold),
                               ),
                             ],
                           ),
-                          child: ListTile(
-                            dense: true,
-                            leading: Checkbox.adaptive(
-                              value: selectedTags.contains(tag.id),
-                              onChanged: (_) => _toggle(tag),
-                            ),
-                            horizontalTitleGap: 12.0,
-                            contentPadding: const EdgeInsets.only(left: 4.0, right: 12.0),
-                            trailing:
-                                [
-                                  TargetPlatform.linux,
-                                  TargetPlatform.windows,
-                                  TargetPlatform.macOS,
-                                ].contains(Theme.of(context).platform)
-                                ? null
-                                : const Icon(SpIcons.dragIndicator),
-                            title: Text(tag.title, style: TextTheme.of(context).bodySmall),
-                            subtitle: Text(plural("plural.story", getStoriesCount(tag))),
-                            onTap: () => _toggle(tag),
-                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ...filtered.map(
+                      (tag) => Slidable(
+                        closeOnScroll: true,
+                        key: ValueKey(tag.id),
+                        endActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) => provider.deleteTag(context, tag),
+                              backgroundColor: ColorScheme.of(context).error,
+                              foregroundColor: ColorScheme.of(context).onError,
+                              icon: SpIcons.delete,
+                              label: tr("button.delete"),
+                            ),
+                            SlidableAction(
+                              onPressed: (context) async {
+                                final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => _EditTagView(tag: tag)),
+                                );
+
+                                if (result is List<String> && result.isNotEmpty) {
+                                  TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
+                                  await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
+                                  AnalyticsService.instance.logEditTag(tag: newTag);
+                                }
+                              },
+                              backgroundColor: ColorScheme.of(context).secondary,
+                              foregroundColor: ColorScheme.of(context).onSecondary,
+                              icon: SpIcons.edit,
+                              label: tr("button.edit"),
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          dense: true,
+                          leading: Checkbox.adaptive(
+                            value: selectedTags.contains(tag.id),
+                            onChanged: (_) => _toggle(tag),
+                          ),
+                          horizontalTitleGap: 12.0,
+                          contentPadding: const EdgeInsets.only(left: 4.0, right: 12.0),
+                          trailing:
+                              [
+                                TargetPlatform.linux,
+                                TargetPlatform.windows,
+                                TargetPlatform.macOS,
+                              ].contains(Theme.of(context).platform)
+                              ? null
+                              : const Icon(SpIcons.dragIndicator),
+                          title: Text(tag.title, style: TextTheme.of(context).bodySmall),
+                          subtitle: Text(plural("plural.story", getStoriesCount(tag))),
+                          onTap: () => _toggle(tag),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
+          ),
         ],
-      ),
+      ],
     );
   }
 }
@@ -300,42 +301,36 @@ class _EditTagView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: ColorScheme.of(context).surfaceContainerHighest,
-      elevation: 4,
-      shadowColor: Colors.black38,
-      borderRadius: BorderRadius.circular(12),
-      child: Column(
-        crossAxisAlignment: .start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-            child: BackButton(),
-          ),
-          Expanded(
-            child: SpTextInputsPage(
-              contentOnly: true,
-              fields: [
-                SpTextInputField(
-                  initialText: tag.title,
-                  hintText: tr("input.tag.hint"),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty == true) {
-                      return tr("input.message.required");
-                    }
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+          child: BackButton(),
+        ),
+        Expanded(
+          child: SpTextInputsPage(
+            contentOnly: true,
+            fields: [
+              SpTextInputField(
+                initialText: tag.title,
+                hintText: tr("input.tag.hint"),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty == true) {
+                    return tr("input.message.required");
+                  }
 
-                    if (context.read<TagsProvider>().isTagExist(value) == true) {
-                      return tr("input.message.already_exist");
-                    }
+                  if (context.read<TagsProvider>().isTagExist(value) == true) {
+                    return tr("input.message.already_exist");
+                  }
 
-                    return null;
-                  },
-                ),
-              ],
-            ),
+                  return null;
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
