@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_album_grid.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
@@ -57,6 +61,28 @@ class _ContentState extends State<_Content> {
     _paths = widget.paths.toSet().toList();
   }
 
+  Future<void> _takePhoto(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () => picker.pickImage(source: ImageSource.camera),
+    );
+
+    if (photo == null) return;
+
+    final AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+    if (tookAsset == null) return;
+
+    if (mounted) {
+      setState(() {
+        _paths = {
+          ..._paths,
+          tookAsset.relativeLocalFilePath,
+        }.toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +105,11 @@ class _ContentState extends State<_Content> {
               spacing: 8.0,
               children: [
                 IconButton.outlined(
-                  icon: Icon(SpIcons.addPhoto, color: ColorScheme.of(context).primary),
+                  icon: Icon(SpIcons.camera, color: ColorScheme.of(context).primary),
+                  onPressed: () => _takePhoto(context),
+                ),
+                IconButton.outlined(
+                  icon: Icon(SpIcons.photo, color: ColorScheme.of(context).primary),
                   onPressed: () async {
                     if (_paths.length >= 2 && !context.read<InAppPurchaseProvider>().isProUser) {
                       const PaywallRoute(initialFocus: .image_album).push(context);
