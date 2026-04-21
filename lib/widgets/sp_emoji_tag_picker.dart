@@ -133,7 +133,14 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
           borderRadius: BorderRadius.circular(12),
         ),
         child: SpNestedNavigation(
-          initialScreen: _buildMainPage(context),
+          initialScreen: MediaQuery.removePadding(
+            removeTop: true,
+            removeLeft: true,
+            removeBottom: true,
+            removeRight: true,
+            context: context,
+            child: _buildMainPage(context),
+          ),
         ),
       ),
     );
