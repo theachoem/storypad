@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +15,10 @@ import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_story_tags_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_emoji_tag_picker.dart';
+import 'package:storypad/widgets/sp_floating_tag_picker.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
@@ -219,92 +222,100 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    // Tags labels including its add button
     bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
-    if (showTagLabels) children.addAll(buildTags(tagProvider, context));
-
-    final emojis = (story.validTags?.map((tag) => tagProvider.getEmojiTag(tag)) ?? []).whereType<String>();
-
-    if (emojis.isNotEmpty) {
+    final tagLabels = buildTags(tagProvider, context);
+    if (showTagLabels) children.addAll(tagLabels);
+    if (onToggleTags != null && tagLabels.isEmpty) {
       children.add(
-        SpTapEffect(
-          duration: Durations.medium3,
-          curve: Curves.easeInOutCubicEmphasized,
-          behavior: .translucent,
-          onTap: onToggleTags != null
-              ? () => SpStoryTagsBottomSheet(
-                  initialTags: story.validTags ?? [],
-                  onUpdated: onToggleTags!,
-                  showTagAsInitialSegment: false,
-                ).show(context: context)
-              : null,
-          child: Row(
-            mainAxisSize: .min,
-            children: emojis.map((emoji) {
-              return Container(
-                padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(1)),
-                height: MediaQuery.textScalerOf(context).scale(20),
-                width: MediaQuery.textScalerOf(context).scale(20),
-                alignment: .center,
-                child: FittedBox(
-                  child: Text(
-                    emoji,
-                    textAlign: .center,
-                    softWrap: true,
-                    style: const TextStyle(fontSize: 40, height: 1.0),
-                    strutStyle: const StrutStyle(
-                      forceStrutHeight: true,
-                      fontSize: 40,
-                      height: 1.0,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 288,
+          bottomToTop: false,
+          dyGetter: (dy) => dy + 24,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (close) => SpFloatingTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => _buildIconButton(
+            context: context,
+            icon: SpIcons.tag,
+            tooltip: tr('page.tags.title'),
+            onTap: open,
           ),
         ),
       );
     }
 
-    if (emojis.isEmpty && onToggleTags != null) {
-      children.add(
-        Builder(
-          builder: (context) {
-            return SpTapEffect(
-              duration: Durations.medium3,
-              curve: Curves.easeInOutCubicEmphasized,
-              behavior: .translucent,
-              onTap: null,
-              onTapUp: (details) {
-                SpStoryTagsBottomSheet(
-                  initialTags: story.validTags ?? [],
-                  onUpdated: onToggleTags!,
-                  showTagAsInitialSegment: false,
-                ).show(context: context);
-              },
-              child: Container(
-                height: MediaQuery.textScalerOf(context).scale(20),
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(4)),
-                child: Row(
-                  mainAxisAlignment: .center,
-                  crossAxisAlignment: .center,
-                  mainAxisSize: .min,
-                  spacing: MediaQuery.textScalerOf(context).scale(6.0),
-                  children: [
-                    Icon(
-                      SpIcons.addFeeling,
-                      size: MediaQuery.textScalerOf(context).scale(18.0),
-                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
-                    ),
-                    Icon(
-                      SpIcons.tag,
-                      size: MediaQuery.textScalerOf(context).scale(18.0),
-                      color: ColorScheme.of(context).onSurface.withValues(alpha: 0.7),
-                    ),
-                  ],
-                ),
+    // Emoji labels including its add button
+    final emojis = (story.validTags?.map((tag) => tagProvider.getEmojiTag(tag)) ?? []).whereType<String>();
+    final emojiRow = Row(
+      mainAxisSize: .min,
+      children: emojis.map((emoji) {
+        return Container(
+          padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(1)),
+          height: MediaQuery.textScalerOf(context).scale(20),
+          width: MediaQuery.textScalerOf(context).scale(20),
+          alignment: .center,
+          child: FittedBox(
+            child: Text(
+              emoji,
+              textAlign: .center,
+              softWrap: true,
+              style: const TextStyle(fontSize: 40, height: 1.0),
+              strutStyle: const StrutStyle(
+                forceStrutHeight: true,
+                fontSize: 40,
+                height: 1.0,
               ),
-            );
-          },
+            ),
+          ),
+        );
+      }).toList(),
+    );
+
+    if (onToggleTags != null && emojis.length < 2) {
+      children.add(
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 288,
+          bottomToTop: false,
+          dyGetter: (dy) => dy + 24,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (close) => SpEmojiTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => _buildIconButton(
+            context: context,
+            icon: SpIcons.addFeeling,
+            tooltip: tr('general.stickers'),
+            onTap: open,
+          ),
+        ),
+      );
+    }
+
+    if (emojis.isNotEmpty) {
+      children.add(
+        SpFloatingPopUpButton(
+          estimatedFloatingWidth: 288,
+          bottomToTop: false,
+          dyGetter: (dy) => dy + 24,
+          pathBuilder: PathBuilders.slideDown,
+          floatingBuilder: (close) => SpEmojiTagPicker(
+            initialTags: story.validTags ?? [],
+            onUpdated: onToggleTags!,
+            close: close,
+          ),
+          builder: (open) => SpTapEffect(
+            duration: Durations.medium3,
+            curve: Curves.easeInOutCubicEmphasized,
+            behavior: .translucent,
+            onTap: onToggleTags != null ? open : null,
+            child: emojiRow,
+          ),
         ),
       );
     }
@@ -400,20 +411,57 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag) {
+    if (onToggleTags != null) {
+      return SpFloatingPopUpButton(
+        estimatedFloatingWidth: 288,
+        bottomToTop: false,
+        dyGetter: (dy) => dy + 24,
+        pathBuilder: PathBuilders.slideDown,
+        floatingBuilder: (close) => SpFloatingTagPicker(
+          initialTags: story.validTags ?? [],
+          onUpdated: onToggleTags!,
+          close: close,
+        ),
+        builder: (open) => buildPin(
+          context: context,
+          title: "# ${tag.title.sanitizeUtf16}",
+          onTap: open,
+        ),
+      );
+    }
+
     return buildPin(
       context: context,
       title: "# ${tag.title.sanitizeUtf16}",
-      onTap: () {
-        if (onToggleTags != null) {
-          SpStoryTagsBottomSheet(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            showTagAsInitialSegment: true,
-          ).show(context: context);
-        } else {
-          provider.viewTag(context: context, tag: tag, storyViewOnly: false);
-        }
-      },
+      onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+    );
+  }
+
+  Widget _buildIconButton({
+    required BuildContext context,
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback onTap,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4.0),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Icon(
+              icon,
+              size: MediaQuery.textScalerOf(context).scale(14.0),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

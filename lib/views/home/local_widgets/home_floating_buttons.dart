@@ -50,14 +50,19 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: Tween<double>(begin: 1, end: 0.0).animate(animation),
-      child: buildButton(context),
+      child: GestureDetector(
+        onLongPress: () {
+          Feedback.forLongPress(context);
+          widget.viewModel.goToNewPage(context);
+        },
+        child: buildButton(context),
+      ),
     );
   }
 
   Widget buildButton(BuildContext context) {
     if (MediaQuery.accessibleNavigationOf(context)) {
       return FloatingActionButton.extended(
-        tooltip: tr("button.new_story"),
         onPressed: () => toggle(context),
         label: Text(tr("button.new_story")),
         icon: const Icon(SpIcons.newStory),
@@ -65,7 +70,6 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
       );
     } else {
       return FloatingActionButton(
-        tooltip: tr("button.new_story"),
         onPressed: () => toggle(context),
         child: const Icon(SpIcons.newStory),
       );

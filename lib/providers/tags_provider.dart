@@ -96,6 +96,27 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     }
   }
 
+  List<String> get tagTitles => tags?.items.map((e) => e.title).toList() ?? [];
+
+  bool isTagExist(String title) {
+    return tagTitles.map((e) => e.toLowerCase()).contains(title.trim().toLowerCase());
+  }
+
+  Future<void> addTag(BuildContext context) async {
+    final result = await EditTagRoute(tag: null, tags: tags?.items ?? []).push(context);
+
+    if (result is List<String> && result.isNotEmpty) {
+      TagDbModel newTag = TagDbModel.fromNow().copyWith(title: result.first);
+      TagDbModel? tag = await TagDbModel.db.set(newTag);
+      await reload();
+
+      if (tag == null) return;
+      AnalyticsService.instance.logAddTag(
+        tag: tag,
+      );
+    }
+  }
+
   Future<bool> deleteTag(BuildContext context, TagDbModel tag) async {
     OkCancelResult result = await showOkCancelAlertDialog(
       context: context,
@@ -120,7 +141,7 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
   }
 
   Future<void> editTag(BuildContext context, TagDbModel tag) async {
-    final result = await EditTagRoute(tag: tag, allTags: tags?.items ?? []).push(context);
+    final result = await EditTagRoute(tag: tag, tags: tags?.items ?? []).push(context);
 
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
