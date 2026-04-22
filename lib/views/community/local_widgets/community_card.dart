@@ -5,6 +5,32 @@ class _CommunityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> socials = [
+      if (RemoteConfigService.redditUrl.get().isNotEmpty)
+        IconButton.filled(
+          icon: Icon(MdiIcons.reddit),
+          onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
+        ),
+      if (RemoteConfigService.tiktokUsername.get().isNotEmpty)
+        IconButton.filledTonal(
+          icon: const Icon(Icons.tiktok_outlined),
+          onPressed: () => UrlOpenerService.openInCustomTab(
+            context,
+            "https://www.tiktok.com/@${RemoteConfigService.tiktokUsername.get()}",
+          ),
+        ),
+      if (RemoteConfigService.twitterUrl.get().isNotEmpty)
+        IconButton.filledTonal(
+          icon: Icon(MdiIcons.twitter),
+          onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.twitterUrl.get()),
+        ),
+      if (RemoteConfigService.bugReportUrl.get().isNotEmpty)
+        IconButton.filledTonal(
+          icon: Icon(MdiIcons.bug),
+          onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.bugReportUrl.get()),
+        ),
+    ];
+
     return Container(
       margin: const EdgeInsets.all(16.0).copyWith(bottom: 8.0, top: 8.0),
       padding: const EdgeInsets.all(16.0).copyWith(bottom: 12.0),
@@ -24,41 +50,13 @@ class _CommunityCard extends StatelessWidget {
               runSpacing: Platform.isMacOS ? 8.0 : 0.0,
               children: [
                 const SizedBox(height: 48.0),
-                SpFadeIn.fromBottom(
-                  delay: Durations.medium1 * 1.2,
-                  duration: Durations.medium4,
-                  child: IconButton.filled(
-                    icon: Icon(MdiIcons.reddit),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
-                  ),
-                ),
-                SpFadeIn.fromBottom(
-                  delay: Durations.medium1,
-                  duration: Durations.medium4,
-                  child: IconButton.filledTonal(
-                    icon: const Icon(Icons.tiktok_outlined),
-                    onPressed: () => UrlOpenerService.openInCustomTab(
-                      context,
-                      "https://www.tiktok.com/@${RemoteConfigService.tiktokUsername.get()}",
-                    ),
-                  ),
-                ),
-                SpFadeIn.fromBottom(
-                  delay: Durations.medium1 * 1.4,
-                  duration: Durations.medium4,
-                  child: IconButton.filledTonal(
-                    icon: Icon(MdiIcons.twitter),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.twitterUrl.get()),
-                  ),
-                ),
-                SpFadeIn.fromBottom(
-                  delay: Durations.medium1 * 1.6,
-                  duration: Durations.medium4,
-                  child: IconButton.filledTonal(
-                    icon: Icon(MdiIcons.bug),
-                    onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.bugReportUrl.get()),
-                  ),
-                ),
+                ...List.generate(socials.length, (index) {
+                  return SpFadeIn.fromBottom(
+                    delay: Durations.medium1 * (index + 1) * 0.5,
+                    duration: Durations.medium4,
+                    child: socials[index],
+                  );
+                }),
               ],
             ),
           ),
