@@ -311,7 +311,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     required int month,
     required int year,
     int? tagId,
-    Map<int, String> emojiById = const {},
+    Map<int, String> feelingEmojiById = const {},
   }) {
     AppLogger.info("Triggering $tableName#getStoryFeelingByMonth 🍎");
     Map<int, List<String>> storyFeelingByMonth = {};
@@ -329,7 +329,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       final List<String> storyFeelings = (story.tags ?? [])
           .map((tagStr) => int.tryParse(tagStr))
           .whereType<int>()
-          .map((id) => emojiById[id])
+          .map((id) => feelingEmojiById[id])
           .whereType<String>()
           .toSet()
           .toList();

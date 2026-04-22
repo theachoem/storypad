@@ -40,7 +40,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
       month: month,
       year: year,
-      emojiById: context.read<TagsProvider>().emojiById,
+      feelingEmojiById: context.read<TagsProvider>().feelingEmojiById,
     );
 
     _tags = [...context.read<TagsProvider>().tags?.items ?? []];
@@ -104,7 +104,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     feelingsMapByDay = StoryDbModel.db.getStoryFeelingByMonth(
       month: month,
       year: year,
-      emojiById: tagsProvider.emojiById,
+      feelingEmojiById: tagsProvider.feelingEmojiById,
     );
     notifyListeners();
   }
@@ -144,7 +144,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         month: month,
         year: year,
         tagId: selectedTagId,
-        emojiById: tagsProvider.emojiById,
+        feelingEmojiById: tagsProvider.feelingEmojiById,
       );
     }
 

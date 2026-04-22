@@ -29,12 +29,18 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
   Map<int, String> _emojiById = {};
   Map<int, String> get emojiById => _emojiById;
 
+  Map<int, String> _feelingEmojiById = {};
+  Map<int, String> get feelingEmojiById => _feelingEmojiById;
+
   String? getEmojiTag(int tagId) => _emojiById[tagId];
 
   void setAllTags(CollectionDbModel<TagDbModel>? allTags) {
     _tags = CollectionDbModel(items: allTags?.items.where((tag) => tag.categoryId == null).toList() ?? []);
     _emojiTags = CollectionDbModel(items: allTags?.items.where((tag) => tag.categoryId != null).toList() ?? []);
     _emojiById = {for (var tag in _emojiTags?.items ?? <TagDbModel>[]) tag.id: ?tag.emoji};
+    _feelingEmojiById = {
+      for (var tag in _emojiTags?.items.where((tag) => tag.feeling) ?? <TagDbModel>[]) tag.id: ?tag.emoji,
+    };
   }
 
   // pass null to allow reindex to notify only when needed.

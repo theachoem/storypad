@@ -2,6 +2,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/databases/adapters/objectbox/tags_box.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
+import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/services/tag_id_generator_service.dart';
 
 part 'tag_db_model.g.dart';
@@ -41,6 +42,8 @@ class TagDbModel extends BaseDbModel {
     required this.permanentlyDeletedAt,
     int? index,
   }) : index = index ?? 0;
+
+  bool get feeling => categoryId == TagCategoryDbModel.feeling().id;
 
   TagDbModel.fromIDTitle(this.id, this.title)
     : version = 0,
@@ -101,6 +104,7 @@ class TagDbModel extends BaseDbModel {
 
   bool _cloudViewing = false;
   bool get cloudViewing => _cloudViewing;
+
   TagDbModel markAsCloudViewing() {
     _cloudViewing = true;
     return this;
