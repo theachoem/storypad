@@ -80,6 +80,33 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
 
   @override
   Widget build(BuildContext context) {
+    return MediaQuery.removePadding(
+      removeTop: true,
+      removeLeft: true,
+      removeBottom: true,
+      removeRight: true,
+      context: context,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
+        child: Material(
+          clipBehavior: .hardEdge,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: SpNestedNavigation(
+            initialScreen: Builder(
+              builder: (context) {
+                return buildPage(context: context);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPage({required BuildContext context}) {
     final provider = Provider.of<TagsProvider>(context);
     final tags = provider.tags?.items ?? <TagDbModel>[];
 
@@ -102,34 +129,6 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
     final allowCreate =
         _query.isNotEmpty && (tags.isEmpty || !tags.any((t) => t.title.toLowerCase() == _query.toLowerCase()));
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
-      child: Material(
-        clipBehavior: .hardEdge,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Theme.of(context).dividerColor),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: SpNestedNavigation(
-          initialScreen: buildPage(
-            context: context,
-            tags: tags,
-            allowCreate: allowCreate,
-            provider: provider,
-            filtered: filtered,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildPage({
-    required BuildContext context,
-    required List<TagDbModel> tags,
-    required bool allowCreate,
-    required TagsProvider provider,
-    required List<TagDbModel> filtered,
-  }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -155,7 +154,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                     )
                   : null,
             ),
-            style: TextTheme.of(context).bodySmall,
+            style: TextTheme.of(context).bodyMedium,
           ),
         ),
         const SizedBox(height: _PADDING),
@@ -179,111 +178,103 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
           ),
         ] else ...[
           Flexible(
-            child: MediaQuery.removePadding(
-              removeTop: true,
-              removeLeft: true,
-              removeBottom: true,
-              removeRight: true,
-              context: context,
-              child: Scrollbar(
-                thumbVisibility: true,
-                interactive: true,
-                child: ReorderableListView(
-                  shrinkWrap: true,
-                  buildDefaultDragHandles: true,
-                  padding: EdgeInsets.zero,
-                  onReorder: (oldIndex, newIndex) {
-                    if (allowCreate) {
-                      oldIndex -= 1;
-                      newIndex -= 1;
-                    }
-                    if (oldIndex < 0 || newIndex < 0) return;
-                    provider.reorder(oldIndex, newIndex);
-                  },
-                  children: [
-                    if (allowCreate)
-                      ListTile(
-                        key: const ValueKey('create'),
-                        dense: true,
-                        horizontalTitleGap: 4.0,
-                        onTap: () => _create(provider),
-                        leading: _creating
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator.adaptive(),
-                              )
-                            : const Icon(SpIcons.add, size: 16),
-                        title: Text.rich(
-                          style: TextTheme.of(context).bodySmall,
-                          TextSpan(
-                            children: [
-                              TextSpan(text: '${tr("page.new_tag.title")}: '),
-                              TextSpan(
-                                text: _query,
-                                style: const TextStyle(fontStyle: FontStyle.italic, fontWeight: .bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ...filtered.map(
-                      (tag) => Slidable(
-                        closeOnScroll: true,
-                        key: ValueKey(tag.id),
-                        endActionPane: ActionPane(
-                          motion: const DrawerMotion(),
+            child: Scrollbar(
+              thumbVisibility: true,
+              interactive: true,
+              child: ReorderableListView(
+                shrinkWrap: true,
+                buildDefaultDragHandles: true,
+                padding: EdgeInsets.zero,
+                onReorder: (oldIndex, newIndex) {
+                  if (allowCreate) {
+                    oldIndex -= 1;
+                    newIndex -= 1;
+                  }
+                  if (oldIndex < 0 || newIndex < 0) return;
+                  provider.reorder(oldIndex, newIndex);
+                },
+                children: [
+                  if (allowCreate)
+                    ListTile(
+                      key: const ValueKey('create'),
+                      dense: true,
+                      horizontalTitleGap: 4.0,
+                      onTap: () => _create(provider),
+                      leading: _creating
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator.adaptive(),
+                            )
+                          : const Icon(SpIcons.add, size: 16),
+                      title: Text.rich(
+                        TextSpan(
                           children: [
-                            SlidableAction(
-                              onPressed: (context) => provider.deleteTag(context, tag),
-                              backgroundColor: ColorScheme.of(context).error,
-                              foregroundColor: ColorScheme.of(context).onError,
-                              icon: SpIcons.delete,
-                              label: tr("button.delete"),
-                            ),
-                            SlidableAction(
-                              onPressed: (context) async {
-                                final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => _EditTagView(tag: tag)),
-                                );
-
-                                if (result is List<String> && result.isNotEmpty) {
-                                  TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
-                                  await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
-                                  AnalyticsService.instance.logEditTag(tag: newTag);
-                                }
-                              },
-                              backgroundColor: ColorScheme.of(context).secondary,
-                              foregroundColor: ColorScheme.of(context).onSecondary,
-                              icon: SpIcons.edit,
-                              label: tr("button.edit"),
+                            TextSpan(text: '${tr("page.new_tag.title")}: '),
+                            TextSpan(
+                              text: _query,
+                              style: const TextStyle(fontStyle: FontStyle.italic, fontWeight: .bold),
                             ),
                           ],
                         ),
-                        child: ListTile(
-                          dense: true,
-                          leading: Checkbox.adaptive(
-                            value: selectedTags.contains(tag.id),
-                            onChanged: (_) => _toggle(tag),
-                          ),
-                          horizontalTitleGap: 12.0,
-                          contentPadding: const EdgeInsets.only(left: 4.0, right: 12.0),
-                          trailing:
-                              [
-                                TargetPlatform.linux,
-                                TargetPlatform.windows,
-                                TargetPlatform.macOS,
-                              ].contains(Theme.of(context).platform)
-                              ? null
-                              : const Icon(SpIcons.dragIndicator),
-                          title: Text(tag.title, style: TextTheme.of(context).bodySmall),
-                          subtitle: Text(plural("plural.story", getStoriesCount(tag))),
-                          onTap: () => _toggle(tag),
-                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ...filtered.map(
+                    (tag) => Slidable(
+                      closeOnScroll: true,
+                      key: ValueKey(tag.id),
+                      endActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) => provider.deleteTag(context, tag),
+                            backgroundColor: ColorScheme.of(context).error,
+                            foregroundColor: ColorScheme.of(context).onError,
+                            icon: SpIcons.delete,
+                            label: tr("button.delete"),
+                          ),
+                          SlidableAction(
+                            onPressed: (context) async {
+                              final result = await Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => _EditTagView(tag: tag)),
+                              );
+
+                              if (result is List<String> && result.isNotEmpty) {
+                                TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
+                                await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
+                                AnalyticsService.instance.logEditTag(tag: newTag);
+                              }
+                            },
+                            backgroundColor: ColorScheme.of(context).secondary,
+                            foregroundColor: ColorScheme.of(context).onSecondary,
+                            icon: SpIcons.edit,
+                            label: tr("button.edit"),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        dense: true,
+                        leading: Checkbox.adaptive(
+                          value: selectedTags.contains(tag.id),
+                          onChanged: (_) => _toggle(tag),
+                        ),
+                        horizontalTitleGap: 12.0,
+                        contentPadding: const EdgeInsets.only(left: 4.0, right: 12.0),
+                        trailing:
+                            [
+                              TargetPlatform.linux,
+                              TargetPlatform.windows,
+                              TargetPlatform.macOS,
+                            ].contains(Theme.of(context).platform)
+                            ? null
+                            : const Icon(SpIcons.dragIndicator),
+                        title: Text(tag.title),
+                        subtitle: Text(plural("plural.story", getStoriesCount(tag))),
+                        onTap: () => _toggle(tag),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -302,6 +293,13 @@ class _EditTagView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Material(
+      color: ColorScheme.of(context).surface,
+      child: buildContent(context),
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
     return Column(
       crossAxisAlignment: .start,
       children: [

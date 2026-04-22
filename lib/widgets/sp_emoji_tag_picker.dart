@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/storages/preferred_emoji_tab_storage.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_nested_navigation.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
@@ -124,22 +127,22 @@ class _SpEmojiTagPicker extends State<SpEmojiTagPicker> with DebounchedCallback 
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
-      child: Material(
-        clipBehavior: .hardEdge,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Theme.of(context).dividerColor),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: SpNestedNavigation(
-          initialScreen: MediaQuery.removePadding(
-            removeTop: true,
-            removeLeft: true,
-            removeBottom: true,
-            removeRight: true,
-            context: context,
-            child: _buildMainPage(context),
+    return MediaQuery.removePadding(
+      removeTop: true,
+      removeLeft: true,
+      removeBottom: true,
+      removeRight: true,
+      context: context,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 288, maxHeight: 320),
+        child: Material(
+          clipBehavior: .hardEdge,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: SpNestedNavigation(
+            initialScreen: _buildMainPage(context),
           ),
         ),
       ),
@@ -240,10 +243,15 @@ class _EmojiPicker extends StatelessWidget {
                     scaleActive: 1.3,
                     effects: [.scaleDown],
                     onTap: () async {
-                      final emoji = await Navigator.of(context).push<String>(
-                        MaterialPageRoute(builder: (_) => const _CustomEmojiPicker()),
+                      final preferredCategory = await PreferredEmojiTabStorage().getCategoryFor(category.id);
+                      final picker = _CustomEmojiPicker(
+                        category: category,
+                        initialCategory: preferredCategory,
                       );
-                      if (emoji != null) await onPickCustomEmoji(emoji);
+
+                      if (!context.mounted) return;
+                      final emoji = await Navigator.of(context).push(MaterialPageRoute(builder: (_) => picker));
+                      if (emoji != null && emoji is String) await onPickCustomEmoji(emoji);
                     },
                     child: Container(
                       width: itemWidth,
@@ -274,10 +282,31 @@ class _EmojiPicker extends StatelessWidget {
 }
 
 class _CustomEmojiPicker extends StatelessWidget {
-  const _CustomEmojiPicker();
+  const _CustomEmojiPicker({
+    required this.initialCategory,
+    required this.category,
+  });
+
+  final Category? initialCategory;
+  final TagCategoryDbModel category;
 
   @override
   Widget build(BuildContext context) {
+    return Material(
+      color: ColorScheme.of(context).surface,
+      child: buildContent(context),
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    Category initialCategory =
+        this.initialCategory ??
+        switch (category.id) {
+          1 => .SMILEYS,
+          2 => .ACTIVITIES,
+          _ => .RECENT,
+        };
+
     return Column(
       mainAxisSize: .min,
       crossAxisAlignment: .start,
@@ -289,13 +318,17 @@ class _CustomEmojiPicker extends StatelessWidget {
         Expanded(
           child: EmojiPicker(
             onEmojiSelected: (_, emoji) => Navigator.of(context).pop(emoji.emoji),
+            onCategoryChanged: (category) => PreferredEmojiTabStorage().setCategoryFor(this.category.id, category),
             config: Config(
+              locale: context.locale,
               emojiViewConfig: EmojiViewConfig(
                 columns: 7,
                 emojiSizeMax: 28.0,
                 backgroundColor: ColorScheme.of(context).surface,
+                buttonMode: kIsCupertino ? .CUPERTINO : .MATERIAL,
               ),
               categoryViewConfig: CategoryViewConfig(
+                initCategory: initialCategory,
                 backgroundColor: ColorScheme.of(context).surfaceContainerHighest,
                 indicatorColor: ColorScheme.of(context).primary,
                 iconColor: ColorScheme.of(context).onSurface.withValues(alpha: 0.4),

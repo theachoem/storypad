@@ -47,10 +47,10 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
       for (int i = 0; i < tags!.items.length; i++) {
         TagDbModel tag = tags!.items[i];
 
-        if (tag.index != i + 1) {
+        if (tag.index != i) {
           tag =
               await TagDbModel.db.set(
-                tag.copyWith(index: i + 1, updatedAt: DateTime.now()),
+                tag.copyWith(index: i, updatedAt: DateTime.now()),
                 debugSource: '$runtimeType#setup',
 
                 // This is consider silent update, so no need to alert listeners for now.
@@ -169,9 +169,7 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     if (trimmed.isEmpty) return null;
     if (tags?.items.any((tag) => tag.title.toLowerCase() == trimmed.toLowerCase()) == true) return null;
 
-    // We already set index to start from 1 in provider.
-    // So new tag will be added to 0 to make it appear at the top, and then reindex will update it to 1.
-    final newTag = TagDbModel.fromNow().copyWith(title: trimmed, index: 0);
+    final newTag = TagDbModel.fromNow().copyWith(title: trimmed, index: -1);
 
     _tags ??= CollectionDbModel(items: []);
     _tags = _tags?.addElement(newTag, 0);

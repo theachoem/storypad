@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/objectbox.g.dart';
 
 part './helpers/tags_box_transformer.dart';
@@ -31,6 +32,29 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   Future<void> initilize() async {
     await super.initilize();
     _initialTags = await where();
+
+    // migration emoji tags with category_id null to 1 (feeling category)
+    // this is just in case if user have import tags from latest app version to
+    // an older app version that doesn't have category_id field
+    final conditions = TagObjectBox_.id
+        .notNull()
+        .and(TagObjectBox_.permanentlyDeletedAt.notNull())
+        .and(TagObjectBox_.categoryId.isNull())
+        .and(TagObjectBox_.emoji.notNull());
+
+    final count = box.query(conditions).build().count();
+    if (count > 0) {
+      box.putMany(
+        box.query(conditions).build().find().map((e) {
+          e.categoryId = 1;
+          return e;
+        }).toList(),
+      );
+
+      AppLogger.info(
+        "$runtimeType#initialize Migrated $count emoji tags with null category_id to category_id 1 (feeling category)",
+      );
+    }
   }
 
   @override
