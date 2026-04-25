@@ -40,9 +40,8 @@ Future<void> _initializeApp({
 }) async {
   // firebase initialize
   if (!Platform.isLinux) await Firebase.initializeApp(options: firebaseOptions);
-
-  CrashlyticsInitializer.call();
-  RemoteConfigInitializer.call();
+  if (!Platform.isLinux) CrashlyticsInitializer.call();
+  if (!Platform.isLinux) RemoteConfigInitializer.call();
 
   // core
   await EasyLocalization.ensureInitialized();
@@ -65,7 +64,7 @@ Future<void> _initializeApp({
   }
 
   // initialize & cleanup old assets
-  await CloudStorageInitializer.call();
+  if (!Platform.isLinux) await CloudStorageInitializer.call();
 
   LicensesInitializer.call();
 }

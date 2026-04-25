@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -15,6 +17,13 @@ class LocalAuthService {
   bool get enrolledOtherBiometrics => _canCheckBiometrics == true;
 
   Future<void> load() async {
+    if (Platform.isLinux) {
+      _isDeviceSupported = false;
+      _canCheckBiometrics = false;
+      enrolledBiometrics = [];
+      return;
+    }
+
     _isDeviceSupported = await auth.isDeviceSupported();
     _canCheckBiometrics = await auth.canCheckBiometrics;
     if (_isDeviceSupported!) enrolledBiometrics = await auth.getAvailableBiometrics();
@@ -23,6 +32,8 @@ class LocalAuthService {
   Future<bool> authenticate({
     required String title,
   }) async {
+    if (Platform.isLinux) return false;
+
     await auth.stopAuthentication();
     return auth.authenticate(localizedReason: title, persistAcrossBackgrounding: true).catchError(
       (e) {
