@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 
 class SpFirestoreStorageDownloaderBuilder extends StatefulWidget {
   const SpFirestoreStorageDownloaderBuilder({
@@ -24,13 +24,13 @@ class _SpFirestoreStorageDownloaderBuilderState extends State<SpFirestoreStorage
   void initState() {
     super.initState();
 
-    file = FirestoreStorageService.instance.getCachedFile(widget.filePath);
+    file = CloudStorageService.instance.getCachedFile(widget.filePath);
     if (file == null) downloadAndLoadFile();
   }
 
   Future<void> downloadAndLoadFile() async {
     try {
-      file = await FirestoreStorageService.instance.downloadFile(widget.filePath).then((e) => e.file);
+      file = await CloudStorageService.instance.downloadFile(widget.filePath).then((e) => e.file);
       setState(() {});
     } catch (e) {
       failed = true;

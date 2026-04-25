@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/services/cloud_storage/adaptors/base_cloud_storage_adaptor.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 
@@ -25,11 +26,8 @@ class FirestoreStorageResponse {
   });
 }
 
-class FirestoreStorageService {
-  // ignore: constant_identifier_names
-  static const int MAX_DOWNLOAD_SIZE = 20 * 1024 * 1024; // 20mb
-
-  static FirestoreStorageService instance = FirestoreStorageService();
+class CloudStorageService {
+  static CloudStorageService instance = CloudStorageService();
 
   Map<String, dynamic>? _hash;
   Map<String, String>? _downloadUrlsByUrlPath;
@@ -61,18 +59,15 @@ class FirestoreStorageService {
     try {
       if (_downloadUrlsByUrlPath?[urlPath] != null) return _downloadUrlsByUrlPath?[urlPath];
 
-      final storageRef = FirebaseStorage.instance.ref();
       final String hashPath = getHashPath(urlPath);
-      final childRef = storageRef.child(hashPath);
+      final String? downloadUrl = await kCloudStorageService.getDownloadUrl(hashPath);
 
-      return _downloadUrlsByUrlPath?[urlPath] = await childRef.getDownloadURL();
-    } on FirebaseException catch (e, s) {
-      // https://firebase.google.com/docs/storage/flutter/handle-errors
-      AppLogger.error(
-        "FirestoreStorageService#getDownloadURL code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}",
-        stackTrace: s,
-      );
-      return null;
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        AppLogger.error('CloudStorageService#getDownloadURL failed to get URL for $urlPath (hashPath: $hashPath)');
+        return null;
+      }
+
+      return _downloadUrlsByUrlPath?[urlPath] = downloadUrl;
     } catch (e, s) {
       AppLogger.error(e.toString(), stackTrace: s);
       return null;
@@ -84,7 +79,6 @@ class FirestoreStorageService {
   Future<FirestoreStorageResponse> downloadFile(String urlPath) async {
     assert(urlPath.startsWith("/"));
 
-    final storageRef = FirebaseStorage.instance.ref();
     final String hashPath = getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
 
@@ -97,29 +91,22 @@ class FirestoreStorageService {
 
     _downloadingFileByUrlPath[urlPath] = Completer<FirestoreStorageResponse>();
 
-    final childRef = storageRef.child(hashPath);
-
     FirestoreStorageResponse? response;
     try {
-      final content = await childRef.getData(MAX_DOWNLOAD_SIZE);
+      final content = await kCloudStorageService.downloadBytes(hashPath);
 
       if (content != null) {
         await File(downloadPath).writeAsBytes(content);
         response = FirestoreStorageResponse(file: File(downloadPath));
       }
-    } on FirebaseException catch (e, s) {
-      AppLogger.error(
-        "🔴 FirestoreStorageService#downloadFile code: ${e.code}, message: ${e.message}, plugin: ${e.plugin}",
-        stackTrace: s,
+    } on CloudStorageUnauthorizedException catch (e) {
+      AppLogger.error('🔴 CloudStorageService#downloadFile unauthorized: ${e.message}');
+      response = FirestoreStorageResponse(
+        file: null,
+        state: FirestoreStorageState.unauthorized,
       );
-      if (e.code == 'unauthorized') {
-        response = FirestoreStorageResponse(
-          file: null,
-          state: FirestoreStorageState.unauthorized,
-        );
-      }
     } catch (e, s) {
-      AppLogger.error("🔴 FirestoreStorageService#downloadFile code: $e", stackTrace: s);
+      AppLogger.error('🔴 CloudStorageService#downloadFile: $e', stackTrace: s);
     }
 
     response ??= FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);

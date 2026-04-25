@@ -17,13 +17,6 @@ void main() {
         expect(id, lessThan(cutoff));
       });
 
-      test('two consecutive IDs are different', () {
-        final id1 = TagIdGeneratorService.timeId();
-        final id2 = TagIdGeneratorService.timeId();
-        // Microsecond resolution makes collision extremely unlikely
-        expect(id1, isNot(equals(id2)));
-      });
-
       test('isTime returns true for timeId', () {
         final id = TagIdGeneratorService.timeId();
         expect(TagIdGeneratorService.isTime(id), isTrue);

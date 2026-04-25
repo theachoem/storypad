@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
@@ -7,6 +10,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
+import 'package:storypad/core/services/backups/google_drive_linux_cloud_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
@@ -84,9 +88,14 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       step3LatestBackupImporter: BackupImporterService(),
       step4NewBackupUploader: BackupUploaderService(),
       internetChecker: InternetCheckerService(),
-      googleDriveService: GoogleDriveCloudService(),
+      googleDriveService: _createGoogleDriveService(),
       importHistoryStorage: BackupImportHistoryStorage(),
     );
+  }
+
+  static BackupCloudService _createGoogleDriveService() {
+    if (!kIsWeb && Platform.isLinux) return GoogleDriveLinuxCloudService();
+    return GoogleDriveCloudService();
   }
 
   BackupRepository get repository => repoInstance;

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:video_player/video_player.dart';
@@ -36,12 +36,12 @@ class SpVideoDemoSheet extends BaseBottomSheet {
     VideoPlayerController? controller;
 
     try {
-      file = FirestoreStorageService.instance.getCachedFile(videoUrlPath);
+      file = CloudStorageService.instance.getCachedFile(videoUrlPath);
       file ??= !context.mounted
           ? null
           : await MessengerService.of(context).showLoading(
               debugSource: 'SpVideoDemoSheet.showVideoSheet',
-              future: () => FirestoreStorageService.instance.downloadFile(videoUrlPath).then((e) => e.file),
+              future: () => CloudStorageService.instance.downloadFile(videoUrlPath).then((e) => e.file),
             );
 
       if (file == null) return null;

@@ -14,37 +14,35 @@ class _RemoteConfigObject<T> {
   );
 
   T get() {
+    final adaptor = kRemoteConfigAdaptor;
     dynamic value;
 
     switch (type) {
       case _RemoteConfigValueType.boolean:
-        value = RemoteConfigService.instance.remoteConfig.getBool(key) as T;
+        value = adaptor.getBool(key, defaultValue as bool);
         break;
       case _RemoteConfigValueType.string:
-        value = RemoteConfigService.instance.remoteConfig.getString(key) as T;
+        value = adaptor.getString(key, defaultValue as String);
         break;
       case _RemoteConfigValueType.double:
-        value = RemoteConfigService.instance.remoteConfig.getDouble(key) as T;
+        value = adaptor.getDouble(key, defaultValue as double);
         break;
       case _RemoteConfigValueType.int:
-        value = RemoteConfigService.instance.remoteConfig.getInt(key) as T;
+        value = adaptor.getInt(key, defaultValue as int);
         break;
       case _RemoteConfigValueType.json:
-        String result = RemoteConfigService.instance.remoteConfig.getString(key);
+        final result = adaptor.getJsonString(key, '');
 
         if (result.trim().isEmpty) {
-          debugPrint('🐛 [firebase/remote_config] Either $key is not set in Firebase or wrong content type.');
+          debugPrint('🐛 [remote_config] Either $key is not set or wrong content type.');
           break;
         }
 
         try {
-          dynamic json = jsonDecode(result);
-          value = json;
+          value = jsonDecode(result);
         } on FormatException catch (e) {
           debugPrint("$runtimeType#get() decode JSON failed $e");
-          if (!kIsWeb) {
-            FirebaseCrashlytics.instance.recordError(e, StackTrace.fromString(e.message));
-          }
+          kErrorReportingService.recordError(e, StackTrace.fromString(e.message));
         }
 
         break;
