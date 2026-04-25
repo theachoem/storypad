@@ -39,7 +39,8 @@ Future<void> _initializeApp({
   FirebaseOptions? firebaseOptions,
 }) async {
   // firebase initialize
-  await Firebase.initializeApp(options: firebaseOptions);
+  if (!Platform.isLinux) await Firebase.initializeApp(options: firebaseOptions);
+
   CrashlyticsInitializer.call();
   RemoteConfigInitializer.call();
 
