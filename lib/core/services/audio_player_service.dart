@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 
 class AudioPlayerService {
   final AudioPlayer _player = AudioPlayer();
@@ -40,13 +40,13 @@ class AudioPlayerService {
     _setupCompleter = Completer();
     _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
 
-    File? cachedFile = FirestoreStorageService.instance.getCachedFile(urlPath);
+    File? cachedFile = CloudStorageService.instance.getCachedFile(urlPath);
     if (cachedFile != null) {
       _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
       _setupCompleter?.complete(true);
       return true;
     } else {
-      File? cachedFile = await FirestoreStorageService.instance.downloadFile(urlPath).then((e) => e.file);
+      File? cachedFile = await CloudStorageService.instance.downloadFile(urlPath).then((e) => e.file);
       if (cachedFile != null) {
         _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
         _setupCompleter?.complete(true);

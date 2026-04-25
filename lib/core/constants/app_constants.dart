@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
+import 'package:storypad/core/services/analytics/adaptors/base_analytics_event_adaptor.dart';
+import 'package:storypad/core/services/analytics/adaptors/base_analytics_user_property_adaptor.dart';
+import 'package:storypad/core/services/cloud_storage/adaptors/base_cloud_storage_adaptor.dart';
+import 'package:storypad/core/services/error_reporting/adaptors/base_error_reporting_adaptor.dart';
+import 'package:storypad/core/services/remote_config/adaptors/base_remote_config_adaptor.dart';
 import 'package:storypad/core/types/app_logo.dart';
 
 const String kAppName = String.fromEnvironment('APP_NAME');
@@ -36,6 +41,12 @@ late final PackageInfo kPackageInfo;
 late final List<ProcessTextAction> kProcessTextActions;
 
 AppLogo? kAppLogo;
+
+final BaseAnalyticsEventAdaptor kAnalyticsService = BaseAnalyticsEventAdaptor.create();
+final BaseAnalyticsUserPropertyAdaptor kAnalyticsUserPropertyService = BaseAnalyticsUserPropertyAdaptor.create();
+final BaseErrorReportingAdaptor kErrorReportingService = BaseErrorReportingAdaptor.create();
+final BaseRemoteConfigAdaptor kRemoteConfigAdaptor = BaseRemoteConfigAdaptor.create();
+final BaseCloudStorageAdaptor kCloudStorageService = BaseCloudStorageAdaptor.create();
 
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
 const Map<int, Color> kColorsByDayLight = {

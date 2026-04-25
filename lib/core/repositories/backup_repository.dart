@@ -26,7 +26,6 @@ import 'package:storypad/core/services/backups/sync_steps/backup_importer_servic
 import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
-import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 
@@ -63,7 +62,7 @@ class BackupRepository {
   ];
 
   final RestoreBackupService restoreService;
-  final GoogleDriveCloudService googleDriveService;
+  final BackupCloudService googleDriveService;
 
   final BackupImagesUploaderService _step1ImagesUploader;
   final BackupLatestCheckerService _step2LatestBackupChecker;
@@ -93,7 +92,7 @@ class BackupRepository {
   }
 
   // currentUser & isSignedIn are load in initializer - before rendering UI.
-  GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser;
+  GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser as GoogleUserObject?;
   bool get isSignedIn => availableUsers.isNotEmpty;
 
   /// Get all authenticated cloud service users for asset downloads

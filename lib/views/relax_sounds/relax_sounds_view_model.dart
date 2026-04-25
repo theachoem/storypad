@@ -8,7 +8,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/relax_sounds_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
@@ -55,7 +55,7 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
 
   void loadDownloadSounds() {
     for (final sound in RelaxSoundObject.defaultSoundsList().values) {
-      File? cachedFile = FirestoreStorageService.instance.getCachedFile(sound.soundUrlPath);
+      File? cachedFile = CloudStorageService.instance.getCachedFile(sound.soundUrlPath);
       if (cachedFile != null) _downloadedSoundUrlPaths.add(sound.soundUrlPath);
     }
   }

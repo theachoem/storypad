@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/services/firestore_storage_service.dart';
+import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/core/types/notification_channel.dart';
 
 class MultiAudioNotificationService {
@@ -63,7 +63,7 @@ class MultiAudioNotificationService {
     );
 
     if (backgroundUrlPath != null) {
-      FirestoreStorageService.instance.downloadFile(backgroundUrlPath).then((result) {
+      CloudStorageService.instance.downloadFile(backgroundUrlPath).then((result) {
         if (result.file == null) return;
         _audioHandler?.mediaItem.add(_audioHandler?.mediaItem.value?.copyWith(artUri: Uri.file(result.file!.path)));
       });

@@ -1,7 +1,7 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
-class FirebaseCrashlyticsInitializer {
+class CrashlyticsInitializer {
   static void call() {
     _listenToErrors();
     _listenToNonFlutterErrors();
@@ -17,14 +17,14 @@ class FirebaseCrashlyticsInitializer {
   static void _listenToErrors() {
     FlutterError.onError = (FlutterErrorDetails details) {
       if (_isIgnorable(details.exception)) return;
-      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      kErrorReportingService.recordFlutterFatalError(details);
     };
   }
 
   static void _listenToNonFlutterErrors() {
     PlatformDispatcher.instance.onError = (error, stack) {
       if (_isIgnorable(error)) return true;
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      kErrorReportingService.recordError(error, stack, fatal: true);
       return true;
     };
   }

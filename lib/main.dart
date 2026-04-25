@@ -9,10 +9,9 @@ import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLo
 import 'package:storypad/core/initializers/backup_initializer.dart' show BackupRepositoryInitializer;
 import 'package:storypad/core/initializers/constants_initializer.dart' show ConstantsInitializer;
 import 'package:storypad/core/initializers/database_initializer.dart' show DatabaseInitializer;
-import 'package:storypad/core/initializers/firebase_crashlytics_initializer.dart' show FirebaseCrashlyticsInitializer;
-import 'package:storypad/core/initializers/firebase_remote_config_initializer.dart'
-    show FirebaseRemoteConfigInitializer;
-import 'package:storypad/core/initializers/firestore_storage_initializer.dart';
+import 'package:storypad/core/initializers/crashlytics_initializer.dart' show CrashlyticsInitializer;
+import 'package:storypad/core/initializers/remote_config_initializer.dart' show RemoteConfigInitializer;
+import 'package:storypad/core/initializers/cloud_storage_initializer.dart';
 import 'package:storypad/core/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/core/initializers/licenses_initializer.dart' show LicensesInitializer;
 import 'package:storypad/core/initializers/onboarding_initializer.dart' show OnboardingInitializer;
@@ -41,8 +40,8 @@ Future<void> _initializeApp({
 }) async {
   // firebase initialize
   await Firebase.initializeApp(options: firebaseOptions);
-  FirebaseCrashlyticsInitializer.call();
-  FirebaseRemoteConfigInitializer.call();
+  CrashlyticsInitializer.call();
+  RemoteConfigInitializer.call();
 
   // core
   await EasyLocalization.ensureInitialized();
@@ -65,7 +64,7 @@ Future<void> _initializeApp({
   }
 
   // initialize & cleanup old assets
-  await FirestoreStorageInitializer.call();
+  await CloudStorageInitializer.call();
 
   LicensesInitializer.call();
 }

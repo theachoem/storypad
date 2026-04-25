@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 
 part './remote_config_object.dart';
 
@@ -22,7 +20,6 @@ class RemoteConfigService {
     websiteUrl,
   ];
 
-  FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
   static final instance = RemoteConfigService._();
   RemoteConfigService._();
 
@@ -111,36 +108,22 @@ class RemoteConfigService {
   );
 
   Future<void> initialize() async {
-    try {
-      await remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: const Duration(minutes: 5),
-          minimumFetchInterval: kDebugMode ? const Duration(minutes: 1) : const Duration(hours: 12),
-        ),
-      );
+    final defaults = {
+      for (final element in _registeredKeys)
+        element.key: element.defaultValue is Map ? jsonEncode(element.defaultValue) : element.defaultValue,
+    };
 
-      await remoteConfig.setDefaults({
-        for (final element in _registeredKeys)
-          element.key: element.defaultValue is Map ? jsonEncode(element.defaultValue) : element.defaultValue,
-      });
+    await kRemoteConfigAdaptor.initialize(defaults);
+    notifyListeners();
 
-      await remoteConfig.fetchAndActivate();
-      notifyListeners();
-    } catch (error) {
-      debugPrint(error.toString());
-    }
-
-    if (!kIsWeb) {
-      remoteConfig.onConfigUpdated.listen(
-        (event) async {
-          debugPrint(event.updatedKeys.toString());
-          await remoteConfig.activate();
-          notifyListeners();
-        },
-        onError: (error) {
-          debugPrint(error.toString());
-        },
-      );
-    }
+    kRemoteConfigAdaptor.onConfigUpdated.listen(
+      (updatedKeys) {
+        debugPrint(updatedKeys.toString());
+        notifyListeners();
+      },
+      onError: (error) {
+        debugPrint(error.toString());
+      },
+    );
   }
 }
