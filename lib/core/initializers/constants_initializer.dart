@@ -8,9 +8,17 @@ import 'package:storypad/core/services/app_logo_service.dart';
 
 class ConstantsInitializer {
   static Future<void> call() async {
-    kSupportDirectory = await getApplicationSupportDirectory();
+    kSupportDirectory = await _getDirectoryOrFallback(
+      getApplicationSupportDirectory,
+      Directory('${_homeDirectory.path}/.local/share/storypad'),
+    );
+
     kApplicationDirectory =
-        (Platform.isAndroid ? await getExternalStorageDirectory() : null) ?? await getApplicationDocumentsDirectory();
+        (Platform.isAndroid ? await getExternalStorageDirectory() : null) ??
+        await _getDirectoryOrFallback(
+          getApplicationDocumentsDirectory,
+          Directory('${_homeDirectory.path}/Documents/StoryPad'),
+        );
 
     kPackageInfo = await PackageInfo.fromPlatform();
     kDeviceInfo = await DeviceInfoObject.get();
@@ -18,5 +26,21 @@ class ConstantsInitializer {
     /// package:flutter/src/widgets/editable_text.dart [_processTextActions]
     kProcessTextActions = await DefaultProcessTextService().queryTextActions();
     kAppLogo = await AppLogoService().getCurrent();
+  }
+
+  static Directory get _homeDirectory {
+    return Directory(Platform.environment['HOME'] ?? Directory.current.path);
+  }
+
+  static Future<Directory> _getDirectoryOrFallback(
+    Future<Directory> Function() getter,
+    Directory fallback,
+  ) async {
+    try {
+      return await getter();
+    } catch (_) {
+      if (Platform.isLinux) return fallback;
+      rethrow;
+    }
   }
 }
