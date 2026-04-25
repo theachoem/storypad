@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -21,14 +20,20 @@ class AnalyticsService extends BaseAnalyticsService {
   }) {
     String screenName = routeObject.analyticScreenName;
     String screenClass = routeObject.analyticScreenClass;
-    Map<String, Object>? parameters = sanitizeParameters(analyticsParameters ?? {});
+    Map<String, Object>? parameters = sanitizeParameters(
+      analyticsParameters ?? {},
+    );
 
     debug(
       'logViewRoute',
-      {'screen_name': screenName, 'screen_class': screenClass, ...parameters ?? {}},
+      {
+        'screen_name': screenName,
+        'screen_class': screenClass,
+        ...parameters ?? {},
+      },
     );
 
-    return FirebaseAnalytics.instance.logScreenView(
+    return firebaseAnalytics.logScreenView(
       screenClass: screenClass,
       screenName: screenName,
       parameters: parameters,
@@ -41,9 +46,12 @@ class AnalyticsService extends BaseAnalyticsService {
     String screenName = bottomSheet.analyticScreenName;
     String screenClass = bottomSheet.analyticScreenClass;
 
-    debug('logViewRoute', {'screen_name': screenName, 'screen_class': screenClass});
+    debug('logViewRoute', {
+      'screen_name': screenName,
+      'screen_class': screenClass,
+    });
 
-    return FirebaseAnalytics.instance.logScreenView(
+    return firebaseAnalytics.logScreenView(
       screenClass: screenClass,
       screenName: screenName,
       parameters: null,
@@ -56,7 +64,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'year': year.toString()});
     debug('logViewHome', parameters);
 
-    return FirebaseAnalytics.instance.logScreenView(
+    return firebaseAnalytics.logScreenView(
       screenClass: 'HomeView',
       screenName: 'Home',
       parameters: parameters,
@@ -69,7 +77,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'year': year.toString()});
     debug('logOpenHomeEndDrawer', parameters);
 
-    return FirebaseAnalytics.instance.logScreenView(
+    return firebaseAnalytics.logScreenView(
       screenClass: 'HomeEndDrawer',
       screenName: 'HomeEndDrawer',
       parameters: parameters,
@@ -79,7 +87,7 @@ class AnalyticsService extends BaseAnalyticsService {
   Future<void> logLicenseView() {
     debug('logLicenseView');
 
-    return FirebaseAnalytics.instance.logScreenView(
+    return firebaseAnalytics.logScreenView(
       screenClass: 'LicensePage',
       screenName: 'License',
       parameters: null,
@@ -93,7 +101,7 @@ class AnalyticsService extends BaseAnalyticsService {
       'searchTerm': searchTerm,
     });
 
-    return FirebaseAnalytics.instance.logSearch(
+    return firebaseAnalytics.logSearch(
       searchTerm: searchTerm,
     );
   }
@@ -101,7 +109,7 @@ class AnalyticsService extends BaseAnalyticsService {
   Future<void> logSyncBackup() {
     debug('logSyncBackup');
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('sync_backup'),
     );
   }
@@ -109,7 +117,7 @@ class AnalyticsService extends BaseAnalyticsService {
   Future<void> logImportOfflineBackup() {
     debug('logImportOfflineBackup');
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('import_offline_backup'),
     );
   }
@@ -117,28 +125,28 @@ class AnalyticsService extends BaseAnalyticsService {
   Future<void> logExportOfflineBackup() {
     debug('logExportOfflineBackup');
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('export_offline_backup'),
     );
   }
 
   Future<void> logRequestGoogleDriveScope() {
     debug('logRequestGoogleDriveScope');
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('request_google_drive_scope'),
     );
   }
 
   Future<void> logSignOut() {
     debug('logSignOut');
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('sign_out'),
     );
   }
 
   Future<void> logSignInWithGoogle() {
     debug('logSignInWithGoogle');
-    return FirebaseAnalytics.instance.logLogin(
+    return firebaseAnalytics.logLogin(
       loginMethod: 'google',
     );
   }
@@ -149,7 +157,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'url': url});
     debug('logOpenLinkInCustomTab', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('open_custom_tab'),
       parameters: parameters,
     );
@@ -161,7 +169,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'url': url});
     debug('logLaunchUrl', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('launch_url'),
       parameters: parameters,
     );
@@ -173,7 +181,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'target': target});
     debug('logSubmitRedditPost', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('submit_reddit_post'),
       parameters: parameters,
     );
@@ -185,7 +193,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({});
     debug('logDeleteCloudBackup', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('delete_cloud_backup'),
       parameters: parameters,
     );
@@ -197,7 +205,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({});
     debug('logDeleteAsset', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('delete_asset'),
       parameters: parameters,
     );
@@ -209,7 +217,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'version': backupFileInfo.version});
     debug('logForceRestoreBackup', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('force_restore_backup'),
       parameters: parameters,
     );
@@ -221,7 +229,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logHardDeleteStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('hard_delete_story'),
       parameters: parameters,
     );
@@ -233,7 +241,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logUndoHardDeleteStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('undo_hard_delete_story'),
       parameters: parameters,
     );
@@ -245,7 +253,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logImportIndividualStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('import_story_individually'),
       parameters: parameters,
     );
@@ -257,7 +265,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logMoveStoryToBin', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('move_story_to_bin'),
       parameters: parameters,
     );
@@ -269,7 +277,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logUndoMoveStoryToBin', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('undo_move_story_to_bin'),
       parameters: parameters,
     );
@@ -281,7 +289,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logUndoPutBack', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('undo_put_back'),
       parameters: parameters,
     );
@@ -293,7 +301,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logArchiveStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('archive_story'),
       parameters: parameters,
     );
@@ -305,7 +313,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logUndoArchiveStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('undo_archive_story'),
       parameters: parameters,
     );
@@ -317,7 +325,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logChangeStoryDate', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('change_story_date'),
       parameters: parameters,
     );
@@ -330,7 +338,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logSaveStoryAsTemplate', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('save_story_as_template'),
       parameters: parameters,
     );
@@ -342,7 +350,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logToggleStoryStarred', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('toggle_story_starred'),
       parameters: parameters,
     );
@@ -354,7 +362,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logReorderStoryPages', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('reorder_story_pages'),
       parameters: parameters,
     );
@@ -366,7 +374,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logAddStoryPage', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('add_story_page'),
       parameters: parameters,
     );
@@ -378,7 +386,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logDeleteStoryPage', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('delete_story_page'),
       parameters: parameters,
     );
@@ -390,7 +398,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logToggleShowDayCount', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('toggle_show_day_count'),
       parameters: parameters,
     );
@@ -402,7 +410,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logUpdateStoryPreferences', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('update_story_preferences'),
       parameters: parameters,
     );
@@ -414,7 +422,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logPutStoryBack', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('put_story_back'),
       parameters: parameters,
     );
@@ -426,7 +434,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logSetTagsToStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('set_tags_to_story'),
       parameters: parameters,
     );
@@ -438,7 +446,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logSetStoryFeeling', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('set_story_feeling'),
       parameters: parameters,
     );
@@ -450,7 +458,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logStorySaveDraft', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('story_save_draft'),
       parameters: parameters,
     );
@@ -462,7 +470,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logStoryContinueEdit', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('story_continue_edit'),
       parameters: parameters,
     );
@@ -474,7 +482,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logStoryViewPrevious', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('story_view_previous'),
       parameters: parameters,
     );
@@ -486,7 +494,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = storyAnalyticParameters(story);
     debug('logDiscardDraft', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('story_discard_draft'),
       parameters: parameters,
     );
@@ -498,7 +506,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = tagAnalyticParameters(tag);
     debug('logDeleteTag', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('delete_tag'),
       parameters: parameters,
     );
@@ -510,7 +518,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = tagAnalyticParameters(tag);
     debug('logEditTag', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('edit_tag'),
       parameters: parameters,
     );
@@ -522,7 +530,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = tagAnalyticParameters(tag);
     debug('logAddTag', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('add_tag'),
       parameters: parameters,
     );
@@ -532,21 +540,21 @@ class AnalyticsService extends BaseAnalyticsService {
     required CollectionDbModel<TagDbModel> tags,
   }) {
     debug('logReorderTags');
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('reorder_tags'),
     );
   }
 
   Future<void> logInsertNewPhoto() {
     debug('logInsertNewPhoto');
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('insert_new_photo'),
     );
   }
 
   Future<void> logTakePhoto() {
     debug('logTakePhoto');
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('take_photo'),
     );
   }
@@ -554,10 +562,12 @@ class AnalyticsService extends BaseAnalyticsService {
   Future<void> logViewImages({
     required int imagesCount,
   }) {
-    final parameters = sanitizeParameters({'images_count': imagesCount.toString()});
+    final parameters = sanitizeParameters({
+      'images_count': imagesCount.toString(),
+    });
     debug('logViewImages', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('view_images'),
       parameters: parameters,
     );
@@ -567,7 +577,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({});
     debug('logShareApp', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('share_app'),
       parameters: parameters,
     );
@@ -579,7 +589,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'option': option});
     debug('logShareStory', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('share_story'),
       parameters: parameters,
     );
@@ -589,7 +599,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({});
     debug('logClearPIN', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('clear_pin'),
       parameters: parameters,
     );
@@ -599,7 +609,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({});
     debug('logSetPIN', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('set_pin'),
       parameters: parameters,
     );
@@ -614,7 +624,7 @@ class AnalyticsService extends BaseAnalyticsService {
       'source': source,
     });
     debug('logUseGalleryTemplate', parameters);
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: 'use_gallery_template',
       parameters: parameters,
     );
@@ -626,7 +636,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logPutBackAllStories', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('put_back_all_stories'),
       parameters: parameters,
     );
@@ -638,7 +648,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logMoveAllStoriesToBin', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('move_all_stories_to_bin'),
       parameters: parameters,
     );
@@ -650,7 +660,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logUnpinAllStories', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('unpin_all_stories'),
       parameters: parameters,
     );
@@ -662,7 +672,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logPinAllStories', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('pin_all_stories'),
       parameters: parameters,
     );
@@ -674,7 +684,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logArchiveAllStories', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('archive_all_stories'),
       parameters: parameters,
     );
@@ -686,7 +696,7 @@ class AnalyticsService extends BaseAnalyticsService {
     final parameters = sanitizeParameters({'count': count.toString()});
     debug('logPermanentDeleteAllStories', parameters);
 
-    return FirebaseAnalytics.instance.logEvent(
+    return firebaseAnalytics.logEvent(
       name: sanitizeEventName('permanent_delete_all_stories'),
       parameters: parameters,
     );
@@ -702,8 +712,13 @@ class AnalyticsService extends BaseAnalyticsService {
       'day': story.day.toString(),
       'feeling': story.feeling,
       'tags_count': story.tags?.length.toString(),
-      'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
-          .toString(),
+      'pages_count':
+          (story.draftContent?.id != null
+                  ? story.draftContent
+                  : story.latestContent)
+              ?.richPages
+              ?.length
+              .toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
       'preferred_show_day_count': story.preferences.showDayCount?.toString(),
     });

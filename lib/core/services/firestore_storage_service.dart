@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
+import 'package:storypad/core/utils/firebase_platform_support.dart';
 
 enum FirestoreStorageState { success, connectionFailed, unauthorized, unknown }
 
@@ -34,21 +35,26 @@ class FirestoreStorageService {
   Map<String, dynamic>? _hash;
   Map<String, String>? _downloadUrlsByUrlPath;
 
-  final Map<String, Completer<FirestoreStorageResponse>> _downloadingFileByUrlPath = {};
+  final Map<String, Completer<FirestoreStorageResponse>>
+  _downloadingFileByUrlPath = {};
 
   Future<void> loadHash() async {
-    _hash = await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
-      return json.decode(jsonString);
-    });
+    _hash = await rootBundle
+        .loadString('assets/firestore_storage_map.json')
+        .then((jsonString) {
+          return json.decode(jsonString);
+        });
   }
 
   // input: /relax_sounds/animal/forest_birds.svg"
   // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
   String getHashPath(String originalUrlPath) {
-    return _hash![originalUrlPath];
+    return _hash?[originalUrlPath] ?? originalUrlPath;
   }
 
   File? getCachedFile(String urlPath) {
+    if (_hash == null) return null;
+
     final String hashPath = getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
     if (File(downloadPath).existsSync()) return File(downloadPath);
@@ -59,7 +65,10 @@ class FirestoreStorageService {
     _downloadUrlsByUrlPath ??= {};
 
     try {
-      if (_downloadUrlsByUrlPath?[urlPath] != null) return _downloadUrlsByUrlPath?[urlPath];
+      if (!FirebasePlatformSupport.isSupported) return null;
+      if (_downloadUrlsByUrlPath?[urlPath] != null) {
+        return _downloadUrlsByUrlPath?[urlPath];
+      }
 
       final storageRef = FirebaseStorage.instance.ref();
       final String hashPath = getHashPath(urlPath);
@@ -84,14 +93,29 @@ class FirestoreStorageService {
   Future<FirestoreStorageResponse> downloadFile(String urlPath) async {
     assert(urlPath.startsWith("/"));
 
+    if (!FirebasePlatformSupport.isSupported) {
+      final cachedFile = getCachedFile(urlPath);
+      return FirestoreStorageResponse(
+        file: cachedFile,
+        state: cachedFile != null
+            ? FirestoreStorageState.success
+            : FirestoreStorageState.unknown,
+      );
+    }
+
     final storageRef = FirebaseStorage.instance.ref();
     final String hashPath = getHashPath(urlPath);
     final String downloadPath = constructDeviceDownloadPath(hashPath);
 
-    if (File(downloadPath).existsSync()) return FirestoreStorageResponse(file: File(downloadPath));
-    if (!File(downloadPath).parent.existsSync()) await File(downloadPath).parent.create(recursive: true);
+    if (File(downloadPath).existsSync()) {
+      return FirestoreStorageResponse(file: File(downloadPath));
+    }
+    if (!File(downloadPath).parent.existsSync()) {
+      await File(downloadPath).parent.create(recursive: true);
+    }
 
-    if (_downloadingFileByUrlPath[urlPath] != null && !_downloadingFileByUrlPath[urlPath]!.isCompleted) {
+    if (_downloadingFileByUrlPath[urlPath] != null &&
+        !_downloadingFileByUrlPath[urlPath]!.isCompleted) {
       return _downloadingFileByUrlPath[urlPath]!.future;
     }
 
@@ -119,10 +143,16 @@ class FirestoreStorageService {
         );
       }
     } catch (e, s) {
-      AppLogger.error("🔴 FirestoreStorageService#downloadFile code: $e", stackTrace: s);
+      AppLogger.error(
+        "🔴 FirestoreStorageService#downloadFile code: $e",
+        stackTrace: s,
+      );
     }
 
-    response ??= FirestoreStorageResponse(file: null, state: FirestoreStorageState.unknown);
+    response ??= FirestoreStorageResponse(
+      file: null,
+      state: FirestoreStorageState.unknown,
+    );
     _downloadingFileByUrlPath[urlPath]?.complete(response);
     return response;
   }
@@ -135,16 +165,22 @@ class FirestoreStorageService {
   /// Returns a list of paths that were deleted.
   Future<List<String>> cleanupUnusedFiles() async {
     try {
-      final downloadDir = SupportDirectoryPath.downloaded_from_firestore.directory;
+      final downloadDir =
+          SupportDirectoryPath.downloaded_from_firestore.directory;
       if (!await downloadDir.exists()) return [];
 
       // {
       //   "/relax_sounds/water/ocean_waves-130d1d326a06fe0f21d4650a4f7065b7.txt",
       //   "/relax_sounds/water/droplets-ec36e00209a8cece33eef6f5c3f80e61.txt",
       // };
-      final validBasenames = (_hash ?? {}).values.map((e) => path.basename(e.toString())).toSet();
+      final validBasenames = (_hash ?? {}).values
+          .map((e) => path.basename(e.toString()))
+          .toSet();
 
-      final files = await downloadDir.list(recursive: true).where((entity) => entity is File).toList();
+      final files = await downloadDir
+          .list(recursive: true)
+          .where((entity) => entity is File)
+          .toList();
       final deletedFiles = <String>[];
 
       for (final fileEntity in files) {
@@ -163,10 +199,15 @@ class FirestoreStorageService {
         }
       }
 
-      AppLogger.info('$runtimeType#cleanupUnusedFiles ${deletedFiles.length} unused files removed');
+      AppLogger.info(
+        '$runtimeType#cleanupUnusedFiles ${deletedFiles.length} unused files removed',
+      );
       return deletedFiles;
     } catch (e, s) {
-      AppLogger.error('$runtimeType#cleanupUnusedFiles error: $e', stackTrace: s);
+      AppLogger.error(
+        '$runtimeType#cleanupUnusedFiles error: $e',
+        stackTrace: s,
+      );
       return [];
     }
   }

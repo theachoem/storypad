@@ -14,6 +14,8 @@ class _RemoteConfigObject<T> {
   );
 
   T get() {
+    if (!FirebasePlatformSupport.isSupported) return defaultValue;
+
     dynamic value;
 
     switch (type) {
@@ -30,10 +32,14 @@ class _RemoteConfigObject<T> {
         value = RemoteConfigService.instance.remoteConfig.getInt(key) as T;
         break;
       case _RemoteConfigValueType.json:
-        String result = RemoteConfigService.instance.remoteConfig.getString(key);
+        String result = RemoteConfigService.instance.remoteConfig.getString(
+          key,
+        );
 
         if (result.trim().isEmpty) {
-          debugPrint('🐛 [firebase/remote_config] Either $key is not set in Firebase or wrong content type.');
+          debugPrint(
+            '🐛 [firebase/remote_config] Either $key is not set in Firebase or wrong content type.',
+          );
           break;
         }
 
@@ -42,8 +48,11 @@ class _RemoteConfigObject<T> {
           value = json;
         } on FormatException catch (e) {
           debugPrint("$runtimeType#get() decode JSON failed $e");
-          if (!kIsWeb) {
-            FirebaseCrashlytics.instance.recordError(e, StackTrace.fromString(e.message));
+          if (!kIsWeb && FirebasePlatformSupport.isSupported) {
+            FirebaseCrashlytics.instance.recordError(
+              e,
+              StackTrace.fromString(e.message),
+            );
           }
         }
 

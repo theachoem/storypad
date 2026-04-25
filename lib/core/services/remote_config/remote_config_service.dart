@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/utils/firebase_platform_support.dart';
 
 part './remote_config_object.dart';
 
@@ -27,7 +28,8 @@ class RemoteConfigService {
   RemoteConfigService._();
 
   final Map<Type, void Function()> _listeners = {};
-  void clearListeners(String key, void Function() callback) => _listeners.clear();
+  void clearListeners(String key, void Function() callback) =>
+      _listeners.clear();
   void notifyListeners() {
     for (var callback in _listeners.values) {
       callback.call();
@@ -115,13 +117,17 @@ class RemoteConfigService {
       await remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(minutes: 5),
-          minimumFetchInterval: kDebugMode ? const Duration(minutes: 1) : const Duration(hours: 12),
+          minimumFetchInterval: kDebugMode
+              ? const Duration(minutes: 1)
+              : const Duration(hours: 12),
         ),
       );
 
       await remoteConfig.setDefaults({
         for (final element in _registeredKeys)
-          element.key: element.defaultValue is Map ? jsonEncode(element.defaultValue) : element.defaultValue,
+          element.key: element.defaultValue is Map
+              ? jsonEncode(element.defaultValue)
+              : element.defaultValue,
       });
 
       await remoteConfig.fetchAndActivate();

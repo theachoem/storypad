@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/services/analytics/base_analytics_service.dart';
 import 'package:storypad/core/types/add_on_type.dart';
@@ -9,14 +8,15 @@ import 'package:storypad/core/types/time_format_option.dart';
 // Logging analytics events without user-identifiable information.
 class AnalyticsUserProperyService extends BaseAnalyticsService {
   AnalyticsUserProperyService._();
-  static AnalyticsUserProperyService get instance => AnalyticsUserProperyService._();
+  static AnalyticsUserProperyService get instance =>
+      AnalyticsUserProperyService._();
 
   Future<void> logSetLocale({
     required Locale newLocale,
   }) {
     debug('logSetLocale', {'value': newLocale.toLanguageTag()});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'locale',
       value: newLocale.toLanguageTag(),
     );
@@ -27,7 +27,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetColorSeedTheme', {'value': newColor.toString()});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       value: newColor?.toARGB32().toString() ?? 'default',
       name: 'color_seed',
     );
@@ -38,7 +38,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetThemeMode', {'value': newThemeMode.name});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'theme_mode',
       value: newThemeMode.name,
     );
@@ -49,7 +49,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetFontWeight', {'value': newFontWeight.value.toString()});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'font_weight',
       value: newFontWeight.value.toString(),
     );
@@ -60,7 +60,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetFontFamily', {'value': newFontFamily});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'font_family',
       value: newFontFamily,
     );
@@ -71,7 +71,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetFontSize', {'value': newFontSize?.name ?? 'system'});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'font_size',
       value: newFontSize?.name ?? 'system',
     );
@@ -82,7 +82,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetTimeFormat', {'value': timeFormat.name});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'time_format',
       value: timeFormat.label,
     );
@@ -92,9 +92,12 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
     required AddOnType addOn,
     required bool enabled,
   }) {
-    debug('logToggleAddOn', {'add_on': addOn.name, 'enabled': enabled.toString()});
+    debug('logToggleAddOn', {
+      'add_on': addOn.name,
+      'enabled': enabled.toString(),
+    });
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'add_on_${addOn.name}',
       value: enabled.toString(),
     );
@@ -115,11 +118,26 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
       'display_character_count': displayCharacterCount.toString(),
     });
 
-    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_time', value: showTime.toString());
-    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_page_count', value: showPageCount.toString());
-    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_tag_labels', value: showTagLabels.toString());
-    await FirebaseAnalytics.instance.setUserProperty(name: 'list_show_voice_count', value: showVoiceCount.toString());
-    await FirebaseAnalytics.instance.setUserProperty(name: 'list_char_count', value: displayCharacterCount.toString());
+    await firebaseAnalytics.setUserProperty(
+      name: 'list_show_time',
+      value: showTime.toString(),
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'list_show_page_count',
+      value: showPageCount.toString(),
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'list_show_tag_labels',
+      value: showTagLabels.toString(),
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'list_show_voice_count',
+      value: showVoiceCount.toString(),
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'list_char_count',
+      value: displayCharacterCount.toString(),
+    );
   }
 
   Future<void> logSetDefaultStoryPreferences({
@@ -133,9 +151,18 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
       'has_background': hasBackground.toString(),
     });
 
-    await FirebaseAnalytics.instance.setUserProperty(name: 'default_default_layout', value: defaultLayoutType);
-    await FirebaseAnalytics.instance.setUserProperty(name: 'default_has_color_seed', value: hasColorSeed.toString());
-    await FirebaseAnalytics.instance.setUserProperty(name: 'default_has_background', value: hasBackground.toString());
+    await firebaseAnalytics.setUserProperty(
+      name: 'default_default_layout',
+      value: defaultLayoutType,
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'default_has_color_seed',
+      value: hasColorSeed.toString(),
+    );
+    await firebaseAnalytics.setUserProperty(
+      name: 'default_has_background',
+      value: hasBackground.toString(),
+    );
   }
 
   Future<void> logSetAppLogo({
@@ -143,7 +170,7 @@ class AnalyticsUserProperyService extends BaseAnalyticsService {
   }) {
     debug('logSetAppLogo', {'value': newAppLogo?.name ?? 'default'});
 
-    return FirebaseAnalytics.instance.setUserProperty(
+    return firebaseAnalytics.setUserProperty(
       name: 'app_logo',
       value: newAppLogo?.name ?? 'default',
     );
