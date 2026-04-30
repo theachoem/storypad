@@ -1,0 +1,75 @@
+{
+  "metadata": { "version": "1.0" },
+  "entries": [
+    {
+      "uuid": "05100555B27F4A489CF4E974BCA5579C",
+      "starred": false,
+      "isPinned": false,
+      "text": "# Great day\n**This is bold!**\n",
+      "richText": "{\"contents\":[{\"attributes\":{\"line\":{\"header\":1}},\"text\":\"Great day\\n\"},{\"attributes\":{\"bold\":true},\"text\":\"This is bold! \"}],\"meta\":{\"created\":{\"platform\":\"com.bloombuilt.dayone-android\",\"version\":649},\"small-lines-removed\":true,\"version\":1}}",
+      "creationDate": "2026-04-30T18:21:40Z",
+      "modifiedDate": "2026-04-30T18:22:10Z",
+      "creationDevice": "Pixel 7",
+      "creationOSName": "Android",
+      "creationOSVersion": "17",
+      "creationDeviceType": "Google",
+      "timeZone": "Asia/Phnom_Penh",
+      "location": {
+        "region": {
+          "center": { "longitude": 104.8742554, "latitude": 11.5793136 }
+        },
+        "localityName": "Phnom Penh",
+        "country": "Cambodia",
+        "longitude": 104.8742554,
+        "latitude": 11.5793136,
+        "administrativeArea": "Phnom Penh",
+        "placeName": "HVHF+RRM",
+        "address": "HVHF+RRM, Phnom Penh, Cambodia"
+      },
+      "weather": {
+        "temperatureCelsius": 27.57,
+        "windBearing": 168.0,
+        "pressureMB": 1010.1,
+        "visibilityKM": 21327.35,
+        "windSpeedKPH": 5.81,
+        "weatherCode": "MostlyCloudy"
+      },
+      "source": "47c3554668fe8cb1"
+    },
+    {
+      "uuid": "56C3E0094C094002885F73C584F7B665",
+      "starred": false,
+      "isPinned": false,
+      "text": "",
+      "richText": "{\"contents\":[],\"meta\":{\"created\":{\"platform\":\"com.bloombuilt.dayone-android\",\"version\":649},\"small-lines-removed\":true,\"version\":1}}",
+      "creationDate": "2026-04-30T18:21:31Z",
+      "modifiedDate": "2026-04-30T18:21:34Z",
+      "creationDevice": "Pixel 7",
+      "creationOSName": "Android",
+      "creationOSVersion": "17",
+      "creationDeviceType": "Google",
+      "timeZone": "Asia/Phnom_Penh",
+      "location": {
+        "region": {
+          "center": { "longitude": 104.8742554, "latitude": 11.5793136 }
+        },
+        "localityName": "Phnom Penh",
+        "country": "Cambodia",
+        "longitude": 104.8742554,
+        "latitude": 11.5793136,
+        "administrativeArea": "Phnom Penh",
+        "placeName": "HVHF+RRM",
+        "address": "HVHF+RRM, Phnom Penh, Cambodia"
+      },
+      "weather": {
+        "temperatureCelsius": 27.58,
+        "windBearing": 168.0,
+        "pressureMB": 1010.1,
+        "visibilityKM": 21323.76,
+        "windSpeedKPH": 5.81,
+        "weatherCode": "MostlyCloudy"
+      },
+      "source": "47c3554668fe8cb1"
+    }
+  ]
+}

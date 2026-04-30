@@ -46,6 +46,7 @@ class SpFlutterMapAdapter implements SpMapAdapter {
     SpLatLng? initialPosition,
     double initialZoom = 13.0,
     SpMapController? controller,
+    void Function(SpLatLng)? onTap,
   }) {
     final center = initialPosition != null
         ? LatLng(initialPosition.latitude, initialPosition.longitude)
@@ -58,6 +59,7 @@ class SpFlutterMapAdapter implements SpMapAdapter {
       options: MapOptions(
         initialCenter: center,
         initialZoom: initialPosition != null ? initialZoom : 2.0,
+        onTap: onTap != null ? (tapPosition, point) => onTap(SpLatLng(point.latitude, point.longitude)) : null,
       ),
       children: [
         TileLayer(

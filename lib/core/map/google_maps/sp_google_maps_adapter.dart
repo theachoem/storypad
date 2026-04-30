@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;
 import 'package:storypad/core/map/google_maps/sp_google_maps_controller.dart';
@@ -35,6 +37,7 @@ class SpGoogleMapsAdapter implements SpMapAdapter {
     SpLatLng? initialPosition,
     double initialZoom = 13.0,
     SpMapController? controller,
+    void Function(SpLatLng)? onTap,
   }) {
     final center = initialPosition != null
         ? gm.LatLng(initialPosition.latitude, initialPosition.longitude)
@@ -48,6 +51,7 @@ class SpGoogleMapsAdapter implements SpMapAdapter {
       mapType: tileStyle == SpMapTileStyle.satellite ? gm.MapType.satellite : gm.MapType.normal,
       markers: markers,
       controller: controller as SpGoogleMapsController?,
+      onTap: onTap,
     );
   }
 }
@@ -68,12 +72,14 @@ class _GoogleMapWidget extends StatefulWidget {
     required this.mapType,
     required this.markers,
     this.controller,
+    this.onTap,
   });
 
   final gm.CameraPosition initialCameraPosition;
   final gm.MapType mapType;
   final List<SpMapMarker> markers;
   final SpGoogleMapsController? controller;
+  final void Function(SpLatLng)? onTap;
 
   @override
   State<_GoogleMapWidget> createState() => _GoogleMapWidgetState();
@@ -158,6 +164,7 @@ class _GoogleMapWidgetState extends State<_GoogleMapWidget> {
       markers: _gmMarkers,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
+      onTap: widget.onTap != null ? (gm.LatLng pos) => widget.onTap!(SpLatLng(pos.latitude, pos.longitude)) : null,
       onMapCreated: (native) {
         _nativeController = native;
         widget.controller?.onMapCreated(native);

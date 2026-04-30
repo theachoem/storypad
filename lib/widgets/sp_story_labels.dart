@@ -4,6 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
+import 'package:storypad/core/services/geocoding/sp_place_result.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
@@ -14,6 +16,7 @@ import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
+import 'package:storypad/views/map/location_picker/location_picker_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -45,6 +48,8 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleManagingPage,
     this.setFeeling,
     this.onToggleTags,
+    this.onSetPlace,
+    this.onAddCurrentLocation,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -71,6 +76,8 @@ class SpStoryLabels extends StatelessWidget {
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function(String? feeling)? setFeeling;
   final Future<bool> Function(List<int> tags)? onToggleTags;
+  final Future<void> Function(PlaceDbModel? place)? onSetPlace;
+  final Future<void> Function()? onAddCurrentLocation;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -320,6 +327,39 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    if (onAddCurrentLocation != null && !story.hasLocation) {
+      children.add(
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.myLocation,
+          tooltip: tr('page.map.add_location'),
+          onTap: () => onAddCurrentLocation!(),
+        ),
+      );
+    }
+
+    if (story.hasLocation) {
+      final initialPlace = _dbModelToPlaceResult(story.place!);
+      children.add(
+        buildPin(
+          context: context,
+          title: story.place!.displayLabel,
+          leadingIconData: SpIcons.map,
+          onTap: onSetPlace != null
+              ? () async {
+                  final result = await LocationPickerRoute(
+                    initialPlace: initialPlace,
+                    onDelete: () => onSetPlace?.call(null),
+                  ).push(context);
+                  if (result is SpPlaceResult) {
+                    await onSetPlace?.call(_placeResultToDbModel(result));
+                  }
+                }
+              : null,
+        ),
+      );
+    }
+
     if (story.event?.period == true) {
       children.add(
         SpTapEffect(
@@ -518,6 +558,28 @@ class SpStoryLabels extends StatelessWidget {
     return Tooltip(
       message: tooltip ?? title,
       child: child,
+    );
+  }
+
+  PlaceDbModel _placeResultToDbModel(SpPlaceResult result) {
+    return PlaceDbModel(
+      latitude: result.latitude,
+      longitude: result.longitude,
+      placeName: result.placeName,
+      locality: result.locality,
+      country: result.country,
+      address: result.address,
+    );
+  }
+
+  SpPlaceResult _dbModelToPlaceResult(PlaceDbModel place) {
+    return SpPlaceResult(
+      latitude: place.latitude,
+      longitude: place.longitude,
+      placeName: place.placeName,
+      locality: place.locality,
+      country: place.country,
+      address: place.address,
     );
   }
 }

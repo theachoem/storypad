@@ -42,6 +42,7 @@ abstract class SpMapAdapter {
   /// [initialPosition] — camera starting centre; defaults to a world view if null.
   /// [initialZoom]     — camera starting zoom level.
   /// [controller]      — optional controller for programmatic camera moves.
+  /// [onTap]           — called with the tapped coordinate; used by location picker.
   Widget buildMap({
     required BuildContext context,
     required List<SpMapMarker> markers,
@@ -49,5 +50,6 @@ abstract class SpMapAdapter {
     SpLatLng? initialPosition,
     double initialZoom,
     SpMapController? controller,
+    void Function(SpLatLng)? onTap,
   });
 }

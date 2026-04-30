@@ -17,7 +17,9 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel pinned(bool? pinned);
 
-  StoryDbModel feeling(String? feeling);
+  StoryDbModel feeling(
+    @Deprecated('We have moved to tags instead') String? feeling,
+  );
 
   StoryDbModel year(int year);
 
@@ -59,6 +61,8 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel characterCount(int? characterCount);
 
+  StoryDbModel place(PlaceDbModel? place);
+
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId);
 
   StoryDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
@@ -76,7 +80,7 @@ abstract class _$StoryDbModelCWProxy {
     int id,
     bool? starred,
     bool? pinned,
-    String? feeling,
+    @Deprecated('We have moved to tags instead') String? feeling,
     int year,
     int month,
     int day,
@@ -97,6 +101,7 @@ abstract class _$StoryDbModelCWProxy {
     EventDbModel? event,
     int? wordCount,
     int? characterCount,
+    PlaceDbModel? place,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
   });
@@ -125,7 +130,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel pinned(bool? pinned) => call(pinned: pinned);
 
   @override
-  StoryDbModel feeling(String? feeling) => call(feeling: feeling);
+  StoryDbModel feeling(
+    @Deprecated('We have moved to tags instead') String? feeling,
+  ) => call(feeling: feeling);
 
   @override
   StoryDbModel year(int year) => call(year: year);
@@ -194,6 +201,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
       call(characterCount: characterCount);
 
   @override
+  StoryDbModel place(PlaceDbModel? place) => call(place: place);
+
+  @override
   StoryDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       call(lastSavedDeviceId: lastSavedDeviceId);
 
@@ -215,6 +225,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
     Object? pinned = const $CopyWithPlaceholder(),
+    @Deprecated('We have moved to tags instead')
     Object? feeling = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
@@ -236,6 +247,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? event = const $CopyWithPlaceholder(),
     Object? wordCount = const $CopyWithPlaceholder(),
     Object? characterCount = const $CopyWithPlaceholder(),
+    Object? place = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
   }) {
@@ -344,6 +356,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.characterCount
           // ignore: cast_nullable_to_non_nullable
           : characterCount as int?,
+      place: place == const $CopyWithPlaceholder()
+          ? _value.place
+          // ignore: cast_nullable_to_non_nullable
+          : place as PlaceDbModel?,
       lastSavedDeviceId: lastSavedDeviceId == const $CopyWithPlaceholder()
           ? _value.lastSavedDeviceId
           // ignore: cast_nullable_to_non_nullable
@@ -412,6 +428,9 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
       : EventDbModel.fromJson(json['event'] as Map<String, dynamic>),
   wordCount: (json['word_count'] as num?)?.toInt(),
   characterCount: (json['character_count'] as num?)?.toInt(),
+  place: json['place'] == null
+      ? null
+      : PlaceDbModel.fromJson(json['place'] as Map<String, dynamic>),
   lastSavedDeviceId: json['last_saved_device_id'] as String?,
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
@@ -445,6 +464,7 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'event': instance.event?.toJson(),
   'word_count': instance.wordCount,
   'character_count': instance.characterCount,
+  'place': instance.place?.toJson(),
   'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'preferences': instance.preferences.toJson(),

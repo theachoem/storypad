@@ -35,6 +35,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     eventId: object.eventId,
     wordCount: object.wordCount,
     characterCount: object.characterCount,
+    place: object.place != null ? PlaceDbModel.fromJson(jsonDecode(object.place!)) : null,
   );
 
   return story.copyWith(
@@ -108,6 +109,9 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     characterCount: story.draftContent?.characterCount ?? story.latestContent?.characterCount,
     permanentlyDeletedAt: story.permanentlyDeletedAt,
     preferences: jsonEncode(story.preferences.toNonNullJson()),
+    latitude: story.place?.latitude,
+    longitude: story.place?.longitude,
+    place: story.place != null ? jsonEncode(story.place!.toJson()) : null,
   );
 }
 
