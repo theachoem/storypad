@@ -280,7 +280,9 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
                 : pinnedStories?.addElement(updatedStory, 0),
           );
         }
-      } else if (updatedStory.pinned == false) {
+      } else {
+        // pinned == false or pinned == null — both treated as unpinned,
+        // consistent with the DB query which uses: pinned.equals(false).or(pinned.isNull())
         if (stories == null || stories?.items.isEmpty == true) {
           setStories(
             CollectionDbModel(items: [updatedStory]),

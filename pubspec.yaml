@@ -32,6 +32,9 @@ dependencies:
   flutter_custom_tabs: 2.5.0
   flutter_localizations:
     sdk: flutter
+  flutter_map: 7.0.2
+  google_maps_flutter: 2.10.0
+  latlong2: 0.9.1
   flutter_markdown_plus: 1.0.7
   flutter_quill:
     git:
