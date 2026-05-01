@@ -1,13 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
-import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
+import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/widgets/maps/sp_map_controller.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
 import 'map_picker_view.dart';
 
 class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -15,9 +16,13 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   MapPickerViewModel({
     required this.params,
-  }) : _selectedPlace = params.initialSelectedPlace;
+  }) : _selectedPlace = params.initialSelectedPlace {
+    unawaited(resolveInitialCamera());
+  }
 
   final SpMapController mapController = SpMapController();
+
+  SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
 
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
 
@@ -34,19 +39,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool get canRemove => params.initialSelectedPlace != null;
   bool get hasSelectedPlace => _selectedPlace != null;
 
-  SpMapCamera get initialSpMapCamera {
-    if (params.initialSelectedPlace != null) {
-      return SpMapCamera(
-        target: SpLatLng(params.initialSelectedPlace!.latitude, params.initialSelectedPlace!.longitude),
-        zoom: 15.0,
-      );
-    }
-
-    return const SpMapCamera(
-      target: SpLatLng(37.7815, -122.4310),
-      zoom: 10.8,
-    );
-  }
+  SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
 
   List<SpMapMarker<PlaceDbModel>> get selectedMarkers {
     final PlaceDbModel? selectedPlace = _selectedPlace;
@@ -73,6 +66,32 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     final PlaceDbModel? initialPlace = params.initialSelectedPlace;
     if (initialPlace == null) return true;
     return selectedPlace.latitude != initialPlace.latitude || selectedPlace.longitude != initialPlace.longitude;
+  }
+
+  Future<void> resolveInitialCamera() async {
+    final resolver = InitialMapCameraResolver(
+      fetchDevicePlace: SpLocationService.fetchLastKnownPlace,
+      fetchStoryLocations: () async {
+        final stories = await StoryDbModel.db.getRecentStoriesWithLocation();
+        return stories.map((story) => story.location).toList();
+      },
+    );
+
+    final result = await resolver.resolve(selectedPlace: params.initialSelectedPlace);
+    if (disposed) return;
+    if (params.initialSelectedPlace == null && _selectedPlace != null) return;
+
+    _initialSpMapCamera = result.camera;
+    notifyListeners();
+
+    if (result.source != InitialMapCameraSource.fallback) {
+      await mapController.animateTo(
+        result.camera.target.latitude,
+        result.camera.target.longitude,
+        zoom: result.camera.zoom,
+        bearing: 0.0,
+      );
+    }
   }
 
   void setMapStyle(SpMapStyle mapStyle) {

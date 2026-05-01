@@ -11,9 +11,10 @@ import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
+import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/widgets/maps/sp_map_controller.dart';
 import 'map_view.dart';
-import 'local_widgets/maps/map_types.dart';
+import '../../widgets/maps/map_types.dart';
 
 class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const int visibleStoryLimit = 100;
@@ -28,16 +29,41 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   MapViewModel({
     required this.params,
     required this.viewContext,
-  });
+  }) {
+    unawaited(resolveInitialCamera());
+  }
 
-  SpMapCamera get initialSpMapCamera => const SpMapCamera(
-    target: SpLatLng(37.7815, -122.4310),
-    zoom: 10.8,
-  );
+  SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
+  SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
 
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
 
   final SpMapController mapController = SpMapController();
+
+  Future<void> resolveInitialCamera() async {
+    final resolver = InitialMapCameraResolver(
+      fetchDevicePlace: () => SpLocationService.fetchCurrentPlace(requestPermission: false),
+      fetchStoryLocations: () async {
+        final stories = await StoryDbModel.db.getRecentStoriesWithLocation();
+        return stories.map((story) => story.location).toList();
+      },
+    );
+
+    final result = await resolver.resolve();
+    if (disposed) return;
+
+    _initialSpMapCamera = result.camera;
+    notifyListeners();
+
+    if (result.source != InitialMapCameraSource.fallback) {
+      await mapController.animateTo(
+        result.camera.target.latitude,
+        result.camera.target.longitude,
+        zoom: result.camera.zoom,
+        bearing: 0.0,
+      );
+    }
+  }
 
   Future<void> goToCurrentLocation() async {
     final place = await SpLocationService.fetchCurrentPlace();

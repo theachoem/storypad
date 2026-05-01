@@ -11,7 +11,17 @@ enum SpMapRenderer {
 
 enum SpMapStyle {
   streets,
-  satellite,
+  satellite
+  ;
+
+  Brightness get overlayBrightness {
+    switch (this) {
+      case SpMapStyle.streets:
+        return .light;
+      case SpMapStyle.satellite:
+        return .dark;
+    }
+  }
 }
 
 extension SpMapStyleExtension on SpMapStyle {

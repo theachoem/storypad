@@ -5,8 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
-import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
+import 'package:storypad/widgets/maps/sp_map_controller.dart';
 
 typedef SpGoogleMapMarkerIconBuilder<T> =
     Future<BitmapDescriptor> Function(

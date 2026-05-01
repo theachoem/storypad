@@ -11,10 +11,10 @@ class SpLocationService {
   ///
   /// Returns `null` when permission is denied, GPS is unavailable,
   /// or an error occurs.
-  static Future<PlaceDbModel?> fetchCurrentPlace() async {
+  static Future<PlaceDbModel?> fetchCurrentPlace({bool requestPermission = true}) async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
+      if (permission == LocationPermission.denied && requestPermission) {
         permission = await Geolocator.requestPermission();
       }
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -24,6 +24,25 @@ class SpLocationService {
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
+
+      final latLng = SpLatLng(position.latitude, position.longitude);
+      return await SpGeocodingService.instance.reverseGeocode(latLng) ??
+          PlaceDbModel(latitude: position.latitude, longitude: position.longitude);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Reads the platform's last known position without requesting permission.
+  static Future<PlaceDbModel?> fetchLastKnownPlace() async {
+    try {
+      final LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        return null;
+      }
+
+      final Position? position = await Geolocator.getLastKnownPosition();
+      if (position == null) return null;
 
       final latLng = SpLatLng(position.latitude, position.longitude);
       return await SpGeocodingService.instance.reverseGeocode(latLng) ??

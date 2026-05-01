@@ -234,12 +234,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     SpLatLngBounds? bounds,
     int? limit,
   }) async {
-    Condition<StoryObjectBox> conditions = StoryObjectBox_.id
-        .notNull()
-        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
-        .and(StoryObjectBox_.latitude.notNull())
-        .and(StoryObjectBox_.longitude.notNull())
-        .and(StoryObjectBox_.place.notNull());
+    Condition<StoryObjectBox> conditions = _storiesWithLocationConditions();
 
     if (bounds != null) {
       conditions = conditions
@@ -273,6 +268,46 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     return storiesWithLocation;
+  }
+
+  Future<List<MapStoryObject>> getRecentStoriesWithLocation({int limit = 50}) async {
+    final queryBuilder = box.query(_storiesWithLocationConditions())
+      ..order(StoryObjectBox_.year, flags: Order.descending)
+      ..order(StoryObjectBox_.month, flags: Order.descending)
+      ..order(StoryObjectBox_.day, flags: Order.descending)
+      ..order(StoryObjectBox_.hour, flags: Order.descending)
+      ..order(StoryObjectBox_.minute, flags: Order.descending);
+
+    final query = queryBuilder.build();
+    query.limit = limit;
+
+    final result = await query.findAsync();
+    return result.map(_objectToMapStoryObject).toList();
+  }
+
+  Condition<StoryObjectBox> _storiesWithLocationConditions() {
+    return StoryObjectBox_.id
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
+        .and(StoryObjectBox_.latitude.notNull())
+        .and(StoryObjectBox_.longitude.notNull())
+        .and(StoryObjectBox_.place.notNull());
+  }
+
+  MapStoryObject _objectToMapStoryObject(StoryObjectBox story) {
+    return MapStoryObject(
+      id: story.id,
+      assets: story.assets?.isNotEmpty == true ? story.assets : null,
+      location: SpLatLng(story.latitude!, story.longitude!),
+      storyDate: DateTime(
+        story.year,
+        story.month,
+        story.day,
+        story.hour ?? 0,
+        story.minute ?? 0,
+        story.second ?? 0,
+      ),
+    );
   }
 
   Future<Map<int, int>> getStoryCountsByYear({
