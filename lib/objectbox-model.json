@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2962579780537594759",
-      "lastPropertyId": "36:3051838431030192697",
+      "lastPropertyId": "39:2142887574017047798",
       "name": "StoryObjectBox",
       "properties": [
         {
@@ -171,6 +171,21 @@
           "id": "36:3051838431030192697",
           "name": "characterCount",
           "type": 6
+        },
+        {
+          "id": "37:6787714761444359568",
+          "name": "latitude",
+          "type": 8
+        },
+        {
+          "id": "38:6206608334633774136",
+          "name": "longitude",
+          "type": 8
+        },
+        {
+          "id": "39:2142887574017047798",
+          "name": "place",
+          "type": 9
         }
       ],
       "relations": []

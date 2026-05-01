@@ -1,7 +1,7 @@
 import 'package:geocoding/geocoding.dart' as geo;
+import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
-import 'package:storypad/core/services/geocoding/sp_place_result.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 
 /// [SpGeocodingService] implementation using the system geocoder via the
@@ -10,7 +10,7 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 /// Supported platforms: iOS, Android, macOS.
 class SpSystemGeocodingService implements SpGeocodingService {
   @override
-  Future<SpPlaceResult?> reverseGeocode(SpLatLng latLng) async {
+  Future<PlaceDbModel?> reverseGeocode(SpLatLng latLng) async {
     try {
       final placemarks = await geo.placemarkFromCoordinates(
         latLng.latitude,
@@ -27,7 +27,7 @@ class SpSystemGeocodingService implements SpGeocodingService {
         if (p.country != null && p.country!.isNotEmpty) p.country!,
       ];
 
-      return SpPlaceResult(
+      return PlaceDbModel(
         latitude: latLng.latitude,
         longitude: latLng.longitude,
         placeName: p.name?.isNotEmpty == true ? p.name : null,
@@ -42,11 +42,11 @@ class SpSystemGeocodingService implements SpGeocodingService {
   }
 
   @override
-  Future<List<SpPlaceResult>> searchPlaces(String query) async {
+  Future<List<PlaceDbModel>> searchPlaces(String query) async {
     try {
       final locations = await geo.locationFromAddress(query);
       return locations.map((loc) {
-        return SpPlaceResult(
+        return PlaceDbModel(
           latitude: loc.latitude,
           longitude: loc.longitude,
           // geocoding package doesn't return place names from forward geocoding

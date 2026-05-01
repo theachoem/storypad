@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
-import 'package:storypad/core/services/geocoding/sp_place_result.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -156,18 +155,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   Future<void> addCurrentLocation() async {
     final result = await SpLocationService.fetchCurrentPlace();
-    if (result != null) await setPlace(_placeFromResult(result));
-  }
-
-  PlaceDbModel _placeFromResult(SpPlaceResult r) {
-    return PlaceDbModel(
-      latitude: r.latitude,
-      longitude: r.longitude,
-      placeName: r.placeName,
-      locality: r.locality,
-      country: r.country,
-      address: r.address,
-    );
+    if (result != null) await setPlace(result);
   }
 
   Future<void> toggleShowDayCount() async {

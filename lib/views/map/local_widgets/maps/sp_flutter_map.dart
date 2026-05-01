@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
@@ -32,7 +33,7 @@ class SpFlutterMap<T> extends StatefulWidget {
   final SpMapCamera initialCamera;
   final SpMapStyle mapStyle;
   final List<SpMapMarker<T>> markers;
-  final ValueChanged<SpMapPoint>? onMapTap;
+  final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
@@ -102,7 +103,7 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
         onTap: widget.onMapTap == null
             ? null
             : (tapPosition, point) {
-                widget.onMapTap!(SpMapPoint(latitude: point.latitude, longitude: point.longitude));
+                widget.onMapTap!(SpLatLng(point.latitude, point.longitude));
               },
         onPositionChanged: (MapCamera camera, bool hasGesture) {
           if (camera.zoom.isFinite) {
@@ -333,7 +334,7 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
     _flutterMapController.rotate(0.0);
   }
 
-  latlong.LatLng _toLatLng(SpMapPoint point) {
+  latlong.LatLng _toLatLng(SpLatLng point) {
     return latlong.LatLng(point.latitude, point.longitude);
   }
 

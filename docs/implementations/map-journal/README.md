@@ -7,7 +7,7 @@ Location-aware journal entries: manual pin-drop, reverse geocoding, map view wit
 ```
 Story Editor
     ↓ (user taps "Add Location")
-LocationPickerView (full-screen map, tap to pin)
+MapPickerView (full-screen map, tap to pin)
     ↓ (confirm)
 SpGeocodingService.reverseGeocode(SpLatLng) → SpPlaceResult
     ↓
@@ -40,14 +40,12 @@ lib/core/services/geocoding/
   sp_place_result.dart             # value object returned by geocoding
   system/
     sp_system_geocoding_service.dart  # iOS / Android / macOS (geocoding package)
-  api/
-    sp_api_geocoding_service.dart     # Linux / Windows (configurable API)
-  sp_null_geocoding_service.dart   # no-op stub
+  sp_null_geocoding_service.dart   # Linux / Windows / Web no-op stub
 
 lib/views/map/
-  location_picker/
-    location_picker_view.dart      # full-screen map, tap to pin, confirm
-    location_picker_view_model.dart
+  picker/
+    map_picker_view.dart           # full-screen map, tap to pin, confirm
+    map_picker_view_model.dart
 ```
 
 ## DB Design
@@ -96,8 +94,7 @@ Follows the `SpMapAdapter` factory pattern:
 SpGeocodingService (abstract)
     ↓ singleton factory
 SpSystemGeocodingService   ← iOS / Android / macOS  (geocoding package, free)
-SpApiGeocodingService      ← Linux / Windows  (configurable endpoint)
-SpNullGeocodingService     ← unsupported / offline no-op
+SpNullGeocodingService     ← Linux / Windows / Web  (offline no-op)
 ```
 
 API:
@@ -173,6 +170,6 @@ box.query(
 | ----- | ------------------------------------------------------------------ | ------ |
 | 1     | `PlaceDbModel` + `StoryObjectBox` schema + `StoryDbModel` + mapper | 🔲     |
 | 2     | `SpGeocodingService` abstraction layer                             | 🔲     |
-| 3     | `LocationPickerView` + story editor integration                    | 🔲     |
+| 3     | `MapPickerView` + story editor integration                         | 🔲     |
 | 4     | Map view — `fetchWithinBounds` + clustering                        | 🔲     |
 | 5     | Import/export — DayOne + Apple Journal converters                  | 🔲     |

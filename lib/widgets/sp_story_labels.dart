@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
-import 'package:storypad/core/services/geocoding/sp_place_result.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
@@ -16,7 +15,7 @@ import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
-import 'package:storypad/views/map/location_picker/location_picker_view.dart';
+import 'package:storypad/views/map/picker/map_picker_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -339,7 +338,6 @@ class SpStoryLabels extends StatelessWidget {
     }
 
     if (story.hasLocation) {
-      final initialPlace = _dbModelToPlaceResult(story.place!);
       children.add(
         buildPin(
           context: context,
@@ -347,12 +345,24 @@ class SpStoryLabels extends StatelessWidget {
           leadingIconData: SpIcons.map,
           onTap: onSetPlace != null
               ? () async {
-                  final result = await LocationPickerRoute(
-                    initialPlace: initialPlace,
-                    onDelete: () => onSetPlace?.call(null),
+                  final result = await MapPickerRoute(
+                    initialSelectedPlace: story.place,
                   ).push(context);
-                  if (result is SpPlaceResult) {
-                    await onSetPlace?.call(_placeResultToDbModel(result));
+
+                  if (result is MapPickerResult) {
+                    switch (result.action) {
+                      case MapPickerFinalAction.confirm:
+                        final selected = result.place;
+                        if (selected != null) {
+                          await onSetPlace?.call(selected);
+                        }
+                        break;
+                      case MapPickerFinalAction.remove:
+                        await onSetPlace?.call(null);
+                        break;
+                      case MapPickerFinalAction.cancel:
+                        break;
+                    }
                   }
                 }
               : null,
@@ -558,28 +568,6 @@ class SpStoryLabels extends StatelessWidget {
     return Tooltip(
       message: tooltip ?? title,
       child: child,
-    );
-  }
-
-  PlaceDbModel _placeResultToDbModel(SpPlaceResult result) {
-    return PlaceDbModel(
-      latitude: result.latitude,
-      longitude: result.longitude,
-      placeName: result.placeName,
-      locality: result.locality,
-      country: result.country,
-      address: result.address,
-    );
-  }
-
-  SpPlaceResult _dbModelToPlaceResult(PlaceDbModel place) {
-    return SpPlaceResult(
-      latitude: place.latitude,
-      longitude: place.longitude,
-      placeName: place.placeName,
-      locality: place.locality,
-      country: place.country,
-      address: place.address,
     );
   }
 }

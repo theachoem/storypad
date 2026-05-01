@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
 import 'map_view.dart';
 import 'local_widgets/maps/map_types.dart';
@@ -12,17 +13,9 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   });
 
-  MapJournalCamera get initialCamera => const MapJournalCamera(
-    location: MapJournalLocation(latitude: 37.7815, longitude: -122.4310),
+  SpMapCamera get initialSpMapCamera => const SpMapCamera(
+    target: SpLatLng(37.7815, -122.4310),
     zoom: 10.8,
-  );
-
-  SpMapCamera get initialSpMapCamera => SpMapCamera(
-    target: SpMapPoint(
-      latitude: initialCamera.location.latitude,
-      longitude: initialCamera.location.longitude,
-    ),
-    zoom: initialCamera.zoom,
   );
 
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
@@ -43,23 +36,15 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> goToCurrentLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-          return;
-        }
-      }
+    final place = await SpLocationService.fetchCurrentPlace();
+    if (place == null) return;
 
-      final Position position = await Geolocator.getCurrentPosition();
-      await mapController.animateTo(
-        position.latitude,
-        position.longitude,
-        zoom: 15.0,
-        bearing: 0.0,
-      );
-    } catch (_) {}
+    await mapController.animateTo(
+      place.latitude,
+      place.longitude,
+      zoom: 15.0,
+      bearing: 0.0,
+    );
   }
 
   Future<void> resetRotation() async {
@@ -89,10 +74,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
         .map(
           (entry) => SpMapMarker<MapJournalEntry>(
             id: entry.id,
-            point: SpMapPoint(
-              latitude: entry.location.latitude,
-              longitude: entry.location.longitude,
-            ),
+            point: SpLatLng(entry.location.latitude, entry.location.longitude),
             data: entry,
             title: entry.title,
             snippet: '${entry.dateLabel} - ${entry.locationLabel}',
@@ -112,26 +94,6 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 }
 
-class MapJournalCamera {
-  const MapJournalCamera({
-    required this.location,
-    required this.zoom,
-  });
-
-  final MapJournalLocation location;
-  final double zoom;
-}
-
-class MapJournalLocation {
-  const MapJournalLocation({
-    required this.latitude,
-    required this.longitude,
-  });
-
-  final double latitude;
-  final double longitude;
-}
-
 class MapJournalEntry {
   const MapJournalEntry({
     required this.id,
@@ -148,7 +110,7 @@ class MapJournalEntry {
   final String title;
   final String dateLabel;
   final String locationLabel;
-  final MapJournalLocation location;
+  final SpLatLng location;
   final String markerText;
   final Color color;
   final String? imageAssetPath;
@@ -162,7 +124,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Morning pages',
     dateLabel: 'Apr 24',
     locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.8017, longitude: -122.4109),
+    location: SpLatLng(37.8017, -122.4109),
     markerText: 'MP',
     color: Color(0xFF4B7F52),
     imageAssetPath: 'assets/images/onboarding/light_home_300x360.jpg',
@@ -172,7 +134,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Coffee and quiet',
     dateLabel: 'Apr 22',
     locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.7995, longitude: -122.4076),
+    location: SpLatLng(37.7995, -122.4076),
     markerText: 'CQ',
     color: Color(0xFFC1663A),
   ),
@@ -181,7 +143,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Postcard draft',
     dateLabel: 'Apr 21',
     locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.8035, longitude: -122.4061),
+    location: SpLatLng(37.8035, -122.4061),
     markerText: 'PD',
     color: Color(0xFFB85C38),
   ),
@@ -190,7 +152,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Bookshop margin note',
     dateLabel: 'Apr 20',
     locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.7980, longitude: -122.4125),
+    location: SpLatLng(37.7980, -122.4125),
     markerText: 'BM',
     color: Color(0xFF8A5A44),
   ),
@@ -199,7 +161,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Long walk after rain',
     dateLabel: 'Apr 18',
     locationLabel: 'Mission District',
-    location: MapJournalLocation(latitude: 37.7595, longitude: -122.4156),
+    location: SpLatLng(37.7595, -122.4156),
     markerText: 'LW',
     color: Color(0xFF4464AD),
     imageAssetPath: 'assets/images/onboarding/dark_story_details_300x360.jpg',
@@ -209,7 +171,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Late note',
     dateLabel: 'Apr 17',
     locationLabel: 'Mission District',
-    location: MapJournalLocation(latitude: 37.7567, longitude: -122.4189),
+    location: SpLatLng(37.7567, -122.4189),
     markerText: 'LN',
     color: Color(0xFF345E9E),
   ),
@@ -218,7 +180,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Read until sunset',
     dateLabel: 'Apr 16',
     locationLabel: 'Dolores Park',
-    location: MapJournalLocation(latitude: 37.7617, longitude: -122.4264),
+    location: SpLatLng(37.7617, -122.4264),
     markerText: 'RS',
     color: Color(0xFF735CDD),
   ),
@@ -227,7 +189,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Picnic notes',
     dateLabel: 'Apr 15',
     locationLabel: 'Dolores Park',
-    location: MapJournalLocation(latitude: 37.7585, longitude: -122.4298),
+    location: SpLatLng(37.7585, -122.4298),
     markerText: 'PN',
     color: Color(0xFF654ED2),
     imageAssetPath: 'assets/images/onboarding/light_drawer_signed_in_221x510.jpg',
@@ -237,7 +199,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'A note from the bus',
     dateLabel: 'Apr 14',
     locationLabel: 'Haight-Ashbury',
-    location: MapJournalLocation(latitude: 37.7698, longitude: -122.4491),
+    location: SpLatLng(37.7698, -122.4491),
     markerText: 'BN',
     color: Color(0xFF0F8B8D),
   ),
@@ -246,7 +208,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Record shop thought',
     dateLabel: 'Apr 13',
     locationLabel: 'Haight-Ashbury',
-    location: MapJournalLocation(latitude: 37.7712, longitude: -122.4450),
+    location: SpLatLng(37.7712, -122.4450),
     markerText: 'RT',
     color: Color(0xFF118C75),
   ),
@@ -255,7 +217,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Garden air',
     dateLabel: 'Apr 11',
     locationLabel: 'Golden Gate Park',
-    location: MapJournalLocation(latitude: 37.7691, longitude: -122.4826),
+    location: SpLatLng(37.7691, -122.4826),
     markerText: 'GA',
     color: Color(0xFF526A31),
     imageAssetPath: 'assets/images/onboarding/light_story_details_300x360.jpg',
@@ -265,7 +227,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Fog over the trail',
     dateLabel: 'Apr 09',
     locationLabel: 'Presidio',
-    location: MapJournalLocation(latitude: 37.7867, longitude: -122.4789),
+    location: SpLatLng(37.7867, -122.4789),
     markerText: 'FT',
     color: Color(0xFF6A7FDB),
     imageAssetPath: 'assets/images/onboarding/dark_home_300x360.jpg',
@@ -275,7 +237,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Window seat draft',
     dateLabel: 'Apr 07',
     locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7778, longitude: -122.4248),
+    location: SpLatLng(37.7778, -122.4248),
     markerText: 'WD',
     color: Color(0xFF9B5DE5),
   ),
@@ -284,7 +246,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Evening outline',
     dateLabel: 'Apr 06',
     locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7751, longitude: -122.4212),
+    location: SpLatLng(37.7751, -122.4212),
     markerText: 'EO',
     color: Color(0xFF8750CF),
   ),
@@ -293,7 +255,7 @@ const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
     title: 'Tiny sketch',
     dateLabel: 'Apr 05',
     locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7793, longitude: -122.4217),
+    location: SpLatLng(37.7793, -122.4217),
     markerText: 'TS',
     color: Color(0xFF7A4FC1),
     imageAssetPath: 'assets/images/onboarding/dark_drawer_signed_in_221x510.jpg',

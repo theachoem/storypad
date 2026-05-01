@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/core/services/geocoding/sp_null_geocoding_service.dart';
-import 'package:storypad/core/services/geocoding/sp_place_result.dart';
 import 'package:storypad/core/services/geocoding/system/sp_system_geocoding_service.dart';
 
 /// Abstract interface for reverse geocoding and place search.
@@ -33,10 +33,10 @@ abstract class SpGeocodingService {
   ///
   /// Returns `null` when the platform does not support geocoding or the
   /// coordinates cannot be resolved.
-  Future<SpPlaceResult?> reverseGeocode(SpLatLng latLng);
+  Future<PlaceDbModel?> reverseGeocode(SpLatLng latLng);
 
   /// Search for places matching [query].
   ///
   /// Returns an empty list when geocoding is unavailable.
-  Future<List<SpPlaceResult>> searchPlaces(String query);
+  Future<List<PlaceDbModel>> searchPlaces(String query);
 }

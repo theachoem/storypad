@@ -42,12 +42,8 @@ class _MapContent extends StatelessWidget {
                           SpMapSideButton(
                             icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
                             tooltip: 'Map style',
-                            onPressed: () {
-                              SpMapStyleSheet(
-                                mapStyle: viewModel.mapStyle,
-                                onChanged: viewModel.setMapStyle,
-                              ).show(context: context);
-                            },
+                            onPressed: () =>
+                                viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
                           ),
                           SpMapSideButton(
                             icon: SpIcons.myLocation,

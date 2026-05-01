@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
 
@@ -30,7 +31,7 @@ class SpGoogleMap<T> extends StatefulWidget {
   final SpMapCamera initialCamera;
   final SpMapStyle mapStyle;
   final List<SpMapMarker<T>> markers;
-  final ValueChanged<SpMapPoint>? onMapTap;
+  final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
   final ValueChanged<bool>? onMarkersPreparing;
@@ -120,7 +121,7 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
       onTap: widget.onMapTap == null
           ? null
           : (LatLng latLng) {
-              widget.onMapTap!(SpMapPoint(latitude: latLng.latitude, longitude: latLng.longitude));
+              widget.onMapTap!(SpLatLng(latLng.latitude, latLng.longitude));
             },
       onCameraMove: (CameraPosition position) {
         _currentCenter = position.target;
@@ -309,7 +310,7 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
     }
   }
 
-  LatLng _toLatLng(SpMapPoint point) {
+  LatLng _toLatLng(SpLatLng point) {
     return LatLng(point.latitude, point.longitude);
   }
 }

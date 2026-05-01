@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:storypad/core/map/sp_latlng.dart';
 
 enum SpMapRenderer {
   googleMaps,
@@ -30,23 +31,13 @@ extension SpMapStyleExtension on SpMapStyle {
   }
 }
 
-class SpMapPoint {
-  const SpMapPoint({
-    required this.latitude,
-    required this.longitude,
-  });
-
-  final double latitude;
-  final double longitude;
-}
-
 class SpMapCamera {
   const SpMapCamera({
     required this.target,
     required this.zoom,
   });
 
-  final SpMapPoint target;
+  final SpLatLng target;
   final double zoom;
 }
 
@@ -64,7 +55,7 @@ class SpMapMarker<T> {
   });
 
   final String id;
-  final SpMapPoint point;
+  final SpLatLng point;
   final T data;
   final String? title;
   final String? snippet;
