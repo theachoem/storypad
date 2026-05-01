@@ -17,7 +17,9 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel pinned(bool? pinned);
 
-  StoryDbModel feeling(String? feeling);
+  StoryDbModel feeling(
+    @Deprecated('We have moved to tags instead') String? feeling,
+  );
 
   StoryDbModel year(int year);
 
@@ -76,7 +78,7 @@ abstract class _$StoryDbModelCWProxy {
     int id,
     bool? starred,
     bool? pinned,
-    String? feeling,
+    @Deprecated('We have moved to tags instead') String? feeling,
     int year,
     int month,
     int day,
@@ -125,7 +127,9 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel pinned(bool? pinned) => call(pinned: pinned);
 
   @override
-  StoryDbModel feeling(String? feeling) => call(feeling: feeling);
+  StoryDbModel feeling(
+    @Deprecated('We have moved to tags instead') String? feeling,
+  ) => call(feeling: feeling);
 
   @override
   StoryDbModel year(int year) => call(year: year);
@@ -215,6 +219,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? starred = const $CopyWithPlaceholder(),
     Object? pinned = const $CopyWithPlaceholder(),
+    @Deprecated('We have moved to tags instead')
     Object? feeling = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),

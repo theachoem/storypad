@@ -59,6 +59,8 @@
         <string>$(FLUTTER_BUILD_NUMBER)</string>
         <key>GIDClientID</key>
         <string>$(GOOGLE_CLIENT_ID)</string>
+        <key>GOOGLE_MAPS_IOS_API_KEY</key>
+        <string>$(GOOGLE_MAPS_IOS_API_KEY)</string>
         <key>ITSAppUsesNonExemptEncryption</key>
         <false />
         <key>LSRequiresIPhoneOS</key>
@@ -78,6 +80,8 @@
         <string>This app needs access to your microphone to record voice notes for your stories.</string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>This app needs to access to the Photos library to add photo to your stories.</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>This app needs access to your location to add location info to your stories.</string>
         <key>UIApplicationSceneManifest</key>
         <dict>
             <key>UIApplicationSupportsMultipleScenes</key>

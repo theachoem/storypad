@@ -1,0 +1,48 @@
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;
+import 'package:storypad/views/map/local_widgets/sp_map_side_button.dart';
+import 'package:storypad/views/map/local_widgets/maps/sp_flutter_map.dart';
+import 'package:storypad/views/map/local_widgets/maps/sp_google_maps_flutter.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_map_style_sheet.dart';
+import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+
+import 'map_view_model.dart';
+import 'local_widgets/maps/map_types.dart';
+
+part 'map_content.dart';
+part 'local_widgets/marker_preparing_pill.dart';
+
+class MapRoute extends BaseRoute {
+  const MapRoute();
+
+  @override
+  String? get routeName => "map";
+
+  @override
+  Widget buildPage(BuildContext context) => MapView(params: this);
+}
+
+class MapView extends StatelessWidget {
+  const MapView({
+    super.key,
+    required this.params,
+  });
+
+  final MapRoute params;
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelProvider<MapViewModel>(
+      create: (context) => MapViewModel(params: params),
+      builder: (context, viewModel, child) {
+        return _MapContent(viewModel);
+      },
+    );
+  }
+}
