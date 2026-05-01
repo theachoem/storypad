@@ -6,8 +6,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -26,6 +27,7 @@ class SpFlutterMap<T> extends StatefulWidget {
     this.onMarkerTap,
     this.markerBuilder,
     this.clusterMarkerBuilder,
+    this.onViewportChanged,
     this.showCurrentLocation = true,
   });
 
@@ -37,6 +39,7 @@ class SpFlutterMap<T> extends StatefulWidget {
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
+  final SpMapViewportChanged? onViewportChanged;
   final bool showCurrentLocation;
 
   @override
@@ -100,21 +103,30 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
       options: MapOptions(
         initialCenter: _toLatLng(widget.initialCamera.target),
         initialZoom: widget.initialCamera.zoom,
+        onMapReady: () => _notifyViewportChanged(_flutterMapController.camera),
         onTap: widget.onMapTap == null
             ? null
             : (tapPosition, point) {
                 widget.onMapTap!(SpLatLng(point.latitude, point.longitude));
               },
         onPositionChanged: (MapCamera camera, bool hasGesture) {
+          final double previousZoom = _currentZoom;
+
           if (camera.zoom.isFinite) {
             _currentZoom = camera.zoom;
           }
+
           if (camera.rotation.isFinite) {
             _currentRotation = camera.rotation;
           }
 
+          final bool shouldRebuildClusters = (previousZoom - _currentZoom).abs() > 0.0001;
+          if (shouldRebuildClusters && mounted) setState(() {});
+
+          if (!mounted) return;
+
           debouncedCallback(() {
-            if (mounted) setState(() {});
+            _notifyViewportChanged(camera);
           }, duration: const Duration(milliseconds: 50));
         },
       ),
@@ -303,6 +315,28 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
       zoomBy: _zoomBy,
       animateTo: _animateTo,
       resetRotation: _resetRotation,
+    );
+  }
+
+  void _notifyViewportChanged(MapCamera camera) {
+    final SpMapViewportChanged? onViewportChanged = widget.onViewportChanged;
+    if (onViewportChanged == null) return;
+
+    final bounds = camera.visibleBounds;
+    onViewportChanged(
+      SpMapViewport(
+        bounds: SpLatLngBounds(
+          south: bounds.south,
+          west: bounds.west,
+          north: bounds.north,
+          east: bounds.east,
+        ),
+        center: SpLatLng(
+          camera.center.latitude,
+          camera.center.longitude,
+        ),
+        zoom: camera.zoom,
+      ),
     );
   }
 

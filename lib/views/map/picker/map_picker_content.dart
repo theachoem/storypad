@@ -76,11 +76,6 @@ class _MapPickerContent extends StatelessWidget {
                       spacing: 8.0,
                       children: [
                         SpMapSideButton(
-                          icon: SpIcons.refresh,
-                          tooltip: 'Reset rotation',
-                          onPressed: () => viewModel.resetRotation(),
-                        ),
-                        SpMapSideButton(
                           icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
                           tooltip: 'Map style',
                           onPressed: () =>

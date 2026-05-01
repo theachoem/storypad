@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;
 import 'package:storypad/views/map/local_widgets/sp_map_side_button.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_flutter_map.dart';
@@ -38,7 +40,7 @@ class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<MapViewModel>(
-      create: (context) => MapViewModel(params: params),
+      create: (context) => MapViewModel(params: params, viewContext: context),
       builder: (context, viewModel, child) {
         return _MapContent(viewModel);
       },

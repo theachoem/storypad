@@ -11,7 +11,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/types/path_type.dart';

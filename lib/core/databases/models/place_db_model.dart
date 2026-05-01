@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 
 part 'place_db_model.g.dart';
 

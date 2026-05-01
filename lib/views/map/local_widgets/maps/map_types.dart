@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
+
+typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
 enum SpMapRenderer {
   googleMaps,
@@ -38,6 +41,18 @@ class SpMapCamera {
   });
 
   final SpLatLng target;
+  final double zoom;
+}
+
+class SpMapViewport {
+  const SpMapViewport({
+    required this.bounds,
+    required this.center,
+    required this.zoom,
+  });
+
+  final SpLatLngBounds bounds;
+  final SpLatLng center;
   final double zoom;
 }
 

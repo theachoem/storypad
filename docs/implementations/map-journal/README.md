@@ -5,25 +5,27 @@ Location-aware journal entries: manual pin-drop, reverse geocoding, map view wit
 ## Architecture
 
 ```
-Story Editor
-    ↓ (user taps "Add Location")
+Story Editor (SpStoryLabels widget)
+    ↓ (user taps location label)
 MapPickerView (full-screen map, tap to pin)
-    ↓ (confirm)
-SpGeocodingService.reverseGeocode(SpLatLng) → SpPlaceResult
+    ↓ (confirm → MapPickerResult)
+SpGeocodingService.reverseGeocode(SpLatLng) → PlaceDbModel
     ↓
 StoryDbModel.place (PlaceDbModel)
-    ↓ (persisted as JSON in StoryObjectBox.place, lat/lon indexed separately)
+    ↓ (persisted as JSON in StoryObjectBox.place, lat/lon unpacked separately)
 StoryObjectBox: latitude, longitude (range-queryable), place (JSON string)
 ```
 
 ```
 Map View
-    ↓ (camera idle → visible bounds)
-StoriesBox.fetchWithinBounds(LatLngBounds)  ← ObjectBox bounding-box query on indexed lat/lon
-    ↓
-Client-side grid clustering (zoom-aware cell size)
-    ↓
-SpWidgetMapMarker per cluster/pin
+    ↓ (camera idle → debounced 50 ms → onViewportChanged)
+MapViewModel.handleViewportChanged(SpMapViewport)
+    ↓ (expand bounds by _viewportFetchExpansionFactor)
+StoriesBox.getStoriesWithLocation(bounds)  ← ObjectBox between() query on lat/lon
+    ↓ (_limitStoriesByDistance: keep 100 closest to viewport centre)
+SpMapMarker<MapStoryObject> list → SpGoogleMap
+    ↓ (native Google Maps ClusterManager handles marker grouping)
+_MapStoryMarkerIconFactory — BitmapDescriptor rendered per marker
 ```
 
 ## Files
@@ -36,16 +38,28 @@ lib/core/databases/adapters/objectbox/
   entities.dart                    # StoryObjectBox: +latitude, +longitude, +place fields
 
 lib/core/services/geocoding/
-  sp_geocoding_service.dart        # abstract SpGeocodingService + singleton factory
-  sp_place_result.dart             # value object returned by geocoding
+  sp_geocoding_service.dart        # abstract SpGeocodingService + singleton (.instance)
+  sp_null_geocoding_service.dart   # Linux / Windows / Web no-op stub
   system/
     sp_system_geocoding_service.dart  # iOS / Android / macOS (geocoding package)
-  sp_null_geocoding_service.dart   # Linux / Windows / Web no-op stub
 
 lib/views/map/
+  map_view.dart                    # MapRoute + MapView (entry point)
+  map_view_model.dart              # MapViewModel — viewport handling, story fetching, asset caching
+  map_content.dart                 # _MapContent, _FlutterMapStoryMarker, _MapStoryMarkerIconFactory
+  local_widgets/
+    maps/
+      map_types.dart               # SpMapRenderer, SpMapStyle, SpMapCamera, SpMapViewport, SpMapMarker
+      sp_map_controller.dart       # SpMapController — animateTo, zoomBy, resetRotation
+      sp_google_maps_flutter.dart  # SpGoogleMap<T> — Google Maps adapter with ClusterManager
+      sp_flutter_map.dart          # SpFlutterMap<T> — flutter_map adapter (fallback)
+    marker_preparing_pill.dart     # loading indicator shown while marker icons are being built
+    sp_map_side_button.dart        # icon button used in map overlays
+    sp_map_zoom_controls.dart      # +/- zoom overlay buttons
   picker/
-    map_picker_view.dart           # full-screen map, tap to pin, confirm
-    map_picker_view_model.dart
+    map_picker_view.dart           # MapPickerRoute, MapPickerView, MapPickerResult
+    map_picker_view_model.dart     # MapPickerViewModel — pin selection, reverse geocoding
+    map_picker_content.dart        # UI part of the picker
 ```
 
 ## DB Design
@@ -88,41 +102,46 @@ SpLatLng? get latLng => place != null ? SpLatLng(place!.latitude, place!.longitu
 
 ## Geocoding Service
 
-Follows the `SpMapAdapter` factory pattern:
+Follows the platform-adapter pattern:
 
 ```
 SpGeocodingService (abstract)
-    ↓ singleton factory
+    ↓ SpGeocodingService.instance (platform-selected singleton)
 SpSystemGeocodingService   ← iOS / Android / macOS  (geocoding package, free)
 SpNullGeocodingService     ← Linux / Windows / Web  (offline no-op)
 ```
 
 API:
 
-- `reverseGeocode(SpLatLng) → Future<SpPlaceResult?>` — coordinates → place name
-- `searchPlaces(String query) → Future<List<SpPlaceResult>>` — for search in location picker
+- `reverseGeocode(SpLatLng) → Future<PlaceDbModel?>` — coordinates → place (returns `null` when unavailable)
+- `searchPlaces(String query) → Future<List<PlaceDbModel>>` — text search (returns empty list when unavailable)
 
-## Map View — Clustering
+## Map View — Story Loading & Markers
 
 ### Bounding-box query
 
 ```dart
-// ObjectBox range query on indexed lat/lon
-box.query(
-  StoryObjectBox_.latitude.between(bounds.sw.latitude, bounds.ne.latitude)
-    .and(StoryObjectBox_.longitude.between(bounds.sw.longitude, bounds.ne.longitude))
-    .and(StoryObjectBox_.permanentlyDeletedAt.isNull()),
-).build().findAsync();
+// ObjectBox range query — no @Index on double?, full scan (fine for journal scale)
+StoryObjectBox_.latitude.between(bounds.south, bounds.north)
+  .and(StoryObjectBox_.longitude.between(bounds.west, bounds.east))
+  .and(StoryObjectBox_.latitude.notNull())
+  .and(StoryObjectBox_.longitude.notNull())
+  .and(StoryObjectBox_.place.notNull())
+  .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
 ```
 
-### Grid-based clustering
+### Viewport flow
 
-1. Camera idle → debounced ~300 ms
-2. Compute `cellSize = baseDegrees / pow(2, zoom - baseZoom)` from current zoom
-3. Group entries by `(lat / cellSize).floor(), (lon / cellSize).floor()`
-4. 1 entry → `SpWidgetMapMarker` with story preview chip
-5. 2+ entries → `SpWidgetMapMarker` with count badge
-6. Tap pin → navigate to story; tap cluster → `mapController.animateTo(center, zoom + 2)`
+1. Camera moves → `onCameraMove` debounces 50 ms → `MapViewModel.handleViewportChanged`
+2. Viewport bounds are expanded by `_viewportFetchExpansionFactor(zoom)` (1.15 × at zoom 4 → 2.2 × at zoom 16) before querying, so panning slightly doesn't re-fetch.
+3. `_limitStoriesByDistance` keeps at most 100 stories closest to the viewport centre (Euclidean lat/lon distance).
+4. Markers are `SpMapMarker<MapStoryObject>` passed to `SpGoogleMap<T>`.
+
+### Clustering & marker icons
+
+- Google Maps native **`ClusterManager`** (from `google_maps_flutter`) handles marker grouping automatically.
+- Custom `BitmapDescriptor` icons are rendered per marker by `_MapStoryMarkerIconFactory` (renders a Flutter widget to an image off-screen).
+- `SpGoogleMap` tracks a `_prepareVersion` so stale async icon builds are discarded when markers change.
 
 ## Import / Export
 
@@ -168,8 +187,8 @@ box.query(
 
 | Phase | Task                                                               | Status |
 | ----- | ------------------------------------------------------------------ | ------ |
-| 1     | `PlaceDbModel` + `StoryObjectBox` schema + `StoryDbModel` + mapper | 🔲     |
-| 2     | `SpGeocodingService` abstraction layer                             | 🔲     |
-| 3     | `MapPickerView` + story editor integration                         | 🔲     |
-| 4     | Map view — `fetchWithinBounds` + clustering                        | 🔲     |
+| 1     | `PlaceDbModel` + `StoryObjectBox` schema + `StoryDbModel` + mapper | ✅     |
+| 2     | `SpGeocodingService` abstraction layer                             | ✅     |
+| 3     | `MapPickerView` + story editor integration (`SpStoryLabels`)       | ✅     |
+| 4     | Map view — `getStoriesWithLocation` + ClusterManager markers       | ✅     |
 | 5     | Import/export — DayOne + Apple Journal converters                  | 🔲     |

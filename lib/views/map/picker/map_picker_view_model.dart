@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';

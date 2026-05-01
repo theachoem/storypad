@@ -86,7 +86,6 @@ class StoryObjectBox extends BaseObjectBox {
 
   // location — unpacked from PlaceDbModel on write for range queries
   double? latitude;
-
   double? longitude;
 
   /// JSON-encoded PlaceDbModel (placeName, locality, country, address, lat, lon).

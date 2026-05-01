@@ -55,6 +55,32 @@ void main() {
         expect(result, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10...");
       });
     });
+
+    group('when markdown ends inside a link', () {
+      test('complete plain link before adding ...', () {
+        String markdown =
+            "Read this link for more details https://storypad.app/releases/2026/05/01/link-preview-updates before continuing";
+
+        String result = MarkdownBodyShortenerService.call(markdown, maxCharacterCount: 60);
+
+        expect(
+          result,
+          "Read this link for more details https://storypad.app/releases/2026/05/01/link-preview-updates...",
+        );
+      });
+
+      test('complete markdown link before adding ...', () {
+        String markdown =
+            "Read this release note [StoryPad link preview updates](https://storypad.app/releases/2026/05/01/link-preview-updates) before continuing";
+
+        String result = MarkdownBodyShortenerService.call(markdown, maxCharacterCount: 80);
+
+        expect(
+          result,
+          "Read this release note [StoryPad link preview updates](https://storypad.app/releases/2026/05/01/link-preview-updates)...",
+        );
+      });
+    });
   });
 
   group("MarkdownBodyShortenerService.trimBody", () {

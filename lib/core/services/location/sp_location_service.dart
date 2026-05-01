@@ -1,6 +1,6 @@
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:storypad/core/map/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
 
 class SpLocationService {
