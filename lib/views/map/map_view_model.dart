@@ -37,6 +37,12 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
   SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
 
+  bool _isCameraResolved = false;
+  bool get isCameraResolved => _isCameraResolved;
+
+  bool _showCurrentLocation = false;
+  bool get showCurrentLocation => _showCurrentLocation;
+
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
 
   final SpMapController mapController = SpMapController();
@@ -54,21 +60,21 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (disposed) return;
 
     _initialSpMapCamera = result.camera;
-    notifyListeners();
+    _isCameraResolved = true;
 
-    if (result.source != InitialMapCameraSource.fallback) {
-      await mapController.animateTo(
-        result.camera.target.latitude,
-        result.camera.target.longitude,
-        zoom: result.camera.zoom,
-        bearing: 0.0,
-      );
+    if (result.source == InitialMapCameraSource.devicePlace) {
+      _showCurrentLocation = true;
     }
+
+    notifyListeners();
   }
 
   Future<void> goToCurrentLocation(BuildContext context) async {
     final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
     if (!context.mounted || place == null) return;
+
+    _showCurrentLocation = true;
+    notifyListeners();
 
     await mapController.animateTo(
       place.latitude,

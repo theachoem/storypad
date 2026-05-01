@@ -56,6 +56,12 @@ class _MapContent extends StatelessWidget {
   }
 
   Widget _buildMapLayer(BuildContext context) {
+    if (!viewModel.isCameraResolved) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(),
+      );
+    }
+
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
         return SpGoogleMap<MapStoryObject>(
@@ -64,6 +70,7 @@ class _MapContent extends StatelessWidget {
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.mapMarkers,
+          showCurrentLocation: viewModel.showCurrentLocation,
           onViewportChanged: viewModel.handleViewportChanged,
           markerIconBuilder: (context, marker, pixelRatio) => _MapStoryMarkerIconFactory.create(
             context,

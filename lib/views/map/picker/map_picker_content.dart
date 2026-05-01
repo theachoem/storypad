@@ -106,6 +106,12 @@ class _MapPickerLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!viewModel.isCameraResolved) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(),
+      );
+    }
+
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
         return SpGoogleMap<PlaceDbModel>(
@@ -113,6 +119,7 @@ class _MapPickerLayer extends StatelessWidget {
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.selectedMarkers,
+          showCurrentLocation: viewModel.showCurrentLocation,
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
       case SpMapRenderer.flutterMap:

@@ -26,6 +26,12 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
 
+  bool _isCameraResolved = false;
+  bool get isCameraResolved => _isCameraResolved;
+
+  bool _showCurrentLocation = false;
+  bool get showCurrentLocation => _showCurrentLocation;
+
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
 
   SpMapStyle _mapStyle = SpMapStyle.streets;
@@ -84,16 +90,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (params.initialSelectedPlace == null && _selectedPlace != null) return;
 
     _initialSpMapCamera = result.camera;
-    notifyListeners();
-
-    if (result.source != InitialMapCameraSource.fallback) {
-      await mapController.animateTo(
-        result.camera.target.latitude,
-        result.camera.target.longitude,
-        zoom: result.camera.zoom,
-        bearing: 0.0,
-      );
+    _isCameraResolved = true;
+    if (result.source == InitialMapCameraSource.devicePlace) {
+      _showCurrentLocation = true;
     }
+    notifyListeners();
   }
 
   void setMapStyle(SpMapStyle mapStyle) {
@@ -117,6 +118,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
     if (!context.mounted || place == null) return;
 
+    _showCurrentLocation = true;
     _selectedVersion += 1;
     _selectedPlace = place;
     notifyListeners();

@@ -27,7 +27,7 @@ class SpGoogleMap<T> extends StatefulWidget {
     this.onMarkerTap,
     this.markerIconBuilder,
     this.onViewportChanged,
-    this.showCurrentLocation = true,
+    this.showCurrentLocation = false,
   });
 
   final SpMapController mapController;
