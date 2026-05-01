@@ -10,6 +10,7 @@ import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
@@ -65,9 +66,9 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
-  Future<void> goToCurrentLocation() async {
-    final place = await SpLocationService.fetchCurrentPlace();
-    if (place == null) return;
+  Future<void> goToCurrentLocation(BuildContext context) async {
+    final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
+    if (!context.mounted || place == null) return;
 
     await mapController.animateTo(
       place.latitude,

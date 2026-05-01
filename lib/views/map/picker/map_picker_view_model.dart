@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
+import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
@@ -111,9 +113,9 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     unawaited(_resolveSelectedPlace(selectedVersion: _selectedVersion));
   }
 
-  Future<void> goToCurrentLocation() async {
-    final place = await SpLocationService.fetchCurrentPlace();
-    if (place == null) return;
+  Future<void> goToCurrentLocation(BuildContext context) async {
+    final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
+    if (!context.mounted || place == null) return;
 
     _selectedVersion += 1;
     _selectedPlace = place;

@@ -84,7 +84,7 @@ class _MapPickerContent extends StatelessWidget {
                         SpMapSideButton(
                           icon: SpIcons.myLocation,
                           tooltip: 'Current location',
-                          onPressed: () => viewModel.goToCurrentLocation(),
+                          onPressed: () => viewModel.goToCurrentLocation(context),
                         ),
                       ],
                     ),

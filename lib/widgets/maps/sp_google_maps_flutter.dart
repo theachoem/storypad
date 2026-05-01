@@ -314,7 +314,11 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
       zoom: zoom ?? _currentZoom,
       bearing: bearing ?? _currentBearing,
     );
-    await controller.animateCamera(CameraUpdate.newCameraPosition(nextPosition));
+
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(nextPosition),
+      duration: const Duration(milliseconds: 500),
+    );
   }
 
   Future<void> _resetRotation() async {
