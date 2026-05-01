@@ -73,7 +73,13 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     final PlaceDbModel? initialPlace = params.initialSelectedPlace;
     if (initialPlace == null) return true;
-    return selectedPlace.latitude != initialPlace.latitude || selectedPlace.longitude != initialPlace.longitude;
+
+    return selectedPlace.latitude != initialPlace.latitude ||
+        selectedPlace.longitude != initialPlace.longitude ||
+        _normalizeText(selectedPlace.placeName) != _normalizeText(initialPlace.placeName) ||
+        _normalizeText(selectedPlace.locality) != _normalizeText(initialPlace.locality) ||
+        _normalizeText(selectedPlace.country) != _normalizeText(initialPlace.country) ||
+        _normalizeText(selectedPlace.address) != _normalizeText(initialPlace.address);
   }
 
   Future<void> resolveInitialCamera() async {
@@ -94,6 +100,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (result.source == InitialMapCameraSource.devicePlace) {
       _showCurrentLocation = true;
     }
+
     notifyListeners();
   }
 
@@ -133,6 +140,24 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> resetRotation() async {
     await mapController.resetRotation();
+  }
+
+  void updateSelectedPlaceDetails({
+    required String? placeName,
+    required String? locality,
+    required String? country,
+    required String? address,
+  }) {
+    final PlaceDbModel? selectedPlace = _selectedPlace;
+    if (selectedPlace == null) return;
+
+    _selectedPlace = selectedPlace.copyWith(
+      placeName: _normalizeText(placeName),
+      locality: _normalizeText(locality),
+      country: _normalizeText(country),
+      address: _normalizeText(address),
+    );
+    notifyListeners();
   }
 
   Future<MapPickerResult?> buildConfirmResult() async {
@@ -175,5 +200,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
       }
     }
+  }
+
+  String? _normalizeText(String? value) {
+    if (value == null) return null;
+    final String trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 }

@@ -79,8 +79,11 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
   }
 
   Widget buildContent(BuildContext context) {
+    final screenPadding = MediaQuery.paddingOf(context);
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(
+        16.0,
+      ).add(EdgeInsets.only(left: screenPadding.left, right: screenPadding.right, bottom: screenPadding.bottom)),
       children: [
         for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
         const SizedBox(height: 16.0),

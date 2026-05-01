@@ -12,6 +12,7 @@ import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
 import 'map_view.dart';
@@ -120,6 +121,8 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     final fetchBounds = viewport.bounds.expanded(_viewportFetchExpansionFactor(viewport.zoom));
 
     if (_fetchedBounds?.containsBounds(viewport.bounds) != true) {
+      AppLogger.d('$runtimeType#handleViewportChanged - fetching stories for bounds: $fetchBounds');
+
       final stories = await StoryDbModel.db.getStoriesWithLocation(bounds: fetchBounds);
       if (disposed || loadVersion != _loadVersion) return;
 

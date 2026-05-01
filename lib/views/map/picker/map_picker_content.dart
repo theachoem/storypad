@@ -65,6 +65,35 @@ class _MapPickerContent extends StatelessWidget {
                     child: _SelectedPlaceCard(
                       place: selectedPlace,
                       isResolving: isResolving,
+                      onEditPressed: selectedPlace == null
+                          ? null
+                          : () async {
+                              final List<String>? values = await Navigator.of(context).push<List<String>>(
+                                MaterialPageRoute(
+                                  builder: (context) => SpTextInputsPage(
+                                    appBar: AppBar(
+                                      title: const Text('Edit place'),
+                                    ),
+                                    saveButtonLabel: 'Apply',
+                                    fields: <SpTextInputField>[
+                                      SpTextInputField(
+                                        labelText: 'Place name',
+                                        hintText: 'Coffee shop, park, museum...',
+                                        initialText: selectedPlace.placeName,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+
+                              if (!context.mounted || values == null || values.length != 1) return;
+                              viewModel.updateSelectedPlaceDetails(
+                                placeName: values[0],
+                                locality: selectedPlace.locality,
+                                country: selectedPlace.country,
+                                address: selectedPlace.address,
+                              );
+                            },
                     ),
                   ),
                   const Spacer(),
@@ -235,10 +264,12 @@ class _SelectedPlaceCard extends StatelessWidget {
   const _SelectedPlaceCard({
     required this.place,
     required this.isResolving,
+    required this.onEditPressed,
   });
 
   final PlaceDbModel? place;
   final bool isResolving;
+  final VoidCallback? onEditPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +303,7 @@ class _SelectedPlaceCard extends StatelessWidget {
               )
             else
               Icon(SpIcons.myLocation, size: 18.0, color: colorScheme.primary),
-            const SizedBox(width: 8.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,6 +329,10 @@ class _SelectedPlaceCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            IconButton(
+              icon: const Icon(SpIcons.edit),
+              onPressed: onEditPressed,
             ),
           ],
         ),
