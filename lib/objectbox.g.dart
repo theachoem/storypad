@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 2962579780537594759),
     name: 'StoryObjectBox',
-    lastPropertyId: const obx_int.IdUid(36, 3051838431030192697),
+    lastPropertyId: const obx_int.IdUid(39, 2142887574017047798),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -206,6 +206,24 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(36, 3051838431030192697),
         name: 'characterCount',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(37, 6787714761444359568),
+        name: 'latitude',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(38, 6206608334633774136),
+        name: 'longitude',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(39, 2142887574017047798),
+        name: 'place',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -822,7 +840,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final searchMetadataOffset = object.searchMetadata == null
             ? null
             : fbb.writeString(object.searchMetadata!);
-        fbb.startTable(37);
+        final placeOffset = object.place == null
+            ? null
+            : fbb.writeString(object.place!);
+        fbb.startTable(40);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.version);
         fbb.addOffset(2, typeOffset);
@@ -852,6 +873,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(33, object.pinned);
         fbb.addInt64(34, object.wordCount);
         fbb.addInt64(35, object.characterCount);
+        fbb.addFloat64(36, object.latitude);
+        fbb.addFloat64(37, object.longitude);
+        fbb.addOffset(38, placeOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -985,6 +1009,19 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final permanentlyDeletedAtParam = permanentlyDeletedAtValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(permanentlyDeletedAtValue);
+        final latitudeParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          76,
+        );
+        final longitudeParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          78,
+        );
+        final placeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 80);
         final lastSavedDeviceIdParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 46);
@@ -1017,6 +1054,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           searchMetadata: searchMetadataParam,
           preferences: preferencesParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
+          latitude: latitudeParam,
+          longitude: longitudeParam,
+          place: placeParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
@@ -1806,6 +1846,21 @@ class StoryObjectBox_ {
   /// See [StoryObjectBox.characterCount].
   static final characterCount = obx.QueryIntegerProperty<StoryObjectBox>(
     _entities[0].properties[28],
+  );
+
+  /// See [StoryObjectBox.latitude].
+  static final latitude = obx.QueryDoubleProperty<StoryObjectBox>(
+    _entities[0].properties[29],
+  );
+
+  /// See [StoryObjectBox.longitude].
+  static final longitude = obx.QueryDoubleProperty<StoryObjectBox>(
+    _entities[0].properties[30],
+  );
+
+  /// See [StoryObjectBox.place].
+  static final place = obx.QueryStringProperty<StoryObjectBox>(
+    _entities[0].properties[31],
   );
 }
 

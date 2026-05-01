@@ -7,8 +7,6 @@ class _MapContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -28,26 +26,16 @@ class _MapContent extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      if (viewModel.isPreparingMarkers) _MarkerPreparingPill(colorScheme: colorScheme),
                       const Spacer(),
                       Column(
                         mainAxisSize: .min,
                         spacing: 8.0,
                         children: <Widget>[
                           SpMapSideButton(
-                            icon: SpIcons.refresh,
-                            tooltip: 'Reset rotation',
-                            onPressed: () => viewModel.resetRotation(),
-                          ),
-                          SpMapSideButton(
                             icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
                             tooltip: 'Map style',
-                            onPressed: () {
-                              SpMapStyleSheet(
-                                mapStyle: viewModel.mapStyle,
-                                onChanged: viewModel.setMapStyle,
-                              ).show(context: context);
-                            },
+                            onPressed: () =>
+                                viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
                           ),
                           SpMapSideButton(
                             icon: SpIcons.myLocation,
@@ -70,33 +58,45 @@ class _MapContent extends StatelessWidget {
   Widget _buildMapLayer(BuildContext context) {
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
-        return SpGoogleMap<MapJournalEntry>(
+        return SpGoogleMap<MapStoryObject>(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8.0),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.mapMarkers,
-          onMarkerTap: (marker) => viewModel.handleEntryTap(context, marker.data),
-          markerIconBuilder: _MapJournalMarkerIconFactory.create,
-          onMarkersPreparing: viewModel.setMarkersPreparing,
+          onViewportChanged: viewModel.handleViewportChanged,
+          markerIconBuilder: (context, marker, pixelRatio) => _MapStoryMarkerIconFactory.create(
+            context,
+            marker,
+            pixelRatio,
+            imageFile: viewModel.firstAssetFileForStory(marker.data),
+            color: viewModel.markerColorForStory(marker.data),
+          ),
         );
       case SpMapRenderer.flutterMap:
-        if (viewModel.isPreparingMarkers) viewModel.setMarkersPreparing(false);
-        return SpFlutterMap<MapJournalEntry>(
+        return SpFlutterMap<MapStoryObject>(
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.mapMarkers,
-          onMarkerTap: (marker) => viewModel.handleEntryTap(context, marker.data),
-          markerBuilder: (context, marker) => _FlutterMapJournalMarker(entry: marker.data),
+          onViewportChanged: viewModel.handleViewportChanged,
+          markerBuilder: (context, marker) => _FlutterMapStoryMarker(
+            imageFile: viewModel.firstAssetFileForStory(marker.data),
+            color: viewModel.markerColorForStory(marker.data),
+          ),
         );
     }
   }
 }
 
-class _FlutterMapJournalMarker extends StatelessWidget {
-  const _FlutterMapJournalMarker({required this.entry});
+class _FlutterMapStoryMarker extends StatelessWidget {
+  const _FlutterMapStoryMarker({
+    required this.imageFile,
+    required this.color,
+  });
 
-  final MapJournalEntry entry;
+  final File? imageFile;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -104,21 +104,21 @@ class _FlutterMapJournalMarker extends StatelessWidget {
       width: 62.0,
       height: 74.0,
       child: CustomPaint(
-        painter: const _FlutterMapJournalMarkerFramePainter(),
+        painter: const _FlutterMapStoryMarkerFramePainter(),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 14.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(11.0),
             child: DecoratedBox(
-              decoration: BoxDecoration(color: entry.color),
-              child: entry.hasImage
+              decoration: BoxDecoration(color: color),
+              child: imageFile != null
                   ? Stack(
                       fit: StackFit.expand,
                       children: <Widget>[
-                        Image.asset(
-                          entry.imageAssetPath!,
+                        Image.file(
+                          imageFile!,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => _FlutterMapJournalTextPlaceholder(entry: entry),
+                          errorBuilder: (context, error, stackTrace) => const _FlutterMapStoryIconPlaceholder(),
                         ),
                         DecoratedBox(
                           decoration: BoxDecoration(
@@ -127,7 +127,7 @@ class _FlutterMapJournalMarker extends StatelessWidget {
                         ),
                       ],
                     )
-                  : _FlutterMapJournalTextPlaceholder(entry: entry),
+                  : const _FlutterMapStoryIconPlaceholder(),
             ),
           ),
         ),
@@ -136,29 +136,23 @@ class _FlutterMapJournalMarker extends StatelessWidget {
   }
 }
 
-class _FlutterMapJournalTextPlaceholder extends StatelessWidget {
-  const _FlutterMapJournalTextPlaceholder({required this.entry});
-
-  final MapJournalEntry entry;
+class _FlutterMapStoryIconPlaceholder extends StatelessWidget {
+  const _FlutterMapStoryIconPlaceholder();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        entry.markerText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.0,
-        ),
+      child: Icon(
+        SpIcons.text,
+        color: Colors.white,
+        size: 22.0,
       ),
     );
   }
 }
 
-class _FlutterMapJournalMarkerFramePainter extends CustomPainter {
-  const _FlutterMapJournalMarkerFramePainter();
+class _FlutterMapStoryMarkerFramePainter extends CustomPainter {
+  const _FlutterMapStoryMarkerFramePainter();
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -191,13 +185,13 @@ class _FlutterMapJournalMarkerFramePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _FlutterMapJournalMarkerFramePainter oldDelegate) {
+  bool shouldRepaint(covariant _FlutterMapStoryMarkerFramePainter oldDelegate) {
     return false;
   }
 }
 
-class _MapJournalMarkerIconFactory {
-  const _MapJournalMarkerIconFactory._();
+class _MapStoryMarkerIconFactory {
+  const _MapStoryMarkerIconFactory._();
 
   static const double _logicalWidth = 62.0;
   static const double _logicalHeight = 74.0;
@@ -205,15 +199,16 @@ class _MapJournalMarkerIconFactory {
 
   static Future<gm.BitmapDescriptor> create(
     BuildContext context,
-    SpMapMarker<MapJournalEntry> marker,
-    double pixelRatio,
-  ) async {
-    final MapJournalEntry entry = marker.data;
-    final ui.Image? image = entry.imageAssetPath == null ? null : await _loadImage(entry.imageAssetPath!);
+    SpMapMarker<MapStoryObject> marker,
+    double pixelRatio, {
+    required File? imageFile,
+    required Color color,
+  }) async {
+    final ui.Image? image = imageFile == null ? null : await _loadImage(imageFile);
     final Uint8List bytes = await _drawMarker(
-      entry: entry,
       image: image,
       pixelRatio: pixelRatio,
+      color: color,
     );
 
     return gm.BitmapDescriptor.bytes(
@@ -224,9 +219,9 @@ class _MapJournalMarkerIconFactory {
     );
   }
 
-  static Future<ui.Image?> _loadImage(String assetPath) async {
+  static Future<ui.Image?> _loadImage(File imageFile) async {
     final Completer<ui.Image?> completer = Completer<ui.Image?>();
-    final ImageStream stream = AssetImage(assetPath).resolve(ImageConfiguration.empty);
+    final ImageStream stream = FileImage(imageFile).resolve(ImageConfiguration.empty);
     late final ImageStreamListener listener;
 
     listener = ImageStreamListener(
@@ -251,9 +246,9 @@ class _MapJournalMarkerIconFactory {
   }
 
   static Future<Uint8List> _drawMarker({
-    required MapJournalEntry entry,
     required ui.Image? image,
     required double pixelRatio,
+    required Color color,
   }) async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder);
@@ -296,14 +291,13 @@ class _MapJournalMarkerIconFactory {
     } else {
       canvas.drawRect(
         contentRRect.outerRect,
-        ui.Paint()..color = entry.color,
+        ui.Paint()..color = color,
       );
-      _drawCenteredText(
+      _drawCenteredIcon(
         canvas: canvas,
-        text: entry.markerText,
+        icon: SpIcons.text,
         color: Colors.white,
-        fontSize: 18.0,
-        fontWeight: FontWeight.bold,
+        size: 22.0,
         bounds: contentRRect.outerRect,
       );
     }
@@ -326,22 +320,22 @@ class _MapJournalMarkerIconFactory {
     return byteData!.buffer.asUint8List();
   }
 
-  static void _drawCenteredText({
+  static void _drawCenteredIcon({
     required ui.Canvas canvas,
-    required String text,
+    required IconData icon,
     required Color color,
-    required double fontSize,
-    required FontWeight fontWeight,
+    required double size,
     required ui.Rect bounds,
   }) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
-        text: text,
+        text: String.fromCharCode(icon.codePoint),
         style: TextStyle(
           color: color,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
+          fontSize: size,
           letterSpacing: 0.0,
+          fontFamily: icon.fontFamily,
+          package: icon.fontPackage,
         ),
       ),
       textAlign: TextAlign.center,

@@ -10,15 +10,32 @@ import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/objectbox.g.dart';
 
 part 'helpers/stories_box_transformer.dart';
+
+class MapStoryObject {
+  final int id;
+  final List<int>? assets;
+  final SpLatLng location;
+  final DateTime storyDate;
+
+  MapStoryObject({
+    required this.id,
+    required this.assets,
+    required this.location,
+    required this.storyDate,
+  });
+}
 
 class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   @override
@@ -211,6 +228,51 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     }
 
     AppLogger.info('🔍 Reindexed Stories: $count (Failed: $failed)');
+  }
+
+  Future<List<MapStoryObject>> getStoriesWithLocation({
+    SpLatLngBounds? bounds,
+    int? limit,
+  }) async {
+    Condition<StoryObjectBox> conditions = StoryObjectBox_.id
+        .notNull()
+        .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
+        .and(StoryObjectBox_.latitude.notNull())
+        .and(StoryObjectBox_.longitude.notNull())
+        .and(StoryObjectBox_.place.notNull());
+
+    if (bounds != null) {
+      conditions = conditions
+          .and(StoryObjectBox_.latitude.between(bounds.south, bounds.north))
+          .and(StoryObjectBox_.longitude.between(bounds.west, bounds.east));
+    }
+
+    final queryBuilder = box.query(conditions);
+    final query = queryBuilder.build();
+    if (limit != null) query.limit = limit;
+
+    final result = await query.findAsync();
+
+    List<MapStoryObject> storiesWithLocation = [];
+    for (var story in result) {
+      storiesWithLocation.add(
+        MapStoryObject(
+          id: story.id,
+          assets: story.assets?.isNotEmpty == true ? story.assets : null,
+          location: SpLatLng(story.latitude!, story.longitude!),
+          storyDate: DateTime(
+            story.year,
+            story.month,
+            story.day,
+            story.hour ?? 0,
+            story.minute ?? 0,
+            story.second ?? 0,
+          ),
+        ),
+      );
+    }
+
+    return storiesWithLocation;
   }
 
   Future<Map<int, int>> getStoryCountsByYear({

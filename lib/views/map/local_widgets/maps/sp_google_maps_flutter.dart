@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
 
@@ -19,31 +22,34 @@ class SpGoogleMap<T> extends StatefulWidget {
     required this.initialCamera,
     required this.mapStyle,
     required this.markers,
+    this.padding = EdgeInsets.zero,
     this.onMapTap,
     this.onMarkerTap,
     this.markerIconBuilder,
-    this.onMarkersPreparing,
+    this.onViewportChanged,
     this.showCurrentLocation = true,
   });
 
   final SpMapController mapController;
   final SpMapCamera initialCamera;
+  final EdgeInsets padding;
   final SpMapStyle mapStyle;
   final List<SpMapMarker<T>> markers;
-  final ValueChanged<SpMapPoint>? onMapTap;
+  final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
-  final ValueChanged<bool>? onMarkersPreparing;
+  final SpMapViewportChanged? onViewportChanged;
   final bool showCurrentLocation;
 
   @override
   State<SpGoogleMap<T>> createState() => _SpGoogleMapState<T>();
 }
 
-class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
+class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback {
+  // Cluster only show when there are at least 4 markers.
   static const ClusterManagerId _clusterManagerId = ClusterManagerId('sp_map_markers');
-
   late final Map<ClusterManagerId, ClusterManager> _clusterManagers;
+
   GoogleMapController? _googleMapController;
   late LatLng _currentCenter;
   double _currentZoom = 10.8;
@@ -99,16 +105,15 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasClusterableMarkers = widget.markers.any((marker) => marker.clusterable);
-
     return GoogleMap(
+      padding: widget.padding,
       mapType: _toGoogleMapType(widget.mapStyle),
       initialCameraPosition: CameraPosition(
         target: _toLatLng(widget.initialCamera.target),
         zoom: widget.initialCamera.zoom,
       ),
       markers: Set<Marker>.of(_markers.values),
-      clusterManagers: hasClusterableMarkers ? Set<ClusterManager>.of(_clusterManagers.values) : <ClusterManager>{},
+      clusterManagers: Set<ClusterManager>.of(_clusterManagers.values),
       mapToolbarEnabled: false,
       myLocationButtonEnabled: false,
       myLocationEnabled: widget.showCurrentLocation,
@@ -116,18 +121,49 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
       compassEnabled: true,
       onMapCreated: (GoogleMapController controller) {
         _googleMapController = controller;
+        unawaited(_notifyViewportChanged());
       },
       onTap: widget.onMapTap == null
           ? null
           : (LatLng latLng) {
-              widget.onMapTap!(SpMapPoint(latitude: latLng.latitude, longitude: latLng.longitude));
+              widget.onMapTap!(SpLatLng(latLng.latitude, latLng.longitude));
             },
       onCameraMove: (CameraPosition position) {
         _currentCenter = position.target;
         _currentZoom = position.zoom;
         _currentBearing = position.bearing;
+
+        if (!mounted) return;
+
+        debouncedCallback(() {
+          _notifyViewportChanged();
+        }, duration: const Duration(milliseconds: 50));
       },
     );
+  }
+
+  Future<void> _notifyViewportChanged() async {
+    final GoogleMapController? controller = _googleMapController;
+    final SpMapViewportChanged? onViewportChanged = widget.onViewportChanged;
+    if (controller == null || onViewportChanged == null) return;
+
+    try {
+      final LatLngBounds visibleRegion = await controller.getVisibleRegion();
+      if (!mounted) return;
+
+      onViewportChanged(
+        SpMapViewport(
+          bounds: SpLatLngBounds(
+            south: visibleRegion.southwest.latitude,
+            west: visibleRegion.southwest.longitude,
+            north: visibleRegion.northeast.latitude,
+            east: visibleRegion.northeast.longitude,
+          ),
+          center: SpLatLng(_currentCenter.latitude, _currentCenter.longitude),
+          zoom: _currentZoom,
+        ),
+      );
+    } catch (_) {}
   }
 
   void _attachMapController() {
@@ -159,7 +195,6 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
           ..clear()
           ..addAll(markers);
       });
-      widget.onMarkersPreparing?.call(false);
       return;
     }
 
@@ -177,8 +212,6 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
     required double pixelRatio,
     required int prepareVersion,
   }) async {
-    widget.onMarkersPreparing?.call(true);
-
     final Map<MarkerId, BitmapDescriptor> icons = <MarkerId, BitmapDescriptor>{};
     for (final SpMapMarker<T> marker in widget.markers) {
       final MarkerId markerId = MarkerId(marker.id);
@@ -197,7 +230,6 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
         ..clear()
         ..addAll(markers);
     });
-    widget.onMarkersPreparing?.call(false);
   }
 
   Map<MarkerId, Marker> _buildGoogleMarkers({
@@ -309,7 +341,7 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> {
     }
   }
 
-  LatLng _toLatLng(SpMapPoint point) {
+  LatLng _toLatLng(SpLatLng point) {
     return LatLng(point.latitude, point.longitude);
   }
 }

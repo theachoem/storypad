@@ -1,107 +1,195 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
 import 'map_view.dart';
 import 'local_widgets/maps/map_types.dart';
 
 class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
+  static const int visibleStoryLimit = 100;
+  static const double _minViewportFetchExpansionFactor = 1.15;
+  static const double _maxViewportFetchExpansionFactor = 2.2;
+  static const double _minExpansionZoom = 4.0;
+  static const double _maxExpansionZoom = 16.0;
+
   final MapRoute params;
+  final BuildContext viewContext;
 
   MapViewModel({
     required this.params,
+    required this.viewContext,
   });
 
-  MapJournalCamera get initialCamera => const MapJournalCamera(
-    location: MapJournalLocation(latitude: 37.7815, longitude: -122.4310),
+  SpMapCamera get initialSpMapCamera => const SpMapCamera(
+    target: SpLatLng(37.7815, -122.4310),
     zoom: 10.8,
-  );
-
-  SpMapCamera get initialSpMapCamera => SpMapCamera(
-    target: SpMapPoint(
-      latitude: initialCamera.location.latitude,
-      longitude: initialCamera.location.longitude,
-    ),
-    zoom: initialCamera.zoom,
   );
 
   SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
 
   final SpMapController mapController = SpMapController();
 
-  bool _isPreparingMarkers = true;
-  bool get isPreparingMarkers => _isPreparingMarkers;
-
-  void setMarkersPreparing(bool preparing) {
-    if (disposed || _isPreparingMarkers == preparing) return;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (disposed || _isPreparingMarkers == preparing) return;
-      _isPreparingMarkers = preparing;
-      notifyListeners();
-    });
-  }
-
   Future<void> goToCurrentLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-          return;
-        }
-      }
+    final place = await SpLocationService.fetchCurrentPlace();
+    if (place == null) return;
 
-      final Position position = await Geolocator.getCurrentPosition();
-      await mapController.animateTo(
-        position.latitude,
-        position.longitude,
-        zoom: 15.0,
-        bearing: 0.0,
-      );
-    } catch (_) {}
+    await mapController.animateTo(
+      place.latitude,
+      place.longitude,
+      zoom: 15.0,
+      bearing: 0.0,
+    );
   }
 
   Future<void> resetRotation() async {
     await mapController.resetRotation();
   }
 
-  void handleEntryTap(BuildContext context, MapJournalEntry entry) {
-    debugPrint('Map journal entry tapped: ${entry.title}');
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('${entry.title} - ${entry.locationLabel}'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
-
   SpMapStyle _mapStyle = SpMapStyle.streets;
   SpMapStyle get mapStyle => _mapStyle;
 
-  List<MapJournalEntry> get entries => _mockEntries;
+  List<MapStoryObject> _visibleStories = [];
+  List<MapStoryObject> get visibleStories => _visibleStories;
+  List<MapStoryObject> _fetchedStories = [];
+  SpLatLngBounds? _fetchedBounds;
+  final Map<int, File?> _assetFileById = {};
+  final Map<int, Future<File?>> _assetFileFutureById = {};
 
-  List<SpMapMarker<MapJournalEntry>> get mapMarkers {
-    return entries
+  List<SpMapMarker<MapStoryObject>> get mapMarkers {
+    return visibleStories
         .map(
-          (entry) => SpMapMarker<MapJournalEntry>(
-            id: entry.id,
-            point: SpMapPoint(
-              latitude: entry.location.latitude,
-              longitude: entry.location.longitude,
-            ),
-            data: entry,
-            title: entry.title,
-            snippet: '${entry.dateLabel} - ${entry.locationLabel}',
+          (story) => SpMapMarker<MapStoryObject>(
+            id: story.id.toString(),
+            point: story.location,
+            data: story,
+            title: DateFormatHelper.yMEd_Hm(story.storyDate, Localizations.localeOf(viewContext)),
             size: const Size(62.0, 74.0),
             alignment: Alignment.topCenter,
             anchor: const Offset(0.5, 1.0),
           ),
         )
         .toList();
+  }
+
+  int _loadVersion = 0;
+
+  Future<void> handleViewportChanged(SpMapViewport viewport) async {
+    final int loadVersion = ++_loadVersion;
+    final fetchBounds = viewport.bounds.expanded(_viewportFetchExpansionFactor(viewport.zoom));
+
+    if (_fetchedBounds?.containsBounds(viewport.bounds) != true) {
+      final stories = await StoryDbModel.db.getStoriesWithLocation(bounds: fetchBounds);
+      if (disposed || loadVersion != _loadVersion) return;
+
+      _fetchedStories = stories;
+      _fetchedBounds = fetchBounds;
+    }
+
+    final visibleStories = _limitStoriesByDistance(_fetchedStories, viewport.center);
+    if (_hasSameStoryIds(_visibleStories, visibleStories)) return;
+
+    _visibleStories = visibleStories;
+    notifyListeners();
+    unawaited(_cacheFirstAssetFiles(visibleStories));
+  }
+
+  File? firstAssetFileForStory(MapStoryObject story) {
+    final int? assetId = _firstAssetId(story);
+    if (assetId == null) return null;
+    return _assetFileById[assetId];
+  }
+
+  Color markerColorForStory(MapStoryObject story) {
+    return kColorsByDayLight[story.storyDate.weekday]!;
+  }
+
+  Future<void> _cacheFirstAssetFiles(List<MapStoryObject> stories) async {
+    final List<int> uncachedAssetIds = stories
+        .map(_firstAssetId)
+        .whereType<int>()
+        .where((assetId) => !_assetFileById.containsKey(assetId) && !_assetFileFutureById.containsKey(assetId))
+        .toList();
+
+    if (uncachedAssetIds.isEmpty) return;
+
+    bool changed = false;
+    await Future.wait(
+      uncachedAssetIds.map((assetId) async {
+        final future = _loadAssetFile(assetId);
+        _assetFileFutureById[assetId] = future;
+
+        try {
+          final file = await future;
+          if (_assetFileById[assetId]?.path != file?.path || (_assetFileById[assetId] == null && file != null)) {
+            _assetFileById[assetId] = file;
+            changed = true;
+          } else {
+            _assetFileById.putIfAbsent(assetId, () => file);
+          }
+        } finally {
+          _assetFileFutureById.remove(assetId);
+        }
+      }),
+    );
+
+    if (!disposed && changed) {
+      notifyListeners();
+    }
+  }
+
+  Future<File?> _loadAssetFile(int assetId) async {
+    final asset = await AssetDbModel.db.find(assetId);
+    return asset?.localFile;
+  }
+
+  int? _firstAssetId(MapStoryObject story) {
+    final assets = story.assets;
+    if (assets == null || assets.isEmpty) return null;
+    return assets.first;
+  }
+
+  double _viewportFetchExpansionFactor(double zoom) {
+    final double clampedZoom = zoom.clamp(_minExpansionZoom, _maxExpansionZoom);
+    final double progress = (clampedZoom - _minExpansionZoom) / (_maxExpansionZoom - _minExpansionZoom);
+    return _minViewportFetchExpansionFactor +
+        ((_maxViewportFetchExpansionFactor - _minViewportFetchExpansionFactor) * progress);
+  }
+
+  List<MapStoryObject> _limitStoriesByDistance(List<MapStoryObject> stories, SpLatLng center) {
+    if (stories.length <= visibleStoryLimit) return stories;
+
+    final sorted = [...stories]
+      ..sort((a, b) {
+        return _distanceSquared(a.location, center).compareTo(_distanceSquared(b.location, center));
+      });
+
+    return sorted.take(visibleStoryLimit).toList();
+  }
+
+  double _distanceSquared(SpLatLng a, SpLatLng b) {
+    final double latitudeDelta = a.latitude - b.latitude;
+    final double longitudeDelta = a.longitude - b.longitude;
+    return latitudeDelta * latitudeDelta + longitudeDelta * longitudeDelta;
+  }
+
+  bool _hasSameStoryIds(List<MapStoryObject> current, List<MapStoryObject> next) {
+    if (current.length != next.length) return false;
+
+    for (int i = 0; i < current.length; i++) {
+      if (current[i].id != next[i].id) return false;
+    }
+
+    return true;
   }
 
   void setMapStyle(SpMapStyle mapStyle) {
@@ -111,191 +199,3 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 }
-
-class MapJournalCamera {
-  const MapJournalCamera({
-    required this.location,
-    required this.zoom,
-  });
-
-  final MapJournalLocation location;
-  final double zoom;
-}
-
-class MapJournalLocation {
-  const MapJournalLocation({
-    required this.latitude,
-    required this.longitude,
-  });
-
-  final double latitude;
-  final double longitude;
-}
-
-class MapJournalEntry {
-  const MapJournalEntry({
-    required this.id,
-    required this.title,
-    required this.dateLabel,
-    required this.locationLabel,
-    required this.location,
-    required this.markerText,
-    required this.color,
-    this.imageAssetPath,
-  });
-
-  final String id;
-  final String title;
-  final String dateLabel;
-  final String locationLabel;
-  final MapJournalLocation location;
-  final String markerText;
-  final Color color;
-  final String? imageAssetPath;
-
-  bool get hasImage => imageAssetPath != null;
-}
-
-const List<MapJournalEntry> _mockEntries = <MapJournalEntry>[
-  MapJournalEntry(
-    id: 'ferry-building-morning',
-    title: 'Morning pages',
-    dateLabel: 'Apr 24',
-    locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.8017, longitude: -122.4109),
-    markerText: 'MP',
-    color: Color(0xFF4B7F52),
-    imageAssetPath: 'assets/images/onboarding/light_home_300x360.jpg',
-  ),
-  MapJournalEntry(
-    id: 'north-beach-coffee',
-    title: 'Coffee and quiet',
-    dateLabel: 'Apr 22',
-    locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.7995, longitude: -122.4076),
-    markerText: 'CQ',
-    color: Color(0xFFC1663A),
-  ),
-  MapJournalEntry(
-    id: 'north-beach-postcard',
-    title: 'Postcard draft',
-    dateLabel: 'Apr 21',
-    locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.8035, longitude: -122.4061),
-    markerText: 'PD',
-    color: Color(0xFFB85C38),
-  ),
-  MapJournalEntry(
-    id: 'north-beach-bookshop',
-    title: 'Bookshop margin note',
-    dateLabel: 'Apr 20',
-    locationLabel: 'North Beach',
-    location: MapJournalLocation(latitude: 37.7980, longitude: -122.4125),
-    markerText: 'BM',
-    color: Color(0xFF8A5A44),
-  ),
-  MapJournalEntry(
-    id: 'mission-walk',
-    title: 'Long walk after rain',
-    dateLabel: 'Apr 18',
-    locationLabel: 'Mission District',
-    location: MapJournalLocation(latitude: 37.7595, longitude: -122.4156),
-    markerText: 'LW',
-    color: Color(0xFF4464AD),
-    imageAssetPath: 'assets/images/onboarding/dark_story_details_300x360.jpg',
-  ),
-  MapJournalEntry(
-    id: 'mission-late-note',
-    title: 'Late note',
-    dateLabel: 'Apr 17',
-    locationLabel: 'Mission District',
-    location: MapJournalLocation(latitude: 37.7567, longitude: -122.4189),
-    markerText: 'LN',
-    color: Color(0xFF345E9E),
-  ),
-  MapJournalEntry(
-    id: 'dolores-reading',
-    title: 'Read until sunset',
-    dateLabel: 'Apr 16',
-    locationLabel: 'Dolores Park',
-    location: MapJournalLocation(latitude: 37.7617, longitude: -122.4264),
-    markerText: 'RS',
-    color: Color(0xFF735CDD),
-  ),
-  MapJournalEntry(
-    id: 'dolores-picnic',
-    title: 'Picnic notes',
-    dateLabel: 'Apr 15',
-    locationLabel: 'Dolores Park',
-    location: MapJournalLocation(latitude: 37.7585, longitude: -122.4298),
-    markerText: 'PN',
-    color: Color(0xFF654ED2),
-    imageAssetPath: 'assets/images/onboarding/light_drawer_signed_in_221x510.jpg',
-  ),
-  MapJournalEntry(
-    id: 'haight-note',
-    title: 'A note from the bus',
-    dateLabel: 'Apr 14',
-    locationLabel: 'Haight-Ashbury',
-    location: MapJournalLocation(latitude: 37.7698, longitude: -122.4491),
-    markerText: 'BN',
-    color: Color(0xFF0F8B8D),
-  ),
-  MapJournalEntry(
-    id: 'haight-record-shop',
-    title: 'Record shop thought',
-    dateLabel: 'Apr 13',
-    locationLabel: 'Haight-Ashbury',
-    location: MapJournalLocation(latitude: 37.7712, longitude: -122.4450),
-    markerText: 'RT',
-    color: Color(0xFF118C75),
-  ),
-  MapJournalEntry(
-    id: 'golden-gate-garden',
-    title: 'Garden air',
-    dateLabel: 'Apr 11',
-    locationLabel: 'Golden Gate Park',
-    location: MapJournalLocation(latitude: 37.7691, longitude: -122.4826),
-    markerText: 'GA',
-    color: Color(0xFF526A31),
-    imageAssetPath: 'assets/images/onboarding/light_story_details_300x360.jpg',
-  ),
-  MapJournalEntry(
-    id: 'presidio-fog',
-    title: 'Fog over the trail',
-    dateLabel: 'Apr 09',
-    locationLabel: 'Presidio',
-    location: MapJournalLocation(latitude: 37.7867, longitude: -122.4789),
-    markerText: 'FT',
-    color: Color(0xFF6A7FDB),
-    imageAssetPath: 'assets/images/onboarding/dark_home_300x360.jpg',
-  ),
-  MapJournalEntry(
-    id: 'hayes-window',
-    title: 'Window seat draft',
-    dateLabel: 'Apr 07',
-    locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7778, longitude: -122.4248),
-    markerText: 'WD',
-    color: Color(0xFF9B5DE5),
-  ),
-  MapJournalEntry(
-    id: 'hayes-evening',
-    title: 'Evening outline',
-    dateLabel: 'Apr 06',
-    locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7751, longitude: -122.4212),
-    markerText: 'EO',
-    color: Color(0xFF8750CF),
-  ),
-  MapJournalEntry(
-    id: 'hayes-sketch',
-    title: 'Tiny sketch',
-    dateLabel: 'Apr 05',
-    locationLabel: 'Hayes Valley',
-    location: MapJournalLocation(latitude: 37.7793, longitude: -122.4217),
-    markerText: 'TS',
-    color: Color(0xFF7A4FC1),
-    imageAssetPath: 'assets/images/onboarding/dark_drawer_signed_in_221x510.jpg',
-  ),
-];

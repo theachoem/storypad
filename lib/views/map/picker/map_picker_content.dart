@@ -7,7 +7,7 @@ class _MapPickerContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlaceObject? selectedPlace = viewModel.selectedPlace;
+    final PlaceDbModel? selectedPlace = viewModel.selectedPlace;
     final bool isResolving = viewModel.isResolvingPlace;
 
     return Scaffold(
@@ -42,10 +42,7 @@ class _MapPickerContent extends StatelessWidget {
                         icon: SpIcons.check,
                         label: 'Confirm',
                         tooltip: 'Confirm location',
-                        enabled:
-                            selectedPlace != null &&
-                            !isResolving &&
-                            selectedPlace.compareTo(viewModel.initialSelectedPlace) != 0,
+                        enabled: viewModel.canConfirm,
                         isPrimary: true,
                         onPressed: () async {
                           final MapPickerResult? result = await viewModel.buildConfirmResult();
@@ -79,19 +76,10 @@ class _MapPickerContent extends StatelessWidget {
                       spacing: 8.0,
                       children: [
                         SpMapSideButton(
-                          icon: SpIcons.refresh,
-                          tooltip: 'Reset rotation',
-                          onPressed: () => viewModel.resetRotation(),
-                        ),
-                        SpMapSideButton(
                           icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
                           tooltip: 'Map style',
-                          onPressed: () {
-                            SpMapStyleSheet(
-                              mapStyle: viewModel.mapStyle,
-                              onChanged: viewModel.setMapStyle,
-                            ).show(context: context);
-                          },
+                          onPressed: () =>
+                              viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
                         ),
                         SpMapSideButton(
                           icon: SpIcons.myLocation,
@@ -120,7 +108,7 @@ class _MapPickerLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
-        return SpGoogleMap<PlaceObject>(
+        return SpGoogleMap<PlaceDbModel>(
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
@@ -128,7 +116,7 @@ class _MapPickerLayer extends StatelessWidget {
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
       case SpMapRenderer.flutterMap:
-        return SpFlutterMap<PlaceObject>(
+        return SpFlutterMap<PlaceDbModel>(
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
@@ -236,7 +224,7 @@ class _SelectedPlaceCard extends StatelessWidget {
     required this.isResolving,
   });
 
-  final PlaceObject? place;
+  final PlaceDbModel? place;
   final bool isResolving;
 
   @override

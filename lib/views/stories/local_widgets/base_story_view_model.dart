@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
+import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -139,6 +141,21 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     AnalyticsService.instance.logSetStoryFeeling(
       story: story!,
     );
+  }
+
+  Future<void> setPlace(PlaceDbModel? place) async {
+    story = story?.copyWith(updatedAt: DateTime.now(), place: place);
+    notifyListeners();
+
+    if (hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+  }
+
+  Future<void> addCurrentLocation() async {
+    final result = await SpLocationService.fetchCurrentPlace();
+    if (result != null) await setPlace(result);
   }
 
   Future<void> toggleShowDayCount() async {

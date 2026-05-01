@@ -8,8 +8,10 @@ import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -66,6 +68,8 @@ class StoryDbModel extends BaseDbModel {
   final int? wordCount;
   final int? characterCount;
 
+  final PlaceDbModel? place;
+
   final DateTime? movedToBinAt;
   final String? lastSavedDeviceId;
 
@@ -118,11 +122,15 @@ class StoryDbModel extends BaseDbModel {
     this.event,
     this.wordCount,
     this.characterCount,
+    this.place,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
   }) : _preferences = preferences;
 
   bool get draftStory => draftContent != null;
+
+  bool get hasLocation => place != null;
+  SpLatLng? get latLng => place != null ? SpLatLng(place!.latitude, place!.longitude) : null;
 
   Duration get dateDifferentCount => DateTime.now().difference(displayPathDate);
   bool get preferredShowDayCount => preferences.showDayCount ?? false;
