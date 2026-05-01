@@ -23,7 +23,7 @@ class _MapPickerContent extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       SpMapSideButton(
-                        icon: SpIcons.keyboardLeft,
+                        icon: const BackButtonIcon(),
                         tooltip: 'Back',
                         onPressed: () {
                           Navigator.of(context).pop(MapPickerResult.cancel(viewModel.initialSelectedPlace));
@@ -32,7 +32,7 @@ class _MapPickerContent extends StatelessWidget {
                       const Spacer(),
                       if (viewModel.canRemove)
                         SpMapSideButton(
-                          icon: SpIcons.delete,
+                          icon: const Icon(SpIcons.delete),
                           tooltip: 'Remove selected place',
                           isDanger: true,
                           onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
@@ -76,13 +76,18 @@ class _MapPickerContent extends StatelessWidget {
                       spacing: 8.0,
                       children: [
                         SpMapSideButton(
-                          icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
+                          icon: SpAnimatedIcons.fadeScale(
+                            duration: Durations.long1,
+                            firstChild: const Icon(SpIcons.map),
+                            secondChild: const Icon(SpIcons.satellite),
+                            showFirst: viewModel.mapStyle == SpMapStyle.streets,
+                          ),
                           tooltip: 'Map style',
                           onPressed: () =>
                               viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
                         ),
                         SpMapSideButton(
-                          icon: SpIcons.myLocation,
+                          icon: const Icon(SpIcons.myLocation),
                           tooltip: 'Current location',
                           onPressed: () => viewModel.goToCurrentLocation(context),
                         ),
@@ -128,6 +133,7 @@ class _MapPickerLayer extends StatelessWidget {
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.selectedMarkers,
+          showCurrentLocation: viewModel.showCurrentLocation,
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
     }
@@ -135,7 +141,7 @@ class _MapPickerLayer extends StatelessWidget {
 }
 
 class _MapPickerActionButton extends StatelessWidget {
-  static const double _minHeight = 44.0;
+  static const double _minHeight = 48.0;
 
   const _MapPickerActionButton({
     required this.label,
@@ -199,7 +205,7 @@ class _MapPickerActionButton extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: _minHeight),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[

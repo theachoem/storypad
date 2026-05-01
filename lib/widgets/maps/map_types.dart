@@ -6,7 +6,10 @@ typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
 enum SpMapRenderer {
   googleMaps,
-  flutterMap,
+  flutterMap
+  ;
+
+  static SpMapRenderer get defaultRenderer => googleMaps;
 }
 
 enum SpMapStyle {
@@ -75,7 +78,6 @@ class SpMapMarker<T> {
     this.snippet,
     this.clusterable = true,
     this.size = const Size.square(42.0),
-    this.alignment = Alignment.center,
     this.anchor = const Offset(0.5, 0.5),
   });
 
@@ -86,6 +88,5 @@ class SpMapMarker<T> {
   final String? snippet;
   final bool clusterable;
   final Size size;
-  final Alignment alignment;
   final Offset anchor;
 }

@@ -7,6 +7,7 @@ import 'package:storypad/widgets/maps/map_types.dart';
 import 'package:storypad/widgets/maps/sp_flutter_map.dart';
 import 'package:storypad/widgets/maps/sp_google_maps_flutter.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 import 'map_picker_view_model.dart';

@@ -43,7 +43,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool _showCurrentLocation = false;
   bool get showCurrentLocation => _showCurrentLocation;
 
-  SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
+  SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
 
   final SpMapController mapController = SpMapController();
 
@@ -107,7 +107,6 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
             data: story,
             title: DateFormatHelper.yMEd_Hm(story.storyDate, Localizations.localeOf(viewContext)),
             size: const Size(62.0, 74.0),
-            alignment: Alignment.topCenter,
             anchor: const Offset(0.5, 1.0),
           ),
         )

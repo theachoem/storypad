@@ -18,7 +18,7 @@ class _MapContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SpMapSideButton(
-                    icon: SpIcons.keyboardLeft,
+                    icon: const BackButtonIcon(),
                     tooltip: 'Back',
                     onPressed: () => Navigator.of(context).pop(),
                   ),
@@ -32,13 +32,18 @@ class _MapContent extends StatelessWidget {
                         spacing: 8.0,
                         children: <Widget>[
                           SpMapSideButton(
-                            icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
+                            icon: SpAnimatedIcons.fadeScale(
+                              duration: Durations.long1,
+                              firstChild: const Icon(SpIcons.map),
+                              secondChild: const Icon(SpIcons.satellite),
+                              showFirst: viewModel.mapStyle == SpMapStyle.streets,
+                            ),
                             tooltip: 'Map style',
                             onPressed: () =>
                                 viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
                           ),
                           SpMapSideButton(
-                            icon: SpIcons.myLocation,
+                            icon: const Icon(SpIcons.myLocation),
                             tooltip: 'Current location',
                             onPressed: () => viewModel.goToCurrentLocation(context),
                           ),
@@ -87,6 +92,7 @@ class _MapContent extends StatelessWidget {
           mapStyle: viewModel.mapStyle,
           markers: viewModel.mapMarkers,
           onViewportChanged: viewModel.handleViewportChanged,
+          showCurrentLocation: viewModel.showCurrentLocation,
           markerBuilder: (context, marker) => _FlutterMapStoryMarker(
             imageFile: viewModel.firstAssetFileForStory(marker.data),
             color: viewModel.markerColorForStory(marker.data),

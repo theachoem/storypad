@@ -32,7 +32,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool _showCurrentLocation = false;
   bool get showCurrentLocation => _showCurrentLocation;
 
-  SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
+  SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
 
   SpMapStyle _mapStyle = SpMapStyle.streets;
   SpMapStyle get mapStyle => _mapStyle;
@@ -60,7 +60,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         data: selectedPlace,
         title: selectedPlace.displayLabel,
         clusterable: false,
-        size: const Size.square(42.0),
+        size: const Size(32.0, 42.0),
       ),
     ];
   }
