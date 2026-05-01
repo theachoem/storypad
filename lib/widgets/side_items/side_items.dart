@@ -12,6 +12,7 @@ import 'package:storypad/views/community/community_view.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/survey_banner.dart';
+import 'package:storypad/views/map/map_view.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/search/search_view.dart';
@@ -48,6 +49,13 @@ class SideItems {
         title: tr('page.search.title'),
         iconData: SpIcons.search,
         selectedIconData: SpIcons.search,
+        onTap: (context, route) => context.read<RootProvider>().navigate(route),
+      ),
+      IconButtonSideItem(
+        route: const MapRoute(),
+        title: tr('page.map.title'),
+        iconData: SpIcons.map,
+        selectedIconData: SpIcons.map,
         onTap: (context, route) => context.read<RootProvider>().navigate(route),
       ),
       IconButtonSideItem(
@@ -187,6 +195,12 @@ class SideItems {
           },
           onTap: (context) => const RelaxSoundsRoute().push(context),
         ),
+      TimelineSideBarItem(
+        icon: SpIcons.map,
+        tooltip: tr('page.map.title'),
+        wrap: (context, child) => SpFadeIn.bound(child: child),
+        onTap: (context) => const MapRoute().push(context),
+      ),
       TimelineSideBarItem(
         icon: SpIcons.search,
         tooltip: tr('page.search.title'),

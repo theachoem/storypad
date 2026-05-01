@@ -43,6 +43,8 @@
         <string>This app needs to access to the Photos library to add photo to your stories.</string>
         <key>NSCameraUsageDescription</key>
         <string>This app needs access to the camera so you can take a photo for your stories.</string>
+        <key>NSLocationUsageDescription</key>
+        <string>This app needs access to your location to add location info to your stories.</string>
         <key>NSHumanReadableCopyright</key>
         <string>$(PRODUCT_COPYRIGHT)</string>
         <key>NSMainNibFile</key>
