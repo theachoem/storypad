@@ -15,6 +15,8 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
 
   StoryTilePreferencesObject showVoiceCount(bool? showVoiceCount);
 
+  StoryTilePreferencesObject showLocation(bool? showLocation);
+
   StoryTilePreferencesObject displayCharacterCount(int? displayCharacterCount);
 
   /// Creates a new instance with the provided field values.
@@ -29,6 +31,7 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
     bool? showPageCount,
     bool? showTagLabels,
     bool? showVoiceCount,
+    bool? showLocation,
     int? displayCharacterCount,
   });
 }
@@ -58,6 +61,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
       call(showVoiceCount: showVoiceCount);
 
   @override
+  StoryTilePreferencesObject showLocation(bool? showLocation) =>
+      call(showLocation: showLocation);
+
+  @override
   StoryTilePreferencesObject displayCharacterCount(
     int? displayCharacterCount,
   ) => call(displayCharacterCount: displayCharacterCount);
@@ -75,6 +82,7 @@ class _$StoryTilePreferencesObjectCWProxyImpl
     Object? showPageCount = const $CopyWithPlaceholder(),
     Object? showTagLabels = const $CopyWithPlaceholder(),
     Object? showVoiceCount = const $CopyWithPlaceholder(),
+    Object? showLocation = const $CopyWithPlaceholder(),
     Object? displayCharacterCount = const $CopyWithPlaceholder(),
   }) {
     return StoryTilePreferencesObject(
@@ -94,6 +102,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
           ? _value.showVoiceCount
           // ignore: cast_nullable_to_non_nullable
           : showVoiceCount as bool?,
+      showLocation: showLocation == const $CopyWithPlaceholder()
+          ? _value.showLocation
+          // ignore: cast_nullable_to_non_nullable
+          : showLocation as bool?,
       displayCharacterCount:
           displayCharacterCount == const $CopyWithPlaceholder()
           ? _value.displayCharacterCount
@@ -122,6 +134,7 @@ StoryTilePreferencesObject _$StoryTilePreferencesObjectFromJson(
   showPageCount: json['show_page_count'] as bool?,
   showTagLabels: json['show_tag_labels'] as bool?,
   showVoiceCount: json['show_voice_count'] as bool?,
+  showLocation: json['show_location'] as bool?,
   displayCharacterCount: (json['display_character_count'] as num?)?.toInt(),
 );
 
@@ -132,5 +145,6 @@ Map<String, dynamic> _$StoryTilePreferencesObjectToJson(
   'show_page_count': instance.showPageCount,
   'show_tag_labels': instance.showTagLabels,
   'show_voice_count': instance.showVoiceCount,
+  'show_location': instance.showLocation,
   'display_character_count': instance.displayCharacterCount,
 };

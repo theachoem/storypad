@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -122,6 +123,14 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         _demoFeeling2Tag.id.toString(),
       ],
       feeling: null,
+      place: PlaceDbModel(
+        latitude: 0.0,
+        longitude: 0.0,
+        placeName: "Home",
+        country: "Cambodia",
+        locality: "Phnom Penh",
+        address: "123 Main St, Phnom Penh, Cambodia",
+      ),
       latestContent: story.latestContent!.copyWith(
         title: "My Journal Entry ✨",
         plainText: body,
@@ -234,6 +243,16 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             value: storyTilePreferences.showPageCount,
             onChanged: (value) {
               storyTilePreferences = storyTilePreferences.copyWith(showPageCount: value);
+              setState(() {});
+            },
+          ),
+          SwitchListTile.adaptive(
+            secondary: const Icon(SpIcons.map),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_location.title")),
+            value: storyTilePreferences.showLocation,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showLocation: value);
               setState(() {});
             },
           ),

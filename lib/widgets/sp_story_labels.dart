@@ -230,6 +230,7 @@ class SpStoryLabels extends StatelessWidget {
         ),
       );
     }
+
     if (onAddCurrentLocation != null && !story.hasLocation) {
       children.add(
         _buildIconButton(
@@ -241,7 +242,8 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (story.hasLocation) {
+    bool showLocation = preferences.showLocation || !fromStoryTile;
+    if (story.hasLocation && showLocation) {
       children.add(
         buildPin(
           context: context,
