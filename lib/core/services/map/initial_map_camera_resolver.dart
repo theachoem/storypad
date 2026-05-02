@@ -2,8 +2,8 @@ import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/widgets/maps/map_types.dart';
 
-/// Returns the device's current or last-known place, or `null` when unavailable.
-typedef DevicePlaceLoader = Future<PlaceDbModel?> Function();
+/// Returns the device's current or last-known location, or `null` when unavailable.
+typedef DeviceLocationLoader = Future<SpLatLng?> Function();
 
 /// Returns an ordered list of recent story locations (most recent first).
 typedef StoryLocationsLoader = Future<List<SpLatLng>> Function();
@@ -29,14 +29,14 @@ class InitialMapCameraResult {
 ///
 /// Fallback order (first non-null result wins):
 ///   1. [selectedPlace] — an existing picker place (e.g. story already has a location)
-///   2. Device place — from [fetchDevicePlace] (without prompting for permission)
+///   2. Device place — from [fetchDeviceLocation] (without prompting for permission)
 ///   3. Story locations — centroid of recent nearby journals from [fetchStoryLocations]
 ///   4. [fallbackCamera] — neutral world view at zoom 2
 ///
 /// Example:
 /// ```dart
 /// final resolver = InitialMapCameraResolver(
-///   fetchDevicePlace: SpLocationService.fetchLastKnownPlace,
+///   fetchDeviceLocation: SpLocationService.fetchLastKnownLocation,
 ///   fetchStoryLocations: () async {
 ///     final stories = await StoryDbModel.db.getRecentStoriesWithLocation();
 ///     return stories.map((s) => s.location).toList();
@@ -48,7 +48,7 @@ class InitialMapCameraResult {
 /// ```
 class InitialMapCameraResolver {
   const InitialMapCameraResolver({
-    required this.fetchDevicePlace,
+    required this.fetchDeviceLocation,
     required this.fetchStoryLocations,
     this.preferDevicePlace = true,
   });
@@ -58,7 +58,7 @@ class InitialMapCameraResolver {
     zoom: 2.0,
   );
 
-  final DevicePlaceLoader fetchDevicePlace;
+  final DeviceLocationLoader fetchDeviceLocation;
   final StoryLocationsLoader fetchStoryLocations;
   final bool preferDevicePlace;
 
@@ -70,16 +70,17 @@ class InitialMapCameraResolver {
       );
     }
 
+    final Future<InitialMapCameraResult?> deviceFuture = _resolveDevicePlace();
+    final Future<InitialMapCameraResult?> storyFuture = _resolveStoryLocations();
+
+    final InitialMapCameraResult? deviceResult = await deviceFuture;
+    final InitialMapCameraResult? storyResult = await storyFuture;
+
     if (preferDevicePlace) {
-      final InitialMapCameraResult? deviceResult = await _resolveDevicePlace();
       if (deviceResult != null) return deviceResult;
-    }
-
-    final InitialMapCameraResult? storyResult = await _resolveStoryLocations();
-    if (storyResult != null) return storyResult;
-
-    if (!preferDevicePlace) {
-      final InitialMapCameraResult? deviceResult = await _resolveDevicePlace();
+      if (storyResult != null) return storyResult;
+    } else {
+      if (storyResult != null) return storyResult;
       if (deviceResult != null) return deviceResult;
     }
 
@@ -90,11 +91,11 @@ class InitialMapCameraResolver {
   }
 
   Future<InitialMapCameraResult?> _resolveDevicePlace() async {
-    final PlaceDbModel? place = await fetchDevicePlace();
-    if (place == null || !_isValidPoint(place.latLng)) return null;
+    final SpLatLng? location = await fetchDeviceLocation();
+    if (location == null || !_isValidPoint(location)) return null;
 
     return InitialMapCameraResult(
-      camera: SpMapCamera(target: place.latLng, zoom: 13.0),
+      camera: SpMapCamera(target: location, zoom: 13.0),
       source: InitialMapCameraSource.devicePlace,
     );
   }

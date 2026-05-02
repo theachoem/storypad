@@ -78,8 +78,10 @@ class SpLocationService {
     }
   }
 
-  /// Reads the platform's last known position without requesting permission.
-  static Future<PlaceDbModel?> fetchLastKnownPlace() async {
+  /// Reads only last-known coordinates without reverse geocoding.
+  ///
+  /// Use this for fast, initial camera positioning where coordinates are enough.
+  static Future<SpLatLng?> fetchLastKnownLocation() async {
     try {
       final LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -89,9 +91,7 @@ class SpLocationService {
       final Position? position = await Geolocator.getLastKnownPosition();
       if (position == null) return null;
 
-      final latLng = SpLatLng(position.latitude, position.longitude);
-      return await SpGeocodingService.instance.reverseGeocode(latLng) ??
-          PlaceDbModel(latitude: position.latitude, longitude: position.longitude);
+      return SpLatLng(position.latitude, position.longitude);
     } catch (_) {
       return null;
     }

@@ -7,7 +7,7 @@ void main() {
   group('InitialMapCameraResolver', () {
     test('uses selected place before device or story locations', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => PlaceDbModel(latitude: 11.5564, longitude: 104.9282),
+        fetchDeviceLocation: () async => const SpLatLng(11.5564, 104.9282),
         fetchStoryLocations: () async => const <SpLatLng>[SpLatLng(40.7128, -74.0060)],
       );
 
@@ -22,7 +22,7 @@ void main() {
 
     test('uses device place before story locations when preferred', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => PlaceDbModel(latitude: 11.5564, longitude: 104.9282),
+        fetchDeviceLocation: () async => const SpLatLng(11.5564, 104.9282),
         fetchStoryLocations: () async => const <SpLatLng>[SpLatLng(13.3618, 103.8606)],
       );
 
@@ -35,7 +35,7 @@ void main() {
 
     test('falls back to recent story location when device place is unavailable', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => null,
+        fetchDeviceLocation: () async => null,
         fetchStoryLocations: () async => const <SpLatLng>[SpLatLng(11.5564, 104.9282)],
       );
 
@@ -48,7 +48,7 @@ void main() {
 
     test('centers a tight recent story cluster', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => null,
+        fetchDeviceLocation: () async => null,
         fetchStoryLocations: () async => const <SpLatLng>[
           SpLatLng(11.5564, 104.9282),
           SpLatLng(11.5610, 104.9240),
@@ -66,7 +66,7 @@ void main() {
 
     test('uses the most recent story instead of averaging far-apart continents', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => null,
+        fetchDeviceLocation: () async => null,
         fetchStoryLocations: () async => const <SpLatLng>[
           SpLatLng(11.5564, 104.9282),
           SpLatLng(37.7749, -122.4194),
@@ -83,7 +83,7 @@ void main() {
 
     test('ignores invalid coordinates', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => PlaceDbModel(latitude: 120.0, longitude: 104.9282),
+        fetchDeviceLocation: () async => const SpLatLng(120.0, 104.9282),
         fetchStoryLocations: () async => const <SpLatLng>[
           SpLatLng(double.nan, 104.9282),
           SpLatLng(11.5564, 104.9282),
@@ -98,7 +98,7 @@ void main() {
 
     test('uses neutral fallback when no source is available', () async {
       final resolver = InitialMapCameraResolver(
-        fetchDevicePlace: () async => null,
+        fetchDeviceLocation: () async => null,
         fetchStoryLocations: () async => const <SpLatLng>[],
       );
 

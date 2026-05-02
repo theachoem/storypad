@@ -50,9 +50,9 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> resolveInitialCamera() async {
     final resolver = InitialMapCameraResolver(
-      fetchDevicePlace: () => SpLocationService.fetchCurrentPlace(requestPermission: false),
+      fetchDeviceLocation: SpLocationService.fetchLastKnownLocation,
       fetchStoryLocations: () async {
-        final stories = await StoryDbModel.db.getRecentStoriesWithLocation();
+        final stories = await StoryDbModel.db.getRecentStoriesWithLocation(limit: 20);
         return stories.map((story) => story.location).toList();
       },
     );
