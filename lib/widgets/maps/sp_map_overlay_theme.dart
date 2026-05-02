@@ -53,11 +53,23 @@ class _SpMapOverlayThemeState extends State<SpMapOverlayTheme> {
       dynamicSchemeVariant: .monochrome,
     );
 
-    final theme = AppTheme.getTheme(
+    final baseTheme = AppTheme.getTheme(
       colorScheme: colorScheme,
       fontFamily: context.read<DevicePreferencesProvider>().preferences.fontFamily,
       fontWeight: context.read<DevicePreferencesProvider>().preferences.fontWeight,
       scaffoldBackgroundColor: colorScheme.surface,
+    );
+
+    final theme = baseTheme.copyWith(
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          shape: CircleBorder(
+            side: BorderSide(color: baseTheme.dividerColor),
+          ),
+          backgroundColor: colorScheme.surface.withValues(alpha: colorScheme.brightness == .dark ? 0.8 : 0.5),
+          foregroundColor: colorScheme.onSurface,
+        ),
+      ),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

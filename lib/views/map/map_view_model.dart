@@ -14,6 +14,8 @@ import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
 import 'map_view.dart';
 import '../../widgets/maps/map_types.dart';
@@ -232,5 +234,14 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     _mapStyle = mapStyle;
     notifyListeners();
+  }
+
+  Future<void> goToNewPage(BuildContext context) async {
+    final addedStory = await EditStoryRoute(id: null, autoRequestLocation: true).push(context);
+    if (addedStory != null) {
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        HomeView.reload(debugSource: '$runtimeType#goToNewPage');
+      });
+    }
   }
 }

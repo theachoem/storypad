@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;
 import 'package:storypad/widgets/maps/sp_map_overlay_theme.dart';
-import 'package:storypad/widgets/maps/sp_map_side_button.dart';
 import 'package:storypad/widgets/maps/sp_flutter_map.dart';
 import 'package:storypad/widgets/maps/sp_google_maps_flutter.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 import 'map_view_model.dart';
 import '../../widgets/maps/map_types.dart';

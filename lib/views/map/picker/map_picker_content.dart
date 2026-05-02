@@ -11,123 +11,181 @@ class _MapPickerContent extends StatelessWidget {
     final bool isResolving = viewModel.isResolvingPlace;
 
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          _MapPickerLayer(viewModel: viewModel),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      SpMapSideButton(
-                        icon: const BackButtonIcon(),
-                        tooltip: 'Back',
-                        onPressed: () {
-                          Navigator.of(context).pop(MapPickerResult.cancel(viewModel.initialSelectedPlace));
-                        },
-                      ),
-                      const Spacer(),
-                      if (viewModel.canRemove)
-                        SpMapSideButton(
-                          icon: const Icon(SpIcons.delete),
-                          tooltip: 'Remove selected place',
-                          isDanger: true,
-                          onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
-                        ),
-                      const SizedBox(width: 8.0),
-                      _MapPickerActionButton(
-                        icon: SpIcons.check,
-                        label: 'Confirm',
-                        tooltip: 'Confirm location',
-                        enabled: viewModel.canConfirm,
-                        isPrimary: true,
-                        onPressed: () async {
-                          final MapPickerResult? result = await viewModel.buildConfirmResult();
-                          if (!context.mounted || result == null) return;
-                          Navigator.of(context).pop(result);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8.0),
-                  GestureDetector(
-                    onTap: selectedPlace == null
-                        ? null
-                        : () => viewModel.mapController.animateTo(
-                            selectedPlace.latitude,
-                            selectedPlace.longitude,
-                            zoom: 15.0,
-                            bearing: 0.0,
-                          ),
-                    child: _SelectedPlaceCard(
-                      place: selectedPlace,
-                      isResolving: isResolving,
-                      onEditPressed: selectedPlace == null
-                          ? null
-                          : () async {
-                              final List<String>? values = await Navigator.of(context).push<List<String>>(
-                                MaterialPageRoute(
-                                  builder: (context) => SpTextInputsPage(
-                                    appBar: AppBar(
-                                      title: const Text('Edit place'),
-                                    ),
-                                    saveButtonLabel: 'Apply',
-                                    fields: <SpTextInputField>[
-                                      SpTextInputField(
-                                        labelText: 'Place name',
-                                        hintText: 'Coffee shop, park, museum...',
-                                        initialText: selectedPlace.placeName,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-
-                              if (!context.mounted || values == null || values.length != 1) return;
-                              viewModel.updateSelectedPlaceDetails(
-                                placeName: values[0],
-                                locality: selectedPlace.locality,
-                                country: selectedPlace.country,
-                                address: selectedPlace.address,
-                              );
-                            },
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: .end,
-                      mainAxisAlignment: .end,
-                      spacing: 8.0,
-                      children: [
-                        SpMapSideButton(
-                          icon: SpAnimatedIcons.fadeScale(
-                            duration: Durations.long1,
-                            firstChild: const Icon(SpIcons.map),
-                            secondChild: const Icon(SpIcons.satellite),
-                            showFirst: viewModel.mapStyle == SpMapStyle.streets,
-                          ),
-                          tooltip: 'Map style',
-                          onPressed: () =>
-                              viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
-                        ),
-                        SpMapSideButton(
-                          icon: const Icon(SpIcons.myLocation),
-                          tooltip: 'Current location',
-                          onPressed: () => viewModel.goToCurrentLocation(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).pop(MapPickerResult.cancel(viewModel.initialSelectedPlace));
+          },
+        ),
+        actions: [
+          if (viewModel.canRemove)
+            IconButton.filledTonal(
+              style: IconButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+              tooltip: 'Remove selected place',
+              icon: const Icon(SpIcons.delete),
+              onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
+            ),
+          FilledButton.icon(
+            onPressed: viewModel.canConfirm
+                ? () async {
+                    final MapPickerResult? result = await viewModel.buildConfirmResult();
+                    if (!context.mounted || result == null) return;
+                    Navigator.of(context).pop(result);
+                  }
+                : null,
+            icon: const Icon(SpIcons.check),
+            label: const Text('Confirm'),
+          ),
+          const SizedBox(width: 8.0),
+        ],
+      ),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .end,
+        children: [
+          IconButton(
+            tooltip: 'Map style',
+            icon: SpAnimatedIcons.fadeScale(
+              duration: Durations.long1,
+              firstChild: const Icon(SpIcons.map),
+              secondChild: const Icon(SpIcons.satellite),
+              showFirst: viewModel.mapStyle == SpMapStyle.streets,
+            ),
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(8.0),
               ),
             ),
+
+            onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
+          ),
+          IconButton(
+            tooltip: 'Current location',
+            icon: const Icon(SpIcons.myLocation),
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            onPressed: () => viewModel.goToCurrentLocation(context),
           ),
         ],
+      ),
+      body: Stack(
+        children: [
+          _MapPickerLayer(viewModel: viewModel),
+          buildSelectedPlaceCard(context, selectedPlace, isResolving),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSelectedPlaceCard(BuildContext context, PlaceDbModel? selectedPlace, bool isResolving) {
+    return Container(
+      margin: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + kToolbarHeight,
+        left: MediaQuery.of(context).padding.left + 16.0,
+        right: MediaQuery.of(context).padding.right + 16.0,
+      ),
+      child: Builder(
+        builder: (context) {
+          final ColorScheme colorScheme = Theme.of(context).colorScheme;
+          final String title = selectedPlace == null
+              ? 'Tap map to select a place'
+              : isResolving
+              ? 'Resolving place...'
+              : selectedPlace.displayLabel;
+
+          final String subtitle = selectedPlace == null
+              ? 'or use current location'
+              : isResolving
+              ? 'Please wait'
+              : () {
+                  final List<String> parts = <String>[
+                    if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)
+                      selectedPlace.locality!.trim(),
+                    if (selectedPlace.country != null && selectedPlace.country!.trim().isNotEmpty)
+                      selectedPlace.country!.trim(),
+                  ];
+                  if (parts.isNotEmpty) return parts.join(', ');
+                  return '${selectedPlace.latitude.toStringAsFixed(5)}, ${selectedPlace.longitude.toStringAsFixed(5)}';
+                }();
+
+          return Material(
+            color: colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).dividerColor),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              enabled: true,
+              onTap: selectedPlace == null
+                  ? null
+                  : () => viewModel.mapController.animateTo(
+                      selectedPlace.latitude,
+                      selectedPlace.longitude,
+                      zoom: 15.0,
+                      bearing: 0.0,
+                    ),
+              leading: isResolving
+                  ? const SizedBox.square(
+                      dimension: 18.0,
+                      child: CircularProgressIndicator.adaptive(),
+                    )
+                  : Icon(SpIcons.locationPin, color: colorScheme.primary),
+              title: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: IconButton(
+                style: IconButton.styleFrom(shape: const CircleBorder()),
+                icon: const Icon(SpIcons.edit),
+                onPressed: selectedPlace == null
+                    ? null
+                    : () async {
+                        final List<String>? values = await Navigator.of(context).push<List<String>>(
+                          MaterialPageRoute(
+                            builder: (context) => SpTextInputsPage(
+                              appBar: AppBar(
+                                title: const Text('Edit place'),
+                              ),
+                              saveButtonLabel: 'Apply',
+                              fields: <SpTextInputField>[
+                                SpTextInputField(
+                                  labelText: 'Place name',
+                                  hintText: 'Coffee shop, park, museum...',
+                                  initialText: selectedPlace.placeName,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+
+                        if (!context.mounted || values == null || values.length != 1) return;
+                        viewModel.updateSelectedPlaceDetails(
+                          placeName: values[0],
+                          locality: selectedPlace.locality,
+                          country: selectedPlace.country,
+                          address: selectedPlace.address,
+                        );
+                      },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -149,6 +207,7 @@ class _MapPickerLayer extends StatelessWidget {
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
         return SpGoogleMap<PlaceDbModel>(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight + 8.0, bottom: 112.0),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
@@ -166,195 +225,5 @@ class _MapPickerLayer extends StatelessWidget {
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
     }
-  }
-}
-
-class _MapPickerActionButton extends StatelessWidget {
-  static const double _minHeight = 48.0;
-
-  const _MapPickerActionButton({
-    required this.label,
-    required this.tooltip,
-    required this.onPressed,
-    this.icon,
-    this.enabled = true,
-    this.isPrimary = false,
-
-    // ignore: unused_element_parameter
-    this.isDanger = false,
-  });
-
-  final String label;
-  final String tooltip;
-  final VoidCallback onPressed;
-  final IconData? icon;
-  final bool enabled;
-  final bool isPrimary;
-  final bool isDanger;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    final Color backgroundColor;
-    final Color foregroundColor;
-    if (!enabled) {
-      backgroundColor = colorScheme.surface.withValues(alpha: 0.72);
-      foregroundColor = colorScheme.onSurface.withValues(alpha: 0.44);
-    } else if (isDanger) {
-      backgroundColor = colorScheme.errorContainer.withValues(alpha: 0.96);
-      foregroundColor = colorScheme.onErrorContainer;
-    } else if (isPrimary) {
-      backgroundColor = colorScheme.primary;
-      foregroundColor = colorScheme.onPrimary;
-    } else {
-      backgroundColor = colorScheme.surface.withValues(alpha: 0.94);
-      foregroundColor = colorScheme.onSurface;
-    }
-
-    return Tooltip(
-      message: tooltip,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18.0,
-              offset: const Offset(0.0, 8.0),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8.0),
-            onTap: enabled ? onPressed : null,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: _minHeight),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (icon != null) ...<Widget>[
-                      Icon(icon, size: 18.0, color: foregroundColor),
-                      const SizedBox(width: 6.0),
-                    ],
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: foregroundColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SelectedPlaceCard extends StatelessWidget {
-  const _SelectedPlaceCard({
-    required this.place,
-    required this.isResolving,
-    required this.onEditPressed,
-  });
-
-  final PlaceDbModel? place;
-  final bool isResolving;
-  final VoidCallback? onEditPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final String title = _resolveTitle();
-    final String subtitle = _resolveSubtitle();
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colorScheme.surface.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 18.0,
-            offset: const Offset(0.0, 8.0),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-        child: Row(
-          children: <Widget>[
-            if (isResolving)
-              const SizedBox.square(
-                dimension: 18.0,
-                child: CircularProgressIndicator.adaptive(),
-              )
-            else
-              Icon(SpIcons.locationPin, size: 18.0, color: colorScheme.primary),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2.0),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(SpIcons.edit),
-              onPressed: onEditPressed,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _resolveTitle() {
-    if (place == null) return 'Tap map to select a place';
-    if (isResolving) return 'Resolving place...';
-    return place!.displayLabel;
-  }
-
-  String _resolveSubtitle() {
-    if (place == null) return 'or use current location';
-    if (isResolving) return 'Please wait';
-
-    final List<String> parts = <String>[
-      if (place!.locality != null && place!.locality!.trim().isNotEmpty) place!.locality!.trim(),
-      if (place!.country != null && place!.country!.trim().isNotEmpty) place!.country!.trim(),
-    ];
-    if (parts.isNotEmpty) {
-      return parts.join(', ');
-    }
-
-    return '${place!.latitude.toStringAsFixed(5)}, ${place!.longitude.toStringAsFixed(5)}';
   }
 }

@@ -8,55 +8,67 @@ class _MapContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          _buildMapLayer(context),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SpMapSideButton(
-                    icon: const BackButtonIcon(),
-                    tooltip: 'Back',
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  const Spacer(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      const Spacer(),
-                      Column(
-                        mainAxisSize: .min,
-                        spacing: 8.0,
-                        children: <Widget>[
-                          SpMapSideButton(
-                            icon: SpAnimatedIcons.fadeScale(
-                              duration: Durations.long1,
-                              firstChild: const Icon(SpIcons.map),
-                              secondChild: const Icon(SpIcons.satellite),
-                              showFirst: viewModel.mapStyle == SpMapStyle.streets,
-                            ),
-                            tooltip: 'Map style',
-                            onPressed: () =>
-                                viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
-                          ),
-                          SpMapSideButton(
-                            icon: const Icon(SpIcons.myLocation),
-                            tooltip: 'Current location',
-                            onPressed: () => viewModel.goToCurrentLocation(context),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        leading: BackButton(
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .end,
+        children: [
+          IconButton(
+            tooltip: 'Map style',
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(8.0),
               ),
             ),
+            icon: SpAnimatedIcons.fadeScale(
+              duration: Durations.long1,
+              firstChild: const Icon(SpIcons.map),
+              secondChild: const Icon(SpIcons.satellite),
+              showFirst: viewModel.mapStyle == SpMapStyle.streets,
+            ),
+            onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
+          ),
+          SpSingleStateWidget.listen(
+            initialValue: false,
+            builder: (context, loading, notifier) {
+              return IconButton(
+                tooltip: 'Current location',
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).dividerColor),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                icon: loading
+                    ? const SizedBox.square(
+                        dimension: 24.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const Icon(SpIcons.myLocation),
+                onPressed: () async {
+                  notifier.value = true;
+                  await viewModel.goToCurrentLocation(context);
+                  notifier.value = false;
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 4.0),
+          FloatingActionButton(
+            child: const Icon(SpIcons.newStory),
+            onPressed: () => viewModel.goToNewPage(context),
           ),
         ],
       ),
+      body: _buildMapLayer(context),
     );
   }
 
@@ -67,10 +79,12 @@ class _MapContent extends StatelessWidget {
       );
     }
 
+    final double topPadding = MediaQuery.of(context).padding.top + kToolbarHeight + 8.0;
+
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMaps:
         return SpGoogleMap<MapStoryObject>(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8.0),
+          padding: EdgeInsets.only(top: topPadding, bottom: 112.0),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
@@ -127,7 +141,7 @@ class _FlutterMapStoryMarker extends StatelessWidget {
               child: imageFile != null
                   ? Stack(
                       fit: StackFit.expand,
-                      children: <Widget>[
+                      children: [
                         Image.file(
                           imageFile!,
                           fit: BoxFit.cover,
