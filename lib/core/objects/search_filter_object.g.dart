@@ -13,6 +13,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject assetId(int? assetId);
 
+  SearchFilterObject storyIds(Set<int>? storyIds);
+
   SearchFilterObject tagId(int? tagId);
 
   SearchFilterObject tagIds(Set<int>? tagIds);
@@ -48,6 +50,7 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<int> years,
     Set<PathType> types,
     int? assetId,
+    Set<int>? storyIds,
     int? tagId,
     Set<int>? tagIds,
     String? query,
@@ -78,6 +81,9 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
 
   @override
   SearchFilterObject assetId(int? assetId) => call(assetId: assetId);
+
+  @override
+  SearchFilterObject storyIds(Set<int>? storyIds) => call(storyIds: storyIds);
 
   @override
   SearchFilterObject tagId(int? tagId) => call(tagId: tagId);
@@ -130,6 +136,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? years = const $CopyWithPlaceholder(),
     Object? types = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
+    Object? storyIds = const $CopyWithPlaceholder(),
     Object? tagId = const $CopyWithPlaceholder(),
     Object? tagIds = const $CopyWithPlaceholder(),
     Object? query = const $CopyWithPlaceholder(),
@@ -156,6 +163,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.assetId
           // ignore: cast_nullable_to_non_nullable
           : assetId as int?,
+      storyIds: storyIds == const $CopyWithPlaceholder()
+          ? _value.storyIds
+          // ignore: cast_nullable_to_non_nullable
+          : storyIds as Set<int>?,
       tagId: tagId == const $CopyWithPlaceholder()
           ? _value.tagId
           // ignore: cast_nullable_to_non_nullable
@@ -229,6 +240,9 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
           .map((e) => $enumDecode(_$PathTypeEnumMap, e))
           .toSet(),
       assetId: (json['asset_id'] as num?)?.toInt(),
+      storyIds: (json['story_ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toSet(),
       tagId: (json['tag_id'] as num?)?.toInt(),
       tagIds: (json['tag_ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -250,6 +264,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
     <String, dynamic>{
       'years': instance.years.toList(),
+      'story_ids': instance.storyIds?.toList(),
       'exclude_years': instance.excludeYears?.toList(),
       'query': instance.query,
       'month': instance.month,

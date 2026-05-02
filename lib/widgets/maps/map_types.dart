@@ -5,13 +5,26 @@ import 'package:storypad/core/objects/sp_latlng.dart';
 typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
 enum SpMapRenderer {
-  googleMaps,
-  flutterMap,
+  googleMap,
+  flutterMap
+  ;
+
+  static SpMapRenderer get defaultRenderer => googleMap;
 }
 
 enum SpMapStyle {
   streets,
-  satellite,
+  satellite
+  ;
+
+  Brightness get overlayBrightness {
+    switch (this) {
+      case SpMapStyle.streets:
+        return .light;
+      case SpMapStyle.satellite:
+        return .dark;
+    }
+  }
 }
 
 extension SpMapStyleExtension on SpMapStyle {
@@ -65,7 +78,6 @@ class SpMapMarker<T> {
     this.snippet,
     this.clusterable = true,
     this.size = const Size.square(42.0),
-    this.alignment = Alignment.center,
     this.anchor = const Offset(0.5, 0.5),
   });
 
@@ -76,6 +88,5 @@ class SpMapMarker<T> {
   final String? snippet;
   final bool clusterable;
   final Size size;
-  final Alignment alignment;
   final Offset anchor;
 }

@@ -18,7 +18,8 @@ class SpIcons {
   static const IconData search = kIsCupertino ? CupertinoIcons.search : Icons.search;
   static const IconData setting = kIsCupertino ? CupertinoIcons.settings : Icons.settings_outlined;
   static const IconData map = kIsCupertino ? CupertinoIcons.map : Icons.map_outlined;
-  static const IconData myLocation = kIsCupertino ? CupertinoIcons.location : Icons.my_location;
+  static const IconData locationPin = kIsCupertino ? CupertinoIcons.location_solid : Icons.location_pin;
+  static const IconData myLocation = kIsCupertino ? CupertinoIcons.location : Icons.my_location_outlined;
   static const IconData satellite = kIsCupertino ? CupertinoIcons.map_fill : Icons.satellite_alt_outlined;
   static const IconData tag = kIsCupertino ? CupertinoIcons.tag : Icons.sell_outlined;
   static const IconData archive = kIsCupertino ? CupertinoIcons.archivebox : Icons.archive_outlined;

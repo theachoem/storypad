@@ -2,24 +2,41 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
+import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
-import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
+import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/widgets/maps/sp_map_controller.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
 import 'map_picker_view.dart';
 
 class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   final MapPickerRoute params;
 
+  // Use view context to push / navigate to other pages to avoid using map overlay theme on those pages.
+  final BuildContext viewContext;
+
   MapPickerViewModel({
     required this.params,
-  }) : _selectedPlace = params.initialSelectedPlace;
+    required this.viewContext,
+  }) : _selectedPlace = params.initialSelectedPlace {
+    unawaited(resolveInitialCamera());
+  }
 
   final SpMapController mapController = SpMapController();
 
-  SpMapRenderer get mapRenderer => SpMapRenderer.googleMaps;
+  SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
+
+  bool _isCameraResolved = false;
+  bool get isCameraResolved => _isCameraResolved;
+
+  bool _showCurrentLocation = false;
+  bool get showCurrentLocation => _showCurrentLocation;
+
+  SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
 
   SpMapStyle _mapStyle = SpMapStyle.streets;
   SpMapStyle get mapStyle => _mapStyle;
@@ -34,19 +51,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool get canRemove => params.initialSelectedPlace != null;
   bool get hasSelectedPlace => _selectedPlace != null;
 
-  SpMapCamera get initialSpMapCamera {
-    if (params.initialSelectedPlace != null) {
-      return SpMapCamera(
-        target: SpLatLng(params.initialSelectedPlace!.latitude, params.initialSelectedPlace!.longitude),
-        zoom: 15.0,
-      );
-    }
-
-    return const SpMapCamera(
-      target: SpLatLng(37.7815, -122.4310),
-      zoom: 10.8,
-    );
-  }
+  SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
 
   List<SpMapMarker<PlaceDbModel>> get selectedMarkers {
     final PlaceDbModel? selectedPlace = _selectedPlace;
@@ -59,7 +64,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         data: selectedPlace,
         title: selectedPlace.displayLabel,
         clusterable: false,
-        size: const Size.square(42.0),
+        size: const Size(32.0, 42.0),
       ),
     ];
   }
@@ -72,7 +77,35 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     final PlaceDbModel? initialPlace = params.initialSelectedPlace;
     if (initialPlace == null) return true;
-    return selectedPlace.latitude != initialPlace.latitude || selectedPlace.longitude != initialPlace.longitude;
+
+    return selectedPlace.latitude != initialPlace.latitude ||
+        selectedPlace.longitude != initialPlace.longitude ||
+        _normalizeText(selectedPlace.placeName) != _normalizeText(initialPlace.placeName) ||
+        _normalizeText(selectedPlace.locality) != _normalizeText(initialPlace.locality) ||
+        _normalizeText(selectedPlace.country) != _normalizeText(initialPlace.country) ||
+        _normalizeText(selectedPlace.address) != _normalizeText(initialPlace.address);
+  }
+
+  Future<void> resolveInitialCamera() async {
+    final resolver = InitialMapCameraResolver(
+      fetchDeviceLocation: SpLocationService.fetchLastKnownLocation,
+      fetchStoryLocations: () async {
+        final stories = await StoryDbModel.db.getRecentStoriesWithLocation(limit: 20);
+        return stories.map((story) => story.location).toList();
+      },
+    );
+
+    final result = await resolver.resolve(selectedPlace: params.initialSelectedPlace);
+    if (disposed) return;
+    if (params.initialSelectedPlace == null && _selectedPlace != null) return;
+
+    _initialSpMapCamera = result.camera;
+    _isCameraResolved = true;
+    if (result.source == InitialMapCameraSource.devicePlace) {
+      _showCurrentLocation = true;
+    }
+
+    notifyListeners();
   }
 
   void setMapStyle(SpMapStyle mapStyle) {
@@ -92,10 +125,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     unawaited(_resolveSelectedPlace(selectedVersion: _selectedVersion));
   }
 
-  Future<void> goToCurrentLocation() async {
-    final place = await SpLocationService.fetchCurrentPlace();
-    if (place == null) return;
+  Future<void> goToCurrentLocation(BuildContext context) async {
+    final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
+    if (!context.mounted || place == null) return;
 
+    _showCurrentLocation = true;
     _selectedVersion += 1;
     _selectedPlace = place;
     notifyListeners();
@@ -110,6 +144,24 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> resetRotation() async {
     await mapController.resetRotation();
+  }
+
+  void updateSelectedPlaceDetails({
+    required String? placeName,
+    required String? locality,
+    required String? country,
+    required String? address,
+  }) {
+    final PlaceDbModel? selectedPlace = _selectedPlace;
+    if (selectedPlace == null) return;
+
+    _selectedPlace = selectedPlace.copyWith(
+      placeName: _normalizeText(placeName),
+      locality: _normalizeText(locality),
+      country: _normalizeText(country),
+      address: _normalizeText(address),
+    );
+    notifyListeners();
   }
 
   Future<MapPickerResult?> buildConfirmResult() async {
@@ -152,5 +204,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
       }
     }
+  }
+
+  String? _normalizeText(String? value) {
+    if (value == null) return null;
+    final String trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 }

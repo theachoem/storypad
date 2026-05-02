@@ -9,9 +9,8 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
-import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_map_controller.dart';
-import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
+import 'package:storypad/widgets/maps/sp_map_controller.dart';
 
 typedef SpFlutterMapMarkerBuilder<T> = Widget Function(BuildContext context, SpMapMarker<T> marker);
 typedef SpFlutterMapClusterMarkerBuilder<T> = Widget Function(BuildContext context, List<SpMapMarker<T>> markers);
@@ -25,6 +24,7 @@ class SpFlutterMap<T> extends StatefulWidget {
     required this.markers,
     this.onMapTap,
     this.onMarkerTap,
+    this.onClusterTap,
     this.markerBuilder,
     this.clusterMarkerBuilder,
     this.onViewportChanged,
@@ -37,6 +37,7 @@ class SpFlutterMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
+  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
   final SpMapViewportChanged? onViewportChanged;
@@ -149,6 +150,7 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
           MarkerLayer(
             markers: <Marker>[
               Marker(
+                rotate: true,
                 point: _currentLocation!,
                 width: 20.0,
                 height: 20.0,
@@ -225,6 +227,12 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
         rotate: true,
         child: GestureDetector(
           onTap: () {
+            final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
+            if (onClusterTap != null) {
+              onClusterTap(cluster.markers);
+              return;
+            }
+
             if (!_isFiniteLatLng(cluster.position)) return;
 
             final double nextZoom = (_safeZoom(_currentZoom) + 2.0).clamp(_minZoom, _maxZoom).toDouble();
@@ -242,10 +250,13 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
       point: _toLatLng(marker.point),
       width: marker.size.width,
       height: marker.size.height,
-      alignment: marker.alignment,
+      alignment: widget.markerBuilder != null ? Alignment.center : const Alignment(0.0, -0.6),
+      rotate: true,
       child: GestureDetector(
         onTap: () => widget.onMarkerTap?.call(marker),
-        child: widget.markerBuilder?.call(context, marker) ?? const _FlutterMapDefaultMarker(),
+        child:
+            widget.markerBuilder?.call(context, marker) ??
+            const _FlutterMapDefaultMarker(tipOffset: -4.0, color: Colors.redAccent),
       ),
     );
   }
@@ -506,17 +517,86 @@ class _FlutterMapClusterMarker extends StatelessWidget {
   }
 }
 
+/// A teardrop-shaped map pin widget.
+///
+/// The tip of the pin sits at the bottom-center of the bounding box.
+/// Use [Alignment.bottomCenter] on the flutter_map [Marker] so the tip
+/// aligns exactly with the geographic coordinate.
+///
+/// Use [tipOffset] to fine-tune vertical positioning:
+/// - negative values move the tip upward (pin appears higher)
+/// - positive values move the tip downward (pin appears lower)
 class _FlutterMapDefaultMarker extends StatelessWidget {
-  const _FlutterMapDefaultMarker();
+  const _FlutterMapDefaultMarker({
+    required this.color,
+    required this.tipOffset,
+  });
+
+  /// Pin fill color
+  final Color color;
+
+  /// Vertical offset applied to the tip point inside the painter.
+  /// Negative = tip moves up; positive = tip moves down.
+  final double tipOffset;
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
-      SpIcons.myLocation,
-      color: Theme.of(context).colorScheme.primary,
-      size: 40.0,
+    return CustomPaint(
+      painter: _PinPainter(color: color, tipOffset: tipOffset),
     );
   }
+}
+
+/// Draws a teardrop-shaped map pin.
+///
+/// The tip of the pin is at the exact bottom-center of the bounding box,
+/// so using [Alignment.bottomCenter] on the flutter_map [Marker] places
+/// the tip precisely on the geographic coordinate.
+class _PinPainter extends CustomPainter {
+  const _PinPainter({required this.color, this.tipOffset = 0.0});
+
+  final Color color;
+  final double tipOffset;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double cx = size.width / 2.0;
+    // Circle occupies the top ~70% of the bounding box.
+    final double r = size.width / 2.0 * 0.82;
+    final double cy = r + 2.0;
+
+    final Paint fill = Paint()..color = color;
+    final Paint shadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.28)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0);
+    final Paint white = Paint()..color = Colors.white;
+
+    // Shadow (offset down by 3)
+    canvas.drawCircle(Offset(cx, cy + 3.0), r, shadow);
+
+    // Circle head
+    canvas.drawCircle(Offset(cx, cy), r, fill);
+
+    // Tail: smooth teardrop path meeting at bottom-center tip.
+    // Tangent points are at ±35° from the bottom of the circle.
+    const double angle = 35.0 * math.pi / 180.0;
+    final Offset leftTangent = Offset(cx - r * math.sin(angle), cy + r * math.cos(angle));
+    final Offset rightTangent = Offset(cx + r * math.sin(angle), cy + r * math.cos(angle));
+    final Offset tip = Offset(cx, size.height + tipOffset);
+
+    final Path tail = Path()
+      ..moveTo(leftTangent.dx, leftTangent.dy)
+      ..quadraticBezierTo(cx - 2.0, size.height - 4.0, tip.dx, tip.dy)
+      ..quadraticBezierTo(cx + 2.0, size.height - 4.0, rightTangent.dx, rightTangent.dy)
+      ..close();
+    canvas.drawPath(tail, fill);
+
+    // White inner ring
+    canvas.drawCircle(Offset(cx, cy), r * 0.42, white);
+  }
+
+  @override
+  bool shouldRepaint(_PinPainter old) => old.color != color || old.tipOffset != tipOffset;
 }
 
 class _FlutterMapCurrentLocationMarker extends StatelessWidget {

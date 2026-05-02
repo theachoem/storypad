@@ -8,6 +8,7 @@ part 'search_filter_object.g.dart';
 @JsonSerializable()
 class SearchFilterObject {
   final Set<int> years;
+  final Set<int>? storyIds;
   final Set<int>? excludeYears;
   final String? query;
   final int? month;
@@ -27,6 +28,7 @@ class SearchFilterObject {
     required this.years,
     required this.types,
     required this.assetId,
+    this.storyIds,
     this.tagId,
     Set<int>? tagIds,
     this.query,
@@ -45,6 +47,7 @@ class SearchFilterObject {
     Map<String, dynamic> filters = {};
 
     if (query != null) filters['query'] = query;
+    if (storyIds?.isNotEmpty == true) filters['ids'] = storyIds?.toList();
     if (years.isNotEmpty) filters['years'] = years.toList();
     if (month != null) filters['month'] = month;
     if (day != null) filters['day'] = day;

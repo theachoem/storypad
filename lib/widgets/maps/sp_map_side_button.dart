@@ -6,11 +6,11 @@ class SpMapSideButton extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onPressed,
-    this.size = 44.0,
+    this.size = 48.0,
     this.isDanger = false,
   });
 
-  final IconData icon;
+  final Widget icon;
   final String tooltip;
   final VoidCallback onPressed;
   final double size;
@@ -43,7 +43,10 @@ class SpMapSideButton extends StatelessWidget {
             child: SizedBox.square(
               dimension: size,
               child: Center(
-                child: Icon(icon, size: 20.0, color: isDanger ? colorScheme.error : null),
+                child: IconTheme(
+                  data: IconThemeData(color: isDanger ? colorScheme.error : colorScheme.onSurface),
+                  child: icon,
+                ),
               ),
             ),
           ),

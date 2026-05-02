@@ -33,6 +33,7 @@ class _ShowTagContent extends StatelessWidget {
       bottomNavigationBar: buildBottomNavigationBar(context, state),
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: FloatingActionButton(
+        tooltip: tr("button.new_story"),
         child: const Icon(SpIcons.newStory),
         onPressed: () => viewModel.goToNewPage(context),
       ),

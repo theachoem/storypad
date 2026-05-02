@@ -11,89 +11,180 @@ class _MapPickerContent extends StatelessWidget {
     final bool isResolving = viewModel.isResolvingPlace;
 
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          _MapPickerLayer(viewModel: viewModel),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      SpMapSideButton(
-                        icon: SpIcons.keyboardLeft,
-                        tooltip: 'Back',
-                        onPressed: () {
-                          Navigator.of(context).pop(MapPickerResult.cancel(viewModel.initialSelectedPlace));
-                        },
-                      ),
-                      const Spacer(),
-                      if (viewModel.canRemove)
-                        SpMapSideButton(
-                          icon: SpIcons.delete,
-                          tooltip: 'Remove selected place',
-                          isDanger: true,
-                          onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
-                        ),
-                      const SizedBox(width: 8.0),
-                      _MapPickerActionButton(
-                        icon: SpIcons.check,
-                        label: 'Confirm',
-                        tooltip: 'Confirm location',
-                        enabled: viewModel.canConfirm,
-                        isPrimary: true,
-                        onPressed: () async {
-                          final MapPickerResult? result = await viewModel.buildConfirmResult();
-                          if (!context.mounted || result == null) return;
-                          Navigator.of(context).pop(result);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8.0),
-                  GestureDetector(
-                    onTap: selectedPlace == null
-                        ? null
-                        : () => viewModel.mapController.animateTo(
-                            selectedPlace.latitude,
-                            selectedPlace.longitude,
-                            zoom: 15.0,
-                            bearing: 0.0,
-                          ),
-                    child: _SelectedPlaceCard(
-                      place: selectedPlace,
-                      isResolving: isResolving,
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: .end,
-                      mainAxisAlignment: .end,
-                      spacing: 8.0,
-                      children: [
-                        SpMapSideButton(
-                          icon: viewModel.mapStyle == SpMapStyle.streets ? SpIcons.map : SpIcons.satellite,
-                          tooltip: 'Map style',
-                          onPressed: () =>
-                              viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
-                        ),
-                        SpMapSideButton(
-                          icon: SpIcons.myLocation,
-                          tooltip: 'Current location',
-                          onPressed: () => viewModel.goToCurrentLocation(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).pop(MapPickerResult.cancel(viewModel.initialSelectedPlace));
+          },
+        ),
+        actions: [
+          if (viewModel.canRemove)
+            IconButton.filledTonal(
+              style: IconButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+              tooltip: tr("button.remove_selected_place"),
+              icon: const Icon(SpIcons.delete),
+              onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
+            ),
+          FilledButton.icon(
+            onPressed: viewModel.canConfirm
+                ? () async {
+                    final MapPickerResult? result = await viewModel.buildConfirmResult();
+                    if (!context.mounted || result == null) return;
+                    Navigator.of(context).pop(result);
+                  }
+                : null,
+            icon: const Icon(SpIcons.check),
+            label: Text(tr("button.confirm")),
+          ),
+          const SizedBox(width: 8.0),
+        ],
+      ),
+      floatingActionButtonLocation: SpFabLocation.endFloat(context),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .end,
+        children: [
+          IconButton(
+            tooltip: tr("button.switch_map_style"),
+            icon: SpAnimatedIcons.fadeScale(
+              duration: Durations.long1,
+              firstChild: const Icon(SpIcons.map),
+              secondChild: const Icon(SpIcons.satellite),
+              showFirst: viewModel.mapStyle == SpMapStyle.streets,
+            ),
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(8.0),
               ),
             ),
+
+            onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
+          ),
+          SpSingleStateWidget.listen(
+            initialValue: false,
+            builder: (context, loading, notifier) {
+              return IconButton(
+                tooltip: tr("button.move_to_current_location"),
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).dividerColor),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                icon: loading
+                    ? const SizedBox.square(
+                        dimension: 24.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const Icon(SpIcons.myLocation),
+                onPressed: () async {
+                  notifier.value = true;
+                  await viewModel.goToCurrentLocation(context);
+                  notifier.value = false;
+                },
+              );
+            },
           ),
         ],
+      ),
+      body: Stack(
+        children: [
+          _MapPickerLayer(viewModel: viewModel),
+          buildSelectedPlaceCard(context, selectedPlace, isResolving),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSelectedPlaceCard(BuildContext context, PlaceDbModel? selectedPlace, bool isResolving) {
+    return MediaQuery.removePadding(
+      removeLeft: true,
+      removeRight: true,
+      context: context,
+      child: Container(
+        margin: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + kToolbarHeight,
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+        ),
+        child: Builder(
+          builder: (context) {
+            final ColorScheme colorScheme = Theme.of(context).colorScheme;
+            final String title = selectedPlace == null
+                ? tr("page.map.picker.messages.tap_map_to_select_place")
+                : isResolving
+                ? tr("page.map.picker.messages.resolving_place")
+                : selectedPlace.displayLabel;
+
+            final String? subtitle = selectedPlace == null
+                ? null
+                : isResolving
+                ? tr("page.map.picker.messages.please_wait")
+                : () {
+                    final List<String> parts = <String>[
+                      if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)
+                        selectedPlace.locality!.trim(),
+                      if (selectedPlace.country != null && selectedPlace.country!.trim().isNotEmpty)
+                        selectedPlace.country!.trim(),
+                    ];
+                    if (parts.isNotEmpty) return parts.join(', ');
+                    return '${selectedPlace.latitude.toStringAsFixed(5)}, ${selectedPlace.longitude.toStringAsFixed(5)}';
+                  }();
+
+            return Material(
+              color: colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                enabled: true,
+                onTap: selectedPlace == null
+                    ? null
+                    : () => viewModel.mapController.animateTo(
+                        selectedPlace.latitude,
+                        selectedPlace.longitude,
+                        zoom: 15.0,
+                        bearing: 0.0,
+                      ),
+                leading: isResolving
+                    ? const SizedBox.square(
+                        dimension: 18.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : Icon(SpIcons.locationPin, color: colorScheme.primary),
+                title: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: subtitle == null ? null : Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                trailing: IconButton(
+                  style: IconButton.styleFrom(shape: const CircleBorder()),
+                  icon: const Icon(SpIcons.edit),
+                  onPressed: selectedPlace == null
+                      ? null
+                      : () async {
+                          final label = await EditPlaceRoute(place: selectedPlace).push(viewModel.viewContext);
+                          if (!context.mounted || label == null || label is! String) return;
+
+                          viewModel.updateSelectedPlaceDetails(
+                            placeName: label,
+                            locality: selectedPlace.locality,
+                            country: selectedPlace.country,
+                            address: selectedPlace.address,
+                          );
+                        },
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -106,13 +197,26 @@ class _MapPickerLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!viewModel.isCameraResolved) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(),
+      );
+    }
+
     switch (viewModel.mapRenderer) {
-      case SpMapRenderer.googleMaps:
+      case SpMapRenderer.googleMap:
         return SpGoogleMap<PlaceDbModel>(
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.0,
+            bottom: 112.0,
+            left: MediaQuery.paddingOf(context).left,
+            right: MediaQuery.paddingOf(context).right,
+          ),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.selectedMarkers,
+          showCurrentLocation: viewModel.showCurrentLocation,
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
       case SpMapRenderer.flutterMap:
@@ -121,195 +225,9 @@ class _MapPickerLayer extends StatelessWidget {
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
           markers: viewModel.selectedMarkers,
+          showCurrentLocation: viewModel.showCurrentLocation,
           onMapTap: (point) => viewModel.setSelectedLocation(point.latitude, point.longitude),
         );
     }
-  }
-}
-
-class _MapPickerActionButton extends StatelessWidget {
-  static const double _minHeight = 44.0;
-
-  const _MapPickerActionButton({
-    required this.label,
-    required this.tooltip,
-    required this.onPressed,
-    this.icon,
-    this.enabled = true,
-    this.isPrimary = false,
-
-    // ignore: unused_element_parameter
-    this.isDanger = false,
-  });
-
-  final String label;
-  final String tooltip;
-  final VoidCallback onPressed;
-  final IconData? icon;
-  final bool enabled;
-  final bool isPrimary;
-  final bool isDanger;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    final Color backgroundColor;
-    final Color foregroundColor;
-    if (!enabled) {
-      backgroundColor = colorScheme.surface.withValues(alpha: 0.72);
-      foregroundColor = colorScheme.onSurface.withValues(alpha: 0.44);
-    } else if (isDanger) {
-      backgroundColor = colorScheme.errorContainer.withValues(alpha: 0.96);
-      foregroundColor = colorScheme.onErrorContainer;
-    } else if (isPrimary) {
-      backgroundColor = colorScheme.primary;
-      foregroundColor = colorScheme.onPrimary;
-    } else {
-      backgroundColor = colorScheme.surface.withValues(alpha: 0.94);
-      foregroundColor = colorScheme.onSurface;
-    }
-
-    return Tooltip(
-      message: tooltip,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18.0,
-              offset: const Offset(0.0, 8.0),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8.0),
-            onTap: enabled ? onPressed : null,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: _minHeight),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (icon != null) ...<Widget>[
-                      Icon(icon, size: 18.0, color: foregroundColor),
-                      const SizedBox(width: 6.0),
-                    ],
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: foregroundColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SelectedPlaceCard extends StatelessWidget {
-  const _SelectedPlaceCard({
-    required this.place,
-    required this.isResolving,
-  });
-
-  final PlaceDbModel? place;
-  final bool isResolving;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final String title = _resolveTitle();
-    final String subtitle = _resolveSubtitle();
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colorScheme.surface.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 18.0,
-            offset: const Offset(0.0, 8.0),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-        child: Row(
-          children: <Widget>[
-            if (isResolving)
-              SizedBox.square(
-                dimension: 18.0,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.0,
-                  color: colorScheme.primary,
-                ),
-              )
-            else
-              Icon(SpIcons.myLocation, size: 18.0, color: colorScheme.primary),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2.0),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _resolveTitle() {
-    if (place == null) return 'Tap map to select a place';
-    if (isResolving) return 'Resolving place...';
-    return place!.displayLabel;
-  }
-
-  String _resolveSubtitle() {
-    if (place == null) return 'or use current location';
-    if (isResolving) return 'Please wait';
-
-    final List<String> parts = <String>[
-      if (place!.locality != null && place!.locality!.trim().isNotEmpty) place!.locality!.trim(),
-      if (place!.country != null && place!.country!.trim().isNotEmpty) place!.country!.trim(),
-    ];
-    if (parts.isNotEmpty) {
-      return parts.join(', ');
-    }
-
-    return '${place!.latitude.toStringAsFixed(5)}, ${place!.longitude.toStringAsFixed(5)}';
   }
 }

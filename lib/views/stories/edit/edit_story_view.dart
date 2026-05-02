@@ -42,6 +42,7 @@ class EditStoryRoute extends BaseRoute {
   final int? initialPageIndex;
   final double initialPageScrollOffet;
   final StoryPageObjectsMap? pagesMap;
+  final bool autoRequestLocation;
 
   EditStoryRoute({
     this.id,
@@ -57,6 +58,7 @@ class EditStoryRoute extends BaseRoute {
     this.galleryTemplate,
     this.template,
     this.initialEventId,
+    this.autoRequestLocation = false,
   }) : assert(initialYear == null || id == null);
 
   @override
@@ -77,6 +79,7 @@ class EditStoryRoute extends BaseRoute {
       'month': initialMonth.toString(),
       'day': initialDay.toString(),
       'has_initial_tag': initialTagIds?.isNotEmpty == true ? 'true' : 'false',
+      'auto_request_location': autoRequestLocation ? 'true' : 'false',
     };
   }
 

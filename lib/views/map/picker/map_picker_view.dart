@@ -1,12 +1,17 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/widgets/maps/sp_map_overlay_theme.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
-import 'package:storypad/views/map/local_widgets/sp_map_side_button.dart';
-import 'package:storypad/views/map/local_widgets/maps/map_types.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_flutter_map.dart';
-import 'package:storypad/views/map/local_widgets/maps/sp_google_maps_flutter.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
+import 'package:storypad/widgets/maps/sp_flutter_map.dart';
+import 'package:storypad/widgets/maps/sp_google_maps_flutter.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_animated_icon.dart';
+import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/views/map/edit_place/edit_place_view.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 
 import 'map_picker_view_model.dart';
 
@@ -67,9 +72,12 @@ class MapPickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<MapPickerViewModel>(
-      create: (context) => MapPickerViewModel(params: params),
+      create: (context) => MapPickerViewModel(params: params, viewContext: context),
       builder: (context, viewModel, child) {
-        return _MapPickerContent(viewModel);
+        return SpMapOverlayTheme(
+          brightness: viewModel.mapStyle.overlayBrightness,
+          child: _MapPickerContent(viewModel),
+        );
       },
     );
   }

@@ -100,7 +100,10 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     createdAt: story.createdAt,
     updatedAt: story.updatedAt,
     movedToBinAt: story.movedToBinAt,
-    searchMetadata: _generateSearchMetadata(story.draftContent ?? story.latestContent),
+
+    // Set search metadata to null so that when open search view, it will be picked up for reindexing.
+    searchMetadata: null,
+
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
@@ -111,17 +114,57 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     preferences: jsonEncode(story.preferences.toNonNullJson()),
     latitude: story.place?.latitude,
     longitude: story.place?.longitude,
+    placeName: story.place?.placeName,
     place: story.place != null ? jsonEncode(story.place!.toJson()) : null,
   );
 }
 
-String? _generateSearchMetadata(StoryContentDbModel? content) {
+String? _generateSearchMetadata(
+  String? placeName,
+  DateTime storyDate,
+  StoryContentDbModel? content,
+  List<String>? tagLabels,
+) {
   if (content == null) return null;
 
-  // This combine first page title, and plain text for other pages.
-  // Check StoryContentDbModel#generateBodyPlainText for more details.
-  return [
-    if (content.title != null) content.title,
-    if (content.plainText != null) content.plainText,
-  ].join('\n');
+  final tokens = <String>{};
+
+  // Tags
+  for (final tag in tagLabels ?? []) {
+    final t = tag.trim().toLowerCase();
+    if (t.isNotEmpty) tokens.add(t);
+  }
+
+  // Place
+  if (placeName != null) {
+    final p = placeName.trim().toLowerCase();
+    if (p.isNotEmpty) tokens.add(p);
+  }
+
+  // Title
+  if (content.title != null) {
+    final t = content.title!.trim().toLowerCase();
+    if (t.isNotEmpty) tokens.add(t);
+  }
+
+  // Body
+  if (content.plainText != null) {
+    final b = content.plainText!.trim().toLowerCase();
+    if (b.isNotEmpty) tokens.add(b);
+  }
+
+  // ---- Extended date tokens ----
+  final year = DateFormat('yyyy').format(storyDate); // 2024
+  final monthPad = DateFormat('MM').format(storyDate); // 08
+  final monthFull = DateFormat('MMMM').format(storyDate).toLowerCase(); // august
+  final dayPad = DateFormat('dd').format(storyDate); // 05
+  final weekday = DateFormat('EEEE').format(storyDate).toLowerCase(); // monday
+
+  tokens.addAll([
+    monthFull,
+    weekday,
+    '$year-$monthPad-$dayPad', // 2024-08-05 (safe ISO format)
+  ]);
+
+  return tokens.isEmpty ? null : tokens.join('\n');
 }

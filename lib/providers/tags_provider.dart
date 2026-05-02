@@ -4,6 +4,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart' show OkCancelResult, showO
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' show BuildContext, ChangeNotifier;
 import 'package:storypad/core/databases/models/collection_db_model.dart' show CollectionDbModel;
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart' show $TagDbModelCopyWith, TagDbModel;
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart' show AnalyticsService;
@@ -164,6 +165,10 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     if (result is List<String> && result.isNotEmpty) {
       TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
       await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
+
+      // Clear search index for related stories so it get picked up to reindex when open search view.
+      StoryDbModel.db.clearSearchIndex(filters: {"tag": tag.id});
+
       AnalyticsService.instance.logEditTag(
         tag: tag,
       );

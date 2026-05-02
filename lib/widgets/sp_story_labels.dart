@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -21,6 +23,7 @@ import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_emoji_tag_picker.dart';
 import 'package:storypad/widgets/sp_floating_tag_picker.dart';
+import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
@@ -228,6 +231,51 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
+    if (onAddCurrentLocation != null && !story.hasLocation) {
+      children.add(
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.locationPin,
+          tooltip: tr("button.add_current_location"),
+          onTap: () async => onAddCurrentLocation!(),
+        ),
+      );
+    }
+
+    bool showLocation = preferences.showLocation || !fromStoryTile;
+    if (story.hasLocation && showLocation) {
+      children.add(
+        buildPin(
+          context: context,
+          title: story.place!.displayLabel,
+          leadingIconData: SpIcons.map,
+          onTap: onSetPlace != null
+              ? () async {
+                  final result = await MapPickerRoute(
+                    initialSelectedPlace: story.place,
+                  ).push(context);
+
+                  if (result is MapPickerResult) {
+                    switch (result.action) {
+                      case MapPickerFinalAction.confirm:
+                        final selected = result.place;
+                        if (selected != null) {
+                          await onSetPlace?.call(selected);
+                        }
+                        break;
+                      case MapPickerFinalAction.remove:
+                        await onSetPlace?.call(null);
+                        break;
+                      case MapPickerFinalAction.cancel:
+                        break;
+                    }
+                  }
+                }
+              : null,
+        ),
+      );
+    }
+
     // Tags labels including its add button
     bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
     final tagLabels = buildTags(tagProvider, context);
@@ -322,50 +370,6 @@ class SpStoryLabels extends StatelessWidget {
             onTap: onToggleTags != null ? open : null,
             child: emojiRow,
           ),
-        ),
-      );
-    }
-
-    if (onAddCurrentLocation != null && !story.hasLocation) {
-      children.add(
-        _buildIconButton(
-          context: context,
-          icon: SpIcons.myLocation,
-          tooltip: tr('page.map.add_location'),
-          onTap: () => onAddCurrentLocation!(),
-        ),
-      );
-    }
-
-    if (story.hasLocation) {
-      children.add(
-        buildPin(
-          context: context,
-          title: story.place!.displayLabel,
-          leadingIconData: SpIcons.map,
-          onTap: onSetPlace != null
-              ? () async {
-                  final result = await MapPickerRoute(
-                    initialSelectedPlace: story.place,
-                  ).push(context);
-
-                  if (result is MapPickerResult) {
-                    switch (result.action) {
-                      case MapPickerFinalAction.confirm:
-                        final selected = result.place;
-                        if (selected != null) {
-                          await onSetPlace?.call(selected);
-                        }
-                        break;
-                      case MapPickerFinalAction.remove:
-                        await onSetPlace?.call(null);
-                        break;
-                      case MapPickerFinalAction.cancel:
-                        break;
-                    }
-                  }
-                }
-              : null,
         ),
       );
     }
@@ -491,27 +495,47 @@ class SpStoryLabels extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required String tooltip,
-    required VoidCallback onTap,
+    required FutureOr<void> Function() onTap,
   }) {
-    return Tooltip(
-      message: tooltip,
-      child: Material(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-        color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(4.0),
-          onTap: onTap,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
-            height: MediaQuery.textScalerOf(context).scale(20),
-            child: Icon(
-              icon,
-              size: MediaQuery.textScalerOf(context).scale(14.0),
-              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+    return SpSingleStateWidget.listen(
+      initialValue: false,
+      builder: (context, loading, notifier) {
+        return Tooltip(
+          message: tooltip,
+          child: Material(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+            color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4.0),
+              onTap: onTap is Future<void> Function()
+                  ? () async {
+                      notifier.value = true;
+                      await onTap();
+                      notifier.value = false;
+                    }
+                  : onTap,
+              child: loading
+                  ? Container(
+                      padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(4)),
+                      height: MediaQuery.textScalerOf(context).scale(20),
+                      width: MediaQuery.textScalerOf(context).scale(20),
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: MediaQuery.textScalerOf(context).scale(3.0),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
+                      height: MediaQuery.textScalerOf(context).scale(20),
+                      child: Icon(
+                        icon,
+                        size: MediaQuery.textScalerOf(context).scale(14.0),
+                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

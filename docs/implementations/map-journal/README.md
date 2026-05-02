@@ -118,6 +118,23 @@ API:
 
 ## Map View — Story Loading & Markers
 
+## Initial Camera
+
+The map screens share one initial-camera policy so they do not fall back to a
+country-specific default when the user has journals or device location elsewhere.
+
+Fallback order:
+
+1. Map picker editing an existing place: center on that selected place.
+2. Device-derived location: regular map uses current location only when permission
+   is already available; map picker uses last-known location without prompting.
+3. Recent geotagged journals: use a recent, tight cluster when possible; otherwise
+   use the most recent geotagged journal instead of averaging far-apart trips.
+4. Neutral world camera: final fallback when there is no usable location source.
+
+This keeps a journal set in Cambodia from opening in San Francisco, and prevents
+mixed-continent journal locations from producing a misleading midpoint.
+
 ### Bounding-box query
 
 ```dart
