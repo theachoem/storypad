@@ -9,7 +9,7 @@ import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_text_inputs_page.dart';
+import 'package:storypad/views/map/edit_place/edit_place_view.dart';
 
 import 'map_picker_view_model.dart';
 

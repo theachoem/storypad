@@ -2,11 +2,13 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:isolate';
 import 'dart:math' as math;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/adapters/objectbox/events_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/helpers/story_content_helper.dart';
+import 'package:storypad/core/databases/adapters/objectbox/tags_box.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
@@ -28,12 +30,14 @@ class MapStoryObject {
   final List<int>? assets;
   final SpLatLng location;
   final DateTime storyDate;
+  final String? placeName;
 
   MapStoryObject({
     required this.id,
     required this.assets,
     required this.location,
     required this.storyDate,
+    required this.placeName,
   });
 }
 
@@ -177,6 +181,13 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     AppLogger.info('🤾‍♀️ Migrated Feeling to Tags: $migratedCount');
   }
 
+  /// Clear search index for related stories so it get picked up to reindex when open search view.
+  Future<void> clearSearchIndex({required Map<String, int> filters}) async {
+    return buildQuery(filters: filters).build().findAsync().then((boxes) async {
+      await box.putManyAsync(boxes.map((e) => e..searchMetadata = null).toList());
+    });
+  }
+
   /// Regenerates searchMetadata for stories that don't have it (legacy data from older versions).
   ///
   /// Background:
@@ -186,6 +197,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
   ///
   /// Call this only on the search view (lazy-load pattern) when needed to search text,
   Future<void> reindexSearchMetadata() async {
+    final tagById = await TagsBox().box
+        .query(TagObjectBox_.id.notNull().and(TagObjectBox_.permanentlyDeletedAt.isNull()))
+        .build()
+        .findAsync()
+        .then((e) => {for (var item in e) item.id: item.title});
+
     final conditions = StoryObjectBox_.id
         .notNull()
         .and(StoryObjectBox_.permanentlyDeletedAt.isNull())
@@ -209,7 +226,12 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
           try {
             final contentStr = storyBox.draftContent ?? storyBox.latestContent;
             final content = StoryContentHelper.stringToContent(contentStr!);
-            final updatedMetadata = _generateSearchMetadata(content);
+            final updatedMetadata = _generateSearchMetadata(
+              storyBox.placeName,
+              DateTime(storyBox.year, storyBox.month, storyBox.day),
+              content,
+              storyBox.tags?.map((id) => tagById[int.tryParse(id) ?? -1]).whereType<String>().toList(),
+            );
             storyBox.searchMetadata = updatedMetadata;
             toUpdate.add(storyBox);
             count++;
@@ -255,6 +277,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
           id: story.id,
           assets: story.assets?.isNotEmpty == true ? story.assets : null,
           location: SpLatLng(story.latitude!, story.longitude!),
+          placeName: story.placeName,
           storyDate: DateTime(
             story.year,
             story.month,
@@ -299,6 +322,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       id: story.id,
       assets: story.assets?.isNotEmpty == true ? story.assets : null,
       location: SpLatLng(story.latitude!, story.longitude!),
+      placeName: story.placeName,
       storyDate: DateTime(
         story.year,
         story.month,
@@ -618,10 +642,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     if (query != null) {
       conditions = conditions.and(
-        StoryObjectBox_.searchMetadata.contains(
-          query,
-          caseSensitive: false,
-        ),
+        StoryObjectBox_.searchMetadata.contains(query.toLowerCase(), caseSensitive: false),
       );
     }
 

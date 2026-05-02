@@ -242,6 +242,10 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                               if (result is List<String> && result.isNotEmpty) {
                                 TagDbModel newTag = tag.copyWith(title: result.first, updatedAt: DateTime.now());
                                 await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
+
+                                // Clear search index for related stories so it get picked up to reindex when open search view.
+                                StoryDbModel.db.clearSearchIndex(filters: {"tag": tag.id});
+
                                 AnalyticsService.instance.logEditTag(tag: newTag);
                               }
                             },

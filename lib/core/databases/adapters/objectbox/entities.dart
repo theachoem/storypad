@@ -87,6 +87,7 @@ class StoryObjectBox extends BaseObjectBox {
   // location — unpacked from PlaceDbModel on write for range queries
   double? latitude;
   double? longitude;
+  String? placeName;
 
   /// JSON-encoded PlaceDbModel (placeName, locality, country, address, lat, lon).
   String? place;
@@ -128,9 +129,10 @@ class StoryObjectBox extends BaseObjectBox {
     required this.searchMetadata,
     required this.preferences,
     required this.permanentlyDeletedAt,
-    this.latitude,
-    this.longitude,
-    this.place,
+    required this.latitude,
+    required this.longitude,
+    required this.placeName,
+    required this.place,
     this.lastSavedDeviceId,
   });
 

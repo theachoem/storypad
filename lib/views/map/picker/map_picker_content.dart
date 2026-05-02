@@ -156,31 +156,19 @@ class _MapPickerContent extends StatelessWidget {
                 onPressed: selectedPlace == null
                     ? null
                     : () async {
-                        final List<String>? values = await Navigator.of(context).push<List<String>>(
-                          MaterialPageRoute(
-                            builder: (context) => SpTextInputsPage(
-                              appBar: AppBar(
-                                title: const Text('Edit place'),
-                              ),
-                              saveButtonLabel: 'Apply',
-                              fields: <SpTextInputField>[
-                                SpTextInputField(
-                                  labelText: 'Place name',
-                                  hintText: 'Coffee shop, park, museum...',
-                                  initialText: selectedPlace.placeName,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        final label = await EditPlaceRoute(place: selectedPlace).push(context);
+                        if (!context.mounted || label == null || label is! String) return;
 
-                        if (!context.mounted || values == null || values.length != 1) return;
                         viewModel.updateSelectedPlaceDetails(
-                          placeName: values[0],
+                          placeName: label,
                           locality: selectedPlace.locality,
                           country: selectedPlace.country,
                           address: selectedPlace.address,
                         );
+
+                        final MapPickerResult? result = await viewModel.buildConfirmResult();
+                        if (!context.mounted || result == null) return;
+                        Navigator.of(context).pop(result);
                       },
               ),
             ),
