@@ -294,15 +294,12 @@ class _SelectedPlaceCard extends StatelessWidget {
         child: Row(
           children: <Widget>[
             if (isResolving)
-              SizedBox.square(
+              const SizedBox.square(
                 dimension: 18.0,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.0,
-                  color: colorScheme.primary,
-                ),
+                child: CircularProgressIndicator.adaptive(),
               )
             else
-              Icon(SpIcons.myLocation, size: 18.0, color: colorScheme.primary),
+              Icon(SpIcons.locationPin, size: 18.0, color: colorScheme.primary),
             const SizedBox(width: 12.0),
             Expanded(
               child: Column(
