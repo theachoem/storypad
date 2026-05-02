@@ -66,7 +66,7 @@ class _SpMapOverlayThemeState extends State<SpMapOverlayTheme> {
           shape: CircleBorder(
             side: BorderSide(color: baseTheme.dividerColor),
           ),
-          backgroundColor: colorScheme.surface.withValues(alpha: colorScheme.brightness == .dark ? 0.8 : 0.5),
+          backgroundColor: colorScheme.surface.withValues(alpha: 0.8),
           foregroundColor: colorScheme.onSurface,
         ),
       ),

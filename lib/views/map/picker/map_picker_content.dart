@@ -23,7 +23,7 @@ class _MapPickerContent extends StatelessWidget {
           if (viewModel.canRemove)
             IconButton.filledTonal(
               style: IconButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-              tooltip: 'Remove selected place',
+              tooltip: tr("button.remove_selected_place"),
               icon: const Icon(SpIcons.delete),
               onPressed: () => Navigator.of(context).pop(MapPickerResult.remove()),
             ),
@@ -36,7 +36,7 @@ class _MapPickerContent extends StatelessWidget {
                   }
                 : null,
             icon: const Icon(SpIcons.check),
-            label: const Text('Confirm'),
+            label: Text(tr("button.confirm")),
           ),
           const SizedBox(width: 8.0),
         ],
@@ -47,7 +47,7 @@ class _MapPickerContent extends StatelessWidget {
         crossAxisAlignment: .end,
         children: [
           IconButton(
-            tooltip: 'Map style',
+            tooltip: tr("button.switch_map_style"),
             icon: SpAnimatedIcons.fadeScale(
               duration: Durations.long1,
               firstChild: const Icon(SpIcons.map),
@@ -67,7 +67,7 @@ class _MapPickerContent extends StatelessWidget {
             initialValue: false,
             builder: (context, loading, notifier) {
               return IconButton(
-                tooltip: 'Current location',
+                tooltip: tr("button.move_to_current_location"),
                 style: IconButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).dividerColor),
@@ -114,15 +114,15 @@ class _MapPickerContent extends StatelessWidget {
           builder: (context) {
             final ColorScheme colorScheme = Theme.of(context).colorScheme;
             final String title = selectedPlace == null
-                ? 'Tap map to select a place'
+                ? tr("page.map.picker.messages.tap_map_to_select_place")
                 : isResolving
-                ? 'Resolving place...'
+                ? tr("page.map.picker.messages.resolving_place")
                 : selectedPlace.displayLabel;
 
             final String? subtitle = selectedPlace == null
                 ? null
                 : isResolving
-                ? 'Please wait'
+                ? tr("page.map.picker.messages.please_wait")
                 : () {
                     final List<String> parts = <String>[
                       if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)

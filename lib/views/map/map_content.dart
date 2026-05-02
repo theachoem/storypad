@@ -21,7 +21,7 @@ class _MapContent extends StatelessWidget {
         crossAxisAlignment: .end,
         children: [
           IconButton(
-            tooltip: 'Map style',
+            tooltip: tr("button.switch_map_style"),
             style: IconButton.styleFrom(
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).dividerColor),
@@ -40,7 +40,7 @@ class _MapContent extends StatelessWidget {
             initialValue: false,
             builder: (context, loading, notifier) {
               return IconButton(
-                tooltip: 'Current location',
+                tooltip: tr("button.move_to_current_location"),
                 style: IconButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).dividerColor),
@@ -63,6 +63,7 @@ class _MapContent extends StatelessWidget {
           ),
           const SizedBox(height: 4.0),
           FloatingActionButton(
+            tooltip: tr("button.new_story"),
             child: const Icon(SpIcons.newStory),
             onPressed: () => viewModel.goToNewPage(),
           ),

@@ -18,10 +18,10 @@ import 'package:csv/csv.dart' show csv;
 import 'package:xml/xml.dart';
 
 const String editUrl =
-    "https://docs.google.com/spreadsheets/d/1XcohOqNzrkMJnAmAuJssa0Rc7wftjfN2rrxb4GgcE9c/edit?gid=654733603#gid=654733603";
+    "https://docs.google.com/spreadsheets/d/1XcohOqNzrkMJnAmAuJssa0Rc7wftjfN2rrxb4GgcE9c/edit?usp=sharing";
 
 const String publicCsvUrl =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTlTQdinMVbZEL6EQzBs2zNtfldSnCtXA9YhegOe4CCoOA5FxXYmEp_t4joa_mIVgPVI5RaY_YNCGxa/pub?gid=654733603&single=true&output=csv";
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTlTQdinMVbZEL6EQzBs2zNtfldSnCtXA9YhegOe4CCoOA5FxXYmEp_t4joa_mIVgPVI5RaY_YNCGxa/pub?output=csv";
 
 void main() async {
   final csvString = await _fetchCsvRaw();

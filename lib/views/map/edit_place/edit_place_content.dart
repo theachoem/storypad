@@ -9,11 +9,11 @@ class _EditPlaceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit place'),
+        title: Text(tr("page.map.edit_place.title")),
         actions: [
           FilledButton(
             onPressed: viewModel.canApply ? () => viewModel.apply(context) : null,
-            child: const Text('Apply'),
+            child: Text(tr("button.apply")),
           ),
           const SizedBox(width: 12.0),
         ],
@@ -38,17 +38,17 @@ class _EditPlaceContent extends StatelessWidget {
                   viewModel.apply(context);
                 }
               },
-              decoration: const InputDecoration(
-                labelText: 'Place name',
-                hintText: 'Coffee shop, park, museum...',
+              decoration: InputDecoration(
+                labelText: tr("input.place_name.label"),
+                hintText: tr("input.place_name.hint"),
               ),
             ),
           ),
           if (viewModel.recentLabels.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const SpSectionTitle(
-              title: "Recent labels",
-              padding: EdgeInsets.symmetric(
+            SpSectionTitle(
+              title: tr("page.map.edit_place.recent_labels"),
+              padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
                 vertical: 4.0,
               ),

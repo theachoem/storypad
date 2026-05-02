@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;

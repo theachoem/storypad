@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
@@ -25,10 +26,10 @@ class SpAppLocationService {
         case SpLocationFetchStatus.denied:
           final action = await showOkCancelAlertDialog(
             context: context,
-            title: 'Location access needed',
-            message: 'We need location permission to move the map to your current location.',
-            okLabel: 'Retry',
-            cancelLabel: 'Not now',
+            title: tr("dialog.location_access_needed.title"),
+            message: tr("dialog.location_access_needed.message"),
+            okLabel: tr("button.retry"),
+            cancelLabel: tr("button.maybe_later"),
             defaultType: OkCancelAlertDefaultType.ok,
           );
 
@@ -37,10 +38,10 @@ class SpAppLocationService {
         case SpLocationFetchStatus.deniedForever:
           final action = await showOkCancelAlertDialog(
             context: context,
-            title: 'Location access is turned off',
-            message: 'Enable location permission in Settings to use current location.',
-            okLabel: 'Open Settings',
-            cancelLabel: 'Not now',
+            title: tr("dialog.location_access_turned_off.title"),
+            message: tr("dialog.location_access_turned_off.message"),
+            okLabel: tr("button.open_settings"),
+            cancelLabel: tr("button.maybe_later"),
             defaultType: OkCancelAlertDefaultType.ok,
           );
 
@@ -50,10 +51,10 @@ class SpAppLocationService {
         case SpLocationFetchStatus.serviceDisabled:
           final action = await showOkCancelAlertDialog(
             context: context,
-            title: 'Location services are off',
-            message: 'Turn on location services to use current location.',
-            okLabel: 'Open Location Settings',
-            cancelLabel: 'Not now',
+            title: tr("dialog.location_services_off.title"),
+            message: tr("dialog.location_services_off.message"),
+            okLabel: tr("button.open_location_settings"),
+            cancelLabel: tr("button.maybe_later"),
             defaultType: OkCancelAlertDefaultType.ok,
           );
 
@@ -62,7 +63,7 @@ class SpAppLocationService {
           continue;
         case SpLocationFetchStatus.failed:
           MessengerService.of(context).showSnackBar(
-            'Could not get current location. Please try again.',
+            tr("snack_bar.could_not_get_current_location"),
             success: false,
           );
           return null;

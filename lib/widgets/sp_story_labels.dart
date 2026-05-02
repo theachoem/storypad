@@ -235,7 +235,7 @@ class SpStoryLabels extends StatelessWidget {
         _buildIconButton(
           context: context,
           icon: SpIcons.locationPin,
-          tooltip: "Add current location",
+          tooltip: tr("button.add_current_location"),
           onTap: () async => onAddCurrentLocation!(),
         ),
       );
