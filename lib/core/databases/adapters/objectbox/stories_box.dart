@@ -579,6 +579,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
+    List<int>? ids = filters?["ids"];
     int? createdYear = filters?["created_year"];
     String? query = filters?["query"];
     String? type = filters?["type"];
@@ -602,6 +603,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? yearsRange = filters?["years_range"];
 
     Condition<StoryObjectBox> conditions = StoryObjectBox_.id.notNull();
+
+    if (ids != null && ids.isNotEmpty) {
+      conditions = conditions.and(StoryObjectBox_.id.oneOf(ids));
+    }
 
     if (!returnDeleted) conditions = conditions.and(StoryObjectBox_.permanentlyDeletedAt.isNull());
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));

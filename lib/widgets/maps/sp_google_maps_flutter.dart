@@ -25,6 +25,7 @@ class SpGoogleMap<T> extends StatefulWidget {
     this.padding = EdgeInsets.zero,
     this.onMapTap,
     this.onMarkerTap,
+    this.onClusterTap,
     this.markerIconBuilder,
     this.onViewportChanged,
     this.showCurrentLocation = false,
@@ -37,6 +38,7 @@ class SpGoogleMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
+  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
   final SpMapViewportChanged? onViewportChanged;
   final bool showCurrentLocation;
@@ -275,6 +277,17 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
   }
 
   Future<void> _handleClusterTap(Cluster cluster) async {
+    final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
+    if (onClusterTap != null) {
+      final List<SpMapMarker<T>> clusterMarkers = widget.markers
+          .where((marker) => _latLngWithinBounds(cluster.bounds, marker.point))
+          .toList();
+      if (clusterMarkers.isNotEmpty) {
+        onClusterTap(clusterMarkers);
+        return;
+      }
+    }
+
     final GoogleMapController? controller = _googleMapController;
     if (controller == null) return;
 
@@ -347,5 +360,21 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
 
   LatLng _toLatLng(SpLatLng point) {
     return LatLng(point.latitude, point.longitude);
+  }
+
+  bool _latLngWithinBounds(LatLngBounds bounds, SpLatLng point) {
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
+    final bool latitudeWithin = latitude >= bounds.southwest.latitude && latitude <= bounds.northeast.latitude;
+
+    final double west = bounds.southwest.longitude;
+    final double east = bounds.northeast.longitude;
+    final bool crossesDateLine = west > east;
+
+    final bool longitudeWithin = crossesDateLine
+        ? longitude >= west || longitude <= east
+        : longitude >= west && longitude <= east;
+
+    return latitudeWithin && longitudeWithin;
   }
 }

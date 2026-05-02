@@ -16,8 +16,12 @@ import 'map_picker_view.dart';
 class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   final MapPickerRoute params;
 
+  // Use view context to push / navigate to other pages to avoid using map overlay theme on those pages.
+  final BuildContext viewContext;
+
   MapPickerViewModel({
     required this.params,
+    required this.viewContext,
   }) : _selectedPlace = params.initialSelectedPlace {
     unawaited(resolveInitialCamera());
   }

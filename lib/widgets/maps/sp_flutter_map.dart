@@ -24,6 +24,7 @@ class SpFlutterMap<T> extends StatefulWidget {
     required this.markers,
     this.onMapTap,
     this.onMarkerTap,
+    this.onClusterTap,
     this.markerBuilder,
     this.clusterMarkerBuilder,
     this.onViewportChanged,
@@ -36,6 +37,7 @@ class SpFlutterMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
+  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
   final SpMapViewportChanged? onViewportChanged;
@@ -225,6 +227,12 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
         rotate: true,
         child: GestureDetector(
           onTap: () {
+            final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
+            if (onClusterTap != null) {
+              onClusterTap(cluster.markers);
+              return;
+            }
+
             if (!_isFiniteLatLng(cluster.position)) return;
 
             final double nextZoom = (_safeZoom(_currentZoom) + 2.0).clamp(_minZoom, _maxZoom).toDouble();

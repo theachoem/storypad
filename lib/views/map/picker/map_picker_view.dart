@@ -70,7 +70,7 @@ class MapPickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<MapPickerViewModel>(
-      create: (context) => MapPickerViewModel(params: params),
+      create: (context) => MapPickerViewModel(params: params, viewContext: context),
       builder: (context, viewModel, child) {
         return SpMapOverlayTheme(
           brightness: viewModel.mapStyle.overlayBrightness,

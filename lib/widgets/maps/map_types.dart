@@ -5,11 +5,11 @@ import 'package:storypad/core/objects/sp_latlng.dart';
 typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
 enum SpMapRenderer {
-  googleMaps,
+  googleMap,
   flutterMap
   ;
 
-  static SpMapRenderer get defaultRenderer => googleMaps;
+  static SpMapRenderer get defaultRenderer => googleMap;
 }
 
 enum SpMapStyle {

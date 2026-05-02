@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
@@ -16,9 +17,10 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_stories_bottom_sheet.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
-import 'map_view.dart';
-import '../../widgets/maps/map_types.dart';
+import 'package:storypad/views/map/map_view.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
 
 class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const int visibleStoryLimit = 100;
@@ -26,6 +28,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const double _maxViewportFetchExpansionFactor = 2.2;
   static const double _minExpansionZoom = 4.0;
   static const double _maxExpansionZoom = 16.0;
+  static const double _storiesSheetMapFocusOffsetFactor = 0.18;
 
   final MapRoute params;
   final BuildContext viewContext;
@@ -156,6 +159,77 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     return kColorsByDayLight[story.storyDate.weekday]!;
   }
 
+  Future<void> onMarkerTap(SpMapMarker<MapStoryObject> marker) async {
+    await _showStoriesSheet(
+      [marker.data.id],
+      focusPoint: marker.point,
+    );
+  }
+
+  Future<void> onClusterTap(List<SpMapMarker<MapStoryObject>> markers) async {
+    final List<int> storyIds = markers.map((marker) => marker.data.id).toSet().toList();
+    await _showStoriesSheet(storyIds, focusPoint: _clusterCenter(markers));
+  }
+
+  Future<void> _showStoriesSheet(
+    List<int> storyIds, {
+    SpLatLng? focusPoint,
+  }) async {
+    if (storyIds.isEmpty || disposed) return;
+    if (!viewContext.mounted) return;
+
+    final filter = SearchFilterObject(years: {}, types: {}, assetId: null, storyIds: storyIds.toSet());
+
+    // Use view context to show bottom sheet to avoid using override theme of map overlay for sheet.
+    SpStoriesBottomSheet(filter: filter).show(context: viewContext);
+
+    if (focusPoint != null) {
+      Future.delayed(const Duration(milliseconds: 300));
+      if (disposed) return;
+      await _focusPointAboveStoriesSheet(focusPoint);
+    }
+  }
+
+  Future<void> _focusPointAboveStoriesSheet(SpLatLng point) async {
+    final SpMapViewport? viewport = _lastViewport;
+    if (viewport == null) return;
+
+    final double latitudeSpan = viewport.bounds.north - viewport.bounds.south;
+    if (!latitudeSpan.isFinite || latitudeSpan <= 0) return;
+
+    final double adjustedLatitude = (point.latitude - (latitudeSpan * _storiesSheetMapFocusOffsetFactor)).clamp(
+      -90.0,
+      90.0,
+    );
+
+    await mapController.animateTo(
+      adjustedLatitude,
+      point.longitude,
+      zoom: viewport.zoom,
+    );
+  }
+
+  SpLatLng _clusterCenter(List<SpMapMarker<MapStoryObject>> markers) {
+    if (markers.isEmpty) return _lastViewport?.center ?? initialSpMapCamera.target;
+
+    double minLatitude = markers.first.point.latitude;
+    double maxLatitude = markers.first.point.latitude;
+    double minLongitude = markers.first.point.longitude;
+    double maxLongitude = markers.first.point.longitude;
+
+    for (final marker in markers.skip(1)) {
+      minLatitude = minLatitude < marker.point.latitude ? minLatitude : marker.point.latitude;
+      maxLatitude = maxLatitude > marker.point.latitude ? maxLatitude : marker.point.latitude;
+      minLongitude = minLongitude < marker.point.longitude ? minLongitude : marker.point.longitude;
+      maxLongitude = maxLongitude > marker.point.longitude ? maxLongitude : marker.point.longitude;
+    }
+
+    return SpLatLng(
+      (minLatitude + maxLatitude) / 2,
+      (minLongitude + maxLongitude) / 2,
+    );
+  }
+
   Future<void> _cacheFirstAssetFiles(List<MapStoryObject> stories) async {
     final List<int> uncachedAssetIds = stories
         .map(_firstAssetId)
@@ -242,8 +316,8 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  Future<void> goToNewPage(BuildContext context) async {
-    final addedStory = await EditStoryRoute(id: null, autoRequestLocation: true).push(context);
+  Future<void> goToNewPage() async {
+    final addedStory = await EditStoryRoute(id: null, autoRequestLocation: true).push(viewContext);
     if (addedStory != null && addedStory is StoryDbModel) {
       if (addedStory.place != null && _lastViewport != null) {
         await handleViewportChanged(_lastViewport!, forceReload: true);

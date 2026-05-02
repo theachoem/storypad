@@ -64,7 +64,7 @@ class _MapContent extends StatelessWidget {
           const SizedBox(height: 4.0),
           FloatingActionButton(
             child: const Icon(SpIcons.newStory),
-            onPressed: () => viewModel.goToNewPage(context),
+            onPressed: () => viewModel.goToNewPage(),
           ),
         ],
       ),
@@ -82,7 +82,7 @@ class _MapContent extends StatelessWidget {
     final double topPadding = MediaQuery.of(context).padding.top + kToolbarHeight + 8.0;
 
     switch (viewModel.mapRenderer) {
-      case SpMapRenderer.googleMaps:
+      case SpMapRenderer.googleMap:
         return SpGoogleMap<MapStoryObject>(
           padding: EdgeInsets.only(top: topPadding, bottom: 112.0),
           mapController: viewModel.mapController,
@@ -91,6 +91,8 @@ class _MapContent extends StatelessWidget {
           markers: viewModel.mapMarkers,
           showCurrentLocation: viewModel.showCurrentLocation,
           onViewportChanged: viewModel.handleViewportChanged,
+          onMarkerTap: viewModel.onMarkerTap,
+          onClusterTap: viewModel.onClusterTap,
           markerIconBuilder: (context, marker, pixelRatio) => _MapStoryMarkerIconFactory.create(
             context,
             marker,
@@ -107,6 +109,8 @@ class _MapContent extends StatelessWidget {
           markers: viewModel.mapMarkers,
           onViewportChanged: viewModel.handleViewportChanged,
           showCurrentLocation: viewModel.showCurrentLocation,
+          onMarkerTap: viewModel.onMarkerTap,
+          onClusterTap: viewModel.onClusterTap,
           markerBuilder: (context, marker) => _FlutterMapStoryMarker(
             imageFile: viewModel.firstAssetFileForStory(marker.data),
             color: viewModel.markerColorForStory(marker.data),
@@ -195,7 +199,7 @@ class _MapStoryMarkerIconFactory {
 
   static Future<gm.BitmapDescriptor> create(
     BuildContext context,
-    SpMapMarker<MapStoryObject> _marker,
+    SpMapMarker<MapStoryObject> marker,
     double pixelRatio, {
     required File? imageFile,
     required Color color,

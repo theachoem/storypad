@@ -156,13 +156,10 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
           // remove it from the list.
           stories = stories?.removeElement(updatedStory);
           setState(() {});
-          return;
-        } else if (widget.filter?.types.contains(updatedStory.type) == true) {
-          stories = stories?.replaceElement(updatedStory);
         } else {
-          stories = stories?.removeElement(updatedStory);
+          stories = stories?.replaceElement(updatedStory);
+          setState(() {});
         }
-        setState(() {});
       },
     );
   }

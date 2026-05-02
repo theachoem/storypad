@@ -156,7 +156,7 @@ class _MapPickerContent extends StatelessWidget {
                 onPressed: selectedPlace == null
                     ? null
                     : () async {
-                        final label = await EditPlaceRoute(place: selectedPlace).push(context);
+                        final label = await EditPlaceRoute(place: selectedPlace).push(viewModel.viewContext);
                         if (!context.mounted || label == null || label is! String) return;
 
                         viewModel.updateSelectedPlaceDetails(
@@ -165,10 +165,6 @@ class _MapPickerContent extends StatelessWidget {
                           country: selectedPlace.country,
                           address: selectedPlace.address,
                         );
-
-                        final MapPickerResult? result = await viewModel.buildConfirmResult();
-                        if (!context.mounted || result == null) return;
-                        Navigator.of(context).pop(result);
                       },
               ),
             ),
@@ -193,7 +189,7 @@ class _MapPickerLayer extends StatelessWidget {
     }
 
     switch (viewModel.mapRenderer) {
-      case SpMapRenderer.googleMaps:
+      case SpMapRenderer.googleMap:
         return SpGoogleMap<PlaceDbModel>(
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight + 8.0, bottom: 112.0),
           mapController: viewModel.mapController,
