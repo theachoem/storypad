@@ -44,31 +44,13 @@ class _EditPlaceContent extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const SpSectionTitle(title: "Quick labels"),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14.0),
-            child: Wrap(
-              spacing: 8,
-              children: EditPlaceViewModel.quickLabels
-                  .map(
-                    (label) => ActionChip(
-                      label: Text(label),
-                      onPressed: () => viewModel.useLabelSuggestion(label),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-
-          const SizedBox(height: 16.0),
-          const SpSectionTitle(title: "Recent labels"),
           if (viewModel.recentLabels.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            const SpSectionTitle(title: "Recent labels"),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
               child: Wrap(
                 spacing: 8,
-                runSpacing: 8,
                 children: viewModel.recentLabels
                     .map(
                       (label) => ActionChip(
@@ -77,16 +59,6 @@ class _EditPlaceContent extends StatelessWidget {
                       ),
                     )
                     .toList(),
-              ),
-            ),
-          ] else ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'No recent labels found.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6)),
               ),
             ),
           ],

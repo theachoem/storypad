@@ -6,15 +6,6 @@ import 'edit_place_view.dart';
 class EditPlaceViewModel extends ChangeNotifier with DisposeAwareMixin {
   final EditPlaceRoute params;
 
-  static const List<String> quickLabels = <String>[
-    'Home',
-    'Work',
-    'School',
-    'Gym',
-    'Cafe',
-    'Restaurant',
-  ];
-
   late final TextEditingController labelController;
 
   List<String> _recentLabels = <String>[];

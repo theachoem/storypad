@@ -98,6 +98,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   List<MapStoryObject> get visibleStories => _visibleStories;
   List<MapStoryObject> _fetchedStories = [];
   SpLatLngBounds? _fetchedBounds;
+
   final Map<int, File?> _assetFileById = {};
   final Map<int, Future<File?>> _assetFileFutureById = {};
 
@@ -109,7 +110,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
             point: story.location,
             data: story,
             title: DateFormatHelper.yMEd_Hm(story.storyDate, Localizations.localeOf(viewContext)),
-            size: const Size(62.0, 74.0),
+            size: const Size.square(60.0),
             anchor: const Offset(0.5, 1.0),
           ),
         )
@@ -117,12 +118,17 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   int _loadVersion = 0;
+  SpMapViewport? _lastViewport;
 
-  Future<void> handleViewportChanged(SpMapViewport viewport) async {
+  Future<void> handleViewportChanged(
+    SpMapViewport viewport, {
+    bool forceReload = false,
+  }) async {
+    _lastViewport = viewport;
     final int loadVersion = ++_loadVersion;
     final fetchBounds = viewport.bounds.expanded(_viewportFetchExpansionFactor(viewport.zoom));
 
-    if (_fetchedBounds?.containsBounds(viewport.bounds) != true) {
+    if (_fetchedBounds?.containsBounds(viewport.bounds) != true || forceReload) {
       AppLogger.d('$runtimeType#handleViewportChanged - fetching stories for bounds: $fetchBounds');
 
       final stories = await StoryDbModel.db.getStoriesWithLocation(bounds: fetchBounds);
@@ -238,7 +244,16 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   Future<void> goToNewPage(BuildContext context) async {
     final addedStory = await EditStoryRoute(id: null, autoRequestLocation: true).push(context);
-    if (addedStory != null) {
+    if (addedStory != null && addedStory is StoryDbModel) {
+      if (addedStory.place != null && _lastViewport != null) {
+        await handleViewportChanged(_lastViewport!, forceReload: true);
+        await mapController.animateTo(
+          addedStory.place!.latitude,
+          addedStory.place!.longitude,
+          zoom: 15.0,
+          bearing: 0.0,
+        );
+      }
       Future.delayed(const Duration(seconds: 1)).then((_) {
         HomeView.reload(debugSource: '$runtimeType#goToNewPage');
       });
