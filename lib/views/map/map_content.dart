@@ -79,12 +79,17 @@ class _MapContent extends StatelessWidget {
       );
     }
 
-    final double topPadding = MediaQuery.of(context).padding.top + kToolbarHeight + 8.0;
+    final double topPadding = MediaQuery.of(context).padding.top + kToolbarHeight + 16.0;
 
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMap:
         return SpGoogleMap<MapStoryObject>(
-          padding: EdgeInsets.only(top: topPadding, bottom: 112.0),
+          padding: EdgeInsets.only(
+            top: topPadding,
+            bottom: 112.0,
+            left: MediaQuery.paddingOf(context).left,
+            right: MediaQuery.paddingOf(context).right,
+          ),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,

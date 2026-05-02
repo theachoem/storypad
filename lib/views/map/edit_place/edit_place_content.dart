@@ -46,7 +46,13 @@ class _EditPlaceContent extends StatelessWidget {
           ),
           if (viewModel.recentLabels.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const SpSectionTitle(title: "Recent labels"),
+            const SpSectionTitle(
+              title: "Recent labels",
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
               child: Wrap(

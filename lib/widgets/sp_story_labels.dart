@@ -230,6 +230,49 @@ class SpStoryLabels extends StatelessWidget {
         ),
       );
     }
+    if (onAddCurrentLocation != null && !story.hasLocation) {
+      children.add(
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.locationPin,
+          tooltip: "Add current location",
+          onTap: () async => onAddCurrentLocation!(),
+        ),
+      );
+    }
+
+    if (story.hasLocation) {
+      children.add(
+        buildPin(
+          context: context,
+          title: story.place!.displayLabel,
+          leadingIconData: SpIcons.map,
+          onTap: onSetPlace != null
+              ? () async {
+                  final result = await MapPickerRoute(
+                    initialSelectedPlace: story.place,
+                  ).push(context);
+
+                  if (result is MapPickerResult) {
+                    switch (result.action) {
+                      case MapPickerFinalAction.confirm:
+                        final selected = result.place;
+                        if (selected != null) {
+                          await onSetPlace?.call(selected);
+                        }
+                        break;
+                      case MapPickerFinalAction.remove:
+                        await onSetPlace?.call(null);
+                        break;
+                      case MapPickerFinalAction.cancel:
+                        break;
+                    }
+                  }
+                }
+              : null,
+        ),
+      );
+    }
 
     // Tags labels including its add button
     bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
@@ -325,50 +368,6 @@ class SpStoryLabels extends StatelessWidget {
             onTap: onToggleTags != null ? open : null,
             child: emojiRow,
           ),
-        ),
-      );
-    }
-
-    if (onAddCurrentLocation != null && !story.hasLocation) {
-      children.add(
-        _buildIconButton(
-          context: context,
-          icon: SpIcons.locationPin,
-          tooltip: "Add current location",
-          onTap: () async => onAddCurrentLocation!(),
-        ),
-      );
-    }
-
-    if (story.hasLocation) {
-      children.add(
-        buildPin(
-          context: context,
-          title: story.place!.displayLabel,
-          leadingIconData: SpIcons.map,
-          onTap: onSetPlace != null
-              ? () async {
-                  final result = await MapPickerRoute(
-                    initialSelectedPlace: story.place,
-                  ).push(context);
-
-                  if (result is MapPickerResult) {
-                    switch (result.action) {
-                      case MapPickerFinalAction.confirm:
-                        final selected = result.place;
-                        if (selected != null) {
-                          await onSetPlace?.call(selected);
-                        }
-                        break;
-                      case MapPickerFinalAction.remove:
-                        await onSetPlace?.call(null);
-                        break;
-                      case MapPickerFinalAction.cancel:
-                        break;
-                    }
-                  }
-                }
-              : null,
         ),
       );
     }

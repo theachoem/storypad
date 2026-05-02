@@ -63,16 +63,30 @@ class _MapPickerContent extends StatelessWidget {
 
             onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
           ),
-          IconButton(
-            tooltip: 'Current location',
-            icon: const Icon(SpIcons.myLocation),
-            style: IconButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            onPressed: () => viewModel.goToCurrentLocation(context),
+          SpSingleStateWidget.listen(
+            initialValue: false,
+            builder: (context, loading, notifier) {
+              return IconButton(
+                tooltip: 'Current location',
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).dividerColor),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                icon: loading
+                    ? const SizedBox.square(
+                        dimension: 24.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const Icon(SpIcons.myLocation),
+                onPressed: () async {
+                  notifier.value = true;
+                  await viewModel.goToCurrentLocation(context);
+                  notifier.value = false;
+                },
+              );
+            },
           ),
         ],
       ),
@@ -86,90 +100,91 @@ class _MapPickerContent extends StatelessWidget {
   }
 
   Widget buildSelectedPlaceCard(BuildContext context, PlaceDbModel? selectedPlace, bool isResolving) {
-    return Container(
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + kToolbarHeight,
-        left: MediaQuery.of(context).padding.left + 16.0,
-        right: MediaQuery.of(context).padding.right + 16.0,
-      ),
-      child: Builder(
-        builder: (context) {
-          final ColorScheme colorScheme = Theme.of(context).colorScheme;
-          final String title = selectedPlace == null
-              ? 'Tap map to select a place'
-              : isResolving
-              ? 'Resolving place...'
-              : selectedPlace.displayLabel;
+    return MediaQuery.removePadding(
+      removeLeft: true,
+      removeRight: true,
+      context: context,
+      child: Container(
+        margin: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + kToolbarHeight,
+          left: MediaQuery.of(context).padding.left + 16.0,
+          right: MediaQuery.of(context).padding.right + 16.0,
+        ),
+        child: Builder(
+          builder: (context) {
+            final ColorScheme colorScheme = Theme.of(context).colorScheme;
+            final String title = selectedPlace == null
+                ? 'Tap map to select a place'
+                : isResolving
+                ? 'Resolving place...'
+                : selectedPlace.displayLabel;
 
-          final String subtitle = selectedPlace == null
-              ? 'or use current location'
-              : isResolving
-              ? 'Please wait'
-              : () {
-                  final List<String> parts = <String>[
-                    if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)
-                      selectedPlace.locality!.trim(),
-                    if (selectedPlace.country != null && selectedPlace.country!.trim().isNotEmpty)
-                      selectedPlace.country!.trim(),
-                  ];
-                  if (parts.isNotEmpty) return parts.join(', ');
-                  return '${selectedPlace.latitude.toStringAsFixed(5)}, ${selectedPlace.longitude.toStringAsFixed(5)}';
-                }();
+            final String? subtitle = selectedPlace == null
+                ? null
+                : isResolving
+                ? 'Please wait'
+                : () {
+                    final List<String> parts = <String>[
+                      if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)
+                        selectedPlace.locality!.trim(),
+                      if (selectedPlace.country != null && selectedPlace.country!.trim().isNotEmpty)
+                        selectedPlace.country!.trim(),
+                    ];
+                    if (parts.isNotEmpty) return parts.join(', ');
+                    return '${selectedPlace.latitude.toStringAsFixed(5)}, ${selectedPlace.longitude.toStringAsFixed(5)}';
+                  }();
 
-          return Material(
-            color: colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              enabled: true,
-              onTap: selectedPlace == null
-                  ? null
-                  : () => viewModel.mapController.animateTo(
-                      selectedPlace.latitude,
-                      selectedPlace.longitude,
-                      zoom: 15.0,
-                      bearing: 0.0,
-                    ),
-              leading: isResolving
-                  ? const SizedBox.square(
-                      dimension: 18.0,
-                      child: CircularProgressIndicator.adaptive(),
-                    )
-                  : Icon(SpIcons.locationPin, color: colorScheme.primary),
-              title: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            return Material(
+              color: colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(12.0),
               ),
-              subtitle: Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: IconButton(
-                style: IconButton.styleFrom(shape: const CircleBorder()),
-                icon: const Icon(SpIcons.edit),
-                onPressed: selectedPlace == null
+              child: ListTile(
+                contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                enabled: true,
+                onTap: selectedPlace == null
                     ? null
-                    : () async {
-                        final label = await EditPlaceRoute(place: selectedPlace).push(viewModel.viewContext);
-                        if (!context.mounted || label == null || label is! String) return;
+                    : () => viewModel.mapController.animateTo(
+                        selectedPlace.latitude,
+                        selectedPlace.longitude,
+                        zoom: 15.0,
+                        bearing: 0.0,
+                      ),
+                leading: isResolving
+                    ? const SizedBox.square(
+                        dimension: 18.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : Icon(SpIcons.locationPin, color: colorScheme.primary),
+                title: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: subtitle == null ? null : Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                trailing: IconButton(
+                  style: IconButton.styleFrom(shape: const CircleBorder()),
+                  icon: const Icon(SpIcons.edit),
+                  onPressed: selectedPlace == null
+                      ? null
+                      : () async {
+                          final label = await EditPlaceRoute(place: selectedPlace).push(viewModel.viewContext);
+                          if (!context.mounted || label == null || label is! String) return;
 
-                        viewModel.updateSelectedPlaceDetails(
-                          placeName: label,
-                          locality: selectedPlace.locality,
-                          country: selectedPlace.country,
-                          address: selectedPlace.address,
-                        );
-                      },
+                          viewModel.updateSelectedPlaceDetails(
+                            placeName: label,
+                            locality: selectedPlace.locality,
+                            country: selectedPlace.country,
+                            address: selectedPlace.address,
+                          );
+                        },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -191,7 +206,12 @@ class _MapPickerLayer extends StatelessWidget {
     switch (viewModel.mapRenderer) {
       case SpMapRenderer.googleMap:
         return SpGoogleMap<PlaceDbModel>(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + kToolbarHeight + 8.0, bottom: 112.0),
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.0,
+            bottom: 112.0,
+            left: MediaQuery.paddingOf(context).left,
+            right: MediaQuery.paddingOf(context).right,
+          ),
           mapController: viewModel.mapController,
           initialCamera: viewModel.initialSpMapCamera,
           mapStyle: viewModel.mapStyle,
