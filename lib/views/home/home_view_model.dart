@@ -15,7 +15,6 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/views/home/home_view.dart';
@@ -326,13 +325,8 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
         notifyListeners();
       } else {
-        await MessengerService.of(HomeView.homeContext!).showLoading(
-          debugSource: '$runtimeType#_checkNewStoryResult',
-          future: () async {
-            year = addedStory.year;
-            await reload(debugSource: '$runtimeType#_checkNewStoryResult');
-          },
-        );
+        year = addedStory.year;
+        await reload(debugSource: '$runtimeType#_checkNewStoryResult');
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
