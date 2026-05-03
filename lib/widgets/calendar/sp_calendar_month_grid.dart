@@ -8,16 +8,22 @@ class _SpCalendarMonthGrid extends StatelessWidget {
   const _SpCalendarMonthGrid({
     required this.year,
     required this.month,
+    required this.firstDayOfWeek,
     required this.cellBuilder,
   });
 
   final int year;
   final int month;
+  final FirstDayOfWeekOption firstDayOfWeek;
   final Widget Function(BuildContext context, DateTime date, bool isCurrentMonth) cellBuilder;
 
   @override
   Widget build(BuildContext context) {
-    final visibleDays = CalendarDaysGenerator.generate(year: year, month: month);
+    final visibleDays = CalendarDaysGenerator.generate(
+      year: year,
+      month: month,
+      firstDayOfWeek: firstDayOfWeek,
+    );
     const crossAxisCount = DateTime.daysPerWeek;
     final itemCount = visibleDays.length;
 

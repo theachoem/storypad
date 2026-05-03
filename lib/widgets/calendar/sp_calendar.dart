@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/calendar_days_generator.dart';
+import 'package:storypad/core/types/first_day_of_week_option.dart';
 
 part 'sp_calendar_month_grid.dart';
 
@@ -23,9 +24,11 @@ class SpCalendar extends StatefulWidget {
     this.onMonthChanged,
     this.controller,
     this.showBottomBorder = false,
+    this.firstDayOfWeek = FirstDayOfWeekOption.monday,
   });
 
   final bool showBottomBorder;
+  final FirstDayOfWeekOption firstDayOfWeek;
 
   /// The initial year to display
   final int initialYear;
@@ -156,6 +159,7 @@ class _SpCalendarState extends State<SpCalendar> {
                   return _SpCalendarMonthGrid(
                     year: date.year,
                     month: date.month,
+                    firstDayOfWeek: widget.firstDayOfWeek,
                     cellBuilder: widget.cellBuilder,
                   );
                 },
@@ -170,18 +174,23 @@ class _SpCalendarState extends State<SpCalendar> {
 
   /// Builds the header showing day names (Mon, Tue, etc.)
   Widget _buildDaysHeader(BuildContext context) {
+    final weekdays = _orderedWeekdays(widget.firstDayOfWeek);
+
     return Row(
       children: List.generate(DateTime.daysPerWeek, (index) {
+        final weekday = weekdays[index];
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                DateFormatHelper.E(DateTime(2000, 10, index + 1), context.locale),
+                DateFormatHelper.E(_dateFromWeekday(weekday), context.locale),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: index == 0 || index == 6 ? Theme.of(context).colorScheme.error : null,
+                  color: weekday == DateTime.saturday || weekday == DateTime.sunday
+                      ? Theme.of(context).colorScheme.error
+                      : null,
                 ),
               ),
             ),
@@ -196,8 +205,22 @@ class _SpCalendarState extends State<SpCalendar> {
     final visibleDays = CalendarDaysGenerator.generate(
       year: _currentYear,
       month: _currentMonth,
+      firstDayOfWeek: widget.firstDayOfWeek,
     );
     final rows = (visibleDays.length / DateTime.daysPerWeek).ceil();
     return rows * constraints.maxWidth / DateTime.daysPerWeek; // 56 is the minimum height per row
+  }
+
+  List<int> _orderedWeekdays(FirstDayOfWeekOption firstDayOfWeek) {
+    final start = firstDayOfWeek.value;
+    return List.generate(
+      DateTime.daysPerWeek,
+      (index) => ((start + index - 1) % DateTime.daysPerWeek) + 1,
+    );
+  }
+
+  DateTime _dateFromWeekday(int weekday) {
+    final monday = DateTime(2000, 1, 3);
+    return monday.add(Duration(days: weekday - 1));
   }
 }

@@ -1,7 +1,12 @@
-part of '../paywall_features_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
+import 'package:storypad/widgets/sp_images_viewer.dart';
 
-class _DemoImages extends StatelessWidget {
-  const _DemoImages({
+class SpDemoImages extends StatelessWidget {
+  const SpDemoImages({
+    super.key,
     required this.demoImageUrls,
     required this.context,
     required this.skeletonCount,

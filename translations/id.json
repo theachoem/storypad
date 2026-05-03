@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "Ekspor Teks (.txt)",
   "list_tile.faq.title": "Pertanyaan Umum",
   "list_tile.file_size.title": "Ukuran berkas",
+  "list_tile.first_day_of_week.title": "Hari Pertama dalam Seminggu",
   "list_tile.font_family.title": "Keluarga Font",
   "list_tile.font_weight.title": "Berat Font",
   "list_tile.import_storypad_json.title": "Impor StoryPad JSON (.json)",

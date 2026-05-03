@@ -21,6 +21,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat);
 
+  DevicePreferencesObject firstDayOfWeek(FirstDayOfWeekOption? firstDayOfWeek);
+
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
@@ -48,6 +50,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     bool? enablePeriodCalendar,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
+    FirstDayOfWeekOption? firstDayOfWeek,
     int? colorSeedValue,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
@@ -92,6 +95,11 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(timeFormat: timeFormat);
 
   @override
+  DevicePreferencesObject firstDayOfWeek(
+    FirstDayOfWeekOption? firstDayOfWeek,
+  ) => call(firstDayOfWeek: firstDayOfWeek);
+
+  @override
   DevicePreferencesObject colorSeedValue(int? colorSeedValue) =>
       call(colorSeedValue: colorSeedValue);
 
@@ -125,6 +133,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? enablePeriodCalendar = const $CopyWithPlaceholder(),
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
+    Object? firstDayOfWeek = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
@@ -159,6 +168,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.timeFormat
           // ignore: cast_nullable_to_non_nullable
           : timeFormat as TimeFormatOption?,
+      firstDayOfWeek: firstDayOfWeek == const $CopyWithPlaceholder()
+          ? _value.firstDayOfWeek
+          // ignore: cast_nullable_to_non_nullable
+          : firstDayOfWeek as FirstDayOfWeekOption?,
       colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
@@ -205,6 +218,10 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     _$TimeFormatOptionEnumMap,
     json['time_format'],
   ),
+  firstDayOfWeek: $enumDecodeNullable(
+    _$FirstDayOfWeekOptionEnumMap,
+    json['first_day_of_week'],
+  ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
   storyTilePreferences: json['story_tile_preferences'] == null
@@ -229,6 +246,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'color_seed_value': instance.colorSeedValue,
   'voice_playback_speed': instance.voicePlaybackSpeed,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
+  'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
   'enable_relax_sounds': instance.enableRelaxSounds,
@@ -251,4 +269,9 @@ const _$ThemeModeEnumMap = {
 const _$TimeFormatOptionEnumMap = {
   TimeFormatOption.h12: 'h12',
   TimeFormatOption.h24: 'h24',
+};
+
+const _$FirstDayOfWeekOptionEnumMap = {
+  FirstDayOfWeekOption.monday: 'monday',
+  FirstDayOfWeekOption.sunday: 'sunday',
 };

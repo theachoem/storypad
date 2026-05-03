@@ -1,14 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_period_calendar_demo_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_demo_images_sheet.dart';
+import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 
 import 'add_ons_view_model.dart';
 

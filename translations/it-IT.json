@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "Esporta testo (.txt)",
   "list_tile.faq.title": "Domande frequenti",
   "list_tile.file_size.title": "Dimensione del file",
+  "list_tile.first_day_of_week.title": "Primo giorno della settimana",
   "list_tile.font_family.title": "Famiglia di caratteri",
   "list_tile.font_weight.title": "Peso del carattere",
   "list_tile.import_storypad_json.title": "Importa StoryPad JSON (.json)",

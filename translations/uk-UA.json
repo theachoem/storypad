@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "Експорт Text (.txt)",
   "list_tile.faq.title": "Часті запитання",
   "list_tile.file_size.title": "Розмір файлу",
+  "list_tile.first_day_of_week.title": "Перший день тижня",
   "list_tile.font_family.title": "Сімейство шрифтів",
   "list_tile.font_weight.title": "Товщина шрифту",
   "list_tile.import_storypad_json.title": "Імпорт StoryPad JSON (.json)",

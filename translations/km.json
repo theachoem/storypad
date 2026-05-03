@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "នាំចេញអត្ថបទ (.txt)",
   "list_tile.faq.title": "សំណួរគេសួរញឹកញាប់",
   "list_tile.file_size.title": "ទំហំឯកសារ",
+  "list_tile.first_day_of_week.title": "ថ្ងៃដំបូងនៃសប្តាហ៍",
   "list_tile.font_family.title": "គ្រួសារពុម្ពអក្សរ",
   "list_tile.font_weight.title": "ទម្ងន់ពុម្ពអក្សរ",
   "list_tile.import_storypad_json.title": "នាំចូល StoryPad JSON (.json)",

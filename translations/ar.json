@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "تصدير النص (.txt)",
   "list_tile.faq.title": "التعليمات",
   "list_tile.file_size.title": "حجم الملف",
+  "list_tile.first_day_of_week.title": "أول يوم من الأسبوع",
   "list_tile.font_family.title": "عائلة الخطوط",
   "list_tile.font_weight.title": "وزن الخط",
   "list_tile.import_storypad_json.title": "استيراد StoryPad JSON (.json)",

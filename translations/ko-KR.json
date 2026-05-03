@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "텍스트 내보내기(.txt)",
   "list_tile.faq.title": "자주 묻는 질문",
   "list_tile.file_size.title": "파일 크기",
+  "list_tile.first_day_of_week.title": "한 주의 첫날",
   "list_tile.font_family.title": "글꼴 종류",
   "list_tile.font_weight.title": "글꼴 굵기",
   "list_tile.import_storypad_json.title": "StoryPad JSON(.json) 가져오기",

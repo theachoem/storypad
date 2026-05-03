@@ -29,14 +29,7 @@ class _FeatureTile extends StatelessWidget {
           ),
         ),
         ListTile(
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: ColorFromDayService(context: context).get(feature.weekdayColor),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(feature.iconData, color: ColorFromDayService(context: context).getForeground()),
-          ),
+          leading: SpSettingIconBadge(weekday: feature.weekdayColor, icon: feature.iconData, compact: false),
           title: Text(feature.title),
           subtitle: Text(feature.subtitle),
           trailing: const Icon(SpIcons.keyboardRight),

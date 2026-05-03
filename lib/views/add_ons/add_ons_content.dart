@@ -43,20 +43,17 @@ class _AddOnTile extends StatelessWidget {
       onTap: () {
         switch (addOn) {
           case .relax_sounds:
-            const RelaxSoundsRoute().push(context);
+            SpDemoImagesSheet.relaxSoundDemo().show(context: context);
             break;
           case .period_calendar:
-            const SpPeriodCalendarDemoSheet().show(context: context);
+            SpDemoImagesSheet.periodCalendarDemo().show(context: context);
             break;
         }
       },
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      leading: CircleAvatar(
-        backgroundColor: ColorFromDayService(context: context).get(addOn.weekdayColor),
-        child: Icon(
-          addOn.icon,
-          color: ColorFromDayService(context: context).getForeground(),
-        ),
+      leading: SpSettingIconBadge(
+        weekday: addOn.weekdayColor,
+        icon: addOn.icon,
       ),
       title: Text.rich(
         TextSpan(
