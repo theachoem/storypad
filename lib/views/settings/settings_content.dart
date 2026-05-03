@@ -38,33 +38,38 @@ class _SettingsContent extends StatelessWidget {
           const SizedBox(height: 8),
           ...[
             SpSectionTitle(title: tr("general.general")),
-            const LanguageTile(),
+            const LanguageTile(weekday: 1),
             buildAppLockTile(context),
-            TimeFormatTile.globalTheme(),
+            TimeFormatTile.globalTheme(weekday: 3),
+            ListTile(
+              leading: const SpSettingIconBadge(weekday: 4, icon: SpIcons.import),
+              title: Text(tr("page.backup_services.title")),
+              onTap: () => const BackupServicesRoute().push(context),
+            ),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.appearance")),
-            ThemeModeTile.globalTheme(),
-            const ColorSeedTile(),
+            ThemeModeTile.globalTheme(weekday: 5),
+            ColorSeedTile(),
             if (kStoryPad) const AppIconTile(),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.text")),
-            FontSizeTile.globalTheme(),
-            FontFamilyTile.globalTheme(),
-            FontWeightTile.globalTheme(),
+            FontSizeTile.globalTheme(weekday: 1),
+            FontFamilyTile.globalTheme(weekday: 2),
+            FontWeightTile.globalTheme(weekday: 3),
           ],
           ...[
             const Divider(),
-            SpSectionTitle(title: tr("general.advanced")),
+            SpSectionTitle(title: tr("general.stories")),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(),
+            StoryTilePreferencesTile(weekday: 4),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(),
+            DefaultStoryPreferencesTile(weekday: 5),
           ],
           const SizedBox(height: 120),
         ],
@@ -73,10 +78,15 @@ class _SettingsContent extends StatelessWidget {
   }
 
   Widget buildAppLockTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(SpIcons.lock),
-      title: Text(tr("page.app_lock.title")),
-      onTap: () => AppLocksRoute().push(context),
+    return Consumer<AppLockProvider>(
+      builder: (context, appLockProvider, child) {
+        return ListTile(
+          leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.lock),
+          title: Text(tr("page.app_lock.title")),
+          subtitle: appLockProvider.hasAppLock ? Text(tr("general.enabled")) : null,
+          onTap: () => AppLocksRoute().push(context),
+        );
+      },
     );
   }
 }

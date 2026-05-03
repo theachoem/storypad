@@ -18,6 +18,7 @@ import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
+import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 class SpStoryTilePreferencesSheet extends BaseBottomSheet {
@@ -207,7 +208,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         controller: PrimaryScrollController.maybeOf(context),
         children: [
           SwitchListTile.adaptive(
-            secondary: const Icon(SpIcons.timer),
+            secondary: const SpSettingIconBadge(weekday: 1, icon: SpIcons.timer),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_time.title")),
             value: storyTilePreferences.showTime,
@@ -217,7 +218,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             },
           ),
           SwitchListTile.adaptive(
-            secondary: const Icon(SpIcons.voice),
+            secondary: const SpSettingIconBadge(weekday: 2, icon: SpIcons.voice),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_voice_count.title")),
             value: storyTilePreferences.showVoiceCount,
@@ -227,7 +228,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             },
           ),
           SwitchListTile.adaptive(
-            secondary: const Icon(SpIcons.tag),
+            secondary: const SpSettingIconBadge(weekday: 3, icon: SpIcons.tag),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_tag_labels.title")),
             value: storyTilePreferences.showTagLabels,
@@ -237,7 +238,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             },
           ),
           SwitchListTile.adaptive(
-            secondary: Icon(SpIcons.managingPage),
+            secondary: SpSettingIconBadge(weekday: 4, icon: SpIcons.managingPage),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_page_count.title")),
             value: storyTilePreferences.showPageCount,
@@ -247,7 +248,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             },
           ),
           SwitchListTile.adaptive(
-            secondary: const Icon(SpIcons.map),
+            secondary: const SpSettingIconBadge(weekday: 5, icon: SpIcons.map),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_location.title")),
             value: storyTilePreferences.showLocation,
@@ -345,7 +346,7 @@ class _CharacterCountSliderState extends State<_CharacterCountSlider> {
       children: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 24.0),
-          leading: Icon(SpIcons.text),
+          leading: SpSettingIconBadge(weekday: 6, icon: SpIcons.text),
           title: Text(tr("list_tile.preview_char_count.title")),
           trailing: Text(
             _localValue.toString(),

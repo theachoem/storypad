@@ -94,7 +94,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-        if (viewModel.yearlyBackups!.isNotEmpty) SpSectionTitle(title: tr('page.backups.title')),
+        if (viewModel.yearlyBackups!.isNotEmpty) SpSectionTitle(title: tr('list_tile.backup.title')),
         for (MapEntry<int, CloudFileObject> entry in viewModel.getSortedYearlyBackups())
           SpPopupMenuButton(
             items: (context) {
