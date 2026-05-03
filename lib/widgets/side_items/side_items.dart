@@ -196,16 +196,16 @@ class SideItems {
           onTap: (context) => const RelaxSoundsRoute().push(context),
         ),
       TimelineSideBarItem(
-        icon: SpIcons.map,
-        tooltip: tr('page.map.title'),
-        wrap: (context, child) => SpFadeIn.bound(child: child),
-        onTap: (context) => const MapRoute().push(context),
-      ),
-      TimelineSideBarItem(
         icon: SpIcons.search,
         tooltip: tr('page.search.title'),
         wrap: (context, child) => SpFadeIn.bound(child: child),
         onTap: (context) => SearchRoute().push(context),
+      ),
+      TimelineSideBarItem(
+        icon: SpIcons.map,
+        tooltip: tr('page.map.title'),
+        wrap: (context, child) => SpFadeIn.bound(child: child),
+        onTap: (context) => const MapRoute().push(context),
       ),
       TimelineSideBarItem(
         icon: SpIcons.calendar,

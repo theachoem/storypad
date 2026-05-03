@@ -103,6 +103,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
 
               widget.onThemeChanged(preferences);
             },
+            weekday: 2,
           ),
           FontSizeTile(
             currentFontSize: preferences.fontSize,
@@ -112,6 +113,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
 
               widget.onThemeChanged(preferences);
             },
+            weekday: 1,
           ),
           FontWeightTile(
             currentFontWeight:
@@ -122,8 +124,9 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
 
               widget.onThemeChanged(preferences);
             },
+            weekday: 3,
           ),
-          const SizedBox(height: 12.0),
+          const SizedBox(height: 8.0),
           SpBackgroundPicker(
             backgroundColor: ColorScheme.of(context).surfaceContainerLow,
             colorSeedValue: preferences.colorSeedValue,

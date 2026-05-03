@@ -21,7 +21,7 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   DevicePreferencesObject get preferences => _preferences;
   ThemeMode get themeMode => preferences.themeMode;
 
-  bool get enableRelaxSounds => preferences.enableRelaxSounds ?? true;
+  bool get enableRelaxSounds => preferences.enableRelaxSounds ?? false;
   bool enablePeriodCalendar(BuildContext context) =>
       preferences.enablePeriodCalendar ?? context.read<InAppPurchaseProvider>().periodCalendar;
 
@@ -39,7 +39,12 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   }
 
   void reset() {
-    _preferences = DevicePreferencesObject.initial();
+    _preferences = DevicePreferencesObject.initial().copyWith(
+      // Preserve add-on states as they are tied to purchases, not preferences.
+      enableRelaxSounds: preferences.enableRelaxSounds,
+      enablePeriodCalendar: preferences.enablePeriodCalendar,
+    );
+
     storage.remove();
     notifyListeners();
 

@@ -9,7 +9,7 @@ class _BackupServicesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr('page.backups.title')),
+        title: Text(tr('page.backup_services.title')),
         actions: [
           Consumer<BackupProvider>(
             builder: (context, backupProvider, child) {

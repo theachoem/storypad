@@ -8,88 +8,88 @@
       "name": "Community",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_community.dart",
       "args": [
         "--flavor",
         "community",
-        "--dart-define-from-file=configs/community.json"
+        "--dart-define-from-file=private_keys/dart_defines/community.json"
       ]
     },
     {
       "name": "StoryPad",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
       "args": [
         "--flavor",
         "storypad",
-        "--dart-define-from-file=configs/storypad.json"
+        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
       ]
     },
     {
       "name": "Spooky",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_spooky.dart",
       "args": [
         "--flavor",
         "spooky",
-        "--dart-define-from-file=configs/spooky.json"
+        "--dart-define-from-file=private_keys/dart_defines/spooky.json"
       ]
     },
     {
       "name": "Community (iOS)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_community.dart",
       "args": [
         "--flavor",
         "community",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=configs/community.json"
+        "--dart-define-from-file=private_keys/dart_defines/community.json"
       ]
     },
     {
       "name": "StoryPad (iOS)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
       "args": [
         "--flavor",
         "storypad",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=configs/storypad.json"
+        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
       ]
     },
     {
       "name": "Spooky (iOS)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_spooky.dart",
       "args": [
         "--flavor",
         "spooky",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=configs/spooky.json"
+        "--dart-define-from-file=private_keys/dart_defines/spooky.json"
       ]
     },
     {
       "name": "Community (macOS)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_community.dart",
       "args": [
         "--flavor",
         "community",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=configs/community.json"
+        "--dart-define-from-file=private_keys/dart_defines/community.json"
       ],
       "deviceId": "macos"
     },
@@ -97,13 +97,13 @@
       "name": "StoryPad (macOS)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
+      "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
       "args": [
         "--flavor",
         "storypad",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=configs/storypad.json"
+        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
       ],
       "deviceId": "macos"
     }

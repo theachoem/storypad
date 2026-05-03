@@ -5,14 +5,17 @@ import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_story_tile_preferences_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 
 class StoryTilePreferencesTile extends StatelessWidget {
-  const StoryTilePreferencesTile({super.key});
+  const StoryTilePreferencesTile({super.key, required this.weekday});
+
+  final int weekday;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(SpIcons.tune),
+      leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.tune),
       title: Text(tr("list_tile.story_tile_preferences.title")),
       onTap: () async {
         final result = await const SpStoryTilePreferencesSheet().show(context: context);

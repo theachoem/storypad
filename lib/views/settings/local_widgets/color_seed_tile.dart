@@ -6,13 +6,16 @@ import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 
 class ColorSeedTile extends StatelessWidget {
-  const ColorSeedTile({
+  // No need const so translation can be updated when locale changes.
+  // ignore: prefer_const_constructors_in_immutables
+  ColorSeedTile({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     DevicePreferencesProvider provider = Provider.of<DevicePreferencesProvider>(context);
+
     return SpFloatingPopUpButton(
       estimatedFloatingWidth: spColorPickerMinWidth,
       bottomToTop: false,
@@ -33,16 +36,23 @@ class ColorSeedTile extends StatelessWidget {
           title: Text(tr("list_tile.color_seed.title")),
           subtitle: Text(provider.preferences.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
           leading: Container(
-            width: 24,
-            height: 24,
-            padding: const EdgeInsets.all(1),
+            width: 32,
+            height: 32,
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2.0),
-              shape: BoxShape.circle,
+              border: Border.all(
+                color:
+                    (provider.preferences.colorSeedCustomized
+                            ? provider.preferences.colorSeed!
+                            : Theme.of(context).colorScheme.primary)
+                        .withValues(alpha: 0.5),
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Container(
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(4),
                 color: provider.preferences.colorSeedCustomized
                     ? provider.preferences.colorSeed
                     : Theme.of(context).colorScheme.primary,
