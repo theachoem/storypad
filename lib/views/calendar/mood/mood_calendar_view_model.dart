@@ -52,10 +52,11 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     params.monthYearNotifier.addListener(_onParentMonthYearChanged);
 
     selectedDay =
-        params.monthYearNotifier.value.month == DateTime.now().month &&
-            params.monthYearNotifier.value.year == DateTime.now().year
-        ? DateTime.now().day
-        : 1;
+        params.initialSelectedDay ??
+        (params.monthYearNotifier.value.month == DateTime.now().month &&
+                params.monthYearNotifier.value.year == DateTime.now().year
+            ? DateTime.now().day
+            : 1);
   }
 
   // For feeling flip animation, giving even days a 1-second delay

@@ -18,6 +18,7 @@ class _CalendarContent extends StatelessWidget {
       CalendarSegmentId.mood => MoodCalendarView(
         hasMultipleSegments: viewModel.segments.length > 1,
         monthYearNotifier: viewModel.monthYearNotifier,
+        initialSelectedDay: viewModel.params.initialDay,
       ),
       CalendarSegmentId.period => PeriodCalendarView(
         monthYearNotifier: viewModel.monthYearNotifier,

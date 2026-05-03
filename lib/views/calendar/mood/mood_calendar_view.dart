@@ -24,9 +24,11 @@ class MoodCalendarView extends StatelessWidget {
     super.key,
     required this.monthYearNotifier,
     required this.hasMultipleSegments,
+    required this.initialSelectedDay,
   });
 
   final bool hasMultipleSegments;
+  final int? initialSelectedDay;
   final ValueNotifier<({int year, int month})> monthYearNotifier;
 
   @override
