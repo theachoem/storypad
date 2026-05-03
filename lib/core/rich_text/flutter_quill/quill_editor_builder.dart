@@ -127,6 +127,7 @@ class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
         showCursor: !widget.readOnly,
         paintCursorAboveText: !widget.readOnly,
         placeholder: "...",
+        onLaunchUrl: (value) => UrlOpenerService.openForRichContent(context: context, url: value),
         embedBuilders: [
           _QuillImageBlockEmbed(
             layoutType: widget.layoutType,
