@@ -17,12 +17,7 @@ class SpMarkdownBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return MarkdownBody(
       data: body,
-      onTapLink: (text, href, title) => UrlOpenerService.openForMarkdown(
-        context: context,
-        text: text,
-        href: href,
-        title: title,
-      ),
+      onTapLink: (text, href, title) => UrlOpenerService.openForRichContent(context: context, url: href ?? ''),
       styleSheet: MarkdownStyleSheet(
         textAlign: align,
         blockquoteDecoration: BoxDecoration(

@@ -1,11 +1,15 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
 import 'package:storypad/core/extensions/color_extension.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 export 'package:url_launcher/url_launcher.dart' show LaunchMode;
@@ -99,5 +103,26 @@ class UrlOpenerService {
   }) {
     if (href == null) return;
     openInCustomTab(context, href);
+  }
+
+  static Future<void> openForRichContent({
+    required BuildContext context,
+    required String url,
+  }) async {
+    final result = await showModalActionSheet(
+      context: context,
+      actions: [
+        SheetAction(label: tr("button.open"), key: "open"),
+        SheetAction(label: tr("button.copy_link"), key: "copy"),
+      ],
+    );
+
+    if (!context.mounted) return;
+    if (result == "open") {
+      UrlOpenerService.openInCustomTab(context, url);
+    } else if (result == "copy") {
+      Clipboard.setData(ClipboardData(text: url));
+      MessengerService.of(context).showSnackBar(url, showAction: false);
+    }
   }
 }
