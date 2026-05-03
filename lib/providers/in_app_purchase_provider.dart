@@ -335,13 +335,13 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> presentCodeRedemptionSheet(BuildContext context) async {
-    if (!kIAPEnabled || !Platform.isIOS || !Platform.isAndroid) return;
+    if (!kIAPEnabled) return;
 
     if (Platform.isIOS) {
       await _ensureInitialized();
       await Purchases.presentCodeRedemptionSheet();
       if (context.mounted) await restorePurchase(context);
-    } else {
+    } else if (Platform.isAndroid) {
       SpAndroidRedemptionSheet().show(context: context);
     }
   }

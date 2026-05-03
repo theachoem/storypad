@@ -42,6 +42,7 @@
   "button.new_template": "새 템플릿",
   "button.next": "다음",
   "button.open": "열기",
+  "button.open_in_args": "{OPENEE_NAME}에서 열기",
   "button.open_location_settings": "위치 설정 열기",
   "button.open_settings": "설정 열기",
   "button.permanent_delete": "삭제",

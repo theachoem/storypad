@@ -42,6 +42,7 @@
   "button.new_template": "Новий шаблон",
   "button.next": "Далі",
   "button.open": "Відкрити",
+  "button.open_in_args": "Відкрити в {OPENEE_NAME}",
   "button.open_location_settings": "Відкрити налаштування місцезнаходження",
   "button.open_settings": "Відкрити налаштування",
   "button.permanent_delete": "Видалити",

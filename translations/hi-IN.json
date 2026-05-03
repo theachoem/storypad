@@ -42,6 +42,7 @@
   "button.new_template": "नया टेम्पलेट",
   "button.next": "अगला",
   "button.open": "खुला",
+  "button.open_in_args": "{OPENEE_NAME} में खोलें",
   "button.open_location_settings": "स्थान सेटिंग्स खोलें",
   "button.open_settings": "सेटिंग्स खोलें",
   "button.permanent_delete": "मिटाना",

@@ -42,6 +42,7 @@
   "button.new_template": "New Template",
   "button.next": "Next",
   "button.open": "Open",
+  "button.open_in_args": "Open in {OPENEE_NAME}",
   "button.open_location_settings": "Open Location Settings",
   "button.open_settings": "Open Settings",
   "button.permanent_delete": "Delete",

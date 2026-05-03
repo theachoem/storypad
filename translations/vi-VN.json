@@ -42,6 +42,7 @@
   "button.new_template": "Mẫu mới",
   "button.next": "Kế tiếp",
   "button.open": "Mở",
+  "button.open_in_args": "Mở trong {OPENEE_NAME}",
   "button.open_location_settings": "Mở cài đặt vị trí",
   "button.open_settings": "Mở cài đặt",
   "button.permanent_delete": "Xóa bỏ",

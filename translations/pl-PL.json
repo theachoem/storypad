@@ -42,6 +42,7 @@
   "button.new_template": "Nowy szablon",
   "button.next": "Następny",
   "button.open": "Otwarte",
+  "button.open_in_args": "Otwórz w {OPENEE_NAME}",
   "button.open_location_settings": "Otwórz ustawienia lokalizacji",
   "button.open_settings": "Otwórz ustawienia",
   "button.permanent_delete": "Usuwać",

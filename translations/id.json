@@ -42,6 +42,7 @@
   "button.new_template": "Template Baru",
   "button.next": "Berikutnya",
   "button.open": "Membuka",
+  "button.open_in_args": "Buka di {OPENEE_NAME}",
   "button.open_location_settings": "Buka Pengaturan Lokasi",
   "button.open_settings": "Buka Pengaturan",
   "button.permanent_delete": "Menghapus",

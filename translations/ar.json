@@ -42,6 +42,7 @@
   "button.new_template": "قالب جديد",
   "button.next": "التالي",
   "button.open": "يفتح",
+  "button.open_in_args": "افتح في {OPENEE_NAME}",
   "button.open_location_settings": "فتح إعدادات الموقع",
   "button.open_settings": "فتح الإعدادات",
   "button.permanent_delete": "يمسح",

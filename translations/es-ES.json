@@ -42,6 +42,7 @@
   "button.new_template": "Nueva plantilla",
   "button.next": "Próximo",
   "button.open": "Abierto",
+  "button.open_in_args": "Abrir en {NOMBRE_OPENEE}",
   "button.open_location_settings": "Abrir configuración de ubicación",
   "button.open_settings": "Abrir configuración",
   "button.permanent_delete": "Borrar",

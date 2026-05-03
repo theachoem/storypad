@@ -42,6 +42,7 @@
   "button.new_template": "Neue Vorlage",
   "button.next": "Nächste",
   "button.open": "Offen",
+  "button.open_in_args": "Öffnen in {OPENEE_NAME}",
   "button.open_location_settings": "Standorteinstellungen öffnen",
   "button.open_settings": "Einstellungen öffnen",
   "button.permanent_delete": "Löschen",

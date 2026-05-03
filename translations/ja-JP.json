@@ -42,6 +42,7 @@
   "button.new_template": "新しいテンプレート",
   "button.next": "次へ",
   "button.open": "開く",
+  "button.open_in_args": "{OPENEE_NAME}で開く",
   "button.open_location_settings": "位置情報設定を開く",
   "button.open_settings": "設定を開く",
   "button.permanent_delete": "削除",

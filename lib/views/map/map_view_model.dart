@@ -181,7 +181,13 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     final filter = SearchFilterObject(years: {}, types: {}, assetId: null, storyIds: storyIds.toSet());
 
     // Use view context to show bottom sheet to avoid using override theme of map overlay for sheet.
-    SpStoriesBottomSheet(filter: filter).show(context: viewContext);
+    SpStoriesBottomSheet(
+      filter: filter,
+
+      // Only show map opener button when there's exactly 1 story.
+      // We want to open extact position, not cluster center.
+      storyLocation: storyIds.length == 1 ? focusPoint : null,
+    ).show(context: viewContext);
 
     if (focusPoint != null) {
       Future.delayed(const Duration(milliseconds: 300));

@@ -42,6 +42,7 @@
   "button.new_template": "Nouveau modèle",
   "button.next": "Suivant",
   "button.open": "Ouvrir",
+  "button.open_in_args": "Ouvrir dans {OPENEE_NAME}",
   "button.open_location_settings": "Ouvrir les paramètres de localisation",
   "button.open_settings": "Ouvrir les paramètres",
   "button.permanent_delete": "Supprimer",

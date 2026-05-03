@@ -42,6 +42,7 @@
   "button.new_template": "新模板",
   "button.next": "下一个",
   "button.open": "打开",
+  "button.open_in_args": "打开方式：{OPENEE_NAME}",
   "button.open_location_settings": "打开位置设置",
   "button.open_settings": "打开设置",
   "button.permanent_delete": "删除",

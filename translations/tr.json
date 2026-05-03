@@ -42,6 +42,7 @@
   "button.new_template": "Yeni Şablon",
   "button.next": "Sonraki",
   "button.open": "Açık",
+  "button.open_in_args": "{OPENEE_NAME} içinde aç",
   "button.open_location_settings": "Konum Ayarlarını Aç",
   "button.open_settings": "Ayarları aç",
   "button.permanent_delete": "Sil",

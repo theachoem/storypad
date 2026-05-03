@@ -42,6 +42,7 @@
   "button.new_template": "គំរូថ្មី",
   "button.next": "បន្ទាប់",
   "button.open": "បើក",
+  "button.open_in_args": "បើកនៅក្នុង {OPENEE_NAME}",
   "button.open_location_settings": "បើកការកំណត់ទីតាំង",
   "button.open_settings": "បើកការកំណត់",
   "button.permanent_delete": "លុប",
