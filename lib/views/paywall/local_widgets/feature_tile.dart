@@ -29,7 +29,7 @@ class _FeatureTile extends StatelessWidget {
           ),
         ),
         ListTile(
-          leading: SpSettingIconBadge(weekday: feature.weekdayColor, icon: feature.iconData, compact: false),
+          leading: SpSettingIconBadge(weekday: feature.weekdayColor, icon: feature.iconData),
           title: Text(feature.title),
           subtitle: Text(feature.subtitle),
           trailing: const Icon(SpIcons.keyboardRight),

@@ -36,8 +36,8 @@ class ColorSeedTile extends StatelessWidget {
           title: Text(tr("list_tile.color_seed.title")),
           subtitle: Text(provider.preferences.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
           leading: Container(
-            width: 32,
-            height: 32,
+            width: 40,
+            height: 40,
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               border: Border.all(

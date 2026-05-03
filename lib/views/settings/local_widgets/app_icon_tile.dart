@@ -18,8 +18,8 @@ class AppIconTile extends StatelessWidget {
         return ListTile(
           title: Text(tr('general.app_icon')),
           leading: Container(
-            width: 32,
-            height: 32,
+            width: 40,
+            height: 40,
             clipBehavior: .hardEdge,
             decoration: BoxDecoration(
               color: Colors.white,
