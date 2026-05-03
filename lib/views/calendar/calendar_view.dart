@@ -23,10 +23,15 @@ class CalendarRoute extends BaseRoute {
     required this.initialMonth,
     required this.initialYear,
     required this.initialSegment,
+    this.initialDay,
   });
 
   final int? initialMonth;
   final int? initialYear;
+
+  // Initial day only supported for mood calendar.
+  final int? initialDay;
+
   final CalendarSegmentId? initialSegment;
 
   @override

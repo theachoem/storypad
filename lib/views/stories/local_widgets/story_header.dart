@@ -10,6 +10,7 @@ import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/date_picker_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
+import 'package:storypad/views/calendar/calendar_view.dart';
 import 'package:storypad/views/stories/changes/show/show_change_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view_model.dart';
 import 'package:storypad/views/stories/show/show_story_view_model.dart';
@@ -185,6 +186,15 @@ class _StoryHeaderDateSelector extends StatelessWidget {
     }
   }
 
+  Future<void> openCalendar(BuildContext context) async {
+    CalendarRoute(
+      initialMonth: story.month,
+      initialYear: story.year,
+      initialDay: story.day,
+      initialSegment: .mood,
+    ).push(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final String? daySuffix = DateFormatHelper.getDaySuffix(story.displayPathDate.day, context.locale);
@@ -193,7 +203,7 @@ class _StoryHeaderDateSelector extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       alignment: .centerLeft,
       child: InkWell(
-        onTap: dateReadOnly || onChangeDate == null ? null : () => changeDate(context),
+        onTap: dateReadOnly || onChangeDate == null ? () => openCalendar(context) : () => changeDate(context),
         borderRadius: BorderRadius.circular(4.0),
         child: Wrap(
           crossAxisAlignment: .center,
