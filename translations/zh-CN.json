@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "导出文本（.txt）",
   "list_tile.faq.title": "常见问题",
   "list_tile.file_size.title": "文件大小",
+  "list_tile.first_day_of_week.title": "一周的第一天",
   "list_tile.font_family.title": "字体",
   "list_tile.font_weight.title": "字重",
   "list_tile.import_storypad_json.title": "导入 StoryPad JSON (.json)",

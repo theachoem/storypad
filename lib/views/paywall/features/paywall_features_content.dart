@@ -106,7 +106,7 @@ class _Page extends StatelessWidget {
           child: FutureBuilder(
             future: viewModel.fetchDemoImageUrlsFor(feature),
             builder: (context, asyncSnapshot) {
-              return _DemoImages(
+              return SpDemoImages(
                 demoImageUrls: asyncSnapshot.data,
                 context: context,
                 skeletonCount: feature.demoImages.length,

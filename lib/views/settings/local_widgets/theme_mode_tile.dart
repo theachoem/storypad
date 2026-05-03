@@ -49,8 +49,8 @@ class ThemeModeTile extends StatelessWidget {
         weekday: weekday,
         child: SpAnimatedIcons(
           duration: Durations.medium4,
-          firstChild: Icon(SpIcons.darkMode, color: ColorFromDayService(context: context).getForeground(), size: 20),
-          secondChild: Icon(SpIcons.lightMode, color: ColorFromDayService(context: context).getForeground(), size: 20),
+          firstChild: Icon(SpIcons.darkMode, color: ColorFromDayService(context: context).getForeground()),
+          secondChild: Icon(SpIcons.lightMode, color: ColorFromDayService(context: context).getForeground()),
           showFirst: isDarkMode(context),
         ),
       ),

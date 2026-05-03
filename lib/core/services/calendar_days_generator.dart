@@ -1,4 +1,5 @@
 import 'package:storypad/core/services/days_count_in_month_service.dart';
+import 'package:storypad/core/types/first_day_of_week_option.dart';
 
 class CalendarDaysGenerator {
   static const int totalCells = DateTime.daysPerWeek * totalRows;
@@ -13,8 +14,11 @@ class CalendarDaysGenerator {
   static List<DateTime> generate({
     required int year,
     required int month,
+    FirstDayOfWeekOption firstDayOfWeek = FirstDayOfWeekOption.monday,
   }) {
-    int visiblePreviousMonthDayCount = DateTime(year, month, 1).weekday == 7 ? 0 : DateTime(year, month, 1).weekday;
+    final firstDayWeekday = DateTime(year, month, 1).weekday;
+    final visiblePreviousMonthDayCount =
+        (firstDayWeekday - firstDayOfWeek.value + DateTime.daysPerWeek) % DateTime.daysPerWeek;
     int visibleCurrentMonthDayCount = DaysCountInMonthService.get(year: year, month: month);
     int visibleNextMonthDayCount = totalCells - visibleCurrentMonthDayCount - visiblePreviousMonthDayCount;
 

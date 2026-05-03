@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "Metni Dışa Aktar (.txt)",
   "list_tile.faq.title": "SSS",
   "list_tile.file_size.title": "Dosya boyutu",
+  "list_tile.first_day_of_week.title": "Haftanın İlk Günü",
   "list_tile.font_family.title": "Yazı Tipi Ailesi",
   "list_tile.font_weight.title": "Yazı Tipi Kalınlığı",
   "list_tile.import_storypad_json.title": "StoryPad JSON (.json) dosyasını içe aktarın.",

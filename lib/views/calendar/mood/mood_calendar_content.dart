@@ -75,7 +75,7 @@ class _CalendarStoriesContent extends StatelessWidget {
                     color: Theme.of(context).dividerColor,
                   ),
                 ),
-                child: buildCalendar(showBottomBorder: false, scrollable: true),
+                child: buildCalendar(context, showBottomBorder: false, scrollable: true),
               ),
             ),
             Flexible(child: buildStoryList()),
@@ -93,7 +93,7 @@ class _CalendarStoriesContent extends StatelessWidget {
           SliverPadding(
             padding: MediaQuery.paddingOf(context).copyWith(top: 0, bottom: 0),
             sliver: SliverToBoxAdapter(
-              child: buildCalendar(showBottomBorder: true),
+              child: buildCalendar(context, showBottomBorder: true),
             ),
           ),
         ];
@@ -158,14 +158,20 @@ class _CalendarStoriesContent extends StatelessWidget {
     );
   }
 
-  Widget buildCalendar({
+  Widget buildCalendar(
+    BuildContext context, {
     required bool showBottomBorder,
     bool scrollable = false,
   }) {
+    final firstDayOfWeek = context.select(
+      (DevicePreferencesProvider provider) => provider.preferences.firstDayOfWeek,
+    );
+
     Widget child = SpCalendar(
       showBottomBorder: showBottomBorder,
       initialYear: viewModel.year,
       initialMonth: viewModel.month,
+      firstDayOfWeek: firstDayOfWeek,
       onMonthChanged: viewModel.onMonthChanged,
       controller: viewModel.calendarController,
       cellBuilder: (context, date, isDisplayMonth) {

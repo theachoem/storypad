@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "टेक्स्ट (.txt) निर्यात करें",
   "list_tile.faq.title": "अक्सर पूछे जाने वाले प्रश्न",
   "list_tile.file_size.title": "फ़ाइल का साइज़",
+  "list_tile.first_day_of_week.title": "सप्ताह का पहला दिन",
   "list_tile.font_family.title": "फुहारा परिवार",
   "list_tile.font_weight.title": "फ़ॉन्ट वजन",
   "list_tile.import_storypad_json.title": "स्टोरीपैड JSON (.json) आयात करें",

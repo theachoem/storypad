@@ -5,6 +5,7 @@ import 'package:storypad/core/services/analytics/adaptors/firebase_analytics_use
 import 'package:storypad/core/services/analytics/adaptors/none_analytics_user_property_adaptor.dart';
 import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/core/types/app_logo.dart';
+import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
@@ -49,6 +50,10 @@ abstract class BaseAnalyticsUserPropertyAdaptor {
 
   Future<void> logSetTimeFormat({required TimeFormatOption timeFormat}) {
     return setUserProperty('time_format', timeFormat.label);
+  }
+
+  Future<void> logSetFirstDayOfWeek({required FirstDayOfWeekOption firstDayOfWeek}) {
+    return setUserProperty('first_day_of_week', firstDayOfWeek.name);
   }
 
   Future<void> logToggleAddOn({required AddOnType addOn, required bool enabled}) {

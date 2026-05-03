@@ -7,6 +7,7 @@ import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/views/backup_services/backup_services_view.dart';
 import 'package:storypad/views/settings/local_widgets/app_icon_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
+import 'package:storypad/views/settings/local_widgets/first_day_of_week_tile.dart';
 import 'package:storypad/views/settings/local_widgets/language_tile.dart';
 import 'package:storypad/views/settings/local_widgets/time_format_tile.dart';
 import 'package:storypad/widgets/base_view/view_model_provider.dart';

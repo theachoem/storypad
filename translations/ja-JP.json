@@ -254,6 +254,7 @@
   "list_tile.export_txt.title": "テキストのエクスポート (.txt)",
   "list_tile.faq.title": "よくある質問",
   "list_tile.file_size.title": "ファイルサイズ",
+  "list_tile.first_day_of_week.title": "週の初日",
   "list_tile.font_family.title": "フォントの種類",
   "list_tile.font_weight.title": "フォントの太さ",
   "list_tile.import_storypad_json.title": "StoryPad JSON (.json) をインポートする",

@@ -73,13 +73,10 @@ class _PaywallContent extends StatelessWidget {
               ),
             ],
             ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: ColorFromDayService(context: context).get(2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(SpIcons.star, color: ColorFromDayService(context: context).getForeground()),
+              leading: const SpSettingIconBadge(
+                weekday: 2,
+                icon: SpIcons.star,
+                compact: false,
               ),
               title: Text(tr('list_tile.support_indie_dev.title')),
               subtitle: Text(tr('list_tile.support_indie_dev.subtitle')),
