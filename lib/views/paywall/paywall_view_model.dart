@@ -33,12 +33,13 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> focusOn(PaywallFeature focusFeature) async {
-    if (focusFeature.index < 4) {
+    int? index = features?.indexWhere((feature) => feature.type == focusFeature);
+    if (index != null && index > 4) {
       await Scrollable.ensureVisible(
         featureKeys[focusFeature.index].currentContext!,
         curve: Curves.ease,
         duration: Durations.medium1,
-        alignment: 0.5,
+        alignment: 0.3,
       );
     }
 

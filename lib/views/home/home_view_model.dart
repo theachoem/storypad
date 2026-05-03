@@ -15,6 +15,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/services/in_app_review_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/core/types/path_type.dart';
@@ -309,20 +310,24 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         // Check existence before adding to prevent duplicates
         if (addedStory.pinned == true) {
           final pinnedCollection = pinnedStories ?? CollectionDbModel(items: []);
+          final isNew = !pinnedCollection.exists(addedStory.id) && !(stories?.exists(addedStory.id) ?? false);
           setStories(
             stories?.removeElement(addedStory),
             pinnedCollection.exists(addedStory.id)
                 ? pinnedCollection.replaceElement(addedStory)
                 : pinnedCollection.addElement(addedStory, 0),
           );
+          if (isNew) unawaited(InAppReviewService.maybeRequest());
         } else {
           final storiesCollection = stories ?? CollectionDbModel(items: []);
+          final isNew = !storiesCollection.exists(addedStory.id) && !(pinnedStories?.exists(addedStory.id) ?? false);
           setStories(
             storiesCollection.exists(addedStory.id)
                 ? storiesCollection.replaceElement(addedStory)
                 : storiesCollection.addElement(addedStory, 0),
             pinnedStories?.removeElement(addedStory),
           );
+          if (isNew) unawaited(InAppReviewService.maybeRequest());
         }
         notifyListeners();
       } else {
@@ -333,6 +338,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
             await reload(debugSource: '$runtimeType#_checkNewStoryResult');
           },
         );
+        unawaited(InAppReviewService.maybeRequest());
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
