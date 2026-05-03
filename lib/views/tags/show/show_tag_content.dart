@@ -7,18 +7,23 @@ class _ShowTagContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpStoryListMultiEditWrapper.withListener(
-      builder: (BuildContext context, SpStoryListMultiEditWrapperState state) {
-        return PopScope(
-          canPop: !state.editing,
-          onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
-          child: buildScaffold(context, state),
-        );
-      },
+    final years = viewModel.years;
+
+    return DefaultTabController(
+      length: years?.length ?? 1,
+      child: SpStoryListMultiEditWrapper.withListener(
+        builder: (BuildContext context, SpStoryListMultiEditWrapperState state) {
+          return PopScope(
+            canPop: !state.editing,
+            onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),
+            child: buildScaffold(context, state, years),
+          );
+        },
+      ),
     );
   }
 
-  Widget buildScaffold(BuildContext context, SpStoryListMultiEditWrapperState state) {
+  Widget buildScaffold(BuildContext context, SpStoryListMultiEditWrapperState state, List<int>? years) {
     return Scaffold(
       appBar: AppBar(
         title: buildTitle(context),
@@ -29,6 +34,15 @@ class _ShowTagContent extends StatelessWidget {
             onPressed: () => viewModel.goToFilterPage(context),
           ),
         ],
+        bottom: years == null
+            ? null
+            : TabBar(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                onTap: (_) => state.turnOffEditing(),
+                tabs: years.map((year) => Tab(text: year.toString())).toList(),
+              ),
       ),
       bottomNavigationBar: buildBottomNavigationBar(context, state),
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
@@ -37,11 +51,23 @@ class _ShowTagContent extends StatelessWidget {
         child: const Icon(SpIcons.newStory),
         onPressed: () => viewModel.goToNewPage(context),
       ),
-      body: SpStoryList.withQuery(
-        key: ValueKey(viewModel.editedKey),
-        viewOnly: viewModel.params.storyViewOnly,
-        filter: viewModel.filter,
-      ),
+      body: buildBody(years),
+    );
+  }
+
+  Widget buildBody(List<int>? years) {
+    if (years == null) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    return TabBarView(
+      children: years.map((year) {
+        return SpStoryList.withQuery(
+          key: ValueKey('${viewModel.editedKey}_$year'),
+          viewOnly: viewModel.params.storyViewOnly,
+          filter: viewModel.filter.copyWith(years: {year}),
+        );
+      }).toList(),
     );
   }
 

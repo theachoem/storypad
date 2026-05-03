@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
@@ -20,15 +21,26 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.params,
   }) {
     _tag = params.tag;
+    load();
   }
 
   late TagDbModel _tag;
   TagDbModel get tag => _tag;
 
   int editedKey = 0;
+  List<int>? years;
+
+  Future<void> load() async {
+    years = await StoryDbModel.db
+        .getStoryCountsByYear(filters: filter.toDatabaseFilter())
+        .then((map) => map.keys.toList()..sort((a, b) => b.compareTo(a)));
+
+    notifyListeners();
+  }
+
   void refreshList() {
     editedKey++;
-    notifyListeners();
+    load();
   }
 
   late SearchFilterObject filter = SearchFilterObject(
@@ -49,7 +61,7 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
       _tag = editedTag;
     }
 
-    notifyListeners();
+    await load();
   }
 
   Future<void> goToNewPage(BuildContext context) async {
@@ -58,8 +70,7 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialTagIds: [tag.id],
     ).push(context);
 
-    editedKey += 1;
-    notifyListeners();
+    refreshList();
 
     Future.delayed(const Duration(seconds: 1)).then((_) {
       HomeView.reload(debugSource: '$runtimeType#goToNewPage');
@@ -76,7 +87,7 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     if (result is SearchFilterObject) {
       filter = result;
-      notifyListeners();
+      await load();
     }
   }
 
