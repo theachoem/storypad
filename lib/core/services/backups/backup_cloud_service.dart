@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 /// Abstract base class for cloud backup services
@@ -90,4 +91,8 @@ abstract class BackupCloudService {
     required String fileName,
     required io.File file,
   });
+
+  /// Fetch cloud storage quota for the signed-in user.
+  /// Returns null if not signed in or unsupported by this service.
+  Future<CloudStorageQuotaObject?> fetchStorageQuota();
 }

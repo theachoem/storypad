@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
@@ -449,6 +450,61 @@ class GoogleDriveCloudService extends BackupCloudService {
   }
 
   @override
+  Future<CloudStorageQuotaObject?> fetchStorageQuota() async {
+    final client = await googleDriveClient;
+    if (client == null) return null;
+
+    try {
+      // Get app-only usage: sum of all files in appDataFolder (all app-owned storage).
+      final appUsageBytes = await _calculateAppDataUsageBytes(client);
+
+      // Get account quota and total usage
+      final about = await client.about.get($fields: 'storageQuota');
+      final quota = about.storageQuota;
+      final accountUsageBytes = quota?.usage != null ? int.tryParse(quota!.usage!) : null;
+      final limitBytes = quota?.limit != null ? int.tryParse(quota!.limit!) : null;
+
+      return CloudStorageQuotaObject(
+        appUsageInBytes: appUsageBytes,
+        accountUsageInBytes: accountUsageBytes,
+        limitInBytes: limitBytes,
+      );
+    } catch (e, s) {
+      AppLogger.error('GoogleDriveService#fetchStorageQuota failed: $e', stackTrace: s);
+      return null;
+    }
+  }
+
+  Future<int> _calculateAppDataUsageBytes(drive.DriveApi client) async {
+    const folderMimeType = 'application/vnd.google-apps.folder';
+
+    int totalBytes = 0;
+    String? nextPageToken;
+
+    do {
+      final fileList = await client.files.list(
+        spaces: 'appDataFolder',
+        q: 'trashed=false',
+        $fields: 'nextPageToken, files(size,mimeType)',
+        pageToken: nextPageToken,
+        pageSize: 1000,
+      );
+
+      final files = fileList.files;
+      if (files != null) {
+        for (final file in files) {
+          if (file.mimeType == folderMimeType || file.size == null) continue;
+          totalBytes += int.tryParse(file.size.toString()) ?? 0;
+        }
+      }
+
+      nextPageToken = fileList.nextPageToken;
+    } while (nextPageToken != null && nextPageToken.isNotEmpty);
+
+    return totalBytes;
+  }
+
+  @override
   Future<CloudFileObject?> uploadFile(
     String fileName,
     io.File file, {
@@ -487,6 +543,7 @@ class GoogleDriveCloudService extends BackupCloudService {
           fileToUpload.parents = [folderId];
         }
 
+        // Request explicit fields to guarantee name is available for AssetDb cloud mapping.
         AppLogger.d('GoogleDriveService#uploadFile uploading...');
         drive.File received = await client.files.create(
           fileToUpload,
@@ -494,6 +551,7 @@ class GoogleDriveCloudService extends BackupCloudService {
             file.openRead(),
             file.lengthSync(),
           ),
+          $fields: 'id,name',
         );
 
         if (received.id != null) {

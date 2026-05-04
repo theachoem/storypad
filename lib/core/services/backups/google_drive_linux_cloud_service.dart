@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
@@ -61,4 +62,7 @@ class GoogleDriveLinuxCloudService extends BackupCloudService {
     required String fileName,
     required io.File file,
   }) async => null;
+
+  @override
+  Future<CloudStorageQuotaObject?> fetchStorageQuota() async => null;
 }

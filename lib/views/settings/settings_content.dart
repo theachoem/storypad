@@ -47,6 +47,11 @@ class _SettingsContent extends StatelessWidget {
               title: Text(tr("page.backup_services.title")),
               onTap: () => const BackupServicesRoute().push(context),
             ),
+            ListTile(
+              leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.storage),
+              title: const Text('Storage Management'),
+              onTap: () => const StorageManagementRoute().push(context),
+            ),
           ],
           ...[
             const Divider(),

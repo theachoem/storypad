@@ -5,6 +5,7 @@ import 'package:storypad/providers/app_lock_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/views/backup_services/backup_services_view.dart';
+import 'package:storypad/views/storage_management/storage_management_view.dart';
 import 'package:storypad/views/settings/local_widgets/app_icon_tile.dart';
 import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
 import 'package:storypad/views/settings/local_widgets/first_day_of_week_tile.dart';

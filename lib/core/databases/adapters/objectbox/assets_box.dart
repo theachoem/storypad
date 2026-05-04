@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
@@ -166,5 +167,11 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         permanentlyDeletedAt: object.permanentlyDeletedAt,
       );
     }).toList();
+  }
+
+  @override
+  Future<void> afterCommit([int? id, AssetDbModel? model]) async {
+    PreferencesBox().invalidateStorageQuotaCache();
+    await super.afterCommit(id, model);
   }
 }
