@@ -59,7 +59,7 @@ StoryPad is designed with simplicity in mind, both in its UI and codebase. We ai
 StoryPad uses Provider and Stateful widgets to manage its state, distinctly organized into three levels to avoid confusion:
 
 - Global State: Managed by [ProviderScope](lib/provider_scope.dart), disposed when the app closes.
-- View State: Managed by [ViewModelProvider](lib/widgets/base_view/view_model_provider.dart), disposed when the page closes.
+- View State: Managed by ChangeNotifierProvider (package:provider/provider.dart), disposed when the page closes.
 - Widget State: Managed by Stateful widgets, where the widget itself controls its own state and is disposed when removed from the tree.
 
 ### 2. MVVM Pattern:

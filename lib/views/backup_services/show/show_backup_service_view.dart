@@ -5,7 +5,7 @@ import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -37,10 +37,10 @@ class ShowBackupServiceView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowBackupServiceViewModel>(
+    return ChangeNotifierProvider<ShowBackupServiceViewModel>(
       create: (context) => ShowBackupServiceViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _ShowBackupServiceContent(viewModel);
+      builder: (context, child) {
+        return _ShowBackupServiceContent(Provider.of(context));
       },
     );
   }

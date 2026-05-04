@@ -17,7 +17,7 @@ import 'package:storypad/views/backup_services/backups/tables/local_widgets/back
 import 'package:storypad/views/backup_services/backups/tables/local_widgets/backup_stories_table_viewer.dart';
 import 'package:storypad/views/backup_services/backups/tables/local_widgets/backup_tags_table_viewer.dart';
 import 'package:storypad/views/backup_services/backups/tables/local_widgets/backup_templates_table_viewer.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -52,10 +52,10 @@ class ShowTableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowTableViewModel>(
+    return ChangeNotifierProvider<ShowTableViewModel>(
       create: (context) => ShowTableViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowTableContent(viewModel);
+      builder: (context, child) {
+        return _ShowTableContent(Provider.of(context));
       },
     );
   }

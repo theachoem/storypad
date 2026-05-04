@@ -5,7 +5,6 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/templates/local_widgets/gallery_tab.dart';
 import 'package:storypad/views/templates/local_widgets/templates_tab.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -47,10 +46,10 @@ class TemplatesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<TemplatesViewModel>(
+    return ChangeNotifierProvider<TemplatesViewModel>(
       create: (context) => TemplatesViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _TemplatesContent(viewModel);
+      builder: (context, child) {
+        return _TemplatesContent(Provider.of(context));
       },
     );
   }

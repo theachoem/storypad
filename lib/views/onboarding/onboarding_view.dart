@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/views/languages/languages_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -32,10 +32,10 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<OnboardingViewModel>(
+    return ChangeNotifierProvider<OnboardingViewModel>(
       create: (context) => OnboardingViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _OnboardingContent(viewModel);
+      builder: (context, child) {
+        return _OnboardingContent(Provider.of(context));
       },
     );
   }

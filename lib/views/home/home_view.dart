@@ -24,7 +24,6 @@ import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/root/root_view.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
 import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -87,11 +86,11 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<HomeViewModel>(
+    return ChangeNotifierProvider<HomeViewModel>(
       create: (context) => HomeViewModel(),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
         _homeContext = context;
-        return _HomeContent(viewModel);
+        return _HomeContent(Provider.of(context));
       },
     );
   }

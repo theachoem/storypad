@@ -6,7 +6,6 @@ import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:storypad/widgets/calendar/sp_calendar.dart';
 import 'package:storypad/widgets/calendar/sp_calendar_date_cell.dart';
 import 'package:storypad/widgets/sp_fab_location.dart';
@@ -33,13 +32,13 @@ class MoodCalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<MoodCalendarViewModel>(
+    return ChangeNotifierProvider<MoodCalendarViewModel>(
       create: (context) => MoodCalendarViewModel(
         params: this,
         context: context,
       ),
-      builder: (context, viewModel, child) {
-        return _CalendarStoriesContent(viewModel);
+      builder: (context, child) {
+        return _CalendarStoriesContent(Provider.of(context));
       },
     );
   }

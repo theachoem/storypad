@@ -1,7 +1,7 @@
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -33,10 +33,10 @@ class ShowChangeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowChangeViewModel>(
+    return ChangeNotifierProvider<ShowChangeViewModel>(
       create: (context) => ShowChangeViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowChangeContent(viewModel);
+      builder: (context, child) {
+        return _ShowChangeContent(Provider.of(context));
       },
     );
   }

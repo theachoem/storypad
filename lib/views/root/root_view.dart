@@ -2,9 +2,8 @@ import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/storages/new_badge_storage.dart';
 import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/root/local_widgets/root_side_bar.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/sp_splash_screen_wrapper.dart';
@@ -24,7 +23,7 @@ class RootView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<RootViewModel>(
+    return ChangeNotifierProvider<RootViewModel>(
       create: (context) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           SpSplashScreenWrapper.markAsLoaded(context);
@@ -32,10 +31,12 @@ class RootView extends StatelessWidget {
 
         return RootViewModel();
       },
-      builder: (context, viewModel, child) {
-        _rootContext = context;
+      builder: (context, child) {
+        final viewModel = Provider.of<RootViewModel>(context);
 
+        _rootContext = context;
         final rootProvider = Provider.of<RootProvider>(context);
+
         return _RootContent(viewModel, rootProvider);
       },
     );

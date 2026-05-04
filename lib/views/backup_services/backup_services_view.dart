@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/local_widgets/backup_service_tile.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -31,10 +30,10 @@ class BackupServicesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<BackupServicesViewModel>(
+    return ChangeNotifierProvider<BackupServicesViewModel>(
       create: (context) => BackupServicesViewModel(context: context, params: params),
-      builder: (context, viewModel, child) {
-        return _BackupServicesContent(viewModel);
+      builder: (context, child) {
+        return _BackupServicesContent(Provider.of(context));
       },
     );
   }

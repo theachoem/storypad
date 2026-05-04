@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/app_lock_provider.dart' show AppLockProvider;
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -45,10 +44,10 @@ class AppLocksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<AppLocksViewModel>(
+    return ChangeNotifierProvider<AppLocksViewModel>(
       create: (context) => AppLocksViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _AppLocksContent(viewModel);
+      builder: (context, child) {
+        return _AppLocksContent(Provider.of(context));
       },
     );
   }

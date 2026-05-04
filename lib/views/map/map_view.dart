@@ -10,7 +10,7 @@ import 'package:storypad/widgets/maps/sp_map_overlay_theme.dart';
 import 'package:storypad/widgets/maps/sp_flutter_map.dart';
 import 'package:storypad/widgets/maps/sp_google_maps_flutter.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -42,9 +42,11 @@ class MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<MapViewModel>(
+    return ChangeNotifierProvider<MapViewModel>(
       create: (context) => MapViewModel(params: params, viewContext: context),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<MapViewModel>(context);
+
         return SpMapOverlayTheme(
           brightness: viewModel.mapStyle.overlayBrightness,
           child: _MapContent(viewModel),

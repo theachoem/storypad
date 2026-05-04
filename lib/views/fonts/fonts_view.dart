@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -42,9 +42,10 @@ class FontsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<FontsViewModel>(
+    return ChangeNotifierProvider<FontsViewModel>(
       create: (context) => FontsViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<FontsViewModel>(context);
         return Theme(
           data:
               AppTheme.getTheme(

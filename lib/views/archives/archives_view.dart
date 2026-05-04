@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -57,10 +56,10 @@ class ArchivesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ArchivesViewModel>(
+    return ChangeNotifierProvider<ArchivesViewModel>(
       create: (context) => ArchivesViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ArchivesContent(viewModel);
+      builder: (context, child) {
+        return _ArchivesContent(Provider.of(context));
       },
     );
   }

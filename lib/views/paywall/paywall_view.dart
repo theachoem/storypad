@@ -7,7 +7,6 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/features/paywall_features_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_paywall_features_sheet.dart';
@@ -50,10 +49,10 @@ class PaywallView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<PaywallViewModel>(
+    return ChangeNotifierProvider<PaywallViewModel>(
       create: (context) => PaywallViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _PaywallContent(viewModel);
+      builder: (context, child) {
+        return _PaywallContent(Provider.of(context));
       },
     );
   }

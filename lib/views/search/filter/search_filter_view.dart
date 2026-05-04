@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -43,10 +43,10 @@ class SearchFilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<SearchFilterViewModel>(
+    return ChangeNotifierProvider<SearchFilterViewModel>(
       create: (context) => SearchFilterViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _SearchFilterContent(viewModel);
+      builder: (context, child) {
+        return _SearchFilterContent(Provider.of(context));
       },
     );
   }

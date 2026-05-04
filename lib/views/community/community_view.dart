@@ -11,7 +11,7 @@ import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -40,10 +40,10 @@ class CommunityView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<CommunityViewModel>(
+    return ChangeNotifierProvider<CommunityViewModel>(
       create: (context) => CommunityViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _CommunityContent(viewModel);
+      builder: (context, child) {
+        return _CommunityContent(Provider.of(context));
       },
     );
   }

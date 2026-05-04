@@ -4,7 +4,7 @@ import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
@@ -32,10 +32,10 @@ class ShowBackupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowBackupsViewModel>(
+    return ChangeNotifierProvider<ShowBackupsViewModel>(
       create: (context) => ShowBackupsViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowBackupContent(viewModel);
+      builder: (context, child) {
+        return _ShowBackupContent(Provider.of(context));
       },
     );
   }

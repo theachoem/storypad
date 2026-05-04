@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -27,10 +27,10 @@ class OnboardingStep4View extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<OnboardingStep4ViewModel>(
+    return ChangeNotifierProvider<OnboardingStep4ViewModel>(
       create: (context) => OnboardingStep4ViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _OnboardingStep4Content(viewModel);
+      builder: (context, child) {
+        return _OnboardingStep4Content(Provider.of(context));
       },
     );
   }

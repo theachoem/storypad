@@ -1,4 +1,4 @@
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -31,10 +31,10 @@ class ShowAssetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowAssetViewModel>(
+    return ChangeNotifierProvider<ShowAssetViewModel>(
       create: (context) => ShowAssetViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowAssetContent(viewModel);
+      builder: (context, child) {
+        return _ShowAssetContent(Provider.of(context));
       },
     );
   }

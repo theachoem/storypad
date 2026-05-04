@@ -5,7 +5,7 @@ import 'package:storypad/core/services/remote_config/remote_config_service.dart'
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -40,10 +40,10 @@ class LanguagesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<LanguagesViewModel>(
+    return ChangeNotifierProvider<LanguagesViewModel>(
       create: (context) => LanguagesViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _LanguagesContent(viewModel);
+      builder: (context, child) {
+        return _LanguagesContent(Provider.of(context));
       },
     );
   }

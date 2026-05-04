@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/maps/sp_map_overlay_theme.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/widgets/maps/map_types.dart';
@@ -71,9 +71,11 @@ class MapPickerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<MapPickerViewModel>(
+    return ChangeNotifierProvider<MapPickerViewModel>(
       create: (context) => MapPickerViewModel(params: params, viewContext: context),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<MapPickerViewModel>(context);
+
         return SpMapOverlayTheme(
           brightness: viewModel.mapStyle.overlayBrightness,
           child: _MapPickerContent(viewModel),

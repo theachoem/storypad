@@ -9,7 +9,7 @@ import 'package:storypad/views/onboarding/local_widgets/home_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/views/onboarding/local_widgets/story_details_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/visible_when_notified.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -34,10 +34,10 @@ class OnboardingStep1View extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<OnboardingStep1ViewModel>(
+    return ChangeNotifierProvider<OnboardingStep1ViewModel>(
       create: (context) => OnboardingStep1ViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _OnboardingStep1Content(viewModel);
+      builder: (context, child) {
+        return _OnboardingStep1Content(Provider.of(context));
       },
     );
   }
