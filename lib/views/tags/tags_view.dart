@@ -3,7 +3,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -42,10 +41,10 @@ class TagsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<TagsViewModel>(
+    return ChangeNotifierProvider<TagsViewModel>(
       create: (context) => TagsViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _TagsContent(viewModel);
+      builder: (context, child) {
+        return _TagsContent(Provider.of(context));
       },
     );
   }

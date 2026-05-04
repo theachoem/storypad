@@ -5,7 +5,6 @@ import 'package:storypad/core/objects/paywall_feature_object.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_demo_images.dart';
@@ -40,10 +39,10 @@ class PaywallFeaturesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<PaywallFeaturesViewModel>(
+    return ChangeNotifierProvider<PaywallFeaturesViewModel>(
       create: (context) => PaywallFeaturesViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _PaywallFeaturesContent(viewModel);
+      builder: (context, child) {
+        return _PaywallFeaturesContent(Provider.of(context));
       },
     );
   }

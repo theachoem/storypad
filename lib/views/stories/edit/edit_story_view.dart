@@ -12,7 +12,7 @@ import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/stories/local_widgets/story_theme_button.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/pages_toolbar/sp_pages_toolbar.dart';
@@ -106,9 +106,11 @@ class EditStoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<EditStoryViewModel>(
+    return ChangeNotifierProvider<EditStoryViewModel>(
       create: (context) => EditStoryViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<EditStoryViewModel>(context);
+
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) => viewModel.onPopInvokedWithResult(didPop, result, context),

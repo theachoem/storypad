@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -28,10 +28,10 @@ class ExportAssetsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ExportAssetsViewModel>(
+    return ChangeNotifierProvider<ExportAssetsViewModel>(
       create: (context) => ExportAssetsViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ExportAssetsContent(viewModel);
+      builder: (context, child) {
+        return _ExportAssetsContent(Provider.of(context));
       },
     );
   }

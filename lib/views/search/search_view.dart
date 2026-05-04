@@ -5,7 +5,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
@@ -34,10 +34,10 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<SearchViewModel>(
+    return ChangeNotifierProvider<SearchViewModel>(
       create: (context) => SearchViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _SearchContent(viewModel);
+      builder: (context, child) {
+        return _SearchContent(Provider.of(context));
       },
     );
   }

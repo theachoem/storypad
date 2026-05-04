@@ -5,7 +5,6 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/import_export/export_assets/export_assets_view.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -38,10 +37,10 @@ class ImportExportView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ImportExportViewModel>(
+    return ChangeNotifierProvider<ImportExportViewModel>(
       create: (context) => ImportExportViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ImportExportContent(viewModel);
+      builder: (context, child) {
+        return _ImportExportContent(Provider.of(context));
       },
     );
   }

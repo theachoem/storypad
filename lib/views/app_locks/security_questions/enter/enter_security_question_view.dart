@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/types/app_lock_question.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -38,10 +38,10 @@ class EnterSecurityQuestionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<EnterSecurityQuestionViewModel>(
+    return ChangeNotifierProvider<EnterSecurityQuestionViewModel>(
       create: (context) => EnterSecurityQuestionViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _EnterSecurityQuestionContent(viewModel);
+      builder: (context, child) {
+        return _EnterSecurityQuestionContent(Provider.of(context));
       },
     );
   }

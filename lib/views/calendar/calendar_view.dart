@@ -8,7 +8,7 @@ import 'package:storypad/core/services/month_picker_service.dart';
 import 'package:storypad/views/calendar/period/period_calendar_view.dart';
 import 'package:storypad/views/calendar/mood/mood_calendar_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 import 'calendar_view_model.dart';
@@ -48,10 +48,10 @@ class CalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<CalendarViewModel>(
+    return ChangeNotifierProvider<CalendarViewModel>(
       create: (context) => CalendarViewModel(params: params, viewContext: context),
-      builder: (context, viewModel, child) {
-        return _CalendarContent(viewModel);
+      builder: (context, child) {
+        return _CalendarContent(Provider.of(context));
       },
     );
   }

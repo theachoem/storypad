@@ -1,6 +1,6 @@
 import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/story_list/sp_story_list.dart';
@@ -33,10 +33,10 @@ class TemplateStoriesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<TemplateStoriesViewModel>(
+    return ChangeNotifierProvider<TemplateStoriesViewModel>(
       create: (context) => TemplateStoriesViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _TemplateStoriesContent(viewModel);
+      builder: (context, child) {
+        return _TemplateStoriesContent(Provider.of(context));
       },
     );
   }

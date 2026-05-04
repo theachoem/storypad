@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/widgets/sp_text_inputs_page.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -29,10 +29,10 @@ class NewYearView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<NewYearViewModel>(
+    return ChangeNotifierProvider<NewYearViewModel>(
       create: (context) => NewYearViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _NewYearContent(viewModel);
+      builder: (context, child) {
+        return _NewYearContent(Provider.of(context));
       },
     );
   }

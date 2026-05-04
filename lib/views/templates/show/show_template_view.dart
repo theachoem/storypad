@@ -4,7 +4,7 @@ import 'package:storypad/core/databases/models/template_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/templates/local_widgets/template_tag_labels.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -43,9 +43,11 @@ class ShowTemplateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowTemplateViewModel>(
+    return ChangeNotifierProvider<ShowTemplateViewModel>(
       create: (context) => ShowTemplateViewModel(params: params),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<ShowTemplateViewModel>(context);
+
         return SpStoryPreferenceTheme(
           preferences: viewModel.template.preferences,
           child: _ShowTemplateContent(viewModel),

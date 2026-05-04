@@ -38,7 +38,7 @@
   "StoryPad View": {
     "prefix": "view",
     "body": [
-      "import 'package:storypad/widgets/base_view/view_model_provider.dart';",
+      "import 'package:provider/provider.dart';",
       "import 'package:flutter/material.dart';",
       "import 'package:storypad/widgets/base_view/base_route.dart';",
       "",
@@ -64,10 +64,10 @@
       "",
       "  @override",
       "  Widget build(BuildContext context) {",
-      "    return ViewModelProvider<${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}ViewModel>(",
+      "    return ChangeNotifierProvider<${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}ViewModel>(",
       "      create: (context) => ${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}ViewModel(params: params),",
-      "      builder: (context, viewModel, child) {",
-      "        return _${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Content(viewModel);",
+      "      builder: (context, child) {",
+      "        return _${TM_FILENAME_BASE/(.*)_view/${1:/pascalcase}/}Content(Provider.of(context));",
       "      },",
       "    );",
       "  }",

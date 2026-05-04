@@ -4,7 +4,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
@@ -41,10 +41,10 @@ class ShowTagView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowTagViewModel>(
+    return ChangeNotifierProvider<ShowTagViewModel>(
       create: (context) => ShowTagViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowTagContent(viewModel);
+      builder: (context, child) {
+        return _ShowTagContent(Provider.of(context));
       },
     );
   }

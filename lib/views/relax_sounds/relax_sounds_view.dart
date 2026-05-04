@@ -5,7 +5,7 @@ import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'dart:io';
@@ -13,7 +13,6 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
@@ -58,13 +57,13 @@ class RelaxSoundsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<RelaxSoundsViewModel>(
+    return ChangeNotifierProvider<RelaxSoundsViewModel>(
       create: (context) => RelaxSoundsViewModel(
         params: params,
         provider: context.read<RelaxSoundsProvider>(),
       ),
-      builder: (context, viewModel, child) {
-        return _RelaxSoundsContent(viewModel);
+      builder: (context, child) {
+        return _RelaxSoundsContent(Provider.of(context));
       },
     );
   }

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_demo_images_sheet.dart';
@@ -30,10 +29,10 @@ class AddOnsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<AddOnsViewModel>(
+    return ChangeNotifierProvider<AddOnsViewModel>(
       create: (context) => AddOnsViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
-        return _AddOnsContent(viewModel);
+      builder: (context, child) {
+        return _AddOnsContent(Provider.of(context));
       },
     );
   }

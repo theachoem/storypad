@@ -10,7 +10,6 @@ import 'package:storypad/views/settings/local_widgets/font_size_tile.dart';
 import 'package:storypad/views/settings/local_widgets/first_day_of_week_tile.dart';
 import 'package:storypad/views/settings/local_widgets/language_tile.dart';
 import 'package:storypad/views/settings/local_widgets/time_format_tile.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/views/settings/local_widgets/color_seed_tile.dart';
@@ -57,10 +56,10 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<SettingsViewModel>(
+    return ChangeNotifierProvider<SettingsViewModel>(
       create: (context) => SettingsViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _SettingsContent(viewModel);
+      builder: (context, child) {
+        return _SettingsContent(Provider.of(context));
       },
     );
   }

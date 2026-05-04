@@ -8,7 +8,6 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
 import 'package:storypad/views/templates/local_widgets/template_note.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -46,10 +45,10 @@ class ShowTemplateGalleryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<ShowTemplateGalleryViewModel>(
+    return ChangeNotifierProvider<ShowTemplateGalleryViewModel>(
       create: (context) => ShowTemplateGalleryViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _ShowTemplateGalleryContent(viewModel);
+      builder: (context, child) {
+        return _ShowTemplateGalleryContent(Provider.of(context));
       },
     );
   }

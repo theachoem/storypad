@@ -3,7 +3,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -95,9 +95,11 @@ class PinUnlockView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<PinUnlockViewModel>(
+    return ChangeNotifierProvider<PinUnlockViewModel>(
       create: (context) => PinUnlockViewModel(params: params, context: context),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<PinUnlockViewModel>(context);
+
         return SpKeyboardListener(
           onKeyEvent: (event) => viewModel.handleKeyEvent(event),
           child: _PinUnlockContent(viewModel),

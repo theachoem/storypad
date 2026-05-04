@@ -10,7 +10,7 @@ import 'package:storypad/views/onboarding/local_widgets/home_screenshot.dart';
 import 'package:storypad/views/onboarding/local_widgets/onboarding_template.dart';
 import 'package:storypad/views/onboarding/local_widgets/visible_when_notified.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
@@ -35,10 +35,10 @@ class OnboardingStep3View extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<OnboardingStep3ViewModel>(
+    return ChangeNotifierProvider<OnboardingStep3ViewModel>(
       create: (context) => OnboardingStep3ViewModel(params: params),
-      builder: (context, viewModel, child) {
-        return _OnboardingStep3Content(viewModel);
+      builder: (context, child) {
+        return _OnboardingStep3Content(Provider.of(context));
       },
     );
   }

@@ -7,7 +7,6 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/stories/show/show_story_view.dart';
-import 'package:storypad/widgets/base_view/view_model_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
@@ -61,9 +60,11 @@ class LibraryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<LibraryViewModel>(
+    return ChangeNotifierProvider<LibraryViewModel>(
       create: (context) => LibraryViewModel(params: params),
-      builder: (context, viewModel, child) {
+      builder: (context, child) {
+        final viewModel = Provider.of<LibraryViewModel>(context);
+
         return LayoutBuilder(
           builder: (context, constraints) {
             return _LibraryContent(viewModel, constraints: constraints);
