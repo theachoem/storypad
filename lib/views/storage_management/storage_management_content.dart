@@ -9,7 +9,7 @@ class _StorageManagementContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Storage Management'),
+        title: Text(tr('page.storage_management.title')),
         bottom: (viewModel.loading || viewModel.reloading)
             ? const PreferredSize(
                 preferredSize: Size.fromHeight(3),
@@ -24,7 +24,9 @@ class _StorageManagementContent extends StatelessWidget {
             const SizedBox(height: 8),
             _buildLocalSection(context),
             if (viewModel.cloudQuotas.isNotEmpty) ...[
-              const Divider(),
+              const SizedBox(height: 8),
+              const Divider(height: 1),
+              const SizedBox(height: 12),
               _buildCloudSection(context),
             ],
             const SizedBox(height: 120),
@@ -38,28 +40,28 @@ class _StorageManagementContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SpSectionTitle(title: "Local Storage"),
+        SpSectionTitle(title: tr('page.storage_management.section.local_storage')),
         _buildLocalTile(
           context,
           icon: SpIcons.photo,
-          label: "Images & Audio",
+          label: tr('page.storage_management.label.images_and_audio'),
           paths: [SupportDirectoryPath.images, SupportDirectoryPath.audio],
         ),
         _buildLocalTile(
           context,
           icon: SpIcons.import,
-          label: "Backups & Database",
+          label: tr('page.storage_management.label.backups_and_database'),
           paths: [SupportDirectoryPath.backups, SupportDirectoryPath.objectbox],
         ),
         _buildCacheFilesTile(
           context,
           icon: SpIcons.file,
-          label: 'Cache files',
+          label: tr('page.storage_management.label.cache_files'),
         ),
         ListTile(
           dense: true,
           title: Text(
-            "Total",
+            tr('page.storage_management.label.total'),
             style: TextTheme.of(context).bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -108,7 +110,7 @@ class _StorageManagementContent extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
               onPressed: () => viewModel.clearCacheFiles(context),
               icon: const Icon(SpIcons.delete),
-              label: const Text('Clear'),
+              label: Text(tr('button.clear')),
             ),
           ],
           Text(_formatBytes(size)),
@@ -121,7 +123,7 @@ class _StorageManagementContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SpSectionTitle(title: 'Cloud Storage'),
+        SpSectionTitle(title: tr('page.storage_management.section.cloud_storage')),
         for (final entry in viewModel.cloudQuotas.entries) _buildCloudTile(context, entry.key, entry.value),
       ],
     );
@@ -183,7 +185,12 @@ class _StorageManagementContent extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  hasFullQuotaData ? 'Free ${_formatBytes(freeBytes)} of $limitLabel' : 'Overall: $accountUsedLabel',
+                  hasFullQuotaData
+                      ? tr(
+                          'page.storage_management.label.free_of',
+                          namedArgs: {'SIZE': _formatBytes(freeBytes), 'TOTAL': limitLabel},
+                        )
+                      : tr('page.storage_management.label.overall', namedArgs: {'SIZE': accountUsedLabel}),
                   style: TextTheme.of(context).bodySmall,
                 ),
               ),
@@ -196,7 +203,7 @@ class _StorageManagementContent extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'This app: $appUsedLabel',
+                  tr('page.storage_management.label.this_app', namedArgs: {'SIZE': appUsedLabel}),
                   style: TextTheme.of(context).bodySmall,
                 ),
               ),
@@ -209,14 +216,14 @@ class _StorageManagementContent extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Other apps: ${_formatBytes(otherUsageBytes)}',
+                  tr('page.storage_management.label.other_apps', namedArgs: {'SIZE': _formatBytes(otherUsageBytes)}),
                   style: TextTheme.of(context).bodySmall,
                 ),
               ),
             ],
           ),
           if (hasFullQuotaData) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: SizedBox(
@@ -266,7 +273,7 @@ class _StorageManagementContent extends StatelessWidget {
           const SizedBox(height: 4),
           Align(
             alignment: Alignment.centerLeft,
-            child: TextButton.icon(
+            child: OutlinedButton.icon(
               onPressed: () {
                 final service = context
                     .read<BackupProvider>()
@@ -280,7 +287,7 @@ class _StorageManagementContent extends StatelessWidget {
                 ).push(context);
               },
               icon: Icon(SpIcons.tune),
-              label: const Text('Optimize'),
+              label: Text(tr('button.optimize')),
             ),
           ),
         ],

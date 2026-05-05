@@ -12,14 +12,14 @@ class _CloudOptimizeContent extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Optimize ${viewModel.serviceType.displayName}'),
+        title: Text(tr('page.cloud_optimize.title', namedArgs: {'SERVICE_NAME': viewModel.serviceType.displayName})),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
           _StepCard(
             stepNumber: 1,
-            title: 'Sync latest data',
+            title: tr('page.cloud_optimize.step.sync.title'),
             currentStep: viewModel.currentStep,
             activeStep: OptimizeStep.syncing,
             doneSteps: const {
@@ -34,13 +34,18 @@ class _CloudOptimizeContent extends StatelessWidget {
                 viewModel.currentStep != OptimizeStep.syncing &&
                 viewModel.currentStep != OptimizeStep.idle &&
                 !viewModel.syncSucceeded,
-            doneSubtitle: viewModel.syncSucceeded ? 'Sync complete' : 'Sync skipped',
-            activeSubtitle: 'Syncing with ${viewModel.serviceType.displayName}\u2026',
+            doneSubtitle: viewModel.syncSucceeded
+                ? tr('page.cloud_optimize.step.sync.done')
+                : tr('page.cloud_optimize.step.sync.skipped'),
+            activeSubtitle: tr(
+              'page.cloud_optimize.step.sync.active',
+              namedArgs: {'SERVICE_NAME': viewModel.serviceType.displayName},
+            ),
             doneColor: isAllDone ? green : null,
           ),
           _StepCard(
             stepNumber: 2,
-            title: 'Fetch cloud files',
+            title: tr('page.cloud_optimize.step.fetch.title'),
             currentStep: viewModel.currentStep,
             activeStep: OptimizeStep.fetchingFiles,
             doneSteps: const {
@@ -50,13 +55,13 @@ class _CloudOptimizeContent extends StatelessWidget {
               OptimizeStep.done,
               OptimizeStep.error,
             },
-            doneSubtitle: '${viewModel.fetchedFilesCount} file${viewModel.fetchedFilesCount == 1 ? '' : 's'} found',
-            activeSubtitle: 'Scanning images and audio folders\u2026',
+            doneSubtitle: plural('page.cloud_optimize.step.fetch.done', viewModel.fetchedFilesCount),
+            activeSubtitle: tr('page.cloud_optimize.step.fetch.active'),
             doneColor: isAllDone ? green : null,
           ),
           _StepCard(
             stepNumber: 3,
-            title: 'Analyze files',
+            title: tr('page.cloud_optimize.step.analyze.title'),
             currentStep: viewModel.currentStep,
             activeStep: OptimizeStep.analyzing,
             doneSteps: const {
@@ -67,13 +72,19 @@ class _CloudOptimizeContent extends StatelessWidget {
             },
             doneSubtitle: _analysisSummary(viewModel),
             activeSubtitle: viewModel.fetchedFilesCount > 0
-                ? 'Checked ${viewModel.analyzedCount} of ${viewModel.fetchedFilesCount}\u2026'
-                : 'Checking files\u2026',
+                ? tr(
+                    'page.cloud_optimize.step.analyze.active_with_count',
+                    namedArgs: {
+                      'CURRENT_COUNT': '${viewModel.analyzedCount}',
+                      'TOTAL_COUNT': '${viewModel.fetchedFilesCount}',
+                    },
+                  )
+                : tr('page.cloud_optimize.step.analyze.active'),
             doneColor: isAllDone ? green : null,
           ),
           _StepCard(
             stepNumber: 4,
-            title: 'Clean up',
+            title: tr('page.cloud_optimize.step.cleanup.title'),
             currentStep: viewModel.currentStep,
             activeStep: OptimizeStep.cleaningUp,
             doneSteps: const {
@@ -83,8 +94,14 @@ class _CloudOptimizeContent extends StatelessWidget {
             skipped: isAllDone && !viewModel.hasFilesToClean,
             doneSubtitle: _cleanupSummary(viewModel),
             activeSubtitle: viewModel.totalToClean > 0
-                ? 'Moving ${viewModel.deletedCount + viewModel.failedCount} of ${viewModel.totalToClean} to trash\u2026'
-                : 'Moving files to trash\u2026',
+                ? tr(
+                    'page.cloud_optimize.step.cleanup.active_with_count',
+                    namedArgs: {
+                      'CURRENT_COUNT': '${viewModel.deletedCount + viewModel.failedCount}',
+                      'TOTAL_COUNT': '${viewModel.totalToClean}',
+                    },
+                  )
+                : tr('page.cloud_optimize.step.cleanup.active'),
             doneColor: isAllDone ? green : null,
           ),
           if (viewModel.currentStep == OptimizeStep.awaitingConfirmation) _buildConfirmation(context, viewModel),
@@ -95,24 +112,51 @@ class _CloudOptimizeContent extends StatelessWidget {
   }
 
   String _analysisSummary(CloudOptimizeViewModel vm) {
-    if (!vm.hasFindings) return 'Nothing to clean up';
+    if (!vm.hasFindings) return tr('page.cloud_optimize.step.analyze.nothing_to_clean');
     final parts = <String>[];
     if (vm.detachedCandidates.isNotEmpty) {
-      parts.add('${vm.detachedCandidates.length} detached (eligible for trash)');
+      parts.add(
+        tr(
+          'page.cloud_optimize.step.analyze.detached_eligible',
+          namedArgs: {'DETACHED_COUNT': '${vm.detachedCandidates.length}'},
+        ),
+      );
     } else if (vm.detachedFiles.isNotEmpty) {
-      parts.add('${vm.detachedFiles.length} detached (too recent)');
+      parts.add(
+        tr(
+          'page.cloud_optimize.step.analyze.detached_too_recent',
+          namedArgs: {'TOO_RECENT_COUNT': '${vm.detachedFiles.length}'},
+        ),
+      );
     }
     if (vm.staleDuplicates.isNotEmpty) {
-      parts.add('${vm.staleDuplicates.length} stale duplicate${vm.staleDuplicates.length == 1 ? '' : 's'}');
+      final part = vm.staleDuplicates.length == 1
+          ? tr(
+              'page.cloud_optimize.step.analyze.stale_duplicate',
+              namedArgs: {'STALE_COUNT': '${vm.staleDuplicates.length}'},
+            )
+          : tr(
+              'page.cloud_optimize.step.analyze.stale_duplicates',
+              namedArgs: {'STALE_COUNT': '${vm.staleDuplicates.length}'},
+            );
+      parts.add(part);
     }
-    return '${parts.join(', ')} found';
+    return tr('page.cloud_optimize.step.analyze.summary_found', namedArgs: {'ARG_SUMMARY': parts.join(', ')});
   }
 
   String _cleanupSummary(CloudOptimizeViewModel vm) {
-    if (vm.deletedCount == 0 && vm.failedCount == 0) return 'No files moved to trash';
+    if (vm.deletedCount == 0 && vm.failedCount == 0) return tr('page.cloud_optimize.step.cleanup.no_files');
     final parts = <String>[];
-    if (vm.deletedCount > 0) parts.add('${vm.deletedCount} moved to trash');
-    if (vm.failedCount > 0) parts.add('${vm.failedCount} failed');
+
+    if (vm.deletedCount > 0) {
+      parts.add(
+        tr('page.cloud_optimize.step.cleanup.moved_to_trash', namedArgs: {'DELETED_COUNT': '${vm.deletedCount}'}),
+      );
+    }
+    if (vm.failedCount > 0) {
+      parts.add(tr('page.cloud_optimize.step.cleanup.failed', namedArgs: {'FAILED_COUNT': '${vm.failedCount}'}));
+    }
+
     return parts.join(', ');
   }
 
@@ -123,14 +167,15 @@ class _CloudOptimizeContent extends StatelessWidget {
 
     final rows = <(String, String)>[
       if (viewModel.detachedCandidates.isNotEmpty)
-        ('Detached files (eligible for trash)', '${viewModel.detachedCandidates.length}'),
+        (tr('page.cloud_optimize.confirmation.detached_eligible'), '${viewModel.detachedCandidates.length}'),
       if (viewModel.detachedFiles.length > viewModel.detachedCandidates.length)
         (
-          'Detached files (too recent, skipped)',
+          tr('page.cloud_optimize.confirmation.detached_too_recent'),
           '${viewModel.detachedFiles.length - viewModel.detachedCandidates.length}',
         ),
-      if (viewModel.staleDuplicates.isNotEmpty) ('Safe stale duplicates', '${viewModel.staleDuplicates.length}'),
-      if (bytesToClean > 0) ('Space to free', _formatBytes(bytesToClean)),
+      if (viewModel.staleDuplicates.isNotEmpty)
+        (tr('page.cloud_optimize.confirmation.stale_duplicates'), '${viewModel.staleDuplicates.length}'),
+      if (bytesToClean > 0) (tr('page.cloud_optimize.confirmation.space_to_free'), _formatBytes(bytesToClean)),
     ];
 
     return Padding(
@@ -169,8 +214,8 @@ class _CloudOptimizeContent extends StatelessWidget {
               Expanded(
                 child: Text(
                   viewModel.hasFilesToClean
-                      ? 'Files will be moved to Google Drive trash.'
-                      : 'No eligible files to clean up.',
+                      ? tr('page.cloud_optimize.confirmation.footer')
+                      : tr('page.cloud_optimize.confirmation.no_eligible_files'),
                   style: textTheme.bodySmall?.copyWith(color: colorScheme.outline),
                 ),
               ),
@@ -181,7 +226,7 @@ class _CloudOptimizeContent extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: FilledButton(
               onPressed: viewModel.hasFilesToClean ? () => viewModel.startCleanup() : () => Navigator.of(context).pop(),
-              child: Text(viewModel.hasFilesToClean ? 'Move to trash' : 'Done'),
+              child: Text(viewModel.hasFilesToClean ? tr('button.move_to_trash') : tr('button.done')),
             ),
           ),
         ],
@@ -216,7 +261,7 @@ class _CloudOptimizeContent extends StatelessWidget {
           TextButton.icon(
             onPressed: () => viewModel.retry(),
             icon: const Icon(SpIcons.refresh),
-            label: const Text('Retry'),
+            label: Text(tr('button.retry')),
           ),
         ],
       ),
@@ -291,7 +336,7 @@ class _StepCard extends StatelessWidget {
                   Text(activeSubtitle, style: textTheme.bodySmall),
                 ] else if (_isDone) ...[
                   Text(
-                    skipped ? 'All clean - nothing to remove' : doneSubtitle,
+                    skipped ? tr('page.cloud_optimize.step.skipped') : doneSubtitle,
                     style: textTheme.bodySmall?.copyWith(
                       color: doneColor?.withValues(alpha: 0.85),
                     ),

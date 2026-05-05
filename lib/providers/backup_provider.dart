@@ -186,7 +186,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       if (setupConnection) await _setupConnection();
       if (!readyToSynced) return false;
 
-      return _syncBackupAcrossDevices(services: services);
+      return await _syncBackupAcrossDevices(services: services);
     } finally {
       _syncing = false;
       notifyListeners();

@@ -11,8 +11,6 @@ part './helpers/defined_preference.dart';
 class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   _DefinedPreference get nickname => _DefinedPreference<String>(id: 2, key: 'nickname');
 
-  // IDs 100–109 reserved for cloud storage quota cache (2 per service: JSON + timestamp).
-  // google_drive: 100 (json), 101 (fetchedAt)
   _DefinedPreference<String> storageQuotaFor(BackupServiceType serviceType) {
     return switch (serviceType) {
       BackupServiceType.google_drive => _DefinedPreference<String>(id: 3, key: 'storage_quota_google_drive'),

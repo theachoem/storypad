@@ -101,19 +101,15 @@ class CloudAssetAnalyzer {
   }) {
     // Group all cloud files by parsed asset ID so duplicates are handled together.
     final Map<int, List<CloudFileObject>> filesByAssetId = {};
-    final List<CloudFileObject> unparseable = [];
 
     for (final file in cloudFiles) {
       final fileName = file.fileName;
       if (fileName == null) {
-        unparseable.add(file);
         continue;
       }
       final assetId = int.tryParse(fileName.split('.').first);
       if (assetId != null) {
         filesByAssetId.putIfAbsent(assetId, () => []).add(file);
-      } else {
-        unparseable.add(file);
       }
     }
 

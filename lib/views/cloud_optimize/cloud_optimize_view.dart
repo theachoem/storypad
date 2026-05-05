@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
@@ -36,16 +37,19 @@ class CloudOptimizeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backupProvider = context.read<BackupProvider>();
-
     return ChangeNotifierProvider<CloudOptimizeViewModel>(
-      create: (_) => CloudOptimizeViewModel(
+      create: (context) => CloudOptimizeViewModel(
         params: params,
         service: params.service,
         userIdentifier: params.userIdentifier,
-        syncCallback: () => backupProvider.recheckAndSync(
-          services: backupProvider.services.where((service) => service.isSignedIn).toList(),
-        ),
+        syncCallback: () async {
+          if (!context.mounted) return false;
+
+          final backupProvider = context.read<BackupProvider>();
+          return backupProvider.recheckAndSync(
+            services: backupProvider.services.where((service) => service.isSignedIn).toList(),
+          );
+        },
       ),
       builder: (context, _) {
         return _CloudOptimizeContent(Provider.of(context));

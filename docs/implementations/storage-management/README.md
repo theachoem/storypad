@@ -46,19 +46,50 @@ lib/views/
 // lib/core/objects/cloud_storage_quota_object.dart
 
 class CloudStorageQuotaObject {
-  final int usageInBytes;
-  final int? limitInBytes;   // null = unlimited / unknown
+  final int appUsageInBytes; // App-only usage (backups folder)
+  final int? accountUsageInBytes; // Total account usage (null if not supported)
+  final int? limitInBytes; // Account quota limit
 
   const CloudStorageQuotaObject({
-    required this.usageInBytes,
+    required this.appUsageInBytes,
+    this.accountUsageInBytes,
     this.limitInBytes,
   });
 
-  factory CloudStorageQuotaObject.fromJson(Map<String, dynamic> json) { ... }
-  Map<String, dynamic> toJson() { ... }
+  /// Fraction of app storage used relative to account limit (0.0 – 1.0), or null if limit is unknown.
+  double? get appFraction => limitInBytes != null && limitInBytes! > 0 ? appUsageInBytes / limitInBytes! : null;
 
-  // convenience
-  double? get fraction => limitInBytes != null ? usageInBytes / limitInBytes! : null;
+  /// Fraction of total account storage used (0.0 – 1.0), or null if account usage is unknown.
+  double? get accountFraction => accountUsageInBytes != null && limitInBytes != null && limitInBytes! > 0
+      ? accountUsageInBytes! / limitInBytes!
+      : null;
+
+  factory CloudStorageQuotaObject.fromJson(Map<String, dynamic> json) {
+    return CloudStorageQuotaObject(
+      appUsageInBytes: (json['appUsageInBytes'] as num).toInt(),
+      accountUsageInBytes: json['accountUsageInBytes'] != null ? (json['accountUsageInBytes'] as num).toInt() : null,
+      limitInBytes: json['limitInBytes'] != null ? (json['limitInBytes'] as num).toInt() : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'appUsageInBytes': appUsageInBytes,
+      if (accountUsageInBytes != null) 'accountUsageInBytes': accountUsageInBytes,
+      if (limitInBytes != null) 'limitInBytes': limitInBytes,
+    };
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  static CloudStorageQuotaObject? tryParseJsonString(String? value) {
+    if (value == null || value.isEmpty) return null;
+    try {
+      return CloudStorageQuotaObject.fromJson(jsonDecode(value) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
 }
 ```
 
@@ -90,13 +121,14 @@ Future<CloudStorageQuotaObject?> fetchStorageQuota() async {
   final client = await googleDriveClient;
   if (client == null) return null;
 
+  final appUsageBytes = await _calculateAppDataUsageBytes(client);
   final about = await client.about.get($fields: 'storageQuota');
   final quota = about.storageQuota;
-  if (quota == null) return null;
 
   return CloudStorageQuotaObject(
-    usageInBytes: int.parse(quota.usage ?? '0'),
-    limitInBytes: quota.limit != null ? int.parse(quota.limit!) : null,
+    appUsageInBytes: appUsageBytes,
+    accountUsageInBytes: quota?.usage != null ? int.tryParse(quota!.usage!) : null,
+    limitInBytes: quota?.limit != null ? int.tryParse(quota!.limit!) : null,
   );
 }
 ```
@@ -111,17 +143,15 @@ Add two `_DefinedPreference` entries — one for cached quota JSON, one for cach
 
 ```dart
 // lib/core/databases/adapters/objectbox/preferences_box.dart
-
-// IDs 100–109 reserved for storage quota cache
 _DefinedPreference<String> storageQuotaFor(BackupServiceType serviceType) {
   return switch (serviceType) {
-    BackupServiceType.google_drive => _DefinedPreference<String>(id: 100, key: 'storage_quota_google_drive'),
+    BackupServiceType.google_drive => _DefinedPreference<String>(id: 3, key: 'storage_quota_google_drive'),
   };
 }
 
 _DefinedPreference<DateTime> storageQuotaFetchedAtFor(BackupServiceType serviceType) {
   return switch (serviceType) {
-    BackupServiceType.google_drive => _DefinedPreference<DateTime>(id: 101, key: 'storage_quota_fetched_at_google_drive'),
+    BackupServiceType.google_drive => _DefinedPreference<DateTime>(id: 4, key: 'storage_quota_fetched_at_google_drive'),
   };
 }
 ```
@@ -129,7 +159,7 @@ _DefinedPreference<DateTime> storageQuotaFetchedAtFor(BackupServiceType serviceT
 Cache strategy:
 
 - On open: if cached value exists and is < 1 hour old → use cache; else → fetch + store
-- On asset save/delete: call `PreferencesBox().storageQuotaFor(serviceType).set(null)` to invalidate
+- On asset save/delete: call `PreferencesBox().storageQuotaFor(serviceType).set('')` to invalidate
   - Hook into `AssetsBox` callbacks (the same `runCallbacks` mechanism already used)
 
 ---

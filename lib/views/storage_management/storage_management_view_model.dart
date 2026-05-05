@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/adapters/objectbox/preferences_box.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
-import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/storage/storage_info_service.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -32,6 +31,8 @@ class StorageManagementViewModel extends ChangeNotifier {
 
   Map<SupportDirectoryPath, int> localSizes = {};
   Map<BackupServiceType, CloudStorageQuotaObject?> cloudQuotas = {};
+  int cachedNetworkImageBytes = 0;
+
   bool loading = true;
   bool reloading = false;
   DateTime? _lastReloadAt;
@@ -50,7 +51,14 @@ class StorageManagementViewModel extends ChangeNotifier {
   }
 
   Future<void> _loadLocalSizes() async {
-    localSizes = await StorageInfoService().computeLocalSizes();
+    final storageInfoService = StorageInfoService();
+    final results = await Future.wait([
+      storageInfoService.computeLocalSizes(),
+      storageInfoService.computeCachedNetworkImageCacheSize(),
+    ]);
+
+    localSizes = results[0] as Map<SupportDirectoryPath, int>;
+    cachedNetworkImageBytes = results[1] as int;
   }
 
   Future<void> _loadCloudQuotas(BuildContext context) async {
@@ -87,16 +95,16 @@ class StorageManagementViewModel extends ChangeNotifier {
   }
 
   Future<void> clearCacheFiles(BuildContext context) async {
+    final storageInfoService = StorageInfoService();
+
     for (final path in cacheDirectories) {
-      localSizes[path] = 0;
+      await storageInfoService.clearDirectory(path);
     }
+
+    await storageInfoService.clearCachedNetworkImageCache();
+
+    await _loadLocalSizes();
     notifyListeners();
-
-    for (final path in cacheDirectories) {
-      await StorageInfoService().clearDirectory(path);
-    }
-
-    if (context.mounted) MessengerService.of(context).showSnackBar('Cache files cleared');
   }
 
   bool get canReload {
@@ -127,17 +135,13 @@ class StorageManagementViewModel extends ChangeNotifier {
         _loadLocalSizes(),
         _loadCloudQuotas(context),
       ]);
-
-      if (context.mounted) MessengerService.of(context).showSnackBar('Storage data reloaded');
-    } catch (e) {
-      if (context.mounted) MessengerService.of(context).showSnackBar('Reload failed');
     } finally {
       reloading = false;
       notifyListeners();
     }
   }
 
-  int get cacheFilesBytes => cacheDirectories.fold(0, (a, p) => a + (localSizes[p] ?? 0));
+  int get cacheFilesBytes => cacheDirectories.fold(0, (a, p) => a + (localSizes[p] ?? 0)) + cachedNetworkImageBytes;
 
-  int get totalLocalBytes => localSizes.values.fold(0, (a, b) => a + b);
+  int get totalLocalBytes => localSizes.values.fold(0, (a, b) => a + b) + cachedNetworkImageBytes;
 }

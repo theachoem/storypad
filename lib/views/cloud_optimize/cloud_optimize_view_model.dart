@@ -29,13 +29,13 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   /// Optional callback invoked during the sync preflight step.
   /// Should trigger sync for signed-in providers and return true only when all requested syncs succeed.
-  final Future<bool> Function()? syncCallback;
+  final Future<bool> Function() syncCallback;
 
   CloudOptimizeViewModel({
     required this.params,
     required this.service,
     required this.userIdentifier,
-    this.syncCallback,
+    required this.syncCallback,
   }) {
     startOptimize();
   }
@@ -82,27 +82,27 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> startOptimize() async {
-    // Step 1: sync preflight. Detached cleanup is disabled unless this succeeds.
-    if (syncCallback != null) {
-      currentStep = OptimizeStep.syncing;
-      notifyListeners();
-      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: syncing latest data');
+    // Small delay to ensure the UI has time to render first frame.
+    // Why? Because we will call notifyListeners() here & in backup provider as well which will cause throw.
+    await Future.delayed(const Duration(milliseconds: 300));
 
-      try {
-        syncSucceeded = await syncCallback!();
-        FirebaseCrashlytics.instance.log(
-          syncSucceeded
-              ? '$runtimeType#startOptimize: sync preflight succeeded'
-              : '$runtimeType#startOptimize: sync preflight did not complete; detached cleanup disabled',
-        );
-      } catch (e) {
-        FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: sync preflight failed — $e');
-        syncSucceeded = false;
-      }
-      notifyListeners();
-    } else {
+    // Step 1: sync preflight. Detached cleanup is disabled unless this succeeds.
+    currentStep = OptimizeStep.syncing;
+    notifyListeners();
+    FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: syncing latest data');
+
+    try {
+      syncSucceeded = await syncCallback();
+      FirebaseCrashlytics.instance.log(
+        syncSucceeded
+            ? '$runtimeType#startOptimize: sync preflight succeeded'
+            : '$runtimeType#startOptimize: sync preflight did not complete; detached cleanup disabled',
+      );
+    } catch (e) {
+      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: sync preflight failed — $e');
       syncSucceeded = false;
     }
+    notifyListeners();
 
     currentStep = OptimizeStep.fetchingFiles;
     notifyListeners();

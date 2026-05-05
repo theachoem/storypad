@@ -171,7 +171,10 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
 
   @override
   Future<void> afterCommit([int? id, AssetDbModel? model]) async {
+    // Invalidate storage quota cache after any change to assets.
+    // This will allow StorageManagementView to fetch the latest storage usage data on next load.
     PreferencesBox().invalidateStorageQuotaCache();
+
     await super.afterCommit(id, model);
   }
 }
