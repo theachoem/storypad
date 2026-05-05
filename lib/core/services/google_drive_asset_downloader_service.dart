@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -156,6 +157,13 @@ class GoogleDriveAssetDownloaderService {
       }
 
       // Handle other HTTP errors
+      if (response.statusCode == 404) {
+        FirebaseCrashlytics.instance.log('$runtimeType#_downloadFromUrl: 404 — $embedLink');
+        throw GoogleDriveAssetDownloaderException(
+          'Asset not found (404). Status: 404',
+        );
+      }
+
       if (response.statusCode != 200) {
         throw GoogleDriveAssetDownloaderException(
           'Failed to download asset. Status: ${response.statusCode}',

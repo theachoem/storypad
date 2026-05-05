@@ -8,6 +8,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
+import 'package:storypad/views/cloud_optimize/cloud_optimize_view.dart';
 
 import 'storage_management_view_model.dart';
 

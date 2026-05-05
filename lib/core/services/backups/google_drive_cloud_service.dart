@@ -475,6 +475,43 @@ class GoogleDriveCloudService extends BackupCloudService {
     }
   }
 
+  @override
+  Future<List<CloudFileObject>> listFilesInFolder(String folderName) async {
+    final client = await googleDriveClient;
+    if (client == null) return [];
+
+    return _executeWithRetry(
+      methodName: 'listFilesInFolder',
+      operation: () async {
+        final folderId = await loadFolder(client, folderName);
+        if (folderId == null) return [];
+
+        final List<CloudFileObject> result = [];
+        String? nextPageToken;
+
+        do {
+          final fileList = await client.files.list(
+            spaces: 'appDataFolder',
+            q: "'$folderId' in parents and trashed=false",
+            $fields: 'nextPageToken,files(id,name,size,createdTime,modifiedTime,trashed)',
+            pageSize: 1000,
+            pageToken: nextPageToken,
+          );
+
+          if (fileList.files != null) {
+            for (final file in fileList.files!) {
+              if (file.id != null) result.add(CloudFileObject.fromGoogleDrive(file));
+            }
+          }
+
+          nextPageToken = fileList.nextPageToken;
+        } while (nextPageToken != null && nextPageToken.isNotEmpty);
+
+        return result;
+      },
+    );
+  }
+
   Future<int> _calculateAppDataUsageBytes(drive.DriveApi client) async {
     const folderMimeType = 'application/vnd.google-apps.folder';
 
@@ -577,6 +614,57 @@ class GoogleDriveCloudService extends BackupCloudService {
         drive.DriveApi client = await _getAuthenticatedClient();
         await client.files.delete(cloudFileId);
         return true;
+      },
+    );
+  }
+
+  @override
+  Future<bool> trashFile(String cloudFileId) async {
+    return _executeWithRetry(
+      methodName: 'trashFile',
+      operation: () async {
+        drive.DriveApi client = await _getAuthenticatedClient();
+        await client.files.update(
+          drive.File()..trashed = true,
+          cloudFileId,
+          $fields: 'id,trashed',
+        );
+        return true;
+      },
+    );
+  }
+
+  @override
+  Future<bool> restoreFileFromTrash(String cloudFileId) async {
+    return _executeWithRetry(
+      methodName: 'restoreFileFromTrash',
+      operation: () async {
+        drive.DriveApi client = await _getAuthenticatedClient();
+        await client.files.update(
+          drive.File()..trashed = false,
+          cloudFileId,
+          $fields: 'id,trashed',
+        );
+        return true;
+      },
+    );
+  }
+
+  @override
+  Future<CloudFileObject?> findFileByIdIncludingTrashed(String fileId) async {
+    drive.DriveApi? client = await googleDriveClient;
+    if (client == null) return null;
+
+    return _executeWithRetry(
+      methodName: 'findFileByIdIncludingTrashed',
+      operation: () async {
+        // files.get returns trashed files by ID without any extra query param
+        Object file = await client.files.get(
+          fileId,
+          $fields: 'id,name,size,trashed,createdTime,modifiedTime',
+        );
+        if (file is drive.File) return CloudFileObject.fromGoogleDrive(file);
+        return null;
       },
     );
   }

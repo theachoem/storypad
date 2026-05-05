@@ -263,6 +263,26 @@ class _StorageManagementContent extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () {
+                final service = context
+                    .read<BackupProvider>()
+                    .services
+                    .where((s) => s.serviceType == serviceType && s.isSignedIn)
+                    .firstOrNull;
+                if (service == null || service.currentUser == null) return;
+                CloudOptimizeRoute(
+                  service: service,
+                  userIdentifier: service.currentUser!.identifier,
+                ).push(context);
+              },
+              icon: Icon(SpIcons.tune),
+              label: const Text('Optimize'),
+            ),
+          ),
         ],
       ),
     );

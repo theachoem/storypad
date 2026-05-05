@@ -6,11 +6,19 @@ class CloudFileObject {
   final String? fileName;
   final String id;
   final String? description;
+  final int? sizeInBytes;
+  final DateTime? createdAt;
+  final DateTime? modifiedAt;
+  final bool? trashed;
 
   CloudFileObject({
     required this.fileName,
     required this.id,
     required this.description,
+    this.sizeInBytes,
+    this.createdAt,
+    this.modifiedAt,
+    this.trashed,
   });
 
   factory CloudFileObject.fromGoogleDrive(drive.File file) {
@@ -18,6 +26,10 @@ class CloudFileObject {
       fileName: file.name,
       id: file.id!,
       description: file.description,
+      sizeInBytes: file.size != null ? int.tryParse(file.size.toString()) : null,
+      createdAt: file.createdTime,
+      modifiedAt: file.modifiedTime,
+      trashed: file.trashed,
     );
   }
 
