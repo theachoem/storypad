@@ -103,6 +103,8 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
       tags: tags!,
     );
 
+    // Avoid running callback for each update since it will trigger reload and reindex again.
+    // Only call once after all updates are done.
     int length = tags!.items.length;
     for (int i = 0; i < length; i++) {
       final item = tags!.items[i];
@@ -110,9 +112,12 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
         await TagDbModel.db.set(
           item.copyWith(index: i, updatedAt: DateTime.now()),
           debugSource: '$runtimeType#reorder',
+          runCallbacks: false,
         );
       }
     }
+
+    await TagDbModel.db.afterCommit();
   }
 
   List<String> get tagTitles => tags?.items.map((e) => e.title).toList() ?? [];
