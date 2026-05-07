@@ -3,12 +3,34 @@
 import 'package:storypad/core/databases/adapters/objectbox/base_box.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/preference_db_model.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/objectbox.g.dart';
 
 part './helpers/defined_preference.dart';
 
 class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   _DefinedPreference get nickname => _DefinedPreference<String>(id: 2, key: 'nickname');
+
+  _DefinedPreference<String> storageQuotaFor(BackupServiceType serviceType) {
+    return switch (serviceType) {
+      BackupServiceType.google_drive => _DefinedPreference<String>(id: 3, key: 'storage_quota_google_drive'),
+    };
+  }
+
+  _DefinedPreference<DateTime> storageQuotaFetchedAtFor(BackupServiceType serviceType) {
+    return switch (serviceType) {
+      BackupServiceType.google_drive => _DefinedPreference<DateTime>(
+        id: 4,
+        key: 'storage_quota_fetched_at_google_drive',
+      ),
+    };
+  }
+
+  void invalidateStorageQuotaCache() {
+    for (final serviceType in BackupServiceType.values) {
+      storageQuotaFor(serviceType).set('');
+    }
+  }
 
   @override
   String get tableName => "preferences";

@@ -108,6 +108,7 @@ class SpIcons {
   static const IconData hideSource = kIsCupertino ? CupertinoIcons.circle : Icons.hide_source;
   static const IconData playCircle = kIsCupertino ? CupertinoIcons.play_circle_fill : Icons.play_circle;
   static const IconData pauseCircle = kIsCupertino ? CupertinoIcons.pause_circle_fill : Icons.pause_circle;
+  static const IconData storage = kIsCupertino ? CupertinoIcons.device_phone_portrait : Icons.storage_outlined;
   static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
   static final IconData markdown = MdiIcons.languageMarkdownOutline;
   static final IconData text = MdiIcons.text;

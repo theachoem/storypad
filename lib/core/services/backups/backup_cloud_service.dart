@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 /// Abstract base class for cloud backup services
@@ -73,8 +74,17 @@ abstract class BackupCloudService {
   /// Find a file by ID in cloud storage
   Future<CloudFileObject?> findFileById(String fileId);
 
+  /// Find a file by ID, including files that have been moved to trash
+  Future<CloudFileObject?> findFileByIdIncludingTrashed(String fileId);
+
   /// Delete a file from cloud storage
   Future<bool> deleteFile(String cloudFileId);
+
+  /// Move a file to trash (recoverable) instead of permanently deleting it
+  Future<bool> trashFile(String cloudFileId);
+
+  /// Restore a previously trashed file back to its original location
+  Future<bool> restoreFileFromTrash(String cloudFileId);
 
   /// Upload a file (asset) to cloud storage
   /// Returns: CloudFileObject metadata if successful
@@ -90,4 +100,13 @@ abstract class BackupCloudService {
     required String fileName,
     required io.File file,
   });
+
+  /// Fetch cloud storage quota for the signed-in user.
+  /// Returns null if not signed in or unsupported by this service.
+  Future<CloudStorageQuotaObject?> fetchStorageQuota();
+
+  /// List all files inside a named folder in cloud storage.
+  /// Used by the optimize screen to detect orphaned / stale-duplicate asset files.
+  /// Returns an empty list if not signed in or the folder does not exist.
+  Future<List<CloudFileObject>> listFilesInFolder(String folderName);
 }

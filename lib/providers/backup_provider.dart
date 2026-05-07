@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -164,30 +165,32 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     bool setupConnection = true,
     required BuildContext context,
   }) async {
-    return recheckAndSync(
+    await recheckAndSync(
       setupConnection: setupConnection,
       services: autoBackupServices,
     );
   }
 
-  Future<void> recheckAndSync({
+  Future<bool> recheckAndSync({
     bool setupConnection = true,
     required List<BackupCloudService> services,
   }) async {
-    if (services.isEmpty) return;
-    if (_syncing) return;
+    if (services.isEmpty) return false;
+    if (_syncing) return false;
 
     _syncing = true;
     repository.resetMessages();
     notifyListeners();
 
-    if (setupConnection) await _setupConnection();
-    if (readyToSynced) {
-      await _syncBackupAcrossDevices(services: services);
-    }
+    try {
+      if (setupConnection) await _setupConnection();
+      if (!readyToSynced) return false;
 
-    _syncing = false;
-    notifyListeners();
+      return await _syncBackupAcrossDevices(services: services);
+    } finally {
+      _syncing = false;
+      notifyListeners();
+    }
   }
 
   Future<void> signIn(
@@ -286,12 +289,15 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   ///    - Auth failures trigger connection status update
   ///    - Failed services retry on next sync
   ///
-  Future<void> _syncBackupAcrossDevices({
+  Future<bool> _syncBackupAcrossDevices({
     required List<BackupCloudService> services,
   }) async {
     // Get current state of all years in local database
     _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
     notifyListeners();
+
+    var attemptedSync = false;
+    var allSyncsSucceeded = true;
 
     // Process each service individually
     for (final service in services) {
@@ -300,8 +306,16 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         continue;
       }
 
+      final serviceId = service.serviceType.id;
+      attemptedSync = true;
+      FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
+
       final result = await repository.sync(service);
       if (!result.isSuccess) {
+        allSyncsSucceeded = false;
+        FirebaseCrashlytics.instance.log(
+          '$runtimeType#_syncBackupAcrossDevices[$serviceId]: failed — ${result.error?.message}',
+        );
         if (result.error?.type == BackupErrorType.authentication) {
           final connectionResult = await repository.checkConnection();
           _connectionStatus = connectionResult.data;
@@ -310,6 +324,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         // Skip to next service on failure
         continue;
       }
+
+      FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: succeeded');
 
       // Update local DB timestamps after successful sync (in case import happened)
       _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
@@ -345,6 +361,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     notifyListeners();
+    return attemptedSync && allSyncsSucceeded;
   }
 
   @override

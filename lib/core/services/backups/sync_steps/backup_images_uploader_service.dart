@@ -133,7 +133,9 @@ class BackupImagesUploaderService {
           asset.localFile!,
           folderName: asset.type.subDirectory.relativePath,
         ),
-        policy: RetryPolicy.network,
+
+        // Asset create is non-idempotent: retrying can create duplicate Drive files.
+        policy: RetryPolicy.none,
         operationName: 'upload_asset_$cloudFileName',
       );
 
