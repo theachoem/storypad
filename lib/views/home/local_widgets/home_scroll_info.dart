@@ -168,20 +168,12 @@ class _HomeScrollInfo {
 
       // Find all currently visible keys
       List<int> visibleIndices = [];
-      List<int> visiblePinnedIndices = [];
-
       for (int i = 0; i < allStoryKeys.length; i++) {
         if (allStoryKeys[i].currentContext != null) {
-          if (i < pinnedStoryKeys.length) {
-            visiblePinnedIndices.add(i);
-          } else {
-            visibleIndices.add(i);
-          }
+          visibleIndices.add(i);
         }
       }
 
-      // Always scroll to normal stories first, only scroll to pinned if no normal story is visible.
-      if (visibleIndices.isEmpty) visibleIndices = visiblePinnedIndices;
       if (visibleIndices.isEmpty) break;
 
       // Determine direction and find nearest visible key
@@ -190,7 +182,6 @@ class _HomeScrollInfo {
 
       // Jump to nearest visible key (no animation) to trigger rendering of more items
       final nearestKey = allStoryKeys[nearestIndex];
-
       if (nearestKey.currentContext != null) {
         await Scrollable.ensureVisible(
           nearestKey.currentContext!,
