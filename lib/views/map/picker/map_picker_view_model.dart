@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
@@ -9,6 +10,7 @@ import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
 import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/maps/sp_map_controller.dart';
 import 'package:storypad/widgets/maps/map_types.dart';
 import 'map_picker_view.dart';
@@ -38,7 +40,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
 
-  SpMapStyle _mapStyle = SpMapStyle.streets;
+  late SpMapStyle _mapStyle = viewContext.read<DevicePreferencesProvider>().preferences.mapStyle;
   SpMapStyle get mapStyle => _mapStyle;
 
   PlaceDbModel? _selectedPlace;
@@ -112,6 +114,10 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (_mapStyle == mapStyle) return;
     _mapStyle = mapStyle;
     notifyListeners();
+
+    if (viewContext.mounted) {
+      viewContext.read<DevicePreferencesProvider>().updateMapStyle(mapStyle);
+    }
   }
 
   void setSelectedLocation(double latitude, double longitude) {

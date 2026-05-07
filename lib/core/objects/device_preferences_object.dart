@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
 
 part 'device_preferences_object.g.dart';
 
@@ -22,6 +23,7 @@ class DevicePreferencesObject {
   final double voicePlaybackSpeed;
   final TimeFormatOption timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
+  final SpMapStyle mapStyle;
 
   final StoryTilePreferencesObject storyTilePreferences;
   final DefaultStoryPreferencesObject defaultStoryPreferences;
@@ -48,13 +50,15 @@ class DevicePreferencesObject {
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
+    SpMapStyle? mapStyle,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,
        timeFormat = timeFormat ?? TimeFormatOption.h12,
        firstDayOfWeek = firstDayOfWeek ?? FirstDayOfWeekOption.defaultValue,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
        storyTilePreferences = storyTilePreferences ?? StoryTilePreferencesObject(),
-       defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject();
+       defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject(),
+       mapStyle = mapStyle ?? SpMapStyle.streets;
 
   factory DevicePreferencesObject.initial() {
     return DevicePreferencesObject();

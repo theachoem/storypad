@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -15,6 +16,7 @@ import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_stories_bottom_sheet.dart';
@@ -94,7 +96,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     await mapController.resetRotation();
   }
 
-  SpMapStyle _mapStyle = SpMapStyle.streets;
+  late SpMapStyle _mapStyle = viewContext.read<DevicePreferencesProvider>().preferences.mapStyle;
   SpMapStyle get mapStyle => _mapStyle;
 
   List<MapStoryObject> _visibleStories = [];
@@ -320,6 +322,10 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     _mapStyle = mapStyle;
     notifyListeners();
+
+    if (viewContext.mounted) {
+      viewContext.read<DevicePreferencesProvider>().updateMapStyle(mapStyle);
+    }
   }
 
   Future<void> goToNewPage() async {

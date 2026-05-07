@@ -14,6 +14,7 @@ import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/widgets/maps/map_types.dart';
 
 class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserver {
   static DevicePreferencesStorage get storage => DevicePreferencesStorage.appInstance;
@@ -197,6 +198,13 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     storage.writeObject(_preferences);
 
     _listeners['voice_playback_speed']?.forEach((listener) => listener());
+  }
+
+  // No need notifyListeners or custom listeners as map is open via navigator and will read latest map style when open.
+  // It also manage its own state internally, so no need to notify it of changes.
+  void updateMapStyle(SpMapStyle mapStyle) {
+    _preferences = _preferences.copyWith(mapStyle: mapStyle);
+    storage.writeObject(_preferences);
   }
 
   Future<void> toggleThemeMode(

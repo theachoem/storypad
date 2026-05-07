@@ -35,6 +35,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     DefaultStoryPreferencesObject? defaultStoryPreferences,
   );
 
+  DevicePreferencesObject mapStyle(SpMapStyle? mapStyle);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -55,6 +57,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
+    SpMapStyle? mapStyle,
   });
 }
 
@@ -118,6 +121,10 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(defaultStoryPreferences: defaultStoryPreferences);
 
   @override
+  DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) =>
+      call(mapStyle: mapStyle);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -138,6 +145,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
+    Object? mapStyle = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
       fontFamily: fontFamily == const $CopyWithPlaceholder()
@@ -189,6 +197,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.defaultStoryPreferences
           // ignore: cast_nullable_to_non_nullable
           : defaultStoryPreferences as DefaultStoryPreferencesObject?,
+      mapStyle: mapStyle == const $CopyWithPlaceholder()
+          ? _value.mapStyle
+          // ignore: cast_nullable_to_non_nullable
+          : mapStyle as SpMapStyle?,
     );
   }
 }
@@ -234,6 +246,7 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
       : DefaultStoryPreferencesObject.fromJson(
           json['default_story_preferences'] as Map<String, dynamic>,
         ),
+  mapStyle: $enumDecodeNullable(_$SpMapStyleEnumMap, json['map_style']),
 );
 
 Map<String, dynamic> _$DevicePreferencesObjectToJson(
@@ -247,6 +260,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'voice_playback_speed': instance.voicePlaybackSpeed,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
+  'map_style': _$SpMapStyleEnumMap[instance.mapStyle]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
   'enable_relax_sounds': instance.enableRelaxSounds,
@@ -274,4 +288,9 @@ const _$TimeFormatOptionEnumMap = {
 const _$FirstDayOfWeekOptionEnumMap = {
   FirstDayOfWeekOption.monday: 'monday',
   FirstDayOfWeekOption.sunday: 'sunday',
+};
+
+const _$SpMapStyleEnumMap = {
+  SpMapStyle.streets: 'streets',
+  SpMapStyle.satellite: 'satellite',
 };
