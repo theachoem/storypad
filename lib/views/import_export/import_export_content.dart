@@ -20,6 +20,11 @@ class _ImportExportContent extends StatelessWidget {
             title: Text(tr('list_tile.import_storypad_json.title')),
             onTap: () => viewModel.import(context),
           ),
+          ListTile(
+            leading: const Icon(SpIcons.photo),
+            title: const Text('Import Media (.tar.gz)'),
+            onTap: () => viewModel.importMedia(context),
+          ),
           // TODO: more import options with files support + export by date & export in PDF
           // ListTile(
           //   leading: const Icon(SpIcons.importOffline),
