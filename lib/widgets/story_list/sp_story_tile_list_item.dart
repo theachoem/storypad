@@ -103,13 +103,17 @@ class SpStoryTileListItem extends StatelessWidget {
     bool showMonogram,
     BuildContext context,
   ) {
-    return SpStoryTile(
-      story: story,
-      preferences: context.read<DevicePreferencesProvider>().preferences.storyTilePreferences,
-      showMonogram: showMonogram,
-      viewOnly: viewOnly,
-      onTap: onTap,
-      listContext: listContext,
+    return Consumer<DevicePreferencesProvider>(
+      builder: (context, provider, child) {
+        return SpStoryTile(
+          story: story,
+          preferences: provider.preferences.storyTilePreferences,
+          showMonogram: showMonogram,
+          viewOnly: viewOnly,
+          onTap: onTap,
+          listContext: listContext,
+        );
+      },
     );
   }
 }
