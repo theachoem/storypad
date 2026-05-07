@@ -15,9 +15,12 @@ class SpAppLocationService {
   /// Requests current place with retry/settings UX and returns a resolved place.
   ///
   /// Returns `null` when the user cancels recovery or location still cannot be resolved.
-  static Future<PlaceDbModel?> fetchCurrentPlaceWithRecovery(BuildContext context) async {
+  static Future<PlaceDbModel?> fetchCurrentPlaceWithRecovery(
+    BuildContext context, {
+    bool skipReverseGeocoding = false,
+  }) async {
     while (context.mounted) {
-      final result = await SpLocationService.fetchCurrentPlaceResult();
+      final result = await SpLocationService.fetchCurrentPlace(skipReverseGeocoding: skipReverseGeocoding);
       if (!context.mounted) return null;
 
       switch (result.status) {

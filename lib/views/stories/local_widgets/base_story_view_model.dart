@@ -155,7 +155,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   Future<void> addCurrentLocation() async {
     final result = await SpLocationService.fetchCurrentPlace();
-    if (result != null) await setPlace(result);
+    if (result.isSuccess) await setPlace(result.place);
   }
 
   Future<void> toggleShowDayCount() async {

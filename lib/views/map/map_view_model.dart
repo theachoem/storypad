@@ -76,7 +76,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> goToCurrentLocation(BuildContext context) async {
-    final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context);
+    final place = await SpAppLocationService.fetchCurrentPlaceWithRecovery(context, skipReverseGeocoding: true);
     if (!context.mounted || place == null) return;
 
     _showCurrentLocation = true;

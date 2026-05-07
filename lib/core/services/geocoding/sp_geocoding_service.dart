@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
+import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/services/geocoding/sp_null_geocoding_service.dart';
 import 'package:storypad/core/services/geocoding/system/sp_system_geocoding_service.dart';
 
@@ -39,4 +41,32 @@ abstract class SpGeocodingService {
   ///
   /// Returns an empty list when geocoding is unavailable.
   Future<List<PlaceDbModel>> searchPlaces(String query);
+
+  /// Tries to resolve a nearby saved place from local stories.
+  ///
+  /// Uses a local coordinate window only (no meter distance calculation).
+  /// Returns the first place found within the window, otherwise `null`.
+  static Future<PlaceDbModel?> reverseGeocodeViaDb(
+    SpLatLng latLng, {
+    double latitudeDelta = 0.00027,
+    double longitudeDelta = 0.00027,
+    int fetchLimit = 1,
+  }) async {
+    final bounds = SpLatLngBounds(
+      south: (latLng.latitude - latitudeDelta).clamp(-90.0, 90.0),
+      west: (latLng.longitude - longitudeDelta).clamp(-180.0, 180.0),
+      north: (latLng.latitude + latitudeDelta).clamp(-90.0, 90.0),
+      east: (latLng.longitude + longitudeDelta).clamp(-180.0, 180.0),
+    );
+
+    final nearbyStories = await StoryDbModel.db.getStoriesWithLocation(bounds: bounds, limit: fetchLimit);
+    if (nearbyStories.isEmpty) return null;
+
+    final firstMatch = nearbyStories.first;
+    return PlaceDbModel(
+      latitude: firstMatch.location.latitude,
+      longitude: firstMatch.location.longitude,
+      placeName: firstMatch.placeName,
+    );
+  }
 }

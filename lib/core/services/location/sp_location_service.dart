@@ -35,13 +35,10 @@ class SpLocationService {
   ///
   /// Returns `null` when permission is denied, GPS is unavailable,
   /// or an error occurs.
-  static Future<PlaceDbModel?> fetchCurrentPlace({bool requestPermission = true}) async {
-    final result = await fetchCurrentPlaceResult(requestPermission: requestPermission);
-    return result.place;
-  }
-
-  /// Same location fetch as [fetchCurrentPlace] but with explicit status for UX.
-  static Future<SpLocationFetchResult> fetchCurrentPlaceResult({bool requestPermission = true}) async {
+  static Future<SpLocationFetchResult> fetchCurrentPlace({
+    bool requestPermission = true,
+    bool skipReverseGeocoding = false,
+  }) async {
     try {
       if (!await Geolocator.isLocationServiceEnabled()) {
         return const SpLocationFetchResult(status: SpLocationFetchStatus.serviceDisabled);
@@ -65,9 +62,17 @@ class SpLocationService {
       );
 
       final latLng = SpLatLng(position.latitude, position.longitude);
-      final place =
-          await SpGeocodingService.instance.reverseGeocode(latLng) ??
-          PlaceDbModel(latitude: position.latitude, longitude: position.longitude);
+
+      PlaceDbModel? place;
+
+      if (!skipReverseGeocoding) {
+        // Always prefer DB reverse geocoding first to avoid unnecessary API calls and latency.
+        // User can still use reverseGeocode on map picker.
+        place = await SpGeocodingService.reverseGeocodeViaDb(latLng);
+        place ??= await SpGeocodingService.instance.reverseGeocode(latLng);
+      }
+
+      place ??= PlaceDbModel(latitude: position.latitude, longitude: position.longitude);
 
       return SpLocationFetchResult(
         status: SpLocationFetchStatus.success,
