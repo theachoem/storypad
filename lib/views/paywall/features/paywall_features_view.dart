@@ -8,6 +8,7 @@ import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_demo_images.dart';
+import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_page_indicator.dart';
 import 'package:storypad/widgets/sp_page_view.dart';

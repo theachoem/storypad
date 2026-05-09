@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -32,6 +33,12 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
 
   CustomerInfo? _customerInfo;
   List<StoreProduct>? storeProducts;
+  Offering? offering;
+
+  double? get savingsPercent => offering?.metadata['savings_percent'] != null
+      ? double.tryParse(offering?.metadata['savings_percent']?.toString() ?? '')
+      : 0;
+
   StreamSubscription<void>? _userChangesSubscription;
 
   bool _initialized = false;
@@ -222,10 +229,20 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     final storeProduct = getProduct(product.productIdentifier);
     if (storeProduct == null) return (displayPrice: null, displayComparePrice: null, badgeLabel: null);
 
+    double savingsPercent = this.savingsPercent ?? 0;
+
+    String displayPrice = '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}';
+    String? displayComparePrice;
+
+    if (savingsPercent > 0 && savingsPercent < 100) {
+      final comparePrice = storeProduct.price / (1 - savingsPercent / 100);
+      displayComparePrice = '${comparePrice.toStringAsFixed(2)} ${storeProduct.currencyCode}';
+    }
+
     return (
-      displayPrice: '${storeProduct.price.toStringAsFixed(2)} ${storeProduct.currencyCode}',
-      displayComparePrice: null,
-      badgeLabel: null,
+      displayPrice: displayPrice,
+      displayComparePrice: displayComparePrice,
+      badgeLabel: displayComparePrice != null ? tr('general.special_offer_for_your_region') : null,
     );
   }
 
@@ -239,6 +256,8 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
         AppProduct.productIdentifiers,
         productCategory: ProductCategory.nonSubscription,
       );
+
+      offering = await Purchases.getOfferings().then((e) => e.current);
     } on PlatformException catch (e, s) {
       AppLogger.error(
         '$runtimeType#fetchProducts($debugSource) PlatformException - code: ${e.code}, message: ${e.message}, details: ${e.details}',
