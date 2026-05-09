@@ -7,11 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/rich_text/rich_text.dart';
+import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -39,8 +41,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () async {
-        final ImagePicker picker = ImagePicker();
-        final XFile? photo = await picker.pickImage(source: source);
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final XFile? photo = await AppFilePickerService.pickImage(
+          source: source,
+          compression: compression,
+        );
         if (photo == null) return;
 
         AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
@@ -150,11 +155,14 @@ class _ContentState extends State<_Content> {
     try {
       result = await SpAppLockWrapper.disableAppLockIfHas(
         context,
-        callback: () => FilePicker.platform.pickFiles(
-          type: FileType.image,
-          allowMultiple: allowMultiple,
-          withData: true,
-        ),
+        callback: () {
+          final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+
+          return AppFilePickerService.pickImageFiles(
+            allowMultiple: allowMultiple,
+            compression: compression,
+          );
+        },
       );
     } catch (e) {
       debugPrint(e.toString());

@@ -7,6 +7,7 @@ import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
+import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
@@ -130,6 +131,12 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     AnalyticsUserProperyService.instance.logSetFirstDayOfWeek(
       firstDayOfWeek: value,
     );
+  }
+
+  void setAssetCompression(AssetCompressionOption value) {
+    _preferences = _preferences.copyWith(assetCompression: value);
+    storage.writeObject(_preferences);
+    notifyListeners();
   }
 
   void setStoryTilePreferences(StoryTilePreferencesObject preferences) {

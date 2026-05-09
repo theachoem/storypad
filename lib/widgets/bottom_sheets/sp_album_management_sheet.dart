@@ -3,7 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -62,10 +64,13 @@ class _ContentState extends State<_Content> {
   }
 
   Future<void> _takePhoto(BuildContext context) async {
-    final ImagePicker picker = ImagePicker();
+    final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
     final XFile? photo = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => picker.pickImage(source: ImageSource.camera),
+      callback: () => AppFilePickerService.pickImage(
+        source: ImageSource.camera,
+        compression: compression,
+      ),
     );
 
     if (photo == null) return;
