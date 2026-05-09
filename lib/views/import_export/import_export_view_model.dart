@@ -28,6 +28,7 @@ import 'package:storypad/core/services/export/export_stories_to_markdown_service
 import 'package:storypad/core/services/export/export_stories_to_text_service.dart';
 
 import 'import_export_view.dart';
+import 'import_media_overview/import_media_overview_view.dart';
 
 enum AppExportOption {
   storyPadJson,
@@ -106,6 +107,27 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     MessengerService.of(context).clearSnackBars();
     ShowBackupsRoute(backup).push(context);
+  }
+
+  Future<void> importMedia(BuildContext context) async {
+    FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () => FilePicker.platform.pickFiles(type: FileType.any),
+    );
+
+    if (!context.mounted) return;
+
+    final file = result?.files.firstOrNull;
+    if (file == null || file.path == null) return;
+
+    final path = file.path!;
+    if (!path.endsWith('.tar.gz') && !path.endsWith('.gz')) {
+      MessengerService.of(context).showSnackBar(tr("snack_bar.empty_or_invalid_file"), success: false);
+      return;
+    }
+
+    if (!context.mounted) return;
+    ImportMediaOverviewRoute(tarFilePath: path).push(context);
   }
 
   Future<void> export(BuildContext context, AppExportOption option) async {

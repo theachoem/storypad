@@ -23,6 +23,8 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
 import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/sp_asset_status_badge.dart';
+import 'package:storypad/widgets/sp_asset_story_count_overlay.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
@@ -31,7 +33,6 @@ import 'library_view_model.dart';
 
 part 'library_content.dart';
 part 'local_widgets/empty_body.dart';
-part 'local_widgets/black_overlay.dart';
 part 'local_widgets/image_status.dart';
 part 'local_widgets/images_tab_content.dart';
 part 'local_widgets/voices_tab_content.dart';

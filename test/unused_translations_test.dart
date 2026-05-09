@@ -14,6 +14,8 @@ void main() async {
     'button.more',
     'button.try',
     'dialog.lookings_back.subtitle.other',
+    'page.cloud_optimize.step.fetch.done.one',
+    'page.cloud_optimize.step.fetch.done.other',
   };
 
   // Load en.json

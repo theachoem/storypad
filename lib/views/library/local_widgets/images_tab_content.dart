@@ -249,8 +249,10 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
                       },
                     ),
                     _ImageStatus(context: context, asset: asset, provider: provider),
-                    const _BlackOverlay(),
-                    _buildStoryCount(asset),
+                    SpAssetStoryCountOverlay(
+                      storyCount: storiesCount[asset.id] ?? 0,
+                      showArchiveIconWhenZero: true,
+                    ),
                   ],
                 ),
               ],
@@ -258,36 +260,6 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
           ),
         );
       },
-    );
-  }
-
-  Widget _buildStoryCount(AssetDbModel asset) {
-    return Positioned(
-      left: 8.0,
-      right: 8.0,
-      bottom: 4.0,
-      child: IgnorePointer(
-        ignoring: true,
-        child: Text.rich(
-          TextSpan(
-            style: const TextStyle(color: Colors.white),
-            children: [
-              TextSpan(text: plural("plural.story", storiesCount[asset.id] ?? 0)),
-              if ((storiesCount[asset.id] ?? 0) == 0) ...[
-                const TextSpan(text: ' '),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Icon(
-                    SpIcons.archive,
-                    size: 12.0,
-                    color: ColorScheme.of(context).error,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
     );
   }
 

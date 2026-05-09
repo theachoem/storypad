@@ -13,47 +13,37 @@ class _ImageStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget child;
-
     if (!asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
-      child = CircleAvatar(
+      return SpAssetStatusBadge(
+        top: 8.0,
+        right: 8.0,
         radius: 16.0,
+        iconSize: 20.0,
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
         foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
-        child: Icon(
-          SpIcons.cloudOff,
-          size: 20.0,
-        ),
+        icon: SpIcons.cloudOff,
       );
     } else if (asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
-      child = Tooltip(
-        message: asset.getGoogleDriveUrlForEmail(provider.currentGoogleUser!.email),
-        child: CircleAvatar(
-          radius: 16.0,
-          backgroundColor: ColorScheme.of(context).bootstrap.success.color,
-          foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
-          child: const Icon(
-            SpIcons.cloudDone,
-            size: 20.0,
-          ),
-        ),
+      return SpAssetStatusBadge(
+        top: 8.0,
+        right: 8.0,
+        radius: 16.0,
+        iconSize: 20.0,
+        backgroundColor: ColorScheme.of(context).bootstrap.success.color,
+        foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
+        icon: SpIcons.cloudDone,
+        tooltipMessage: asset.getGoogleDriveUrlForEmail(provider.currentGoogleUser!.email),
       );
     } else {
-      child = CircleAvatar(
+      return SpAssetStatusBadge(
+        top: 8.0,
+        right: 8.0,
         radius: 16.0,
+        iconSize: 20.0,
         backgroundColor: ColorScheme.of(context).bootstrap.info.color,
         foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
-        child: const Icon(
-          SpIcons.warning,
-          size: 20.0,
-        ),
+        icon: SpIcons.warning,
       );
     }
-
-    return Positioned(
-      top: 8.0,
-      right: 8.0,
-      child: child,
-    );
   }
 }
