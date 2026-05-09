@@ -451,5 +451,7 @@
   "sounds.thunder": "Грім",
   "sounds.ticking_clock": "Годинник, що тікає",
   "sounds.typing": "Набір тексту",
-  "sounds.wind_chime": "Вітряний дзвіночок"
+  "sounds.wind_chime": "Вітряний дзвіночок",
+  "button.save_as_default": "Зберегти як за замовчуванням",
+  "snack_bar.save_theme_as_default_success": "Нові історії використовуватимуть цю тему."
 }

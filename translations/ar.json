@@ -451,5 +451,7 @@
   "sounds.thunder": "رعد",
   "sounds.ticking_clock": "ساعة موقوتة",
   "sounds.typing": "الكتابة",
-  "sounds.wind_chime": "رنين الرياح"
+  "sounds.wind_chime": "رنين الرياح",
+  "button.save_as_default": "حفظ كافتراضي",
+  "snack_bar.save_theme_as_default_success": "ستستخدم القصص الجديدة هذا الموضوع."
 }

@@ -451,5 +451,7 @@
   "sounds.thunder": "Гром",
   "sounds.ticking_clock": "Тикающие часики",
   "sounds.typing": "Ввод текста",
-  "sounds.wind_chime": "Ветряные колокольчики"
+  "sounds.wind_chime": "Ветряные колокольчики",
+  "button.save_as_default": "Сохранить как значение по умолчанию",
+  "snack_bar.save_theme_as_default_success": "В новых рассказах будет использована эта тема."
 }

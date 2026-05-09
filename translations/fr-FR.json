@@ -451,5 +451,7 @@
   "sounds.thunder": "Tonnerre",
   "sounds.ticking_clock": "Horloge à retardement",
   "sounds.typing": "Dactylographie",
-  "sounds.wind_chime": "Carillon éolien"
+  "sounds.wind_chime": "Carillon éolien",
+  "button.save_as_default": "Enregistrer par défaut",
+  "snack_bar.save_theme_as_default_success": "Les nouvelles histoires utiliseront ce thème."
 }

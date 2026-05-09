@@ -451,5 +451,7 @@
   "sounds.thunder": "Thunder",
   "sounds.ticking_clock": "Ticking clock",
   "sounds.typing": "Typing",
-  "sounds.wind_chime": "Wind chime"
+  "sounds.wind_chime": "Wind chime",
+  "button.save_as_default": "Save as Default",
+  "snack_bar.save_theme_as_default_success": "New stories will use this theme."
 }

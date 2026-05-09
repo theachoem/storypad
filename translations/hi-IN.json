@@ -451,5 +451,7 @@
   "sounds.thunder": "गड़गड़ाहट",
   "sounds.ticking_clock": "टिक-टिक करती घड़ी",
   "sounds.typing": "टाइपिंग",
-  "sounds.wind_chime": "पवन झंकार"
+  "sounds.wind_chime": "पवन झंकार",
+  "button.save_as_default": "डिफ़ॉल्ट के रूप में सहेजें",
+  "snack_bar.save_theme_as_default_success": "नई कहानियों में इसी विषय का उपयोग किया जाएगा।"
 }

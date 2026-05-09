@@ -451,5 +451,7 @@
   "sounds.thunder": "Trueno",
   "sounds.ticking_clock": "El reloj hace tictac",
   "sounds.typing": "Mecanografía",
-  "sounds.wind_chime": "carillón de viento"
+  "sounds.wind_chime": "carillón de viento",
+  "button.save_as_default": "Guardar como predeterminado",
+  "snack_bar.save_theme_as_default_success": "Las nuevas historias utilizarán este tema."
 }

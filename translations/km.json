@@ -451,5 +451,7 @@
   "sounds.thunder": "ផ្គរលាន់",
   "sounds.ticking_clock": "នាឡិកាគូស",
   "sounds.typing": "វាយអក្សរ",
-  "sounds.wind_chime": "កណ្តឹងខ្យល់"
+  "sounds.wind_chime": "កណ្តឹងខ្យល់",
+  "button.save_as_default": "រក្សាទុកជាលំនាំដើម",
+  "snack_bar.save_theme_as_default_success": "រឿងថ្មីៗនឹងប្រើប្រាស់ប្រធានបទនេះ។"
 }

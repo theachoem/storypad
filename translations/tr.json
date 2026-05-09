@@ -451,5 +451,7 @@
   "sounds.thunder": "Gök gürültüsü",
   "sounds.ticking_clock": "Zaman işliyor",
   "sounds.typing": "Yazma sesleri",
-  "sounds.wind_chime": "Rüzgar çanı"
+  "sounds.wind_chime": "Rüzgar çanı",
+  "button.save_as_default": "Varsayılan olarak kaydet",
+  "snack_bar.save_theme_as_default_success": "Yeni öykülerde bu tema kullanılacak."
 }

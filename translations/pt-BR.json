@@ -451,5 +451,7 @@
   "sounds.thunder": "Trovão",
   "sounds.ticking_clock": "Relógio correndo",
   "sounds.typing": "Digitando",
-  "sounds.wind_chime": "Carrilhão de vento"
+  "sounds.wind_chime": "Carrilhão de vento",
+  "button.save_as_default": "Salvar como padrão",
+  "snack_bar.save_theme_as_default_success": "Novas histórias usarão esse tema."
 }

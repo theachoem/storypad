@@ -451,5 +451,7 @@
   "sounds.thunder": "雷",
   "sounds.ticking_clock": "カチカチ時計",
   "sounds.typing": "タイピング",
-  "sounds.wind_chime": "風鈴"
+  "sounds.wind_chime": "風鈴",
+  "button.save_as_default": "デフォルトとして保存",
+  "snack_bar.save_theme_as_default_success": "今後の物語ではこのテーマが用いられる予定です。"
 }

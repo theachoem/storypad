@@ -451,5 +451,7 @@
   "sounds.thunder": "Tuono",
   "sounds.ticking_clock": "Orologio che ticchetta",
   "sounds.typing": "Digitando",
-  "sounds.wind_chime": "Carillon di vento"
+  "sounds.wind_chime": "Carillon di vento",
+  "button.save_as_default": "Salva come predefinito",
+  "snack_bar.save_theme_as_default_success": "Le nuove storie utilizzeranno questo tema."
 }

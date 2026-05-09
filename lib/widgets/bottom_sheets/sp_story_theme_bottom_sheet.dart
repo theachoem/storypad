@@ -6,6 +6,8 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
+import 'package:storypad/core/objects/default_story_preferences_object.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -81,6 +83,25 @@ class _StoryThemeSheet extends StatefulWidget {
 
 class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallback {
   late StoryPreferencesDbModel preferences = widget.preferences;
+
+  DefaultStoryPreferencesObject get _currentThemeAsDefaultStoryPreferences {
+    return DefaultStoryPreferencesObject(
+      defaultColorSeedValue: preferences.colorSeedValue,
+      defaultColorTone: preferences.colorTone,
+      defaultBackgroundImagePath: preferences.backgroundImagePath,
+      defaultLayoutType: preferences.layoutType,
+    );
+  }
+
+  bool get _currentThemeAlreadySavedAsDefault {
+    final currentDefaults = context.read<DevicePreferencesProvider>().preferences.defaultStoryPreferences;
+    final currentThemeAsDefault = _currentThemeAsDefaultStoryPreferences;
+
+    return currentDefaults.defaultColorSeedValue == currentThemeAsDefault.defaultColorSeedValue &&
+        currentDefaults.defaultColorTone == currentThemeAsDefault.defaultColorTone &&
+        currentDefaults.defaultBackgroundImagePath == currentThemeAsDefault.defaultBackgroundImagePath &&
+        currentDefaults.defaultLayoutType == currentThemeAsDefault.defaultLayoutType;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +195,7 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
 
         BaseStoryViewModel? storyViewModel = widget.storyViewModel;
         StoryDbModel? story = storyViewModel?.story;
+        final alreadySavedAsDefault = _currentThemeAlreadySavedAsDefault;
 
         return [
           SpPopMenuItem(
@@ -187,6 +209,21 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
                     setState(() {});
 
                     widget.onThemeChanged(preferences);
+                  },
+          ),
+          SpPopMenuItem(
+            title: tr('button.save_as_default'),
+            leadingIconData: SpIcons.theme,
+            trailingIconData: alreadySavedAsDefault ? SpIcons.check : null,
+            titleStyle: TextStyle(color: alreadySavedAsDefault ? Theme.of(context).disabledColor : null),
+            onPressed: alreadySavedAsDefault
+                ? null
+                : () {
+                    context.read<DevicePreferencesProvider>().setDefaultStoryPreferences(
+                      _currentThemeAsDefaultStoryPreferences,
+                    );
+                    MessengerService.of(context).showSnackBar(tr("snack_bar.save_theme_as_default_success"));
+                    setState(() {});
                   },
           ),
           if (storyViewModel != null && story != null) ...[

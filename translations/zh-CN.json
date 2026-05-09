@@ -451,5 +451,7 @@
   "sounds.thunder": "雷声",
   "sounds.ticking_clock": "滴答作响的时钟",
   "sounds.typing": "打字",
-  "sounds.wind_chime": "风铃"
+  "sounds.wind_chime": "风铃",
+  "button.save_as_default": "保存为默认值",
+  "snack_bar.save_theme_as_default_success": "新的故事将以此为主题。"
 }

@@ -451,5 +451,7 @@
   "sounds.thunder": "Donner",
   "sounds.ticking_clock": "Tickende Uhr",
   "sounds.typing": "Tippen",
-  "sounds.wind_chime": "Windspiel"
+  "sounds.wind_chime": "Windspiel",
+  "button.save_as_default": "Als Standard speichern",
+  "snack_bar.save_theme_as_default_success": "Neue Geschichten werden dieses Thema aufgreifen."
 }

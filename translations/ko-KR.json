@@ -451,5 +451,7 @@
   "sounds.thunder": "우뢰",
   "sounds.ticking_clock": "똑딱거리는 시계",
   "sounds.typing": "타자",
-  "sounds.wind_chime": "풍경"
+  "sounds.wind_chime": "풍경",
+  "button.save_as_default": "기본값으로 저장",
+  "snack_bar.save_theme_as_default_success": "새로운 이야기들은 이 주제를 활용할 것입니다."
 }
