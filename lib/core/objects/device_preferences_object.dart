@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
+import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -23,6 +24,7 @@ class DevicePreferencesObject {
   final double voicePlaybackSpeed;
   final TimeFormatOption timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
+  final AssetCompressionOption assetCompression;
   final SpMapStyle mapStyle;
 
   final StoryTilePreferencesObject storyTilePreferences;
@@ -46,6 +48,7 @@ class DevicePreferencesObject {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
+    AssetCompressionOption? assetCompression,
     this.colorSeedValue,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
@@ -55,6 +58,7 @@ class DevicePreferencesObject {
        themeMode = themeMode ?? ThemeMode.system,
        timeFormat = timeFormat ?? TimeFormatOption.h12,
        firstDayOfWeek = firstDayOfWeek ?? FirstDayOfWeekOption.defaultValue,
+       assetCompression = assetCompression ?? AssetCompressionOption.defaultValue,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
        storyTilePreferences = storyTilePreferences ?? StoryTilePreferencesObject(),
        defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject(),

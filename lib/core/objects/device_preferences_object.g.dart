@@ -23,6 +23,10 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject firstDayOfWeek(FirstDayOfWeekOption? firstDayOfWeek);
 
+  DevicePreferencesObject assetCompression(
+    AssetCompressionOption? assetCompression,
+  );
+
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
@@ -53,6 +57,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
+    AssetCompressionOption? assetCompression,
     int? colorSeedValue,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
@@ -63,39 +68,32 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
 /// Callable proxy for `copyWith` functionality.
 /// Use as `instanceOfDevicePreferencesObject.copyWith(...)` or call `instanceOfDevicePreferencesObject.copyWith.fieldName(value)` for a single field.
-class _$DevicePreferencesObjectCWProxyImpl
-    implements _$DevicePreferencesObjectCWProxy {
+class _$DevicePreferencesObjectCWProxyImpl implements _$DevicePreferencesObjectCWProxy {
   const _$DevicePreferencesObjectCWProxyImpl(this._value);
 
   final DevicePreferencesObject _value;
 
   @override
-  DevicePreferencesObject fontFamily(String? fontFamily) =>
-      call(fontFamily: fontFamily);
+  DevicePreferencesObject fontFamily(String? fontFamily) => call(fontFamily: fontFamily);
 
   @override
-  DevicePreferencesObject fontSize(FontSizeOption? fontSize) =>
-      call(fontSize: fontSize);
+  DevicePreferencesObject fontSize(FontSizeOption? fontSize) => call(fontSize: fontSize);
 
   @override
-  DevicePreferencesObject fontWeightIndex(int? fontWeightIndex) =>
-      call(fontWeightIndex: fontWeightIndex);
+  DevicePreferencesObject fontWeightIndex(int? fontWeightIndex) => call(fontWeightIndex: fontWeightIndex);
 
   @override
-  DevicePreferencesObject enableRelaxSounds(bool? enableRelaxSounds) =>
-      call(enableRelaxSounds: enableRelaxSounds);
+  DevicePreferencesObject enableRelaxSounds(bool? enableRelaxSounds) => call(enableRelaxSounds: enableRelaxSounds);
 
   @override
   DevicePreferencesObject enablePeriodCalendar(bool? enablePeriodCalendar) =>
       call(enablePeriodCalendar: enablePeriodCalendar);
 
   @override
-  DevicePreferencesObject themeMode(ThemeMode? themeMode) =>
-      call(themeMode: themeMode);
+  DevicePreferencesObject themeMode(ThemeMode? themeMode) => call(themeMode: themeMode);
 
   @override
-  DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat) =>
-      call(timeFormat: timeFormat);
+  DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat) => call(timeFormat: timeFormat);
 
   @override
   DevicePreferencesObject firstDayOfWeek(
@@ -103,8 +101,12 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(firstDayOfWeek: firstDayOfWeek);
 
   @override
-  DevicePreferencesObject colorSeedValue(int? colorSeedValue) =>
-      call(colorSeedValue: colorSeedValue);
+  DevicePreferencesObject assetCompression(
+    AssetCompressionOption? assetCompression,
+  ) => call(assetCompression: assetCompression);
+
+  @override
+  DevicePreferencesObject colorSeedValue(int? colorSeedValue) => call(colorSeedValue: colorSeedValue);
 
   @override
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed) =>
@@ -121,8 +123,7 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(defaultStoryPreferences: defaultStoryPreferences);
 
   @override
-  DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) =>
-      call(mapStyle: mapStyle);
+  DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) => call(mapStyle: mapStyle);
 
   @override
   /// Creates a new instance with the provided field values.
@@ -141,6 +142,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? firstDayOfWeek = const $CopyWithPlaceholder(),
+    Object? assetCompression = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
@@ -180,6 +182,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.firstDayOfWeek
           // ignore: cast_nullable_to_non_nullable
           : firstDayOfWeek as FirstDayOfWeekOption?,
+      assetCompression: assetCompression == const $CopyWithPlaceholder()
+          ? _value.assetCompression
+          // ignore: cast_nullable_to_non_nullable
+          : assetCompression as AssetCompressionOption?,
       colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
@@ -192,8 +198,7 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.storyTilePreferences
           // ignore: cast_nullable_to_non_nullable
           : storyTilePreferences as StoryTilePreferencesObject?,
-      defaultStoryPreferences:
-          defaultStoryPreferences == const $CopyWithPlaceholder()
+      defaultStoryPreferences: defaultStoryPreferences == const $CopyWithPlaceholder()
           ? _value.defaultStoryPreferences
           // ignore: cast_nullable_to_non_nullable
           : defaultStoryPreferences as DefaultStoryPreferencesObject?,
@@ -209,8 +214,7 @@ extension $DevicePreferencesObjectCopyWith on DevicePreferencesObject {
   /// Returns a callable class used to build a new instance with modified fields.
   /// Example: `instanceOfDevicePreferencesObject.copyWith(...)` or `instanceOfDevicePreferencesObject.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$DevicePreferencesObjectCWProxy get copyWith =>
-      _$DevicePreferencesObjectCWProxyImpl(this);
+  _$DevicePreferencesObjectCWProxy get copyWith => _$DevicePreferencesObjectCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -233,6 +237,10 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   firstDayOfWeek: $enumDecodeNullable(
     _$FirstDayOfWeekOptionEnumMap,
     json['first_day_of_week'],
+  ),
+  assetCompression: $enumDecodeNullable(
+    _$AssetCompressionOptionEnumMap,
+    json['asset_compression'],
   ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
@@ -260,6 +268,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'voice_playback_speed': instance.voicePlaybackSpeed,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
+  'asset_compression': _$AssetCompressionOptionEnumMap[instance.assetCompression]!,
   'map_style': _$SpMapStyleEnumMap[instance.mapStyle]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
@@ -288,6 +297,11 @@ const _$TimeFormatOptionEnumMap = {
 const _$FirstDayOfWeekOptionEnumMap = {
   FirstDayOfWeekOption.monday: 'monday',
   FirstDayOfWeekOption.sunday: 'sunday',
+};
+
+const _$AssetCompressionOptionEnumMap = {
+  AssetCompressionOption.none: 'none',
+  AssetCompressionOption.standard: 'standard',
 };
 
 const _$SpMapStyleEnumMap = {

@@ -272,7 +272,7 @@ class SpColorItem extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(
           width: 2.0,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: selected ? 1 : 0),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: selected ? 1 : 0.1),
         ),
       ),
       child: Padding(

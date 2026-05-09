@@ -37,11 +37,35 @@ class _SettingsContent extends StatelessWidget {
         children: [
           const SizedBox(height: 8),
           ...[
+            SpSectionTitle(title: tr("general.appearance")),
+            ThemeModeTile.globalTheme(weekday: 2),
+            ColorSeedTile(),
+            if (kStoryPad) const AppIconTile(),
+          ],
+          ...[
+            const Divider(),
+            SpSectionTitle(title: tr("general.text")),
+            FontSizeTile.globalTheme(weekday: 3),
+            FontFamilyTile.globalTheme(weekday: 4),
+            FontWeightTile.globalTheme(weekday: 5),
+          ],
+          ...[
+            const Divider(),
             SpSectionTitle(title: tr("general.general")),
             const LanguageTile(weekday: 1),
             buildAppLockTile(context, weekday: 2),
             TimeFormatTile.globalTheme(weekday: 3),
             FirstDayOfWeekTile.globalTheme(weekday: 4),
+          ],
+          ...[
+            const Divider(),
+            SpSectionTitle(title: tr("general.stories")),
+
+            // ignore: prefer_const_constructors, no need to make sure locals switching work.
+            StoryTilePreferencesTile(weekday: 6),
+
+            // ignore: prefer_const_constructors, no need to make sure locals switching work.
+            DefaultStoryPreferencesTile(weekday: 7),
           ],
           ...[
             const Divider(),
@@ -56,30 +80,7 @@ class _SettingsContent extends StatelessWidget {
               title: Text(tr('page.storage_management.title')),
               onTap: () => const StorageManagementRoute().push(context),
             ),
-          ],
-          ...[
-            const Divider(),
-            SpSectionTitle(title: tr("general.appearance")),
-            ThemeModeTile.globalTheme(weekday: 1),
-            ColorSeedTile(),
-            if (kStoryPad) const AppIconTile(),
-          ],
-          ...[
-            const Divider(),
-            SpSectionTitle(title: tr("general.text")),
-            FontSizeTile.globalTheme(weekday: 2),
-            FontFamilyTile.globalTheme(weekday: 3),
-            FontWeightTile.globalTheme(weekday: 4),
-          ],
-          ...[
-            const Divider(),
-            SpSectionTitle(title: tr("general.stories")),
-
-            // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(weekday: 5),
-
-            // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(weekday: 6),
+            AssetCompressionTile.globalTheme(weekday: 1),
           ],
           const SizedBox(height: 120),
         ],

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
@@ -12,7 +13,9 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/in_app_review_service.dart';
@@ -187,8 +190,11 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () async {
-        final ImagePicker picker = ImagePicker();
-        final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final XFile? photo = await AppFilePickerService.pickImage(
+          source: ImageSource.camera,
+          compression: compression,
+        );
         if (photo == null) return;
 
         AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());

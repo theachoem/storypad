@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 
@@ -19,10 +20,8 @@ class RetrieveLostPhotoService {
   }
 
   static Future<void> _getLostData() async {
-    final ImagePicker picker = ImagePicker();
-
     try {
-      final LostDataResponse response = await picker.retrieveLostData();
+      final LostDataResponse response = await AppFilePickerService.retrieveLostData();
       if (response.isEmpty) return;
 
       final List<XFile>? files = response.files;

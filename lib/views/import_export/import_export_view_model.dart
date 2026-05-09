@@ -16,6 +16,7 @@ import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
+import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/views/backup_services/backups/show/show_backup_view.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -76,7 +77,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => FilePicker.platform.pickFiles(type: FileType.any),
+      callback: () => AppFilePickerService.pickAnyFiles(),
     );
 
     if (!context.mounted) return;
@@ -112,7 +113,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> importMedia(BuildContext context) async {
     FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => FilePicker.platform.pickFiles(type: FileType.any),
+      callback: () => AppFilePickerService.pickAnyFiles(),
     );
 
     if (!context.mounted) return;
