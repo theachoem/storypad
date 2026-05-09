@@ -23,7 +23,7 @@ class PaywallFeatureObject {
   // feature specifically design for female user 🙆‍♀️
   final bool designForFemale;
 
-  final List<String> demoImages;
+  final List<String> demoImagePaths;
   final Future<void> Function(BuildContext context)? onOpen;
 
   PaywallFeatureObject({
@@ -32,7 +32,7 @@ class PaywallFeatureObject {
     required this.subtitle,
     required this.iconData,
     required this.weekdayColor,
-    required this.demoImages,
+    required this.demoImagePaths,
     required this.onOpen,
     this.designForFemale = false,
   });

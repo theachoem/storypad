@@ -31,9 +31,10 @@ class _SpFirestoreStorageDownloaderBuilderState extends State<SpFirestoreStorage
   Future<void> downloadAndLoadFile() async {
     try {
       file = await CloudStorageService.instance.downloadFile(widget.filePath).then((e) => e.file);
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e) {
       failed = true;
+      if (mounted) setState(() {});
     }
   }
 

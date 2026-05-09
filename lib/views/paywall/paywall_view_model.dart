@@ -58,7 +58,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.backgrounds.subtitle'),
         iconData: SpIcons.theme,
         weekdayColor: 2,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/backgrounds/backgrounds_1.jpg',
           '/feature_demos/backgrounds/backgrounds_2.jpg',
         ],
@@ -70,7 +70,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.image_album.subtitle'),
         iconData: SpIcons.photo,
         weekdayColor: 4,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/image_album/image_album_1.jpg',
           '/feature_demos/image_album/image_album_2.jpg',
           '/feature_demos/image_album/image_album_3.jpg',
@@ -83,7 +83,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.voice_journal.subtitle'),
         iconData: SpIcons.voice,
         weekdayColor: 5,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/voice_journal/voice_journal_1.jpg',
           '/feature_demos/voice_journal/voice_journal_2.jpg',
           '/feature_demos/voice_journal/voice_journal_3.jpg',
@@ -96,7 +96,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.templates.subtitle'),
         iconData: SpIcons.lightBulb,
         weekdayColor: 1,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/templates/template_1.jpg',
           '/feature_demos/templates/template_2.jpg',
           '/feature_demos/templates/template_3.jpg',
@@ -110,7 +110,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.markdown_export.subtitle'),
         iconData: SpIcons.markdown,
         weekdayColor: 6,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/markdown_export/markdown_export_1.jpg',
           '/feature_demos/markdown_export/markdown_export_2.jpg',
           '/feature_demos/markdown_export/markdown_export_3.jpg',
@@ -125,7 +125,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.writing_stats.subtitle'),
         iconData: SpIcons.text,
         weekdayColor: 7,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/writing_stats/writing_stats_1.jpg',
           '/feature_demos/writing_stats/writing_stats_2.jpg',
         ],
@@ -137,7 +137,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.pinned_notes.subtitle'),
         iconData: SpIcons.pinOutline,
         weekdayColor: 1,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/pinned_notes/pinned_notes_1.jpg',
           '/feature_demos/pinned_notes/pinned_notes_2.jpg',
         ],
@@ -149,7 +149,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         subtitle: tr('paywall_features.relax_sounds.subtitle'),
         iconData: SpIcons.musicNote,
         weekdayColor: 4,
-        demoImages: [
+        demoImagePaths: [
           '/feature_demos/relax_sounds/relax_sound_1.jpg',
           '/feature_demos/relax_sounds/relax_sound_2.jpg',
           '/feature_demos/relax_sounds/relax_sound_3.jpg',
@@ -159,17 +159,17 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
       ),
     ];
 
-    preloadUrls();
+    preloadFiles();
 
     notifyListeners();
   }
 
-  void preloadUrls() {
-    // getDownloadUrl already handle completer to prevent duplicate download for same urlPath
-    // So UI, can call getDownloadURL again to get this preloaded completer.
+  void preloadFiles() {
+    // downloadFile deduplicates requests using completers, so calling this
+    // from multiple screens is safe and helps images be ready sooner.
     for (PaywallFeatureObject feature in features ?? []) {
-      for (String urlPath in feature.demoImages) {
-        CloudStorageService.instance.getDownloadURL(urlPath);
+      for (String urlPath in feature.demoImagePaths) {
+        CloudStorageService.instance.downloadFile(urlPath);
       }
     }
   }

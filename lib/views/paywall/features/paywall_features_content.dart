@@ -8,6 +8,7 @@ class _PaywallFeaturesContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+    final activeDeal = iapProvider.getActiveDeal(.storypad_pro_lifetime);
 
     return Scaffold(
       appBar: CupertinoSheetRoute.hasParentSheet(context)
@@ -19,38 +20,64 @@ class _PaywallFeaturesContent extends StatelessWidget {
             )
           : null,
       floatingActionButtonLocation: .centerFloat,
-      floatingActionButton: iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice != null
-          ? Column(
-              mainAxisSize: .min,
-              mainAxisAlignment: .center,
-              crossAxisAlignment: .center,
-              spacing: 16.0,
-              children: [
-                if (!iapProvider.isProUser)
-                  FloatingActionButton.extended(
-                    heroTag: null,
-                    backgroundColor: ColorScheme.of(context).primary,
-                    foregroundColor: ColorScheme.of(context).onPrimary,
-                    shape: const StadiumBorder(),
-                    label: Text(
-                      tr(
-                        'button.purchase_for_args',
-                        namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+      bottomNavigationBar: activeDeal.displayPrice == null
+          ? null
+          : SpFadeIn.fromBottom(
+              duration: Durations.long1,
+              child: Column(
+                mainAxisSize: .min,
+                children: [
+                  if (activeDeal.badgeLabel != null || activeDeal.displayComparePrice != null) ...[
+                    if (activeDeal.badgeLabel != null) ...[
+                      Text(
+                        activeDeal.badgeLabel!,
+                        style: TextTheme.of(context).bodyMedium,
                       ),
+                    ],
+                    if (activeDeal.displayComparePrice != null) ...[
+                      Text(
+                        "${activeDeal.displayComparePrice}",
+                        style: TextTheme.of(context).bodyLarge?.copyWith(
+                          color: ColorScheme.of(context).error,
+                          fontWeight: .bold,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: ColorScheme.of(context).error,
+                        ),
+                        textAlign: .start,
+                      ),
+                    ],
+                    const SizedBox(height: 8.0),
+                  ],
+                  if (!iapProvider.isProUser) ...[
+                    FloatingActionButton.extended(
+                      heroTag: null,
+                      backgroundColor: ColorScheme.of(context).primary,
+                      foregroundColor: ColorScheme.of(context).onPrimary,
+                      shape: const StadiumBorder(),
+                      label: Text(
+                        tr(
+                          'button.purchase_for_args',
+                          namedArgs: {
+                            'PRICE': activeDeal.displayPrice ?? 'N/A',
+                          },
+                        ),
+                      ),
+                      icon: const Icon(SpIcons.star),
+                      onPressed: () => iapProvider.purchase(context),
                     ),
-                    icon: const Icon(SpIcons.star),
-                    onPressed: () => viewModel.purchase(context),
+                    const SizedBox(height: 12.0),
+                  ],
+                  SpPageIndicator(
+                    controller: viewModel.pageController,
+                    pageCount: viewModel.params.features.length,
+                    maxVisiblePages: 4,
+                    activeColor: ColorScheme.of(context).primary,
+                    inactiveColor: ColorScheme.of(context).primary.withValues(alpha: 0.5),
                   ),
-                SpPageIndicator(
-                  controller: viewModel.pageController,
-                  pageCount: viewModel.params.features.length,
-                  maxVisiblePages: 4,
-                  activeColor: ColorScheme.of(context).primary,
-                  inactiveColor: ColorScheme.of(context).primary.withValues(alpha: 0.5),
-                ),
-              ],
-            )
-          : null,
+                  SizedBox(height: MediaQuery.paddingOf(context).bottom),
+                ],
+              ),
+            ),
       body: SpPageView(
         controller: viewModel.pageController,
         itemCount: viewModel.params.features.length,
@@ -103,15 +130,9 @@ class _Page extends StatelessWidget {
             left: MediaQuery.of(context).padding.left,
             right: MediaQuery.of(context).padding.right,
           ),
-          child: FutureBuilder(
-            future: viewModel.fetchDemoImageUrlsFor(feature),
-            builder: (context, asyncSnapshot) {
-              return SpDemoImages(
-                demoImageUrls: asyncSnapshot.data,
-                context: context,
-                skeletonCount: feature.demoImages.length,
-              );
-            },
+          child: SpDemoImages(
+            demoImageUrlPaths: feature.demoImagePaths,
+            skeletonCount: feature.demoImagePaths.length,
           ),
         ),
       ],

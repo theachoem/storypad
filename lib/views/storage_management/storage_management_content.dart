@@ -163,7 +163,7 @@ class _StorageManagementContent extends StatelessWidget {
 
     final appColor = ColorFromDayService(context: context).get(2)!;
     final otherColor = ColorFromDayService(context: context).get(1)!;
-    final freeColor = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final freeColor = ColorScheme.of(context).readOnly.surface5!;
 
     return ListTile(
       leading: Column(
@@ -223,7 +223,7 @@ class _StorageManagementContent extends StatelessWidget {
             ],
           ),
           if (hasFullQuotaData) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: SizedBox(

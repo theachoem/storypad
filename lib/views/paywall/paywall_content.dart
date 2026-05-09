@@ -8,6 +8,7 @@ class _PaywallContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+    final activeDeal = iapProvider.getActiveDeal(.storypad_pro_lifetime);
 
     return Scaffold(
       appBar: AppBar(
@@ -18,14 +19,34 @@ class _PaywallContent extends StatelessWidget {
         ],
       ),
       body: buildBody(context, iapProvider),
-      bottomNavigationBar: iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice == null
+      bottomNavigationBar: activeDeal.displayPrice == null
           ? null
           : SpFadeIn.fromBottom(
               duration: Durations.long1,
               child: Column(
                 mainAxisSize: .min,
-                spacing: 8.0,
                 children: [
+                  if (activeDeal.badgeLabel != null || activeDeal.displayComparePrice != null) ...[
+                    if (activeDeal.badgeLabel != null) ...[
+                      Text(
+                        activeDeal.badgeLabel!,
+                        style: TextTheme.of(context).bodyMedium,
+                      ),
+                    ],
+                    if (activeDeal.displayComparePrice != null) ...[
+                      Text(
+                        "${activeDeal.displayComparePrice}",
+                        style: TextTheme.of(context).bodyLarge?.copyWith(
+                          color: ColorScheme.of(context).error,
+                          fontWeight: .bold,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: ColorScheme.of(context).error,
+                        ),
+                        textAlign: .start,
+                      ),
+                    ],
+                    const SizedBox(height: 8.0),
+                  ],
                   if (!iapProvider.isProUser)
                     FloatingActionButton.extended(
                       heroTag: null,
@@ -35,7 +56,9 @@ class _PaywallContent extends StatelessWidget {
                       label: Text(
                         tr(
                           'button.purchase_for_args',
-                          namedArgs: {'PRICE': iapProvider.getActiveDeal(.storypad_pro_lifetime).displayPrice ?? 'N/A'},
+                          namedArgs: {
+                            'PRICE': activeDeal.displayPrice ?? 'N/A',
+                          },
                         ),
                       ),
                       icon: const Icon(SpIcons.star),
