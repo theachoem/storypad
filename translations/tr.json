@@ -66,6 +66,7 @@
   "button.restore_purchase": "Satın Alımı Geri Yükle",
   "button.retry": "Tekrar dene",
   "button.save": "Kaydet",
+  "button.save_as_default": "Varsayılan olarak kaydet",
   "button.save_as_template": "Şablon olarak kaydet",
   "button.save_template": "Şablonu Kaydet",
   "button.search": "Ara",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "İnternet bağlantısı yok!",
   "snack_bar.put_back_success": "Eve geri dönüldü!",
   "snack_bar.restore_individual_success": "Hikaye yeniden ortaya çıktı!",
+  "snack_bar.save_theme_as_default_success": "Yeni öykülerde bu tema kullanılacak.",
   "sounds.acoustic_guitar_duet": "Akustik gitar",
   "sounds.bamboo_windchime": "Bambu rüzgar çanı",
   "sounds.bubbles": "Balon",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Gök gürültüsü",
   "sounds.ticking_clock": "Zaman işliyor",
   "sounds.typing": "Yazma sesleri",
-  "sounds.wind_chime": "Rüzgar çanı",
-  "button.save_as_default": "Varsayılan olarak kaydet",
-  "snack_bar.save_theme_as_default_success": "Yeni öykülerde bu tema kullanılacak."
+  "sounds.wind_chime": "Rüzgar çanı"
 }

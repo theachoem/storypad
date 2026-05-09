@@ -66,6 +66,7 @@
   "button.restore_purchase": "Restore Purchase",
   "button.retry": "Retry",
   "button.save": "Save",
+  "button.save_as_default": "Save as Default",
   "button.save_as_template": "Save as Template",
   "button.save_template": "Save Template",
   "button.search": "Search",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "No internet connection!",
   "snack_bar.put_back_success": "Back in home!",
   "snack_bar.restore_individual_success": "Story restored!",
+  "snack_bar.save_theme_as_default_success": "New stories will use this theme.",
   "sounds.acoustic_guitar_duet": "Acoustic guitar",
   "sounds.bamboo_windchime": "Bamboo windchime",
   "sounds.bubbles": "Bubble",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Thunder",
   "sounds.ticking_clock": "Ticking clock",
   "sounds.typing": "Typing",
-  "sounds.wind_chime": "Wind chime",
-  "button.save_as_default": "Save as Default",
-  "snack_bar.save_theme_as_default_success": "New stories will use this theme."
+  "sounds.wind_chime": "Wind chime"
 }

@@ -66,6 +66,7 @@
   "button.restore_purchase": "पुनःस्थापन क्रय",
   "button.retry": "पुन: प्रयास करें",
   "button.save": "बचाना",
+  "button.save_as_default": "डिफ़ॉल्ट के रूप में सहेजें",
   "button.save_as_template": "टेम्पलेट के रूप में सहेजें",
   "button.save_template": "टेम्पलेट सहेजें",
   "button.search": "खोज",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "कोई इंटरनेट कनेक्शन नहीं!",
   "snack_bar.put_back_success": "घर वापस!",
   "snack_bar.restore_individual_success": "कहानी पुनर्स्थापित!",
+  "snack_bar.save_theme_as_default_success": "नई कहानियों में इसी विषय का उपयोग किया जाएगा।",
   "sounds.acoustic_guitar_duet": "ध्वनिक गिटार",
   "sounds.bamboo_windchime": "बांस की विंडचाइम",
   "sounds.bubbles": "बुलबुला",
@@ -451,7 +453,5 @@
   "sounds.thunder": "गड़गड़ाहट",
   "sounds.ticking_clock": "टिक-टिक करती घड़ी",
   "sounds.typing": "टाइपिंग",
-  "sounds.wind_chime": "पवन झंकार",
-  "button.save_as_default": "डिफ़ॉल्ट के रूप में सहेजें",
-  "snack_bar.save_theme_as_default_success": "नई कहानियों में इसी विषय का उपयोग किया जाएगा।"
+  "sounds.wind_chime": "पवन झंकार"
 }

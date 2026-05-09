@@ -66,6 +66,7 @@
   "button.restore_purchase": "Restaurar Compra",
   "button.retry": "Tentar novamente",
   "button.save": "Salvar",
+  "button.save_as_default": "Salvar como padrão",
   "button.save_as_template": "Salvar como modelo",
   "button.save_template": "Salvar modelo",
   "button.search": "Procurar",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Sem conexão com a internet!",
   "snack_bar.put_back_success": "De volta a casa!",
   "snack_bar.restore_individual_success": "História restaurada!",
+  "snack_bar.save_theme_as_default_success": "Novas histórias usarão esse tema.",
   "sounds.acoustic_guitar_duet": "Violão acústico",
   "sounds.bamboo_windchime": "Carrilhão de vento de bambu",
   "sounds.bubbles": "Bolha",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Trovão",
   "sounds.ticking_clock": "Relógio correndo",
   "sounds.typing": "Digitando",
-  "sounds.wind_chime": "Carrilhão de vento",
-  "button.save_as_default": "Salvar como padrão",
-  "snack_bar.save_theme_as_default_success": "Novas histórias usarão esse tema."
+  "sounds.wind_chime": "Carrilhão de vento"
 }

@@ -66,6 +66,7 @@
   "button.restore_purchase": "Pulihkan Pembelian",
   "button.retry": "Mencoba kembali",
   "button.save": "Menyimpan",
+  "button.save_as_default": "Simpan sebagai Default",
   "button.save_as_template": "Simpan sebagai Template",
   "button.save_template": "Simpan Template",
   "button.search": "Mencari",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Tidak ada koneksi internet!",
   "snack_bar.put_back_success": "Kembali ke rumah!",
   "snack_bar.restore_individual_success": "Cerita dipulihkan!",
+  "snack_bar.save_theme_as_default_success": "Cerita-cerita baru akan menggunakan tema ini.",
   "sounds.acoustic_guitar_duet": "Gitar akustik",
   "sounds.bamboo_windchime": "Lonceng angin bambu",
   "sounds.bubbles": "Gelembung",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Guruh",
   "sounds.ticking_clock": "Jam berdetak",
   "sounds.typing": "Mengetik",
-  "sounds.wind_chime": "Lonceng angin",
-  "button.save_as_default": "Simpan sebagai Default",
-  "snack_bar.save_theme_as_default_success": "Cerita-cerita baru akan menggunakan tema ini."
+  "sounds.wind_chime": "Lonceng angin"
 }

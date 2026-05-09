@@ -66,6 +66,7 @@
   "button.restore_purchase": "Ripristina acquisto",
   "button.retry": "Riprova",
   "button.save": "Salva",
+  "button.save_as_default": "Salva come predefinito",
   "button.save_as_template": "Salva come modello",
   "button.save_template": "Salva modello",
   "button.search": "Ricerca",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Nessuna connessione Internet!",
   "snack_bar.put_back_success": "Di nuovo a casa!",
   "snack_bar.restore_individual_success": "Storia ripristinata!",
+  "snack_bar.save_theme_as_default_success": "Le nuove storie utilizzeranno questo tema.",
   "sounds.acoustic_guitar_duet": "chitarra acustica",
   "sounds.bamboo_windchime": "Scacciapensieri in bambù",
   "sounds.bubbles": "Bolla",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Tuono",
   "sounds.ticking_clock": "Orologio che ticchetta",
   "sounds.typing": "Digitando",
-  "sounds.wind_chime": "Carillon di vento",
-  "button.save_as_default": "Salva come predefinito",
-  "snack_bar.save_theme_as_default_success": "Le nuove storie utilizzeranno questo tema."
+  "sounds.wind_chime": "Carillon di vento"
 }

@@ -66,6 +66,7 @@
   "button.restore_purchase": "購入を復元",
   "button.retry": "リトライ",
   "button.save": "保存",
+  "button.save_as_default": "デフォルトとして保存",
   "button.save_as_template": "テンプレートとして保存",
   "button.save_template": "テンプレートを保存",
   "button.search": "検索",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "インターネットに接続できません!",
   "snack_bar.put_back_success": "ホームに戻りました！",
   "snack_bar.restore_individual_success": "ストーリーが復元されました！",
+  "snack_bar.save_theme_as_default_success": "今後の物語ではこのテーマが用いられる予定です。",
   "sounds.acoustic_guitar_duet": "アコースティックギター",
   "sounds.bamboo_windchime": "竹風鈴",
   "sounds.bubbles": "バブル",
@@ -451,7 +453,5 @@
   "sounds.thunder": "雷",
   "sounds.ticking_clock": "カチカチ時計",
   "sounds.typing": "タイピング",
-  "sounds.wind_chime": "風鈴",
-  "button.save_as_default": "デフォルトとして保存",
-  "snack_bar.save_theme_as_default_success": "今後の物語ではこのテーマが用いられる予定です。"
+  "sounds.wind_chime": "風鈴"
 }

@@ -66,6 +66,7 @@
   "button.restore_purchase": "恢复购买",
   "button.retry": "重试",
   "button.save": "保存",
+  "button.save_as_default": "保存为默认值",
   "button.save_as_template": "另存为模板",
   "button.save_template": "保存模板",
   "button.search": "搜索",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "没有网络连接！",
   "snack_bar.put_back_success": "回到主页！",
   "snack_bar.restore_individual_success": "故事已恢复！",
+  "snack_bar.save_theme_as_default_success": "新的故事将以此为主题。",
   "sounds.acoustic_guitar_duet": "原声吉他",
   "sounds.bamboo_windchime": "竹风铃",
   "sounds.bubbles": "气泡",
@@ -451,7 +453,5 @@
   "sounds.thunder": "雷声",
   "sounds.ticking_clock": "滴答作响的时钟",
   "sounds.typing": "打字",
-  "sounds.wind_chime": "风铃",
-  "button.save_as_default": "保存为默认值",
-  "snack_bar.save_theme_as_default_success": "新的故事将以此为主题。"
+  "sounds.wind_chime": "风铃"
 }

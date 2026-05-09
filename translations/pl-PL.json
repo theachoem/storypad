@@ -66,6 +66,7 @@
   "button.restore_purchase": "Przywróć zakup",
   "button.retry": "Spróbować ponownie",
   "button.save": "Ratować",
+  "button.save_as_default": "Zapisz jako domyślne",
   "button.save_as_template": "Zapisz jako szablon",
   "button.save_template": "Zapisz szablon",
   "button.search": "Szukaj",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Brak połączenia internetowego!",
   "snack_bar.put_back_success": "Z powrotem w domu!",
   "snack_bar.restore_individual_success": "Historia przywrócona!",
+  "snack_bar.save_theme_as_default_success": "Nowe opowieści będą wykorzystywać ten motyw.",
   "sounds.acoustic_guitar_duet": "Gitara akustyczna",
   "sounds.bamboo_windchime": "Dzwonek bambusowy",
   "sounds.bubbles": "Bańka",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Grzmot",
   "sounds.ticking_clock": "Tykający zegar",
   "sounds.typing": "Pisanie na maszynie",
-  "sounds.wind_chime": "Dzwonek wietrzny",
-  "button.save_as_default": "Zapisz jako domyślne",
-  "snack_bar.save_theme_as_default_success": "Nowe opowieści będą wykorzystywać ten motyw."
+  "sounds.wind_chime": "Dzwonek wietrzny"
 }

@@ -66,6 +66,7 @@
   "button.restore_purchase": "ទិញឡើងវិញ",
   "button.retry": "ព្យាយាមម្តងទៀត",
   "button.save": "រក្សាទុក",
+  "button.save_as_default": "រក្សាទុកជាលំនាំដើម",
   "button.save_as_template": "រក្សាទុកជាគំរូ",
   "button.save_template": "រក្សាទុកគំរូ",
   "button.search": "ស្វែងរក",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "គ្មានអ៊ីនធឺណិតទេ!",
   "snack_bar.put_back_success": "ចូលផ្ទះវិញហើយ!",
   "snack_bar.restore_individual_success": "រឿង​បាន​ស្ដារ​ឡើង​វិញ!",
+  "snack_bar.save_theme_as_default_success": "រឿងថ្មីៗនឹងប្រើប្រាស់ប្រធានបទនេះ។",
   "sounds.acoustic_guitar_duet": "ហ្គីតាសូរស័ព្ទ",
   "sounds.bamboo_windchime": "បំពង់ខ្យល់ឫស្សី",
   "sounds.bubbles": "ពពុះ",
@@ -451,7 +453,5 @@
   "sounds.thunder": "ផ្គរលាន់",
   "sounds.ticking_clock": "នាឡិកាគូស",
   "sounds.typing": "វាយអក្សរ",
-  "sounds.wind_chime": "កណ្តឹងខ្យល់",
-  "button.save_as_default": "រក្សាទុកជាលំនាំដើម",
-  "snack_bar.save_theme_as_default_success": "រឿងថ្មីៗនឹងប្រើប្រាស់ប្រធានបទនេះ។"
+  "sounds.wind_chime": "កណ្តឹងខ្យល់"
 }

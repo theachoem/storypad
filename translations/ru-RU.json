@@ -66,6 +66,7 @@
   "button.restore_purchase": "Восстановить покупку",
   "button.retry": "Повторить",
   "button.save": "Сохранить",
+  "button.save_as_default": "Сохранить как значение по умолчанию",
   "button.save_as_template": "Сохранить как шаблон",
   "button.save_template": "Сохранить шаблон",
   "button.search": "Поиск",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Нет соединения с интернетом!",
   "snack_bar.put_back_success": "Возращено на главную!",
   "snack_bar.restore_individual_success": "История восстановлена!",
+  "snack_bar.save_theme_as_default_success": "В новых рассказах будет использована эта тема.",
   "sounds.acoustic_guitar_duet": "Акустическая гитара",
   "sounds.bamboo_windchime": "Бамбуковый колокольчик",
   "sounds.bubbles": "Шарики",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Гром",
   "sounds.ticking_clock": "Тикающие часики",
   "sounds.typing": "Ввод текста",
-  "sounds.wind_chime": "Ветряные колокольчики",
-  "button.save_as_default": "Сохранить как значение по умолчанию",
-  "snack_bar.save_theme_as_default_success": "В новых рассказах будет использована эта тема."
+  "sounds.wind_chime": "Ветряные колокольчики"
 }

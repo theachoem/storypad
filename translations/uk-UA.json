@@ -66,6 +66,7 @@
   "button.restore_purchase": "Відновити покупку",
   "button.retry": "Повторити",
   "button.save": "Зберегти",
+  "button.save_as_default": "Зберегти як за замовчуванням",
   "button.save_as_template": "Зберегти як шаблон",
   "button.save_template": "Зберегти шаблон",
   "button.search": "Пошук",
@@ -427,6 +428,7 @@
   "snack_bar.no_internet": "Відсутнє з'єднання з мережею",
   "snack_bar.put_back_success": "Повернуто на Головну!",
   "snack_bar.restore_individual_success": "Розповідь відновлена",
+  "snack_bar.save_theme_as_default_success": "Нові історії використовуватимуть цю тему.",
   "sounds.acoustic_guitar_duet": "Акустична гітара",
   "sounds.bamboo_windchime": "Бамбуковий дзвіночок",
   "sounds.bubbles": "Бульбашка",
@@ -451,7 +453,5 @@
   "sounds.thunder": "Грім",
   "sounds.ticking_clock": "Годинник, що тікає",
   "sounds.typing": "Набір тексту",
-  "sounds.wind_chime": "Вітряний дзвіночок",
-  "button.save_as_default": "Зберегти як за замовчуванням",
-  "snack_bar.save_theme_as_default_success": "Нові історії використовуватимуть цю тему."
+  "sounds.wind_chime": "Вітряний дзвіночок"
 }
