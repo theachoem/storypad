@@ -65,19 +65,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         onOpen: null,
       ),
       PaywallFeatureObject(
-        type: PaywallFeature.image_album,
-        title: tr('paywall_features.image_album.title'),
-        subtitle: tr('paywall_features.image_album.subtitle'),
-        iconData: SpIcons.photo,
-        weekdayColor: 4,
-        demoImagePaths: [
-          '/feature_demos/image_album/image_album_1.jpg',
-          '/feature_demos/image_album/image_album_2.jpg',
-          '/feature_demos/image_album/image_album_3.jpg',
-        ],
-        onOpen: null,
-      ),
-      PaywallFeatureObject(
         type: PaywallFeature.voice_journal,
         title: tr('paywall_features.voice_journal.title'),
         subtitle: tr('paywall_features.voice_journal.subtitle'),
@@ -118,30 +105,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/markdown_export/markdown_export_5.jpg',
         ],
         onOpen: (BuildContext context) => const ImportExportRoute(initialExportOption: .markdown).push(context),
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.writing_stats,
-        title: tr('paywall_features.writing_stats.title'),
-        subtitle: tr('paywall_features.writing_stats.subtitle'),
-        iconData: SpIcons.text,
-        weekdayColor: 7,
-        demoImagePaths: [
-          '/feature_demos/writing_stats/writing_stats_1.jpg',
-          '/feature_demos/writing_stats/writing_stats_2.jpg',
-        ],
-        onOpen: null,
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.pinned_notes,
-        title: tr('paywall_features.pinned_notes.title'),
-        subtitle: tr('paywall_features.pinned_notes.subtitle'),
-        iconData: SpIcons.pinOutline,
-        weekdayColor: 1,
-        demoImagePaths: [
-          '/feature_demos/pinned_notes/pinned_notes_1.jpg',
-          '/feature_demos/pinned_notes/pinned_notes_2.jpg',
-        ],
-        onOpen: null,
       ),
       PaywallFeatureObject(
         type: PaywallFeature.relax_sounds,

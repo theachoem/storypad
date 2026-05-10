@@ -14,14 +14,11 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_image.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
@@ -145,8 +142,6 @@ class _Content extends StatefulWidget {
 class _ContentState extends State<_Content> {
   List<AssetDbModel> get assets => widget.params.assets;
 
-  bool get allowMultiple => context.read<InAppPurchaseProvider>().isProUser;
-
   Map<int, AssetDbModel> selectedAssets = {};
 
   Future<void> _insertFromPhotoLibrary(BuildContext context) async {
@@ -159,7 +154,7 @@ class _ContentState extends State<_Content> {
           final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
 
           return AppFilePickerService.pickImageFiles(
-            allowMultiple: allowMultiple,
+            allowMultiple: true,
             compression: compression,
           );
         },
@@ -204,7 +199,6 @@ class _ContentState extends State<_Content> {
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (!allowMultiple) buildProBanner(context) else const Divider(height: 1),
               Container(
                 padding: EdgeInsets.only(
                   left: 8.0,
@@ -221,13 +215,12 @@ class _ContentState extends State<_Content> {
                       label: Text(tr("button.insert_from_device")),
                       onPressed: () => _insertFromPhotoLibrary(context),
                     ),
-                    if (allowMultiple)
-                      FilledButton(
-                        onPressed: selectedAssets.isNotEmpty
-                            ? () => Navigator.maybePop(context, selectedAssets.values.toList())
-                            : null,
-                        child: Text(tr("button.done")),
-                      ),
+                    FilledButton(
+                      onPressed: selectedAssets.isNotEmpty
+                          ? () => Navigator.maybePop(context, selectedAssets.values.toList())
+                          : null,
+                      child: Text(tr("button.done")),
+                    ),
                   ],
                 ),
               ),
@@ -235,43 +228,6 @@ class _ContentState extends State<_Content> {
           ),
         );
       },
-    );
-  }
-
-  Widget buildProBanner(BuildContext context) {
-    return SpTapEffect(
-      onTap: () => const PaywallRoute(initialFocus: .image_album).push(context),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          border: Border(
-            top: BorderSide(
-              color: Theme.of(context).dividerColor,
-            ),
-          ),
-        ),
-        child: Text.rich(
-          TextSpan(
-            text: "${tr("general.select_multiple_photo_at_once_with_storypad_pro")} ",
-            style: TextTheme.of(context).bodyMedium?.copyWith(
-              color: ColorScheme.of(context).secondary,
-            ),
-            children: [
-              WidgetSpan(
-                alignment: .middle,
-                child: Icon(
-                  SpIcons.star,
-                  size: 16.0,
-                  color: ColorScheme.of(context).secondary,
-                ),
-              ),
-            ],
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
     );
   }
 
@@ -309,16 +265,12 @@ class _ContentState extends State<_Content> {
 
           return GestureDetector(
             onTap: () {
-              if (allowMultiple) {
-                if (selectedAssets.containsKey(asset.id)) {
-                  selectedAssets.remove(asset.id);
-                } else {
-                  selectedAssets[asset.id] = asset;
-                }
-                setState(() {});
+              if (selectedAssets.containsKey(asset.id)) {
+                selectedAssets.remove(asset.id);
               } else {
-                Navigator.maybePop(context, [asset]);
+                selectedAssets[asset.id] = asset;
               }
+              setState(() {});
             },
             child: Stack(
               children: [

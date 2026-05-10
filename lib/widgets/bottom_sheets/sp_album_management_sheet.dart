@@ -6,8 +6,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_album_grid.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
@@ -116,11 +114,6 @@ class _ContentState extends State<_Content> {
                 IconButton.outlined(
                   icon: Icon(SpIcons.photo, color: ColorScheme.of(context).primary),
                   onPressed: () async {
-                    if (_paths.length >= 2 && !context.read<InAppPurchaseProvider>().isProUser) {
-                      const PaywallRoute(initialFocus: .image_album).push(context);
-                      return;
-                    }
-
                     final picked = await SpImagePickerBottomSheet.showAlbumPicker(context: context);
                     if (picked != null && picked.isNotEmpty) {
                       setState(() {
