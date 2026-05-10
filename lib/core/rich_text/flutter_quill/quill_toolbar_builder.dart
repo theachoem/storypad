@@ -96,11 +96,7 @@ class _QuillToolbarWidget extends StatelessWidget {
                         ],
                       ),
                 onPressed: () {
-                  if (provider.isProUser) {
-                    SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
-                  } else {
-                    const PaywallRoute(initialFocus: .voice_journal).push(context);
-                  }
+                  SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
                 },
               );
             },

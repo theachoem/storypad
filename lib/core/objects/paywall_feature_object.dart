@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 enum PaywallFeature {
   relax_sounds,
-  voice_journal,
   markdown_export,
   templates,
   backgrounds,

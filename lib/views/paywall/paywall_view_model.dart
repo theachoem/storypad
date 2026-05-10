@@ -65,19 +65,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         onOpen: null,
       ),
       PaywallFeatureObject(
-        type: PaywallFeature.voice_journal,
-        title: tr('paywall_features.voice_journal.title'),
-        subtitle: tr('paywall_features.voice_journal.subtitle'),
-        iconData: SpIcons.voice,
-        weekdayColor: 5,
-        demoImagePaths: [
-          '/feature_demos/voice_journal/voice_journal_1.jpg',
-          '/feature_demos/voice_journal/voice_journal_2.jpg',
-          '/feature_demos/voice_journal/voice_journal_3.jpg',
-        ],
-        onOpen: null,
-      ),
-      PaywallFeatureObject(
         type: PaywallFeature.templates,
         title: tr('paywall_features.templates.title'),
         subtitle: tr('paywall_features.templates.subtitle'),
