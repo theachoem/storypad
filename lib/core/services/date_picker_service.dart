@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 
@@ -15,8 +16,9 @@ class DatePickerService {
 
   Future<DateTime?> show() async {
     DateTime? date;
+    final bool hasMousePointer = RendererBinding.instance.mouseTracker.mouseIsConnected;
 
-    if (kIsCupertino) {
+    if (kIsCupertino && !hasMousePointer) {
       date = await _showCupertinoDatePicker();
     } else {
       date = await showDatePicker(
