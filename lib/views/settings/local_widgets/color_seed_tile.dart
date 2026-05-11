@@ -25,9 +25,9 @@ class ColorSeedTile extends StatelessWidget {
           position: SpColorPickerPosition.top,
           currentColor: provider.preferences.colorSeed,
           level: SpColorPickerLevel.one,
-          onPickedColor: (color) {
+          onPickedColor: (color) async {
+            await close();
             provider.setColorSeed(color);
-            close();
           },
         );
       },

@@ -53,11 +53,25 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     features = [
       PaywallFeatureObject(
+        type: PaywallFeature.customizations,
+        title: tr('paywall_features.customizations.title'),
+        subtitle: tr('paywall_features.customizations.subtitle'),
+        iconData: SpIcons.markdown,
+        weekdayColor: 3,
+        demoImagePaths: [
+          '/feature_demos/customizations/customization_1.jpg',
+          '/feature_demos/customizations/customization_2.jpg',
+          '/feature_demos/customizations/customization_3.jpg',
+          '/feature_demos/customizations/customization_4.jpg',
+        ],
+        onOpen: null,
+      ),
+      PaywallFeatureObject(
         type: PaywallFeature.backgrounds,
         title: tr('paywall_features.backgrounds.title'),
         subtitle: tr('paywall_features.backgrounds.subtitle'),
         iconData: SpIcons.theme,
-        weekdayColor: 2,
+        weekdayColor: 1,
         demoImagePaths: [
           '/feature_demos/backgrounds/backgrounds_1.jpg',
           '/feature_demos/backgrounds/backgrounds_2.jpg',
@@ -69,7 +83,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         title: tr('paywall_features.templates.title'),
         subtitle: tr('paywall_features.templates.subtitle'),
         iconData: SpIcons.lightBulb,
-        weekdayColor: 1,
+        weekdayColor: 2,
         demoImagePaths: [
           '/feature_demos/templates/template_1.jpg',
           '/feature_demos/templates/template_2.jpg',
@@ -78,12 +92,13 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onOpen: (BuildContext context) => const TemplatesRoute().push(context),
       ),
+
       PaywallFeatureObject(
         type: PaywallFeature.markdown_export,
         title: tr('paywall_features.markdown_export.title'),
         subtitle: tr('paywall_features.markdown_export.subtitle'),
         iconData: SpIcons.markdown,
-        weekdayColor: 6,
+        weekdayColor: 4,
         demoImagePaths: [
           '/feature_demos/markdown_export/markdown_export_1.jpg',
           '/feature_demos/markdown_export/markdown_export_2.jpg',
@@ -98,7 +113,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         title: tr('paywall_features.relax_sounds.title'),
         subtitle: tr('paywall_features.relax_sounds.subtitle'),
         iconData: SpIcons.musicNote,
-        weekdayColor: 4,
+        weekdayColor: 5,
         demoImagePaths: [
           '/feature_demos/relax_sounds/relax_sound_1.jpg',
           '/feature_demos/relax_sounds/relax_sound_2.jpg',

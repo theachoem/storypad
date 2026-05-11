@@ -35,6 +35,7 @@
             <string>ru-RU</string>
             <string>uk-UA</string>
             <string>tr</string>
+            <string>th-TH</string>
         </array>
         <key>CFBundleName</key>
         <string>${APP_NAME}</string>

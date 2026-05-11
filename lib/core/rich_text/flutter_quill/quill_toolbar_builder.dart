@@ -82,19 +82,7 @@ class _QuillToolbarWidget extends StatelessWidget {
             builder: (context, provider, child) {
               return IconButton(
                 tooltip: tr('button.record_voice'),
-                icon: provider.isProUser
-                    ? const Icon(SpIcons.voice)
-                    : const Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Icon(SpIcons.voice),
-                          Positioned(
-                            top: 0,
-                            right: -8,
-                            child: Icon(SpIcons.lock, size: 12.0),
-                          ),
-                        ],
-                      ),
+                icon: const Icon(SpIcons.voice),
                 onPressed: () {
                   SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
                 },

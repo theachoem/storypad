@@ -45,6 +45,7 @@ class SpDemoImages extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: .horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        clipBehavior: .none,
         child: Row(
           mainAxisSize: .min,
           spacing: 12.0,

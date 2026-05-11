@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_background_picker.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -78,7 +80,15 @@ class _StoryEditingPreferencesSheetContentState extends State<_StoryEditingPrefe
             IconButton(
               tooltip: tr("button.done"),
               icon: Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
-              onPressed: changed ? () => Navigator.maybePop(context, defaultStoryPreferences) : null,
+              onPressed: changed
+                  ? () {
+                      if (context.read<InAppPurchaseProvider>().isProUser) {
+                        Navigator.maybePop(context, defaultStoryPreferences);
+                      } else {
+                        const PaywallRoute(initialFocus: .customizations).push(context);
+                      }
+                    }
+                  : null,
             ),
           IconButton(
             icon: const Icon(SpIcons.refresh),

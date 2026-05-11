@@ -132,15 +132,17 @@ class _FontsContent extends StatelessWidget {
           selected: viewModel.currentFontFamily == fontFamily,
           onTap: () => open(),
           title: Text(fontFamily),
-          trailing: Visibility(
-            visible: selected,
-            child: SpFadeIn.fromBottom(
-              child: Icon(
-                SpIcons.checkCircle,
-                color: ColorScheme.of(context).primary,
-              ),
-            ),
-          ),
+          trailing: !viewModel.available(fontFamily)
+              ? const Icon(SpIcons.lock)
+              : Visibility(
+                  visible: selected,
+                  child: SpFadeIn.fromBottom(
+                    child: Icon(
+                      SpIcons.checkCircle,
+                      color: ColorScheme.of(context).primary,
+                    ),
+                  ),
+                ),
         );
       },
     );

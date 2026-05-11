@@ -23,6 +23,7 @@ const kSupportedLocales = [
   Locale("ru", "RU"),
   Locale("uk", "UA"),
   Locale("tr"),
+  Locale("th", "TH"),
 ];
 
 const kLanguageNames = {
@@ -45,6 +46,7 @@ const kLanguageNames = {
   "ru-RU": "Russian",
   "uk-UA": "Ukrainian",
   "tr": "Turkish",
+  "th-TH": "Thai",
 };
 
 const kNativeLanguageNames = {
@@ -67,4 +69,5 @@ const kNativeLanguageNames = {
   "ru-RU": "Русский",
   "uk-UA": "Українська",
   "tr": "Türkçe",
+  "th-TH": "ภาษาไทย",
 };

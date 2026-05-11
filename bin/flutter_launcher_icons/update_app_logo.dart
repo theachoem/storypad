@@ -60,6 +60,8 @@ ${enumEntries.join(',\n')}
   String get xcodeLogoName => logoName;
   String get androidActivityAliasName => 'com.tc.writestory.\$logoName';
 
+  bool get free => this == AppLogo.storypad_1_0;
+
   const AppLogo({
     required this.logoName,
   });

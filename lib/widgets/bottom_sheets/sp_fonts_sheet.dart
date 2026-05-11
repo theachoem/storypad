@@ -7,11 +7,13 @@ class SpFontsSheet extends BaseBottomSheet {
   final String currentFontFamily;
   final FontWeight currentFontWeight;
   final void Function(String fontFamily) onChanged;
+  final bool locked;
 
   SpFontsSheet({
     required this.currentFontFamily,
     required this.currentFontWeight,
     required this.onChanged,
+    this.locked = false,
   });
 
   @override
@@ -42,6 +44,7 @@ class SpFontsSheet extends BaseBottomSheet {
         currentFontFamily: currentFontFamily,
         currentFontWeight: currentFontWeight,
         onChanged: onChanged,
+        locked: locked,
       ),
     );
   }
