@@ -3,14 +3,11 @@
 import 'package:flutter/material.dart';
 
 enum PaywallFeature {
-  relax_sounds,
-  voice_journal,
-  markdown_export,
-  pinned_notes,
-  templates,
-  writing_stats,
   backgrounds,
-  image_album,
+  templates,
+  customizations,
+  markdown_export,
+  relax_sounds,
 }
 
 class PaywallFeatureObject {

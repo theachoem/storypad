@@ -20,7 +20,6 @@ import 'package:storypad/providers/in_app_update_provider.dart';
 import 'package:storypad/providers/nickname_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/home/local_widgets/end_drawer/home_end_drawer.dart';
-import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/root/root_view.dart';
 import 'package:storypad/views/settings/settings_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';

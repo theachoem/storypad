@@ -14,7 +14,9 @@ import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_section_title.dart';
@@ -194,7 +196,15 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             IconButton(
               tooltip: tr("button.done"),
               icon: Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
-              onPressed: changed ? () => Navigator.maybePop(context, storyTilePreferences) : null,
+              onPressed: changed
+                  ? () {
+                      if (context.read<InAppPurchaseProvider>().isProUser) {
+                        Navigator.maybePop(context, storyTilePreferences);
+                      } else {
+                        const PaywallRoute(initialFocus: .customizations).push(context);
+                      }
+                    }
+                  : null,
             ),
           IconButton(
             icon: const Icon(SpIcons.refresh),

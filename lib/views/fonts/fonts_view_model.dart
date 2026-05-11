@@ -5,6 +5,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/storages/recently_selected_fonts_storage.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'fonts_view.dart';
 
 class FontGroup {
@@ -35,16 +36,40 @@ class FontsViewModel extends ChangeNotifier with DisposeAwareMixin {
   List<String>? recentlySelectedFonts;
   List<FontGroup>? fontGroups;
 
+  // When customization is locked (for example, global theme customization),
+  // only a limited free subset is selectable: the default font plus up to
+  // 5 fonts from each group.
+  Set<String> freeGlobalFonts = {};
+
   late String currentFontFamily;
   late FontWeight currentFontWeight;
 
   Future<void> load() async {
     recentlySelectedFonts = await RecentlySelectedFontsStorage().readList();
     fontGroups = constructGroup();
+
+    freeGlobalFonts = {kDefaultFontFamily};
+    fontGroups?.forEach((group) {
+      freeGlobalFonts.addAll(group.fontFamilies.where((font) => fonts.contains(font)).take(5));
+    });
+
     notifyListeners();
   }
 
+  bool available(String fontFamily) {
+    if (params.locked) {
+      return freeGlobalFonts.contains(fontFamily);
+    }
+
+    return true;
+  }
+
   Future<void> changeFont(String fontFamily) async {
+    if (params.locked && !freeGlobalFonts.contains(fontFamily)) {
+      const PaywallRoute(initialFocus: .customizations).push(context);
+      return;
+    }
+
     currentFontFamily = fontFamily;
     params.onChanged(fontFamily);
     notifyListeners();
@@ -60,13 +85,14 @@ class FontsViewModel extends ChangeNotifier with DisposeAwareMixin {
       groupedFonts.putIfAbsent(label, () => []).add(font);
     }
 
-    // List<FontGroup> fontGroups = groupedFonts.entries.map((entry) {
-    //   return FontGroup(label: entry.key, fontFamilies: entry.value);
-    // }).toList();
+    List<FontGroup> alphabeticalGroups = groupedFonts.entries.map((entry) {
+      return FontGroup(label: entry.key, fontFamilies: entry.value);
+    }).toList();
 
     return [
       FontGroup(label: tr("general.defaults"), fontFamilies: [kDefaultFontFamily]),
       if (recentlySelectedFonts != null) FontGroup(label: tr("general.recently"), fontFamilies: recentlySelectedFonts!),
+      ...alphabeticalGroups,
     ];
   }
 

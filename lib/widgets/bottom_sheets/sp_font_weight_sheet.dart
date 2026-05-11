@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -12,12 +13,14 @@ class SpFontWeightSheet extends BaseBottomSheet {
     required this.fontWeight,
     required this.onChanged,
     this.showDefaultLabel = true,
+    this.locked = false,
     this.defaultFontWeight = kDefaultFontWeight,
   });
 
   final FontWeight defaultFontWeight;
   final FontWeight fontWeight;
   final bool showDefaultLabel;
+  final bool locked;
   final void Function(FontWeight fontWeight) onChanged;
 
   @override
@@ -37,23 +40,31 @@ class SpFontWeightSheet extends BaseBottomSheet {
             children: [
               ...FontWeight.values.map((fontWeight) {
                 String title = FontWeightTile.getFontWeightTitle(fontWeight);
+                bool isDefault = defaultFontWeight == fontWeight;
 
-                if (defaultFontWeight == fontWeight && showDefaultLabel) {
+                if (isDefault && showDefaultLabel) {
                   title += ' (${tr('general.default')})';
                 }
 
                 return ListTile(
                   title: Text(title),
-                  trailing: Visibility(
-                    visible: fontWeight == selectedFontWeight,
-                    child: SpFadeIn.fromBottom(
-                      child: Icon(
-                        SpIcons.checkCircle,
-                        color: ColorScheme.of(context).primary,
-                      ),
-                    ),
-                  ),
+                  trailing: !isDefault && locked
+                      ? const Icon(SpIcons.lock)
+                      : Visibility(
+                          visible: fontWeight == selectedFontWeight,
+                          child: SpFadeIn.fromBottom(
+                            child: Icon(
+                              SpIcons.checkCircle,
+                              color: ColorScheme.of(context).primary,
+                            ),
+                          ),
+                        ),
                   onTap: () {
+                    if (!isDefault && locked) {
+                      const PaywallRoute(initialFocus: .customizations).push(context);
+                      return;
+                    }
+
                     notifier.value = fontWeight;
                     onChanged(notifier.value);
                   },

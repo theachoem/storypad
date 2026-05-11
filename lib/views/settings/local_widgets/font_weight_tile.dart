@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_setting_icon_badge.dart';
@@ -12,20 +13,22 @@ class FontWeightTile extends StatelessWidget {
     required this.weekday,
     required this.currentFontWeight,
     required this.onChanged,
+    this.locked = false,
   });
 
   final int weekday;
-
   final FontWeight currentFontWeight;
   final void Function(FontWeight value) onChanged;
+  final bool locked;
 
   static Widget globalTheme({required int weekday}) {
-    return Consumer<DevicePreferencesProvider>(
-      builder: (context, provider, child) {
+    return Consumer2<DevicePreferencesProvider, InAppPurchaseProvider>(
+      builder: (context, provider, inAppPurchaseProvider, child) {
         return FontWeightTile(
           weekday: weekday,
           currentFontWeight: provider.preferences.fontWeight,
           onChanged: (FontWeight fontWeight) => provider.setFontWeight(fontWeight),
+          locked: !inAppPurchaseProvider.isProUser,
         );
       },
     );
@@ -37,10 +40,12 @@ class FontWeightTile extends StatelessWidget {
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.fontWeight),
       title: Text(tr("list_tile.font_weight.title")),
       subtitle: Text(getFontWeightTitle(currentFontWeight)),
+      trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () {
         SpFontWeightSheet(
           fontWeight: currentFontWeight,
           onChanged: onChanged,
+          locked: locked,
         ).show(context: context);
       },
     );

@@ -214,9 +214,15 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
           SpPopMenuItem(
             title: tr('button.save_as_default'),
             leadingIconData: SpIcons.theme,
-            trailingIconData: alreadySavedAsDefault ? SpIcons.check : null,
-            titleStyle: TextStyle(color: alreadySavedAsDefault ? Theme.of(context).disabledColor : null),
-            onPressed: alreadySavedAsDefault
+            titleStyle: TextStyle(
+              color: alreadySavedAsDefault ? Theme.of(context).disabledColor : null,
+            ),
+            trailingIconData: !context.read<InAppPurchaseProvider>().isProUser
+                ? SpIcons.lock
+                : (alreadySavedAsDefault ? SpIcons.check : null),
+            onPressed: !context.read<InAppPurchaseProvider>().isProUser
+                ? () => const PaywallRoute(initialFocus: .customizations).push(context)
+                : alreadySavedAsDefault
                 ? null
                 : () {
                     context.read<DevicePreferencesProvider>().setDefaultStoryPreferences(
@@ -231,9 +237,6 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
               title: tr('button.save_as_template'),
               leadingIconData: SpIcons.lightBulb,
               trailingIconData: !context.read<InAppPurchaseProvider>().isProUser ? SpIcons.lock : null,
-              titleStyle: context.read<InAppPurchaseProvider>().isProUser
-                  ? null
-                  : TextStyle(color: Theme.of(context).disabledColor),
               onPressed: () => storyViewModel.saveAsTemplate(context),
             ),
             if (storyViewModel.readOnly && story.putBackAble)
@@ -437,16 +440,6 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isProUser = context.read<InAppPurchaseProvider>().isProUser;
-
-    if (!isProUser) {
-      return TextButton.icon(
-        icon: const Icon(SpIcons.lock),
-        label: Text(tr('button.unlock_writing_stats')),
-        onPressed: () => const PaywallRoute(initialFocus: .writing_stats).push(context),
-      );
-    }
-
     return TextButton.icon(
       style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
       icon: Icon(SpIcons.text),

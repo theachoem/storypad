@@ -22,10 +22,12 @@ class FontsRoute extends BaseRoute {
     required this.currentFontFamily,
     required this.currentFontWeight,
     required this.onChanged,
+    this.locked = false,
   });
 
   final String currentFontFamily;
   final FontWeight currentFontWeight;
+  final bool locked;
   final void Function(String fontFamily) onChanged;
 
   @override
