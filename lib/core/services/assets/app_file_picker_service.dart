@@ -15,29 +15,36 @@ class AppFilePickerService {
     );
   }
 
-  static Future<FilePickerResult?> pickImageFiles({
+  static Future<List<XFile>> pickImageFiles({
     required bool allowMultiple,
     required AssetCompressionOption compression,
-    bool withData = true,
-  }) {
-    return FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: allowMultiple,
-      withData: withData,
-      compressionQuality: compression.filePickerCompressionQuality,
+  }) async {
+    if (allowMultiple) {
+      return _imagePicker.pickMultiImage(imageQuality: compression.imagePickerQuality);
+    }
+
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: compression.imagePickerQuality,
     );
+
+    return image == null ? <XFile>[] : <XFile>[image];
   }
 
-  static Future<FilePickerResult?> pickAnyFiles({
-    FileType type = FileType.any,
-    bool allowMultiple = false,
-    List<String>? allowedExtensions,
-  }) {
-    return FilePicker.platform.pickFiles(
-      type: type,
-      allowMultiple: allowMultiple,
-      allowedExtensions: allowedExtensions,
+  static Future<XFile?> pickJsonFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
     );
+    return result?.files.firstOrNull?.xFile;
+  }
+
+  static Future<XFile?> pickGzipFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['gz'],
+    );
+    return result?.files.firstOrNull?.xFile;
   }
 
   static Future<LostDataResponse> retrieveLostData() {

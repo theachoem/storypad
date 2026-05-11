@@ -7,6 +7,7 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:tar/tar.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -23,7 +24,6 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/core/services/export/export_stories_to_markdown_service.dart';
 import 'package:storypad/core/services/export/export_stories_to_text_service.dart';
@@ -75,20 +75,19 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> import(BuildContext context) async {
     AnalyticsService.instance.logImportOfflineBackup();
 
-    FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
+    XFile? file = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => AppFilePickerService.pickAnyFiles(),
+      callback: () => AppFilePickerService.pickJsonFile(),
     );
 
     if (!context.mounted) return;
 
-    final file = result?.files.firstOrNull;
-    if (file == null || file.path == null || !file.path!.endsWith(".json")) return;
+    if (file == null || !file.path.endsWith('.json')) return;
 
     final backup = await MessengerService.of(context).showLoading(
       debugSource: '$runtimeType#import',
       future: () => Isolate.run(() async {
-        final jsonString = await file.xFile.readAsString();
+        final jsonString = await file.readAsString();
         Map<String, dynamic>? contents;
 
         try {
@@ -111,17 +110,16 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<void> importMedia(BuildContext context) async {
-    FilePickerResult? result = await SpAppLockWrapper.disableAppLockIfHas(
+    XFile? file = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => AppFilePickerService.pickAnyFiles(),
+      callback: () => AppFilePickerService.pickGzipFile(),
     );
 
     if (!context.mounted) return;
 
-    final file = result?.files.firstOrNull;
-    if (file == null || file.path == null) return;
+    if (file == null) return;
 
-    final path = file.path!;
+    final path = file.path;
     if (!path.endsWith('.tar.gz') && !path.endsWith('.gz')) {
       MessengerService.of(context).showSnackBar(tr("snack_bar.empty_or_invalid_file"), success: false);
       return;
