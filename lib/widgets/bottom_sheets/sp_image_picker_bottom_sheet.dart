@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -145,7 +144,7 @@ class _ContentState extends State<_Content> {
   Map<int, AssetDbModel> selectedAssets = {};
 
   Future<void> _insertFromPhotoLibrary(BuildContext context) async {
-    FilePickerResult? result;
+    List<XFile> result = <XFile>[];
 
     try {
       result = await SpAppLockWrapper.disableAppLockIfHas(
@@ -163,13 +162,13 @@ class _ContentState extends State<_Content> {
       debugPrint(e.toString());
     }
 
-    if (result?.files.isNotEmpty == true) {
+    if (result.isNotEmpty) {
       List<AssetDbModel> saveAssets = [];
 
-      for (var file in result!.files) {
-        if (file.bytes == null) continue;
+      for (var file in result) {
+        final bytes = await file.readAsBytes();
 
-        final savedAsset = await InsertFileToDbService.insertImage(file.xFile, file.bytes!);
+        final savedAsset = await InsertFileToDbService.insertImage(file, bytes);
         if (savedAsset != null) saveAssets.add(savedAsset);
       }
 
