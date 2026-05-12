@@ -11,7 +11,7 @@ class _ImagesTabContent extends StatefulWidget {
   State<_ImagesTabContent> createState() => _ImagesTabContentState();
 }
 
-class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeepAliveClientMixin {
+class _ImagesTabContentState extends State<_ImagesTabContent> {
   Map<int, int> storiesCount = {};
   CollectionDbModel<AssetDbModel>? assets;
   List<Map<String, dynamic>>? groupedAssets;
@@ -52,8 +52,6 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     final provider = Provider.of<BackupProvider>(context);
 
     return NestedScrollView(
@@ -241,10 +239,17 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
                   children: [
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        return SpImage(
-                          link: asset.relativeLocalFilePath,
-                          width: constraints.maxWidth,
-                          height: 120,
+                        return Material(
+                          clipBehavior: Clip.hardEdge,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: BorderSide(color: Theme.of(context).dividerColor),
+                          ),
+                          child: SpImage(
+                            link: asset.relativeLocalFilePath,
+                            width: constraints.maxWidth,
+                            height: 120,
+                          ),
                         );
                       },
                     ),
@@ -293,7 +298,4 @@ class _ImagesTabContentState extends State<_ImagesTabContent> with AutomaticKeep
       await _load();
     }
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -21,8 +21,8 @@ class SpAssetStoryCountOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: left,
-      right: right,
+      left: 0,
+      right: 0,
       bottom: 0,
       child: IgnorePointer(
         ignoring: true,
@@ -40,7 +40,7 @@ class SpAssetStoryCountOverlay extends StatelessWidget {
             ),
           ),
           alignment: Alignment.bottomLeft,
-          padding: EdgeInsets.only(left: 0, right: 0, bottom: bottom),
+          padding: EdgeInsets.only(left: left, right: right, bottom: bottom),
           child: Text.rich(
             TextSpan(
               style: const TextStyle(color: Colors.white, fontSize: 11),

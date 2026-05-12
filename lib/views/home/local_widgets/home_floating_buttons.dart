@@ -98,17 +98,16 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             widget.viewModel.takePhoto(context);
           },
         ),
-      if (context.read<InAppPurchaseProvider>().isProUser)
-        IconButton.outlined(
-          tooltip: tr("button.record_voice"),
-          visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
-          icon: const Icon(SpIcons.voice),
-          color: Colors.white,
-          onPressed: () {
-            toggle(context);
-            widget.viewModel.goToNewPageWithVoice(context);
-          },
-        ),
+      IconButton.outlined(
+        tooltip: tr("button.record_voice"),
+        visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
+        icon: const Icon(SpIcons.voice),
+        color: Colors.white,
+        onPressed: () {
+          toggle(context);
+          widget.viewModel.goToNewPageWithVoice(context);
+        },
+      ),
       IconButton.outlined(
         tooltip: tr("paywall_features.templates.title"),
         visualDensity: const VisualDensity(horizontal: 1, vertical: 1),

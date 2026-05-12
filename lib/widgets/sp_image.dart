@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/widgets/asset_db/sp_db_asset_loader.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -32,7 +33,7 @@ class SpImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Check if this is a relative asset path (images/ or audio/)
-    if (link.startsWith("images/") || link.startsWith("audio/")) {
+    if (AssetType.values.any((type) => link.startsWith("${type.subDirectory.relativePath}/"))) {
       return SpDbAssetLoader.withUser(
         relativePath: link,
         builder: (context, file, error) {

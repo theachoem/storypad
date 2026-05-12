@@ -273,13 +273,21 @@ class _ContentState extends State<_Content> {
             },
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: SpImage(
-                    link: asset.relativeLocalFilePath,
-                    width: double.infinity,
-                    height: 120,
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Material(
+                      clipBehavior: Clip.hardEdge,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(color: Theme.of(context).dividerColor),
+                      ),
+                      child: SpImage(
+                        link: asset.relativeLocalFilePath,
+                        width: constraints.maxWidth,
+                        height: 120,
+                      ),
+                    );
+                  },
                 ),
                 if (selectedAssets.containsKey(asset.id)) buildSelectedCheck(),
               ],
