@@ -175,24 +175,31 @@ class _ImageImportTile extends StatelessWidget {
             children: [
               LayoutBuilder(
                 builder: (context, constraints) {
-                  return Image.file(
-                    entry.previewFile,
-                    width: constraints.maxWidth,
-                    height: 120,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) {
-                      return Container(
-                        width: constraints.maxWidth,
-                        height: 120,
-                        color: ColorScheme.of(context).surfaceContainerHighest,
-                        child: Center(
-                          child: Icon(
-                            SpIcons.photo,
-                            color: ColorScheme.of(context).onSurfaceVariant,
+                  return Material(
+                    clipBehavior: Clip.hardEdge,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Image.file(
+                      entry.previewFile,
+                      width: constraints.maxWidth,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) {
+                        return Container(
+                          width: constraints.maxWidth,
+                          height: 120,
+                          color: ColorScheme.of(context).surfaceContainerHighest,
+                          child: Center(
+                            child: Icon(
+                              SpIcons.photo,
+                              color: ColorScheme.of(context).onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   );
                 },
               ),
