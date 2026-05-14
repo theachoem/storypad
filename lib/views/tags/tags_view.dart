@@ -6,6 +6,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
+import 'package:storypad/widgets/sp_capacity_badge.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_scroll_configuration.dart';
 
@@ -18,11 +19,15 @@ class TagsRoute extends BaseRoute {
   String get routeName => 'tags';
 
   final bool storyViewOnly;
+  final bool pickMode;
+  final int? maxCount;
   final List<int>? initialSelectedTags;
   final Future<bool> Function(List<int> selectedTags)? onToggleTags;
 
   TagsRoute({
     this.storyViewOnly = false,
+    this.pickMode = false,
+    this.maxCount,
     this.initialSelectedTags,
     this.onToggleTags,
   });

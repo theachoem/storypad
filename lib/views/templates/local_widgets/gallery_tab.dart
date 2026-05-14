@@ -51,6 +51,11 @@ class _GalleryTabState extends State<GalleryTab> {
   }
 
   Future<void> openTemplate(BuildContext context, GalleryTemplateObject template) async {
+    if (widget.params.pickMode) {
+      Navigator.maybePop(context, TemplatePickResult.gallery(template));
+      return;
+    }
+
     final result = await ShowTemplateGalleryRoute(
       galleryTemplate: template,
     ).push(context);

@@ -54,6 +54,11 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: tr("general.general")),
             const LanguageTile(weekday: 1),
             buildAppLockTile(context, weekday: 2),
+            ListTile(
+              leading: const SpSettingIconBadge(weekday: 3, icon: SpIcons.home),
+              title: const Text('Home Quick Actions'),
+              onTap: () => const HomeQuickActionsRoute().push(context),
+            ),
             TimeFormatTile.globalTheme(weekday: 3),
             FirstDayOfWeekTile.globalTheme(weekday: 4),
           ],

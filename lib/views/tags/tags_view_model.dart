@@ -30,11 +30,23 @@ class TagsViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  bool get checkable => params.initialSelectedTags != null && params.onToggleTags != null;
+  bool get checkable => params.pickMode || (params.initialSelectedTags != null && params.onToggleTags != null);
   late List<int> selectedTags = params.initialSelectedTags ?? [];
 
   Future<void> onToggle(TagDbModel tag, bool value) async {
     HapticFeedback.selectionClick();
+
+    if (params.pickMode) {
+      if (value) {
+        final maxCount = params.maxCount;
+        if (maxCount != null && selectedTags.length >= maxCount) return;
+        selectedTags = {...selectedTags, tag.id}.toList();
+      } else {
+        selectedTags = selectedTags.toList()..removeWhere((id) => id == tag.id);
+      }
+      notifyListeners();
+      return;
+    }
 
     if (value == true) {
       selectedTags = {...selectedTags, tag.id}.toList();
