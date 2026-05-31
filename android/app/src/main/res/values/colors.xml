@@ -2,4 +2,6 @@
 <resources>
     <color name="splash_background">#FFFFFF</color>
     <color name="splash_background_dark">#121212</color>
+    <color name="shortcut_icon_background">#F5F5F5</color>
+    <color name="shortcut_icon_foreground">#1F1F1F</color>
 </resources>

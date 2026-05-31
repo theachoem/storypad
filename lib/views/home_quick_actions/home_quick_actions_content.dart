@@ -9,7 +9,7 @@ class _HomeQuickActionsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Quick Actions'),
+        title: const Text('Quick Actions'),
       ),
       body: ListView(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 120),

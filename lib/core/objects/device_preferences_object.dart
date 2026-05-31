@@ -2,6 +2,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/objects/app_quick_action_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
@@ -29,6 +30,7 @@ class DevicePreferencesObject {
 
   final StoryTilePreferencesObject storyTilePreferences;
   final DefaultStoryPreferencesObject defaultStoryPreferences;
+  final List<AppQuickActionObject>? homeQuickActions;
 
   // Add ons
   final bool? enableRelaxSounds;
@@ -53,6 +55,7 @@ class DevicePreferencesObject {
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
+    this.homeQuickActions,
     SpMapStyle? mapStyle,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,

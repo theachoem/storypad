@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/objects/app_quick_action_object.dart';
+import 'package:storypad/core/services/app_quick_actions_service.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home_quick_actions/home_quick_actions_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-
-enum HomeQuickActionType { defaultAction, template, tag }
 
 class HomeQuickActionItem {
   const HomeQuickActionItem({
@@ -18,14 +19,12 @@ class HomeQuickActionItem {
     required this.label,
     required this.icon,
     required this.type,
-    this.subtitle,
   });
 
   final String id;
   final String label;
-  final String? subtitle;
   final IconData icon;
-  final HomeQuickActionType type;
+  final AppQuickActionType type;
 }
 
 class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -34,41 +33,44 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
     required BuildContext context,
   }) {
     isProUser = context.read<InAppPurchaseProvider>().isProUser;
+    devicePreferencesProvider = context.read<DevicePreferencesProvider>();
+    enabledActions = _actionsFromObjects(devicePreferencesProvider.preferences.homeQuickActions);
+    availableItems.addAll(defaultActions.where((action) => !isEnabled(action.id)));
   }
 
   final HomeQuickActionsRoute params;
 
   late final bool isProUser;
+  late final DevicePreferencesProvider devicePreferencesProvider;
 
-  final int actionLimit = 5;
+  late final int actionLimit = AppQuickActionsService.instance.maxActionCount;
 
-  late List<HomeQuickActionItem> enabledActions = [];
+  late List<HomeQuickActionItem>? enabledActions;
 
   final List<HomeQuickActionItem> defaultActions = [
     HomeQuickActionItem(
-      id: 'new_story',
+      id: AppDefaultQuickActionType.newStory.id,
       label: tr('button.new_story'),
       icon: SpIcons.newStory,
-      type: HomeQuickActionType.defaultAction,
+      type: AppQuickActionType.defaultAction,
     ),
     HomeQuickActionItem(
-      id: 'take_photo',
+      id: AppDefaultQuickActionType.takePhoto.id,
       label: tr('button.take_photo'),
       icon: SpIcons.camera,
-      type: HomeQuickActionType.defaultAction,
+      type: AppQuickActionType.defaultAction,
     ),
     HomeQuickActionItem(
-      id: 'record_voice',
+      id: AppDefaultQuickActionType.recordVoice.id,
       label: tr('button.record_voice'),
       icon: SpIcons.voice,
-      type: HomeQuickActionType.defaultAction,
+      type: AppQuickActionType.defaultAction,
     ),
   ];
 
   final GlobalKey<AnimatedListState> availableActionsListKey = GlobalKey<AnimatedListState>();
 
-  // Tracks the items currently visible in the AnimatedList.
-  // Starts empty because all defaultActions are already in enabledActions.
+  // Tracks the default items currently visible in the AnimatedList.
   final List<HomeQuickActionItem> availableItems = [];
   final Set<String> _activatingIds = <String>{};
   final Map<String, Timer> _syncTimers = <String, Timer>{};
@@ -80,24 +82,27 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   bool isActivating(String actionId) => _activatingIds.contains(actionId);
 
-  bool get limitReached => enabledActions.length >= actionLimit;
-  int get enabledCount => enabledActions.length;
+  List<HomeQuickActionItem> get visibleEnabledActions => enabledActions ?? const [];
+
+  bool get limitReached => enabledCount >= actionLimit;
+  int get enabledCount => enabledActions?.length ?? 0;
   double get capacity => enabledCount / actionLimit;
 
   List<int> get selectedTagIds {
-    return enabledActions
-        .where((action) => action.type == HomeQuickActionType.tag)
+    return visibleEnabledActions
+        .where((action) => action.type == AppQuickActionType.tag)
         .map((action) => int.tryParse(action.id.replaceFirst('tag:', '')))
         .whereType<int>()
         .toList();
   }
 
   bool isEnabled(String id) {
-    return enabledActions.any((action) => action.id == id);
+    return visibleEnabledActions.any((action) => action.id == id);
   }
 
   void addAction(HomeQuickActionItem action) {
     if (limitReached || isEnabled(action.id)) return;
+    final actions = enabledActions ??= [];
     final idx = availableItems.indexWhere((a) => a.id == action.id);
     if (idx != -1) {
       final removed = availableItems.removeAt(idx);
@@ -106,18 +111,24 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
         (ctx, anim) => _availableTileBuilder?.call(removed, anim) ?? const SizedBox.shrink(),
       );
     }
-    enabledActions.add(action);
+    actions.add(action);
+    _saveActions();
     _markActionAsSyncing(action.id);
     notifyListeners();
   }
 
   void addTemplate(TemplatePickResult result) {
     final action = HomeQuickActionItem(
-      id: 'template:${result.type.name}:${result.id}',
+      id: AppQuickActionObject.templateId(
+        type: switch (result.type) {
+          TemplatePickResultType.custom => AppQuickActionTemplateType.custom,
+          TemplatePickResultType.gallery => AppQuickActionTemplateType.gallery,
+        },
+        id: result.id,
+      ),
       label: result.label,
-      subtitle: result.type == TemplatePickResultType.gallery ? 'Gallery Template' : 'Template',
       icon: SpIcons.file,
-      type: HomeQuickActionType.template,
+      type: AppQuickActionType.template,
     );
 
     addAction(action);
@@ -126,17 +137,16 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
   void addTag(TagDbModel tag) {
     addAction(
       HomeQuickActionItem(
-        id: 'tag:${tag.id}',
+        id: AppQuickActionObject.tagActionId(tag.id),
         label: tag.emoji == null ? tag.title : '${tag.emoji} ${tag.title}',
-        subtitle: 'Tag',
         icon: SpIcons.tag,
-        type: HomeQuickActionType.tag,
+        type: AppQuickActionType.tag,
       ),
     );
   }
 
   void removeAction(HomeQuickActionItem action) {
-    enabledActions.removeWhere((a) => a.id == action.id);
+    enabledActions?.removeWhere((a) => a.id == action.id);
     _syncTimers.remove(action.id)?.cancel();
     _activatingIds.remove(action.id);
     // Re-insert the item into availableItems at its original position.
@@ -147,14 +157,60 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
         availableActionsListKey.currentState?.insertItem(i);
       }
     }
+    _saveActions();
     notifyListeners();
   }
 
   void reorderActions(int oldIndex, int newIndex) {
+    final actions = enabledActions;
+    if (actions == null) return;
+
     if (newIndex > oldIndex) newIndex--;
-    final item = enabledActions.removeAt(oldIndex);
-    enabledActions.insert(newIndex, item);
+    final item = actions.removeAt(oldIndex);
+    actions.insert(newIndex, item);
+    _saveActions();
     notifyListeners();
+  }
+
+  List<HomeQuickActionItem>? _actionsFromObjects(List<AppQuickActionObject>? objects) {
+    if (objects == null) return null;
+
+    return objects
+        .map(
+          (object) => HomeQuickActionItem(
+            id: object.id,
+            label: object.label,
+            icon: _iconFor(object),
+            type: object.type,
+          ),
+        )
+        .toList();
+  }
+
+  IconData _iconFor(AppQuickActionObject object) {
+    return switch (object.type) {
+      AppQuickActionType.defaultAction => defaultActions.firstWhere((action) => action.id == object.id).icon,
+      AppQuickActionType.template => SpIcons.file,
+      AppQuickActionType.tag => SpIcons.tag,
+    };
+  }
+
+  void _saveActions() {
+    devicePreferencesProvider.setHomeQuickActions(
+      visibleEnabledActions
+          .map(
+            (action) => AppQuickActionObject(
+              id: action.id,
+              label: action.label,
+              type: action.type,
+              nativeIcon: AppQuickActionObject.nativeIconFor(
+                type: action.type,
+                id: action.id,
+              ),
+            ),
+          )
+          .toList(),
+    );
   }
 
   void _markActionAsSyncing(String actionId) {

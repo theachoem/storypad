@@ -67,7 +67,6 @@ class _AvailableActions extends StatelessWidget {
       child: _ActionTile(
         icon: action.icon,
         title: action.label,
-        subtitle: action.subtitle,
         enabled: !viewModel.limitReached,
         onTap: () => viewModel.addAction(action),
       ),
@@ -80,7 +79,6 @@ class _ActionTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
-    this.subtitle,
     this.locked = false,
     this.enabled = true,
   });
@@ -88,7 +86,6 @@ class _ActionTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final String? subtitle;
   final bool locked;
   final bool enabled;
 
@@ -98,9 +95,8 @@ class _ActionTile extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
       leading: Icon(icon),
       title: Text(title),
-      subtitle: subtitle == null ? null : Text(subtitle!),
       trailing: IconButton(
-        tooltip: locked ? 'Unlock $title' : 'Add $title',
+        tooltip: title,
         icon: Icon(locked ? SpIcons.lock : SpIcons.add),
         onPressed: enabled ? onTap : null,
       ),

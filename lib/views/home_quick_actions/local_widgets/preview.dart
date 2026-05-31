@@ -16,11 +16,10 @@ class _Preview extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      constraints: const BoxConstraints(minHeight: 248),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       decoration: BoxDecoration(
         color: colorScheme.readOnly.surface1,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
@@ -47,7 +46,7 @@ class _Preview extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: pointerHeight),
-                    child: viewModel.enabledActions.isEmpty
+                    child: viewModel.visibleEnabledActions.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14, vertical: 18),
                             child: Text('No quick actions yet'),
@@ -59,19 +58,19 @@ class _Preview extends StatelessWidget {
                             physics: const NeverScrollableScrollPhysics(),
                             onReorder: viewModel.reorderActions,
                             children: [
-                              for (int i = 0; i < viewModel.enabledActions.length; i++)
+                              for (int i = 0; i < viewModel.visibleEnabledActions.length; i++)
                                 ReorderableDelayedDragStartListener(
-                                  key: ValueKey(viewModel.enabledActions[i].id),
+                                  key: ValueKey(viewModel.visibleEnabledActions[i].id),
                                   index: i,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       _PreviewRow(
-                                        action: viewModel.enabledActions[i],
-                                        activating: viewModel.isActivating(viewModel.enabledActions[i].id),
-                                        onRemove: () => viewModel.removeAction(viewModel.enabledActions[i]),
+                                        action: viewModel.visibleEnabledActions[i],
+                                        activating: viewModel.isActivating(viewModel.visibleEnabledActions[i].id),
+                                        onRemove: () => viewModel.removeAction(viewModel.visibleEnabledActions[i]),
                                       ),
-                                      if (i < viewModel.enabledActions.length - 1) const Divider(height: 1),
+                                      if (i < viewModel.visibleEnabledActions.length - 1) const Divider(height: 1),
                                     ],
                                   ),
                                 ),

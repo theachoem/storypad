@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
+import 'package:storypad/core/objects/app_quick_action_object.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
+import 'package:storypad/core/services/app_quick_actions_service.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
@@ -50,6 +53,7 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
 
     storage.remove();
     notifyListeners();
+    unawaited(AppQuickActionsService.instance.clearActions());
 
     AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _preferences.fontFamily);
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
@@ -163,6 +167,13 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
       hasColorSeed: preferences.defaultColorSeedValue != null,
       hasBackground: preferences.defaultBackgroundImagePath != null,
     );
+  }
+
+  // No need to notify listeners as it only do sync with system.
+  void setHomeQuickActions(List<AppQuickActionObject>? actions) {
+    _preferences = _preferences.copyWith(homeQuickActions: actions);
+    storage.writeObject(_preferences);
+    AppQuickActionsService.instance.setActions(actions);
   }
 
   void toggleAddOn(AddOnType addOn, bool enabled) {

@@ -33,9 +33,12 @@ function export_keystore_vars() {
   export DEBUG_KEY_PASSWORD="android"
   export DEBUG_KEY_ALIAS="androiddebugkey"
 
+  MASKED_RELEASE_KEYSTORE_PASSWORD=$(printf '%*s' "${#RELEASE_KEYSTORE_PASSWORD}" '' | tr ' ' '*')
+  MASKED_RELEASE_KEY_PASSWORD=$(printf '%*s' "${#RELEASE_KEY_PASSWORD}" '' | tr ' ' '*')
+
   echo "🔑 Keystore Path: $RELEASE_KEYSTORE_PATH"
-  echo "🔑 Keystore Password: $RELEASE_KEYSTORE_PASSWORD"
-  echo "🔑 Key Password: $RELEASE_KEY_PASSWORD"
+  echo "🔑 Keystore Password: $MASKED_RELEASE_KEYSTORE_PASSWORD"
+  echo "🔑 Key Password: $MASKED_RELEASE_KEY_PASSWORD"
   echo "🔑 Key Alias: $RELEASE_KEY_ALIAS"
   echo ""
 }

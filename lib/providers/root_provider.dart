@@ -4,6 +4,8 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
+import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/services/app_quick_actions_service.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
 class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
@@ -19,6 +21,10 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
       temporaryHidden: false,
     ),
   );
+
+  RootProvider() {
+    if (kSupportQuickActions) AppQuickActionsService.instance.initialize(navigatorKey: navigatorKey);
+  }
 
   /// For any navigation from sidebar, use this RootProvider#navigate instead of push directly.
   void navigate(BaseRoute route) {

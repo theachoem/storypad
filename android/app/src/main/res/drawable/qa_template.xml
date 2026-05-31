@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/shortcut_icon_background" />
+    <item>
+        <inset android:inset="30%">
+            <bitmap android:src="@drawable/ic_qa_template" android:tint="@color/shortcut_icon_foreground" />
+        </inset>
+    </item>
+</layer-list>
