@@ -19,7 +19,7 @@ class _AvailableActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SpSectionTitle(
-          title: 'Add Shortcuts',
+          title: tr('button.add_app_shortcuts'),
           trailing: SpCapacityBadge(current: viewModel.enabledCount, max: viewModel.actionLimit),
         ),
         AnimatedList(
@@ -36,14 +36,14 @@ class _AvailableActions extends StatelessWidget {
             final pickerTile = pickerIndex == 0
                 ? _ActionTile(
                     icon: SpIcons.file,
-                    title: 'Choose Template',
+                    title: tr('button.choose_template'),
                     locked: !context.read<InAppPurchaseProvider>().isProUser,
                     enabled: !viewModel.limitReached,
                     onTap: onChooseTemplate,
                   )
                 : _ActionTile(
                     icon: SpIcons.tag,
-                    title: 'Choose Tag',
+                    title: tr('button.choose_tag'),
                     locked: !context.read<InAppPurchaseProvider>().isProUser,
                     enabled: !viewModel.limitReached,
                     onTap: onChooseTag,

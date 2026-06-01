@@ -52,9 +52,9 @@ class _Preview extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: pointerHeight),
                     child: viewModel.visibleEnabledActions.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-                            child: Text('No app shortcuts yet'),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+                            child: Text(tr('page.home_quick_actions.empty_message')),
                           )
                         : ReorderableListView(
                             shrinkWrap: true,
@@ -147,7 +147,7 @@ class _PreviewRow extends StatelessWidget {
                 )
               : IconButton(
                   key: const ValueKey('remove'),
-                  tooltip: 'Remove ${action.label}',
+                  tooltip: tr('button.remove_args', namedArgs: {'RM_LABEL': action.label}),
                   icon: const Icon(SpIcons.clear),
                   visualDensity: VisualDensity.compact,
                   constraints: const BoxConstraints.tightFor(width: 36, height: 36),
