@@ -33,8 +33,8 @@ Default quick actions use `AppDefaultQuickActionType`, and template ids use `App
 - `setActions(actions)` publishes the current list via `QuickActions.setShortcutItems`.
 - `clearActions()` removes native shortcuts by publishing an empty list.
 - `initialize(navigatorKey: ...)` registers the native launch callback and dispatches supported actions through the root navigator.
-- `maxActionCount` owns platform capacity: iOS supports 4 actions and Android supports 5.
-- The service is guarded to Android/iOS and ignores `MissingPluginException`, so desktop builds can keep the dependency without failing.
+- `maxActionCount` owns platform capacity: both iOS and Android support 4 actions (`iosMaxActionCount = 4`, `androidMaxActionCount = 4`); other platforms return 0.
+- The service is guarded by a `supported` getter (`Platform.isIOS || Platform.isAndroid`); all public methods return early when `supported` is false, so desktop builds skip the plugin entirely.
 
 ## Provider Flow
 
@@ -42,8 +42,9 @@ Default quick actions use `AppDefaultQuickActionType`, and template ids use `App
 
 1. Update `DevicePreferencesObject.homeQuickActions`.
 2. Persist the preferences through `DevicePreferencesStorage`.
-3. Notify listeners.
-4. Publish the same list to `AppQuickActionsService`.
+3. Publish the same list to `AppQuickActionsService`.
+
+`setHomeQuickActions` intentionally does **not** call `notifyListeners` — it only syncs with the system. The view model owns its own state and updates the UI directly.
 
 Preference reset clears native shortcuts as well.
 

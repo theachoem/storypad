@@ -300,6 +300,17 @@ abstract class BaseAnalyticsEventAdaptor {
     );
   }
 
+  Future<void> logQuickActionLaunched({required String type, String? action}) {
+    return logEvent(
+      sanitizeEventName('quick_action_launched'),
+      parameters: sanitizeParameters({'type': type, 'action': action}),
+    );
+  }
+
+  Future<void> logQuickActionAdded({required String type}) {
+    return logEvent(sanitizeEventName('quick_action_added'), parameters: sanitizeParameters({'type': type}));
+  }
+
   // ---------------------------------------------------------------------------
   // Shared helpers
   // ---------------------------------------------------------------------------
@@ -308,12 +319,13 @@ abstract class BaseAnalyticsEventAdaptor {
     return sanitizeParameters({
       'version': story.version.toString(),
       'type': story.type.name,
-      'starred': story.starred.toString(),
+      'starred': ?story.starred?.toString(),
       'year': story.year.toString(),
       'month': story.month.toString(),
       'day': story.day.toString(),
-      'feeling': story.feeling,
+      'pinned': ?story.pinned?.toString(),
       'tags_count': story.tags?.length.toString(),
+      'gallery_template_id': ?story.galleryTemplateId,
       'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
           .toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',

@@ -172,8 +172,9 @@ class _Page extends StatelessWidget {
           ),
           if (iapProvider.isProUser && feature.onOpen != null) ...[
             const SizedBox(height: 16.0),
-            SizedBox(
+            Container(
               width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 400.0),
               child: FilledButton(
                 child: Text(tr('button.open')),
                 onPressed: () {

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/app_quick_action_object.dart';
+import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/app_quick_actions_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/home_quick_actions/home_quick_actions_view.dart';
@@ -116,6 +117,7 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
     }
     actions.add(action);
+    AnalyticsService.instance.logQuickActionAdded(type: action.object.type.name);
     _saveActions();
     _markActionAsSyncing(action.key);
     notifyListeners();

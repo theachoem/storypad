@@ -37,7 +37,7 @@ class _TemplatesContent extends StatelessWidget {
     return AppBar(
       title: Text(
         viewModel.params.pickMode
-            ? 'Choose Template'
+            ? tr("button.choose_template")
             : viewModel.params.viewingArchives
             ? tr('general.path_type.archives')
             : tr("paywall_features.templates.title"),

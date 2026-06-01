@@ -8,7 +8,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
-import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/app_quick_action_object.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -32,12 +31,11 @@ import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 
 typedef AppQuickActionLaunchHandler = FutureOr<void> Function(String actionId);
 
-class AppQuickActionsService with DebounchedCallback {
+class AppQuickActionsService {
   AppQuickActionsService({QuickActions quickActions = const QuickActions()}) : _quickActions = quickActions {
     if (supported) {
       _actionStream.stream.listen((actionId) async {
-        await _initCompleter.future;
-        await _handleLaunch(actionId);
+        _handleLaunch(actionId);
       });
     }
   }
@@ -91,20 +89,40 @@ class AppQuickActionsService with DebounchedCallback {
 
   Future<void> clearActions() => setActions(const []);
 
+  bool _isHandlingLaunch = false;
   Future<void> _handleLaunch(String actionId) async {
-    final action = AppQuickActionObject.tryFromId(actionId);
-    if (action == null) return;
+    if (_isHandlingLaunch) return;
+    _isHandlingLaunch = true;
 
-    final context = await _waitForNavigatorContext();
-    if (context == null || !context.mounted) return;
+    try {
+      final action = AppQuickActionObject.tryFromId(actionId);
+      if (action == null) return;
 
-    switch (action.type) {
-      case AppQuickActionType.defaultAction:
-        await _handleDefaultAction(action, context);
-      case AppQuickActionType.template:
-        await _handleTemplateAction(action, context);
-      case AppQuickActionType.tag:
-        await _handleTagAction(action, context);
+      final context = await _waitForNavigatorContext();
+      if (context == null || !context.mounted) return;
+
+      AnalyticsService.instance.logQuickActionLaunched(
+        type: action.type.name,
+        action: action.defaultActionType?.name,
+      );
+
+      switch (action.type) {
+        case AppQuickActionType.defaultAction:
+          await _handleDefaultAction(action, context);
+          break;
+        case AppQuickActionType.template:
+          await _handleTemplateAction(action, context);
+          break;
+        case AppQuickActionType.tag:
+          await _handleTagAction(action, context);
+          break;
+      }
+
+      // Keep the lock active for 1 extra second after a successful action
+      await Future.delayed(const Duration(seconds: 1));
+    } finally {
+      // This block is GUARANTEED to run, even if the try block hits an early return or throws an error.
+      _isHandlingLaunch = false;
     }
   }
 
@@ -117,12 +135,16 @@ class AppQuickActionsService with DebounchedCallback {
     switch (defaultAction) {
       case AppDefaultQuickActionType.newStory:
         await _openNewStory(context);
+        break;
       case AppDefaultQuickActionType.takePhoto:
         await _takePhoto(context);
+        break;
       case AppDefaultQuickActionType.recordVoice:
         await _recordVoice(context);
+        break;
       case AppDefaultQuickActionType.editShortcuts:
         await const HomeQuickActionsRoute().push(context);
+        break;
     }
   }
 

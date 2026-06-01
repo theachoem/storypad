@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'app_quick_action_object.g.dart';
@@ -97,7 +97,7 @@ class AppQuickActionObject {
   // Predefined default action for editing shortcuts, used when no user-defined shortcuts exist.
   factory AppQuickActionObject.editShortcuts() {
     return AppQuickActionObject(
-      label: 'Edit App Shortcuts',
+      label: tr('button.edit_app_shortcuts'),
       type: AppQuickActionType.defaultAction,
       nativeIcon: AppDefaultQuickActionType.editShortcuts.nativeIcon,
       defaultActionType: AppDefaultQuickActionType.editShortcuts,

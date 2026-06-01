@@ -7,6 +7,8 @@ class _HomeQuickActionsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iapProvider = Provider.of<InAppPurchaseProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(tr('page.home_quick_actions.title')),
@@ -18,16 +20,16 @@ class _HomeQuickActionsContent extends StatelessWidget {
           const SizedBox(height: 16),
           _AvailableActions(
             viewModel: viewModel,
-            onChooseTemplate: () => _chooseTemplate(context),
-            onChooseTag: () => _chooseTag(context),
+            onChooseTemplate: () => _chooseTemplate(context, iapProvider),
+            onChooseTag: () => _chooseTag(context, iapProvider),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _chooseTemplate(BuildContext context) async {
-    if (!context.read<InAppPurchaseProvider>().isProUser) {
+  Future<void> _chooseTemplate(BuildContext context, InAppPurchaseProvider iapProvider) async {
+    if (!iapProvider.isProUser) {
       const PaywallRoute(initialFocus: .customizations).push(context);
       return;
     }
@@ -38,8 +40,8 @@ class _HomeQuickActionsContent extends StatelessWidget {
     if (result != null && result is TemplatePickResult) viewModel.addTemplate(result);
   }
 
-  Future<void> _chooseTag(BuildContext context) async {
-    if (!context.read<InAppPurchaseProvider>().isProUser) {
+  Future<void> _chooseTag(BuildContext context, InAppPurchaseProvider iapProvider) async {
+    if (!iapProvider.isProUser) {
       const PaywallRoute(initialFocus: .customizations).push(context);
       return;
     }
