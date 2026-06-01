@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/objects/paywall_feature_object.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_tags_picker_sheet.dart';

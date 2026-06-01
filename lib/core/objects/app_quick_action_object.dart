@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'app_quick_action_object.g.dart';
+
+enum AppQuickActionType { defaultAction, template, tag }
+
+enum AppQuickActionTemplateType { custom, gallery }
 
 enum AppDefaultQuickActionType {
   newStory('new_story'),
   takePhoto('take_photo'),
   recordVoice('record_voice'),
+  editShortcuts('edit_shortcuts'),
   ;
 
   const AppDefaultQuickActionType(this.id);
@@ -16,20 +23,16 @@ enum AppDefaultQuickActionType {
     AppDefaultQuickActionType.newStory => 'qa_new_story',
     AppDefaultQuickActionType.takePhoto => 'qa_take_photo',
     AppDefaultQuickActionType.recordVoice => 'qa_record_voice',
+    AppDefaultQuickActionType.editShortcuts => 'qa_new_story',
   };
 
   static AppDefaultQuickActionType? fromId(String id) {
     for (final action in values) {
       if (action.id == id) return action;
     }
-
     return null;
   }
 }
-
-enum AppQuickActionType { defaultAction, template, tag }
-
-enum AppQuickActionTemplateType { custom, gallery }
 
 @JsonSerializable()
 class AppQuickActionTemplateReference {
@@ -46,57 +49,59 @@ class AppQuickActionTemplateReference {
   Map<String, dynamic> toJson() => _$AppQuickActionTemplateReferenceToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class AppQuickActionObject {
+  static const String templateNativeIcon = 'qa_template';
+  static const String tagNativeIcon = 'qa_tag';
+
   const AppQuickActionObject({
-    required this.id,
     required this.label,
     required this.type,
     this.nativeIcon,
+    this.defaultActionType,
+    this.templateReference,
+    this.tagId,
   });
 
-  final String id;
   final String label;
 
   @JsonKey(unknownEnumValue: AppQuickActionType.defaultAction)
   final AppQuickActionType type;
   final String? nativeIcon;
 
-  static String templateId({
-    required AppQuickActionTemplateType type,
-    required String id,
-  }) => 'template:${type.name}:$id';
+  @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
+  final AppDefaultQuickActionType? defaultActionType;
+  final AppQuickActionTemplateReference? templateReference;
+  final int? tagId;
 
-  static String tagActionId(int tagId) => 'tag:$tagId';
+  /// OS shortcut key — base64Url-encoded JSON of the full object including label.
+  String toId() => base64Url.encode(utf8.encode(jsonEncode(toJson())));
 
-  static const String templateNativeIcon = 'qa_template';
-  static const String tagNativeIcon = 'qa_tag';
+  /// Logical identity used for dedup and equality — not stored in JSON.
+  String get key => switch (type) {
+    AppQuickActionType.defaultAction => defaultActionType?.id ?? '',
+    AppQuickActionType.template =>
+      templateReference != null ? 'template:${templateReference!.type.name}:${templateReference!.id}' : '',
+    AppQuickActionType.tag => tagId != null ? 'tag:$tagId' : '',
+  };
 
-  static String? nativeIconFor({required AppQuickActionType type, required String id}) {
-    return switch (type) {
-      AppQuickActionType.defaultAction => AppDefaultQuickActionType.fromId(id)?.nativeIcon,
-      AppQuickActionType.template => templateNativeIcon,
-      AppQuickActionType.tag => tagNativeIcon,
-    };
-  }
-
-  AppQuickActionTemplateReference? get templateReference {
-    final parts = id.split(':');
-    if (parts.length != 3 || parts[0] != 'template') return null;
-
+  static AppQuickActionObject? tryFromId(String id) {
     try {
-      return AppQuickActionTemplateReference.fromJson({
-        'type': parts[1],
-        'id': parts[2],
-      });
+      final json = jsonDecode(utf8.decode(base64Url.decode(id))) as Map<String, dynamic>;
+      return AppQuickActionObject.fromJson(json);
     } catch (_) {
       return null;
     }
   }
 
-  int? get tagId {
-    if (!id.startsWith('tag:')) return null;
-    return int.tryParse(id.replaceFirst('tag:', ''));
+  // Predefined default action for editing shortcuts, used when no user-defined shortcuts exist.
+  factory AppQuickActionObject.editShortcuts() {
+    return AppQuickActionObject(
+      label: 'Edit App Shortcuts',
+      type: AppQuickActionType.defaultAction,
+      nativeIcon: AppDefaultQuickActionType.editShortcuts.nativeIcon,
+      defaultActionType: AppDefaultQuickActionType.editShortcuts,
+    );
   }
 
   factory AppQuickActionObject.fromJson(Map<String, dynamic> json) => _$AppQuickActionObjectFromJson(json);

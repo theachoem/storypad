@@ -57,7 +57,7 @@ class _SettingsContent extends StatelessWidget {
             if (kSupportQuickActions)
               ListTile(
                 leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.home),
-                title: const Text('Quick Actions'),
+                title: const Text('App Shortcuts'),
                 onTap: () => const HomeQuickActionsRoute().push(context),
               ),
             TimeFormatTile.globalTheme(weekday: 1),

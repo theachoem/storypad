@@ -39,17 +39,17 @@ class _TemplatesTabState extends State<TemplatesTab> {
     load();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.appBarActionsLoaderCallback?.call(
-        params.pickMode
-            ? []
-            : [
-                IconButton(
-                  tooltip: tr('general.path_type.archives'),
-                  icon: const Icon(SpIcons.archive),
-                  onPressed: () => goToArchivesPage(context),
-                ),
-              ],
-      );
+      final actions = params.pickMode
+          ? <IconButton>[]
+          : [
+              IconButton(
+                tooltip: tr('general.path_type.archives'),
+                icon: const Icon(SpIcons.archive),
+                onPressed: () => goToArchivesPage(context),
+              ),
+            ];
+
+      widget.appBarActionsLoaderCallback?.call(actions);
     });
   }
 

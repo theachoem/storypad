@@ -19,7 +19,7 @@ class _AvailableActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SpSectionTitle(
-          title: 'Add Actions',
+          title: 'Add Shortcuts',
           trailing: SpCapacityBadge(current: viewModel.enabledCount, max: viewModel.actionLimit),
         ),
         AnimatedList(
@@ -37,14 +37,14 @@ class _AvailableActions extends StatelessWidget {
                 ? _ActionTile(
                     icon: SpIcons.file,
                     title: 'Choose Template',
-                    locked: !viewModel.isProUser,
+                    locked: !context.read<InAppPurchaseProvider>().isProUser,
                     enabled: !viewModel.limitReached,
                     onTap: onChooseTemplate,
                   )
                 : _ActionTile(
                     icon: SpIcons.tag,
                     title: 'Choose Tag',
-                    locked: !viewModel.isProUser,
+                    locked: !context.read<InAppPurchaseProvider>().isProUser,
                     enabled: !viewModel.limitReached,
                     onTap: onChooseTag,
                   );

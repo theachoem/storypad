@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -16,12 +14,16 @@ import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
+import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/gallery_template_service.dart';
+import 'package:storypad/core/services/markdown_to_quill_delta_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/root_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/views/home_quick_actions/home_quick_actions_view.dart';
 import 'package:storypad/views/home/home_view_model.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/tags/show/show_tag_view.dart';
@@ -31,7 +33,14 @@ import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 typedef AppQuickActionLaunchHandler = FutureOr<void> Function(String actionId);
 
 class AppQuickActionsService with DebounchedCallback {
-  AppQuickActionsService({QuickActions quickActions = const QuickActions()}) : _quickActions = quickActions;
+  AppQuickActionsService({QuickActions quickActions = const QuickActions()}) : _quickActions = quickActions {
+    if (supported) {
+      _actionStream.stream.listen((actionId) async {
+        await _initCompleter.future;
+        await _handleLaunch(actionId);
+      });
+    }
+  }
 
   static AppQuickActionsService instance = AppQuickActionsService();
 
@@ -39,6 +48,9 @@ class AppQuickActionsService with DebounchedCallback {
   static const int androidMaxActionCount = 4;
 
   final QuickActions _quickActions;
+  final StreamController<String> _actionStream = StreamController<String>();
+  final Completer<void> _initCompleter = Completer<void>();
+  GlobalKey<NavigatorState>? _navigatorKey;
 
   bool get supported => Platform.isIOS || Platform.isAndroid;
   int get maxActionCount => Platform.isIOS
@@ -50,43 +62,40 @@ class AppQuickActionsService with DebounchedCallback {
   Future<void> initialize({
     required GlobalKey<NavigatorState> navigatorKey,
   }) async {
-    if (!supported) return;
+    if (!supported || _initCompleter.isCompleted) return;
 
-    await _ignoreMissingPlugin(
-      () => _quickActions.initialize((actionId) {
-        debouncedCallback(() {
-          _handleLaunch(actionId, navigatorKey);
-        });
-      }),
-    );
+    _navigatorKey = navigatorKey;
+    _quickActions.initialize(_actionStream.add);
+    _initCompleter.complete();
+
+    final homeQuickActions = DevicePreferencesStorage.appInstance.preferences.homeQuickActions;
+    if (homeQuickActions == null || homeQuickActions.isEmpty) await setActions([]);
   }
 
   Future<void> setActions(List<AppQuickActionObject>? actions) async {
     if (!supported) return;
 
-    await _ignoreMissingPlugin(
-      () => _quickActions.setShortcutItems(
-        [
-          for (final action in (actions ?? const <AppQuickActionObject>[]).take(maxActionCount))
-            ShortcutItem(
-              type: action.id,
-              localizedTitle: action.label,
-              icon: action.nativeIcon ?? AppQuickActionObject.nativeIconFor(type: action.type, id: action.id),
-            ),
-        ],
-      ),
-    );
+    var validActions = actions == null || actions.isEmpty
+        ? <AppQuickActionObject>[AppQuickActionObject.editShortcuts()]
+        : actions;
+
+    _quickActions.setShortcutItems([
+      for (final action in validActions.take(maxActionCount))
+        ShortcutItem(
+          type: action.toId(),
+          localizedTitle: action.label,
+          icon: action.nativeIcon,
+        ),
+    ]);
   }
 
   Future<void> clearActions() => setActions(const []);
 
-  Future<void> _handleLaunch(String actionId, GlobalKey<NavigatorState> navigatorKey) async {
-    final action = DevicePreferencesStorage.appInstance.preferences.homeQuickActions
-        ?.where((action) => action.id == actionId)
-        .firstOrNull;
+  Future<void> _handleLaunch(String actionId) async {
+    final action = AppQuickActionObject.tryFromId(actionId);
     if (action == null) return;
 
-    final context = await _waitForNavigatorContext(navigatorKey);
+    final context = await _waitForNavigatorContext();
     if (context == null || !context.mounted) return;
 
     switch (action.type) {
@@ -100,7 +109,7 @@ class AppQuickActionsService with DebounchedCallback {
   }
 
   Future<void> _handleDefaultAction(AppQuickActionObject action, BuildContext context) async {
-    final defaultAction = AppDefaultQuickActionType.fromId(action.id);
+    final defaultAction = action.defaultActionType;
     if (defaultAction == null) return;
 
     context.read<RootProvider>().navigate(const HomeRoute());
@@ -112,6 +121,8 @@ class AppQuickActionsService with DebounchedCallback {
         await _takePhoto(context);
       case AppDefaultQuickActionType.recordVoice:
         await _recordVoice(context);
+      case AppDefaultQuickActionType.editShortcuts:
+        await const HomeQuickActionsRoute().push(context);
     }
   }
 
@@ -133,6 +144,8 @@ class AppQuickActionsService with DebounchedCallback {
           template: template,
         ).push(context);
         await _reloadHomeIfStoryCreated(result);
+
+        break;
       case AppQuickActionTemplateType.gallery:
         final galleryTemplate = await _findGalleryTemplate(reference.id);
         if (galleryTemplate == null || !context.mounted) return;
@@ -143,6 +156,8 @@ class AppQuickActionsService with DebounchedCallback {
           galleryTemplate: galleryTemplate,
         ).push(context);
         await _reloadHomeIfStoryCreated(result);
+
+        break;
     }
   }
 
@@ -158,6 +173,7 @@ class AppQuickActionsService with DebounchedCallback {
 
   Future<void> _openNewStory(BuildContext context) async {
     final homeContext = HomeView.homeContext;
+
     if (homeContext?.mounted == true) {
       await homeContext!.read<HomeViewModel>().goToNewPage(homeContext);
       return;
@@ -221,6 +237,7 @@ class AppQuickActionsService with DebounchedCallback {
       initialYear: DateTime.now().year,
       initialAsset: asset,
     ).push(context);
+
     await _reloadHomeIfStoryCreated(result);
   }
 
@@ -234,29 +251,32 @@ class AppQuickActionsService with DebounchedCallback {
     final templatesByCategory = await GalleryTemplateService.loadTemplates();
     for (final templates in templatesByCategory.values) {
       for (final template in templates) {
-        if (template.id == templateId) return template;
+        if (template.id != templateId) continue;
+
+        final richPages = [
+          for (int i = 0; i < template.pages.length; i++)
+            StoryPageDbModel(
+              id: i,
+              title: template.pages[i].title,
+              body: MarkdownToQuillDeltaService.call(template.pages[i].content),
+            ),
+        ];
+        final draftContent = StoryContentDbModel.create().copyWith(richPages: richPages);
+        return template.copyWith(lazyDraftContent: draftContent);
       }
     }
 
     return null;
   }
 
-  Future<BuildContext?> _waitForNavigatorContext(GlobalKey<NavigatorState> navigatorKey) async {
+  Future<BuildContext?> _waitForNavigatorContext() async {
     for (int attempt = 0; attempt < 10; attempt++) {
-      final context = navigatorKey.currentContext;
+      final context = _navigatorKey?.currentContext;
       if (context?.mounted == true) return context;
 
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
 
     return null;
-  }
-
-  Future<void> _ignoreMissingPlugin(Future<void> Function() callback) async {
-    try {
-      await callback();
-    } on MissingPluginException {
-      return;
-    }
   }
 }

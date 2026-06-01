@@ -9,7 +9,7 @@ class _HomeQuickActionsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quick Actions'),
+        title: const Text('App Shortcuts'),
       ),
       body: ListView(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 120),
@@ -27,8 +27,8 @@ class _HomeQuickActionsContent extends StatelessWidget {
   }
 
   Future<void> _chooseTemplate(BuildContext context) async {
-    if (!viewModel.isProUser) {
-      const PaywallRoute(initialFocus: PaywallFeature.templates).push(context);
+    if (!context.read<InAppPurchaseProvider>().isProUser) {
+      const PaywallRoute(initialFocus: .customizations).push(context);
       return;
     }
 
@@ -39,8 +39,8 @@ class _HomeQuickActionsContent extends StatelessWidget {
   }
 
   Future<void> _chooseTag(BuildContext context) async {
-    if (!viewModel.isProUser) {
-      const PaywallRoute(initialFocus: PaywallFeature.customizations).push(context);
+    if (!context.read<InAppPurchaseProvider>().isProUser) {
+      const PaywallRoute(initialFocus: .customizations).push(context);
       return;
     }
 

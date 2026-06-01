@@ -15,8 +15,13 @@ class _Preview extends StatelessWidget {
     const menuRadius = kIsCupertino ? 14.0 : 18.0;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 16).add(
+        EdgeInsets.only(
+          left: MediaQuery.paddingOf(context).left,
+          right: MediaQuery.paddingOf(context).right,
+        ),
+      ),
       decoration: BoxDecoration(
         color: colorScheme.readOnly.surface1,
         borderRadius: BorderRadius.circular(16),
@@ -49,7 +54,7 @@ class _Preview extends StatelessWidget {
                     child: viewModel.visibleEnabledActions.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-                            child: Text('No quick actions yet'),
+                            child: Text('No app shortcuts yet'),
                           )
                         : ReorderableListView(
                             shrinkWrap: true,
@@ -60,14 +65,14 @@ class _Preview extends StatelessWidget {
                             children: [
                               for (int i = 0; i < viewModel.visibleEnabledActions.length; i++)
                                 ReorderableDelayedDragStartListener(
-                                  key: ValueKey(viewModel.visibleEnabledActions[i].id),
+                                  key: ValueKey(viewModel.visibleEnabledActions[i].key),
                                   index: i,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       _PreviewRow(
                                         action: viewModel.visibleEnabledActions[i],
-                                        activating: viewModel.isActivating(viewModel.visibleEnabledActions[i].id),
+                                        activating: viewModel.isActivating(viewModel.visibleEnabledActions[i].key),
                                         onRemove: () => viewModel.removeAction(viewModel.visibleEnabledActions[i]),
                                       ),
                                       if (i < viewModel.visibleEnabledActions.length - 1) const Divider(height: 1),

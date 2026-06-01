@@ -51,8 +51,8 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
   /// Can be changed explicitly via [setSelectedPurchaseSyncProvider].
   BackupServiceType? _selectedSyncProvider;
   BackupServiceType? get selectedSyncProvider => _selectedSyncProvider;
-  final _selectedProviderStorage = SelectedPurchaseSyncProviderStorage();
 
+  final _selectedProviderStorage = SelectedPurchaseSyncProviderStorage();
   final _purchaseGuard = AvoidDublicatedCallService<bool>();
 
   InAppPurchaseProvider() {
