@@ -13,11 +13,27 @@ class _TagsContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr("page.tags.title")),
         actions: [
-          IconButton(
-            tooltip: tr("page.new_tag.title"),
-            icon: const Icon(SpIcons.add),
-            onPressed: () => provider.addTag(context),
-          ),
+          if (viewModel.params.pickMode) ...[
+            if (viewModel.params.maxCount != null)
+              SpCapacityBadge(
+                current: viewModel.selectedTags.length,
+                max: viewModel.params.maxCount!,
+              ),
+            const SizedBox(width: 4),
+            TextButton(
+              onPressed: () {
+                final selected =
+                    provider.tags?.items.where((t) => viewModel.selectedTags.contains(t.id)).toList() ?? [];
+                Navigator.maybePop(context, selected);
+              },
+              child: Text(tr('button.done')),
+            ),
+          ] else
+            IconButton(
+              tooltip: tr("page.new_tag.title"),
+              icon: const Icon(SpIcons.add),
+              onPressed: () => provider.addTag(context),
+            ),
         ],
       ),
       body: RefreshIndicator.adaptive(
@@ -56,25 +72,27 @@ class _TagsContent extends StatelessWidget {
           return Slidable(
             closeOnScroll: true,
             key: ValueKey(tag.id),
-            endActionPane: ActionPane(
-              motion: const DrawerMotion(),
-              children: [
-                SlidableAction(
-                  onPressed: (context) => provider.deleteTag(context, tag),
-                  backgroundColor: ColorScheme.of(context).error,
-                  foregroundColor: ColorScheme.of(context).onError,
-                  icon: SpIcons.delete,
-                  label: tr("button.delete"),
-                ),
-                SlidableAction(
-                  onPressed: (context) => provider.editTag(context, tag),
-                  backgroundColor: ColorScheme.of(context).secondary,
-                  foregroundColor: ColorScheme.of(context).onSecondary,
-                  icon: SpIcons.edit,
-                  label: tr("button.edit"),
-                ),
-              ],
-            ),
+            endActionPane: viewModel.params.pickMode
+                ? null
+                : ActionPane(
+                    motion: const DrawerMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) => provider.deleteTag(context, tag),
+                        backgroundColor: ColorScheme.of(context).error,
+                        foregroundColor: ColorScheme.of(context).onError,
+                        icon: SpIcons.delete,
+                        label: tr("button.delete"),
+                      ),
+                      SlidableAction(
+                        onPressed: (context) => provider.editTag(context, tag),
+                        backgroundColor: ColorScheme.of(context).secondary,
+                        foregroundColor: ColorScheme.of(context).onSecondary,
+                        icon: SpIcons.edit,
+                        label: tr("button.edit"),
+                      ),
+                    ],
+                  ),
             child: Material(
               color: Colors.transparent,
               child: buildTile(tag, storyCount, provider, context),
@@ -106,20 +124,35 @@ class _TagsContent extends StatelessWidget {
           ].contains(Theme.of(context).platform)
           ? null
           : const Icon(SpIcons.dragIndicator),
-      onTap: () => provider.viewTag(
-        context: context,
-        tag: tag,
-        storyViewOnly: viewModel.params.storyViewOnly,
-      ),
+      onTap: viewModel.params.pickMode
+          ? () async {
+              final isSelected = viewModel.selectedTags.contains(tag.id);
+              final maxCount = viewModel.params.maxCount;
+              if (!isSelected && maxCount != null && viewModel.selectedTags.length >= maxCount) return;
+              await viewModel.onToggle(tag, !isSelected);
+            }
+          : () => provider.viewTag(
+              context: context,
+              tag: tag,
+              storyViewOnly: viewModel.params.storyViewOnly,
+            ),
       leading: !viewModel.checkable
           ? null
           : Checkbox.adaptive(
               tristate: false,
               value: viewModel.selectedTags.contains(tag.id),
-              onChanged: (value) async {
-                await viewModel.onToggle(tag, value!);
-                if (context.mounted) context.read<TagsProvider>().reload();
-              },
+              onChanged:
+                  viewModel.params.pickMode &&
+                      viewModel.params.maxCount != null &&
+                      viewModel.selectedTags.length >= viewModel.params.maxCount! &&
+                      !viewModel.selectedTags.contains(tag.id)
+                  ? null
+                  : (value) async {
+                      await viewModel.onToggle(tag, value!);
+                      if (context.mounted && !viewModel.params.pickMode) {
+                        context.read<TagsProvider>().reload();
+                      }
+                    },
             ),
     );
   }

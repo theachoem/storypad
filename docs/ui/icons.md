@@ -57,6 +57,14 @@ static final IconData myMdiIcon = MdiIcons.myIcon;
 Icon(SpIcons.myNewIcon)
 ```
 
+## Android Home Quick Action Icons
+
+Home quick action icons are native platform resources (not `SpIcons` directly), and live in Android drawables and iOS asset catalogs.
+
+For the native quick action icon workflow (including Google Fonts Icons **Copy path** for Android), see:
+
+- [Home Quick Action Icons Guide](./home-quick-action-icons.md)
+
 ## Icon Reference
 
 Common `SpIcons` used in app:

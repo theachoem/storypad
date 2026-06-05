@@ -39,13 +39,17 @@ class _TemplatesTabState extends State<TemplatesTab> {
     load();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.appBarActionsLoaderCallback?.call([
-        IconButton(
-          tooltip: tr('general.path_type.archives'),
-          icon: const Icon(SpIcons.archive),
-          onPressed: () => goToArchivesPage(context),
-        ),
-      ]);
+      final actions = params.pickMode
+          ? <IconButton>[]
+          : [
+              IconButton(
+                tooltip: tr('general.path_type.archives'),
+                icon: const Icon(SpIcons.archive),
+                onPressed: () => goToArchivesPage(context),
+              ),
+            ];
+
+      widget.appBarActionsLoaderCallback?.call(actions);
     });
   }
 
@@ -71,6 +75,11 @@ class _TemplatesTabState extends State<TemplatesTab> {
   }
 
   void goToShowPage(BuildContext context, TemplateDbModel template) async {
+    if (params.pickMode) {
+      Navigator.maybePop(context, TemplatePickResult.custom(template));
+      return;
+    }
+
     final result = await ShowTemplateRoute(
       template: template,
       initialYear: params.initialYear,
@@ -108,7 +117,7 @@ class _TemplatesTabState extends State<TemplatesTab> {
     return Scaffold(
       body: buildBody(context),
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
-      floatingActionButton: params.viewingArchives ? null : buildFAB(context),
+      floatingActionButton: params.viewingArchives || params.pickMode ? null : buildFAB(context),
     );
   }
 
@@ -144,29 +153,45 @@ class _TemplatesTabState extends State<TemplatesTab> {
       return const _EmptyBody();
     }
 
+    final padding = EdgeInsets.only(
+      top: 8.0,
+      left: MediaQuery.of(context).padding.left + 10.0,
+      right: MediaQuery.of(context).padding.right + 10.0,
+      bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 24.0,
+    );
+
+    if (params.pickMode) {
+      return ListView.builder(
+        itemCount: templates!.items.length,
+        padding: padding,
+        itemBuilder: (context, index) {
+          return _buildTemplateTile(context, templates!.items[index]);
+        },
+      );
+    }
+
     return ReorderableListView.builder(
       itemCount: templates!.items.length,
-      padding: EdgeInsets.only(
-        top: 8.0,
-        left: MediaQuery.of(context).padding.left + 10.0,
-        right: MediaQuery.of(context).padding.right + 10.0,
-        bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 24.0,
-      ),
+      padding: padding,
       onReorder: (int oldIndex, int newIndex) => reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
-        return Container(
-          key: ValueKey(templates!.items[index].id),
-          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6.0),
-          decoration: BoxDecoration(
-            color: ColorScheme.of(context).readOnly.surface1,
-            borderRadius: BorderRadiusGeometry.circular(8.0),
-          ),
-          child: _TemplateTile(
-            onTap: () => goToShowPage(context, templates!.items[index]),
-            template: templates!.items[index],
-          ),
-        );
+        return _buildTemplateTile(context, templates!.items[index]);
       },
+    );
+  }
+
+  Widget _buildTemplateTile(BuildContext context, TemplateDbModel template) {
+    return Container(
+      key: ValueKey(template.id),
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6.0),
+      decoration: BoxDecoration(
+        color: ColorScheme.of(context).readOnly.surface1,
+        borderRadius: BorderRadiusGeometry.circular(8.0),
+      ),
+      child: _TemplateTile(
+        onTap: () => goToShowPage(context, template),
+        template: template,
+      ),
     );
   }
 }

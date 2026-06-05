@@ -36,10 +36,14 @@ class _TemplatesContent extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        viewModel.params.viewingArchives ? tr('general.path_type.archives') : tr("paywall_features.templates.title"),
+        viewModel.params.pickMode
+            ? tr("button.choose_template")
+            : viewModel.params.viewingArchives
+            ? tr('general.path_type.archives')
+            : tr("paywall_features.templates.title"),
       ),
       actions: [
-        if (!viewModel.params.viewingArchives) buildActions(),
+        if (!viewModel.params.viewingArchives && !viewModel.params.pickMode) buildActions(),
       ],
       bottom: TabBar(
         onTap: (index) {

@@ -1593,6 +1593,8 @@ PODS:
     - PurchasesHybridCommon (= 17.53.0)
   - PurchasesHybridCommon (17.53.0):
     - RevenueCat (= 5.66.0)
+  - quick_actions_ios (0.0.1):
+    - Flutter
   - quill_native_bridge_ios (0.0.1):
     - Flutter
   - record_ios (1.2.0):
@@ -1643,6 +1645,7 @@ DEPENDENCIES:
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
+  - quick_actions_ios (from `.symlinks/plugins/quick_actions_ios/ios`)
   - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - record_ios (from `.symlinks/plugins/record_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -1750,6 +1753,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   purchases_flutter:
     :path: ".symlinks/plugins/purchases_flutter/ios"
+  quick_actions_ios:
+    :path: ".symlinks/plugins/quick_actions_ios/ios"
   quill_native_bridge_ios:
     :path: ".symlinks/plugins/quill_native_bridge_ios/ios"
   record_ios:
@@ -1832,6 +1837,7 @@ SPEC CHECKSUMS:
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   purchases_flutter: eaa65afecf3a856e8729efceab7a01b8685e2eab
   PurchasesHybridCommon: 53d966ac5c39df13c3c759289bb3ef3e2f9f1622
+  quick_actions_ios: 500fcc11711d9f646739093395c4ae8eec25f779
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_ios: 412daca2350b228e698fffcd08f1f94ceb1e3844
   RevenueCat: a3cf721ad8b1b56a930d748a40342aba16c09bbb

@@ -38,34 +38,40 @@ class _SettingsContent extends StatelessWidget {
           const SizedBox(height: 8),
           ...[
             SpSectionTitle(title: tr("general.appearance")),
-            ThemeModeTile.globalTheme(weekday: 2),
+            ThemeModeTile.globalTheme(weekday: 1),
             ColorSeedTile(),
             if (kStoryPad) const AppIconTile(),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.text")),
-            FontSizeTile.globalTheme(weekday: 3),
-            FontFamilyTile.globalTheme(weekday: 4),
-            FontWeightTile.globalTheme(weekday: 5),
+            FontSizeTile.globalTheme(weekday: 2),
+            FontFamilyTile.globalTheme(weekday: 3),
+            FontWeightTile.globalTheme(weekday: 4),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.general")),
-            const LanguageTile(weekday: 1),
-            buildAppLockTile(context, weekday: 2),
-            TimeFormatTile.globalTheme(weekday: 3),
-            FirstDayOfWeekTile.globalTheme(weekday: 4),
+            const LanguageTile(weekday: 5),
+            buildAppLockTile(context, weekday: 6),
+            if (kSupportQuickActions)
+              ListTile(
+                leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.home),
+                title: Text(tr('page.home_quick_actions.title')),
+                onTap: () => const HomeQuickActionsRoute().push(context),
+              ),
+            TimeFormatTile.globalTheme(weekday: 1),
+            FirstDayOfWeekTile.globalTheme(weekday: 2),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.stories")),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(weekday: 6),
+            StoryTilePreferencesTile(weekday: 3),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(weekday: 7),
+            DefaultStoryPreferencesTile(weekday: 4),
           ],
           ...[
             const Divider(),
@@ -76,11 +82,11 @@ class _SettingsContent extends StatelessWidget {
               onTap: () => const BackupServicesRoute().push(context),
             ),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.storage),
+              leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.storage),
               title: Text(tr('page.storage_management.title')),
               onTap: () => const StorageManagementRoute().push(context),
             ),
-            AssetCompressionTile.globalTheme(weekday: 1),
+            AssetCompressionTile.globalTheme(weekday: 7),
           ],
           const SizedBox(height: 120),
         ],
