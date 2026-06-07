@@ -19,13 +19,20 @@ class _CommunityContent extends StatelessWidget {
         ),
         children: [
           const _CommunityCard(),
-          if (RemoteConfigService.faqUrl.get().trim().isNotEmpty == true)
-            ListTile(
-              leading: const Icon(SpIcons.question),
-              title: Text(tr("list_tile.faq.title")),
-              trailing: const Icon(SpIcons.keyboardRight),
-              onTap: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.faqUrl.get()),
+          ListTile(
+            leading: Icon(
+              SpIcons.favoriteFilled,
+              color: AppTheme.isDarkMode(context) ? Colors.red[300] : Colors.red[700],
             ),
+            title: Text(tr('page.support_us.title')),
+            trailing: const Icon(SpIcons.keyboardRight),
+            onTap: () async {
+              await SupportUsRoute().push(context);
+              if (context.mounted) {
+                MessengerService.of(context).showSnackBar(tr('page.support_us.thank_you_message'));
+              }
+            },
+          ),
           if (RemoteConfigService.policyPrivacyUrl.get().trim().isNotEmpty == true)
             ListTile(
               leading: const Icon(SpIcons.policy),

@@ -6,11 +6,12 @@ part './remote_config_object.dart';
 
 class RemoteConfigService {
   final List<_RemoteConfigObject> _registeredKeys = [
+    alternativeToUrl,
     bugReportUrl,
-    faqUrl,
     featureFlags,
     localizationSupportUrl,
     policyPrivacyUrl,
+    productHuntUrl,
     redditUrl,
     sourceCodeUrl,
     relaxSoundFreeSetVariant,
@@ -35,16 +36,16 @@ class RemoteConfigService {
     _listeners[key] = callback;
   }
 
+  static const alternativeToUrl = _RemoteConfigObject<String>(
+    'ALTERNATIVE_TO_URL',
+    _RemoteConfigValueType.string,
+    'https://alternativeto.net/software/storypad--write-your-story/about/',
+  );
+
   static const bugReportUrl = _RemoteConfigObject<String>(
     'BUG_REPORT_URL',
     _RemoteConfigValueType.string,
     'https://storypad.me#footer',
-  );
-
-  static const faqUrl = _RemoteConfigObject<String>(
-    'FAQ_URL',
-    _RemoteConfigValueType.string,
-    'https://storypad.me/#faq',
   );
 
   static const featureFlags = _RemoteConfigObject<Map>(
@@ -63,6 +64,12 @@ class RemoteConfigService {
     'POLICY_PRIVACY_URL',
     _RemoteConfigValueType.string,
     'https://storypad.me/privacy-policy',
+  );
+
+  static const productHuntUrl = _RemoteConfigObject<String>(
+    'PRODUCT_HUNT_URL',
+    _RemoteConfigValueType.string,
+    'https://www.producthunt.com/products/storypad-2?utm_source=other&utm_medium=social',
   );
 
   static const redditUrl = _RemoteConfigObject<String>(
