@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
+import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_multi_edit_bottom_nav_bar.dart';
 import 'package:storypad/widgets/sp_scrollable_choice_chips.dart';
@@ -15,10 +16,14 @@ import 'search_view_model.dart';
 part 'search_content.dart';
 
 class SearchRoute extends BaseRoute {
+  final SearchFilterObject? initialFilter;
+
   @override
   String get routeName => 'search';
 
-  SearchRoute();
+  SearchRoute({
+    this.initialFilter,
+  });
 
   @override
   Widget buildPage(BuildContext context) => SearchView(params: this);

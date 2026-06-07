@@ -34,13 +34,15 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
   }
 
   SearchFilterObject? searchFilter;
-  late final SearchFilterObject initialFilter = SearchFilterObject(
-    years: {},
-    types: {PathType.docs},
-    tagId: null,
-    assetId: null,
-    limit: 100,
-  );
+  late final SearchFilterObject initialFilter =
+      params.initialFilter ??
+      SearchFilterObject(
+        years: {},
+        types: {PathType.docs},
+        tagId: null,
+        assetId: null,
+        limit: 100,
+      );
 
   List<TagDbModel>? _tags;
   List<TagDbModel>? get tags => _tags;

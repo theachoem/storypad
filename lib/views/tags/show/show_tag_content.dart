@@ -29,6 +29,11 @@ class _ShowTagContent extends StatelessWidget {
         title: buildTitle(context),
         actions: [
           IconButton(
+            tooltip: tr("page.search.title"),
+            icon: const Icon(SpIcons.search),
+            onPressed: () => viewModel.goToSearchPage(context),
+          ),
+          IconButton(
             tooltip: tr("page.search_filter.title"),
             icon: Icon(SpIcons.tune),
             onPressed: () => viewModel.goToFilterPage(context),

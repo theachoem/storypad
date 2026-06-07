@@ -12,6 +12,7 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/views/search/filter/search_filter_view.dart';
+import 'package:storypad/views/search/search_view.dart';
 import 'show_tag_view.dart';
 
 class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -30,6 +31,8 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   int editedKey = 0;
   List<int>? years;
 
+  late final initialTune = SearchFilterObject(years: {}, types: {}, tagIds: {tag.id}, assetId: null);
+
   Future<void> load() async {
     years = await StoryDbModel.db
         .getStoryCountsByYear(filters: filter.toDatabaseFilter())
@@ -46,7 +49,7 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   late SearchFilterObject filter = SearchFilterObject(
     years: {},
     types: {PathType.docs},
-    tagId: tag.id,
+    tagIds: {tag.id},
     assetId: null,
   );
 
@@ -77,12 +80,20 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
     });
   }
 
+  Future<void> goToSearchPage(BuildContext context) async {
+    await SearchRoute(
+      initialFilter: initialTune,
+    ).push(context);
+    refreshList();
+  }
+
   Future<void> goToFilterPage(BuildContext context) async {
     final result = await SearchFilterRoute(
       initialTune: filter,
       multiSelectYear: true,
+      // Lock the scope to this non-emoji tag; emoji categories stay filterable.
       filterTagModifiable: false,
-      resetTune: SearchFilterObject(years: {}, types: {}, tagId: tag.id, assetId: null),
+      resetTune: initialTune,
     ).push(context);
 
     if (result is SearchFilterObject) {
