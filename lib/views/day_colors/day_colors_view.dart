@@ -6,6 +6,8 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';

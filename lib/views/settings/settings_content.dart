@@ -40,11 +40,7 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: tr("general.appearance")),
             ThemeModeTile.globalTheme(weekday: 1),
             ColorSeedTile(),
-            ListTile(
-              leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.theme),
-              title: Text(tr('list_tile.day_colors.title')),
-              onTap: () => const DayColorsRoute().push(context),
-            ),
+            buildDayColorTile(context),
             if (kStoryPad) const AppIconTile(),
           ],
           ...[
@@ -91,6 +87,21 @@ class _SettingsContent extends StatelessWidget {
           const SizedBox(height: 120),
         ],
       ),
+    );
+  }
+
+  Widget buildDayColorTile(BuildContext context) {
+    return Consumer<InAppPurchaseProvider>(
+      builder: (context, inAppPurchaseProvider, child) {
+        final locked = !inAppPurchaseProvider.isProUser;
+
+        return ListTile(
+          trailing: locked ? const Icon(SpIcons.lock) : null,
+          leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.theme),
+          title: Text(tr('list_tile.day_colors.title')),
+          onTap: () => const DayColorsRoute().push(context),
+        );
+      },
     );
   }
 

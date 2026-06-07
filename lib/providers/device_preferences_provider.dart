@@ -88,16 +88,14 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     final updated = Map<int, String>.from(_preferences.colorByDay ?? {});
     updated.remove(weekday);
 
-    // copy_with_extension can't reset a field to null, so an empty map is kept
-    // and treated as "no customizations" by ColorFromDayService.
-    _preferences = _preferences.copyWith(colorByDay: updated);
+    // Reset to null once there are no customizations left, so stored preferences stay clean.
+    _preferences = _preferences.copyWith(colorByDay: updated.isEmpty ? null : updated);
     storage.writeObject(_preferences);
     notifyListeners();
   }
 
   void resetAllDayColors() {
-    // Empty map is treated as "no customizations" by ColorFromDayService (every day falls back to default).
-    _preferences = _preferences.copyWith(colorByDay: {});
+    _preferences = _preferences.copyWith(colorByDay: null);
     storage.writeObject(_preferences);
     notifyListeners();
   }

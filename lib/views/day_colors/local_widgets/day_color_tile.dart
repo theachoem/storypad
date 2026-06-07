@@ -9,6 +9,9 @@ class _DayColorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final inAppPurchaseProvider = Provider.of<InAppPurchaseProvider>(context);
+    final locked = !inAppPurchaseProvider.isProUser;
+
     final provider = Provider.of<DevicePreferencesProvider>(context);
     final String? currentName = provider.preferences.colorByDay?[weekday];
     final bool customized = currentName != null;
@@ -26,6 +29,15 @@ class _DayColorTile extends StatelessWidget {
           level: SpColorPickerLevel.one,
           onPickedColor: (color) async {
             await close();
+            if (!context.mounted) return;
+
+            if (locked) {
+              await const PaywallRoute(
+                initialFocus: .customizations,
+              ).push(context);
+              return;
+            }
+
             final name = _nameFromColor(color);
             if (name == null) return;
 
@@ -43,6 +55,7 @@ class _DayColorTile extends StatelessWidget {
           contentPadding: const EdgeInsets.only(left: 16, right: 8),
           title: Text(_weekdayLabel(context)),
           subtitle: Text(customized ? tr("general.custom") : tr("general.default")),
+
           leading: Container(
             width: 40,
             height: 40,
@@ -61,11 +74,15 @@ class _DayColorTile extends StatelessWidget {
               ),
             ),
           ),
-          trailing: IconButton(
-            tooltip: tr("button.reset"),
-            icon: const Icon(SpIcons.refresh),
-            onPressed: customized ? () => provider.resetColorForDay(weekday) : null,
-          ),
+          trailing: locked
+              ? const Icon(SpIcons.lock)
+              : customized
+              ? IconButton(
+                  tooltip: tr("button.reset"),
+                  icon: const Icon(SpIcons.refresh),
+                  onPressed: () => provider.resetColorForDay(weekday),
+                )
+              : null,
           onTap: () => open(),
         );
       },

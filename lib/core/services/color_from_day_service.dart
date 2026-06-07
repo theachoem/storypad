@@ -10,25 +10,34 @@ class ColorFromDayService {
     required this.context,
   });
 
+  // Resolves a single weekday directly to avoid building the full map on every lookup (hot path: tiles/badges/markers).
   Color? get(int weekday) {
-    return colors()[weekday];
+    final String? name = _colorNameFor(weekday);
+    if (name == null) return null;
+    return _resolve(name, _isDarkMode);
   }
 
   Color? getForeground() {
-    bool darkMode = Theme.of(context).brightness == Brightness.dark;
-    return darkMode ? Colors.black : Colors.white;
+    return _isDarkMode ? Colors.black : Colors.white;
   }
 
   Map<int, Color> colors() {
-    bool darkMode = Theme.of(context).brightness == Brightness.dark;
-
-    // Read user customizations from the in-memory preferences (no extra cache needed).
-    final Map<int, String>? names = context.read<DevicePreferencesProvider>().preferences.colorByDay;
+    final bool darkMode = _isDarkMode;
+    final Map<int, String>? names = _names;
 
     return {
       for (int weekday = DateTime.monday; weekday <= DateTime.sunday; weekday++)
         weekday: _resolve(names?[weekday] ?? kDefaultColorNamesByDay[weekday]!, darkMode),
     };
+  }
+
+  bool get _isDarkMode => Theme.of(context).brightness == Brightness.dark;
+
+  // User customizations from the in-memory preferences (no extra cache needed).
+  Map<int, String>? get _names => context.read<DevicePreferencesProvider>().preferences.colorByDay;
+
+  String? _colorNameFor(int weekday) {
+    return _names?[weekday] ?? kDefaultColorNamesByDay[weekday];
   }
 
   Color _resolve(String name, bool darkMode) {
