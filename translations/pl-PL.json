@@ -99,8 +99,6 @@
   "button.view": "Pogląd",
   "button.view_previous": "Zobacz poprzednie",
   "dialog.are_you_sure_to_archive_these_stories.title": "Czy na pewno chcesz zarchiwizować te historie?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Wszystkie historie związane z tą datą zostaną usunięte.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Czy na pewno chcesz usunąć tę datę okresu?",
   "dialog.are_you_sure_to_delete_tag.message": "Tej czynności nie można cofnąć, ale Twoje notatki i historie nie zostaną usunięte.",
   "dialog.are_you_sure_to_delete_tag.title": "Czy na pewno chcesz usunąć ten tag?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Czy na pewno chcesz usunąć te historie?",

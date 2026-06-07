@@ -99,8 +99,6 @@
   "button.view": "表示",
   "button.view_previous": "前を表示",
   "dialog.are_you_sure_to_archive_these_stories.title": "これらのストーリーをアーカイブしてもよろしいですか？",
-  "dialog.are_you_sure_to_delete_period_date.message": "この期間の日付に関連付けられたすべてのストーリーが削除されます。",
-  "dialog.are_you_sure_to_delete_period_date.title": "この期間の日付を削除してもよろしいですか?",
   "dialog.are_you_sure_to_delete_tag.message": "この操作を元に戻すことはできませんが、メモやストーリーは削除されません。",
   "dialog.are_you_sure_to_delete_tag.title": "このタグを削除してもよろしいですか？",
   "dialog.are_you_sure_to_delete_these_stories.title": "これらのストーリーを削除してもよろしいですか？",

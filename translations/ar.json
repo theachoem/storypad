@@ -99,8 +99,6 @@
   "button.view": "منظر",
   "button.view_previous": "عرض السابق",
   "dialog.are_you_sure_to_archive_these_stories.title": "هل أنت متأكد من أرشفة هذه القصص؟",
-  "dialog.are_you_sure_to_delete_period_date.message": "سيتم حذف جميع القصص المرتبطة بهذا التاريخ.",
-  "dialog.are_you_sure_to_delete_period_date.title": "هل أنت متأكد أنك تريد حذف تاريخ هذه الفترة؟",
   "dialog.are_you_sure_to_delete_tag.message": "لا يمكن التراجع عن هذا الإجراء، ولكن لن يتم حذف ملاحظاتك وقصصك.",
   "dialog.are_you_sure_to_delete_tag.title": "هل أنت متأكد أنك تريد حذف هذه العلامة؟",
   "dialog.are_you_sure_to_delete_these_stories.title": "هل أنت متأكد من حذف هذه القصص؟",

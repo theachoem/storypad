@@ -99,8 +99,6 @@
   "button.view": "ดู",
   "button.view_previous": "ดูครั้งก่อนหน้า",
   "dialog.are_you_sure_to_archive_these_stories.title": "คุณแน่ใจหรือว่าจะเก็บเรื่องราวเหล่านี้ไว้ในคลังข้อมูล?",
-  "dialog.are_you_sure_to_delete_period_date.message": "เรื่องราวทั้งหมดที่เกี่ยวข้องกับช่วงเวลาดังกล่าวจะถูกลบออก",
-  "dialog.are_you_sure_to_delete_period_date.title": "คุณแน่ใจหรือไม่ว่าต้องการลบช่วงวันที่นี้?",
   "dialog.are_you_sure_to_delete_tag.message": "การกระทำนี้ไม่สามารถย้อนกลับได้ แต่บันทึกและเรื่องราวของคุณจะไม่ถูกลบ",
   "dialog.are_you_sure_to_delete_tag.title": "คุณแน่ใจหรือไม่ว่าต้องการลบแท็กนี้?",
   "dialog.are_you_sure_to_delete_these_stories.title": "คุณแน่ใจแล้วหรือว่าจะลบเรื่องราวเหล่านี้?",

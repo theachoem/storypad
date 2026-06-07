@@ -79,8 +79,6 @@ class StoryObjectBox extends BaseObjectBox {
   @Index()
   String? galleryTemplateId;
 
-  @Index()
-  int? eventId;
   int? wordCount;
   int? characterCount;
 
@@ -123,7 +121,6 @@ class StoryObjectBox extends BaseObjectBox {
     @Deprecated('deprecated') required this.changes,
     required this.tags,
     required this.assets,
-    required this.eventId,
     required this.wordCount,
     required this.characterCount,
     required this.searchMetadata,

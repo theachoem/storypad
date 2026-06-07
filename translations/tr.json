@@ -99,8 +99,6 @@
   "button.view": "Görüntüle",
   "button.view_previous": "Öncekini görüntüle",
   "dialog.are_you_sure_to_archive_these_stories.title": "Bu hikayeleri arşivlemek istediğinizden emin misiniz?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Bu tarih aralığıyla ilgili tüm hikayeler silinecektir.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Bu dönem tarihini silmek istediğinizden emin misiniz?",
   "dialog.are_you_sure_to_delete_tag.message": "Bu işlem geri alınamaz, ancak notlarınız ve hikayeleriniz silinmeyecektir.",
   "dialog.are_you_sure_to_delete_tag.title": "Bu etiketi silmek istediğinizden emin misiniz?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Bu hikayeleri silmek istediğinizden emin misiniz?",

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -78,7 +79,7 @@ void main() {
         starred: true,
         feeling: "excited",
         tags: [20, 21],
-        eventId: 42,
+        event: EventDbModel.period(date: DateTime(2025, 1, 1)),
       );
 
       // Mock tag getter
@@ -89,11 +90,6 @@ void main() {
         }[tagId];
       }
 
-      // Mock event getter
-      Future<String?> eventTypeGetter(int eventId) async {
-        return eventId == 42 ? 'period' : null;
-      }
-
       final outputFile = File('${tempDir.path}/export.txt');
 
       // Act
@@ -101,7 +97,6 @@ void main() {
         stories: [story],
         outputFile: outputFile,
         tagNameGetter: tagNameGetter,
-        eventTypeGetter: eventTypeGetter,
       );
 
       // Assert
@@ -356,7 +351,6 @@ void main() {
         movedToBinAt: null,
         galleryTemplateId: null,
         templateId: null,
-        eventId: null,
         lastSavedDeviceId: null,
         permanentlyDeletedAt: null,
       );
@@ -488,7 +482,7 @@ StoryDbModel _createStory({
   bool pinned = false,
   String? feeling,
   List<int>? tags,
-  int? eventId,
+  EventDbModel? event,
   String? galleryTemplateId,
   int? templateId,
 }) {
@@ -529,7 +523,7 @@ StoryDbModel _createStory({
     movedToBinAt: null,
     galleryTemplateId: galleryTemplateId,
     templateId: templateId,
-    eventId: eventId,
+    event: event,
     lastSavedDeviceId: "test-device",
     permanentlyDeletedAt: null,
   );
@@ -575,7 +569,6 @@ StoryDbModel _createStoryWithRichPages({
     movedToBinAt: null,
     galleryTemplateId: null,
     templateId: null,
-    eventId: null,
     lastSavedDeviceId: "test-device",
     permanentlyDeletedAt: null,
   );

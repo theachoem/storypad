@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -296,7 +297,7 @@ void main() {
       expect(content, contains('- "workout"'));
     });
 
-    test('should include event type when eventTypeGetter is provided', () async {
+    test('should include event type for stories on a period date', () async {
       // Arrange
       final story = _createStory(
         id: 1,
@@ -305,19 +306,13 @@ void main() {
         day: 1,
         title: "Story with Event",
         content: "Content",
-        eventId: 42,
+        event: EventDbModel.period(date: DateTime(2025, 1, 1)),
       );
-
-      // Mock event getter
-      Future<String?> eventTypeGetter(int eventId) async {
-        return eventId == 42 ? 'period' : null;
-      }
 
       // Act
       await ExportStoriesToMarkdownService.call(
         stories: [story],
         outputDir: tempDir,
-        eventTypeGetter: eventTypeGetter,
       );
 
       // Assert
@@ -562,7 +557,6 @@ void main() {
         movedToBinAt: null,
         galleryTemplateId: null,
         templateId: null,
-        eventId: null,
         lastSavedDeviceId: null,
         permanentlyDeletedAt: null,
       );
@@ -597,7 +591,7 @@ StoryDbModel _createStory({
   bool pinned = false,
   String? feeling,
   List<int>? tags,
-  int? eventId,
+  EventDbModel? event,
   String? galleryTemplateId,
   int? templateId,
 }) {
@@ -638,7 +632,7 @@ StoryDbModel _createStory({
     movedToBinAt: null,
     galleryTemplateId: galleryTemplateId,
     templateId: templateId,
-    eventId: eventId,
+    event: event,
     lastSavedDeviceId: "test-device",
     permanentlyDeletedAt: null,
   );
@@ -684,7 +678,6 @@ StoryDbModel _createStoryWithRichPages({
     movedToBinAt: null,
     galleryTemplateId: null,
     templateId: null,
-    eventId: null,
     lastSavedDeviceId: "test-device",
     permanentlyDeletedAt: null,
   );

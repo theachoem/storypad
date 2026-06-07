@@ -60,9 +60,8 @@ class StoryDbModel extends BaseDbModel {
   final DateTime updatedAt;
   final String? galleryTemplateId;
   final int? templateId;
-  final int? eventId;
 
-  // We include this at DB level.
+  // We include this at DB level. Matched by the story's calendar date (period marker).
   final EventDbModel? event;
 
   final int? wordCount;
@@ -118,7 +117,6 @@ class StoryDbModel extends BaseDbModel {
     required this.draftContent,
     required this.galleryTemplateId,
     required this.templateId,
-    this.eventId,
     this.event,
     this.wordCount,
     this.characterCount,
@@ -287,7 +285,6 @@ class StoryDbModel extends BaseDbModel {
     int? initialMonth,
     int? initialDay,
     List<int>? initialTagIds,
-    int? initialEventId,
     GalleryTemplateObject? galleryTemplate,
     TemplateDbModel? template,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
@@ -319,7 +316,6 @@ class StoryDbModel extends BaseDbModel {
       updatedAt: now,
       createdAt: now,
       tags: tags.isNotEmpty == true ? tags.map((e) => e.toString()).toList() : null,
-      eventId: initialEventId,
       assets: [],
       galleryTemplateId: galleryTemplate?.id,
       templateId: template?.id,
