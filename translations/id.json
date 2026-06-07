@@ -99,8 +99,6 @@
   "button.view": "Melihat",
   "button.view_previous": "Lihat Sebelumnya",
   "dialog.are_you_sure_to_archive_these_stories.title": "Apakah Anda yakin untuk mengarsipkan cerita ini?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Semua cerita yang terkait dengan tanggal periode ini akan dihapus.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Apakah Anda yakin ingin menghapus tanggal periode ini?",
   "dialog.are_you_sure_to_delete_tag.message": "Tindakan ini tidak dapat dibatalkan, namun catatan dan cerita Anda tidak akan dihapus.",
   "dialog.are_you_sure_to_delete_tag.title": "Apakah Anda yakin ingin menghapus tag ini?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Apakah Anda yakin akan menghapus cerita ini?",

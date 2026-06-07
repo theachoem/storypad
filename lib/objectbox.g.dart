@@ -170,13 +170,6 @@ final _entities = <obx_int.ModelEntity>[
         indexId: const obx_int.IdUid(12, 3113154224104962350),
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(31, 3376970649560229075),
-        name: 'eventId',
-        type: 6,
-        flags: 8,
-        indexId: const obx_int.IdUid(14, 9104753461571652364),
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(32, 5877908410429539901),
         name: 'galleryTemplateId',
         type: 9,
@@ -771,7 +764,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [114680069077451626, 419456903475856603],
-    retiredIndexUids: const [4439843768253498140],
+    retiredIndexUids: const [4439843768253498140, 9104753461571652364],
     retiredPropertyUids: const [
       7351525936100002271,
       3655265263412929559,
@@ -796,6 +789,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       2340920246315442710,
       1623317357095888655,
       6417690656797806340,
+      3376970649560229075,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -876,7 +870,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(27, latestContentOffset);
         fbb.addOffset(28, draftContentOffset);
         fbb.addInt64(29, object.templateId);
-        fbb.addInt64(30, object.eventId);
         fbb.addOffset(31, galleryTemplateIdOffset);
         fbb.addOffset(32, searchMetadataOffset);
         fbb.addBool(33, object.pinned);
@@ -995,11 +988,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fb.Int64Reader(),
           lazy: false,
         ).vTableGetNullable(buffer, rootOffset, 50);
-        final eventIdParam = const fb.Int64Reader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          64,
-        );
         final wordCountParam = const fb.Int64Reader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -1061,7 +1049,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           changes: changesParam,
           tags: tagsParam,
           assets: assetsParam,
-          eventId: eventIdParam,
           wordCount: wordCountParam,
           characterCount: characterCountParam,
           searchMetadata: searchMetadataParam,
@@ -1832,54 +1819,49 @@ class StoryObjectBox_ {
     _entities[0].properties[22],
   );
 
-  /// See [StoryObjectBox.eventId].
-  static final eventId = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[23],
-  );
-
   /// See [StoryObjectBox.galleryTemplateId].
   static final galleryTemplateId = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[24],
+    _entities[0].properties[23],
   );
 
   /// See [StoryObjectBox.searchMetadata].
   static final searchMetadata = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[25],
+    _entities[0].properties[24],
   );
 
   /// See [StoryObjectBox.pinned].
   static final pinned = obx.QueryBooleanProperty<StoryObjectBox>(
-    _entities[0].properties[26],
+    _entities[0].properties[25],
   );
 
   /// See [StoryObjectBox.wordCount].
   static final wordCount = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[27],
+    _entities[0].properties[26],
   );
 
   /// See [StoryObjectBox.characterCount].
   static final characterCount = obx.QueryIntegerProperty<StoryObjectBox>(
-    _entities[0].properties[28],
+    _entities[0].properties[27],
   );
 
   /// See [StoryObjectBox.latitude].
   static final latitude = obx.QueryDoubleProperty<StoryObjectBox>(
-    _entities[0].properties[29],
+    _entities[0].properties[28],
   );
 
   /// See [StoryObjectBox.longitude].
   static final longitude = obx.QueryDoubleProperty<StoryObjectBox>(
-    _entities[0].properties[30],
+    _entities[0].properties[29],
   );
 
   /// See [StoryObjectBox.place].
   static final place = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[31],
+    _entities[0].properties[30],
   );
 
   /// See [StoryObjectBox.placeName].
   static final placeName = obx.QueryStringProperty<StoryObjectBox>(
-    _entities[0].properties[32],
+    _entities[0].properties[31],
   );
 }
 

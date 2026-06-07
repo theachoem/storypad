@@ -53,8 +53,6 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel templateId(int? templateId);
 
-  StoryDbModel eventId(int? eventId);
-
   StoryDbModel event(EventDbModel? event);
 
   StoryDbModel wordCount(int? wordCount);
@@ -97,7 +95,6 @@ abstract class _$StoryDbModelCWProxy {
     StoryContentDbModel? draftContent,
     String? galleryTemplateId,
     int? templateId,
-    int? eventId,
     EventDbModel? event,
     int? wordCount,
     int? characterCount,
@@ -188,9 +185,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel templateId(int? templateId) => call(templateId: templateId);
 
   @override
-  StoryDbModel eventId(int? eventId) => call(eventId: eventId);
-
-  @override
   StoryDbModel event(EventDbModel? event) => call(event: event);
 
   @override
@@ -243,7 +237,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? draftContent = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
-    Object? eventId = const $CopyWithPlaceholder(),
     Object? event = const $CopyWithPlaceholder(),
     Object? wordCount = const $CopyWithPlaceholder(),
     Object? characterCount = const $CopyWithPlaceholder(),
@@ -340,10 +333,6 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.templateId
           // ignore: cast_nullable_to_non_nullable
           : templateId as int?,
-      eventId: eventId == const $CopyWithPlaceholder()
-          ? _value.eventId
-          // ignore: cast_nullable_to_non_nullable
-          : eventId as int?,
       event: event == const $CopyWithPlaceholder()
           ? _value.event
           // ignore: cast_nullable_to_non_nullable
@@ -422,7 +411,6 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
         ),
   galleryTemplateId: json['gallery_template_id'] as String?,
   templateId: (json['template_id'] as num?)?.toInt(),
-  eventId: (json['event_id'] as num?)?.toInt(),
   event: json['event'] == null
       ? null
       : EventDbModel.fromJson(json['event'] as Map<String, dynamic>),
@@ -460,7 +448,6 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'updated_at': instance.updatedAt.toIso8601String(),
   'gallery_template_id': instance.galleryTemplateId,
   'template_id': instance.templateId,
-  'event_id': instance.eventId,
   'event': instance.event?.toJson(),
   'word_count': instance.wordCount,
   'character_count': instance.characterCount,

@@ -1,11 +1,16 @@
 part of '../stories_box.dart';
 
+// Period markers are matched to stories by calendar date (decoupled from eventId).
+int periodDateKey(int year, int month, int day) => year * 10000 + month * 100 + day;
+
 StoryDbModel _objectToModel(Map<String, dynamic> map) {
   StoryObjectBox object = map['object'];
   Map<String, dynamic>? options = map['options'];
 
   Iterable<PathType> types = PathType.values.where((e) => e.name == object.type);
-  Map<int, EventDbModel> events = options != null && options.containsKey('events') ? options['events'] : {};
+  Map<int, EventDbModel> eventsByDate = options != null && options.containsKey('eventsByDate')
+      ? options['eventsByDate']
+      : {};
 
   StoryDbModel story = StoryDbModel(
     version: object.version,
@@ -32,14 +37,13 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     permanentlyDeletedAt: object.permanentlyDeletedAt,
     galleryTemplateId: object.galleryTemplateId,
     templateId: object.templateId,
-    eventId: object.eventId,
     wordCount: object.wordCount,
     characterCount: object.characterCount,
     place: object.place != null ? PlaceDbModel.fromJson(jsonDecode(object.place!)) : null,
   );
 
   return story.copyWith(
-    event: events.containsKey(object.eventId) ? events[object.eventId] : null,
+    event: eventsByDate[periodDateKey(object.year, object.month, object.day)],
   );
 }
 
@@ -107,7 +111,6 @@ StoryObjectBox _modelToObject(Map<String, dynamic> map) {
     latestContent: story.latestContent != null ? StoryContentHelper.contentToString(story.latestContent!) : null,
     draftContent: story.draftContent != null ? StoryContentHelper.contentToString(story.draftContent!) : null,
     changes: [],
-    eventId: story.eventId,
     wordCount: story.draftContent?.wordCount ?? story.latestContent?.wordCount,
     characterCount: story.draftContent?.characterCount ?? story.latestContent?.characterCount,
     permanentlyDeletedAt: story.permanentlyDeletedAt,

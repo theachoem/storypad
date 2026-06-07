@@ -18,7 +18,6 @@ class SearchFilterObject {
   final Set<int> tagIds;
   final String? galleryTemplateId;
   final int? templateId;
-  final int? eventId;
   final int? assetId;
   final bool? starred;
   final bool? pinned;
@@ -34,7 +33,6 @@ class SearchFilterObject {
     this.query,
     this.galleryTemplateId,
     this.templateId,
-    this.eventId,
     this.excludeYears,
     this.month,
     this.day,
@@ -56,7 +54,6 @@ class SearchFilterObject {
     if (excludeYears != null) filters['exclude_years'] = excludeYears?.toList();
     if (galleryTemplateId != null) filters['gallery_template_id'] = galleryTemplateId;
     if (templateId != null) filters['template'] = templateId;
-    if (eventId != null) filters['event_id'] = eventId;
     if (assetId != null) filters['asset'] = assetId;
     if (starred != null) filters['starred'] = starred;
     if (pinned != null) filters['pinned'] = pinned;

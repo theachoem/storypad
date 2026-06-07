@@ -28,12 +28,10 @@ class ExportStoriesToTextService {
   /// ```
   ///
   /// [tagNameGetter] - Optional callback to resolve tag ID to tag name
-  /// [eventTypeGetter] - Optional callback to resolve event ID to event type
   static Future<File> call({
     required List<StoryDbModel> stories,
     required File outputFile,
     Future<String?> Function(int tagId)? tagNameGetter,
-    Future<String?> Function(int eventId)? eventTypeGetter,
   }) async {
     final buffer = StringBuffer();
 
@@ -55,7 +53,6 @@ class ExportStoriesToTextService {
         story,
         content,
         tagNameGetter: tagNameGetter,
-        eventTypeGetter: eventTypeGetter,
       );
 
       // Add separator between stories (except for last story)
@@ -78,7 +75,6 @@ class ExportStoriesToTextService {
     StoryDbModel story,
     StoryContentDbModel content, {
     Future<String?> Function(int tagId)? tagNameGetter,
-    Future<String?> Function(int eventId)? eventTypeGetter,
   }) async {
     // StoryPad ID (for reimport)
     buffer.writeln('StoryPad ID: ${story.id}');
@@ -112,12 +108,9 @@ class ExportStoriesToTextService {
       }
     }
 
-    // Event type
-    if (story.eventId != null && eventTypeGetter != null) {
-      final eventType = await eventTypeGetter(story.eventId!);
-      if (eventType != null && eventType.isNotEmpty) {
-        buffer.writeln('Event: $eventType');
-      }
+    // Event type (period marker, matched by date)
+    if (story.event != null) {
+      buffer.writeln('Event: ${story.event!.eventType}');
     }
 
     // Feeling

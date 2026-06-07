@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
@@ -95,14 +93,15 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
             .firstOrNull ??
         _periodEvents.firstOrNull;
 
-    _selectedEventStories = selectedEvent?.id != null
+    _selectedEventStories = selectedEvent != null
         ? await StoryDbModel.db.where(
             filters: SearchFilterObject(
               years: {selectedEvent!.year},
+              month: selectedEvent!.month,
+              day: selectedEvent!.day,
               types: {PathType.docs},
               tagId: null,
               assetId: null,
-              eventId: selectedEvent?.id,
             ).toDatabaseFilter(),
           )
         : null;
@@ -121,39 +120,24 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
 
   Future<void> toggleDate(BuildContext context, DateTime date) async {
     if (isDateSelected(date)) {
-      await _removeEvent(context, date);
+      await _removeEvent(date);
     } else {
       if (isPeriodDate(date)) {
         await load(initialSelectedDate: date);
       } else {
         await EventDbModel.period(date: date).createIfNotExist();
         await load(initialSelectedDate: date);
+        HomeView.reload(debugSource: '$runtimeType#toggleDate');
       }
     }
   }
 
-  Future<void> _removeEvent(BuildContext context, DateTime date) async {
-    OkCancelResult result = await showOkCancelAlertDialog(
-      context: context,
-      title: tr('dialog.are_you_sure_to_delete_period_date.title'),
-      isDestructiveAction: true,
-      message: selectedEventStories?.items.isNotEmpty == true
-          ? tr('dialog.are_you_sure_to_delete_period_date.message')
-          : null,
-      okLabel: tr('button.delete'),
-      cancelLabel: tr('button.cancel'),
-    );
-
-    if (result == OkCancelResult.ok) {
-      await EventDbModel.db.delete(_selectedEvent!.id);
-      await StoryDbModel.db.where(filters: {'event_id': _selectedEvent!.id}).then((stories) async {
-        for (StoryDbModel story in stories?.items ?? []) {
-          await story.delete();
-        }
-      });
-
-      await load(initialSelectedDate: date);
-    }
+  // Period and journal are independent: removing a period date is a pure toggle
+  // that never touches journal entries on that day.
+  Future<void> _removeEvent(DateTime date) async {
+    await EventDbModel.db.delete(_selectedEvent!.id);
+    await load(initialSelectedDate: date);
+    HomeView.reload(debugSource: '$runtimeType#_removeEvent');
   }
 
   void onMonthChanged(int year, int month) async {
@@ -176,7 +160,6 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
       initialYear: year,
       initialMonth: month,
       initialDay: selectedEvent?.day,
-      initialEventId: selectedEvent!.id,
     ).push(context);
 
     if (addedStory is StoryDbModel) {

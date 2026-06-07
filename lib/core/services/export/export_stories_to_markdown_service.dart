@@ -24,12 +24,10 @@ class ExportStoriesToMarkdownService {
   /// - Page separators using `---`
   ///
   /// [tagNameGetter] - Optional callback to resolve tag ID to tag name
-  /// [eventTypeGetter] - Optional callback to resolve event ID to event type
   static Future<Directory> call({
     required List<StoryDbModel> stories,
     required Directory outputDir,
     Future<String?> Function(int tagId)? tagNameGetter,
-    Future<String?> Function(int eventId)? eventTypeGetter,
   }) async {
     // Group stories by year
     final Map<int, List<StoryDbModel>> storiesByYear = {};
@@ -51,7 +49,6 @@ class ExportStoriesToMarkdownService {
           story,
           yearDir,
           tagNameGetter: tagNameGetter,
-          eventTypeGetter: eventTypeGetter,
         );
       }
     }
@@ -63,7 +60,6 @@ class ExportStoriesToMarkdownService {
     StoryDbModel story,
     Directory yearDir, {
     Future<String?> Function(int tagId)? tagNameGetter,
-    Future<String?> Function(int eventId)? eventTypeGetter,
   }) async {
     final content = story.latestContent ?? story.draftContent;
     if (content == null) return;
@@ -85,7 +81,6 @@ class ExportStoriesToMarkdownService {
     final frontmatter = await _buildFrontmatter(
       story,
       tagNameGetter: tagNameGetter,
-      eventTypeGetter: eventTypeGetter,
     );
 
     // Build markdown content with page headers
@@ -103,7 +98,6 @@ class ExportStoriesToMarkdownService {
   static Future<String> _buildFrontmatter(
     StoryDbModel story, {
     Future<String?> Function(int tagId)? tagNameGetter,
-    Future<String?> Function(int eventId)? eventTypeGetter,
   }) async {
     final buffer = StringBuffer();
 
@@ -146,12 +140,9 @@ class ExportStoriesToMarkdownService {
       buffer.writeln('storypad_template_id: ${story.templateId}');
     }
 
-    // Event type
-    if (story.eventId != null && eventTypeGetter != null) {
-      final eventType = await eventTypeGetter(story.eventId!);
-      if (eventType != null && eventType.isNotEmpty) {
-        buffer.writeln('event_type: $eventType');
-      }
+    // Event type (period marker, matched by date)
+    if (story.event != null) {
+      buffer.writeln('event_type: ${story.event!.eventType}');
     }
 
     // Timestamps

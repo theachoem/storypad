@@ -527,16 +527,26 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     objects = await query.findAsync();
 
-    Map<int, EventDbModel> events = await EventsBox()
-        .buildQuery(
-          filters: {'ids': objects.map((e) => e.eventId).whereType<int>().toList()},
-        )
-        .build()
-        .findAsync()
-        .then((query) async => {for (var item in query) item.id: await EventsBox().objectToModel(item)});
+    // Load period events keyed by date so a story shows the period marker purely by
+    // matching its calendar date (decoupled from eventId). Narrow the events query to
+    // the same date scope as the story query so we don't scan the whole events table.
+    final eventFilters = <String, dynamic>{'event_type': 'period'};
+    if (filters != null) {
+      final List? years = filters['years'] as List?;
+      final int? year = (filters['year'] as int?) ?? (years != null && years.length == 1 ? years.first as int : null);
+      if (year != null) eventFilters['year'] = year;
+      if (filters['month'] != null) eventFilters['month'] = filters['month'];
+      if (filters['day'] != null) eventFilters['day'] = filters['day'];
+    }
+
+    final periodEventObjects = await EventsBox().buildQuery(filters: eventFilters).build().findAsync();
+    final periodEvents = await EventsBox().objectsToModels(periodEventObjects);
+    final Map<int, EventDbModel> eventsByDate = {
+      for (final event in periodEvents) periodDateKey(event.year, event.month, event.day): event,
+    };
 
     options ??= {};
-    options['events'] = events;
+    options['eventsByDate'] = eventsByDate;
 
     List<StoryDbModel> docs = await objectsToModels(objects, options);
     return CollectionDbModel<StoryDbModel>(items: docs);
@@ -553,22 +563,30 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     StoryObjectBox? object = box.get(id);
     if (object?.permanentlyDeletedAt != null && !returnDeleted) return null;
 
-    Map<int, EventDbModel>? events;
-
-    if (object?.eventId != null) {
-      events = await EventsBox()
+    if (object != null) {
+      // Attach the period marker by matching the story's date (decoupled from eventId).
+      final periodObjects = await EventsBox()
           .buildQuery(
             filters: {
-              'ids': [object?.eventId],
+              'year': object.year,
+              'month': object.month,
+              'day': object.day,
+              'event_type': 'period',
             },
           )
           .build()
-          .findAsync()
-          .then((query) async => {for (var item in query) item.id: await EventsBox().objectToModel(item)});
-    }
+          .findAsync();
 
-    if (object != null) {
-      return objectToModel(object, events != null ? {'events': events} : null);
+      EventDbModel? event = periodObjects.isNotEmpty ? await EventsBox().objectToModel(periodObjects.first) : null;
+
+      return objectToModel(
+        object,
+        event != null
+            ? {
+                'eventsByDate': {periodDateKey(object.year, object.month, object.day): event},
+              }
+            : null,
+      );
     } else {
       return null;
     }
@@ -593,7 +611,6 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     List<int>? tags = filters?["tags"];
     String? galleryTemplateId = filters?["gallery_template_id"];
     int? template = filters?["template"];
-    int? eventId = filters?["event_id"];
     int? asset = filters?["asset"];
     bool? starred = filters?["starred"];
     bool? pinned = filters?["pinned"];
@@ -622,7 +639,6 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       conditions = conditions.and(StoryObjectBox_.galleryTemplateId.equals(galleryTemplateId));
     }
     if (template != null) conditions = conditions.and(StoryObjectBox_.templateId.equals(template));
-    if (eventId != null) conditions = conditions.and(StoryObjectBox_.eventId.equals(eventId));
     if (asset != null) conditions = conditions.and(StoryObjectBox_.assets.equals(asset));
     if (starred != null) conditions = conditions.and(StoryObjectBox_.starred.equals(starred));
     if (pinned != null && pinned == true) conditions = conditions.and(StoryObjectBox_.pinned.equals(pinned));

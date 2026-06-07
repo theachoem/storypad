@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
-import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
@@ -170,7 +169,6 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
         // Export stories to markdown (organized by year)
         Map<int, TagDbModel?> tags = {};
-        Map<int, EventDbModel?> events = {};
 
         await ExportStoriesToMarkdownService.call(
           stories: stories,
@@ -178,10 +176,6 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
           tagNameGetter: (tagId) async {
             tags[tagId] ??= await TagDbModel.db.find(tagId);
             return tags[tagId]?.title;
-          },
-          eventTypeGetter: (eventId) async {
-            events[eventId] ??= await EventDbModel.db.find(eventId);
-            return events[eventId]?.eventType;
           },
         );
 
@@ -262,18 +256,12 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
         // Export stories to text
         Map<int, TagDbModel?> tags = {};
-        Map<int, EventDbModel?> events = {};
-
         await ExportStoriesToTextService.call(
           stories: stories,
           outputFile: textFile,
           tagNameGetter: (tagId) async {
             tags[tagId] ??= await TagDbModel.db.find(tagId);
             return tags[tagId]?.title;
-          },
-          eventTypeGetter: (eventId) async {
-            events[eventId] ??= await EventDbModel.db.find(eventId);
-            return events[eventId]?.eventType;
           },
         );
 

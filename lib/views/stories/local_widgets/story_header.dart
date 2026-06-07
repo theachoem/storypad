@@ -73,7 +73,7 @@ class StoryHeader extends StatelessWidget {
       onToggleTags: (tags) => viewModel.setTags(tags, context),
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       readOnly: false,
-      dateReadOnly: viewModel.story?.eventId != null,
+      dateReadOnly: false,
       onChangeDate: viewModel.changeDate,
       onToggleManagingPage: viewModel.pagesManager.toggleManagingPage,
       draftActions: null,

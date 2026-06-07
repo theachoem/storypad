@@ -99,8 +99,6 @@
   "button.view": "Перегляд",
   "button.view_previous": "Переглянути попереднє",
   "dialog.are_you_sure_to_archive_these_stories.title": "Ви впевнені, що хочете архівувати ці розповіді?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Усі розповіді, пов'язані з цим менструальним періодом, будуть видалені.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Ви справді хочете видалити цей менструальний період?",
   "dialog.are_you_sure_to_delete_tag.message": "Цю дію неможливо скасувати, але ваші нотатки та розповіді не будуть видалені.",
   "dialog.are_you_sure_to_delete_tag.title": "Ви справді бажаєте видалити цей тег?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Ви справді бажаєте видалити ці розповіді?",

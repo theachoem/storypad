@@ -99,8 +99,6 @@
   "button.view": "Xem",
   "button.view_previous": "Xem trước đó",
   "dialog.are_you_sure_to_archive_these_stories.title": "Bạn có chắc chắn lưu trữ những câu chuyện này không?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Tất cả các câu chuyện liên quan đến ngày tháng này sẽ bị xóa.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Bạn có chắc chắn muốn xóa ngày tháng này không?",
   "dialog.are_you_sure_to_delete_tag.message": "Không thể hoàn tác hành động này nhưng ghi chú và câu chuyện của bạn sẽ không bị xóa.",
   "dialog.are_you_sure_to_delete_tag.title": "Bạn có chắc chắn muốn xóa thẻ này không?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Bạn có chắc chắn xóa những câu chuyện này?",

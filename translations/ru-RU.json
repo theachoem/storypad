@@ -99,8 +99,6 @@
   "button.view": "Просмотр",
   "button.view_previous": "Просмотр последнего",
   "dialog.are_you_sure_to_archive_these_stories.title": "Архивировать выбранное?",
-  "dialog.are_you_sure_to_delete_period_date.message": "Все истории ассоцированные с даной датой календаря месячных будут удалены.",
-  "dialog.are_you_sure_to_delete_period_date.title": "Удалить данную дату из календаря месячных?",
   "dialog.are_you_sure_to_delete_tag.message": "Действие необратимо, но ваши заметки и истории не будут удалены.",
   "dialog.are_you_sure_to_delete_tag.title": "Удалить тег?",
   "dialog.are_you_sure_to_delete_these_stories.title": "Удалить выбранные истории?",

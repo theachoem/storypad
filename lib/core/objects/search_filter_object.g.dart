@@ -25,8 +25,6 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject templateId(int? templateId);
 
-  SearchFilterObject eventId(int? eventId);
-
   SearchFilterObject excludeYears(Set<int>? excludeYears);
 
   SearchFilterObject month(int? month);
@@ -56,7 +54,6 @@ abstract class _$SearchFilterObjectCWProxy {
     String? query,
     String? galleryTemplateId,
     int? templateId,
-    int? eventId,
     Set<int>? excludeYears,
     int? month,
     int? day,
@@ -103,9 +100,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
       call(templateId: templateId);
 
   @override
-  SearchFilterObject eventId(int? eventId) => call(eventId: eventId);
-
-  @override
   SearchFilterObject excludeYears(Set<int>? excludeYears) =>
       call(excludeYears: excludeYears);
 
@@ -142,7 +136,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? query = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? templateId = const $CopyWithPlaceholder(),
-    Object? eventId = const $CopyWithPlaceholder(),
     Object? excludeYears = const $CopyWithPlaceholder(),
     Object? month = const $CopyWithPlaceholder(),
     Object? day = const $CopyWithPlaceholder(),
@@ -187,10 +180,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.templateId
           // ignore: cast_nullable_to_non_nullable
           : templateId as int?,
-      eventId: eventId == const $CopyWithPlaceholder()
-          ? _value.eventId
-          // ignore: cast_nullable_to_non_nullable
-          : eventId as int?,
       excludeYears: excludeYears == const $CopyWithPlaceholder()
           ? _value.excludeYears
           // ignore: cast_nullable_to_non_nullable
@@ -250,7 +239,6 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       query: json['query'] as String?,
       galleryTemplateId: json['gallery_template_id'] as String?,
       templateId: (json['template_id'] as num?)?.toInt(),
-      eventId: (json['event_id'] as num?)?.toInt(),
       excludeYears: (json['exclude_years'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toSet(),
@@ -274,7 +262,6 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'tag_ids': instance.tagIds.toList(),
       'gallery_template_id': instance.galleryTemplateId,
       'template_id': instance.templateId,
-      'event_id': instance.eventId,
       'asset_id': instance.assetId,
       'starred': instance.starred,
       'pinned': instance.pinned,

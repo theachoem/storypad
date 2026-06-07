@@ -99,8 +99,6 @@
   "button.view": "查看",
   "button.view_previous": "查看上一个",
   "dialog.are_you_sure_to_archive_these_stories.title": "确定归档这些故事？",
-  "dialog.are_you_sure_to_delete_period_date.message": "与此期间日期相关的所有故事都将被删除。",
-  "dialog.are_you_sure_to_delete_period_date.title": "您确定要删除此期间日期吗？",
   "dialog.are_you_sure_to_delete_tag.message": "此操作无法撤消，但你的笔记和故事不会被删除。",
   "dialog.are_you_sure_to_delete_tag.title": "确定删除此标签？",
   "dialog.are_you_sure_to_delete_these_stories.title": "确定删除这些故事？",
