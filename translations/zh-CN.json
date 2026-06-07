@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "连接到 Google Drive 来备份您的数据。",
   "list_tile.color_seed.title": "颜色",
   "list_tile.created_at.title": "创建",
+  "list_tile.day_colors.title": "白天的颜色",
   "list_tile.default_story_preferences.title": "故事默认设置",
   "list_tile.export_markdown.subtitle": "兼容 Obsidian、Notion 和 Markdown 编辑器。",
   "list_tile.export_markdown.title": "导出 Markdown (.md)",

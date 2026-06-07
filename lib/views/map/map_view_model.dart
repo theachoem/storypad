@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -12,6 +11,7 @@ import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -158,7 +158,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Color markerColorForStory(MapStoryObject story) {
-    return kColorsByDayLight[story.storyDate.weekday]!;
+    return ColorFromDayService(context: viewContext).get(story.storyDate.weekday)!;
   }
 
   Future<void> onMarkerTap(SpMapMarker<MapStoryObject> marker) async {

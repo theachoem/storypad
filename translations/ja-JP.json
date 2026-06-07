@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "データをバックアップするには、Google ドライブに接続します。",
   "list_tile.color_seed.title": "カラーシード",
   "list_tile.created_at.title": "作成日",
+  "list_tile.day_colors.title": "デイカラーズ",
   "list_tile.default_story_preferences.title": "ストーリーのデフォルト設定",
   "list_tile.export_markdown.subtitle": "Obsidian、Notion、マークダウン エディターと互換性があります。",
   "list_tile.export_markdown.title": "Markdown (.md) をエクスポート",

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/widgets/sp_cross_fade.dart';
@@ -18,6 +17,7 @@ class SpColorPicker extends StatefulWidget {
   const SpColorPicker({
     super.key,
     required this.onPickedColor,
+    required this.isDarkMode,
     this.currentColor,
     this.level = SpColorPickerLevel.one,
     this.position = SpColorPickerPosition.top,
@@ -27,6 +27,7 @@ class SpColorPicker extends StatefulWidget {
   final SpColorPickerPosition position;
   final ValueChanged<Color> onPickedColor;
   final Color? currentColor;
+  final bool isDarkMode;
 
   @override
   SpColorPickerState createState() => SpColorPickerState();
@@ -81,9 +82,8 @@ class SpColorPickerState extends State<SpColorPicker> {
   }
 
   ColorSwatch<dynamic> getBlackWhiteSwatch() {
-    bool isDarkMode = PlatformDispatcher.instance.platformBrightness == Brightness.dark;
     final ColorSwatch blackWhiteSwatchColor = ColorSwatch(
-      isDarkMode ? 0xFFFFFFFF : 0xFF000000,
+      widget.isDarkMode ? 0xFFFFFFFF : 0xFF000000,
       const {50: Color(0xff000000), 100: Color(0xffffffff)},
     );
 

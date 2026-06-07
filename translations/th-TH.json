@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "เชื่อมต่อกับ Google Drive เพื่อสำรองข้อมูลของคุณ",
   "list_tile.color_seed.title": "เมล็ดสี",
   "list_tile.created_at.title": "สร้าง",
+  "list_tile.day_colors.title": "สีประจำวัน",
   "list_tile.default_story_preferences.title": "ค่าเริ่มต้นของเรื่องราว",
   "list_tile.export_markdown.subtitle": "ใช้งานได้กับ Obsidian, Notion และโปรแกรมแก้ไขข้อความแบบ Markdown",
   "list_tile.export_markdown.title": "ส่งออกไฟล์ Markdown (.md)",

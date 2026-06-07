@@ -177,6 +177,7 @@ class _QuillRichTextColorButtonState extends State<_QuillRichTextColorButton> {
       },
       floatingBuilder: (close) {
         return SpColorPicker(
+          isDarkMode: isDarkMode,
           position: widget.positionedOnUpper ? SpColorPickerPosition.top : SpColorPickerPosition.bottom,
           currentColor: currentColor,
           level: SpColorPickerLevel.two,

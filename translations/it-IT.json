@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Connettiti a Google Drive per eseguire il backup dei tuoi dati.",
   "list_tile.color_seed.title": "Seme di colore",
   "list_tile.created_at.title": "Creato",
+  "list_tile.day_colors.title": "Colori del giorno",
   "list_tile.default_story_preferences.title": "Impostazioni predefinite della storia",
   "list_tile.export_markdown.subtitle": "Compatibile con Obsidian, Notion e gli editor markdown.",
   "list_tile.export_markdown.title": "Esporta Markdown (.md)",

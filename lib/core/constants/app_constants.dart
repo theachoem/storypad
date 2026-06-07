@@ -19,9 +19,7 @@ const String kGoogleMapsIosApiKey = String.fromEnvironment('GOOGLE_MAPS_IOS_API_
 
 const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 
-const Color kSplashColor = Colors.transparent;
 const Color kDefaultColorSeed = Colors.black;
-
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
 const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
@@ -51,46 +49,46 @@ final BaseErrorReportingAdaptor kErrorReportingService = BaseErrorReportingAdapt
 final BaseRemoteConfigAdaptor kRemoteConfigAdaptor = BaseRemoteConfigAdaptor.create();
 final BaseCloudStorageAdaptor kCloudStorageService = BaseCloudStorageAdaptor.create();
 
+/// Maps a stable material color name (persisted in preferences) to its swatch.
+/// Used to store user-picked day colors as readable strings (e.g. `red`, `deepPurple`)
+/// and to resolve them back into shades (700 for light, 300 for dark).
+const Map<String, MaterialColor> kMaterialColorsByName = <String, MaterialColor>{
+  'red': Colors.red,
+  'pink': Colors.pink,
+  'purple': Colors.purple,
+  'deepPurple': Colors.deepPurple,
+  'indigo': Colors.indigo,
+  'blue': Colors.blue,
+  'lightBlue': Colors.lightBlue,
+  'cyan': Colors.cyan,
+  'teal': Colors.teal,
+  'green': Colors.green,
+  'lightGreen': Colors.lightGreen,
+  'lime': Colors.lime,
+  'yellow': Colors.yellow,
+  'amber': Colors.amber,
+  'orange': Colors.orange,
+  'deepOrange': Colors.deepOrange,
+  'brown': Colors.brown,
+  'grey': Colors.grey,
+  'blueGrey': Colors.blueGrey,
+};
+
+/// Special day-color name representing the monochrome swatch: black in light mode,
+/// white in dark mode (matches the picker's black/white swatch and getForeground convention).
+const String kBlackWhiteColorName = 'blackWhite';
+
+/// Default color name for each weekday (DateTime.monday..sunday).
 /// ref: http://fashioncambodia.blogspot.com/2015/11/7-colors-for-every-single-day-of-week.html
-const Map<int, Color> kColorsByDayLight = {
-  DateTime.monday: Color(0xFFE38A41),
-  DateTime.tuesday: Color(0xFF9341B1),
-  DateTime.wednesday: Color(0xFFA3AA49),
-  DateTime.thursday: Color(0xFF397C2D),
-  DateTime.friday: Color(0xFF5080D7),
-  DateTime.saturday: Color(0xFF6E183B),
-  DateTime.sunday: Color(0xFFE5333A),
+const Map<int, String> kDefaultColorNamesByDay = <int, String>{
+  DateTime.monday: 'orange',
+  DateTime.tuesday: 'purple',
+  DateTime.wednesday: 'lime',
+  DateTime.thursday: 'green',
+  DateTime.friday: 'blue',
+  DateTime.saturday: 'deepPurple',
+  DateTime.sunday: 'red',
 };
 
-/// generated m3 color from https://material-foundation.github.io/material-theme-builder/#/dynamic
-const Map<int, Color> kColorsByDayDark = {
-  DateTime.monday: Color(0xFFFFB780),
-  DateTime.tuesday: Color(0xFFF0AFFF),
-  DateTime.wednesday: Color(0xFFC5CE5B),
-  DateTime.thursday: Color(0xFF90D87D),
-  DateTime.friday: Color(0xFFACC7FF),
-  DateTime.saturday: Color(0xFFFFB0C8),
-  DateTime.sunday: Color(0xFFFFB3AC),
-};
-
-const List<ColorSwatch> kMaterialColors = <ColorSwatch>[
-  Colors.red,
-  Colors.pink,
-  Colors.purple,
-  Colors.deepPurple,
-  Colors.indigo,
-  Colors.blue,
-  Colors.lightBlue,
-  Colors.cyan,
-  Colors.teal,
-  Colors.green,
-  Colors.lightGreen,
-  Colors.lime,
-  Colors.yellow,
-  Colors.amber,
-  Colors.orange,
-  Colors.deepOrange,
-  Colors.brown,
-  Colors.grey,
-  Colors.blueGrey,
-];
+/// Swatches shown in the color picker, derived from [kMaterialColorsByName] to avoid duplication.
+final List<ColorSwatch> kMaterialColors = List<ColorSwatch>.from(kMaterialColorsByName.values);

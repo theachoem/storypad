@@ -40,57 +40,68 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: tr("general.appearance")),
             ThemeModeTile.globalTheme(weekday: 1),
             ColorSeedTile(),
+            buildDayColorTile(context),
             if (kStoryPad) const AppIconTile(),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.text")),
-            FontSizeTile.globalTheme(weekday: 2),
-            FontFamilyTile.globalTheme(weekday: 3),
-            FontWeightTile.globalTheme(weekday: 4),
+            FontSizeTile.globalTheme(weekday: 3),
+            FontFamilyTile.globalTheme(weekday: 4),
+            FontWeightTile.globalTheme(weekday: 5),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.general")),
-            const LanguageTile(weekday: 5),
-            buildAppLockTile(context, weekday: 6),
-            if (kSupportQuickActions)
-              ListTile(
-                leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.home),
-                title: Text(tr('page.home_quick_actions.title')),
-                onTap: () => const HomeQuickActionsRoute().push(context),
-              ),
-            TimeFormatTile.globalTheme(weekday: 1),
-            FirstDayOfWeekTile.globalTheme(weekday: 2),
+            const LanguageTile(weekday: 6),
+            buildAppLockTile(context, weekday: 7),
+            if (kSupportQuickActions) QuickActionsTile(),
+            TimeFormatTile.globalTheme(weekday: 2),
+            FirstDayOfWeekTile.globalTheme(weekday: 3),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.stories")),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(weekday: 3),
+            StoryTilePreferencesTile(weekday: 4),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(weekday: 4),
+            DefaultStoryPreferencesTile(weekday: 5),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.data")),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 5, icon: SpIcons.import),
+              leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.import),
               title: Text(tr("page.backup_services.title")),
               onTap: () => const BackupServicesRoute().push(context),
             ),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.storage),
+              leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.storage),
               title: Text(tr('page.storage_management.title')),
               onTap: () => const StorageManagementRoute().push(context),
             ),
-            AssetCompressionTile.globalTheme(weekday: 7),
+            AssetCompressionTile.globalTheme(weekday: 1),
           ],
           const SizedBox(height: 120),
         ],
       ),
+    );
+  }
+
+  Widget buildDayColorTile(BuildContext context) {
+    return Consumer<InAppPurchaseProvider>(
+      builder: (context, inAppPurchaseProvider, child) {
+        final locked = !inAppPurchaseProvider.isProUser;
+
+        return ListTile(
+          trailing: locked ? const Icon(SpIcons.lock) : null,
+          leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.theme),
+          title: Text(tr('list_tile.day_colors.title')),
+          onTap: () => const DayColorsRoute().push(context),
+        );
+      },
     );
   }
 

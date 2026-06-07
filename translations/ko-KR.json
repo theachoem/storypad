@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Google Drive에 연결하여 데이터를 백업하세요.",
   "list_tile.color_seed.title": "색상 시드",
   "list_tile.created_at.title": "작성일",
+  "list_tile.day_colors.title": "낮의 색깔",
   "list_tile.default_story_preferences.title": "스토리 기본 설정",
   "list_tile.export_markdown.subtitle": "Obsidian, Notion 및 마크다운 편집기와 호환됩니다.",
   "list_tile.export_markdown.title": "마크다운(.md) 내보내기",

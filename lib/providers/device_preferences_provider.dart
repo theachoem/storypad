@@ -75,6 +75,31 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     );
   }
 
+  void setColorForDay(int weekday, String colorName) {
+    final updated = Map<int, String>.from(_preferences.colorByDay ?? {});
+    updated[weekday] = colorName;
+
+    _preferences = _preferences.copyWith(colorByDay: updated);
+    storage.writeObject(_preferences);
+    notifyListeners();
+  }
+
+  void resetColorForDay(int weekday) {
+    final updated = Map<int, String>.from(_preferences.colorByDay ?? {});
+    updated.remove(weekday);
+
+    // Reset to null once there are no customizations left, so stored preferences stay clean.
+    _preferences = _preferences.copyWith(colorByDay: updated.isEmpty ? null : updated);
+    storage.writeObject(_preferences);
+    notifyListeners();
+  }
+
+  void resetAllDayColors() {
+    _preferences = _preferences.copyWith(colorByDay: null);
+    storage.writeObject(_preferences);
+    notifyListeners();
+  }
+
   void setThemeMode(ThemeMode? value) {
     if (value != null && value != themeMode) {
       _preferences = _preferences.copyWith(themeMode: value);

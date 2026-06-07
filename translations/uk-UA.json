@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Підключіться до Google Drive, щоб створити резервну копію своїх даних.",
   "list_tile.color_seed.title": "Кольорова палітра",
   "list_tile.created_at.title": "Створено",
+  "list_tile.day_colors.title": "Кольори дня",
   "list_tile.default_story_preferences.title": "Налаштування історії за замовчуванням",
   "list_tile.export_markdown.subtitle": "Сумісний з Obsidian, Notion та редакторами Markdown.",
   "list_tile.export_markdown.title": "Експорт Markdown (.md)",

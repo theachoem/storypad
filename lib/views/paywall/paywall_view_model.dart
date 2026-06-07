@@ -64,6 +64,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/customizations/customization_3.jpg',
           '/feature_demos/customizations/customization_4.jpg',
           '/feature_demos/customizations/customization_5.jpg',
+          '/feature_demos/customizations/customization_6.jpg',
         ],
         onOpen: null,
       ),

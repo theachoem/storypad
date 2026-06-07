@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Hubungkan ke Google Drive untuk mencadangkan data Anda.",
   "list_tile.color_seed.title": "Benih Warna",
   "list_tile.created_at.title": "Dibuat",
+  "list_tile.day_colors.title": "Warna Siang Hari",
   "list_tile.default_story_preferences.title": "Pengaturan Default Cerita",
   "list_tile.export_markdown.subtitle": "Kompatibel dengan Obsidian, Notion, dan editor markdown.",
   "list_tile.export_markdown.title": "Ekspor Markdown (.md)",
