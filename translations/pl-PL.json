@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Połącz się z Dyskiem Google, aby wykonać kopię zapasową danych.",
   "list_tile.color_seed.title": "Nasiona koloru",
   "list_tile.created_at.title": "Stworzony",
+  "list_tile.day_colors.title": "Kolory dnia",
   "list_tile.default_story_preferences.title": "Domyślne ustawienia historii",
   "list_tile.export_markdown.subtitle": "Kompatybilny z edytorami Obsidian, Notion i Markdown.",
   "list_tile.export_markdown.title": "Eksportuj Markdown (.md)",

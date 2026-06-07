@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Verilerinizi yedeklemek için Google Drive'a bağlanın.",
   "list_tile.color_seed.title": "Renk Kodu",
   "list_tile.created_at.title": "Oluşturuldu",
+  "list_tile.day_colors.title": "Gün Renkleri",
   "list_tile.default_story_preferences.title": "Hikaye Varsayılanları",
   "list_tile.export_markdown.subtitle": "Obsidian, Notion ve Markdown editörleriyle uyumludur.",
   "list_tile.export_markdown.title": "Markdown dosyası (.md) olarak dışa aktar",

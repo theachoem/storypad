@@ -29,6 +29,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
+  DevicePreferencesObject colorByDay(Map<int, String>? colorByDay);
+
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
 
   DevicePreferencesObject storyTilePreferences(
@@ -63,6 +65,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
     int? colorSeedValue,
+    Map<int, String>? colorByDay,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
@@ -122,6 +125,10 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(colorSeedValue: colorSeedValue);
 
   @override
+  DevicePreferencesObject colorByDay(Map<int, String>? colorByDay) =>
+      call(colorByDay: colorByDay);
+
+  @override
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed) =>
       call(voicePlaybackSpeed: voicePlaybackSpeed);
 
@@ -163,6 +170,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? firstDayOfWeek = const $CopyWithPlaceholder(),
     Object? assetCompression = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
+    Object? colorByDay = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
@@ -210,6 +218,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
           : colorSeedValue as int?,
+      colorByDay: colorByDay == const $CopyWithPlaceholder()
+          ? _value.colorByDay
+          // ignore: cast_nullable_to_non_nullable
+          : colorByDay as Map<int, String>?,
       voicePlaybackSpeed: voicePlaybackSpeed == const $CopyWithPlaceholder()
           ? _value.voicePlaybackSpeed
           // ignore: cast_nullable_to_non_nullable
@@ -269,6 +281,9 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     json['asset_compression'],
   ),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
+  colorByDay: (json['color_by_day'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(int.parse(k), e as String),
+  ),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
   storyTilePreferences: json['story_tile_preferences'] == null
       ? null
@@ -294,6 +309,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'font_weight_index': instance.fontWeightIndex,
   'theme_mode': _$ThemeModeEnumMap[instance.themeMode]!,
   'color_seed_value': instance.colorSeedValue,
+  'color_by_day': instance.colorByDay?.map((k, e) => MapEntry(k.toString(), e)),
   'voice_playback_speed': instance.voicePlaybackSpeed,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,

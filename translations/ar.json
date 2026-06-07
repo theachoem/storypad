@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "قم بالاتصال بـ Google Drive لإجراء نسخة احتياطية لبياناتك.",
   "list_tile.color_seed.title": "بذور اللون",
   "list_tile.created_at.title": "مخلوق",
+  "list_tile.day_colors.title": "ألوان النهار",
   "list_tile.default_story_preferences.title": "الإعدادات الافتراضية للقصة",
   "list_tile.export_markdown.subtitle": "متوافق مع برامج تحرير Obsidian و Notion و Markdown.",
   "list_tile.export_markdown.title": "تصدير بيانات ماركداون (.md)",

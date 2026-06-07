@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Kết nối với Google Drive để sao lưu dữ liệu của bạn.",
   "list_tile.color_seed.title": "Hạt màu",
   "list_tile.created_at.title": "Tạo",
+  "list_tile.day_colors.title": "Màu sắc ban ngày",
   "list_tile.default_story_preferences.title": "Cài đặt mặc định của câu chuyện",
   "list_tile.export_markdown.subtitle": "Tương thích với Obsidian, Notion và các trình soạn thảo Markdown.",
   "list_tile.export_markdown.title": "Xuất file Markdown (.md)",

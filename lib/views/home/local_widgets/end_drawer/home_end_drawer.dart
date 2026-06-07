@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -72,6 +74,7 @@ class HomeEndDrawer extends StatelessWidget {
               ),
             ),
           IconButton(
+            tooltip: AppTheme.isDarkMode(context) ? tr("general.theme_mode.light") : tr("general.theme_mode.dark"),
             icon: SpThemeModeIcon(parentContext: context),
             onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
           ),

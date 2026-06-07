@@ -259,6 +259,7 @@
   "list_tile.backup.unsignin_subtitle": "Авторизуйтесь на Диске для хранения на нём ваших бэкапов.",
   "list_tile.color_seed.title": "Фоновый градиент",
   "list_tile.created_at.title": "Создано",
+  "list_tile.day_colors.title": "Дневные цвета",
   "list_tile.default_story_preferences.title": "Настройки сюжета по умолчанию",
   "list_tile.export_markdown.subtitle": "Совместимость с Obsidian, Notion и редакторами Markdown.",
   "list_tile.export_markdown.title": "Экспорт в формате Markdown (.md)",

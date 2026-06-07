@@ -22,6 +22,10 @@ class DevicePreferencesObject {
 
   final ThemeMode themeMode;
   final int? colorSeedValue;
+
+  /// User-customized color name per weekday (DateTime.monday..sunday).
+  /// `null` or a missing day key falls back to [kDefaultColorNamesByDay].
+  final Map<int, String>? colorByDay;
   final double voicePlaybackSpeed;
   final TimeFormatOption timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
@@ -52,6 +56,7 @@ class DevicePreferencesObject {
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
     this.colorSeedValue,
+    this.colorByDay,
     double? voicePlaybackSpeed,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,

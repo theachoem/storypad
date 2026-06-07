@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:storypad/app_theme.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
@@ -22,6 +23,7 @@ class ColorSeedTile extends StatelessWidget {
       dyGetter: (dy) => dy + 56,
       floatingBuilder: (close) {
         return SpColorPicker(
+          isDarkMode: AppTheme.isDarkMode(context),
           position: SpColorPickerPosition.top,
           currentColor: provider.preferences.colorSeed,
           level: SpColorPickerLevel.one,
