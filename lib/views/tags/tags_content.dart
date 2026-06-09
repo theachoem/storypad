@@ -31,9 +31,6 @@ class _TagsContent extends StatelessWidget {
     return AppBar(
       title: Text(tr("page.tags.title")),
       bottom: TabBar(
-        isScrollable: true,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        tabAlignment: .start,
         tabs: [
           Tab(text: tr("page.tags.title")),
           Tab(text: tr("general.tag_category.people_title")),

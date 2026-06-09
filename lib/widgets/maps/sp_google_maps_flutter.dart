@@ -28,6 +28,8 @@ class SpGoogleMap<T> extends StatefulWidget {
     this.onClusterTap,
     this.markerIconBuilder,
     this.onViewportChanged,
+    this.onCameraMoveStarted,
+    this.onCameraIdle,
     this.showCurrentLocation = false,
   });
 
@@ -41,6 +43,8 @@ class SpGoogleMap<T> extends StatefulWidget {
   final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
   final SpMapViewportChanged? onViewportChanged;
+  final VoidCallback? onCameraMoveStarted;
+  final ValueChanged<SpLatLng>? onCameraIdle;
   final bool showCurrentLocation;
 
   @override
@@ -129,6 +133,12 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
           ? null
           : (LatLng latLng) {
               widget.onMapTap!(SpLatLng(latLng.latitude, latLng.longitude));
+            },
+      onCameraMoveStarted: widget.onCameraMoveStarted,
+      onCameraIdle: widget.onCameraIdle == null
+          ? null
+          : () {
+              widget.onCameraIdle!(SpLatLng(_currentCenter.latitude, _currentCenter.longitude));
             },
       onCameraMove: (CameraPosition position) {
         _currentCenter = position.target;

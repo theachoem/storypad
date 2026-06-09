@@ -28,6 +28,8 @@ class SpFlutterMap<T> extends StatefulWidget {
     this.markerBuilder,
     this.clusterMarkerBuilder,
     this.onViewportChanged,
+    this.onCameraMoveStarted,
+    this.onCameraIdle,
     this.showCurrentLocation = true,
   });
 
@@ -41,6 +43,8 @@ class SpFlutterMap<T> extends StatefulWidget {
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
   final SpMapViewportChanged? onViewportChanged;
+  final VoidCallback? onCameraMoveStarted;
+  final ValueChanged<SpLatLng>? onCameraIdle;
   final bool showCurrentLocation;
 
   @override
@@ -58,6 +62,7 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
   latlong.LatLng? _currentLocation;
   late double _currentZoom;
   double _currentRotation = 0.0;
+  bool _isGesturing = false;
 
   @override
   void initState() {
@@ -126,9 +131,31 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
 
           if (!mounted) return;
 
-          debouncedCallback(() {
-            _notifyViewportChanged(camera);
-          }, duration: const Duration(milliseconds: 50));
+          if (hasGesture && !_isGesturing) {
+            _isGesturing = true;
+            widget.onCameraMoveStarted?.call();
+          }
+
+          if (_isGesturing) {
+            debouncedCallback(
+              () {
+                if (!mounted) return;
+                _isGesturing = false;
+                final latlong.LatLng center = _flutterMapController.camera.center;
+                widget.onCameraIdle?.call(SpLatLng(center.latitude, center.longitude));
+              },
+              duration: const Duration(milliseconds: 300),
+              key: 'idle',
+            );
+          }
+
+          debouncedCallback(
+            () {
+              _notifyViewportChanged(camera);
+            },
+            duration: const Duration(milliseconds: 50),
+            key: 'viewport',
+          );
         },
       ),
       children: <Widget>[

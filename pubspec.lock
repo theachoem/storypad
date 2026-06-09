@@ -1597,6 +1597,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  open_location_code:
+    dependency: "direct main"
+    description:
+      name: open_location_code
+      sha256: fb671d070186c2693e65644c794d3c789b87cd65a9e2593b4b51ab76d717ee1b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   package_config:
     dependency: transitive
     description:

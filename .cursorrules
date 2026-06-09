@@ -10,6 +10,7 @@
 
 ## Critical Rules
 
+- ❌ **NEVER** put a condition inside `tr()` (a script scans literal `tr("key")` calls) → ✅ `cond ? tr("a") : tr("b")`, not `tr(cond ? "a" : "b")`
 - ❌ **NEVER** use `Icons.*` or `CupertinoIcons.*` → ✅ Use `SpIcons.*`
 - ✅ Use **Provider + ChangeNotifier** for state management
 - ✅ Follow **MVVM** structure: View + ViewModel + Content

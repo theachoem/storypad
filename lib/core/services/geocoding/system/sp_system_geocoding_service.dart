@@ -33,6 +33,7 @@ class SpSystemGeocodingService implements SpGeocodingService {
         placeName: p.name?.isNotEmpty == true ? p.name : null,
         locality: p.locality?.isNotEmpty == true ? p.locality : p.subAdministrativeArea,
         country: p.country?.isNotEmpty == true ? p.country : null,
+        isoCountryCode: p.isoCountryCode?.isNotEmpty == true ? p.isoCountryCode : null,
         address: addressParts.isNotEmpty ? addressParts.join(', ') : null,
       );
     } catch (e) {
@@ -42,7 +43,10 @@ class SpSystemGeocodingService implements SpGeocodingService {
   }
 
   @override
-  Future<List<PlaceDbModel>> searchPlaces(String query) async {
+  Future<List<PlaceDbModel>> searchPlaces(
+    String query, {
+    SpLatLng? proximity, // Optional proximity hint for better search results
+  }) async {
     try {
       final locations = await geo.locationFromAddress(query);
       return locations.map((loc) {

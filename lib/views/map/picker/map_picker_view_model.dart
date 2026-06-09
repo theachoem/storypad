@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -26,6 +27,14 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.viewContext,
   }) : _selectedPlace = params.initialSelectedPlace {
     unawaited(resolveInitialCamera());
+
+    // Auto-fill: if we opened with a place that only has coordinates (e.g. it
+    // was saved fast on low signal), try to resolve its details again now.
+    // [_resolveSelectedPlace] skips early when a name/locality already exists,
+    // so a user's manual label is never overwritten.
+    if (params.initialSelectedPlace != null) {
+      unawaited(_resolveSelectedPlace(selectedVersion: _selectedVersion));
+    }
   }
 
   final SpMapController mapController = SpMapController();
@@ -50,26 +59,22 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool get isResolvingPlace => _isResolvingPlace;
   int _selectedVersion = 0;
 
+  bool _isDragging = false;
+  bool get isDragging => _isDragging;
+
+  Timer? _dragUpdateTimer;
+
   bool get canRemove => params.initialSelectedPlace != null;
   bool get hasSelectedPlace => _selectedPlace != null;
 
-  SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
-
-  List<SpMapMarker<PlaceDbModel>> get selectedMarkers {
-    final PlaceDbModel? selectedPlace = _selectedPlace;
-    if (selectedPlace == null) return <SpMapMarker<PlaceDbModel>>[];
-
-    return <SpMapMarker<PlaceDbModel>>[
-      SpMapMarker<PlaceDbModel>(
-        id: 'selected-location',
-        point: SpLatLng(selectedPlace.latitude, selectedPlace.longitude),
-        data: selectedPlace,
-        title: selectedPlace.displayLabel,
-        clusterable: false,
-        size: const Size(32.0, 42.0),
-      ),
-    ];
+  bool get canReset {
+    final PlaceDbModel? initial = params.initialSelectedPlace;
+    final PlaceDbModel? selected = _selectedPlace;
+    if (initial == null || selected == null) return false;
+    return !_isSameLatLng(selected.latitude, selected.longitude, initial.latitude, initial.longitude);
   }
+
+  SpMapCamera get initialSpMapCamera => _initialSpMapCamera;
 
   PlaceDbModel? get initialSelectedPlace => params.initialSelectedPlace;
 
@@ -120,6 +125,63 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
   }
 
+  void onCameraMoveStarted() {
+    if (_isDragging) return;
+    _isDragging = true;
+    HapticFeedback.selectionClick();
+    notifyListeners();
+  }
+
+  void onCameraIdle(SpLatLng center) {
+    _dragUpdateTimer?.cancel();
+    _isDragging = false;
+
+    final PlaceDbModel? current = _selectedPlace;
+    if (current != null && _isSameLatLng(center.latitude, center.longitude, current.latitude, current.longitude)) {
+      notifyListeners();
+      return;
+    }
+
+    setSelectedLocation(center.latitude, center.longitude);
+  }
+
+  void onCameraViewportChanged(SpMapViewport viewport) {
+    if (!_isDragging) return;
+
+    _dragUpdateTimer?.cancel();
+    _dragUpdateTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!_isDragging || disposed) return;
+      final SpLatLng center = viewport.center;
+      final PlaceDbModel? current = _selectedPlace;
+
+      if (current != null && _isSameLatLng(center.latitude, center.longitude, current.latitude, current.longitude)) {
+        return;
+      }
+
+      setSelectedLocation(center.latitude, center.longitude);
+    });
+  }
+
+  @override
+  void dispose() {
+    _dragUpdateTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> resetToInitial() async {
+    final PlaceDbModel? initial = params.initialSelectedPlace;
+    if (initial == null) return;
+
+    _selectedPlace = initial;
+    notifyListeners();
+
+    // Keep current zoom and bearing when resetting to initial location, as that's more likely what users expect.
+    await mapController.animateTo(
+      initial.latitude,
+      initial.longitude,
+    );
+  }
+
   void setSelectedLocation(double latitude, double longitude) {
     _selectedVersion += 1;
     _selectedPlace = PlaceDbModel(
@@ -152,6 +214,41 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     await mapController.resetRotation();
   }
 
+  /// Forward-geocode [query] into candidate places via the system geocoder.
+  ///
+  /// Returns an empty list on unsupported platforms or when nothing matches.
+  Future<List<PlaceDbModel>> searchPlaces(String query) {
+    final String trimmed = query.trim();
+
+    if (trimmed.isEmpty) return Future.value(const <PlaceDbModel>[]);
+    if (params.initialSelectedPlace == null) return Future.value(const <PlaceDbModel>[]);
+
+    return SpGeocodingService.onlineInstance.searchPlaces(
+      trimmed,
+      proximity: params.initialSelectedPlace?.latLng,
+      countries: ['kh'],
+    );
+  }
+
+  /// Move the map to a place chosen from the search results and select it.
+  ///
+  /// Forward geocoding only returns coordinates, so we let [_resolveSelectedPlace]
+  /// fill in the human-readable details afterwards.
+  Future<void> selectSearchedPlace(PlaceDbModel place) async {
+    _selectedVersion += 1;
+    _selectedPlace = place;
+    notifyListeners();
+
+    await mapController.animateTo(
+      place.latitude,
+      place.longitude,
+      zoom: 15.0,
+      bearing: 0.0,
+    );
+
+    unawaited(_resolveSelectedPlace(selectedVersion: _selectedVersion));
+  }
+
   void updateSelectedPlaceDetails({
     required String? placeName,
     required String? locality,
@@ -174,7 +271,15 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (_selectedPlace == null) return null;
 
     if (_selectedPlace!.placeName == null && _selectedPlace!.locality == null) {
-      await _resolveSelectedPlace(selectedVersion: _selectedVersion);
+      // By the time confirm is tapped, the interactive resolve has already
+      // finished (canConfirm gates on !_isResolvingPlace). Reaching here means
+      // geocoding already failed once, so this is a last-chance retry on a
+      // known-bad connection. We bound it so a hung geocoder doesn't silently
+      // block the confirm action — on timeout we just save coordinates.
+      await _resolveSelectedPlace(selectedVersion: _selectedVersion).timeout(
+        SpLocationService.geocodeTimeout,
+        onTimeout: () {},
+      );
     }
 
     if (_selectedPlace == null) return null;
@@ -194,10 +299,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
 
     try {
-      final resolved = await SpGeocodingService.instance.reverseGeocode(place.latLng);
+      final resolved = await SpGeocodingService.systemInstance.reverseGeocode(place.latLng);
       if (selectedVersion != _selectedVersion) return;
 
       _selectedPlace = resolved ?? place;
+      if (resolved != null) HapticFeedback.selectionClick();
     } catch (_) {
       if (selectedVersion == _selectedVersion) {
         _selectedPlace = place;
@@ -210,6 +316,11 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
       }
     }
+  }
+
+  bool _isSameLatLng(double lat1, double lng1, double lat2, double lng2) {
+    const double threshold = 0.0001;
+    return (lat1 - lat2).abs() < threshold && (lng1 - lng2).abs() < threshold;
   }
 
   String? _normalizeText(String? value) {
