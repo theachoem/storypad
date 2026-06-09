@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
+import 'package:storypad/core/services/geocoding/maptiler/sp_maptiler_geocoding_service.dart';
 import 'package:storypad/core/services/geocoding/sp_null_geocoding_service.dart';
 import 'package:storypad/core/services/geocoding/system/sp_system_geocoding_service.dart';
 
@@ -27,9 +28,11 @@ abstract class SpGeocodingService {
   ///
   /// - iOS / Android / macOS → [SpSystemGeocodingService] (system geocoder, free)
   /// - Linux / Windows / Web → [SpNullGeocodingService] (no-op)
-  static final instance = (!kIsWeb && (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
+  static final systemInstance = (!kIsWeb && (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
       ? SpSystemGeocodingService()
       : const SpNullGeocodingService();
+
+  static final onlineInstance = SpMapTilerGeocodingService();
 
   /// Convert coordinates to a human-readable place.
   ///
@@ -40,7 +43,10 @@ abstract class SpGeocodingService {
   /// Search for places matching [query].
   ///
   /// Returns an empty list when geocoding is unavailable.
-  Future<List<PlaceDbModel>> searchPlaces(String query);
+  Future<List<PlaceDbModel>> searchPlaces(
+    String query, {
+    SpLatLng? proximity, // Optional proximity hint for better search results
+  });
 
   /// Tries to resolve a nearby saved place from local stories.
   ///

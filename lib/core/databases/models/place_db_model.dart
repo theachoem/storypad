@@ -24,12 +24,16 @@ class PlaceDbModel extends BaseDbModel {
   /// Full formatted address string.
   final String? address;
 
+  /// ISO 3166-1 alpha-2 country code, e.g. "KH" for Cambodia.
+  final String? isoCountryCode;
+
   PlaceDbModel({
     required this.latitude,
     required this.longitude,
     this.placeName,
     this.locality,
     this.country,
+    this.isoCountryCode,
     this.address,
   });
 
