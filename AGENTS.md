@@ -1,2 +1,0 @@
-- Search result page should show people too
-- Customize showing people in homepage

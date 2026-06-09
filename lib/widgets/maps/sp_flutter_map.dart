@@ -137,17 +137,25 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
           }
 
           if (_isGesturing) {
-            debouncedCallback(() {
-              if (!mounted) return;
-              _isGesturing = false;
-              final latlong.LatLng center = _flutterMapController.camera.center;
-              widget.onCameraIdle?.call(SpLatLng(center.latitude, center.longitude));
-            }, duration: const Duration(milliseconds: 300), key: 'idle');
+            debouncedCallback(
+              () {
+                if (!mounted) return;
+                _isGesturing = false;
+                final latlong.LatLng center = _flutterMapController.camera.center;
+                widget.onCameraIdle?.call(SpLatLng(center.latitude, center.longitude));
+              },
+              duration: const Duration(milliseconds: 300),
+              key: 'idle',
+            );
           }
 
-          debouncedCallback(() {
-            _notifyViewportChanged(camera);
-          }, duration: const Duration(milliseconds: 50), key: 'viewport');
+          debouncedCallback(
+            () {
+              _notifyViewportChanged(camera);
+            },
+            duration: const Duration(milliseconds: 50),
+            key: 'viewport',
+          );
         },
       ),
       children: <Widget>[

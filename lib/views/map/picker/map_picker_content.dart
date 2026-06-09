@@ -40,13 +40,16 @@ class _MapPickerContent extends StatelessWidget {
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: FloatingActionButton(
         tooltip: tr("button.done"),
-        onPressed: viewModel.canConfirm
-            ? () async {
-                final MapPickerResult? result = await viewModel.buildConfirmResult();
-                if (!context.mounted || result == null) return;
-                Navigator.of(context).pop(result);
-              }
-            : null,
+        onPressed: () async {
+          if (!viewModel.canConfirm) {
+            Navigator.of(context).pop();
+            return;
+          }
+
+          final MapPickerResult? result = await viewModel.buildConfirmResult();
+          if (!context.mounted || result == null) return;
+          Navigator.of(context).pop(result);
+        },
         child: const Icon(SpIcons.check),
       ),
       bottomNavigationBar: buildSelectedPlaceBar(context, selectedPlace, isResolving),
