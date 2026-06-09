@@ -17,6 +17,8 @@ abstract class _$PlaceDbModelCWProxy {
 
   PlaceDbModel country(String? country);
 
+  PlaceDbModel isoCountryCode(String? isoCountryCode);
+
   PlaceDbModel address(String? address);
 
   /// Creates a new instance with the provided field values.
@@ -32,6 +34,7 @@ abstract class _$PlaceDbModelCWProxy {
     String? placeName,
     String? locality,
     String? country,
+    String? isoCountryCode,
     String? address,
   });
 }
@@ -59,6 +62,10 @@ class _$PlaceDbModelCWProxyImpl implements _$PlaceDbModelCWProxy {
   PlaceDbModel country(String? country) => call(country: country);
 
   @override
+  PlaceDbModel isoCountryCode(String? isoCountryCode) =>
+      call(isoCountryCode: isoCountryCode);
+
+  @override
   PlaceDbModel address(String? address) => call(address: address);
 
   @override
@@ -75,6 +82,7 @@ class _$PlaceDbModelCWProxyImpl implements _$PlaceDbModelCWProxy {
     Object? placeName = const $CopyWithPlaceholder(),
     Object? locality = const $CopyWithPlaceholder(),
     Object? country = const $CopyWithPlaceholder(),
+    Object? isoCountryCode = const $CopyWithPlaceholder(),
     Object? address = const $CopyWithPlaceholder(),
   }) {
     return PlaceDbModel(
@@ -98,6 +106,10 @@ class _$PlaceDbModelCWProxyImpl implements _$PlaceDbModelCWProxy {
           ? _value.country
           // ignore: cast_nullable_to_non_nullable
           : country as String?,
+      isoCountryCode: isoCountryCode == const $CopyWithPlaceholder()
+          ? _value.isoCountryCode
+          // ignore: cast_nullable_to_non_nullable
+          : isoCountryCode as String?,
       address: address == const $CopyWithPlaceholder()
           ? _value.address
           // ignore: cast_nullable_to_non_nullable
@@ -123,6 +135,7 @@ PlaceDbModel _$PlaceDbModelFromJson(Map<String, dynamic> json) => PlaceDbModel(
   placeName: json['place_name'] as String?,
   locality: json['locality'] as String?,
   country: json['country'] as String?,
+  isoCountryCode: json['iso_country_code'] as String?,
   address: json['address'] as String?,
 );
 
@@ -134,4 +147,5 @@ Map<String, dynamic> _$PlaceDbModelToJson(PlaceDbModel instance) =>
       'locality': instance.locality,
       'country': instance.country,
       'address': instance.address,
+      'iso_country_code': instance.isoCountryCode,
     };
