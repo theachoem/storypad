@@ -9,6 +9,7 @@ class StoryTilePreferencesObject {
   final bool showTime;
   final bool showPageCount;
   final bool showTagLabels;
+  final bool showPeopleLabels;
   final bool showVoiceCount;
   final bool showLocation;
   final int displayCharacterCount;
@@ -17,12 +18,14 @@ class StoryTilePreferencesObject {
     bool? showTime,
     bool? showPageCount,
     bool? showTagLabels,
+    bool? showPeopleLabels,
     bool? showVoiceCount,
     bool? showLocation,
     int? displayCharacterCount,
   }) : showTime = showTime ?? true,
        showPageCount = showPageCount ?? true,
        showTagLabels = showTagLabels ?? true,
+       showPeopleLabels = showPeopleLabels ?? true,
        showVoiceCount = showVoiceCount ?? true,
        showLocation = showLocation ?? true,
        displayCharacterCount = displayCharacterCount ?? 200;
@@ -33,6 +36,7 @@ class StoryTilePreferencesObject {
     return StoryTilePreferencesObject(
       showPageCount: true,
       showTagLabels: true,
+      showPeopleLabels: true,
       showTime: true,
     );
   }

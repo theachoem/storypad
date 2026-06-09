@@ -276,11 +276,15 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    // Tags labels including its add button
+    // Tags labels including its add button. Topics (#) and people (@) are toggled independently.
     bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
-    final tagLabels = buildTags(tagProvider, context);
-    if (showTagLabels) children.addAll(tagLabels);
-    if (onToggleTags != null && tagLabels.isEmpty) {
+    bool showPeopleLabels = preferences.showPeopleLabels || !fromStoryTile;
+    final topicLabels = buildTags(tagProvider, context, people: false);
+    final peopleLabels = buildTags(tagProvider, context, people: true);
+    if (showTagLabels) children.addAll(topicLabels);
+    if (showPeopleLabels) children.addAll(peopleLabels);
+    // Add button (opens the picker covering both tags & people) only when the story has neither.
+    if (onToggleTags != null && topicLabels.isEmpty && peopleLabels.isEmpty) {
       children.add(
         SpFloatingPopUpButton(
           estimatedFloatingWidth: 288,
@@ -452,19 +456,24 @@ class SpStoryLabels extends StatelessWidget {
     }
   }
 
-  List<Widget> buildTags(TagsProvider tagProvider, BuildContext context) {
+  List<Widget> buildTags(TagsProvider tagProvider, BuildContext context, {required bool people}) {
+    if (people) {
+      final peopleTags =
+          tagProvider.peopleTags?.items.where((e) => story.validTags?.contains(e.id) == true).toList() ?? [];
+      return [for (final person in peopleTags) buildTag(context, tagProvider, person, prefix: "@")];
+    }
+
     final tags =
         tagProvider.tags?.items
             .where((e) => e.categoryId == null && e.emoji == null && story.validTags?.contains(e.id) == true)
             .toList() ??
         [];
-    final children = tags.map((tag) {
-      return buildTag(context, tagProvider, tag);
-    }).toList();
-    return children;
+    return [for (final tag in tags) buildTag(context, tagProvider, tag, prefix: "#")];
   }
 
-  Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag) {
+  Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag, {required String prefix}) {
+    final title = "$prefix ${tag.title.sanitizeUtf16}";
+
     if (onToggleTags != null) {
       return SpFloatingPopUpButton(
         estimatedFloatingWidth: 288,
@@ -475,10 +484,11 @@ class SpStoryLabels extends StatelessWidget {
           initialTags: story.validTags ?? [],
           onUpdated: onToggleTags!,
           close: close,
+          initialPeopleMode: tag.isPerson,
         ),
         builder: (open) => buildPin(
           context: context,
-          title: "# ${tag.title.sanitizeUtf16}",
+          title: title,
           onTap: open,
         ),
       );
@@ -486,7 +496,7 @@ class SpStoryLabels extends StatelessWidget {
 
     return buildPin(
       context: context,
-      title: "# ${tag.title.sanitizeUtf16}",
+      title: title,
       onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
     );
   }

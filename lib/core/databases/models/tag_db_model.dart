@@ -44,6 +44,7 @@ class TagDbModel extends BaseDbModel {
   }) : index = index ?? 0;
 
   bool get feeling => categoryId == TagCategoryDbModel.feeling().id;
+  bool get isPerson => categoryId == TagCategoryDbModel.peopleId;
 
   TagDbModel.fromIDTitle(this.id, this.title)
     : version = 0,
@@ -72,13 +73,13 @@ class TagDbModel extends BaseDbModel {
     );
   }
 
-  factory TagDbModel.fromNow() {
+  factory TagDbModel.fromNow({int? categoryId}) {
     return TagDbModel(
       id: TagIdGeneratorService.timeId(),
       version: 0,
       title: 'Favorite',
       emoji: null,
-      categoryId: null,
+      categoryId: categoryId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       permanentlyDeletedAt: null,

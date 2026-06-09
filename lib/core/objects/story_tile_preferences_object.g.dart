@@ -13,6 +13,8 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
 
   StoryTilePreferencesObject showTagLabels(bool? showTagLabels);
 
+  StoryTilePreferencesObject showPeopleLabels(bool? showPeopleLabels);
+
   StoryTilePreferencesObject showVoiceCount(bool? showVoiceCount);
 
   StoryTilePreferencesObject showLocation(bool? showLocation);
@@ -30,6 +32,7 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
     bool? showTime,
     bool? showPageCount,
     bool? showTagLabels,
+    bool? showPeopleLabels,
     bool? showVoiceCount,
     bool? showLocation,
     int? displayCharacterCount,
@@ -57,6 +60,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
       call(showTagLabels: showTagLabels);
 
   @override
+  StoryTilePreferencesObject showPeopleLabels(bool? showPeopleLabels) =>
+      call(showPeopleLabels: showPeopleLabels);
+
+  @override
   StoryTilePreferencesObject showVoiceCount(bool? showVoiceCount) =>
       call(showVoiceCount: showVoiceCount);
 
@@ -81,6 +88,7 @@ class _$StoryTilePreferencesObjectCWProxyImpl
     Object? showTime = const $CopyWithPlaceholder(),
     Object? showPageCount = const $CopyWithPlaceholder(),
     Object? showTagLabels = const $CopyWithPlaceholder(),
+    Object? showPeopleLabels = const $CopyWithPlaceholder(),
     Object? showVoiceCount = const $CopyWithPlaceholder(),
     Object? showLocation = const $CopyWithPlaceholder(),
     Object? displayCharacterCount = const $CopyWithPlaceholder(),
@@ -98,6 +106,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
           ? _value.showTagLabels
           // ignore: cast_nullable_to_non_nullable
           : showTagLabels as bool?,
+      showPeopleLabels: showPeopleLabels == const $CopyWithPlaceholder()
+          ? _value.showPeopleLabels
+          // ignore: cast_nullable_to_non_nullable
+          : showPeopleLabels as bool?,
       showVoiceCount: showVoiceCount == const $CopyWithPlaceholder()
           ? _value.showVoiceCount
           // ignore: cast_nullable_to_non_nullable
@@ -133,6 +145,7 @@ StoryTilePreferencesObject _$StoryTilePreferencesObjectFromJson(
   showTime: json['show_time'] as bool?,
   showPageCount: json['show_page_count'] as bool?,
   showTagLabels: json['show_tag_labels'] as bool?,
+  showPeopleLabels: json['show_people_labels'] as bool?,
   showVoiceCount: json['show_voice_count'] as bool?,
   showLocation: json['show_location'] as bool?,
   displayCharacterCount: (json['display_character_count'] as num?)?.toInt(),
@@ -144,6 +157,7 @@ Map<String, dynamic> _$StoryTilePreferencesObjectToJson(
   'show_time': instance.showTime,
   'show_page_count': instance.showPageCount,
   'show_tag_labels': instance.showTagLabels,
+  'show_people_labels': instance.showPeopleLabels,
   'show_voice_count': instance.showVoiceCount,
   'show_location': instance.showLocation,
   'display_character_count': instance.displayCharacterCount,

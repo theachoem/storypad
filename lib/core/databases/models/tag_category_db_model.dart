@@ -30,6 +30,11 @@ class TagCategoryDbModel extends BaseDbModel {
   // Custom ID has ID generated from current date, while system ID is predefined and less than 1000.
   bool get system => id < 1000;
 
+  // People is a text-based system category (person names, no emoji), unlike the emoji
+  // categories (Feeling/Activity/Weather). It is intentionally NOT part of [systemCategories]
+  // since that list only feeds the emoji picker.
+  static const int peopleId = 4;
+
   TagCategoryDbModel({
     required this.id,
     required this.version,
@@ -77,6 +82,7 @@ class TagCategoryDbModel extends BaseDbModel {
         1: tr("general.tag_category.feeling_title"),
         2: tr("general.tag_category.activity_title"),
         3: tr("general.tag_category.weather_title"),
+        peopleId: tr("general.tag_category.people_title"),
       }[id]!;
     }
 
@@ -92,6 +98,7 @@ class TagCategoryDbModel extends BaseDbModel {
   factory TagCategoryDbModel.feeling() => TagCategoryDbModel.system(1, "Feeling", multiSelect: false);
   factory TagCategoryDbModel.activity() => TagCategoryDbModel.system(2, "Activity", multiSelect: true);
   factory TagCategoryDbModel.weather() => TagCategoryDbModel.system(3, "Weather", multiSelect: false);
+  factory TagCategoryDbModel.people() => TagCategoryDbModel.system(peopleId, "People", multiSelect: true);
   factory TagCategoryDbModel.system(int id, String title, {bool multiSelect = false}) {
     return TagCategoryDbModel(
       id: id,

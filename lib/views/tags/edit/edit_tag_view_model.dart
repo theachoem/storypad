@@ -8,8 +8,17 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   EditTagViewModel({
     required this.params,
-  });
+  }) : selectedCategoryId = params.tag?.categoryId ?? params.categoryId;
+
+  // null = regular topic tag, TagCategoryDbModel.peopleId = a person.
+  int? selectedCategoryId;
 
   TagDbModel? get tag => params.tag;
   List<String> get tagTitles => params.tags.map((e) => e.title).toList();
+
+  void setCategory(int? categoryId) {
+    if (selectedCategoryId == categoryId) return;
+    selectedCategoryId = categoryId;
+    notifyListeners();
+  }
 }

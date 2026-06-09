@@ -29,12 +29,21 @@ class SpTextInputsPage extends StatefulWidget {
     this.saveButtonLabel,
     required this.fields,
     this.contentOnly = false,
+    this.header,
+    this.onSubmitted,
   });
 
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
   final String? saveButtonLabel;
   final bool contentOnly;
+
+  // Optional widget rendered above the input fields (e.g. a category chip selector).
+  final Widget? header;
+
+  // When provided, called with the trimmed field values on a valid submit instead of
+  // popping the route with the values list. Lets callers return a custom result.
+  final void Function(List<String> values)? onSubmitted;
 
   @override
   State<SpTextInputsPage> createState() => _SpTextInputsPageState();
@@ -85,6 +94,10 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
         16.0,
       ).add(EdgeInsets.only(left: screenPadding.left, right: screenPadding.right, bottom: screenPadding.bottom)),
       children: [
+        if (widget.header != null) ...[
+          widget.header!,
+          const SizedBox(height: 16.0),
+        ],
         for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
         const SizedBox(height: 16.0),
         buildSaveButton(context),
@@ -165,6 +178,11 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
 
   void submit(BuildContext context) {
     if (!Form.of(context).validate()) return;
-    Navigator.of(context).pop(controllers.map((e) => e.text.trim()).toList());
+    final values = controllers.map((e) => e.text.trim()).toList();
+    if (widget.onSubmitted != null) {
+      widget.onSubmitted!(values);
+    } else {
+      Navigator.of(context).pop(values);
+    }
   }
 }

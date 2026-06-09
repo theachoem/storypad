@@ -17,14 +17,18 @@ class _CalendarStoriesContent extends StatelessWidget {
                 preferredSize: const Size.fromHeight(34.0 + 12.0),
                 child: Column(
                   crossAxisAlignment: .start,
+                  mainAxisAlignment: .start,
                   children: [
-                    SpScrollableChoiceChips<TagDbModel>(
-                      choices: viewModel.tags ?? [],
-                      storiesCount: (TagDbModel tag) =>
-                          viewModel.tagSelected(tag) ? viewModel.currentFilterStoriesCount : null,
-                      toLabel: (TagDbModel tag) => tag.title,
-                      selected: (TagDbModel tag) => viewModel.tagSelected(tag),
-                      onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
+                    SizedBox(
+                      width: .infinity,
+                      child: SpScrollableChoiceChips<TagDbModel>(
+                        choices: viewModel.tags ?? [],
+                        storiesCount: (TagDbModel tag) =>
+                            viewModel.tagSelected(tag) ? viewModel.currentFilterStoriesCount : null,
+                        toLabel: (TagDbModel tag) => tag.title,
+                        selected: (TagDbModel tag) => viewModel.tagSelected(tag),
+                        onToggle: (TagDbModel tag) => viewModel.selectTag(tag),
+                      ),
                     ),
                     const SizedBox(height: 12.0),
                   ],

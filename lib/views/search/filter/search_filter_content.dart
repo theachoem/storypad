@@ -70,7 +70,8 @@ class _SearchFilterContent extends StatelessWidget {
   }
 
   Widget buildTagChips(BuildContext context, TagCategoryDbModel? category, List<TagDbModel> tags) {
-    final bool isEmoji = category != null;
+    final bool isPeople = category?.id == TagCategoryDbModel.peopleId;
+    final bool isEmoji = category != null && !isPeople;
 
     return SpScrollableChoiceChips<TagDbModel>(
       wrapWidth: 800,

@@ -65,6 +65,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   }
 
   Future<bool> setTags(List<int> tags, BuildContext context) async {
+    final provider = context.read<TagsProvider>();
     final orderedTags = await _cleanTags(tags, context);
     story = story!.copyWith(updatedAt: DateTime.now(), tags: orderedTags.map((e) => e.toString()).toList());
     notifyListeners();
@@ -74,8 +75,17 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
       lastSavedAtNotifier.value = story?.updatedAt;
     }
 
+    // Breakdown by category so adoption of People vs topic vs emoji tags is measurable.
+    final peopleIds = provider.peopleTags?.items.map((e) => e.id).toSet() ?? {};
+    final emojiIds = provider.emojiTags?.items.map((e) => e.id).toSet() ?? {};
+    final peopleCount = orderedTags.where(peopleIds.contains).length;
+    final emojiCount = orderedTags.where(emojiIds.contains).length;
+
     AnalyticsService.instance.logSetTagsToStory(
       story: story!,
+      peopleTagsCount: peopleCount,
+      emojiTagsCount: emojiCount,
+      topicTagsCount: orderedTags.length - peopleCount - emojiCount,
     );
 
     return true;
