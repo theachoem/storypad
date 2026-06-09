@@ -190,8 +190,21 @@ abstract class BaseAnalyticsEventAdaptor {
     return logEvent(sanitizeEventName('put_story_back'), parameters: storyAnalyticParameters(story));
   }
 
-  Future<void> logSetTagsToStory({required StoryDbModel story}) {
-    return logEvent(sanitizeEventName('set_tags_to_story'), parameters: storyAnalyticParameters(story));
+  Future<void> logSetTagsToStory({
+    required StoryDbModel story,
+    int? topicTagsCount,
+    int? peopleTagsCount,
+    int? emojiTagsCount,
+  }) {
+    return logEvent(
+      sanitizeEventName('set_tags_to_story'),
+      parameters: storyAnalyticParameters(
+        story,
+        topicTagsCount: topicTagsCount,
+        peopleTagsCount: peopleTagsCount,
+        emojiTagsCount: emojiTagsCount,
+      ),
+    );
   }
 
   Future<void> logSetStoryFeeling({required StoryDbModel story}) {
@@ -226,8 +239,23 @@ abstract class BaseAnalyticsEventAdaptor {
     return logEvent(sanitizeEventName('add_tag'), parameters: tagAnalyticParameters(tag));
   }
 
+  // method: 'button' (tapped the Tags/People segment control).
+  // Measures how often users switch into People mode in the picker.
+  Future<void> logTagPickerPeopleModeEntered({required String method}) {
+    return logEvent(
+      sanitizeEventName('tag_picker_people_mode_entered'),
+      parameters: sanitizeParameters({'method': method}),
+    );
+  }
+
   Future<void> logReorderTags({required CollectionDbModel<TagDbModel> tags}) {
-    return logEvent(sanitizeEventName('reorder_tags'));
+    return logEvent(
+      sanitizeEventName('reorder_tags'),
+      parameters: sanitizeParameters({
+        'count': tags.items.length.toString(),
+        'category': tags.items.isEmpty ? null : tagCategoryLabel(tags.items.first),
+      }),
+    );
   }
 
   Future<void> logInsertNewPhoto() => logEvent(sanitizeEventName('insert_new_photo'));
@@ -315,7 +343,12 @@ abstract class BaseAnalyticsEventAdaptor {
   // Shared helpers
   // ---------------------------------------------------------------------------
 
-  Map<String, Object>? storyAnalyticParameters(StoryDbModel story) {
+  Map<String, Object>? storyAnalyticParameters(
+    StoryDbModel story, {
+    int? topicTagsCount,
+    int? peopleTagsCount,
+    int? emojiTagsCount,
+  }) {
     return sanitizeParameters({
       'version': story.version.toString(),
       'type': story.type.name,
@@ -324,16 +357,26 @@ abstract class BaseAnalyticsEventAdaptor {
       'month': story.month.toString(),
       'day': story.day.toString(),
       'pinned': ?story.pinned?.toString(),
-      'tags_count': story.tags?.length.toString(),
       'gallery_template_id': ?story.galleryTemplateId,
       'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
           .toString(),
       'draft_saved': story.draftContent?.id != null ? 'true' : 'false',
       'preferred_show_day_count': story.preferences.showDayCount?.toString(),
+      'tags_count': ?story.tags?.length.toString(),
+      'topic_tags_count': ?topicTagsCount?.toString(),
+      'people_tags_count': ?peopleTagsCount?.toString(),
+      'emoji_tags_count': ?emojiTagsCount?.toString(),
     });
   }
 
-  Map<String, Object>? tagAnalyticParameters(TagDbModel tag) => sanitizeParameters({});
+  // Categorical/numeric only — never the tag title (tag and person names are user PII).
+  Map<String, Object>? tagAnalyticParameters(TagDbModel tag) => sanitizeParameters({
+    'category': tagCategoryLabel(tag),
+    'has_emoji': (tag.emoji != null).toString(),
+  });
+
+  // 'emoji' (Feeling/Activity/Weather), 'people', or 'topic' (regular tags).
+  String tagCategoryLabel(TagDbModel tag) => tag.emoji != null ? 'emoji' : (tag.isPerson ? 'people' : 'topic');
 
   /// Validates and returns [name]. Firebase event names must be 1–40 alphanumeric/underscore
   /// characters, start with a letter, and not use reserved prefixes.

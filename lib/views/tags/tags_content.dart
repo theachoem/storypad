@@ -9,56 +9,86 @@ class _TagsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<TagsProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(tr("page.tags.title")),
-        actions: [
-          if (viewModel.params.pickMode) ...[
-            if (viewModel.params.maxCount != null)
-              SpCapacityBadge(
-                current: viewModel.selectedTags.length,
-                max: viewModel.params.maxCount!,
-              ),
-            const SizedBox(width: 4),
-            TextButton(
-              onPressed: () {
-                final selected =
-                    provider.tags?.items.where((t) => viewModel.selectedTags.contains(t.id)).toList() ?? [];
-                Navigator.maybePop(context, selected);
-              },
-              child: Text(tr('button.done')),
+    return DefaultTabController(
+      length: 2,
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            appBar: buildAppBar(provider, context),
+            body: TabBarView(
+              children: [
+                buildCategory(context, provider, categoryId: null),
+                buildCategory(context, provider, categoryId: TagCategoryDbModel.peopleId),
+              ],
             ),
-          ] else
-            IconButton(
-              tooltip: tr("page.new_tag.title"),
-              icon: const Icon(SpIcons.add),
-              onPressed: () => provider.addTag(context),
-            ),
-        ],
-      ),
-      body: RefreshIndicator.adaptive(
-        onRefresh: () => provider.reload(),
-        child: buildBody(
-          context,
-          provider,
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget buildBody(BuildContext context, TagsProvider provider) {
-    if (provider.tags?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+  AppBar buildAppBar(TagsProvider provider, BuildContext context) {
+    return AppBar(
+      title: Text(tr("page.tags.title")),
+      bottom: TabBar(
+        isScrollable: true,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        tabAlignment: .start,
+        tabs: [
+          Tab(text: tr("page.tags.title")),
+          Tab(text: tr("general.tag_category.people_title")),
+        ],
+      ),
+      actions: [
+        if (viewModel.params.pickMode) ...[
+          if (viewModel.params.maxCount != null)
+            SpCapacityBadge(
+              current: viewModel.selectedTags.length,
+              max: viewModel.params.maxCount!,
+            ),
+          const SizedBox(width: 4),
+          TextButton(
+            onPressed: () {
+              final selected =
+                  provider.allTags?.items.where((t) => viewModel.selectedTags.contains(t.id)).toList() ?? [];
+              Navigator.maybePop(context, selected);
+            },
+            child: Text(tr('button.done')),
+          ),
+        ] else
+          IconButton(
+            tooltip: tr("page.new_tag.title"),
+            icon: const Icon(SpIcons.add),
+            onPressed: () {
+              final categoryId = DefaultTabController.of(context).index == 1 ? TagCategoryDbModel.peopleId : null;
+              provider.addTag(context, categoryId: categoryId);
+            },
+          ),
+      ],
+    );
+  }
 
-    if (provider.tags?.items.isEmpty == true) {
-      return buildEmptyBody(context);
+  Widget buildCategory(BuildContext context, TagsProvider provider, {required int? categoryId}) {
+    return RefreshIndicator.adaptive(
+      onRefresh: () => provider.reload(),
+      child: buildBody(context, provider, categoryId: categoryId),
+    );
+  }
+
+  Widget buildBody(BuildContext context, TagsProvider provider, {required int? categoryId}) {
+    final collection = provider.tagsOf(categoryId);
+    if (collection?.items == null) return const Center(child: CircularProgressIndicator.adaptive());
+
+    if (collection?.items.isEmpty == true) {
+      return buildEmptyBody(context, categoryId: categoryId);
     }
 
     return SpScrollConfiguration(
       child: ReorderableListView.builder(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         buildDefaultDragHandles: true,
-        itemCount: provider.tags?.items.length ?? 0,
-        onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex),
+        itemCount: collection?.items.length ?? 0,
+        onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex, categoryId: categoryId),
         proxyDecorator: (child, index, animation) {
           return Container(
             color: Theme.of(context).colorScheme.readOnly.surface5,
@@ -66,7 +96,7 @@ class _TagsContent extends StatelessWidget {
           );
         },
         itemBuilder: (context, index) {
-          final tag = provider.tags!.items[index];
+          final tag = collection!.items[index];
           final storyCount = viewModel.getStoriesCount(tag);
 
           return Slidable(
@@ -157,7 +187,8 @@ class _TagsContent extends StatelessWidget {
     );
   }
 
-  Widget buildEmptyBody(BuildContext context) {
+  Widget buildEmptyBody(BuildContext context, {required int? categoryId}) {
+    final isPeople = categoryId == TagCategoryDbModel.peopleId;
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -173,9 +204,9 @@ class _TagsContent extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 12.0,
                 children: [
-                  const Icon(SpIcons.tag, size: 32.0),
+                  Icon(isPeople ? SpIcons.people : SpIcons.tag, size: 32.0),
                   Text(
-                    tr("page.tags.empty_message"),
+                    isPeople ? tr("page.tags.people_empty_message") : tr("page.tags.empty_message"),
                     textAlign: TextAlign.center,
                     style: TextTheme.of(context).bodyLarge,
                   ),

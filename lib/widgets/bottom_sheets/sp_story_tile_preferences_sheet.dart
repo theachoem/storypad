@@ -123,6 +123,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
     return story.copyWith(
       tags: [
         ?context.read<TagsProvider>().tags?.items.firstOrNull?.id.toString(),
+        ?context.read<TagsProvider>().peopleTags?.items.firstOrNull?.id.toString(),
         _demoFeeling2Tag.id.toString(),
       ],
       feeling: null,
@@ -244,6 +245,16 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             value: storyTilePreferences.showTagLabels,
             onChanged: (value) {
               storyTilePreferences = storyTilePreferences.copyWith(showTagLabels: value);
+              setState(() {});
+            },
+          ),
+          SwitchListTile.adaptive(
+            secondary: const SpSettingIconBadge(weekday: 7, icon: SpIcons.alternateEmail),
+            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
+            title: Text(tr("list_tile.show_people_labels.title")),
+            value: storyTilePreferences.showPeopleLabels,
+            onChanged: (value) {
+              storyTilePreferences = storyTilePreferences.copyWith(showPeopleLabels: value);
               setState(() {});
             },
           ),

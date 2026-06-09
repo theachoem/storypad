@@ -5,6 +5,8 @@ class _EditTagContent extends StatelessWidget {
 
   final EditTagViewModel viewModel;
 
+  bool get isPerson => viewModel.selectedCategoryId == TagCategoryDbModel.peopleId;
+
   @override
   Widget build(BuildContext context) {
     return SpTextInputsPage(
@@ -22,17 +24,46 @@ class _EditTagContent extends StatelessWidget {
             ),
         ],
       ),
+      header: buildCategorySelector(context),
+      onSubmitted: (values) =>
+          Navigator.of(context).pop(EditTagResult(title: values.first, categoryId: viewModel.selectedCategoryId)),
       fields: [
         SpTextInputField(
           initialText: viewModel.tag?.title,
-          hintText: tr("input.tag.hint"),
+          hintText: isPerson ? tr("input.people.hint") : tr("input.tag.hint"),
           validator: (value) {
             if (value == null || value.trim().isEmpty == true) return tr("input.message.required");
-            if (context.read<TagsProvider>().isTagExist(value) == true) return tr("input.message.already_exist");
+
+            final exists = context.read<TagsProvider>().isTagExist(value, categoryId: viewModel.selectedCategoryId);
+            // Allow keeping the same title when editing an existing tag.
+            final unchanged = viewModel.tag?.title.toLowerCase() == value.trim().toLowerCase();
+            if (exists && !unchanged) return tr("input.message.already_exist");
+
             return null;
           },
         ),
       ],
+    );
+  }
+
+  Widget buildCategorySelector(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: 8.0,
+        children: [
+          ChoiceChip(
+            label: Text(tr("page.tags.title")),
+            selected: !isPerson,
+            onSelected: (_) => viewModel.setCategory(null),
+          ),
+          ChoiceChip(
+            label: Text(tr("general.tag_category.people_title")),
+            selected: isPerson,
+            onSelected: (_) => viewModel.setCategory(TagCategoryDbModel.peopleId),
+          ),
+        ],
+      ),
     );
   }
 }

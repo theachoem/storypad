@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -21,11 +22,15 @@ class SpFloatingTagPicker extends StatefulWidget {
   final Future<bool> Function(List<int> tags) onUpdated;
   final FutureOr<void> Function() close;
 
+  // Opens the picker directly in People mode (e.g. when tapping a person chip).
+  final bool initialPeopleMode;
+
   const SpFloatingTagPicker({
     super.key,
     required this.initialTags,
     required this.onUpdated,
     required this.close,
+    this.initialPeopleMode = false,
   });
 
   @override
@@ -38,10 +43,22 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
 
   String _query = '';
   bool _creating = false;
+  late bool _peopleMode = widget.initialPeopleMode;
+
+  int? get _categoryId => _peopleMode ? TagCategoryDbModel.peopleId : null;
+
+  void _setPeopleMode(bool peopleMode) {
+    if (_peopleMode == peopleMode) return;
+    setState(() => _peopleMode = peopleMode);
+    if (peopleMode) AnalyticsService.instance.logTagPickerPeopleModeEntered(method: 'button');
+  }
 
   late final TagsProvider tagsProvider = context.read<TagsProvider>();
   late Map<int, int> storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
-    tagIds: tagsProvider.tags?.items.map((e) => e.id).toList() ?? [],
+    tagIds: [
+      ...?tagsProvider.tags?.items.map((e) => e.id),
+      ...?tagsProvider.peopleTags?.items.map((e) => e.id),
+    ],
   );
 
   int getStoriesCount(TagDbModel tag) => storiesCountByTagId[tag.id] ?? 0;
@@ -65,7 +82,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
     if (_creating) return;
 
     setState(() => _creating = true);
-    final tag = await provider.createTag(_query);
+    final tag = await provider.createTag(_query, categoryId: _categoryId);
 
     if (tag != null && mounted) {
       await _toggle(tag);
@@ -108,7 +125,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
 
   Widget buildPage({required BuildContext context}) {
     final provider = Provider.of<TagsProvider>(context);
-    final tags = provider.tags?.items ?? <TagDbModel>[];
+    final tags = (_peopleMode ? provider.peopleTags : provider.tags)?.items ?? <TagDbModel>[];
 
     final filtered = _query.isEmpty
         ? tags
@@ -130,7 +147,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
         _query.isNotEmpty && (tags.isEmpty || !tags.any((t) => t.title.toLowerCase() == _query.toLowerCase()));
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: .min,
       children: [
         const SizedBox(height: _PADDING),
         Padding(
@@ -140,7 +157,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
             onChanged: (text) => setState(() => _query = text),
             decoration: InputDecoration(
               isDense: true,
-              hintText: tr('input.tag.hint'),
+              hintText: _peopleMode ? tr('input.people.hint') : tr('input.tag.hint'),
               hintStyle: TextStyle(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -157,27 +174,30 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
             style: TextTheme.of(context).bodyMedium,
           ),
         ),
+
         const SizedBox(height: _PADDING),
         const Divider(height: 1),
 
         if (!allowCreate && tags.isEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12.0,
-              children: [
-                const Icon(SpIcons.tag, size: 24.0),
-                Text(
-                  tr("page.tags.empty_message"),
-                  textAlign: TextAlign.center,
-                  style: TextTheme.of(context).bodyMedium,
-                ),
-              ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 12.0,
+                children: [
+                  Icon(_peopleMode ? SpIcons.people : SpIcons.tag, size: 24.0),
+                  Text(
+                    _peopleMode ? tr("page.tags.people_empty_message") : tr("page.tags.empty_message"),
+                    textAlign: TextAlign.center,
+                    style: TextTheme.of(context).bodyMedium,
+                  ),
+                ],
+              ),
             ),
           ),
         ] else ...[
-          Flexible(
+          Expanded(
             child: Scrollbar(
               thumbVisibility: true,
               interactive: true,
@@ -191,7 +211,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                     newIndex -= 1;
                   }
                   if (oldIndex < 0 || newIndex < 0) return;
-                  provider.reorder(oldIndex, newIndex);
+                  provider.reorder(oldIndex, newIndex, categoryId: _categoryId);
                 },
                 children: [
                   if (allowCreate)
@@ -210,7 +230,9 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                       title: Text.rich(
                         TextSpan(
                           children: [
-                            TextSpan(text: '${tr("page.new_tag.title")}: '),
+                            TextSpan(
+                              text: '${_peopleMode ? tr("page.new_person.title") : tr("page.new_tag.title")}: ',
+                            ),
                             TextSpan(
                               text: _query,
                               style: const TextStyle(fontStyle: FontStyle.italic, fontWeight: .bold),
@@ -283,6 +305,36 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
             ),
           ),
         ],
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Align(
+            alignment: .center,
+            child: SegmentedButton<bool>(
+              showSelectedIcon: false,
+              onSelectionChanged: (value) => _setPeopleMode(value.first),
+              style: IconButton.styleFrom(
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              segments: [
+                ButtonSegment(
+                  icon: const Icon(SpIcons.tag),
+                  value: false,
+                  tooltip: tr('page.tags.title'),
+                ),
+                ButtonSegment(
+                  icon: const Icon(SpIcons.people),
+                  value: true,
+                  tooltip: tr('general.tag_category.people_title'),
+                ),
+              ],
+              selected: {_peopleMode},
+            ),
+          ),
+        ),
+
+        const SizedBox(height: _PADDING - 2.0),
       ],
     );
   }
@@ -323,7 +375,9 @@ class _EditTagView extends StatelessWidget {
                     return tr("input.message.required");
                   }
 
-                  if (context.read<TagsProvider>().isTagExist(value) == true) {
+                  final exists = context.read<TagsProvider>().isTagExist(value, categoryId: tag.categoryId);
+                  final unchanged = tag.title.toLowerCase() == value.trim().toLowerCase();
+                  if (exists && !unchanged) {
                     return tr("input.message.already_exist");
                   }
 

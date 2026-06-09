@@ -46,8 +46,13 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
       // Group those together with a null key.
       final Map<TagCategoryDbModel?, List<TagDbModel>> grouped = {
         null: allItems.where((tag) => tag.categoryId == null).toList(),
-        for (final cateogy in TagCategoryDbModel.systemCategories)
-          cateogy: allItems.where((tag) => tag.categoryId == cateogy.id).toList(),
+
+        // People is a text-based category, not part of systemCategories (the emoji list),
+        // so it must be grouped explicitly or its tags would be dropped from the filter.
+        TagCategoryDbModel.people(): allItems.where((tag) => tag.categoryId == TagCategoryDbModel.peopleId).toList(),
+
+        for (final category in TagCategoryDbModel.systemCategories)
+          category: allItems.where((tag) => tag.categoryId == category.id).toList(),
       };
 
       tagsByCategory = grouped;
@@ -106,19 +111,28 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool tagSelected(TagDbModel tag) => searchFilter.tagIds.contains(tag.id);
 
   void toggleTag(TagDbModel tag) {
-    // Single-select per category: remove any other selected tag in the same category first.
-    final categoryTags =
-        tagsByCategory?.entries
-            .where((e) => e.key?.id == tag.categoryId)
-            .expand((e) => e.value)
-            .map((t) => t.id)
-            .toSet() ??
-        {};
+    final category = tagsByCategory?.keys.firstWhere((c) => c?.id == tag.categoryId, orElse: () => null);
+    Set<int> newTagIds = {...searchFilter.tagIds};
 
-    Set<int> newTagIds = {...searchFilter.tagIds}..removeAll(categoryTags);
+    if (category?.multiSelect == true) {
+      // Multi-select category (e.g. People): just toggle this tag on/off.
+      if (!newTagIds.remove(tag.id)) newTagIds.add(tag.id);
+    } else {
+      // Single-select per category: remove any other selected tag in the same category first.
+      final categoryTags =
+          tagsByCategory?.entries
+              .where((e) => e.key?.id == tag.categoryId)
+              .expand((e) => e.value)
+              .map((t) => t.id)
+              .toSet() ??
+          {};
 
-    // Toggle: if tag was already selected it was removed above → do not re-add.
-    if (!searchFilter.tagIds.contains(tag.id)) newTagIds.add(tag.id);
+      newTagIds.removeAll(categoryTags);
+
+      // Toggle: if tag was already selected it was removed above → do not re-add.
+      if (!searchFilter.tagIds.contains(tag.id)) newTagIds.add(tag.id);
+    }
+
     searchFilter = searchFilter.copyWith(tagIds: newTagIds);
     notifyListeners();
 
