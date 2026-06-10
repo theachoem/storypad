@@ -21,6 +21,7 @@ import 'package:storypad/core/rich_text/rich_text_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
 import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';

@@ -53,7 +53,7 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
         });
       }
     } catch (e) {
-      debugPrint('❌ Error loading audio metadata: $e');
+      AppLogger.error('$runtimeType#loadAssetMetadata error loading audio metadata', tag: '$runtimeType', error: e);
     }
   }
 

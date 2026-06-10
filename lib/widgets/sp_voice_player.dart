@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -138,6 +139,12 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   /// Once set, this asset stays loaded until widget is disposed.
   String? _currentFilePath;
 
+  /// Whether [_currentFilePath] has been successfully loaded into [player]
+  /// via `setFilePath`. If loading failed, this stays false so the next
+  /// play attempt retries `_loadAudio` instead of calling `play()` on a
+  /// player with no audio source.
+  bool _audioLoaded = false;
+
   /// Current playback speed (1.0 = normal, 1.5 = 50% faster, 2.0 = 2x faster).
   /// Synced with JustAudio's internal speed setting and device preferences.
   late double _playbackSpeed;
@@ -181,7 +188,8 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
   void load() async {
     if (widget.filePath != null) {
       _currentFilePath = widget.filePath;
-      await _loadAudio(_currentFilePath!);
+      final loaded = await _loadAudio(_currentFilePath!);
+      if (mounted) setState(() => _audioLoaded = loaded);
     }
 
     if (widget.autoplay) togglePlayPause();
@@ -191,7 +199,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
     if (!mounted) return;
     if (_playbackSpeed == _preferencesProvider.preferences.voicePlaybackSpeed) return;
 
-    debugPrint('$runtimeType#_onPreferencesChanged setting _playbackSpeed');
+    AppLogger.debug('$runtimeType#_onPreferencesChanged setting _playbackSpeed');
 
     _playbackSpeed = _preferencesProvider.preferences.voicePlaybackSpeed;
     await player.setSpeed(_playbackSpeed);
@@ -218,7 +226,11 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
     player.playerStateStream.listen((state) {
       if (!mounted) return;
 
-      setState(() => playing = state.playing);
+      // Only treat as "playing" when a source is actually loaded. just_audio
+      // can report `playing: true` immediately after `play()` even if the
+      // player is still `idle` (no audio source set), which would otherwise
+      // show a "playing" UI with no audible sound.
+      setState(() => playing = state.playing && state.processingState != ProcessingState.idle);
 
       // When audio reaches the end, pause and reset to beginning
       if (state.processingState == ProcessingState.completed) {
@@ -241,47 +253,56 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
     });
   }
 
-  Future<void> _loadAudio(String filePath) async {
+  /// Loads [filePath] into [player], retrying once on failure.
+  /// Returns whether the audio source was successfully loaded.
+  Future<bool> _loadAudio(String filePath) async {
     try {
       await Future.delayed(const Duration(milliseconds: 100));
       await player.setFilePath(filePath);
+      return true;
     } catch (e) {
-      debugPrint('❌ Error loading audio: $e');
+      AppLogger.error('Error loading audio', tag: '$runtimeType', error: e);
       try {
         await Future.delayed(const Duration(milliseconds: 500));
         await player.setFilePath(filePath);
+        return true;
       } catch (retryError) {
-        debugPrint('❌ Error loading audio (retry): $retryError');
+        AppLogger.error('Error loading audio (retry)', tag: '$runtimeType', error: retryError);
+        return false;
       }
     }
   }
 
-  /// Ensures audio file is loaded before playback.
+  /// Ensures audio file is downloaded and loaded into [player] before playback.
   /// Handles lazy-loading where audio is downloaded on-demand.
+  /// If loading the audio source previously failed, this retries `_loadAudio`
+  /// using the already-downloaded file rather than getting stuck permanently.
   Future<void> _ensureAudioLoaded() async {
-    if (_currentFilePath != null) return;
+    if (_audioLoaded) return;
 
-    if (widget.onDownloadRequested == null) {
-      debugPrint('❌ No file path or download callback provided');
-      return;
-    }
+    String? filePath = _currentFilePath ?? widget.filePath;
 
-    try {
-      if (mounted) setState(() => downloading = true);
-      final filePath = await widget.onDownloadRequested!();
-
-      if (mounted) {
-        setState(() {
-          _currentFilePath = filePath;
-          downloading = false;
-        });
+    if (filePath == null) {
+      if (widget.onDownloadRequested == null) {
+        AppLogger.error('No file path or download callback provided', tag: '$runtimeType');
+        return;
       }
 
-      await _loadAudio(filePath);
-    } catch (e) {
-      debugPrint('❌ Error preparing audio: $e');
+      try {
+        if (mounted) setState(() => downloading = true);
+        filePath = await widget.onDownloadRequested!();
+        if (mounted) setState(() => _currentFilePath = filePath);
+      } catch (e) {
+        AppLogger.error('Error preparing audio', tag: '$runtimeType', error: e);
+        if (mounted) setState(() => downloading = false);
+        return;
+      }
+
       if (mounted) setState(() => downloading = false);
     }
+
+    final loaded = await _loadAudio(filePath);
+    if (mounted) setState(() => _audioLoaded = loaded);
   }
 
   /// Toggle between play and pause states.
@@ -304,7 +325,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
         player.play();
       }
     } catch (e) {
-      debugPrint('❌ Error toggling playback: $e');
+      AppLogger.error('Error toggling playback', tag: '$runtimeType', error: e);
     }
   }
 
@@ -366,7 +387,7 @@ class _SpVoicePlayerState extends State<SpVoicePlayer> with WidgetsBindingObserv
       _listenToPositionStream = null;
       await player.seek(_draggedPosition);
     } catch (e) {
-      debugPrint('❌ Error seeking to position: $e');
+      AppLogger.error('Error seeking to position', tag: '$runtimeType', error: e);
     }
   }
 
