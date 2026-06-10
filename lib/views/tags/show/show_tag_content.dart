@@ -33,11 +33,6 @@ class _ShowTagContent extends StatelessWidget {
             icon: const Icon(SpIcons.search),
             onPressed: () => viewModel.goToSearchPage(context),
           ),
-          IconButton(
-            tooltip: tr("page.search_filter.title"),
-            icon: Icon(SpIcons.tune),
-            onPressed: () => viewModel.goToFilterPage(context),
-          ),
         ],
         bottom: years == null
             ? null

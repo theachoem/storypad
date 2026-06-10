@@ -11,7 +11,6 @@ import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dar
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
-import 'package:storypad/views/search/filter/search_filter_view.dart';
 import 'package:storypad/views/search/search_view.dart';
 import 'show_tag_view.dart';
 
@@ -85,21 +84,6 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialFilter: initialTune,
     ).push(context);
     refreshList();
-  }
-
-  Future<void> goToFilterPage(BuildContext context) async {
-    final result = await SearchFilterRoute(
-      initialTune: filter,
-      multiSelectYear: true,
-      // Lock the scope to this non-emoji tag; emoji categories stay filterable.
-      filterTagModifiable: false,
-      resetTune: initialTune,
-    ).push(context);
-
-    if (result is SearchFilterObject) {
-      filter = result;
-      await load();
-    }
   }
 
   Future<void> onPopInvokedWithResult(bool didPop, dynamic result, BuildContext context) async {
