@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/services/auto_sync_trigger_service.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -65,15 +66,18 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       database.addGlobalListener(_databaseListener);
     }
 
-    _setupConnection().then((_) {
-      // Auto sync if applicable.
-      // Wait 1 second before calling to ensure home context is ready.
-      Future.delayed(const Duration(seconds: 1), () {
-        if (HomeView.homeContext?.mounted == true) {
-          autoSync(setupConnection: false, context: HomeView.homeContext!);
-        }
-      });
-    });
+    _autoSyncTriggerService = AutoSyncTriggerService(
+      onTrigger: () => _setupConnection().then((_) async {
+        /// Auto sync if applicable.
+        /// Wait 1 second before calling to ensure home context is ready.
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (HomeView.homeContext?.mounted != true) return;
+        autoSync(setupConnection: false, context: HomeView.homeContext!);
+      }),
+    );
+
+    _autoSyncTriggerService.start();
   }
 
   Future<void> _databaseListener() async {
@@ -100,6 +104,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     return GoogleDriveCloudService();
   }
 
+  late final AutoSyncTriggerService _autoSyncTriggerService;
   BackupRepository get repository => repoInstance;
 
   GoogleUserObject? get currentGoogleUser => repository.currentGoogleUser;
@@ -368,6 +373,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
   @override
   void dispose() {
+    _autoSyncTriggerService.dispose();
     repository.dispose();
     super.dispose();
   }
