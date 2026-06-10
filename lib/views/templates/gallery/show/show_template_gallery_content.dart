@@ -80,7 +80,7 @@ class _ShowTemplateGalleryContent extends StatelessWidget {
     final note = viewModel.galleryTemplate.note;
 
     return StoryPagesBuilder(
-      preferences: StoryPreferencesDbModel.create().copyWith(layoutType: .list),
+      preferences: StoryPreferencesDbModel.create().copyWith(layoutType: viewModel.galleryTemplate.pageLayoutType),
       pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.draftContent!,

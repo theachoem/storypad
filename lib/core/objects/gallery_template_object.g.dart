@@ -19,6 +19,8 @@ abstract class _$GalleryTemplateObjectCWProxy {
 
   GalleryTemplateObject iconUrlPath(String iconUrlPath);
 
+  GalleryTemplateObject pageLayoutType(PageLayoutType pageLayoutType);
+
   GalleryTemplateObject lazyDraftContent(StoryContentDbModel? lazyDraftContent);
 
   /// Creates a new instance with the provided field values.
@@ -35,6 +37,7 @@ abstract class _$GalleryTemplateObjectCWProxy {
     String? note,
     List<GalleryTemplatePageObject> pages,
     String iconUrlPath,
+    PageLayoutType pageLayoutType,
     StoryContentDbModel? lazyDraftContent,
   });
 }
@@ -68,6 +71,10 @@ class _$GalleryTemplateObjectCWProxyImpl
       call(iconUrlPath: iconUrlPath);
 
   @override
+  GalleryTemplateObject pageLayoutType(PageLayoutType pageLayoutType) =>
+      call(pageLayoutType: pageLayoutType);
+
+  @override
   GalleryTemplateObject lazyDraftContent(
     StoryContentDbModel? lazyDraftContent,
   ) => call(lazyDraftContent: lazyDraftContent);
@@ -87,6 +94,7 @@ class _$GalleryTemplateObjectCWProxyImpl
     Object? note = const $CopyWithPlaceholder(),
     Object? pages = const $CopyWithPlaceholder(),
     Object? iconUrlPath = const $CopyWithPlaceholder(),
+    Object? pageLayoutType = const $CopyWithPlaceholder(),
     Object? lazyDraftContent = const $CopyWithPlaceholder(),
   }) {
     return GalleryTemplateObject(
@@ -115,6 +123,12 @@ class _$GalleryTemplateObjectCWProxyImpl
           ? _value.iconUrlPath
           // ignore: cast_nullable_to_non_nullable
           : iconUrlPath as String,
+      pageLayoutType:
+          pageLayoutType == const $CopyWithPlaceholder() ||
+              pageLayoutType == null
+          ? _value.pageLayoutType
+          // ignore: cast_nullable_to_non_nullable
+          : pageLayoutType as PageLayoutType,
       lazyDraftContent: lazyDraftContent == const $CopyWithPlaceholder()
           ? _value.lazyDraftContent
           // ignore: cast_nullable_to_non_nullable
@@ -146,6 +160,10 @@ GalleryTemplateObject _$GalleryTemplateObjectFromJson(
       .map((e) => GalleryTemplatePageObject.fromJson(e as Map<String, dynamic>))
       .toList(),
   iconUrlPath: json['icon_url_path'] as String,
+  pageLayoutType: $enumDecode(
+    _$PageLayoutTypeEnumMap,
+    json['page_layout_type'],
+  ),
   lazyDraftContent: json['lazy_draft_content'] == null
       ? null
       : StoryContentDbModel.fromJson(
@@ -162,5 +180,12 @@ Map<String, dynamic> _$GalleryTemplateObjectToJson(
   'note': instance.note,
   'pages': instance.pages.map((e) => e.toJson()).toList(),
   'icon_url_path': instance.iconUrlPath,
+  'page_layout_type': _$PageLayoutTypeEnumMap[instance.pageLayoutType]!,
   'lazy_draft_content': instance.lazyDraftContent?.toJson(),
+};
+
+const _$PageLayoutTypeEnumMap = {
+  PageLayoutType.list: 'list',
+  PageLayoutType.grid: 'grid',
+  PageLayoutType.pages: 'pages',
 };

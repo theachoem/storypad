@@ -294,6 +294,10 @@ class StoryDbModel extends BaseDbModel {
     // for gallery template, must load draft content beforehand.
     final templateContent = galleryTemplate?.lazyDraftContent ?? template?.content;
 
+    StoryPreferencesDbModel preferences =
+        template?.preferences ?? defaultStoryPreferences?.toStoryPreference() ?? StoryPreferencesDbModel.create();
+    if (galleryTemplate != null) preferences = preferences.copyWith(layoutType: galleryTemplate.pageLayoutType);
+
     final now = DateTime.now();
     return StoryDbModel(
       year: initialYear ?? date.year,
@@ -309,8 +313,7 @@ class StoryDbModel extends BaseDbModel {
       feeling: null,
       wordCount: null,
       characterCount: null,
-      preferences:
-          template?.preferences ?? defaultStoryPreferences?.toStoryPreference() ?? StoryPreferencesDbModel.create(),
+      preferences: preferences,
       latestContent: templateContent ?? StoryContentDbModel.create(),
       draftContent: templateContent,
       updatedAt: now,

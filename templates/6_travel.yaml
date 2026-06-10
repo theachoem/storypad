@@ -5,6 +5,7 @@ templates:
     name: "Trip Planner"
     purpose: "Organize plans, destinations, and checklists for your next trip."
     icon_url_path: "/icons/hand_drawn/hand_drawn_compass_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "Destination"
         content: ""
@@ -19,6 +20,7 @@ templates:
     name: "Travel Journal"
     purpose: "Document your experiences, feelings, and discoveries while traveling."
     icon_url_path: "/icons/hand_drawn/hand_drawn_photographer_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What I did today"
         content: ""

@@ -5,6 +5,7 @@ templates:
     name: "Mood Journal"
     purpose: "Log moods and identify emotional patterns."
     icon_url_path: "/icons/hand_drawn/hand_drawn_angel_56x56.png"
+    page_layout_type: "grid"
     pages:
       - title: "Emotion"
         content: ""
@@ -17,6 +18,7 @@ templates:
     name: "Workout Log"
     purpose: "Track your fitness activities and progress."
     icon_url_path: "/icons/hand_drawn/hand_drawn_workout_56x56.png"
+    page_layout_type: "grid"
     pages:
       - title: "Type"
         content: ""
@@ -29,6 +31,7 @@ templates:
     name: "Meal Planner"
     purpose: "Plan meals for the day or week to stay organized."
     icon_url_path: "/icons/hand_drawn/hand_drawn_meal_56x56.png"
+    page_layout_type: "grid"
     pages:
       - title: "Breakfast"
         content: ""
@@ -43,6 +46,7 @@ templates:
     name: "Dream Journal"
     purpose: "Record and analyze dreams for insights."
     icon_url_path: "/icons/hand_drawn/hand_drawn_moon_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What I remember"
         content: ""
@@ -55,6 +59,7 @@ templates:
     name: "Self Check-in"
     purpose: "Reconnect with yourself when you feel off or unclear."
     icon_url_path: "/icons/hand_drawn/hand_drawn_diary_56x56.png"
+    page_layout_type: "list"
     note: "Take a moment to pause and connect with your inner self, especially when you're feeling overwhelmed."
     pages:
       - title: "How do I feel right now?"

@@ -167,6 +167,7 @@ class _QuillRichTextColorButtonState extends State<_QuillRichTextColorButton> {
 
     return SpFloatingPopUpButton(
       estimatedFloatingWidth: spColorPickerMinWidth,
+      estimatedFloatingHeight: spOnPickingColorHeight,
       bottomToTop: !widget.positionedOnUpper,
       dyGetter: (dy) {
         if (widget.positionedOnUpper) {

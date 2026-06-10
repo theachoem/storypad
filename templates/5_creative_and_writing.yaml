@@ -5,6 +5,7 @@ templates:
     name: "Book Review"
     purpose: "Capture thoughts, lessons, and favorite quotes from books."
     icon_url_path: "/icons/hand_drawn/hand_drawn_feedback_56x56.png"
+    page_layout_type: "grid"
     pages:
       - title: "Book title"
         content: ""
@@ -19,6 +20,7 @@ templates:
     name: "Story Idea"
     purpose: "Jot down new story ideas before they fade."
     icon_url_path: "/icons/hand_drawn/hand_drawn_lightbulb_56x56.png"
+    page_layout_type: "list"
     note: "Capture the spark of a new idea before it slips away. Don't worry about details, just get the core concept down."
     pages:
       - title: "Core concept"
@@ -32,6 +34,7 @@ templates:
     name: "Character Profile"
     purpose: "Develop detailed profiles for fictional characters."
     icon_url_path: "/icons/hand_drawn/hand_drawn_monster_56x56.png"
+    page_layout_type: "grid"
     pages:
       - title: "Character name"
         content: ""

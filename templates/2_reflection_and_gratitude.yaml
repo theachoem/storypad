@@ -5,6 +5,7 @@ templates:
     name: "Weekly Review"
     purpose: "Reflect on the past week and plan for the next."
     icon_url_path: "/icons/hand_drawn/hand_drawn_notepad_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What went well?"
         content: ""
@@ -17,6 +18,7 @@ templates:
     name: "Monthly Review"
     purpose: "Assess growth, challenges, and lessons from the month."
     icon_url_path: "/icons/hand_drawn/hand_drawn_data_report_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What are you proud of?"
         content: ""
@@ -29,6 +31,7 @@ templates:
     name: "Year in Review"
     purpose: "Reflect on the entire year and set new intentions."
     icon_url_path: "/icons/hand_drawn/hand_drawn_trophy_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "Highlights of the year"
         content: ""
@@ -41,6 +44,7 @@ templates:
     name: "Daily Gratitude"
     purpose: "Appreciate the small things that make each day meaningful."
     icon_url_path: "/icons/hand_drawn/hand_drawn_give_love_56x56.png"
+    page_layout_type: "list"
     note: "Cultivate a positive mindset by noticing the good things in your life, big or small."
     pages:
       - title: "What are you grateful for today?"
@@ -50,6 +54,7 @@ templates:
     name: "Weekly Gratitude"
     purpose: "Acknowledge the highlights and joys of your week."
     icon_url_path: "/icons/hand_drawn/hand_drawn_love_message_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What moments made me smile?"
         content: ""
@@ -60,6 +65,7 @@ templates:
     name: "Milestone Reflection"
     purpose: "Capture big life or project moments."
     icon_url_path: "/icons/hand_drawn/hand_drawn_notepad_56x56.png"
+    page_layout_type: "list"
     pages:
       - title: "What happened?"
         content: ""
