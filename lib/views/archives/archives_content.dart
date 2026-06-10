@@ -54,7 +54,6 @@ class _ArchivesContent extends StatelessWidget {
             filter: SearchFilterObject(
               years: {year},
               types: {viewModel.type},
-              tagId: null,
               assetId: null,
             ),
           );

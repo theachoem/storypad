@@ -142,7 +142,7 @@ class _CalendarStoriesContent extends StatelessWidget {
           month: viewModel.month,
           day: day,
           types: {PathType.docs},
-          tagId: viewModel.selectedTagId,
+          tagIds: viewModel.selectedTagId != null ? {viewModel.selectedTagId!} : {},
           assetId: null,
         );
 
@@ -154,7 +154,7 @@ class _CalendarStoriesContent extends StatelessWidget {
             month: viewModel.month,
             day: day,
             types: {PathType.docs},
-            tagId: viewModel.selectedTagId,
+            tagIds: viewModel.selectedTagId != null ? {viewModel.selectedTagId!} : {},
             assetId: null,
           ),
         );

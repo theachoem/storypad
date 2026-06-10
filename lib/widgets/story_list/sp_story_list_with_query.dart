@@ -56,7 +56,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
               month: widget.filter?.month,
               day: widget.filter?.day,
               types: {PathType.docs, PathType.archives},
-              tagId: widget.filter?.tagId,
+              tagIds: widget.filter?.tagIds ?? {},
               assetId: null,
             ).toDatabaseFilter(),
           )

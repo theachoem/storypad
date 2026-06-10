@@ -30,7 +30,6 @@ class ThrowbackViewModel extends ChangeNotifier with DisposeAwareMixin {
     day: day,
     years: {},
     types: {PathType.docs, PathType.archives},
-    tagId: null,
     assetId: null,
   );
 

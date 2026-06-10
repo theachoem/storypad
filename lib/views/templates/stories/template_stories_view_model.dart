@@ -14,7 +14,6 @@ class TemplateStoriesViewModel extends ChangeNotifier with DisposeAwareMixin {
   late SearchFilterObject filter = SearchFilterObject(
     years: {},
     types: {PathType.docs},
-    tagId: null,
     assetId: null,
     templateId: params.template?.id,
     galleryTemplateId: params.galleryTemplate?.id,

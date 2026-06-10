@@ -94,7 +94,7 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       month: month,
       day: selectedDay,
       types: {PathType.docs},
-      tagId: selectedTagId,
+      tagIds: selectedTagId != null ? {selectedTagId!} : {},
       assetId: null,
     );
   }

@@ -16,7 +16,6 @@ class _ShowAssetContent extends StatelessWidget {
           assetId: viewModel.params.assetId,
           years: {},
           types: {},
-          tagId: null,
         ),
       ),
     );

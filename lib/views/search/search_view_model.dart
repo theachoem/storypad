@@ -39,7 +39,6 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
       SearchFilterObject(
         years: {},
         types: {PathType.docs},
-        tagId: null,
         assetId: null,
         limit: 100,
       );
@@ -54,12 +53,12 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
 
   Future<void> load() async {
     // StoryPad already persist the all search filters, but when reopening Search
-    // only restore the tagId. Other fields (years, types, starred, etc.) are
+    // only restore the selected tag. Other fields (years, types, starred, etc.) are
     // hidden in the UI and restoring them can be confusing.
-    // Tags are visibly selectable, so restoring just tagId keeps the UX clear.
-    searchFilter = await SearchFilterStorage().readObject().then((value) {
-      return initialFilter.copyWith(tagId: value?.tagId);
-    });
+    // Tags are visibly selectable, so restoring just tagIds keeps the UX clear.
+    searchFilter = initialFilter.tagIds.isEmpty
+        ? await SearchFilterStorage().readObject().then((value) => initialFilter.copyWith(tagIds: value?.tagIds ?? {}))
+        : initialFilter;
 
     _tags = [...tagsProvider.tags?.items ?? []];
     if (_tags?.isNotEmpty == true) _tags?.insert(0, TagDbModel.fromIDTitle(0, tr('general.all')));
@@ -101,13 +100,14 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     SearchFilterStorage().writeObject(searchFilter!);
   }
 
-  bool tagSelected(TagDbModel tag) => (searchFilter?.tagId == tag.id) || (tag.id == 0 && searchFilter?.tagId == null);
+  bool tagSelected(TagDbModel tag) =>
+      searchFilter?.tagIds.contains(tag.id) == true || (tag.id == 0 && searchFilter?.tagIds.isEmpty == true);
 
   void toggleTag(TagDbModel tag, BuildContext context) async {
     if (searchFilter == null) return;
 
     searchFilter = searchFilter!.copyWith(
-      tagId: tag.id == searchFilter!.tagId || tag.id == 0 ? null : tag.id,
+      tagIds: tag.id == 0 || searchFilter!.tagIds.contains(tag.id) ? {} : {tag.id},
     );
 
     notifyListeners();

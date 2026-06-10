@@ -15,8 +15,6 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject storyIds(Set<int>? storyIds);
 
-  SearchFilterObject tagId(int? tagId);
-
   SearchFilterObject tagIds(Set<int>? tagIds);
 
   SearchFilterObject query(String? query);
@@ -49,7 +47,6 @@ abstract class _$SearchFilterObjectCWProxy {
     Set<PathType> types,
     int? assetId,
     Set<int>? storyIds,
-    int? tagId,
     Set<int>? tagIds,
     String? query,
     String? galleryTemplateId,
@@ -81,9 +78,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
 
   @override
   SearchFilterObject storyIds(Set<int>? storyIds) => call(storyIds: storyIds);
-
-  @override
-  SearchFilterObject tagId(int? tagId) => call(tagId: tagId);
 
   @override
   SearchFilterObject tagIds(Set<int>? tagIds) => call(tagIds: tagIds);
@@ -131,7 +125,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? types = const $CopyWithPlaceholder(),
     Object? assetId = const $CopyWithPlaceholder(),
     Object? storyIds = const $CopyWithPlaceholder(),
-    Object? tagId = const $CopyWithPlaceholder(),
     Object? tagIds = const $CopyWithPlaceholder(),
     Object? query = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
@@ -160,10 +153,6 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.storyIds
           // ignore: cast_nullable_to_non_nullable
           : storyIds as Set<int>?,
-      tagId: tagId == const $CopyWithPlaceholder()
-          ? _value.tagId
-          // ignore: cast_nullable_to_non_nullable
-          : tagId as int?,
       tagIds: tagIds == const $CopyWithPlaceholder()
           ? _value.tagIds
           // ignore: cast_nullable_to_non_nullable
@@ -232,7 +221,6 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       storyIds: (json['story_ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toSet(),
-      tagId: (json['tag_id'] as num?)?.toInt(),
       tagIds: (json['tag_ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toSet(),
@@ -258,7 +246,6 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'month': instance.month,
       'day': instance.day,
       'types': instance.types.map((e) => _$PathTypeEnumMap[e]!).toList(),
-      'tag_id': instance.tagId,
       'tag_ids': instance.tagIds.toList(),
       'gallery_template_id': instance.galleryTemplateId,
       'template_id': instance.templateId,

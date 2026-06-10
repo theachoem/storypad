@@ -100,7 +100,6 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
               month: selectedEvent!.month,
               day: selectedEvent!.day,
               types: {PathType.docs},
-              tagId: null,
               assetId: null,
             ).toDatabaseFilter(),
           )

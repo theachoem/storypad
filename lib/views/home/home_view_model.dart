@@ -88,7 +88,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         years: {year},
         types: {PathType.docs},
         pinned: false,
-        tagId: null,
         assetId: null,
       ).toDatabaseFilter(),
     );
@@ -98,7 +97,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         years: {year},
         types: {PathType.docs},
         pinned: true,
-        tagId: null,
         assetId: null,
       ).toDatabaseFilter(),
     );
@@ -112,7 +110,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
                   month: DateTime.now().month,
                   day: DateTime.now().day,
                   types: {PathType.docs, PathType.archives},
-                  tagId: null,
                   assetId: null,
                 ).toDatabaseFilter(),
               )

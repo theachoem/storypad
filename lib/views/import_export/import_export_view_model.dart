@@ -50,7 +50,6 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   SearchFilterObject initialExportFilter = SearchFilterObject(
     years: {},
     types: {},
-    tagId: null,
     assetId: null,
   );
 
