@@ -224,6 +224,23 @@ class _ImagesTabContentState extends State<_ImagesTabContent> {
             title: tr("button.info"),
             onPressed: () => SpAssetInfoSheet(asset: asset).show(context: context),
           ),
+          if (asset.localFile?.existsSync() == true)
+            SpPopMenuItem(
+              leadingIconData: SpIcons.share,
+              title: tr("button.share"),
+              onPressed: () {
+                if (asset.localFile?.path == null) return;
+
+                RenderBox? box = context.findRenderObject() as RenderBox?;
+                SharePlus.instance.share(
+                  ShareParams(
+                    title: basename(asset.localFile!.path),
+                    files: [XFile(asset.localFile!.path)],
+                    sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+                  ),
+                );
+              },
+            ),
         ];
       },
       builder: (callback) {

@@ -72,7 +72,7 @@ class SpStoryList extends StatelessWidget {
       padding: EdgeInsets.only(
         left: MediaQuery.of(listContext).padding.left,
         right: MediaQuery.of(listContext).padding.right,
-        bottom: MediaQuery.of(listContext).padding.bottom + 16.0,
+        bottom: MediaQuery.of(listContext).padding.bottom + 48.0,
       ),
       itemCount: itemsCount,
       itemBuilder: (context, itemIndex) {
