@@ -18,6 +18,7 @@ class _DayColorTile extends StatelessWidget {
 
     return SpFloatingPopUpButton(
       estimatedFloatingWidth: spColorPickerMinWidth,
+      estimatedFloatingHeight: spOnPickingSwatchHeight,
       bottomToTop: false,
       dyGetter: (dy) => dy + 56,
       floatingBuilder: (close) {
