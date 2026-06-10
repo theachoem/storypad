@@ -34,6 +34,9 @@ class $TemplatesGen {
   /// File path: templates/6_travel.yaml
   String get a6Travel => 'templates/6_travel.yaml';
 
+  /// File path: templates/7_special_days.yaml
+  String get a7SpecialDays => 'templates/7_special_days.yaml';
+
   /// List of all assets
   List<String> get values => [
     a1DailyReflection,
@@ -42,6 +45,7 @@ class $TemplatesGen {
     a4HealthAndWellness,
     a5CreativeAndWriting,
     a6Travel,
+    a7SpecialDays,
   ];
 }
 

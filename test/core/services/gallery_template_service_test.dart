@@ -31,7 +31,7 @@ void main() {
       final result = await GalleryTemplateService.loadTemplates();
 
       expect(result, isA<Map<GalleryTemplateCategoryObject, List<GalleryTemplateObject>>>());
-      expect(result.length, 6); // All 6 categories
+      expect(result.length, 7); // All 7 categories
 
       // Check that all expected categories are loaded
       final categoryNames = result.keys.map((c) => c.name).toSet();
@@ -44,6 +44,7 @@ void main() {
           'Growth & Productivity',
           'Health & Wellness',
           'Reflection & Gratitude',
+          'Special Days & Celebrations',
         ]),
       );
 
