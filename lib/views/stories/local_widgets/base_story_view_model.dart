@@ -188,6 +188,26 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     );
   }
 
+  Future<void> togglePinned() async {
+    if (story == null) return;
+
+    story = story!.copyWith(
+      pinned: !(story!.pinned == true),
+      updatedAt: DateTime.now(),
+    );
+
+    notifyListeners();
+
+    if (hasDataWritten) {
+      await StoryDbModel.db.set(story!);
+      lastSavedAtNotifier.value = story?.updatedAt;
+    }
+
+    AnalyticsService.instance.logToggleStoryPinned(
+      story: story!,
+    );
+  }
+
   Future<void> changeDate(DateTime date) async {
     story = story!.copyWith(
       year: date.year,

@@ -69,7 +69,7 @@ class _MapPickerManualInputContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Can't find your location? Enter its coordinates below. Tap an example to try it.",
+          "Can't find your location? Enter its coordinates above. Supported formats below, tap an example to try it.",
           style: labelStyle,
         ),
         const SizedBox(height: 8.0),

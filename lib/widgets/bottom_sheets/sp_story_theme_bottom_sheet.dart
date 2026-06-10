@@ -239,6 +239,12 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
               trailingIconData: !context.read<InAppPurchaseProvider>().isProUser ? SpIcons.lock : null,
               onPressed: () => storyViewModel.saveAsTemplate(context),
             ),
+            if (story.editable)
+              SpPopMenuItem(
+                title: story.pinned == true ? tr('button.unpin_story') : tr('button.pin_story'),
+                leadingIconData: story.pinned == true ? SpIcons.pinSlash : SpIcons.pin,
+                onPressed: () => storyViewModel.togglePinned(),
+              ),
             if (storyViewModel.readOnly && story.putBackAble)
               SpPopMenuItem(
                 title: tr('button.put_back'),

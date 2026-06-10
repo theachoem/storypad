@@ -166,6 +166,10 @@ abstract class BaseAnalyticsEventAdaptor {
     return logEvent(sanitizeEventName('toggle_story_starred'), parameters: storyAnalyticParameters(story));
   }
 
+  Future<void> logToggleStoryPinned({required StoryDbModel story}) {
+    return logEvent(sanitizeEventName('toggle_story_pinned'), parameters: storyAnalyticParameters(story));
+  }
+
   Future<void> logReorderStoryPages({required StoryDbModel story}) {
     return logEvent(sanitizeEventName('reorder_story_pages'), parameters: storyAnalyticParameters(story));
   }
