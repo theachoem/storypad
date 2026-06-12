@@ -20,7 +20,7 @@ class _EmptyBody extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 12.0,
                 children: [
-                  Icon(SpIcons.book, size: 32.0),
+                  const Icon(SpIcons.book, size: 32.0),
                   Text(
                     tr('page.templates.empty_message'),
                     textAlign: TextAlign.center,

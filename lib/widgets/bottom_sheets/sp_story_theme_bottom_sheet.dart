@@ -448,7 +448,7 @@ class _WordCharCountButtonState extends State<_WordCharCountButton> {
   Widget build(BuildContext context) {
     return TextButton.icon(
       style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.onSurface),
-      icon: Icon(SpIcons.text),
+      icon: const Icon(SpIcons.text),
       label: SpCrossFade(
         showFirst: showingWords,
         firstChild: Text(

@@ -205,7 +205,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                 shrinkWrap: true,
                 buildDefaultDragHandles: true,
                 padding: EdgeInsets.zero,
-                onReorder: (oldIndex, newIndex) {
+                onReorderItem: (oldIndex, newIndex) {
                   if (allowCreate) {
                     oldIndex -= 1;
                     newIndex -= 1;

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -264,7 +263,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       children: [
         ChoiceChip(
           showCheckmark: false,
-          avatar: Icon(MdiIcons.text),
+          avatar: const Icon(SpIcons.text),
           label: const Text("Text"),
           selected: option == _ShareOption.txt,
           onSelected: (value) {
@@ -275,7 +274,7 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         ),
         ChoiceChip(
           showCheckmark: false,
-          avatar: Icon(MdiIcons.languageMarkdown),
+          avatar: const Icon(SpIcons.markdown),
           label: const Text("Markdown"),
           selected: option == _ShareOption.markdown,
           onSelected: (value) {

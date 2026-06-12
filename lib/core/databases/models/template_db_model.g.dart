@@ -19,7 +19,7 @@ abstract class _$TemplateDbModelCWProxy {
 
   TemplateDbModel note(String? note);
 
-  TemplateDbModel preferences(StoryPreferencesDbModel? preferences);
+  TemplateDbModel preferencesOrNull(StoryPreferencesDbModel? preferencesOrNull);
 
   TemplateDbModel createdAt(DateTime createdAt);
 
@@ -47,7 +47,7 @@ abstract class _$TemplateDbModelCWProxy {
     StoryContentDbModel? content,
     String? galleryTemplateId,
     String? note,
-    StoryPreferencesDbModel? preferences,
+    StoryPreferencesDbModel? preferencesOrNull,
     DateTime createdAt,
     DateTime updatedAt,
     DateTime? archivedAt,
@@ -85,8 +85,9 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   TemplateDbModel note(String? note) => call(note: note);
 
   @override
-  TemplateDbModel preferences(StoryPreferencesDbModel? preferences) =>
-      call(preferences: preferences);
+  TemplateDbModel preferencesOrNull(
+    StoryPreferencesDbModel? preferencesOrNull,
+  ) => call(preferencesOrNull: preferencesOrNull);
 
   @override
   TemplateDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
@@ -124,7 +125,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
     Object? content = const $CopyWithPlaceholder(),
     Object? galleryTemplateId = const $CopyWithPlaceholder(),
     Object? note = const $CopyWithPlaceholder(),
-    Object? preferences = const $CopyWithPlaceholder(),
+    Object? preferencesOrNull = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? archivedAt = const $CopyWithPlaceholder(),
@@ -157,10 +158,10 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
           ? _value.note
           // ignore: cast_nullable_to_non_nullable
           : note as String?,
-      preferences: preferences == const $CopyWithPlaceholder()
-          ? _value.preferences
+      preferencesOrNull: preferencesOrNull == const $CopyWithPlaceholder()
+          ? _value.preferencesOrNull
           // ignore: cast_nullable_to_non_nullable
-          : preferences as StoryPreferencesDbModel?,
+          : preferencesOrNull as StoryPreferencesDbModel?,
       createdAt: createdAt == const $CopyWithPlaceholder() || createdAt == null
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
@@ -214,7 +215,7 @@ TemplateDbModel _$TemplateDbModelFromJson(Map<String, dynamic> json) =>
             ),
       galleryTemplateId: json['gallery_template_id'] as String?,
       note: json['note'] as String?,
-      preferences: json['preferences'] == null
+      preferencesOrNull: json['preferences'] == null
           ? null
           : StoryPreferencesDbModel.fromJson(
               json['preferences'] as Map<String, dynamic>,
@@ -237,7 +238,7 @@ Map<String, dynamic> _$TemplateDbModelToJson(
   'id': instance.id,
   'index': instance.index,
   'tags': instance.tags,
-  'preferences': instance.preferences.toJson(),
+  'preferences': instance.preferencesOrNull?.toJson(),
   'name': instance.name,
   'content': instance.content?.toJson(),
   'gallery_template_id': instance.galleryTemplateId,

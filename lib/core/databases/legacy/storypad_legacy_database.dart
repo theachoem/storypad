@@ -102,7 +102,7 @@ class StorypadLegacyDatabase {
             starred: storypadStory.isFavorite,
             pinned: false,
             feeling: storypadStory.feeling,
-            preferences: null,
+            preferencesOrNull: null,
             year: storypadStory.forDate.year,
             month: storypadStory.forDate.month,
             day: storypadStory.forDate.day,

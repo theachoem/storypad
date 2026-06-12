@@ -36,14 +36,14 @@ class _ExportSectionState extends State<_ExportSection> {
             value: AppExportOption.storyPadJson,
           ),
           RadioListTile(
-            secondary: Icon(SpIcons.text),
+            secondary: const Icon(SpIcons.text),
             title: Text(tr('list_tile.export_txt.title')),
             subtitle: Text(tr('list_tile.export_txt.subtitle')),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
             value: AppExportOption.text,
           ),
           Consumer<InAppPurchaseProvider>(
-            child: Icon(SpIcons.markdown),
+            child: const Icon(SpIcons.markdown),
             builder: (context, provider, child) {
               return GestureDetector(
                 onTap: provider.isProUser
@@ -53,12 +53,12 @@ class _ExportSectionState extends State<_ExportSection> {
                   enabled: provider.isProUser,
                   secondary: Builder(
                     builder: (context) {
-                      if (provider.isProUser) return Icon(SpIcons.markdown);
-                      return Stack(
+                      if (provider.isProUser) return const Icon(SpIcons.markdown);
+                      return const Stack(
                         clipBehavior: Clip.none,
                         children: [
                           Icon(SpIcons.markdown),
-                          const Positioned(
+                          Positioned(
                             top: 0,
                             right: -8,
                             child: Icon(SpIcons.lock, size: 12.0),
@@ -180,7 +180,7 @@ class _ExportSectionState extends State<_ExportSection> {
                 if (!widget.viewModel.filtered) '(${tr('general.all')})',
               ].join(' '),
             ),
-            Icon(SpIcons.tune),
+            const Icon(SpIcons.tune),
           ],
         ),
       ),

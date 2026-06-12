@@ -126,7 +126,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
       if (pagesManager.pageScrollController.hasClients) pagesManager.pageScrollController.jumpTo(0);
     }
 
-    story = story!.copyWith(updatedAt: DateTime.now(), preferences: preferences);
+    story = story!.copyWith(updatedAt: DateTime.now(), preferencesOrNull: preferences);
     notifyListeners();
 
     if (hasDataWritten) {
@@ -172,7 +172,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     if (story == null) return;
 
     story = story!.copyWith(
-      preferences: story!.preferences.copyWith(showDayCount: !story!.preferredShowDayCount),
+      preferencesOrNull: story!.preferences.copyWith(showDayCount: !story!.preferredShowDayCount),
       updatedAt: DateTime.now(),
     );
 

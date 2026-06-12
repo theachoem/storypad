@@ -54,7 +54,7 @@ class _SearchContent extends StatelessWidget {
           ),
           IconButton(
             tooltip: tr("page.search_filter.title"),
-            icon: Icon(SpIcons.tune),
+            icon: const Icon(SpIcons.tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))

@@ -286,7 +286,7 @@ class _StorageManagementContent extends StatelessWidget {
                   userIdentifier: service.currentUser!.identifier,
                 ).push(context);
               },
-              icon: Icon(SpIcons.tune),
+              icon: const Icon(SpIcons.tune),
               label: Text(tr('button.optimize')),
             ),
           ),

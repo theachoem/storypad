@@ -32,7 +32,7 @@ class _AppLocksContent extends StatelessWidget {
             enabled: provider.appLock.pin != null,
             title: Text(tr("page.security_questions.title")),
             subtitle: Text(tr("page.security_questions.info")),
-            leading: Icon(SpIcons.lockQuestion),
+            leading: const Icon(SpIcons.lockQuestion),
             trailing: const Icon(SpIcons.keyboardRight),
             onTap: () => SecurityQuestionsRoute().push(context),
           ),

@@ -62,7 +62,7 @@ class _CommunityContent extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(SpIcons.license),
+            leading: const Icon(SpIcons.license),
             title: Text(tr("list_tile.licenses.title")),
             onLongPress: () => const DeveloperOptionsRoute().push(context),
             onTap: () {

@@ -101,7 +101,7 @@ class SideItems {
               tileColor: Theme.of(context).colorScheme.secondary,
               textColor: Theme.of(context).colorScheme.onSecondary,
               iconColor: Theme.of(context).colorScheme.onSecondary,
-              trailing: Icon(SpIcons.starCircle),
+              trailing: const Icon(SpIcons.starCircle),
               title: Text(tr('list_tile.upgrade_to_pro.title')),
               subtitle: Text(tr('list_tile.upgrade_to_pro.subtitle')),
               onTap: () => const PaywallRoute().push(context),

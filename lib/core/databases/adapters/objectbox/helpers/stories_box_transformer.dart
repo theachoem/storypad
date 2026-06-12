@@ -29,7 +29,7 @@ StoryDbModel _objectToModel(Map<String, dynamic> map) {
     createdAt: object.createdAt,
     tags: object.tags,
     assets: object.assets,
-    preferences: StoryContentHelper.decodePreferences(object.preferences),
+    preferencesOrNull: StoryContentHelper.decodePreferences(object.preferences),
     latestContent: object.latestContent != null ? StoryContentHelper.stringToContent(object.latestContent!) : null,
     draftContent: object.draftContent != null ? StoryContentHelper.stringToContent(object.draftContent!) : null,
     movedToBinAt: object.movedToBinAt,

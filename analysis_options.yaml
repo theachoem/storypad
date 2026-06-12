@@ -34,3 +34,4 @@ formatter:
 analyzer:
   exclude:
     - packages/flutter-quill/**
+    - build/**

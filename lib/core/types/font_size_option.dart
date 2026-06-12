@@ -4,8 +4,7 @@ enum FontSizeOption {
   small,
   normal,
   large,
-  extraLarge
-  ;
+  extraLarge;
 
   String get label {
     switch (this) {

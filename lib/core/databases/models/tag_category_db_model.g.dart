@@ -11,8 +11,6 @@ abstract class _$TagCategoryDbModelCWProxy {
 
   TagCategoryDbModel version(int version);
 
-  TagCategoryDbModel title(String title);
-
   TagCategoryDbModel multiSelect(bool multiSelect);
 
   TagCategoryDbModel createdAt(DateTime createdAt);
@@ -35,7 +33,6 @@ abstract class _$TagCategoryDbModelCWProxy {
   TagCategoryDbModel call({
     int id,
     int version,
-    String title,
     bool multiSelect,
     DateTime createdAt,
     DateTime updatedAt,
@@ -57,9 +54,6 @@ class _$TagCategoryDbModelCWProxyImpl implements _$TagCategoryDbModelCWProxy {
 
   @override
   TagCategoryDbModel version(int version) => call(version: version);
-
-  @override
-  TagCategoryDbModel title(String title) => call(title: title);
 
   @override
   TagCategoryDbModel multiSelect(bool multiSelect) =>
@@ -95,7 +89,6 @@ class _$TagCategoryDbModelCWProxyImpl implements _$TagCategoryDbModelCWProxy {
   TagCategoryDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
-    Object? title = const $CopyWithPlaceholder(),
     Object? multiSelect = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
@@ -112,10 +105,7 @@ class _$TagCategoryDbModelCWProxyImpl implements _$TagCategoryDbModelCWProxy {
           ? _value.version
           // ignore: cast_nullable_to_non_nullable
           : version as int,
-      title: title == const $CopyWithPlaceholder() || title == null
-          ? _value.title
-          // ignore: cast_nullable_to_non_nullable
-          : title as String,
+      title: _value._title,
       multiSelect:
           multiSelect == const $CopyWithPlaceholder() || multiSelect == null
           ? _value.multiSelect

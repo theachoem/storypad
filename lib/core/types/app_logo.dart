@@ -11,8 +11,7 @@ enum AppLogo {
   storypad_4_0(logoName: 'storypad_logo_4_0'),
   storypad_5_0(logoName: 'storypad_logo_5_0'),
   storypad_6_0(logoName: 'storypad_logo_6_0'),
-  storypad_6_1(logoName: 'storypad_logo_6_1')
-  ;
+  storypad_6_1(logoName: 'storypad_logo_6_1');
 
   final String logoName;
 

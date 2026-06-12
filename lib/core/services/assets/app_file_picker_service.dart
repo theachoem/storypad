@@ -32,7 +32,7 @@ class AppFilePickerService {
   }
 
   static Future<XFile?> pickJsonFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
@@ -40,7 +40,7 @@ class AppFilePickerService {
   }
 
   static Future<XFile?> pickGzipFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['gz'],
     );

@@ -39,12 +39,12 @@ class CollectionDbModel<T extends BaseDbModel> {
     return CollectionDbModel(items: newItems);
   }
 
+  // [newIndex] is expected to already account for the removed item at [oldIndex],
+  // matching ReorderableListView's `onReorderItem` semantics.
   CollectionDbModel<T>? reorder({
     required int oldIndex,
     required int newIndex,
   }) {
-    if (oldIndex < newIndex) newIndex -= 1;
-
     if (newIndex > items.length - 1) return this;
     if (oldIndex > items.length - 1) return this;
 

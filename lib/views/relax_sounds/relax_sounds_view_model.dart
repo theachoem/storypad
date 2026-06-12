@@ -6,7 +6,6 @@ import 'package:storypad/core/databases/models/relax_sound_model.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/relax_sound_object.dart';
 import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -106,10 +105,16 @@ class RelaxSoundsViewModel extends ChangeNotifier with DisposeAwareMixin, Deboun
     if (context.mounted) context.read<RelaxSoundsProvider>().refreshCanSaveMix();
   }
 
+  // [newIndex] already accounts for the removed item (ReorderableListView's `onReorderItem`).
   Future<void> reorder(int oldIndex, int newIndex) async {
     if (_mixes == null) return;
+    if (oldIndex < 0 || oldIndex >= _mixes!.length) return;
+    if (newIndex < 0 || newIndex >= _mixes!.length) return;
 
-    _mixes = _mixes!.reorder(oldIndex: oldIndex, newIndex: newIndex);
+    final mixes = _mixes!.toList();
+    final item = mixes.removeAt(oldIndex);
+    mixes.insert(newIndex, item);
+    _mixes = mixes;
     notifyListeners();
 
     int length = _mixes!.length;

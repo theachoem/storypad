@@ -170,7 +170,7 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
         ),
       );
     } else if (Platform.isAndroid) {
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         fileName: basename(tarFile.path),
         type: FileType.custom,
         allowedExtensions: ['gz'],

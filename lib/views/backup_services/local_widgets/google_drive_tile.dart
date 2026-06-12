@@ -20,7 +20,7 @@ class GoogleDriveTile extends StatelessWidget {
     final provider = Provider.of<BackupProvider>(context);
     final service = provider.repository.googleDriveService;
 
-    Widget leading = Icon(SpIcons.googleDrive);
+    Widget leading = const Icon(SpIcons.googleDrive);
     Widget? trailing;
     Widget title = Text.rich(
       TextSpan(
@@ -45,27 +45,27 @@ class GoogleDriveTile extends StatelessWidget {
     VoidCallback? onPressed;
 
     if (!provider.isSignedIn) {
-      trailing = Icon(SpIcons.cloudOff);
+      trailing = const Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       onPressed = () => provider.signIn(context, BackupServiceType.google_drive);
     } else {
       switch (provider.connectionStatus) {
         case BackupConnectionStatus.unknownError:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = const Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.unknown_error'));
           onPressed = () => provider.recheckAndSync(
             services: [provider.repository.googleDriveService],
           );
           break;
         case BackupConnectionStatus.noInternet:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = const Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
           onPressed = () => provider.recheckAndSync(
             services: [provider.repository.googleDriveService],
           );
           break;
         case BackupConnectionStatus.needGoogleDrivePermission:
-          trailing = Icon(SpIcons.cloudOff);
+          trailing = const Icon(SpIcons.cloudOff);
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
           onPressed = () => provider.requestScope(context, BackupServiceType.google_drive);
           break;

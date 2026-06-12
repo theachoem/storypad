@@ -3,8 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 enum InAppUpdateStatus {
   downloading,
   updateAvailable,
-  installAvailable
-  ;
+  installAvailable;
 
   String get label {
     switch (this) {

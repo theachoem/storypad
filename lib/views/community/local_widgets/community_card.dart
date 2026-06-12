@@ -8,7 +8,7 @@ class _CommunityCard extends StatelessWidget {
     final List<Widget> socials = [
       if (RemoteConfigService.redditUrl.get().isNotEmpty)
         IconButton.filled(
-          icon: Icon(MdiIcons.reddit),
+          icon: const Icon(SpIcons.reddit),
           onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.redditUrl.get()),
         ),
       if (RemoteConfigService.tiktokUsername.get().isNotEmpty)
@@ -21,12 +21,12 @@ class _CommunityCard extends StatelessWidget {
         ),
       if (RemoteConfigService.twitterUrl.get().isNotEmpty)
         IconButton.filledTonal(
-          icon: Icon(MdiIcons.twitter),
+          icon: const Icon(SpIcons.twitter),
           onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.twitterUrl.get()),
         ),
       if (RemoteConfigService.bugReportUrl.get().isNotEmpty)
         IconButton.filledTonal(
-          icon: Icon(MdiIcons.bug),
+          icon: const Icon(SpIcons.bug),
           onPressed: () => UrlOpenerService.openInCustomTab(context, RemoteConfigService.bugReportUrl.get()),
         ),
     ];
