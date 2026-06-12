@@ -37,7 +37,7 @@ abstract class _$StoryDbModelCWProxy {
 
   StoryDbModel createdAt(DateTime createdAt);
 
-  StoryDbModel preferences(StoryPreferencesDbModel? preferences);
+  StoryDbModel preferencesOrNull(StoryPreferencesDbModel? preferencesOrNull);
 
   StoryDbModel tags(List<String>? tags);
 
@@ -87,7 +87,7 @@ abstract class _$StoryDbModelCWProxy {
     int? second,
     DateTime updatedAt,
     DateTime createdAt,
-    StoryPreferencesDbModel? preferences,
+    StoryPreferencesDbModel? preferencesOrNull,
     List<String>? tags,
     List<int>? assets,
     DateTime? movedToBinAt,
@@ -156,8 +156,8 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
   StoryDbModel createdAt(DateTime createdAt) => call(createdAt: createdAt);
 
   @override
-  StoryDbModel preferences(StoryPreferencesDbModel? preferences) =>
-      call(preferences: preferences);
+  StoryDbModel preferencesOrNull(StoryPreferencesDbModel? preferencesOrNull) =>
+      call(preferencesOrNull: preferencesOrNull);
 
   @override
   StoryDbModel tags(List<String>? tags) => call(tags: tags);
@@ -229,7 +229,7 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
     Object? second = const $CopyWithPlaceholder(),
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
-    Object? preferences = const $CopyWithPlaceholder(),
+    Object? preferencesOrNull = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
     Object? assets = const $CopyWithPlaceholder(),
     Object? movedToBinAt = const $CopyWithPlaceholder(),
@@ -301,10 +301,10 @@ class _$StoryDbModelCWProxyImpl implements _$StoryDbModelCWProxy {
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      preferences: preferences == const $CopyWithPlaceholder()
-          ? _value.preferences
+      preferencesOrNull: preferencesOrNull == const $CopyWithPlaceholder()
+          ? _value.preferencesOrNull
           // ignore: cast_nullable_to_non_nullable
-          : preferences as StoryPreferencesDbModel?,
+          : preferencesOrNull as StoryPreferencesDbModel?,
       tags: tags == const $CopyWithPlaceholder()
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
@@ -387,7 +387,7 @@ StoryDbModel _$StoryDbModelFromJson(Map<String, dynamic> json) => StoryDbModel(
   second: (json['second'] as num?)?.toInt(),
   updatedAt: DateTime.parse(json['updated_at'] as String),
   createdAt: DateTime.parse(json['created_at'] as String),
-  preferences: json['preferences'] == null
+  preferencesOrNull: json['preferences'] == null
       ? null
       : StoryPreferencesDbModel.fromJson(
           json['preferences'] as Map<String, dynamic>,
@@ -454,7 +454,7 @@ Map<String, dynamic> _$StoryDbModelToJson(
   'place': instance.place?.toJson(),
   'moved_to_bin_at': instance.movedToBinAt?.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
-  'preferences': instance.preferences.toJson(),
+  'preferences': instance.preferencesOrNull?.toJson(),
   'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
 };
 

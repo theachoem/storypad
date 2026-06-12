@@ -50,7 +50,7 @@ class BackupServiceTile extends StatelessWidget {
     VoidCallback? onPressed;
 
     if (!service.isSignedIn) {
-      trailing = Icon(SpIcons.cloudOff);
+      trailing = const Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       onPressed = () => provider.signIn(context, service.serviceType);
     } else {

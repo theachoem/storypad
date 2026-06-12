@@ -225,7 +225,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         ),
       );
     } else if (Platform.isAndroid) {
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         fileName: basename(tarFile.path),
         type: FileType.custom,
         allowedExtensions: ['gz'],
@@ -282,7 +282,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         ),
       );
     } else if (Platform.isAndroid) {
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         fileName: basename(result.path),
         type: FileType.custom,
         allowedExtensions: ['txt'],
@@ -319,7 +319,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
       await file.create(recursive: true);
       await file.writeAsString(jsonEncode(backup.toContents()));
 
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         fileName: exportFileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
@@ -341,7 +341,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
 
       await file.delete();
     } else if (Platform.isAndroid) {
-      await FilePicker.platform.saveFile(
+      await FilePicker.saveFile(
         fileName: exportFileName,
         type: FileType.custom,
         allowedExtensions: ['json'],

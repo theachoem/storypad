@@ -20,8 +20,7 @@ enum AssetType {
   ///
   /// Stores files in the 'audio' subdirectory.
   /// Example: audio/1762500783747.m4a
-  audio(subDirectory: .audio)
-  ;
+  audio(subDirectory: .audio);
 
   final SupportDirectoryPath subDirectory;
 

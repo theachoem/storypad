@@ -12,9 +12,10 @@ source "$(dirname "$0")/helpers"
 
 run_command "asdf install"
 
+run_command "rm -rf .dart_tool"
 run_command "flutter clean"
 run_command "bin/pubspec/upgrade"
-run_command "bin/build_runner"
+run_command "bin/build_runner --delete"
 
 run_command "rm -f ios/Podfile.lock"
 run_command "rm -f macos/Podfile.lock"

@@ -50,7 +50,7 @@ class _MixesTab extends StatelessWidget {
         right: MediaQuery.of(context).padding.right + 10.0,
         bottom: MediaQuery.of(context).padding.bottom + 16.0,
       ),
-      onReorder: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
+      onReorderItem: (int oldIndex, int newIndex) => viewModel.reorder(oldIndex, newIndex),
       itemBuilder: (context, index) {
         final mix = viewModel.mixes![index];
         return buildMixTile(

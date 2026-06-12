@@ -175,11 +175,11 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  // [newIndex] already accounts for the removed item (ReorderableListView's `onReorderItem`).
   void reorderActions(int oldIndex, int newIndex) {
     final actions = enabledActions;
     if (actions == null) return;
 
-    if (newIndex > oldIndex) newIndex--;
     final item = actions.removeAt(oldIndex);
     actions.insert(newIndex, item);
     _saveActions();

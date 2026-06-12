@@ -46,6 +46,6 @@ TemplateDbModel _objectToModel(Map<String, dynamic> options) {
     archivedAt: object.archivedAt,
     lastSavedDeviceId: object.lastSavedDeviceId,
     permanentlyDeletedAt: object.permanentlyDeletedAt,
-    preferences: StoryContentHelper.decodePreferences(object.preferences),
+    preferencesOrNull: StoryContentHelper.decodePreferences(object.preferences),
   );
 }

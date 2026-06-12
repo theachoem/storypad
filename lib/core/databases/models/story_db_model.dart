@@ -73,8 +73,10 @@ class StoryDbModel extends BaseDbModel {
   final String? lastSavedDeviceId;
 
   @JsonKey(name: 'preferences')
-  final StoryPreferencesDbModel? _preferences;
-  StoryPreferencesDbModel get preferences => _preferences ?? StoryPreferencesDbModel.create();
+  final StoryPreferencesDbModel? preferencesOrNull;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  StoryPreferencesDbModel get preferences => preferencesOrNull ?? StoryPreferencesDbModel.create();
 
   @override
   final DateTime? permanentlyDeletedAt;
@@ -109,7 +111,7 @@ class StoryDbModel extends BaseDbModel {
     required this.second,
     required this.updatedAt,
     required this.createdAt,
-    StoryPreferencesDbModel? preferences,
+    this.preferencesOrNull,
     required this.tags,
     required this.assets,
     required this.movedToBinAt,
@@ -123,7 +125,7 @@ class StoryDbModel extends BaseDbModel {
     this.place,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
-  }) : _preferences = preferences;
+  });
 
   bool get draftStory => draftContent != null;
 
@@ -234,7 +236,7 @@ class StoryDbModel extends BaseDbModel {
 
     return db.set(
       copyWith(
-        preferences: preferences,
+        preferencesOrNull: preferences,
         updatedAt: DateTime.now(),
       ),
     );
@@ -313,7 +315,7 @@ class StoryDbModel extends BaseDbModel {
       feeling: null,
       wordCount: null,
       characterCount: null,
-      preferences: preferences,
+      preferencesOrNull: preferences,
       latestContent: templateContent ?? StoryContentDbModel.create(),
       draftContent: templateContent,
       updatedAt: now,

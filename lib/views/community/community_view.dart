@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:storypad/core/services/app_store_opener_service.dart';
 import 'package:storypad/core/services/remote_config/remote_config_service.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
@@ -67,7 +66,7 @@ class SupportUsView extends StatelessWidget {
           ),
           if (productHuntUrl.trim().isNotEmpty) ...[
             ListTile(
-              leading: Icon(MdiIcons.rocketLaunchOutline),
+              leading: const Icon(SpIcons.rocketLaunch),
               title: Text(tr('list_tile.product_hunt.title', namedArgs: {'ARG_NAME': 'Product Hunt'})),
               trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, productHuntUrl),
@@ -83,7 +82,7 @@ class SupportUsView extends StatelessWidget {
           ],
           if (sourceCodeUrl.trim().isNotEmpty) ...[
             ListTile(
-              leading: Icon(MdiIcons.github),
+              leading: const Icon(SpIcons.github),
               title: Text(tr('list_tile.github_star.title', namedArgs: {'ARG_NAME': 'GitHub'})),
               trailing: const Icon(SpIcons.keyboardRight),
               onTap: () => UrlOpenerService.openInCustomTab(context, sourceCodeUrl),

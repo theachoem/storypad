@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 
 class SpIcons {
@@ -10,7 +10,7 @@ class SpIcons {
   static const IconData question = kIsCupertino ? CupertinoIcons.question : Icons.question_mark_outlined;
   static const IconData policy = kIsCupertino ? CupertinoIcons.lock_shield : Icons.policy_outlined;
   static const IconData onboarding = kIsCupertino ? CupertinoIcons.today : Icons.waving_hand_outlined;
-  static final IconData license = MdiIcons.license;
+  static const IconData license = MdiIcons.license;
   static const IconData code = kIsCupertino ? CupertinoIcons.chevron_left_slash_chevron_right : Icons.code;
   static const IconData star = kIsCupertino ? CupertinoIcons.star : Icons.star_border;
   static const IconData starFilled = kIsCupertino ? CupertinoIcons.star_fill : Icons.star;
@@ -31,18 +31,19 @@ class SpIcons {
   static const IconData photo = kIsCupertino ? CupertinoIcons.photo : Icons.photo_library_outlined;
   static const IconData voice = kIsCupertino ? CupertinoIcons.mic : Icons.mic_none_sharp;
   static const IconData cloudUpload = kIsCupertino ? CupertinoIcons.cloud_upload : Icons.backup_outlined;
-  static final IconData googleDrive = MdiIcons.googleDrive;
+  // ignore: deprecated_member_use, brand icon deprecated upstream by MDI (trademark), no replacement
+  static const IconData googleDrive = MdiIcons.googleDrive;
   static const IconData cloudDone = Icons.cloud_done_outlined;
-  static final IconData cloudOff = MdiIcons.cloudOff;
-  static final IconData pinSlash = kIsCupertino ? CupertinoIcons.pin_slash : MdiIcons.pinOff;
-  static final IconData pin = kIsCupertino ? CupertinoIcons.pin_fill : MdiIcons.pin;
-  static final IconData pinOutline = kIsCupertino ? CupertinoIcons.pin : MdiIcons.pinOutline;
-  static final IconData bookLock = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookLockOutline;
-  static final IconData book = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOutline;
-  static final IconData tune = kIsCupertino ? CupertinoIcons.slider_horizontal_3 : MdiIcons.tuneVariant;
+  static const IconData cloudOff = MdiIcons.cloudOff;
+  static const IconData pinSlash = kIsCupertino ? CupertinoIcons.pin_slash : MdiIcons.pinOff;
+  static const IconData pin = kIsCupertino ? CupertinoIcons.pin_fill : MdiIcons.pin;
+  static const IconData pinOutline = kIsCupertino ? CupertinoIcons.pin : MdiIcons.pinOutline;
+  static const IconData bookLock = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookLockOutline;
+  static const IconData book = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOutline;
+  static const IconData tune = kIsCupertino ? CupertinoIcons.slider_horizontal_3 : MdiIcons.tuneVariant;
   static const IconData forum = kIsCupertino ? CupertinoIcons.bubble_left_bubble_right : Icons.forum_outlined;
-  static final IconData managingPage = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
-  static final IconData managingPageOff = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
+  static const IconData managingPage = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
+  static const IconData managingPageOff = kIsCupertino ? CupertinoIcons.book : MdiIcons.bookOpenOutline;
   static const IconData info = kIsCupertino ? CupertinoIcons.info : Icons.info_outline;
   static const IconData moreVert = kIsCupertino ? CupertinoIcons.ellipsis_vertical : Icons.more_vert;
   static const IconData moreHoriz = kIsCupertino ? CupertinoIcons.ellipsis : Icons.more_horiz;
@@ -55,7 +56,7 @@ class SpIcons {
   static const IconData biometrics = Icons.face_unlock_outlined;
   static const IconData faceUnlock = Icons.face_unlock_outlined;
   static const IconData fingerprint = Icons.fingerprint_outlined;
-  static final IconData lockQuestion = kIsCupertino ? CupertinoIcons.question_circle : MdiIcons.lockQuestion;
+  static const IconData lockQuestion = kIsCupertino ? CupertinoIcons.question_circle : MdiIcons.lockQuestion;
   static const IconData folderOpen = kIsCupertino ? CupertinoIcons.folder_open : Icons.folder_open;
   static const IconData file = kIsCupertino ? CupertinoIcons.doc : Icons.insert_drive_file;
   static const IconData profile = kIsCupertino ? CupertinoIcons.person : Icons.person;
@@ -75,8 +76,8 @@ class SpIcons {
   static const IconData expandLess = kIsCupertino ? CupertinoIcons.chevron_up : Icons.expand_less_outlined;
   static const IconData fullscreen = kIsCupertino ? CupertinoIcons.fullscreen : Icons.fullscreen_outlined;
   static const IconData fullscreenExit = kIsCupertino ? CupertinoIcons.fullscreen_exit : Icons.fullscreen_exit_outlined;
-  static final IconData table = kIsCupertino ? CupertinoIcons.doc_text_search : MdiIcons.table;
-  static final IconData restore = kIsCupertino ? CupertinoIcons.doc_checkmark : MdiIcons.restore;
+  static const IconData table = kIsCupertino ? CupertinoIcons.doc_text_search : MdiIcons.table;
+  static const IconData restore = kIsCupertino ? CupertinoIcons.doc_checkmark : MdiIcons.restore;
   static const IconData checkCircle = kIsCupertino ? CupertinoIcons.check_mark_circled : Icons.check_circle_outline;
   static const IconData errorCircle = kIsCupertino ? CupertinoIcons.xmark : Icons.error_outline_outlined;
   static const IconData exploreBrowser = kIsCupertino ? CupertinoIcons.globe : Icons.travel_explore_outlined;
@@ -113,9 +114,10 @@ class SpIcons {
   static const IconData pauseCircle = kIsCupertino ? CupertinoIcons.pause_circle_fill : Icons.pause_circle;
   static const IconData storage = kIsCupertino ? CupertinoIcons.device_phone_portrait : Icons.storage_outlined;
   static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
-  static final IconData markdown = MdiIcons.languageMarkdownOutline;
-  static final IconData text = MdiIcons.text;
-  static final IconData pdf = MdiIcons.filePdfBox;
+  // ignore: deprecated_member_use, deprecated upstream by MDI, no replacement
+  static const IconData markdown = MdiIcons.languageMarkdown;
+  static const IconData text = MdiIcons.text;
+  static const IconData pdf = MdiIcons.filePdfBox;
   static const IconData timer = kIsCupertino ? CupertinoIcons.timer : Icons.timer_outlined;
   static const IconData lightBulb = kIsCupertino ? CupertinoIcons.lightbulb : Icons.lightbulb_outline;
   static const IconData zoomInMap = kIsCupertino ? CupertinoIcons.rectangle_expand_vertical : Icons.zoom_in_map;
@@ -126,6 +128,18 @@ class SpIcons {
   static const IconData gift = kIsCupertino ? CupertinoIcons.gift : Icons.card_giftcard_outlined;
   static const IconData waterDrop = Icons.water_drop;
   static const IconData download = kIsCupertino ? CupertinoIcons.cloud_download : Icons.download_outlined;
-  static final IconData sideBarLeft = kIsCupertino ? CupertinoIcons.sidebar_left : MdiIcons.dockLeft;
-  static final IconData starCircle = kIsCupertino ? CupertinoIcons.star_circle : MdiIcons.starCircleOutline;
+  static const IconData sideBarLeft = kIsCupertino ? CupertinoIcons.sidebar_left : MdiIcons.dockLeft;
+  static const IconData starCircle = kIsCupertino ? CupertinoIcons.star_circle : MdiIcons.starCircleOutline;
+
+  static const IconData bug = MdiIcons.bug;
+  static const IconData rocketLaunch = MdiIcons.rocketLaunchOutline;
+  static const IconData deleteEmpty = MdiIcons.deleteEmpty;
+  static const IconData deleteOutline = MdiIcons.deleteOutline;
+  // Brand icons deprecated upstream by the Material Design Icons project for
+  // trademark reasons; they still render and have no in-MDI replacement.
+  static const IconData reddit = MdiIcons.reddit; // ignore: deprecated_member_use
+  static const IconData twitter = MdiIcons.twitter; // ignore: deprecated_member_use
+  static const IconData github = MdiIcons.github; // ignore: deprecated_member_use
+  static const IconData apple = MdiIcons.apple; // ignore: deprecated_member_use
+  static const IconData googleMaps = MdiIcons.googleMaps; // ignore: deprecated_member_use
 }

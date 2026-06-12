@@ -85,7 +85,7 @@ class _TagsContent extends StatelessWidget {
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         buildDefaultDragHandles: true,
         itemCount: collection?.items.length ?? 0,
-        onReorder: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex, categoryId: categoryId),
+        onReorderItem: (int oldIndex, int newIndex) => provider.reorder(oldIndex, newIndex, categoryId: categoryId),
         proxyDecorator: (child, index, animation) {
           return Container(
             color: Theme.of(context).colorScheme.readOnly.surface5,

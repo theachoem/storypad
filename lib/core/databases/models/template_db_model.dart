@@ -18,8 +18,10 @@ class TemplateDbModel extends BaseDbModel {
   final List<int>? tags;
 
   @JsonKey(name: 'preferences')
-  final StoryPreferencesDbModel? _preferences;
-  StoryPreferencesDbModel get preferences => _preferences ?? StoryPreferencesDbModel.create();
+  final StoryPreferencesDbModel? preferencesOrNull;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  StoryPreferencesDbModel get preferences => preferencesOrNull ?? StoryPreferencesDbModel.create();
 
   final String? name;
   final StoryContentDbModel? content;
@@ -48,15 +50,14 @@ class TemplateDbModel extends BaseDbModel {
     required this.content,
     required this.galleryTemplateId,
     required this.note,
-    StoryPreferencesDbModel? preferences,
+    this.preferencesOrNull,
     required this.createdAt,
     required this.updatedAt,
     required this.archivedAt,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
     int? index,
-  }) : index = index ?? 0,
-       _preferences = preferences;
+  }) : index = index ?? 0;
 
   bool get archived => archivedAt != null;
 
@@ -73,7 +74,7 @@ class TemplateDbModel extends BaseDbModel {
       name: null,
       content: content,
       note: null,
-      preferences: preferences,
+      preferencesOrNull: preferences,
       galleryTemplateId: galleryTemplateId,
       createdAt: createdAt,
       updatedAt: createdAt,

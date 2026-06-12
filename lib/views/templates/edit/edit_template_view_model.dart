@@ -185,7 +185,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
       if (pagesManager.pageScrollController.hasClients) pagesManager.pageScrollController.jumpTo(0);
     }
 
-    template = template.copyWith(updatedAt: DateTime.now(), preferences: preferences);
+    template = template.copyWith(updatedAt: DateTime.now(), preferencesOrNull: preferences);
     notifyListeners();
 
     if (hasDataWritten) {

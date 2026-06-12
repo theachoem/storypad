@@ -30,7 +30,7 @@ class DeveloperOptionsView extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: Icon(SpIcons.table),
+            leading: const Icon(SpIcons.table),
             title: const Text("Delete Records"),
             subtitle: const Text(
               "For safety, permanently deleted records are kept on your device for 7 days "

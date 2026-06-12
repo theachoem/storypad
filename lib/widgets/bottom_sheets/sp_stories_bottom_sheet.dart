@@ -4,7 +4,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
@@ -54,13 +54,13 @@ class _MapAppOpenerButton extends StatelessWidget {
           if (Platform.isIOS || Platform.isMacOS) ...[
             SheetAction(
               label: tr("button.open_in_args", namedArgs: {"OPENEE_NAME": "Apple Maps"}),
-              icon: MdiIcons.apple,
+              icon: SpIcons.apple,
               key: "apple",
             ),
           ],
           SheetAction(
             label: tr("button.open_in_args", namedArgs: {"OPENEE_NAME": "Google Maps"}),
-            icon: MdiIcons.googleMaps,
+            icon: SpIcons.googleMaps,
             key: "google",
           ),
         ];
@@ -73,13 +73,13 @@ class _MapAppOpenerButton extends StatelessWidget {
                   if (Platform.isIOS || Platform.isMacOS) ...[
                     SheetAction(
                       label: tr("button.open_in_args", namedArgs: {"OPENEE_NAME": "Apple Maps"}),
-                      icon: MdiIcons.apple,
+                      icon: SpIcons.apple,
                       key: "apple",
                     ),
                   ],
                   SheetAction(
                     label: tr("button.open_in_args", namedArgs: {"OPENEE_NAME": "Google Maps"}),
-                    icon: MdiIcons.googleMaps,
+                    icon: SpIcons.googleMaps,
                     key: "google",
                   ),
                 ],

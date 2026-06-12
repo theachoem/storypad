@@ -23,7 +23,7 @@ class SpConnectGoogleDriveButton extends StatelessWidget {
 
   Widget _buildMaterialPinButton(BuildContext context) {
     return FilledButton.icon(
-      icon: Icon(SpIcons.googleDrive),
+      icon: const Icon(SpIcons.googleDrive),
       label: Text(tr("button.connect")),
       onPressed: onPressed,
     );
@@ -37,7 +37,7 @@ class SpConnectGoogleDriveButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8.0,
         children: [
-          Icon(SpIcons.googleDrive),
+          const Icon(SpIcons.googleDrive),
           Text(tr("button.connect")),
         ],
       ),

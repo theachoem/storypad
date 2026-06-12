@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 enum BackupServiceType {
-  google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true)
-  ;
+  google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true);
 
   final String id;
   final String displayName;

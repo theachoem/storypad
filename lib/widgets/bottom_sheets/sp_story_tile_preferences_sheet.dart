@@ -259,7 +259,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             },
           ),
           SwitchListTile.adaptive(
-            secondary: SpSettingIconBadge(weekday: 4, icon: SpIcons.managingPage),
+            secondary: const SpSettingIconBadge(weekday: 4, icon: SpIcons.managingPage),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
             title: Text(tr("list_tile.show_page_count.title")),
             value: storyTilePreferences.showPageCount,
@@ -367,7 +367,7 @@ class _CharacterCountSliderState extends State<_CharacterCountSlider> {
       children: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 16.0, right: 24.0),
-          leading: SpSettingIconBadge(weekday: 6, icon: SpIcons.text),
+          leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.text),
           title: Text(tr("list_tile.preview_char_count.title")),
           trailing: Text(
             _localValue.toString(),

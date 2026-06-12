@@ -6,8 +6,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 
 enum AddOnType {
   relax_sounds(icon: SpIcons.musicNote, weekdayColor: 4),
-  period_calendar(icon: SpIcons.waterDrop, designForFemale: true, weekdayColor: 7)
-  ;
+  period_calendar(icon: SpIcons.waterDrop, designForFemale: true, weekdayColor: 7);
 
   final IconData icon;
   final bool designForFemale;

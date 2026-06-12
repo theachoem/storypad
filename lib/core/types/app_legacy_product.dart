@@ -8,8 +8,7 @@ enum AppLegacyProduct {
   relax_sounds,
   templates,
   period_calendar,
-  markdown_export
-  ;
+  markdown_export;
 
   String get productIdentifier => name;
   static List<String> get productIdentifiers => values.map((e) => e.name).toList();

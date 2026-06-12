@@ -60,7 +60,7 @@ class SpAssetInfoSheet extends BaseBottomSheet {
               ),
             if (context.read<BackupProvider>().currentGoogleUser != null)
               ListTile(
-                leading: Icon(SpIcons.googleDrive),
+                leading: const Icon(SpIcons.googleDrive),
                 title: Text(
                   tr(
                     'general.uploaded_to_args',

@@ -29,18 +29,18 @@ class BackupTile extends StatelessWidget {
     Widget? action;
 
     if (!provider.isSignedIn) {
-      leading = Icon(SpIcons.cloudOff);
+      leading = const Icon(SpIcons.cloudOff);
       title = Text(tr("list_tile.backup.title"));
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       action = FilledButton.icon(
-        icon: Icon(SpIcons.googleDrive),
+        icon: const Icon(SpIcons.googleDrive),
         label: Text(tr('button.connect')),
         onPressed: () => provider.signIn(context, .google_drive),
       );
     } else {
       switch (provider.connectionStatus) {
         case .unknownError:
-          leading = Icon(SpIcons.cloudOff);
+          leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.unknown_error'));
           action = FilledButton.icon(
@@ -50,7 +50,7 @@ class BackupTile extends StatelessWidget {
           );
           break;
         case .noInternet:
-          leading = Icon(SpIcons.cloudOff);
+          leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
           action = FilledButton.icon(
@@ -60,17 +60,17 @@ class BackupTile extends StatelessWidget {
           );
           break;
         case .needGoogleDrivePermission:
-          leading = Icon(SpIcons.cloudOff);
+          leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
           action = FilledButton.icon(
-            icon: Icon(SpIcons.googleDrive),
+            icon: const Icon(SpIcons.googleDrive),
             label: Text(tr('button.grant_permission')),
             onPressed: () => provider.requestScope(context, .google_drive),
           );
           break;
         case .readyToSync:
-          leading = Icon(SpIcons.googleDrive);
+          leading = const Icon(SpIcons.googleDrive);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
           action = FilledButton(
@@ -88,7 +88,7 @@ class BackupTile extends StatelessWidget {
     }
 
     if (provider.allYearSynced) {
-      leading = Icon(SpIcons.googleDrive);
+      leading = const Icon(SpIcons.googleDrive);
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;
       title = Text.rich(

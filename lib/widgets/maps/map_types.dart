@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
@@ -6,16 +8,14 @@ typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
 enum SpMapRenderer {
   googleMap,
-  flutterMap
-  ;
+  flutterMap;
 
-  static SpMapRenderer get defaultRenderer => googleMap;
+  static SpMapRenderer get defaultRenderer => Platform.isAndroid || Platform.isIOS ? googleMap : flutterMap;
 }
 
 enum SpMapStyle {
   streets,
-  satellite
-  ;
+  satellite;
 
   Brightness get overlayBrightness {
     switch (this) {
