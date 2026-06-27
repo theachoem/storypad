@@ -160,7 +160,9 @@ class _MapPickerContent extends StatelessWidget {
           leadingIconData: SpIcons.locationPin,
           title: tr("button.manual_input"),
           onPressed: () async {
-            final place = await const MapPickerManualInputRoute().push(context);
+            final place = await MapPickerManualInputRoute(
+              referenceLatLng: viewModel.selectedPlace?.latLng ?? viewModel.initialSpMapCamera.target,
+            ).push(context);
             if (!context.mounted || place is! PlaceDbModel) return;
             unawaited(viewModel.selectSearchedPlace(place));
           },

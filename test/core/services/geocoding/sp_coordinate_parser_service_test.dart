@@ -164,6 +164,52 @@ void main() {
       );
       expect(result, isNull);
     });
+
+    test('recovers bare short Plus Code (no hint) using fallbackReference', () async {
+      final String fullCode = olc.PlusCode.encode(phnomPenhOlc).toString();
+      final String shortCode = olc.PlusCode(fullCode).shorten(phnomPenhOlc).toString();
+
+      final result = await SpCoordinateParserService.parse(
+        shortCode,
+        fallbackReference: phnomPenhSp,
+      );
+
+      expect(result, isNotNull);
+      expect(result!.latitude, closeTo(phnomPenhSp.latitude, 0.1));
+      expect(result.longitude, closeTo(phnomPenhSp.longitude, 0.1));
+    });
+
+    test('falls back to fallbackReference when the city hint cannot be geocoded', () async {
+      final String fullCode = olc.PlusCode.encode(phnomPenhOlc).toString();
+      final String shortCode = olc.PlusCode(fullCode).shorten(phnomPenhOlc).toString();
+
+      final result = await SpCoordinateParserService.parse(
+        '$shortCode Unknown City',
+        referenceResolver: (_) async => null,
+        fallbackReference: phnomPenhSp,
+      );
+
+      expect(result, isNotNull);
+      expect(result!.latitude, closeTo(phnomPenhSp.latitude, 0.1));
+      expect(result.longitude, closeTo(phnomPenhSp.longitude, 0.1));
+    });
+
+    test('prefers the city hint over fallbackReference when both resolve', () async {
+      // Short code generated relative to Phnom Penh; hint resolver returns
+      // Phnom Penh while the fallback points elsewhere. The hint must win.
+      final String fullCode = olc.PlusCode.encode(phnomPenhOlc).toString();
+      final String shortCode = olc.PlusCode(fullCode).shorten(phnomPenhOlc).toString();
+
+      final result = await SpCoordinateParserService.parse(
+        '$shortCode Phnom Penh',
+        referenceResolver: phnomPenhResolver,
+        fallbackReference: const SpLatLng(48.8566, 2.3522), // Paris — should be ignored
+      );
+
+      expect(result, isNotNull);
+      expect(result!.latitude, closeTo(phnomPenhSp.latitude, 0.1));
+      expect(result.longitude, closeTo(phnomPenhSp.longitude, 0.1));
+    });
   });
 
   // ---------------------------------------------------------------------------
