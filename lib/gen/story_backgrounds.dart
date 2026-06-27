@@ -8,9 +8,16 @@
 // coverage:ignore-file
 // ignore_for_file: type=lint
 
-enum StoryBackgroundAlign { left, center, right }
+enum StoryBackgroundAlign {
+  left,
+  center,
+  right,
+}
 
-enum StoryBackgroundTextColor { black, white }
+enum StoryBackgroundTextColor {
+  black,
+  white,
+}
 
 class StoryBackground {
   final String name;
@@ -672,5 +679,10 @@ class StoryBackgrounds {
         scenery[6],
   };
 
-  static const groups = ['dailylife', 'garden', 'cute', 'scenery'];
+  static const groups = [
+    'dailylife',
+    'garden',
+    'cute',
+    'scenery',
+  ];
 }
