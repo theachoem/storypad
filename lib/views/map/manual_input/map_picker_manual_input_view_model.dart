@@ -55,7 +55,10 @@ class MapPickerManualInputViewModel extends ChangeNotifier with DisposeAwareMixi
     notifyListeners();
 
     try {
-      final SpLatLng? latLng = await SpCoordinateParserService.parse(text);
+      final SpLatLng? latLng = await SpCoordinateParserService.parse(
+        text,
+        fallbackReference: params.referenceLatLng,
+      );
       if (version != _resolveVersion || disposed) return;
 
       if (latLng == null) {
