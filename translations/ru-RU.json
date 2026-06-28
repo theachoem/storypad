@@ -314,7 +314,7 @@
   "page.add_ons.title": "Дополнения",
   "page.add_year.title": "Добавить год",
   "page.app_lock.title": "Блокировка приложения",
-  "page.backup_services.title": "Резервное копирование и восстановление",
+  "page.backup_services.title": "Резервная копия",
   "page.calendar.title": "Календарь",
   "page.cloud_optimize.confirmation.detached_eligible": "Отдельные файлы (подлежащие удалению)",
   "page.cloud_optimize.confirmation.detached_too_recent": "Отсоединенные файлы (слишком новые, пропущены)",
