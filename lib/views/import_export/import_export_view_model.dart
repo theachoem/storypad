@@ -182,28 +182,27 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         final tarFile = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
         await tarFile.create(recursive: true);
 
-        // Create tar.gz archive from directory
-        final entries = <TarEntry>[];
-
-        for (final entity in tempDir.listSync(recursive: true)) {
-          if (entity is File) {
-            final relativePath = entity.path.substring(tempDir.path.length + 1);
-            final bytes = await entity.readAsBytes();
-            entries.add(
-              TarEntry.data(
+        // Stream each file from the temp directory into the archive (one file
+        // at a time) instead of buffering them all in memory — avoids OOM
+        // crashes on large exports.
+        Stream<TarEntry> buildEntries() async* {
+          for (final entity in tempDir.listSync(recursive: true)) {
+            if (entity is File) {
+              final relativePath = entity.path.substring(tempDir.path.length + 1);
+              yield TarEntry(
                 TarHeader(
                   name: relativePath,
                   mode: 420, // 0644 in octal
-                  size: bytes.length,
+                  size: entity.lengthSync(),
                   modified: entity.lastModifiedSync(),
                 ),
-                bytes,
-              ),
-            );
+                entity.openRead(), // lazy disk read
+              );
+            }
           }
         }
 
-        await Stream.fromIterable(entries).transform(tarWriter).transform(gzip.encoder).pipe(tarFile.openWrite());
+        await buildEntries().transform(tarWriter).transform(gzip.encoder).pipe(tarFile.openWrite());
         return (tarFile, tempDir);
       },
     );
@@ -214,8 +213,9 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     File tarFile = result.$1;
     Directory tempDir = result.$2;
 
-    // Share/save the tar.gz file
-    if (Platform.isIOS) {
+    try {
+      // Share/save the tar.gz file by path (no in-memory copy of the archive).
+      // On Android the share sheet still offers "Save to Files/Drive".
       RenderBox? box = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(
         ShareParams(
@@ -224,18 +224,11 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
           files: [XFile(tarFile.path)],
         ),
       );
-    } else if (Platform.isAndroid) {
-      await FilePicker.saveFile(
-        fileName: basename(tarFile.path),
-        type: FileType.custom,
-        allowedExtensions: ['gz'],
-        bytes: await tarFile.readAsBytes(),
-      );
+    } finally {
+      // Always clean up, even if sharing throws.
+      if (await tempDir.exists()) await tempDir.delete(recursive: true);
+      if (await tarFile.exists()) await tarFile.delete();
     }
-
-    // Cleanup
-    await tempDir.delete(recursive: true);
-    await tarFile.delete();
   }
 
   Future<void> exportText(BuildContext context) async {

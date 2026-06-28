@@ -103,6 +103,9 @@ class StorageManagementViewModel extends ChangeNotifier {
 
     await storageInfoService.clearCachedNetworkImageCache();
 
+    // Also remove orphaned *.download temp files left by interrupted downloads.
+    await storageInfoService.clearOrphanedDownloads();
+
     await _loadLocalSizes();
     notifyListeners();
   }
