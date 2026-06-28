@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/objects/month_recap_stats_object.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/views/calendar/calendar_view.dart';
+import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 part 'local_widgets/story_month_header.dart';
+part 'local_widgets/story_month_recap.dart';
 
 class SpStoryTileListItem extends StatelessWidget {
   const SpStoryTileListItem({
@@ -20,6 +26,7 @@ class SpStoryTileListItem extends StatelessWidget {
     required this.listHasThrowback,
     this.listHasPinned = false,
     this.viewOnly = false,
+    this.monthlyStats,
   });
 
   final int index;
@@ -30,6 +37,10 @@ class SpStoryTileListItem extends StatelessWidget {
   final void Function() onTap;
   final bool viewOnly;
   final BuildContext listContext;
+
+  /// Per-month recap stats keyed by month. When null (e.g. the cross-year
+  /// list), no recap tile is shown.
+  final Map<int, MonthRecapStatsObject>? monthlyStats;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +69,8 @@ class SpStoryTileListItem extends StatelessWidget {
     }
 
     if (previousStory?.month != story.month || previousStory?.year != story.year) {
+      final MonthRecapStatsObject? monthStats = monthlyStats?[story.month];
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -80,6 +93,18 @@ class SpStoryTileListItem extends StatelessWidget {
               _StoryMonthHeader(index: index, context: context, story: story, showYear: showYear),
             ],
           ),
+
+          // Nudge tier: only surface a monthly recap on active months so it feels
+          // earned and the timeline stays clean on quiet months.
+          if (monthStats != null && monthStats.shouldShowRecap) ...[
+            Stack(
+              children: [
+                timelineDivider,
+                _StoryMonthRecap(story: story, stats: monthStats),
+              ],
+            ),
+          ],
+
           Stack(
             children: [
               timelineDivider,
