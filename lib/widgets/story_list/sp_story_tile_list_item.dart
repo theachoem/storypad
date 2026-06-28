@@ -7,7 +7,7 @@ import 'package:storypad/core/objects/month_recap_stats_object.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/views/calendar/calendar_view.dart';
+import 'package:storypad/views/stats/stats_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';

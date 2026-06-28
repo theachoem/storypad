@@ -295,7 +295,7 @@ class _SpFloatingTagPickerState extends State<SpFloatingTagPicker> {
                             ? null
                             : const Icon(SpIcons.dragIndicator),
                         title: Text(tag.title),
-                        subtitle: Text(plural("plural.story", getStoriesCount(tag))),
+                        subtitle: Text(plural("plural.entry", getStoriesCount(tag))),
                         onTap: () => _toggle(tag),
                       ),
                     ),

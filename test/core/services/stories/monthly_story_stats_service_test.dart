@@ -87,11 +87,11 @@ StoryDbModel _story({
     {"insert": "Entry\n"},
     for (int i = 0; i < images; i++)
       {
-        "insert": {"image": "images/$id-$i.jpg"}
+        "insert": {"image": "images/$id-$i.jpg"},
       },
     for (int i = 0; i < audios; i++)
       {
-        "insert": {"audio": "audio/$id-$i.m4a"}
+        "insert": {"audio": "audio/$id-$i.m4a"},
       },
   ];
 

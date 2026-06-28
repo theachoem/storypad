@@ -54,7 +54,7 @@ class MonthRecapStatsObject {
   /// Localized, pluralized stat strings to be joined by the UI (e.g. with " · ").
   /// Zero-valued media stats are skipped so the tile never shows "0 photos".
   List<String> get labels => [
-    plural('plural.story', storyCount),
+    plural('plural.entry', storyCount),
     plural('plural.photo', photoCount),
     plural('plural.voice', voiceCount),
   ];

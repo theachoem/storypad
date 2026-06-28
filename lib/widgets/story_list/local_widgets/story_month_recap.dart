@@ -22,7 +22,7 @@ class _StoryMonthRecap extends StatelessWidget {
     final ColorScheme colorScheme = ColorScheme.of(context);
 
     return SpTapEffect(
-      onTap: () {},
+      onTap: () => StatsRoute.month(story.displayPathDate).push(context),
       child: ListTile(
         leading: Container(
           width: 32.0,

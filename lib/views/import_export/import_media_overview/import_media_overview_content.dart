@@ -307,7 +307,7 @@ class _AudioImportTile extends StatelessWidget {
           children: [
             TextSpan(text: entry.scanEntry.ext.replaceFirst('.', '').toUpperCase()),
             const TextSpan(text: ' • '),
-            TextSpan(text: plural('plural.story', entry.storyCount)),
+            TextSpan(text: plural('plural.entry', entry.storyCount)),
             if (entry.storyCount == 0) ...[
               const TextSpan(text: ' '),
               WidgetSpan(
