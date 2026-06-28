@@ -10,6 +10,8 @@ import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
 /// - Full Plus Code:  `7P28QRVW+62`  (decoded directly)
 /// - Short Plus Code:  `X4MQ+2V Al Haram, Egypt`  or  `X4HH+QX4, Egypt`
 ///   (space or comma-separated, location geocoded for reference, then recovered)
+/// - Bare Short Plus Code:  `GWCJ+6QH`  (no hint — recovered against
+///   [fallbackReference], e.g. the map's current camera center)
 ///
 /// Returns `null` when the input cannot be parsed or Plus Code recovery fails.
 class SpCoordinateParserService {
@@ -22,14 +24,20 @@ class SpCoordinateParserService {
   /// [referenceResolver] is called with the city/location hint when recovering
   /// a short Plus Code (e.g. "HVRG+727 Phnom Penh"). Defaults to the system
   /// geocoder. Inject a custom resolver in tests to avoid network calls.
+  ///
+  /// [fallbackReference] is the reference point used to recover a short Plus
+  /// Code when no location hint is supplied (e.g. a bare "GWCJ+6QH"), or when
+  /// the hint cannot be geocoded. Pass the map's current camera center so a
+  /// bare short code resolves to the area the user is looking at.
   static Future<SpLatLng?> parse(
     String input, {
     Future<SpLatLng?> Function(String hint)? referenceResolver,
+    SpLatLng? fallbackReference,
   }) async {
     final String text = input.trim();
     if (text.isEmpty) return null;
 
-    return _tryDecimal(text) ?? _tryCardinal(text) ?? await _tryPlusCode(text, referenceResolver);
+    return _tryDecimal(text) ?? _tryCardinal(text) ?? await _tryPlusCode(text, referenceResolver, fallbackReference);
   }
 
   // ---------------------------------------------------------------------------
@@ -83,7 +91,11 @@ class SpCoordinateParserService {
   // Plus Code  "7P28QRVW+62"  or  "X4MQ+2V Al Haram, Egypt"  or  "X4HH+QX4, Egypt"
   // ---------------------------------------------------------------------------
 
-  static Future<SpLatLng?> _tryPlusCode(String text, Future<SpLatLng?> Function(String hint)? referenceResolver) async {
+  static Future<SpLatLng?> _tryPlusCode(
+    String text,
+    Future<SpLatLng?> Function(String hint)? referenceResolver,
+    SpLatLng? fallbackReference,
+  ) async {
     // Split on the first space or comma to separate Plus Code from location hint.
     // Supported formats:
     //   - "7P28QRVW+62"                         (full Plus Code)
@@ -116,7 +128,7 @@ class SpCoordinateParserService {
 
       if (!code.isShort()) return null;
 
-      final SpLatLng? reference = await _resolveReference(locationHint, referenceResolver);
+      final SpLatLng? reference = await _resolveReference(locationHint, referenceResolver, fallbackReference);
       if (reference == null) return null;
 
       final olc.PlusCode full = code.recoverNearest(
@@ -129,15 +141,30 @@ class SpCoordinateParserService {
     }
   }
 
-  /// Geocode [locationHint] (e.g. "Phnom Penh") to get a reference point for
-  /// short Plus Code recovery. Returns `null` when geocoding is unavailable or
-  /// the query returns no results.
+  /// Resolves the reference point used to recover a short Plus Code.
+  ///
+  /// Prefers geocoding the [locationHint] (e.g. "Phnom Penh"); when no hint is
+  /// supplied or it cannot be geocoded, falls back to [fallbackReference] (e.g.
+  /// the map's current camera center). Returns `null` when neither is available.
   static Future<SpLatLng?> _resolveReference(
     String? locationHint,
     Future<SpLatLng?> Function(String hint)? referenceResolver,
+    SpLatLng? fallbackReference,
   ) async {
-    if (locationHint == null || locationHint.isEmpty) return null;
+    if (locationHint != null && locationHint.isNotEmpty) {
+      final SpLatLng? viaHint = await _geocodeHint(locationHint, referenceResolver);
+      if (viaHint != null) return viaHint;
+    }
 
+    return fallbackReference;
+  }
+
+  /// Geocode [locationHint] (e.g. "Phnom Penh") to a reference point. Returns
+  /// `null` when geocoding is unavailable or the query returns no results.
+  static Future<SpLatLng?> _geocodeHint(
+    String locationHint,
+    Future<SpLatLng?> Function(String hint)? referenceResolver,
+  ) async {
     if (referenceResolver != null) {
       return referenceResolver(locationHint);
     }

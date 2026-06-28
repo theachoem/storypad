@@ -15,7 +15,12 @@ import 'map_picker_manual_input_view_model.dart';
 part 'map_picker_manual_input_content.dart';
 
 class MapPickerManualInputRoute extends BaseRoute {
-  const MapPickerManualInputRoute();
+  const MapPickerManualInputRoute({this.referenceLatLng});
+
+  /// Reference point used to recover a bare short Plus Code (one typed without a
+  /// location hint, e.g. "GWCJ+6QH"). Pass the map's current camera center so
+  /// the code resolves to the area the user is looking at.
+  final SpLatLng? referenceLatLng;
 
   @override
   Widget buildPage(BuildContext context) => MapPickerManualInputView(params: this);
