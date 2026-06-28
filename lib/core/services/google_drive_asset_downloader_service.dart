@@ -11,10 +11,19 @@ class GoogleDriveAssetDownloaderException {
   final String message;
   final StackTrace? stackTrace;
 
+  /// HTTP status code when the failure originated from an HTTP response
+  /// (e.g. 401/403 auth, 404 missing). `null` for non-HTTP failures.
+  final int? statusCode;
+
   GoogleDriveAssetDownloaderException(
     this.message, {
     this.stackTrace,
+    this.statusCode,
   });
+
+  /// Auth-related failures affect every download for the current session, so
+  /// callers should stop rather than retry the remaining assets.
+  bool get isAuthError => statusCode == 401 || statusCode == 403;
 
   @override
   String toString() => 'GoogleDriveAssetDownloaderException: $message';
@@ -149,11 +158,15 @@ class GoogleDriveAssetDownloaderService {
       if (response.statusCode == 401) {
         throw GoogleDriveAssetDownloaderException(
           'Authentication expired. Please sign in again to download this asset.',
+          statusCode: 401,
         );
       }
 
       if (response.statusCode == 403) {
-        throw GoogleDriveAssetDownloaderException('Access denied. Please sign in to download this asset.');
+        throw GoogleDriveAssetDownloaderException(
+          'Access denied. Please sign in to download this asset.',
+          statusCode: 403,
+        );
       }
 
       // Handle other HTTP errors
@@ -161,12 +174,14 @@ class GoogleDriveAssetDownloaderService {
         FirebaseCrashlytics.instance.log('$runtimeType#_downloadFromUrl: 404 — $embedLink');
         throw GoogleDriveAssetDownloaderException(
           'Asset not found (404). Status: 404',
+          statusCode: 404,
         );
       }
 
       if (response.statusCode != 200) {
         throw GoogleDriveAssetDownloaderException(
           'Failed to download asset. Status: ${response.statusCode}',
+          statusCode: response.statusCode,
         );
       }
 
@@ -178,22 +193,29 @@ class GoogleDriveAssetDownloaderService {
         );
       }
 
-      // Save file to local storage
+      // Save file to local storage using an atomic write: write the full bytes
+      // to a temp file first, then rename it into place. rename() is atomic on
+      // the same filesystem, so the canonical path only ever appears
+      // fully-written — a crash/kill mid-write can't leave a truncated file
+      // that would later be counted as "downloaded" and shown as a corrupt image.
       final downloadedFile = File(localFilePath);
-      await downloadedFile.create(recursive: true);
-      await downloadedFile.writeAsBytes(response.bodyBytes);
+      final tempFile = File('$localFilePath.download');
+
+      await tempFile.create(recursive: true);
+      await tempFile.writeAsBytes(response.bodyBytes, flush: true);
+      await tempFile.rename(localFilePath);
 
       debugPrint('✅ Asset downloaded successfully: $embedLink');
       return downloadedFile.path;
     } catch (e) {
-      // Clean up partial downloads
-      final downloadedFile = File(localFilePath);
-
-      if (downloadedFile.existsSync()) {
-        try {
-          downloadedFile.deleteSync();
-        } catch (deleteError) {
-          debugPrint('⚠️ Failed to clean up partial download: $deleteError');
+      // Clean up partial downloads (both the temp file and any stale target).
+      for (final file in [File('$localFilePath.download'), File(localFilePath)]) {
+        if (file.existsSync()) {
+          try {
+            file.deleteSync();
+          } catch (deleteError) {
+            debugPrint('⚠️ Failed to clean up partial download: $deleteError');
+          }
         }
       }
 

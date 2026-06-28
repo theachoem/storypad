@@ -17,6 +17,18 @@ class StorageInfoService {
     return result;
   }
 
+  /// Suffix used for in-progress/atomic asset downloads (see
+  /// GoogleDriveAssetDownloaderService). A leftover `*.download` file means a
+  /// download was interrupted; it's never a valid asset.
+  static const String downloadTempSuffix = '.download';
+
+  /// Asset directories where interrupted downloads can leave orphaned
+  /// `*.download` temp files.
+  static const List<SupportDirectoryPath> assetDirectories = [
+    SupportDirectoryPath.images,
+    SupportDirectoryPath.audio,
+  ];
+
   /// Deletes all files inside [path]'s directory without removing the directory itself.
   Future<void> clearDirectory(SupportDirectoryPath path) async {
     final dir = path.directory;
@@ -26,6 +38,23 @@ class StorageInfoService {
       try {
         await entity.delete(recursive: true);
       } catch (_) {}
+    }
+  }
+
+  /// Deletes orphaned `*.download` temp files left behind by interrupted asset
+  /// downloads. These are never valid assets, so removing them is always safe.
+  Future<void> clearOrphanedDownloads() async {
+    for (final path in assetDirectories) {
+      final dir = path.directory;
+      if (!await dir.exists()) continue;
+
+      await for (final entity in dir.list(recursive: false)) {
+        if (entity is File && entity.path.endsWith(downloadTempSuffix)) {
+          try {
+            await entity.delete();
+          } catch (_) {}
+        }
+      }
     }
   }
 
