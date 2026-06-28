@@ -314,7 +314,7 @@
   "page.add_ons.title": "Eklentiler",
   "page.add_year.title": "Yıl Ekle",
   "page.app_lock.title": "Uygulama Kilidi",
-  "page.backup_services.title": "Yedekleme ve Geri Yükleme",
+  "page.backup_services.title": "Yedekleme",
   "page.calendar.title": "Takvim",
   "page.cloud_optimize.confirmation.detached_eligible": "Ayrılmış dosyalar (çöp kutusuna atılabilir)",
   "page.cloud_optimize.confirmation.detached_too_recent": "Ayrılmış dosyalar (çok yeni, atlandı)",

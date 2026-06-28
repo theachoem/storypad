@@ -7,6 +7,7 @@ import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/app_locks/app_locks_view.dart';
 import 'package:storypad/views/backup_services/backup_services_view.dart';
 import 'package:storypad/views/day_colors/day_colors_view.dart';
+import 'package:storypad/views/import_export/import_export_view.dart';
 import 'package:storypad/views/settings/local_widgets/quick_actions_tile.dart';
 import 'package:storypad/views/storage_management/storage_management_view.dart';
 import 'package:storypad/views/settings/local_widgets/asset_compression_tile.dart';

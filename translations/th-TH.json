@@ -314,7 +314,7 @@
   "page.add_ons.title": "ส่วนเสริม",
   "page.add_year.title": "เพิ่มปี",
   "page.app_lock.title": "แอปล็อก",
-  "page.backup_services.title": "การสำรองข้อมูลและการกู้คืน",
+  "page.backup_services.title": "สำรองข้อมูล",
   "page.calendar.title": "ปฏิทิน",
   "page.cloud_optimize.confirmation.detached_eligible": "ไฟล์ที่ไม่ได้เชื่อมต่อ (สามารถนำไปทิ้งได้)",
   "page.cloud_optimize.confirmation.detached_too_recent": "ไฟล์ที่ไม่ได้เชื่อมต่อ (ใหม่เกินไป ข้ามไป)",
