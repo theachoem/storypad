@@ -19,6 +19,9 @@ class ThrowbackRoute extends BaseRoute {
   final int month;
 
   @override
+  String get routeName => "throwback";
+
+  @override
   Widget buildPage(BuildContext context) => ThrowbackView(params: this);
 }
 

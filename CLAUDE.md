@@ -1,7 +1,5 @@
 # Instructions
 
-**ALWAYS read docs/README.md first for navigation and project overview.**
-
 ## For Implementation Tasks
 
 1. Read `docs/README.md` to identify which docs to load
@@ -34,8 +32,8 @@
 2. Filenames: lowercase-with-dashes, keyword-rich (`docs/core/architecture.md`)
 3. Validate against existing docs for compliance
 
-## Cursor/Copilot Rules:
+## Agent Rules:
 
 - Keep rules concise - detailed docs belong in README.md and docs/
 - Only include pointers and checklists, not full explanations
-- When docs change, IMMEDIATELY update both .cursorrules and .github/copilot-instructions.md
+- When docs change, IMMEDIATELY update both `CLAUDE.md` and `AGENTS.md`

@@ -243,6 +243,15 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     _listeners['voice_playback_speed']?.forEach((listener) => listener());
   }
 
+  List<String>? get hiddenStatsSections => preferences.hiddenStatsSections;
+
+  // No need to notifyListeners: the stats view owns this state and only reads it
+  // once when opened, so persisting is enough — nothing else in the app reacts.
+  void setHiddenStatsSections(List<String> sectionNames) {
+    _preferences = _preferences.copyWith(hiddenStatsSections: sectionNames);
+    storage.writeObject(_preferences);
+  }
+
   // No need notifyListeners or custom listeners as map is open via navigator and will read latest map style when open.
   // It also manage its own state internally, so no need to notify it of changes.
   void updateMapStyle(SpMapStyle mapStyle) {

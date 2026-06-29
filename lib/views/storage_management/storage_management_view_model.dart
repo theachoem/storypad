@@ -46,6 +46,7 @@ class StorageManagementViewModel extends ChangeNotifier {
       _loadCloudQuotas(context),
     ]);
 
+    if (!context.mounted) return;
     loading = false;
     notifyListeners();
   }

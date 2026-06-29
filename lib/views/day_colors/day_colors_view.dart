@@ -72,7 +72,7 @@ class DayColorsView extends StatelessWidget {
       body: ListView(
         children: [
           for (final weekday in weekdays) _DayColorTile(weekday: weekday),
-          SizedBox(height: MediaQuery.paddingOf(context).bottom + 24),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 120.0),
         ],
       ),
     );

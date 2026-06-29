@@ -134,6 +134,7 @@ class _HomeContent extends StatelessWidget {
                     context: context,
                     listContext: listContext,
                     stories: viewModel.pinnedStories!,
+                    eligibleToShowRecap: false,
                   ),
               ],
             );
@@ -147,6 +148,7 @@ class _HomeContent extends StatelessWidget {
             context: context,
             listContext: listContext,
             stories: viewModel.stories!,
+            eligibleToShowRecap: true,
           );
         },
       ),
@@ -158,6 +160,7 @@ class _HomeContent extends StatelessWidget {
     required BuildContext context,
     required BuildContext listContext,
     required CollectionDbModel<StoryDbModel> stories,
+    required bool eligibleToShowRecap,
   }) {
     StoryDbModel story = stories.items[index];
 
@@ -189,6 +192,7 @@ class _HomeContent extends StatelessWidget {
               onTap: () => viewModel.goToViewPage(context, story),
               listContext: listContext,
               listHasThrowback: viewModel.hasThrowback,
+              monthlyStats: eligibleToShowRecap ? viewModel.monthlyStats : null,
             ),
           ],
         );

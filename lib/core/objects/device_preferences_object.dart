@@ -36,6 +36,11 @@ class DevicePreferencesObject {
   final DefaultStoryPreferencesObject defaultStoryPreferences;
   final List<AppQuickActionObject>? homeQuickActions;
 
+  /// Names of the stats sections the user has hidden on the stats screen.
+  /// `null` means "never customized" so the stats view falls back to its own
+  /// defaults. Owned by the stats view model, which reads this once on open.
+  final List<String>? hiddenStatsSections;
+
   // Add ons
   final bool? enableRelaxSounds;
   final bool? enablePeriodCalendar;
@@ -61,6 +66,7 @@ class DevicePreferencesObject {
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     this.homeQuickActions,
+    this.hiddenStatsSections,
     SpMapStyle? mapStyle,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,

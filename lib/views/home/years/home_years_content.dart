@@ -46,7 +46,7 @@ class _HomeYearsContent extends StatelessWidget {
                 },
                 selected: selected,
                 title: Text(entry.key.toString()),
-                subtitle: Text(plural("plural.story", entry.value)),
+                subtitle: Text(plural("plural.entry", entry.value)),
                 trailing: Visibility(visible: selected, child: const Icon(SpIcons.check)),
               ),
               AnimatedContainer(

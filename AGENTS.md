@@ -1,6 +1,7 @@
-# GitHub Copilot Instructions for StoryPad
+# AGENTS.md
 
-**ALWAYS read docs/README.md first for navigation and project overview.**
+Standard instructions for AI coding agents (GitHub Copilot, Cursor, etc.).
+Claude Code reads `CLAUDE.md` directly, so keep both in sync when these rules change.
 
 ## For Implementation Tasks
 
@@ -34,8 +35,8 @@
 2. Filenames: lowercase-with-dashes, keyword-rich (`docs/core/architecture.md`)
 3. Validate against existing docs for compliance
 
-## Cursor/Copilot Rules:
+## Agent Rules:
 
 - Keep rules concise - detailed docs belong in README.md and docs/
 - Only include pointers and checklists, not full explanations
-- When docs change, IMMEDIATELY update both .cursorrules and .github/copilot-instructions.md
+- When docs change, IMMEDIATELY update both `AGENTS.md` and `CLAUDE.md`
