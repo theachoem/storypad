@@ -111,6 +111,8 @@ function upload_appbundle_to_play_store() {
 function main(){
   FLAVOR=${1#--} # eg. --prod -> prod
 
+  (cd android && ./gradlew clean)
+
   if [ "$FLAVOR" == "community" ]; then
     echo "🚀 Building & releasing $FLAVOR to FDroid"
     echo ""

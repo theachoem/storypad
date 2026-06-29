@@ -176,7 +176,7 @@ class _ExportSectionState extends State<_ExportSection> {
           children: [
             Text(
               [
-                plural('plural.story', widget.viewModel.storyCount ?? 0),
+                plural('plural.entry', widget.viewModel.storyCount ?? 0),
                 if (!widget.viewModel.filtered) '(${tr('general.all')})',
               ].join(' '),
             ),

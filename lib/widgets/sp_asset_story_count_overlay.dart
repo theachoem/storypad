@@ -45,7 +45,7 @@ class SpAssetStoryCountOverlay extends StatelessWidget {
             TextSpan(
               style: const TextStyle(color: Colors.white, fontSize: 11),
               children: [
-                TextSpan(text: plural('plural.story', storyCount)),
+                TextSpan(text: plural('plural.entry', storyCount)),
                 if (showArchiveIconWhenZero && storyCount == 0) ...[
                   const TextSpan(text: ' '),
                   WidgetSpan(

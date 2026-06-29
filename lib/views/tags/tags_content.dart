@@ -142,7 +142,7 @@ class _TagsContent extends StatelessWidget {
           ? const EdgeInsets.only(left: 16.0, right: 16.0)
           : const EdgeInsets.only(left: 4.0, right: 16.0),
       title: Text(tag.title),
-      subtitle: Text(plural("plural.story", storyCount)),
+      subtitle: Text(plural("plural.entry", storyCount)),
       trailing:
           [
             TargetPlatform.linux,

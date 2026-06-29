@@ -19,10 +19,17 @@ class MonthPickerService {
   final int month;
   final int year;
 
+  /// When set, the picker scrolls are clamped so users cannot navigate
+  /// outside the range of months that actually have story entries.
+  final DateTime? minimumDate;
+  final DateTime? maximumDate;
+
   MonthPickerService({
     required this.context,
     required this.month,
     required this.year,
+    this.minimumDate,
+    this.maximumDate,
   });
 
   MonthPickerResult get initialMonth => MonthPickerResult(month: month, year: year);
@@ -51,6 +58,8 @@ class MonthPickerService {
                   height: 216,
                   child: CupertinoDatePicker(
                     initialDateTime: DateTime(year, month),
+                    minimumDate: minimumDate,
+                    maximumDate: maximumDate,
                     mode: CupertinoDatePickerMode.monthYear,
                     selectionOverlayBuilder: (context, {required int columnCount, required int selectedIndex}) {
                       return Container(
@@ -109,6 +118,8 @@ class MonthPickerService {
                       height: 216,
                       child: CupertinoDatePicker(
                         initialDateTime: DateTime(year, month),
+                        minimumDate: minimumDate,
+                        maximumDate: maximumDate,
                         mode: CupertinoDatePickerMode.monthYear,
                         onDateTimeChanged: (DateTime value) {
                           notifier.value = MonthPickerResult(

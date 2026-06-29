@@ -8,8 +8,10 @@ import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/objects/month_recap_stats_object.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/stories/monthly_story_stats_service.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -58,6 +60,12 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   CollectionDbModel<StoryDbModel>? _pinnedStories;
   CollectionDbModel<StoryDbModel>? get pinnedStories => _pinnedStories;
 
+  /// Per-month recap stats for the current year, keyed by month (1–12).
+  /// Computed from [stories] each time they are set; consumed by the timeline
+  /// recap tile.
+  Map<int, MonthRecapStatsObject> _monthlyStats = {};
+  Map<int, MonthRecapStatsObject> get monthlyStats => _monthlyStats;
+
   void setStories(CollectionDbModel<StoryDbModel>? value, CollectionDbModel<StoryDbModel>? pinnedValue) {
     _stories = value?.deduplicateAndSort(
       comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
@@ -65,6 +73,8 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     _pinnedStories = pinnedValue?.deduplicateAndSort(
       comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
     );
+
+    _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: stories?.items ?? []);
 
     scrollInfo.setupStoryKeys(
       stories?.items ?? [],
