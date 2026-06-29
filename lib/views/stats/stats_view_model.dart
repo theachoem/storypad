@@ -3,10 +3,12 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/stats/stats_range.dart';
 import 'package:storypad/core/objects/stats/story_stats_object.dart' show LabelStatItem, StoryStatsObject;
 import 'package:storypad/core/services/stories/story_stats_service.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stats/stats_section.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_picker_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_stories_bottom_sheet.dart';
@@ -15,6 +17,7 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
   StatsViewModel({
     required StatsRange initialRange,
     required TabController tabController,
+    required this.devicePreferencesProvider,
   }) : _selectedYear = initialRange.anchor.year,
        _tabController = tabController {
     _tabController.addListener(_onTabChanged);
@@ -26,6 +29,10 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
   int get selectedYear => _selectedYear;
 
   final TabController _tabController;
+
+  /// Persists the section-visibility filter across visits. Read once on init;
+  /// changes are written back but never notify (the global provider stays quiet).
+  final DevicePreferencesProvider devicePreferencesProvider;
 
   List<int> _availableYears = [DateTime.now().year];
 
@@ -53,12 +60,24 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const Set<StatsSection> _defaultHiddenSections = {
     StatsSection.countries,
   };
-  final Set<StatsSection> _hiddenSections = {..._defaultHiddenSections};
+
+  // Seeded from the persisted preference on first read, falling back to the
+  // defaults when the user has never customized the filter.
+  late final Set<StatsSection> _hiddenSections = _readPersistedHiddenSections();
+
+  Set<StatsSection> _readPersistedHiddenSections() {
+    final stored = devicePreferencesProvider.hiddenStatsSections;
+    if (stored == null) return {..._defaultHiddenSections};
+
+    final byName = StatsSection.values.asNameMap();
+    return stored.map((name) => byName[name]).whereType<StatsSection>().toSet();
+  }
 
   bool isSectionVisible(StatsSection section) => !_hiddenSections.contains(section);
 
   void toggleSection(StatsSection section) {
     if (!_hiddenSections.remove(section)) _hiddenSections.add(section);
+    _persistHiddenSections();
     notifyListeners();
   }
 
@@ -66,7 +85,12 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     _hiddenSections
       ..clear()
       ..addAll(_defaultHiddenSections);
+    _persistHiddenSections();
     notifyListeners();
+  }
+
+  void _persistHiddenSections() {
+    devicePreferencesProvider.setHiddenStatsSections(_hiddenSections.map((section) => section.name).toList());
   }
 
   /// Sections of the visible tab, listed in the section filter sheet.
@@ -117,6 +141,7 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
       final stories = await StoryDbModel.db.where(
         filters: SearchFilterObject(
           years: range.years,
+          month: range.month,
           types: {PathType.docs},
           assetId: null,
         ).toDatabaseFilter(),
@@ -159,8 +184,27 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     BuildContext context,
     LabelStatItem place,
     int tabIndex,
-  ) {
-    if (place.storyIds == null) return;
+  ) async {
+    if (place.storyIds == null || place.storyIds!.isEmpty) return;
+    final range = rangeForTab(tabIndex);
+
+    SpLatLng? storyLocation = await StoryDbModel.db.find(place.storyIds!.first).then((story) => story?.place?.latLng);
+    if (!context.mounted) return;
+
+    SpStoriesBottomSheet(
+      storyLocation: storyLocation,
+      filter: SearchFilterObject(
+        years: range.years,
+        month: range.month,
+        types: {PathType.docs},
+        storyIds: place.storyIds,
+        assetId: null,
+      ),
+    ).show(context: context);
+  }
+
+  /// Opens every story in the tab's range (overview "entries" chip).
+  void openStoriesForRange(BuildContext context, int tabIndex) {
     final range = rangeForTab(tabIndex);
     SpStoriesBottomSheet(
       storyLocation: null,
@@ -168,7 +212,23 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
         years: range.years,
         month: range.month,
         types: {PathType.docs},
-        storyIds: place.storyIds,
+        assetId: null,
+      ),
+    ).show(context: context);
+  }
+
+  /// Opens the given stories within the tab's range (overview photo/voice/place
+  /// chips, which carry the matching ids). No-op when [storyIds] is empty.
+  void openStoriesForIds(BuildContext context, Set<int> storyIds, int tabIndex) {
+    if (storyIds.isEmpty) return;
+    final range = rangeForTab(tabIndex);
+    SpStoriesBottomSheet(
+      storyLocation: null,
+      filter: SearchFilterObject(
+        years: range.years,
+        month: range.month,
+        types: {PathType.docs},
+        storyIds: storyIds,
         assetId: null,
       ),
     ).show(context: context);

@@ -45,6 +45,10 @@ abstract class _$DevicePreferencesObjectCWProxy {
     List<AppQuickActionObject>? homeQuickActions,
   );
 
+  DevicePreferencesObject hiddenStatsSections(
+    List<String>? hiddenStatsSections,
+  );
+
   DevicePreferencesObject mapStyle(SpMapStyle? mapStyle);
 
   /// Creates a new instance with the provided field values.
@@ -70,6 +74,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     List<AppQuickActionObject>? homeQuickActions,
+    List<String>? hiddenStatsSections,
     SpMapStyle? mapStyle,
   });
 }
@@ -148,6 +153,11 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(homeQuickActions: homeQuickActions);
 
   @override
+  DevicePreferencesObject hiddenStatsSections(
+    List<String>? hiddenStatsSections,
+  ) => call(hiddenStatsSections: hiddenStatsSections);
+
+  @override
   DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) =>
       call(mapStyle: mapStyle);
 
@@ -175,6 +185,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
     Object? homeQuickActions = const $CopyWithPlaceholder(),
+    Object? hiddenStatsSections = const $CopyWithPlaceholder(),
     Object? mapStyle = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
@@ -239,6 +250,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.homeQuickActions
           // ignore: cast_nullable_to_non_nullable
           : homeQuickActions as List<AppQuickActionObject>?,
+      hiddenStatsSections: hiddenStatsSections == const $CopyWithPlaceholder()
+          ? _value.hiddenStatsSections
+          // ignore: cast_nullable_to_non_nullable
+          : hiddenStatsSections as List<String>?,
       mapStyle: mapStyle == const $CopyWithPlaceholder()
           ? _value.mapStyle
           // ignore: cast_nullable_to_non_nullable
@@ -298,6 +313,9 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   homeQuickActions: (json['home_quick_actions'] as List<dynamic>?)
       ?.map((e) => AppQuickActionObject.fromJson(e as Map<String, dynamic>))
       .toList(),
+  hiddenStatsSections: (json['hidden_stats_sections'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
   mapStyle: $enumDecodeNullable(_$SpMapStyleEnumMap, json['map_style']),
 );
 
@@ -321,6 +339,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'home_quick_actions': instance.homeQuickActions
       ?.map((e) => e.toJson())
       .toList(),
+  'hidden_stats_sections': instance.hiddenStatsSections,
   'enable_relax_sounds': instance.enableRelaxSounds,
   'enable_period_calendar': instance.enablePeriodCalendar,
 };

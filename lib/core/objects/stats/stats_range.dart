@@ -46,14 +46,11 @@ class StatsRange {
 
   /// Last day of the window (23:59:59.999).
   DateTime get end {
-    final DateTime lastDay;
-    switch (type) {
-      case StatsRangeType.month:
-        // Day 0 of next month == last day of this month.
-        lastDay = DateTime(anchor.year, anchor.month + 1, 0);
-      case StatsRangeType.year:
-        lastDay = DateTime(anchor.year, 12, 31);
-    }
+    final lastDay = switch (type) {
+      // Day 0 of next month == last day of this month.
+      StatsRangeType.month => DateTime(anchor.year, anchor.month + 1, 0),
+      StatsRangeType.year => DateTime(anchor.year, 12, 31),
+    };
     return DateTime(lastDay.year, lastDay.month, lastDay.day, 23, 59, 59, 999);
   }
 

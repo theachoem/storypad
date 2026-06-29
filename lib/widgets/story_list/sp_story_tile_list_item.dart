@@ -13,7 +13,7 @@ import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 part 'local_widgets/story_month_header.dart';
-part 'local_widgets/story_month_recap.dart';
+part 'local_widgets/story_month_recap_tile.dart';
 
 class SpStoryTileListItem extends StatelessWidget {
   const SpStoryTileListItem({
@@ -100,7 +100,7 @@ class SpStoryTileListItem extends StatelessWidget {
             Stack(
               children: [
                 timelineDivider,
-                _StoryMonthRecap(story: story, stats: monthStats),
+                _StoryMonthRecapTile(story: story, stats: monthStats),
               ],
             ),
           ],

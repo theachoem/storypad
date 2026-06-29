@@ -100,12 +100,15 @@ class _StatsContent extends StatelessWidget {
                   )
                 : _buildNotEnoughData(context),
           ),
+      const _StatsShareFooter(),
     ];
 
     return SingleChildScrollView(
       padding: EdgeInsets.only(
         top: 16.0,
-        bottom: 48.0 + MediaQuery.viewPaddingOf(context).bottom,
+        bottom: 48.0 + MediaQuery.paddingOf(context).bottom,
+        left: MediaQuery.paddingOf(context).left,
+        right: MediaQuery.paddingOf(context).right,
       ),
       child: Column(
         crossAxisAlignment: .stretch,
@@ -113,7 +116,8 @@ class _StatsContent extends StatelessWidget {
         children: List.generate(sections.length, (index) {
           final child = sections[index];
           return SpFadeIn.fromBottom(
-            delay: Duration(milliseconds: 50 * index),
+            // Fade differently for first 5 sections, then fade remaining sections together to avoid a long fade-in sequence.
+            delay: const Duration(milliseconds: 50) * min(index + 1, 4),
             child: child,
           );
         }),
@@ -156,7 +160,7 @@ class _StatsContent extends StatelessWidget {
     void openTag(int tagId) => viewModel.openStoriesForTag(context, tagId, tabIndex);
 
     return switch (section) {
-      StatsSection.overview => _buildOverview(context, stats),
+      StatsSection.overview => _buildOverview(context, stats, tabIndex),
       StatsSection.feelings => _StatsEmojiGrid(
         items: stats.topFeelings,
         onTap: openTag,
@@ -203,41 +207,51 @@ class _StatsContent extends StatelessWidget {
 
   /// Compact summary chips, three per row. Core metrics always show; media/place
   /// chips only appear when they carry a value, so quiet ranges stay uncluttered.
-  Widget _buildOverview(BuildContext context, StoryStatsObject stats) {
-    final List<({IconData icon, String value, String label})> metrics = [
+  ///
+  /// Chips backed by a list of stories (entries/photos/voices/places) open the
+  /// filtered stories sheet on tap; metrics without a story list (active days,
+  /// words) carry a null [onTap] and stay inert to avoid confusion.
+  Widget _buildOverview(BuildContext context, StoryStatsObject stats, int tabIndex) {
+    final List<({IconData icon, String value, String label, VoidCallback? onTap})> metrics = [
       (
         icon: SpIcons.book,
         value: '${stats.entryCount}',
         label: tr('general.entries'),
+        onTap: () => viewModel.openStoriesForRange(context, tabIndex),
       ),
       (
         icon: SpIcons.calendar,
         value: '${stats.activeDays}',
         label: tr('general.active_days'),
+        onTap: null,
       ),
       if (stats.wordCount > 0)
         (
           icon: SpIcons.text,
           value: '${stats.wordCount}',
           label: tr('general.words'),
+          onTap: null,
         ),
       if (stats.photoCount > 0)
         (
           icon: SpIcons.photo,
           value: '${stats.photoCount}',
           label: tr('general.photos'),
+          onTap: () => viewModel.openStoriesForIds(context, stats.photoStoryIds, tabIndex),
         ),
       if (stats.voiceCount > 0)
         (
           icon: SpIcons.voice,
           value: '${stats.voiceCount}',
           label: tr('general.voices'),
+          onTap: () => viewModel.openStoriesForIds(context, stats.voiceStoryIds, tabIndex),
         ),
       if (stats.locatedCount > 0)
         (
           icon: SpIcons.locationPin,
           value: '${stats.locatedCount}',
           label: tr('general.places'),
+          onTap: () => viewModel.openStoriesForIds(context, stats.locatedStoryIds, tabIndex),
         ),
     ];
 
@@ -258,6 +272,7 @@ class _StatsContent extends StatelessWidget {
                   icon: metric.icon,
                   value: metric.value,
                   label: metric.label,
+                  onTap: metric.onTap,
                 ),
               ),
           ],

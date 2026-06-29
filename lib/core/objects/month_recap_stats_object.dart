@@ -55,7 +55,7 @@ class MonthRecapStatsObject {
   /// Zero-valued media stats are skipped so the tile never shows "0 photos".
   List<String> get labels => [
     plural('plural.entry', storyCount),
-    plural('plural.photo', photoCount),
-    plural('plural.voice', voiceCount),
+    if (photoCount > 0) plural('plural.photo', photoCount),
+    if (voiceCount > 0) plural('plural.voice', voiceCount),
   ];
 }

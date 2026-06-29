@@ -47,6 +47,16 @@ class StoryStatsObject {
   /// Stories that carry a location.
   final int locatedCount;
 
+  /// Ids of stories that embed at least one photo, used to open the filtered
+  /// stories sheet when the overview "photos" chip is tapped.
+  final Set<int> photoStoryIds;
+
+  /// Ids of stories that embed at least one voice note (overview "voices" chip).
+  final Set<int> voiceStoryIds;
+
+  /// Ids of stories that carry a location (overview "places" chip).
+  final Set<int> locatedStoryIds;
+
   final List<EmojiStatItem> topFeelings;
   final List<EmojiStatItem> topActivities;
   final List<LabelStatItem> topTags;
@@ -66,6 +76,9 @@ class StoryStatsObject {
     required this.photoCount,
     required this.voiceCount,
     required this.locatedCount,
+    required this.photoStoryIds,
+    required this.voiceStoryIds,
+    required this.locatedStoryIds,
     required this.topFeelings,
     required this.topActivities,
     required this.topTags,

@@ -35,6 +35,10 @@ class StoryStatsService {
     int voiceCount = 0;
     int locatedCount = 0;
 
+    final Set<int> photoStoryIds = {};
+    final Set<int> voiceStoryIds = {};
+    final Set<int> locatedStoryIds = {};
+
     final Set<DateTime> activeDaySet = {};
     final Map<DateTime, int> dailyCounts = {};
 
@@ -57,11 +61,17 @@ class StoryStatsService {
 
       final content = story.latestContent ?? story.draftContent;
       wordCount += content?.wordCount ?? 0;
-      photoCount += StoryContentEmbedExtractor.images(content).length;
-      voiceCount += StoryContentEmbedExtractor.audio(content).length;
+
+      final int storyPhotoCount = StoryContentEmbedExtractor.images(content).length;
+      final int storyVoiceCount = StoryContentEmbedExtractor.audio(content).length;
+      photoCount += storyPhotoCount;
+      voiceCount += storyVoiceCount;
+      if (storyPhotoCount > 0) photoStoryIds.add(story.id);
+      if (storyVoiceCount > 0) voiceStoryIds.add(story.id);
 
       if (story.hasLocation) {
         locatedCount++;
+        locatedStoryIds.add(story.id);
         final place = story.place!;
         (placeStoryIds[place.displayLabel] ??= {}).add(story.id);
         final country = place.country;
@@ -96,6 +106,9 @@ class StoryStatsService {
       photoCount: photoCount,
       voiceCount: voiceCount,
       locatedCount: locatedCount,
+      photoStoryIds: photoStoryIds,
+      voiceStoryIds: voiceStoryIds,
+      locatedStoryIds: locatedStoryIds,
       topFeelings: _topEmojis(feelingCounts, tagById),
       topActivities: _topEmojis(activityCounts, tagById),
       topTags: _topTagLabels(tagCounts, tagById),

@@ -15,18 +15,24 @@ class _StatsMetricChip extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.label,
+    this.onTap,
   });
 
   final IconData icon;
   final String value;
   final String label;
 
+  /// When non-null, the chip becomes tappable (opens the filtered stories sheet).
+  /// Null keeps the chip inert — e.g. for active days / words, which have no
+  /// list to drill into.
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = ColorScheme.of(context);
     final TextTheme textTheme = TextTheme.of(context);
 
-    return Container(
+    final Widget chip = Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: colorScheme.readOnly.surface3,
@@ -61,5 +67,8 @@ class _StatsMetricChip extends StatelessWidget {
         ],
       ),
     );
+
+    if (onTap == null) return chip;
+    return SpTapEffect(onTap: onTap, child: chip);
   }
 }
