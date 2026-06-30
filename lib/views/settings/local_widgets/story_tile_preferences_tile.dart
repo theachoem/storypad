@@ -22,14 +22,21 @@ class StoryTilePreferencesTile extends StatelessWidget {
       title: Text(tr("list_tile.story_tile_preferences.title")),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () async {
-        final result = await const SpStoryTilePreferencesSheet().show(context: context);
+        // The sheet has no save button for pro users; it reports its live draft and
+        // we commit it once here, after the sheet closes.
+        StoryTilePreferencesObject? draft;
+        await SpStoryTilePreferencesSheet(onChanged: (result) => draft = result).show(context: context);
 
         // delay to ensure the bottom sheet is fully closed before applying the new preferences,
         // which can trigger a rebuild of the story list and cause jank if done too early.
         await Future.delayed(const Duration(milliseconds: 500));
 
-        if (context.mounted && result is StoryTilePreferencesObject) {
-          context.read<DevicePreferencesProvider>().setStoryTilePreferences(result);
+        if (!context.mounted || draft == null) return;
+
+        // Non-pro users are gated by the locked save button inside the sheet (paywall),
+        // so their draft is never persisted here.
+        if (context.read<InAppPurchaseProvider>().isProUser) {
+          context.read<DevicePreferencesProvider>().setStoryTilePreferences(draft!);
         }
       },
     );
