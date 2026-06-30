@@ -16,14 +16,11 @@ class _DayColorTile extends StatelessWidget {
     final String? currentName = provider.preferences.colorByDay?[weekday];
     final bool customized = currentName != null;
 
-    return SpFloatingPopUpButton(
-      estimatedFloatingWidth: spColorPickerMinWidth,
-      bottomToTop: false,
-      dyGetter: (dy) => dy + 56,
-      floatingBuilder: (close) {
+    return SpAdaptivePopUpButton(
+      floatingBuilder: (close, openAbove) {
         return SpColorPicker(
           isDarkMode: AppTheme.isDarkMode(context),
-          position: SpColorPickerPosition.top,
+          position: openAbove ? SpColorPickerPosition.bottom : SpColorPickerPosition.top,
           // Highlight the active swatch by passing one of its shades.
           currentColor: _highlightColor(context, currentName),
           level: SpColorPickerLevel.one,

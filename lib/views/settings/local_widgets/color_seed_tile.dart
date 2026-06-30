@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/sp_adaptive_pop_up_button.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 
 class ColorSeedTile extends StatelessWidget {
   // No need const so translation can be updated when locale changes.
@@ -17,14 +17,11 @@ class ColorSeedTile extends StatelessWidget {
   Widget build(BuildContext context) {
     DevicePreferencesProvider provider = Provider.of<DevicePreferencesProvider>(context);
 
-    return SpFloatingPopUpButton(
-      estimatedFloatingWidth: spColorPickerMinWidth,
-      bottomToTop: false,
-      dyGetter: (dy) => dy + 56,
-      floatingBuilder: (close) {
+    return SpAdaptivePopUpButton(
+      floatingBuilder: (close, openAbove) {
         return SpColorPicker(
           isDarkMode: AppTheme.isDarkMode(context),
-          position: SpColorPickerPosition.top,
+          position: openAbove ? SpColorPickerPosition.bottom : SpColorPickerPosition.top,
           currentColor: provider.preferences.colorSeed,
           level: SpColorPickerLevel.one,
           onPickedColor: (color) async {
