@@ -58,6 +58,7 @@ class SpToggleListSheet<T> extends BaseBottomSheet {
             SwitchListTile.adaptive(
               value: isEnabled(item.value),
               onChanged: (_) => onToggle(item.value),
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
               title: Text(item.label),
             ),
           Padding(

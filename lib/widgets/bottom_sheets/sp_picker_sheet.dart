@@ -32,33 +32,37 @@ class SpPickerSheet extends BaseBottomSheet {
       child: SpSingleStateWidget.listen(
         initialValue: selectedValue,
         builder: (context, selected, notifier) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: .start,
-              mainAxisSize: .min,
-              children: [
-                ...options.map((option) {
-                  return ListTile(
-                    title: Text(option.label),
-                    trailing: Visibility(
-                      visible: option.value == selected,
-                      child: SpFadeIn.fromBottom(
-                        child: Icon(
-                          SpIcons.checkCircle,
-                          color: ColorScheme.of(context).primary,
+          return Scrollbar(
+            thumbVisibility: true,
+            interactive: true,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: .start,
+                mainAxisSize: .min,
+                children: [
+                  ...options.map((option) {
+                    return ListTile(
+                      title: Text(option.label),
+                      trailing: Visibility(
+                        visible: option.value == selected,
+                        child: SpFadeIn.fromBottom(
+                          child: Icon(
+                            SpIcons.checkCircle,
+                            color: ColorScheme.of(context).primary,
+                          ),
                         ),
                       ),
-                    ),
-                    onTap: () {
-                      notifier.value = option.value;
-                      onChanged(option.value);
-                      Navigator.maybeOf(context)?.pop();
-                    },
-                  );
-                }),
-                SizedBox(height: bottomPadding),
-              ],
+                      onTap: () {
+                        notifier.value = option.value;
+                        onChanged(option.value);
+                        Navigator.maybeOf(context)?.pop();
+                      },
+                    );
+                  }),
+                  SizedBox(height: bottomPadding),
+                ],
+              ),
             ),
           );
         },

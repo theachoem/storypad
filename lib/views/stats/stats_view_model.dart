@@ -96,12 +96,6 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
   /// Sections of the visible tab, listed in the section filter sheet.
   List<StatsSection> sectionsForCurrentTab() => sectionsForTab(_tabController.index);
 
-  /// Whether the visible tab has loaded stats with stories (gates the filter button).
-  bool get currentTabHasData {
-    final stats = statsFor(_tabController.index);
-    return stats != null && !stats.isEmpty;
-  }
-
   void _onTabChanged() {
     if (_tabController.indexIsChanging) return; // wait until the tab settles
     notifyListeners(); // keep the AppBar filter menu in sync with the visible tab

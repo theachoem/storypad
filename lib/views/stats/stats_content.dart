@@ -27,22 +27,19 @@ class _StatsContent extends StatelessWidget {
           ),
         ),
         actions: [
-          if (viewModel.currentTabHasData)
-            SpFadeIn.bound(
-              child: IconButton(
-                tooltip: tr('button.more_options'),
-                icon: const Icon(SpIcons.moreVert),
-                onPressed: () => SpToggleListSheet<StatsSection>(
-                  items: [
-                    for (final section in viewModel.sectionsForCurrentTab()) (value: section, label: section.label),
-                  ],
-                  isEnabled: viewModel.isSectionVisible,
-                  onToggle: viewModel.toggleSection,
-                  onReset: viewModel.resetSections,
-                  listenable: viewModel,
-                ).show(context: context),
-              ),
-            ),
+          IconButton(
+            tooltip: tr('button.more_options'),
+            icon: const Icon(SpIcons.moreVert),
+            onPressed: () => SpToggleListSheet<StatsSection>(
+              items: [
+                for (final section in viewModel.sectionsForCurrentTab()) (value: section, label: section.label),
+              ],
+              isEnabled: viewModel.isSectionVisible,
+              onToggle: viewModel.toggleSection,
+              onReset: viewModel.resetSections,
+              listenable: viewModel,
+            ).show(context: context),
+          ),
         ],
         bottom: TabBar(
           isScrollable: true,
