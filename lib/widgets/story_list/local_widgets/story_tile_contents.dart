@@ -76,20 +76,6 @@ class _StoryTileContents extends StatelessWidget {
                     ),
               child: SpMarkdownBody(body: displayShortBody!),
             ),
-          if (assetPaths?.isNotEmpty == true) ...[
-            SizedBox(height: MediaQuery.textScalerOf(context).scale(6)),
-            if (preferences.photoCollage)
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: MediaQuery.textScalerOf(context).scale(240)),
-                child: SpAlbumGrid(
-                  paths: assetPaths!,
-                  onTap: viewOnly ? null : (index) => _viewAssetImageAt(context, assetPaths, index),
-                ),
-              )
-            else
-              _StoryTileAssets(assetPaths: assetPaths!),
-            SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
-          ],
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
@@ -110,6 +96,24 @@ class _StoryTileContents extends StatelessWidget {
                   },
             onToggleManagingPage: null,
           ),
+          if (assetPaths?.isNotEmpty == true) ...[
+            SizedBox(height: MediaQuery.textScalerOf(context).scale(12)),
+            if (preferences.photoCollage)
+              // Full width on phones; capped on tablets/large screens so a single
+              // square image doesn't become oversized.
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: SpAlbumGrid(
+                    paths: assetPaths!,
+                    onTap: viewOnly ? null : (index) => _viewAssetImageAt(context, assetPaths, index),
+                  ),
+                ),
+              )
+            else
+              _StoryTileAssets(assetPaths: assetPaths!),
+          ],
         ],
       ),
     );
