@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -13,6 +14,7 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
@@ -24,7 +26,12 @@ import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 class SpStoryTilePreferencesSheet extends BaseBottomSheet {
-  const SpStoryTilePreferencesSheet();
+  const SpStoryTilePreferencesSheet({this.onChanged});
+
+  /// Reports the live draft on every change ([null] when nothing differs from
+  /// the saved value). The caller commits it after the sheet closes, so the
+  /// global preferences only change once — avoiding story list jank mid-sheet.
+  final void Function(StoryTilePreferencesObject? preferences)? onChanged;
 
   @override
   bool get fullScreen => true;
@@ -58,6 +65,7 @@ class SpStoryTilePreferencesSheet extends BaseBottomSheet {
   Widget buildView(BuildContext context, double bottomPadding) {
     return _StoryTilePreferencesSheetContent(
       bottomPadding: bottomPadding,
+      onChanged: onChanged,
     );
   }
 }
@@ -65,9 +73,11 @@ class SpStoryTilePreferencesSheet extends BaseBottomSheet {
 class _StoryTilePreferencesSheetContent extends StatefulWidget {
   const _StoryTilePreferencesSheetContent({
     required this.bottomPadding,
+    this.onChanged,
   });
 
   final double bottomPadding;
+  final void Function(StoryTilePreferencesObject? preferences)? onChanged;
 
   @override
   State<_StoryTilePreferencesSheetContent> createState() => _StoryTilePreferencesSheetContentState();
@@ -90,16 +100,44 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
     if (!TagDbModel.db.exist(_demoActivityTag.id)) await TagDbModel.db.set(_demoActivityTag);
   }
 
-  late final story = _buildMockStory();
+  late StoryDbModel story = _buildMockStory();
   late final simpleStory = _buildSimpleMockStory();
+
+  final ScrollController _optionsScrollController = ScrollController();
+
+  // Real image paths sampled from the user's assets so the preview can demo the
+  // photo collage. Empty when the user has no images yet.
+  List<String> _previewImagePaths = [];
 
   bool get changed => jsonEncode(storyTilePreferences.toJson()) != jsonEncode(initialStoryTilePreferences.toJson());
   bool get resettable => jsonEncode(storyTilePreferences.toJson()) != jsonEncode(defaultStoryTilePreferences.toJson());
+
+  void _apply(StoryTilePreferencesObject next) {
+    setState(() => storyTilePreferences = next);
+    widget.onChanged?.call(changed ? storyTilePreferences : null);
+  }
 
   @override
   void initState() {
     super.initState();
     _ensureDemoFeelingTag();
+    _loadPreviewImages();
+  }
+
+  @override
+  void dispose() {
+    _optionsScrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadPreviewImages() async {
+    final collection = await AssetDbModel.db.where(filters: {'type': AssetType.image, 'limit': 3});
+    final images = collection?.items.map((e) => e.relativeLocalFilePath).toList();
+    if (images == null || images.isEmpty || !mounted) return;
+    setState(() {
+      _previewImagePaths = images;
+      story = _buildMockStory();
+    });
   }
 
   StoryDbModel _buildMockStory() {
@@ -113,7 +151,13 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         "with a warm cup of coffee before diving into work.";
     final delta = Delta()
       ..insert(body)
-      ..insert("\n")
+      ..insert("\n");
+    if (_previewImagePaths.isNotEmpty) {
+      delta
+        ..insert({"image": _previewImagePaths.join('|')})
+        ..insert("\n");
+    }
+    delta
       ..insert({"audio": "audio/mock_voice_1.m4a"})
       ..insert("\n")
       ..insert({"audio": "audio/mock_voice_2.m4a"});
@@ -193,23 +237,28 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: Text(tr("list_tile.story_tile_preferences.title")),
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
-          if (changed)
+          // Pro users save automatically when the sheet closes, so no save button.
+          // Non-pro users keep a locked save button that opens the paywall; they can
+          // still preview changes but cannot persist them.
+          if (changed && !Provider.of<InAppPurchaseProvider>(context).isProUser)
             IconButton(
               tooltip: tr("button.done"),
-              icon: Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
-              onPressed: changed
-                  ? () {
-                      if (context.read<InAppPurchaseProvider>().isProUser) {
-                        Navigator.maybePop(context, storyTilePreferences);
-                      } else {
-                        const PaywallRoute(initialFocus: .customizations).push(context);
-                      }
-                    }
-                  : null,
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
+                  const Positioned(
+                    top: -2,
+                    right: -8,
+                    child: Icon(SpIcons.lock, size: 12.0),
+                  ),
+                ],
+              ),
+              onPressed: () => const PaywallRoute(initialFocus: .customizations).push(context),
             ),
           IconButton(
             icon: const Icon(SpIcons.refresh),
-            onPressed: resettable ? () => setState(() => storyTilePreferences = defaultStoryTilePreferences) : null,
+            onPressed: resettable ? () => _apply(defaultStoryTilePreferences) : null,
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
@@ -217,73 +266,81 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
       ),
       body: ListView(
         controller: PrimaryScrollController.maybeOf(context),
+        padding: const EdgeInsets.only(top: 8.0),
         children: [
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 1, icon: SpIcons.timer),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_time.title")),
-            value: storyTilePreferences.showTime,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showTime: value);
-              setState(() {});
-            },
-          ),
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 2, icon: SpIcons.voice),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_voice_count.title")),
-            value: storyTilePreferences.showVoiceCount,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showVoiceCount: value);
-              setState(() {});
-            },
-          ),
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 3, icon: SpIcons.tag),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_tag_labels.title")),
-            value: storyTilePreferences.showTagLabels,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showTagLabels: value);
-              setState(() {});
-            },
-          ),
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 7, icon: SpIcons.alternateEmail),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_people_labels.title")),
-            value: storyTilePreferences.showPeopleLabels,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showPeopleLabels: value);
-              setState(() {});
-            },
-          ),
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 4, icon: SpIcons.managingPage),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_page_count.title")),
-            value: storyTilePreferences.showPageCount,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showPageCount: value);
-              setState(() {});
-            },
-          ),
-          SwitchListTile.adaptive(
-            secondary: const SpSettingIconBadge(weekday: 5, icon: SpIcons.map),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
-            title: Text(tr("list_tile.show_location.title")),
-            value: storyTilePreferences.showLocation,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(showLocation: value);
-              setState(() {});
-            },
-          ),
-          _CharacterCountSlider(
-            preferences: storyTilePreferences,
-            onChanged: (value) {
-              storyTilePreferences = storyTilePreferences.copyWith(displayCharacterCount: value);
-              setState(() {});
-            },
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: SizedBox(
+              height: 240,
+              child: Scrollbar(
+                controller: _optionsScrollController,
+                thumbVisibility: true,
+                child: ListView(
+                  controller: _optionsScrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  children: [
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 7, icon: SpIcons.photo),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.photo_collage.title")),
+                      value: storyTilePreferences.photoCollage,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(photoCollage: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 1, icon: SpIcons.timer),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_time.title")),
+                      value: storyTilePreferences.showTime,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showTime: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 2, icon: SpIcons.voice),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_voice_count.title")),
+                      value: storyTilePreferences.showVoiceCount,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showVoiceCount: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 3, icon: SpIcons.tag),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_tag_labels.title")),
+                      value: storyTilePreferences.showTagLabels,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showTagLabels: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 4, icon: SpIcons.alternateEmail),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_people_labels.title")),
+                      value: storyTilePreferences.showPeopleLabels,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showPeopleLabels: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 5, icon: SpIcons.managingPage),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_page_count.title")),
+                      value: storyTilePreferences.showPageCount,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showPageCount: value)),
+                    ),
+                    SwitchListTile.adaptive(
+                      secondary: const SpSettingIconBadge(weekday: 6, icon: SpIcons.map),
+                      contentPadding: const EdgeInsets.only(left: 16.0, right: 14.0),
+                      title: Text(tr("list_tile.show_location.title")),
+                      value: storyTilePreferences.showLocation,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(showLocation: value)),
+                    ),
+                    _CharacterCountSlider(
+                      preferences: storyTilePreferences,
+                      onChanged: (value) => _apply(storyTilePreferences.copyWith(displayCharacterCount: value)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 16.0),
           SpSectionTitle(title: tr("general.preview")),
@@ -366,8 +423,8 @@ class _CharacterCountSliderState extends State<_CharacterCountSlider> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.only(left: 16.0, right: 24.0),
-          leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.text),
+          contentPadding: const EdgeInsets.only(left: 16.0, right: 32.0),
+          leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.text),
           title: Text(tr("list_tile.preview_char_count.title")),
           trailing: Text(
             _localValue.toString(),
@@ -377,7 +434,7 @@ class _CharacterCountSliderState extends State<_CharacterCountSlider> {
           ),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Slider.adaptive(
             value: _localValue.toDouble(),
             min: 50,

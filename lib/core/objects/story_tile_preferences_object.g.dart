@@ -19,6 +19,8 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
 
   StoryTilePreferencesObject showLocation(bool? showLocation);
 
+  StoryTilePreferencesObject photoCollage(bool? photoCollage);
+
   StoryTilePreferencesObject displayCharacterCount(int? displayCharacterCount);
 
   /// Creates a new instance with the provided field values.
@@ -35,6 +37,7 @@ abstract class _$StoryTilePreferencesObjectCWProxy {
     bool? showPeopleLabels,
     bool? showVoiceCount,
     bool? showLocation,
+    bool? photoCollage,
     int? displayCharacterCount,
   });
 }
@@ -72,6 +75,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
       call(showLocation: showLocation);
 
   @override
+  StoryTilePreferencesObject photoCollage(bool? photoCollage) =>
+      call(photoCollage: photoCollage);
+
+  @override
   StoryTilePreferencesObject displayCharacterCount(
     int? displayCharacterCount,
   ) => call(displayCharacterCount: displayCharacterCount);
@@ -91,6 +98,7 @@ class _$StoryTilePreferencesObjectCWProxyImpl
     Object? showPeopleLabels = const $CopyWithPlaceholder(),
     Object? showVoiceCount = const $CopyWithPlaceholder(),
     Object? showLocation = const $CopyWithPlaceholder(),
+    Object? photoCollage = const $CopyWithPlaceholder(),
     Object? displayCharacterCount = const $CopyWithPlaceholder(),
   }) {
     return StoryTilePreferencesObject(
@@ -118,6 +126,10 @@ class _$StoryTilePreferencesObjectCWProxyImpl
           ? _value.showLocation
           // ignore: cast_nullable_to_non_nullable
           : showLocation as bool?,
+      photoCollage: photoCollage == const $CopyWithPlaceholder()
+          ? _value.photoCollage
+          // ignore: cast_nullable_to_non_nullable
+          : photoCollage as bool?,
       displayCharacterCount:
           displayCharacterCount == const $CopyWithPlaceholder()
           ? _value.displayCharacterCount
@@ -148,6 +160,7 @@ StoryTilePreferencesObject _$StoryTilePreferencesObjectFromJson(
   showPeopleLabels: json['show_people_labels'] as bool?,
   showVoiceCount: json['show_voice_count'] as bool?,
   showLocation: json['show_location'] as bool?,
+  photoCollage: json['photo_collage'] as bool?,
   displayCharacterCount: (json['display_character_count'] as num?)?.toInt(),
 );
 
@@ -160,5 +173,6 @@ Map<String, dynamic> _$StoryTilePreferencesObjectToJson(
   'show_people_labels': instance.showPeopleLabels,
   'show_voice_count': instance.showVoiceCount,
   'show_location': instance.showLocation,
+  'photo_collage': instance.photoCollage,
   'display_character_count': instance.displayCharacterCount,
 };

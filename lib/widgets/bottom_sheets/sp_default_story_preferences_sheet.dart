@@ -15,7 +15,11 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_layout_type_section.dart';
 
 class SpDefaultStoryPreferencesSheet extends BaseBottomSheet {
-  const SpDefaultStoryPreferencesSheet();
+  const SpDefaultStoryPreferencesSheet({this.onChanged});
+
+  /// Reports the live draft on every change ([null] when nothing differs from
+  /// the saved value). The caller commits it after the sheet closes.
+  final void Function(DefaultStoryPreferencesObject? preferences)? onChanged;
 
   @override
   bool get fullScreen => true;
@@ -42,6 +46,7 @@ class SpDefaultStoryPreferencesSheet extends BaseBottomSheet {
   Widget buildView(BuildContext context, double bottomPadding) {
     return _StoryEditingPreferencesSheetContent(
       bottomPadding: bottomPadding,
+      onChanged: onChanged,
     );
   }
 }
@@ -49,9 +54,11 @@ class SpDefaultStoryPreferencesSheet extends BaseBottomSheet {
 class _StoryEditingPreferencesSheetContent extends StatefulWidget {
   const _StoryEditingPreferencesSheetContent({
     required this.bottomPadding,
+    this.onChanged,
   });
 
   final double bottomPadding;
+  final void Function(DefaultStoryPreferencesObject? preferences)? onChanged;
 
   @override
   State<_StoryEditingPreferencesSheetContent> createState() => _StoryEditingPreferencesSheetContentState();
@@ -68,6 +75,11 @@ class _StoryEditingPreferencesSheetContentState extends State<_StoryEditingPrefe
   bool get resettable =>
       jsonEncode(defaultStoryPreferences.toJson()) != jsonEncode(defaultStoryPreferencesDefault.toJson());
 
+  void _apply(DefaultStoryPreferencesObject next) {
+    setState(() => defaultStoryPreferences = next);
+    widget.onChanged?.call(changed ? defaultStoryPreferences : null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,25 +88,28 @@ class _StoryEditingPreferencesSheetContentState extends State<_StoryEditingPrefe
         title: Text(tr("list_tile.default_story_preferences.title")),
         automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
         actions: [
-          if (changed)
+          // Pro users save automatically when the sheet closes, so no save button.
+          // Non-pro users keep a locked save button that opens the paywall; they can
+          // still preview changes but cannot persist them.
+          if (changed && !Provider.of<InAppPurchaseProvider>(context).isProUser)
             IconButton(
               tooltip: tr("button.done"),
-              icon: Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
-              onPressed: changed
-                  ? () {
-                      if (context.read<InAppPurchaseProvider>().isProUser) {
-                        Navigator.maybePop(context, defaultStoryPreferences);
-                      } else {
-                        const PaywallRoute(initialFocus: .customizations).push(context);
-                      }
-                    }
-                  : null,
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(SpIcons.save, color: Theme.of(context).colorScheme.primary),
+                  const Positioned(
+                    top: -2,
+                    right: -8,
+                    child: Icon(SpIcons.lock, size: 12.0),
+                  ),
+                ],
+              ),
+              onPressed: () => const PaywallRoute(initialFocus: .customizations).push(context),
             ),
           IconButton(
             icon: const Icon(SpIcons.refresh),
-            onPressed: resettable
-                ? () => setState(() => defaultStoryPreferences = defaultStoryPreferencesDefault)
-                : null,
+            onPressed: resettable ? () => _apply(defaultStoryPreferencesDefault) : null,
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
@@ -110,20 +125,20 @@ class _StoryEditingPreferencesSheetContentState extends State<_StoryEditingPrefe
             colorTone: defaultStoryPreferences.defaultColorTone,
             backgroundImagePath: defaultStoryPreferences.defaultBackgroundImagePath,
             onThemeChanged: ({colorSeedValue, colorTone, backgroundImagePath}) {
-              defaultStoryPreferences = defaultStoryPreferences.copyWith(
-                defaultColorSeedValue: colorSeedValue,
-                defaultColorTone: colorTone,
-                defaultBackgroundImagePath: backgroundImagePath,
+              _apply(
+                defaultStoryPreferences.copyWith(
+                  defaultColorSeedValue: colorSeedValue,
+                  defaultColorTone: colorTone,
+                  defaultBackgroundImagePath: backgroundImagePath,
+                ),
               );
-              setState(() {});
             },
           ),
           const SizedBox(height: 12.0),
           SpLayoutTypeSection(
             selected: defaultStoryPreferences.defaultLayoutType,
             onThemeChanged: (layoutType) {
-              defaultStoryPreferences = defaultStoryPreferences.copyWith(defaultLayoutType: layoutType);
-              setState(() {});
+              _apply(defaultStoryPreferences.copyWith(defaultLayoutType: layoutType));
             },
           ),
           SizedBox(height: widget.bottomPadding),
