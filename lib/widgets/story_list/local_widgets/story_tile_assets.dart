@@ -14,7 +14,7 @@ class _StoryTileAssets extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
       child: SizedBox(
-        height: 56,
+        height: 72,
         child: ListView.separated(
           padding: EdgeInsets.zero,
           scrollDirection: Axis.horizontal,
@@ -65,12 +65,12 @@ class _AssetTile extends StatelessWidget {
           ),
           child: SpImage(
             link: assetPath,
-            height: 56,
-            width: 56,
+            height: 72,
+            width: 72,
             errorWidget: (context, url, error) {
               return Container(
-                height: 56,
-                width: 56,
+                height: 72,
+                width: 72,
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),

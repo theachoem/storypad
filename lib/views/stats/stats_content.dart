@@ -87,7 +87,6 @@ class _StatsContent extends StatelessWidget {
           _buildStatsSection(
             context,
             title: section.label,
-            trailingLabel: section == StatsSection.overview ? stats.activeDaysLabel : null,
             child: section.hasEnoughData(stats)
                 ? _buildSectionChild(
                     context,
@@ -128,7 +127,6 @@ class _StatsContent extends StatelessWidget {
     BuildContext context, {
     required String title,
     required Widget child,
-    String? trailingLabel,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -139,7 +137,6 @@ class _StatsContent extends StatelessWidget {
           SpSectionTitle(
             title: title,
             padding: EdgeInsets.zero,
-            trailing: trailingLabel != null ? Text(trailingLabel) : null,
           ),
           child,
         ],
