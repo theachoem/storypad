@@ -290,6 +290,7 @@
   "list_tile.moved_to_bin_at.title": "تم النقل إلى سلة المهملات",
   "list_tile.period_calendar.subtitle": "تتبع دورتك ومشاعرك",
   "list_tile.period_calendar.title": "تقويم الدورة الشهرية",
+  "list_tile.photo_collage.title": "صورة مجمعة",
   "list_tile.preview_char_count.title": "عدد الأحرف في المعاينة",
   "list_tile.product_hunt.title": "صوّت لنا على {ARG_NAME}",
   "list_tile.rate_on_store.title": "قيّمونا على {ARG_NAME}",

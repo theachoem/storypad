@@ -12,6 +12,7 @@ class StoryTilePreferencesObject {
   final bool showPeopleLabels;
   final bool showVoiceCount;
   final bool showLocation;
+  final bool photoCollage;
   final int displayCharacterCount;
 
   StoryTilePreferencesObject({
@@ -21,6 +22,7 @@ class StoryTilePreferencesObject {
     bool? showPeopleLabels,
     bool? showVoiceCount,
     bool? showLocation,
+    bool? photoCollage,
     int? displayCharacterCount,
   }) : showTime = showTime ?? true,
        showPageCount = showPageCount ?? true,
@@ -28,6 +30,7 @@ class StoryTilePreferencesObject {
        showPeopleLabels = showPeopleLabels ?? true,
        showVoiceCount = showVoiceCount ?? true,
        showLocation = showLocation ?? true,
+       photoCollage = photoCollage ?? false,
        displayCharacterCount = displayCharacterCount ?? 200;
 
   // During user editing, we can show all content without limit.

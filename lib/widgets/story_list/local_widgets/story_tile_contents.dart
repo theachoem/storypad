@@ -21,6 +21,14 @@ class _StoryTileContents extends StatelessWidget {
   final String? displayShortBody;
   final StoryTilePreferencesObject preferences;
 
+  void _viewAssetImageAt(BuildContext context, List<String> imagePaths, int index) {
+    SpImagesViewer.fromString(
+      images: imagePaths,
+      initialIndex: index,
+      context: context,
+    ).show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     // display only images for now.
@@ -70,7 +78,16 @@ class _StoryTileContents extends StatelessWidget {
             ),
           if (assetPaths?.isNotEmpty == true) ...[
             SizedBox(height: MediaQuery.textScalerOf(context).scale(6)),
-            _StoryTileAssets(assetPaths: assetPaths!),
+            if (preferences.photoCollage)
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: MediaQuery.textScalerOf(context).scale(240)),
+                child: SpAlbumGrid(
+                  paths: assetPaths!,
+                  onTap: viewOnly ? null : (index) => _viewAssetImageAt(context, assetPaths, index),
+                ),
+              )
+            else
+              _StoryTileAssets(assetPaths: assetPaths!),
             SizedBox(height: MediaQuery.textScalerOf(context).scale(4)),
           ],
           SpStoryLabels(

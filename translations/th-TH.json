@@ -290,6 +290,7 @@
   "list_tile.moved_to_bin_at.title": "ย้ายไปถังขยะ",
   "list_tile.period_calendar.subtitle": "ติดตามรอบเดือนและความรู้สึกของคุณ",
   "list_tile.period_calendar.title": "ปฏิทินช่วงเวลา",
+  "list_tile.photo_collage.title": "ภาพตัดต่อ",
   "list_tile.preview_char_count.title": "จำนวนอักขระที่แสดงตัวอย่าง",
   "list_tile.product_hunt.title": "กดโหวตสนับสนุนเราบน {ARG_NAME}",
   "list_tile.rate_on_store.title": "ให้คะแนนเราบน {ARG_NAME}",

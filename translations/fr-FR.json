@@ -290,6 +290,7 @@
   "list_tile.moved_to_bin_at.title": "Déplacé vers la corbeille",
   "list_tile.period_calendar.subtitle": "Suivez votre cycle et vos sentiments",
   "list_tile.period_calendar.title": "Calendrier menstruel",
+  "list_tile.photo_collage.title": "Collage photo",
   "list_tile.preview_char_count.title": "Nombre de caractères d'aperçu",
   "list_tile.product_hunt.title": "Votez pour nous sur {ARG_NAME}",
   "list_tile.rate_on_store.title": "Évaluez-nous sur {ARG_NAME}",
