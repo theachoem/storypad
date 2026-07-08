@@ -18,7 +18,7 @@ class _LibraryContent extends StatelessWidget {
         builder: (context) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(tr("page.library.title_with_app_name")),
+              title: Text(tr("page.library.title")),
               bottom: const TabBar(
                 tabs: [
                   Tab(icon: Icon(SpIcons.photo)),

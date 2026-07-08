@@ -55,11 +55,12 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: tr("general.general")),
             const LanguageTile(weekday: 6),
             buildAppLockTile(context, weekday: 7),
-            ListTile(
-              leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.alarm),
-              title: Text(tr('page.reminders.title')),
-              onTap: () => const RemindersRoute().push(context),
-            ),
+            if (LocalNotificationService.instance.supported)
+              ListTile(
+                leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.alarm),
+                title: Text(tr('page.reminders.title')),
+                onTap: () => const RemindersRoute().push(context),
+              ),
             if (kSupportQuickActions) QuickActionsTile(),
             TimeFormatTile.globalTheme(weekday: 3),
             FirstDayOfWeekTile.globalTheme(weekday: 4),

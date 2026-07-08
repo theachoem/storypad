@@ -37,7 +37,15 @@ class LocalNotificationService {
   // most recently requested reschedule is allowed to finish applying its writes.
   int _rescheduleVersion = 0;
 
-  bool get supported => Platform.isAndroid || Platform.isIOS;
+  // Chains reschedule runs so their cancelAll()+schedule work never overlaps —
+  // without this, an older call's cancelAll() could complete after a newer
+  // call had already scheduled notifications, wiping them out even though the
+  // version check below would (correctly) stop the older call from
+  // scheduling anything itself. Each run still checks the version first so a
+  // call superseded before its turn comes up does no wasted native work.
+  Future<void> _rescheduleQueue = Future<void>.value();
+
+  bool get supported => Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 
   Future<void> init({GlobalKey<NavigatorState>? navigatorKey}) async {
     if (navigatorKey != null) _navigatorKey = navigatorKey;
@@ -56,7 +64,8 @@ class LocalNotificationService {
     // notification (and its channel) is known — use the generic custom-reminder
     // icon as that fallback.
     final androidSettings = AndroidInitializationSettings(NotificationChannel.reminderCustom.androidIcon);
-    const iosSettings = DarwinInitializationSettings(
+    // Shared by iOS and macOS — both use the same Darwin notification APIs.
+    const darwinSettings = DarwinInitializationSettings(
       // Permission is requested explicitly on first enable, not at init.
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -64,7 +73,7 @@ class LocalNotificationService {
     );
 
     await _plugin.initialize(
-      settings: InitializationSettings(android: androidSettings, iOS: iosSettings),
+      settings: InitializationSettings(android: androidSettings, iOS: darwinSettings, macOS: darwinSettings),
       onDidReceiveNotificationResponse: _onTap,
     );
 
@@ -90,14 +99,33 @@ class LocalNotificationService {
       return await ios?.requestPermissions(alert: true, badge: true, sound: true) ?? false;
     }
 
+    if (Platform.isMacOS) {
+      final macOS = _plugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
+      return await macOS?.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+    }
+
     return false;
   }
 
   /// Cancels all reminder notifications and reschedules the enabled ones.
-  Future<void> rescheduleAll(List<ReminderObject>? reminders) async {
-    if (!supported || !_initialized) return;
+  Future<void> rescheduleAll(List<ReminderObject>? reminders) {
+    if (!supported || !_initialized) return Future<void>.value();
 
     final version = ++_rescheduleVersion;
+
+    // Chained onto the previous run (regardless of whether it's done yet) so
+    // no two runs ever call cancelAll()/schedule concurrently — see
+    // [_rescheduleQueue].
+    final run = _rescheduleQueue.then((_) => _runReschedule(version, reminders));
+    _rescheduleQueue = run;
+    return run;
+  }
+
+  Future<void> _runReschedule(int version, List<ReminderObject>? reminders) async {
+    // A newer reschedule request arrived before this one's turn came up —
+    // skip it entirely rather than doing a cancelAll()+schedule pass whose
+    // result would just be immediately superseded.
+    if (version != _rescheduleVersion) return;
 
     await _plugin.cancelAll();
     for (final reminder in reminders ?? const <ReminderObject>[]) {
@@ -240,6 +268,7 @@ class LocalNotificationService {
         icon: channel.androidIcon,
       ),
       iOS: const DarwinNotificationDetails(),
+      macOS: const DarwinNotificationDetails(),
     );
   }
 

@@ -4,10 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 
 /// Weekday picker for reminders. An empty [weekdays] set is the canonical
-/// "every day" value once saved, but while editing it's shown literally —
-/// no chips checked — so the user can build up a selection from scratch
-/// (uncheck everything, then check just Monday) instead of every uncheck
-/// bouncing back to "all selected".
+/// "every day" value once saved — the built-in and custom reminder editors
+/// expand that to all 7 days before handing it to this widget, so it always
+/// starts fully checked for an "every day" reminder. From there, chips behave
+/// literally (this widget itself never re-expands an empty selection), so the
+/// user can uncheck everything and build up a selection from scratch (e.g.
+/// down to just Monday) instead of every uncheck bouncing back to "all
+/// selected".
 class ReminderWeekdaysChips extends StatelessWidget {
   const ReminderWeekdaysChips({super.key, required this.weekdays, required this.onChanged});
 
