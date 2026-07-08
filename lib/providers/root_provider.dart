@@ -6,6 +6,7 @@ import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/root/local_widgets/root_view_side_bar_info.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/app_quick_actions_service.dart';
+import 'package:storypad/core/services/notifications/local_notification_service.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 
 class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
@@ -24,6 +25,10 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
 
   RootProvider() {
     if (kSupportQuickActions) AppQuickActionsService.instance.initialize(navigatorKey: navigatorKey);
+
+    // Register the navigator key so reminder notification taps can navigate
+    // (including cold-start taps handled during app initialization).
+    LocalNotificationService.instance.init(navigatorKey: navigatorKey);
   }
 
   /// For any navigation from sidebar, use this RootProvider#navigate instead of push directly.

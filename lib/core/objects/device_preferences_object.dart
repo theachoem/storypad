@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/app_quick_action_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
+import 'package:storypad/core/objects/reminder_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
@@ -45,6 +46,11 @@ class DevicePreferencesObject {
   final bool? enableRelaxSounds;
   final bool? enablePeriodCalendar;
 
+  /// Device-local reminder configurations. `null` means never configured.
+  /// Reminders are intentionally not synced across devices (OS notifications
+  /// are per-device). See docs/implementations/reminders.md.
+  final List<ReminderObject>? reminders;
+
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : kDefaultFontWeight;
 
@@ -56,6 +62,7 @@ class DevicePreferencesObject {
     this.fontWeightIndex,
     this.enableRelaxSounds,
     this.enablePeriodCalendar,
+    this.reminders,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,

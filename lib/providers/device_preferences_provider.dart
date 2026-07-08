@@ -8,7 +8,10 @@ import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/app_quick_action_object.dart';
 import 'package:storypad/core/objects/device_preferences_object.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
+import 'package:storypad/core/objects/reminder_object.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
+import 'package:storypad/core/services/notifications/local_notification_service.dart';
+import 'package:storypad/core/types/reminder_type.dart';
 import 'package:storypad/core/services/app_quick_actions_service.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
@@ -54,6 +57,10 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     storage.remove();
     notifyListeners();
     unawaited(AppQuickActionsService.instance.clearActions());
+
+    // Reset clears reminders; cancel their OS-scheduled notifications too so the
+    // native side doesn't keep firing orphaned reminders until the next launch.
+    unawaited(LocalNotificationService.instance.rescheduleAll(_preferences.reminders));
 
     AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _preferences.fontFamily);
     AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
@@ -257,6 +264,70 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   void updateMapStyle(SpMapStyle mapStyle) {
     _preferences = _preferences.copyWith(mapStyle: mapStyle);
     storage.writeObject(_preferences);
+  }
+
+  List<ReminderObject> get reminders => preferences.reminders ?? const [];
+  ReminderObject? reminderOfType(ReminderType type) => reminders.where((r) => r.type == type).firstOrNull;
+
+  ReminderObject? get dailyReminder => reminderOfType(ReminderType.daily);
+  ReminderObject? get onThisDayReminder => reminderOfType(ReminderType.onThisDay);
+  ReminderObject? get periodReminder => reminderOfType(ReminderType.period);
+
+  List<ReminderObject> get customReminders => reminders.where((r) => r.type == ReminderType.custom).toList();
+
+  /// Small, monotonically increasing id for a new custom reminder. Ids are kept
+  /// small because Android notification ids are 32-bit and we derive them as
+  /// `reminder.id * 10 + weekday`. Starts at 10 to stay clear of built-in ids.
+  int get nextCustomReminderId {
+    return reminders.map((r) => r.id).fold<int>(9, (a, b) => a > b ? a : b) + 1;
+  }
+
+  // No need for notifyListeners: DevicePreferencesProvider is watched broadly
+  // across the app, so it would rebuild far more than the Reminders screen for
+  // every reminder edit. Only the Reminders screen cares about this, so it
+  // subscribes via addListenerForReminderChanges instead (same pattern as
+  // addListenerForAddOnChanges).
+  Future<void> _writeReminders(List<ReminderObject> updated) async {
+    _preferences = _preferences.copyWith(reminders: updated);
+    _listeners['reminders']?.forEach((listener) => listener());
+    storage.writeObject(_preferences);
+
+    // Don't block the caller (e.g. a Save button about to pop its sheet/page)
+    // on OS notification rescheduling — it cancels and reschedules *every*
+    // reminder, including on-this-day's date scan, so it can take a moment.
+    // Let it finish in the background instead of stalling the UI dismissal.
+    unawaited(LocalNotificationService.instance.rescheduleAll(updated));
+  }
+
+  void addListenerForReminderChanges(void Function() listener) {
+    _listeners['reminders'] ??= [];
+    _listeners['reminders']!.add(listener);
+  }
+
+  void removeListenerForReminderChanges(void Function() listener) {
+    _listeners['reminders']?.remove(listener);
+  }
+
+  /// Inserts or replaces a reminder (matched by id).
+  Future<void> upsertReminder(ReminderObject reminder) async {
+    final updated = List<ReminderObject>.from(reminders);
+    final index = updated.indexWhere((r) => r.id == reminder.id);
+    if (index >= 0) {
+      updated[index] = reminder;
+    } else {
+      updated.add(reminder);
+    }
+    await _writeReminders(updated);
+  }
+
+  Future<void> deleteReminder(int id) async {
+    final updated = reminders.where((r) => r.id != id).toList();
+    await _writeReminders(updated);
+  }
+
+  Future<void> toggleReminder(int id, bool enabled) async {
+    final updated = reminders.map((r) => r.id == id ? r.copyWith(enabled: enabled) : r).toList();
+    await _writeReminders(updated);
   }
 
   Future<void> toggleThemeMode(
