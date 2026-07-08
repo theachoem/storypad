@@ -4,7 +4,8 @@ Welcome to Storypad's documentation! This documentation is organized to be easil
 
 ## Documentation Structure
 
-- [Features](./features/) - User guides and implementation details for all features
+- [Features](./features/) - User guides for features that are fully complete and stable
+- [Implementations](./implementations/) - Technical design/plan docs for features in progress or as background context (one folder per feature, e.g. `implementations/<feature>/plan.md`)
 - [Architecture](./architecture/) - System design and architecture decisions
 - [Development](./development/) - Setup and configuration guides
 - [UI](./ui/) - UI components and design guidelines

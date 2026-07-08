@@ -55,39 +55,45 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: tr("general.general")),
             const LanguageTile(weekday: 6),
             buildAppLockTile(context, weekday: 7),
+            if (LocalNotificationService.instance.supported)
+              ListTile(
+                leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.alarm),
+                title: Text(tr('page.reminders.title')),
+                onTap: () => const RemindersRoute().push(context),
+              ),
             if (kSupportQuickActions) QuickActionsTile(),
-            TimeFormatTile.globalTheme(weekday: 2),
-            FirstDayOfWeekTile.globalTheme(weekday: 3),
+            TimeFormatTile.globalTheme(weekday: 3),
+            FirstDayOfWeekTile.globalTheme(weekday: 4),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.stories")),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(weekday: 4),
+            StoryTilePreferencesTile(weekday: 5),
 
             // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(weekday: 5),
+            DefaultStoryPreferencesTile(weekday: 6),
           ],
           ...[
             const Divider(),
             SpSectionTitle(title: tr("general.data")),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 6, icon: SpIcons.googleDrive),
+              leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.googleDrive),
               title: Text(tr('page.backup_services.title')),
               onTap: () => const BackupServicesRoute().push(context),
             ),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.folderOpen),
+              leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.folderOpen),
               title: Text(tr('page.import_export_backup')),
               onTap: () => const ImportExportRoute().push(context),
             ),
             ListTile(
-              leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.storage),
+              leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.storage),
               title: Text(tr('page.storage_management.title')),
               onTap: () => const StorageManagementRoute().push(context),
             ),
-            AssetCompressionTile.globalTheme(weekday: 2),
+            AssetCompressionTile.globalTheme(weekday: 3),
           ],
           const SizedBox(height: 120),
         ],

@@ -102,6 +102,7 @@ class SpIcons {
   static const IconData dropDown = Icons.arrow_drop_down;
   static const IconData globe = kIsCupertino ? CupertinoIcons.globe : Icons.language;
   static const IconData add = kIsCupertino ? CupertinoIcons.plus : Icons.add;
+  static const IconData remove = kIsCupertino ? CupertinoIcons.minus : Icons.remove;
   static const IconData camera = kIsCupertino ? CupertinoIcons.photo_camera : Icons.photo_camera_outlined;
   static const IconData factCheck = kIsCupertino ? CupertinoIcons.text_badge_checkmark : Icons.fact_check_outlined;
   static const IconData dragIndicator = Icons.drag_indicator;
