@@ -1,12 +1,12 @@
 ---
-description: Fix all open review comments on a storypad PR, resolve each thread, amend the last commit, and force-push
+description: Fix all open review comments on a storypad PR, resolve each thread, commit as a new commit, and push
 argument-hint: "<PR number or full GitHub PR URL>"
 allowed-tools: Bash, Read, Edit, Grep, Glob
 ---
 
 # Fix PR Review Comments
 
-Fix all open review comments on a pull request, resolve each thread, amend the last commit, and force-push.
+Fix all open review comments on a pull request, resolve each thread, commit the fixes as a new commit, and push.
 
 ## Arguments
 
@@ -73,11 +73,11 @@ Fix all open review comments on a pull request, resolve each thread, amend the l
    flutter test <changed test paths>
    ```
 
-8. **Stage fixed files and amend**:
+8. **Stage fixed files and commit as a new commit** — never amend. Amending rewrites a commit that may already be pushed/open as a PR and forces a rewritten history the user didn't explicitly ask for in this run; a plain new commit is always safe to add on top:
 
    ```
    git add <changed files>
-   git commit --amend --no-edit
+   git commit -m "Address PR review comments"
    ```
 
 9. **Resolve all threads** — for each unresolved thread node ID, resolve BEFORE pushing so that CI (which may block on unresolved comments) sees threads resolved when the push triggers it:
@@ -88,13 +88,13 @@ Fix all open review comments on a pull request, resolve each thread, amend the l
 
    Confirm every thread returns `isResolved: true` before proceeding to the push step.
 
-10. **Force push** — only after all threads are confirmed resolved:
+10. **Push** — only after all threads are confirmed resolved:
 
     ```
-    git push --force-with-lease
+    git push
     ```
 
-    If no upstream is set, add `--set-upstream origin <branch-name>`.
+    If no upstream is set, add `--set-upstream origin <branch-name>`. No `--force`/`--force-with-lease` is needed since this is a new commit, not a rewrite — unless the remote branch has independently diverged, in which case stop and ask the user rather than force-pushing.
 
 11. Report: list each resolved thread (author, file, fix applied) and confirm the push succeeded.
 
@@ -104,3 +104,4 @@ Fix all open review comments on a pull request, resolve each thread, amend the l
 - If a comment requires a design decision rather than a simple fix, flag it to the user instead of resolving it.
 - I may pass some test errors copied from CI runs — fix them and ensure tests pass before pushing.
 - This is a single Flutter repo with no submodules or worktrees — all commands run from the repo root.
+- Always commit fixes as a new commit, never `git commit --amend`. Amending rewrites history that may already be shared (open PR, pushed branch) and requires a force-push; a new commit keeps history additive and only needs a regular push.

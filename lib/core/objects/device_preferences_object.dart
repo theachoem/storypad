@@ -48,7 +48,7 @@ class DevicePreferencesObject {
 
   /// Device-local reminder configurations. `null` means never configured.
   /// Reminders are intentionally not synced across devices (OS notifications
-  /// are per-device). See docs/implementations/reminders.md.
+  /// are per-device).
   final List<ReminderObject>? reminders;
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;

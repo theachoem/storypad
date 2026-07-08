@@ -33,7 +33,11 @@ class ReminderObject {
 
   // ---- custom only ----
 
-  /// Notification body. Falls back to a per-type default when null.
+  /// User-entered reminder text — set only for custom reminders. Despite the
+  /// name, [ReminderNavigationService.copyFor] uses it as the notification
+  /// *title* for custom reminders (matching how it's shown in the reminders
+  /// list), with a fixed generic body; it plays no role for built-in types,
+  /// which get their title/body from [ReminderNotificationCopyService].
   final String? message;
 
   /// Custom template id -> EditStoryRoute.template.

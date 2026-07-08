@@ -172,7 +172,7 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.remove),
+            icon: const Icon(SpIcons.remove),
             onPressed: _daysAhead > 0 ? () => setState(() => _daysAhead--) : null,
           ),
           Text('$_daysAhead'),
