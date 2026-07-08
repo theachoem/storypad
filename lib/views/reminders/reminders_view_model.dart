@@ -7,7 +7,7 @@ import 'package:storypad/core/objects/reminder_object.dart';
 import 'package:storypad/core/services/notifications/local_notification_service.dart';
 import 'package:storypad/core/types/reminder_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/views/reminders/edit/sp_edit_reminder_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_edit_reminder_sheet.dart';
 import 'package:storypad/views/reminders/edit_custom_reminder/edit_custom_reminder_view.dart';
 
 /// Requests OS notification permission, showing an explanatory dialog when denied.
