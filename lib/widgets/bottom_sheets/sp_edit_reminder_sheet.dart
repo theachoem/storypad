@@ -128,9 +128,12 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
                     onTap: _pickTime,
                   ),
                   if (_supportsWeekdays)
-                    ReminderWeekdaysChips(
-                      weekdays: _weekdays,
-                      onChanged: (updated) => setState(() => _weekdays = updated),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ReminderWeekdaysChips(
+                        weekdays: _weekdays,
+                        onChanged: (updated) => setState(() => _weekdays = updated),
+                      ),
                     ),
                   if (_isPeriod) _buildDaysAheadTile(context),
                 ],

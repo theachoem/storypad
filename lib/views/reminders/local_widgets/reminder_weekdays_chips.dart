@@ -22,19 +22,16 @@ class ReminderWeekdaysChips extends StatelessWidget {
   Widget build(BuildContext context) {
     final ordered = _orderedWeekdays(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Wrap(
-        spacing: 8,
-        children: [
-          for (final w in ordered)
-            FilterChip(
-              label: Text(_label(context, w)),
-              selected: weekdays.contains(w),
-              onSelected: (selected) => _toggle(w, selected),
-            ),
-        ],
-      ),
+    return Wrap(
+      spacing: 8,
+      children: [
+        for (final w in ordered)
+          FilterChip(
+            label: Text(_label(context, w)),
+            selected: weekdays.contains(w),
+            onSelected: (selected) => _toggle(w, selected),
+          ),
+      ],
     );
   }
 

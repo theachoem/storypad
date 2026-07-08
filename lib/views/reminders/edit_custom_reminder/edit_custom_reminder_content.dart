@@ -7,6 +7,11 @@ class _EditCustomReminderContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    EdgeInsets safeContentPadding = EdgeInsets.only(
+      left: math.max(MediaQuery.of(context).padding.left, 16.0),
+      right: math.max(MediaQuery.of(context).padding.right, 16.0),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(tr('page.reminders.add_reminder')),
@@ -34,9 +39,12 @@ class _EditCustomReminderContent extends StatelessWidget {
         child: ListView(
           children: [
             const SizedBox(height: 8),
-            SpSectionTitle(title: tr('reminder.field.message')),
+            SpSectionTitle(
+              title: tr('reminder.field.message'),
+              padding: safeContentPadding.copyWith(top: 4.0, bottom: 4.0),
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: safeContentPadding,
               child: _buildMessageField(context),
             ),
             const SizedBox(height: 8.0),
@@ -49,10 +57,13 @@ class _EditCustomReminderContent extends StatelessWidget {
               ),
               onTap: () => _pickTime(context),
             ),
-            ReminderWeekdaysChips(weekdays: viewModel.weekdays, onChanged: viewModel.setWeekdays),
+            Padding(
+              padding: safeContentPadding,
+              child: ReminderWeekdaysChips(weekdays: viewModel.weekdays, onChanged: viewModel.setWeekdays),
+            ),
             const SizedBox(height: 12.0),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: safeContentPadding,
               child: Text(
                 reminderScheduleSummary(context, time: viewModel.time, weekdays: viewModel.weekdays),
                 style: Theme.of(context).textTheme.bodySmall,
@@ -87,7 +98,7 @@ class _EditCustomReminderContent extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: safeContentPadding,
               child: SizedBox(width: double.infinity, child: _buildSaveButton(context)),
             ),
             SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
