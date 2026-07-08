@@ -17,6 +17,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject enablePeriodCalendar(bool? enablePeriodCalendar);
 
+  DevicePreferencesObject reminders(List<ReminderObject>? reminders);
+
   DevicePreferencesObject themeMode(ThemeMode? themeMode);
 
   DevicePreferencesObject timeFormat(TimeFormatOption? timeFormat);
@@ -64,6 +66,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     int? fontWeightIndex,
     bool? enableRelaxSounds,
     bool? enablePeriodCalendar,
+    List<ReminderObject>? reminders,
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
@@ -106,6 +109,10 @@ class _$DevicePreferencesObjectCWProxyImpl
   @override
   DevicePreferencesObject enablePeriodCalendar(bool? enablePeriodCalendar) =>
       call(enablePeriodCalendar: enablePeriodCalendar);
+
+  @override
+  DevicePreferencesObject reminders(List<ReminderObject>? reminders) =>
+      call(reminders: reminders);
 
   @override
   DevicePreferencesObject themeMode(ThemeMode? themeMode) =>
@@ -175,6 +182,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? fontWeightIndex = const $CopyWithPlaceholder(),
     Object? enableRelaxSounds = const $CopyWithPlaceholder(),
     Object? enablePeriodCalendar = const $CopyWithPlaceholder(),
+    Object? reminders = const $CopyWithPlaceholder(),
     Object? themeMode = const $CopyWithPlaceholder(),
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? firstDayOfWeek = const $CopyWithPlaceholder(),
@@ -209,6 +217,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.enablePeriodCalendar
           // ignore: cast_nullable_to_non_nullable
           : enablePeriodCalendar as bool?,
+      reminders: reminders == const $CopyWithPlaceholder()
+          ? _value.reminders
+          // ignore: cast_nullable_to_non_nullable
+          : reminders as List<ReminderObject>?,
       themeMode: themeMode == const $CopyWithPlaceholder()
           ? _value.themeMode
           // ignore: cast_nullable_to_non_nullable
@@ -282,6 +294,9 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   fontWeightIndex: (json['font_weight_index'] as num?)?.toInt(),
   enableRelaxSounds: json['enable_relax_sounds'] as bool?,
   enablePeriodCalendar: json['enable_period_calendar'] as bool?,
+  reminders: (json['reminders'] as List<dynamic>?)
+      ?.map((e) => ReminderObject.fromJson(e as Map<String, dynamic>))
+      .toList(),
   themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['theme_mode']),
   timeFormat: $enumDecodeNullable(
     _$TimeFormatOptionEnumMap,
@@ -342,6 +357,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'hidden_stats_sections': instance.hiddenStatsSections,
   'enable_relax_sounds': instance.enableRelaxSounds,
   'enable_period_calendar': instance.enablePeriodCalendar,
+  'reminders': instance.reminders?.map((e) => e.toJson()).toList(),
 };
 
 const _$FontSizeOptionEnumMap = {

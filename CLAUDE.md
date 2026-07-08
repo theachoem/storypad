@@ -31,6 +31,8 @@
 1. Concise content for LLM efficiency
 2. Filenames: lowercase-with-dashes, keyword-rich (`docs/core/architecture.md`)
 3. Validate against existing docs for compliance
+4. In-progress work: plan/design docs go in `docs/implementations/<feature>/plan.md`, not `docs/features/`
+5. Only add a `docs/features/<feature>.md` user guide once that feature is fully complete and stable
 
 ## Agent Rules:
 

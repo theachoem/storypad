@@ -20,7 +20,7 @@ class QuickActionsTile extends StatelessWidget {
 
     return ListTile(
       trailing: locked ? const Icon(SpIcons.lock) : null,
-      leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.home),
+      leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.home),
       title: Text(tr('page.home_quick_actions.title')),
       onTap: () => const HomeQuickActionsRoute().push(context),
     );

@@ -184,13 +184,14 @@ class _TemplatesTabState extends State<TemplatesTab> {
     return Container(
       key: ValueKey(template.id),
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6.0),
-      decoration: BoxDecoration(
+      child: Material(
         color: ColorScheme.of(context).readOnly.surface1,
         borderRadius: BorderRadiusGeometry.circular(8.0),
-      ),
-      child: _TemplateTile(
-        onTap: () => goToShowPage(context, template),
-        template: template,
+        clipBehavior: Clip.antiAlias,
+        child: _TemplateTile(
+          onTap: () => goToShowPage(context, template),
+          template: template,
+        ),
       ),
     );
   }
