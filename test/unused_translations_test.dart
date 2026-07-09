@@ -13,6 +13,7 @@ void main() async {
     'button.less',
     'button.more',
     'button.try',
+    'button.confirm',
     'dialog.lookings_back.subtitle.other',
     'page.cloud_optimize.step.fetch.done.one',
     'page.cloud_optimize.step.fetch.done.other',

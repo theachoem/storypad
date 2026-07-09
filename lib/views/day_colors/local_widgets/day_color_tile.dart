@@ -49,7 +49,7 @@ class _DayColorTile extends StatelessWidget {
       },
       builder: (void Function() open) {
         return ListTile(
-          contentPadding: const EdgeInsets.only(left: 16, right: 8),
+          contentPadding: locked ? null : const EdgeInsets.only(left: 16, right: 8),
           title: Text(_weekdayLabel(context)),
           subtitle: Text(customized ? tr("general.custom") : tr("general.default")),
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -31,7 +32,7 @@ class SpTimeFormatSheet extends BaseBottomSheet {
             children: [
               ...TimeFormatOption.values.map((timeFormat) {
                 return ListTile(
-                  title: Text(timeFormat.label),
+                  title: Text(_label(context, timeFormat)),
                   trailing: Visibility(
                     visible: timeFormat == selectedTimeFormat,
                     child: SpFadeIn.fromBottom(
@@ -53,5 +54,15 @@ class SpTimeFormatSheet extends BaseBottomSheet {
         );
       },
     );
+  }
+
+  String _label(BuildContext context, TimeFormatOption value) {
+    final baseLabel = value.label;
+
+    if (value == TimeFormatOption.values.first) {
+      return '$baseLabel (${tr('general.default')})';
+    }
+
+    return baseLabel;
   }
 }

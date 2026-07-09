@@ -19,9 +19,13 @@ part 'local_widgets/export_section.dart';
 class ImportExportRoute extends BaseRoute {
   const ImportExportRoute({
     this.initialExportOption,
+    this.showExport,
+    this.showImport,
   });
 
   final AppExportOption? initialExportOption;
+  final bool? showExport;
+  final bool? showImport;
 
   @override
   Widget buildPage(BuildContext context) => ImportExportView(params: this);

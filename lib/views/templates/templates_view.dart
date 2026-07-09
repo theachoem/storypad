@@ -48,6 +48,7 @@ class TemplatesRoute extends BaseRoute {
     this.initialDay,
     this.viewingArchives = false,
     this.pickMode = false,
+    this.onlyMyTemplates = false,
   });
 
   final int? initialYear;
@@ -55,6 +56,7 @@ class TemplatesRoute extends BaseRoute {
   final int? initialDay;
   final bool viewingArchives;
   final bool pickMode;
+  final bool onlyMyTemplates;
 
   @override
   Future<T?> push<T extends Object?>(BuildContext context, {bool rootNavigator = false}) {

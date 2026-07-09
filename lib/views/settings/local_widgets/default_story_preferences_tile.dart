@@ -9,7 +9,12 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 
 class DefaultStoryPreferencesTile extends StatelessWidget {
-  const DefaultStoryPreferencesTile({super.key, required this.weekday});
+  // No need const so translation can be updated when locale changes.
+  // ignore: prefer_const_constructors_in_immutables
+  DefaultStoryPreferencesTile({
+    super.key,
+    required this.weekday,
+  });
 
   final int weekday;
 

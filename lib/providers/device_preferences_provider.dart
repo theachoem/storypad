@@ -18,6 +18,7 @@ import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/add_on_type.dart';
+import 'package:storypad/core/types/appearance_preference_key.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
@@ -47,25 +48,52 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     }
   }
 
-  void reset() {
-    _preferences = DevicePreferencesObject.initial().copyWith(
-      // Preserve add-on states as they are tied to purchases, not preferences.
-      enableRelaxSounds: preferences.enableRelaxSounds,
-      enablePeriodCalendar: preferences.enablePeriodCalendar,
-    );
+  /// Resets exactly the preferences named by [keys], leaving every other
+  /// preference (region, stories, reminders, etc.) untouched.
+  ///
+  /// [keys] is collected from the `AppearanceItem.resetKey`s actually
+  /// rendered on the Appearance settings page, so this only ever resets what
+  /// that page shows. The switch below is exhaustive over
+  /// [AppearancePreferenceKey] — adding a new enum value without adding its
+  /// case here is a compile error, so a new appearance preference can't be
+  /// forgotten.
+  void resetAppearance(Set<AppearancePreferenceKey> keys) {
+    if (keys.isEmpty) return;
 
-    storage.remove();
+    final defaults = DevicePreferencesObject.initial();
+    var updated = _preferences;
+
+    for (final key in keys) {
+      updated = switch (key) {
+        .themeMode => updated.copyWith(themeMode: defaults.themeMode),
+        .colorSeed => updated.copyWith(colorSeedValue: defaults.colorSeedValue),
+        .fontSize => updated.copyWith(fontSize: defaults.fontSize),
+        .fontFamily => updated.copyWith(fontFamily: defaults.fontFamily),
+        .fontWeight => updated.copyWith(fontWeightIndex: defaults.fontWeightIndex),
+        .dayColors => updated.copyWith(colorByDay: defaults.colorByDay),
+        .storyTilePreferences => updated.copyWith(storyTilePreferences: defaults.storyTilePreferences),
+      };
+    }
+
+    _preferences = updated;
+    storage.writeObject(_preferences);
     notifyListeners();
-    unawaited(AppQuickActionsService.instance.clearActions());
 
-    // Reset clears reminders; cancel their OS-scheduled notifications too so the
-    // native side doesn't keep firing orphaned reminders until the next launch.
-    unawaited(LocalNotificationService.instance.rescheduleAll(_preferences.reminders));
+    if (keys.contains(AppearancePreferenceKey.fontFamily)) {
+      AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _preferences.fontFamily);
+    }
 
-    AnalyticsUserProperyService.instance.logSetFontFamily(newFontFamily: _preferences.fontFamily);
-    AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
-    AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
-    AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);
+    if (keys.contains(AppearancePreferenceKey.colorSeed)) {
+      AnalyticsUserProperyService.instance.logSetColorSeedTheme(newColor: null);
+    }
+
+    if (keys.contains(AppearancePreferenceKey.themeMode)) {
+      AnalyticsUserProperyService.instance.logSetThemeMode(newThemeMode: ThemeMode.system);
+    }
+
+    if (keys.contains(AppearancePreferenceKey.fontWeight)) {
+      AnalyticsUserProperyService.instance.logSetFontWeight(newFontWeight: kDefaultFontWeight);
+    }
   }
 
   void setColorSeed(Color color) {
