@@ -60,7 +60,7 @@ class SpTimeFormatSheet extends BaseBottomSheet {
     final baseLabel = value.label;
 
     if (value == TimeFormatOption.values.first) {
-      return '$baseLabel (${tr('general.default')})';
+      return '$baseLabel (${context.tr('general.default')})';
     }
 
     return baseLabel;

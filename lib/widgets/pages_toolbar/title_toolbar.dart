@@ -79,7 +79,7 @@ class _TitleToolbar extends StatelessWidget {
   Widget buildFontWeightButton(FontWeight currentFontWeight, BuildContext context) {
     return OutlinedButton.icon(
       icon: const Icon(SpIcons.fontWeight),
-      label: Text(FontWeightTile.getFontWeightTitle(currentFontWeight)),
+      label: Text(FontWeightTile.getFontWeightTitle(currentFontWeight, context)),
       onPressed: () {
         SpFontWeightSheet(
           showDefaultLabel: false,

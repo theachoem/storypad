@@ -43,7 +43,7 @@ class AppearanceSection {
 }
 
 class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
-  AppearanceViewModel() : sections = _buildSections();
+  AppearanceViewModel(BuildContext context) : sections = _buildSections(context);
 
   final List<AppearanceSection> sections;
 
@@ -55,24 +55,24 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
     context.read<DevicePreferencesProvider>().resetAppearance(resettableKeys);
   }
 
-  static List<AppearanceSection> _buildSections() {
+  static List<AppearanceSection> _buildSections(BuildContext context) {
     return [
       AppearanceSection(
-        title: tr("general.appearance"),
+        title: context.tr("general.appearance"),
         items: [
           AppearanceItem(
             builder: (context) => ThemeModeTile.globalTheme(weekday: 1),
             resetKey: .themeMode,
           ),
           AppearanceItem(
-            builder: (context) => ColorSeedTile(),
+            builder: (context) => const ColorSeedTile(),
             resetKey: .colorSeed,
           ),
           if (kStoryPad) const AppearanceItem(builder: _buildAppIconTile),
         ],
       ),
       AppearanceSection(
-        title: tr("general.text"),
+        title: context.tr("general.text"),
         items: [
           AppearanceItem(
             builder: (context) => FontSizeTile.globalTheme(weekday: 2),
@@ -89,7 +89,7 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
       ),
       AppearanceSection(
-        title: tr("general.advanced"),
+        title: context.tr("general.advanced"),
         items: [
           const AppearanceItem(
             builder: _buildDayColorTile,
@@ -118,7 +118,7 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
         return ListTile(
           trailing: locked ? const Icon(SpIcons.lock) : null,
           leading: const SpSettingIconBadge(weekday: 5, icon: SpIcons.theme),
-          title: Text(tr('list_tile.day_colors.title')),
+          title: Text(context.tr('list_tile.day_colors.title')),
           onTap: () => const DayColorsRoute().push(context),
         );
       },

@@ -23,7 +23,7 @@ class AppearanceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppearanceViewModel>(
-      create: (context) => AppearanceViewModel(),
+      create: (context) => AppearanceViewModel(context),
       builder: (context, child) {
         return _AppearanceContent(Provider.of(context));
       },

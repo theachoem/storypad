@@ -31,7 +31,7 @@ class AssetCompressionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: const Icon(SpIcons.photo),
-      title: Text(tr('list_tile.attachment_compression.title')),
+      title: Text(context.tr('list_tile.attachment_compression.title')),
       subtitle: Text(currentAssetCompression.label),
       onTap: () {
         SpAssetCompressionSheet(

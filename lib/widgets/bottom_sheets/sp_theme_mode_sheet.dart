@@ -31,7 +31,7 @@ class SpThemeModeSheet extends BaseBottomSheet {
             children: [
               ...ThemeMode.values.map((themeMode) {
                 return ListTile(
-                  title: Text(ThemeModeTile.getLocalizedThemeMode(themeMode)),
+                  title: Text(ThemeModeTile.getLocalizedThemeMode(themeMode, context)),
                   trailing: Visibility(
                     visible: themeMode == selectedThemeMode,
                     child: SpFadeIn.fromBottom(

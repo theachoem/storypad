@@ -36,7 +36,7 @@ class TimeFormatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.timer),
-      title: Text(tr('general.time_format')),
+      title: Text(context.tr('general.time_format')),
       subtitle: Text(currentTimeFormat.label),
       onTap: () {
         SpTimeFormatSheet(

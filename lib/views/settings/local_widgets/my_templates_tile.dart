@@ -8,9 +8,7 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 
 class MyTemplatesTile extends StatelessWidget {
-  // No need const so translation can be updated when locale changes.
-  // ignore: prefer_const_constructors_in_immutables
-  MyTemplatesTile({
+  const MyTemplatesTile({
     super.key,
     required this.weekday,
   });
@@ -23,7 +21,7 @@ class MyTemplatesTile extends StatelessWidget {
 
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.book),
-      title: Text(tr('general.my_templates')),
+      title: Text(context.tr('general.my_templates')),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () {
         if (locked) {
