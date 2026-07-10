@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "ในวันนี้",
   "reminder.on_this_day.title": "ในวันนี้",
   "reminder.period.description": "รับการแจ้งเตือนก่อนถึงกำหนดรอบเดือนครั้งต่อไป",
+  "reminder.period.needs_more_data": "บันทึกข้อมูลอย่างน้อย 2 ช่วงเวลาขึ้นไป เพื่อรับวันที่แจ้งเตือนล่วงหน้า",
   "reminder.period.notification_body": "ประจำเดือนครั้งต่อไปของคุณอาจใกล้เข้ามาแล้ว",
   "reminder.period.notification_title": "การแจ้งเตือนประจำเดือน",
   "reminder.period.title": "การแจ้งเตือนประจำเดือน",

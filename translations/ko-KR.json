@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "오늘",
   "reminder.on_this_day.title": "오늘",
   "reminder.period.description": "다음 생리 예정일 전에 알림을 받으세요",
+  "reminder.period.needs_more_data": "2회 이상 생리 기간을 기록하면 예상 알림 날짜를 확인할 수 있습니다.",
   "reminder.period.notification_body": "곧 다음 생리가 시작될 수도 있습니다.",
   "reminder.period.notification_title": "생리 알림",
   "reminder.period.title": "생리 알림",

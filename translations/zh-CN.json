@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "在这一天",
   "reminder.on_this_day.title": "在这一天",
   "reminder.period.description": "在下次预计月经期之前收到通知",
+  "reminder.period.needs_more_data": "记录 2 个或多个周期即可获得预测提醒日期。",
   "reminder.period.notification_body": "你的下一次月经可能快来了。",
   "reminder.period.notification_title": "月经提醒",
   "reminder.period.title": "月经提醒",

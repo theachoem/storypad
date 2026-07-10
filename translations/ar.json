@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "في هذا اليوم",
   "reminder.on_this_day.title": "في هذا اليوم",
   "reminder.period.description": "احصلي على إشعار قبل موعد دورتك الشهرية المتوقعة التالية",
+  "reminder.period.needs_more_data": "قم بتسجيل فترتين أو أكثر للحصول على تاريخ تذكير متوقع.",
   "reminder.period.notification_body": "قد تأتي دورتك الشهرية القادمة قريباً.",
   "reminder.period.notification_title": "تذكير بالدورة الشهرية",
   "reminder.period.title": "تذكير بالدورة الشهرية",

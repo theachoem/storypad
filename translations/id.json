@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "Pada hari ini",
   "reminder.on_this_day.title": "Pada hari ini",
   "reminder.period.description": "Dapatkan pemberitahuan sebelum periode menstruasi Anda berikutnya yang diprediksi",
+  "reminder.period.needs_more_data": "Catat 2 periode atau lebih untuk mendapatkan perkiraan tanggal pengingat.",
   "reminder.period.notification_body": "Menstruasi Anda berikutnya mungkin akan segera datang.",
   "reminder.period.notification_title": "Pengingat menstruasi",
   "reminder.period.title": "Pengingat menstruasi",

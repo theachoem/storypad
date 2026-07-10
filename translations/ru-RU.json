@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "В этот день",
   "reminder.on_this_day.title": "В этот день",
   "reminder.period.description": "Получайте уведомления перед началом следующих прогнозируемых месячных.",
+  "reminder.period.needs_more_data": "Чтобы получить прогнозируемую дату напоминания, запишите в лог 2 или более периодов.",
   "reminder.period.notification_body": "Ваши следующие месячные, возможно, скоро начнутся.",
   "reminder.period.notification_title": "Напоминание о менструальном цикле",
   "reminder.period.title": "Напоминание о менструальном цикле",

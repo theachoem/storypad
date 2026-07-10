@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "នៅថ្ងៃនេះ",
   "reminder.on_this_day.title": "នៅថ្ងៃនេះ",
   "reminder.period.description": "ទទួលបានការជូនដំណឹងមុនពេលរដូវបន្ទាប់ដែលអ្នកបានព្យាករណ៍",
+  "reminder.period.needs_more_data": "កត់ត្រារយៈពេល 2 ឬច្រើនដង ដើម្បីទទួលបានកាលបរិច្ឆេទរំលឹកដែលបានព្យាករណ៍។",
   "reminder.period.notification_body": "រដូវបន្ទាប់របស់អ្នកអាចនឹងមកដល់ឆាប់ៗនេះ។",
   "reminder.period.notification_title": "ការរំលឹកអំពីរដូវ",
   "reminder.period.title": "ការរំលឹកអំពីរដូវ",

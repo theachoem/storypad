@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "En ce jour",
   "reminder.on_this_day.title": "En ce jour",
   "reminder.period.description": "Soyez averti(e) avant vos prochaines règles prévues",
+  "reminder.period.needs_more_data": "Enregistrez au moins deux périodes pour obtenir une date de rappel prévisionnelle.",
   "reminder.period.notification_body": "Vos prochaines règles pourraient arriver bientôt.",
   "reminder.period.notification_title": "Rappel des règles",
   "reminder.period.title": "Rappel des règles",
