@@ -9,7 +9,7 @@ class _AppearanceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr("general.appearance")),
+        title: Text(tr("general.customization")),
         actions: [
           SpPopupMenuButton(
             items: (context) {

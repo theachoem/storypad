@@ -19,12 +19,6 @@ class _LanguagesContent extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: viewModel.params.showBetaBanner ? _FeedbackBanner(context: context) : null,
-      floatingActionButton: viewModel.params.showThemeFAB
-          ? FloatingActionButton(
-              child: const Icon(SpIcons.theme),
-              onPressed: () => SettingsRoute(fromOnboarding: viewModel.params.fromOnboarding).push(context),
-            )
-          : null,
       body: ListView.builder(
         padding: const EdgeInsets.only(bottom: 16.0),
         itemCount: viewModel.supportedLocales.length,

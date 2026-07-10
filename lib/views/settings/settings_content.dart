@@ -17,7 +17,7 @@ class _SettingsContent extends StatelessWidget {
             SpSectionTitle(title: context.tr("general.general")),
             ListTile(
               leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.theme),
-              title: Text(context.tr("general.appearance")),
+              title: Text(context.tr("general.customization")),
               onTap: () => const AppearanceRoute().push(context),
             ),
             buildAppLockTile(context, weekday: 2),

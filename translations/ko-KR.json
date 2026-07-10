@@ -148,6 +148,7 @@
   "general.character_count_args": "문자 수: {CHAR_COUNT}",
   "general.cloud_backup": "클라우드 백업",
   "general.custom": "사용자 정의",
+  "general.customization": "맞춤 설정",
   "general.data_backup": "데이터 및 백업",
   "general.date.today": "오늘",
   "general.date.yesterday": "어제",

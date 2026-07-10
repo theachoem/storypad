@@ -43,7 +43,7 @@ class AppearanceSection {
 }
 
 class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
-  AppearanceViewModel(BuildContext context) : sections = _buildSections(context);
+  AppearanceViewModel(BuildContext context) : sections = _buildSections();
 
   final List<AppearanceSection> sections;
 
@@ -55,10 +55,10 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
     context.read<DevicePreferencesProvider>().resetAppearance(resettableKeys);
   }
 
-  static List<AppearanceSection> _buildSections(BuildContext context) {
+  static List<AppearanceSection> _buildSections() {
     return [
       AppearanceSection(
-        title: context.tr("general.appearance"),
+        title: tr("general.appearance"),
         items: [
           AppearanceItem(
             builder: (context) => ThemeModeTile.globalTheme(weekday: 1),
@@ -72,7 +72,7 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
       ),
       AppearanceSection(
-        title: context.tr("general.text"),
+        title: tr("general.text"),
         items: [
           AppearanceItem(
             builder: (context) => FontSizeTile.globalTheme(weekday: 2),
@@ -89,7 +89,7 @@ class AppearanceViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
       ),
       AppearanceSection(
-        title: context.tr("general.advanced"),
+        title: tr("general.advanced"),
         items: [
           const AppearanceItem(
             builder: _buildDayColorTile,

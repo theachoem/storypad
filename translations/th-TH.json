@@ -148,6 +148,7 @@
   "general.character_count_args": "จำนวนตัวอักษร: {CHAR_COUNT}",
   "general.cloud_backup": "การสำรองข้อมูลบนคลาวด์",
   "general.custom": "กำหนดเอง",
+  "general.customization": "การปรับแต่ง",
   "general.data_backup": "ข้อมูลและการสำรองข้อมูล",
   "general.date.today": "วันนี้",
   "general.date.yesterday": "เมื่อวาน",
