@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "Експорт у форматі Markdown",
   "paywall_features.relax_sounds.subtitle": "Створіть відповідний настрій перед тим, як писати або читати.",
   "paywall_features.relax_sounds.title": "Розслаблювальні звуки",
+  "paywall_features.stats.subtitle": "Перегляньте свої шаблони письма, найкращі моменти та тенденції.",
+  "paywall_features.stats.title": "Статистика та аналітика",
   "paywall_features.templates.subtitle": "Створіть власні шаблони для щоденних записів",
   "paywall_features.templates.title": "Шаблони",
   "plural.day_ago.one": "1 день тому",

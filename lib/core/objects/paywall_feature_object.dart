@@ -7,7 +7,7 @@ enum PaywallFeature {
   templates,
   customizations,
   markdown_export,
-  relax_sounds,
+  stats,
 }
 
 class PaywallFeatureObject {

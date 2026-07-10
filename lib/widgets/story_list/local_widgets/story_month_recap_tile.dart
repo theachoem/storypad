@@ -26,7 +26,13 @@ class _StoryMonthRecapTile extends StatelessWidget {
       removeLeft: true,
       removeRight: true,
       child: SpTapEffect(
-        onTap: () => StatsRoute.month(story.displayPathDate).push(context),
+        onTap: () {
+          if (context.read<InAppPurchaseProvider>().isProUser) {
+            StatsRoute.month(story.displayPathDate).push(context);
+          } else {
+            const PaywallRoute(initialFocus: .stats).push(context);
+          }
+        },
         child: ListTile(
           leading: Container(
             width: 32.0,

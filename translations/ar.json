@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "تصدير Markdown",
   "paywall_features.relax_sounds.subtitle": "حدد حالتك المزاجية قبل الكتابة أو القراءة.",
   "paywall_features.relax_sounds.title": "أصوات مريحة",
+  "paywall_features.stats.subtitle": "اطلع على أنماط كتابتك، وأهم لحظاتك، والاتجاهات السائدة.",
+  "paywall_features.stats.title": "الإحصائيات والتحليلات",
   "paywall_features.templates.subtitle": "هل لديك شيء لتكتبه كل يوم؟ اجعله قالبًا.",
   "paywall_features.templates.title": "القوالب",
   "plural.day_ago.one": "منذ يوم واحد",

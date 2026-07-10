@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "마크다운 내보내기",
   "paywall_features.relax_sounds.subtitle": "글을 쓰거나 읽기 전에 기분을 정하세요.",
   "paywall_features.relax_sounds.title": "편안한 소리",
+  "paywall_features.stats.subtitle": "자신의 글쓰기 패턴, 최고의 순간, 그리고 경향을 확인해 보세요.",
+  "paywall_features.stats.title": "통계 및 분석",
   "paywall_features.templates.subtitle": "매일 뭔가 써야 하나요? 템플릿으로 만들어 보세요.",
   "paywall_features.templates.title": "템플릿",
   "plural.day_ago.one": "1일 전",
