@@ -3,8 +3,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:storypad/core/databases/models/relex_sound_mix_model.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/paywall/paywall_view.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';

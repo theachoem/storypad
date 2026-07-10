@@ -114,11 +114,7 @@ class _SoundsTab extends StatelessWidget {
                 relaxSound: relaxSound,
                 selected: selected,
               ),
-              Consumer<InAppPurchaseProvider>(
-                builder: (context, iapProvider, child) {
-                  return buildStatusIcon(iapProvider, provider, context, relaxSound);
-                },
-              ),
+              buildStatusIcon(provider, context, relaxSound),
             ],
           ),
           Text(
@@ -132,24 +128,11 @@ class _SoundsTab extends StatelessWidget {
   }
 
   Widget buildStatusIcon(
-    InAppPurchaseProvider iapProvider,
     RelaxSoundsProvider provider,
     BuildContext context,
     RelaxSoundObject relaxSound,
   ) {
     PlayerState? state = provider.playerStateFor(relaxSound.soundUrlPath);
-
-    if (!relaxSound.free && !iapProvider.isProUser) {
-      return Positioned(
-        top: 8.0,
-        right: 8.0,
-        child: Icon(
-          SpIcons.lock,
-          color: ColorScheme.of(context).primary,
-          size: 16.0,
-        ),
-      );
-    }
 
     if (viewModel.downloaded(relaxSound)) return const SizedBox.shrink();
     if (state != null && state.playing == true) return const SizedBox.shrink();
