@@ -18,7 +18,9 @@ class PeriodPredictionService {
   /// Pure prediction from a list of period day-dates (flat, one entry per
   /// logged day — a single cycle may span a month boundary, e.g. Jan
   /// 27–Feb 2). Returns null when there isn't enough history (fewer than
-  /// [minCycleStarts] distinct cycle starts, grouped from consecutive days).
+  /// [minCycleStarts] distinct cycle starts, grouped from consecutive days),
+  /// or when the most recent logged start is older than [maxHistoryMonths]
+  /// relative to `now` (nothing recent enough to extrapolate from).
   static DateTime? predictNextPeriodStart(List<DateTime> periodDates, {DateTime? now}) {
     final days = periodDates.map((d) => DateTime(d.year, d.month, d.day)).toSet().toList()..sort();
 
@@ -32,6 +34,16 @@ class PeriodPredictionService {
     ];
 
     if (allStarts.length < minCycleStarts) return null;
+
+    final today = now ?? DateTime.now();
+    final todayDay = DateTime(today.year, today.month, today.day);
+
+    // If even the most recent logged start predates our recency window
+    // (relative to today, not to that start itself), the history is too
+    // stale to extrapolate from — bail rather than roll a long-dead cycle
+    // forward into a misleadingly confident future date.
+    final staleCutoff = DateTime(todayDay.year, todayDay.month - maxHistoryMonths, todayDay.day);
+    if (allStarts.last.isBefore(staleCutoff)) return null;
 
     final cutoff = DateTime(allStarts.last.year, allStarts.last.month - maxHistoryMonths, allStarts.last.day);
     var starts = allStarts.where((d) => !d.isBefore(cutoff)).toList();
@@ -47,9 +59,6 @@ class PeriodPredictionService {
     }
     final avgCycle = (totalGap / (starts.length - 1)).round();
     if (avgCycle <= 0) return null;
-
-    final today = now ?? DateTime.now();
-    final todayDay = DateTime(today.year, today.month, today.day);
 
     var next = starts.last.add(Duration(days: avgCycle));
     // Roll forward whole cycles if the naive prediction is already in the past.
