@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "Markdown Dışa Aktarma",
   "paywall_features.relax_sounds.subtitle": "Yazmaya veya okumaya başlamadan önce ortamı hazırlayın.",
   "paywall_features.relax_sounds.title": "Rahatlatıcı Sesler",
+  "paywall_features.stats.subtitle": "Yazma alışkanlıklarınızı, en iyi anlarınızı ve eğilimlerinizi inceleyin.",
+  "paywall_features.stats.title": "İstatistikler ve Analizler",
   "paywall_features.templates.subtitle": "Kendi günlük yazma şablonlarınızı oluşturun.",
   "paywall_features.templates.title": "Şablonlar",
   "plural.day_ago.one": "1 gün önce",

@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "Exportación de Markdown",
   "paywall_features.relax_sounds.subtitle": "Establece tu estado de ánimo antes de escribir o leer.",
   "paywall_features.relax_sounds.title": "Sonidos relajantes",
+  "paywall_features.stats.subtitle": "Descubre tus patrones de escritura, tus mejores momentos y las tendencias.",
+  "paywall_features.stats.title": "Estadísticas y análisis",
   "paywall_features.templates.subtitle": "¿Tienes algo que escribir todos los días? Hazlo como plantilla.",
   "paywall_features.templates.title": "Plantillas",
   "plural.day_ago.one": "Hace 1 día",

@@ -21,35 +21,9 @@ class _RelaxSoundsContent extends StatelessWidget {
                   CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
               ],
               bottom: TabBar(
-                onTap: (index) {
-                  if (index == 1 && !context.read<InAppPurchaseProvider>().isProUser) {
-                    DefaultTabController.of(context).animateTo(0);
-                    const PaywallRoute(initialFocus: .relax_sounds).push(context);
-                  }
-                },
                 tabs: [
                   Tab(text: tr('general.sounds')),
-                  Tab(
-                    child: Consumer<InAppPurchaseProvider>(
-                      builder: (context, iapProvider, child) {
-                        return Text.rich(
-                          TextSpan(
-                            text: "${tr('general.sound_mixes')} ",
-                            children: [
-                              if (!iapProvider.isProUser)
-                                const WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Icon(
-                                    SpIcons.lock,
-                                    size: 16.0,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  Tab(child: Text(tr('general.sound_mixes'))),
                 ],
               ),
             ),
@@ -59,7 +33,6 @@ class _RelaxSoundsContent extends StatelessWidget {
               },
             ),
             body: TabBarView(
-              physics: context.read<InAppPurchaseProvider>().isProUser ? null : const NeverScrollableScrollPhysics(),
               children: [
                 _SoundsTab(viewModel: viewModel),
                 _MixesTab(viewModel: viewModel),

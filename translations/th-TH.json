@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "การส่งออกมาร์คดาวน์",
   "paywall_features.relax_sounds.subtitle": "สร้างบรรยากาศที่เหมาะสมก่อนเริ่มเขียนหรืออ่าน",
   "paywall_features.relax_sounds.title": "เสียงที่ช่วยให้ผ่อนคลาย",
+  "paywall_features.stats.subtitle": "ดูรูปแบบการเขียน ช่วงเวลาสำคัญ และแนวโน้มต่างๆ ของคุณ",
+  "paywall_features.stats.title": "สถิติและข้อมูลเชิงลึก",
   "paywall_features.templates.subtitle": "สร้างเทมเพลตการเขียนประจำวันของคุณเอง",
   "paywall_features.templates.title": "แม่แบบ",
   "plural.day_ago.one": "1 วันที่แล้ว",

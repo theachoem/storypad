@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/paywall_feature_object.dart';
+import 'package:storypad/core/objects/stats/stats_range.dart';
 import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
-import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
+import 'package:storypad/views/stats/stats_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'paywall_view.dart';
@@ -94,7 +95,18 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         ],
         onOpen: (BuildContext context) => const TemplatesRoute().push(context),
       ),
-
+      PaywallFeatureObject(
+        type: PaywallFeature.stats,
+        title: tr('paywall_features.stats.title'),
+        subtitle: tr('paywall_features.stats.subtitle'),
+        iconData: SpIcons.star,
+        weekdayColor: 5,
+        demoImagePaths: [
+          '/feature_demos/stats/stats_1.jpg',
+          '/feature_demos/stats/stats_2.jpg',
+        ],
+        onOpen: (BuildContext context) => StatsRoute(initialRange: StatsRange.year(DateTime.now())).push(context),
+      ),
       PaywallFeatureObject(
         type: PaywallFeature.markdown_export,
         title: tr('paywall_features.markdown_export.title'),
@@ -109,20 +121,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/markdown_export/markdown_export_5.jpg',
         ],
         onOpen: (BuildContext context) => const ImportExportRoute(initialExportOption: .markdown).push(context),
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.relax_sounds,
-        title: tr('paywall_features.relax_sounds.title'),
-        subtitle: tr('paywall_features.relax_sounds.subtitle'),
-        iconData: SpIcons.musicNote,
-        weekdayColor: 5,
-        demoImagePaths: [
-          '/feature_demos/relax_sounds/relax_sound_1.jpg',
-          '/feature_demos/relax_sounds/relax_sound_2.jpg',
-          '/feature_demos/relax_sounds/relax_sound_3.jpg',
-          '/feature_demos/relax_sounds/relax_sound_4.jpg',
-        ],
-        onOpen: (BuildContext context) => const RelaxSoundsRoute().push(context),
       ),
     ];
 

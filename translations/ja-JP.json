@@ -452,6 +452,8 @@
   "paywall_features.markdown_export.title": "マークダウンエクスポート",
   "paywall_features.relax_sounds.subtitle": "書く前や読む前に気分を整えましょう。",
   "paywall_features.relax_sounds.title": "リラックスできる音",
+  "paywall_features.stats.subtitle": "あなたの文章のパターン、最高の瞬間、そして傾向を確認しましょう。",
+  "paywall_features.stats.title": "統計と分析",
   "paywall_features.templates.subtitle": "毎日何か書く必要がありますか？テンプレートにしましょう。",
   "paywall_features.templates.title": "テンプレート",
   "plural.day_ago.one": "1日前",
