@@ -9,16 +9,16 @@ class SpDemoImagesSheet extends BaseBottomSheet {
   });
 
   static const List<String> periodCalendarDemoImages = [
-    "/feature_demos/period_calendar/period_calendar_1.jpg",
-    "/feature_demos/period_calendar/period_calendar_2.jpg",
-    "/feature_demos/period_calendar/period_calendar_3.jpg",
+    "/feature_demos/period_calendar/period_calendar_1__1080x2400.jpg",
+    "/feature_demos/period_calendar/period_calendar_2__1080x2400.jpg",
+    "/feature_demos/period_calendar/period_calendar_3__1080x2400.jpg",
   ];
 
   static const List<String> relaxSoundDemoImages = [
-    "/feature_demos/relax_sounds/relax_sound_1.jpg",
-    "/feature_demos/relax_sounds/relax_sound_2.jpg",
-    "/feature_demos/relax_sounds/relax_sound_3.jpg",
-    "/feature_demos/relax_sounds/relax_sound_4.jpg",
+    "/feature_demos/relax_sounds/relax_sound_1__1080x2400.jpg",
+    "/feature_demos/relax_sounds/relax_sound_2__1080x2400.jpg",
+    "/feature_demos/relax_sounds/relax_sound_3__1080x2400.jpg",
+    "/feature_demos/relax_sounds/relax_sound_4__1080x2400.jpg",
   ];
 
   static const List<String> allDemoImages = [

@@ -22,17 +22,30 @@ class SpDemoImages extends StatelessWidget {
   final int skeletonCount;
 
   double get height => 320.0;
+
+  static final RegExp _dimensionsPattern = RegExp(r'__(\d+)x(\d+)\.\w+$');
+
+  double aspectRatioOf(String imageId) {
+    final match = _dimensionsPattern.firstMatch(imageId);
+    final w = double.tryParse(match?.group(1) ?? '');
+    final h = double.tryParse(match?.group(2) ?? '');
+    if (w != null && h != null && h > 0) return w / h;
+
+    return imageId.contains('backgrounds') ? 1 : 9 / 20;
+  }
+
+  double widthOf(String imageId) => height * aspectRatioOf(imageId);
+
   double get width {
     final imageIds = [
       ...?demoImageUrls,
       ...?demoImageUrlPaths,
     ];
 
-    if (imageIds.any((imageId) => imageId.contains('backgrounds'))) {
-      return height * 1;
-    }
+    final imageId = imageIds.elementAtOrNull(0);
+    if (imageId == null) return height * 9 / 20;
 
-    return height * 9 / 20;
+    return widthOf(imageId);
   }
 
   int get itemCount => demoImageUrls?.length ?? demoImageUrlPaths?.length ?? skeletonCount;
@@ -68,17 +81,20 @@ class SpDemoImages extends StatelessWidget {
     }
 
     final urlPath = demoImageUrlPaths?.elementAtOrNull(index);
-    if (urlPath == null) return buildLoading(context);
+    if (urlPath == null) return buildLoading(context, width);
+
+    final itemWidth = widthOf(urlPath);
 
     return SpFirestoreStorageDownloaderBuilder(
       filePath: urlPath,
       builder: (context, file, failed) {
-        if (file == null) return buildLoading(context);
+        if (file == null) return buildLoading(context, itemWidth);
 
         return buildLocalImage(
           context: context,
           index: index,
           filePath: file.path,
+          width: itemWidth,
         );
       },
     );
@@ -90,11 +106,13 @@ class SpDemoImages extends StatelessWidget {
     required String imageUrl,
   }) {
     final urls = demoImageUrls;
-    if (urls == null) return buildLoading(context);
+    if (urls == null) return buildLoading(context, width);
+
+    final itemWidth = widthOf(imageUrl);
 
     return SpFadeIn(
       child: SizedBox(
-        width: width,
+        width: itemWidth,
         child: GestureDetector(
           onTap: () => SpImagesViewer.fromString(
             initialIndex: index,
@@ -108,10 +126,10 @@ class SpDemoImages extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               filterQuality: FilterQuality.high,
-              width: width,
+              width: itemWidth,
               height: height,
               fit: BoxFit.cover,
-              progressIndicatorBuilder: (context, url, progress) => buildLoading(context),
+              progressIndicatorBuilder: (context, url, progress) => buildLoading(context, itemWidth),
             ),
           ),
         ),
@@ -123,6 +141,7 @@ class SpDemoImages extends StatelessWidget {
     required BuildContext context,
     required int index,
     required String filePath,
+    required double width,
   }) {
     return SpFadeIn(
       child: SizedBox(
@@ -139,7 +158,7 @@ class SpDemoImages extends StatelessWidget {
               width: width,
               height: height,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => buildLoading(context),
+              errorBuilder: (context, error, stackTrace) => buildLoading(context, width),
             ),
           ),
         ),
@@ -164,7 +183,7 @@ class SpDemoImages extends StatelessWidget {
     ).show(context);
   }
 
-  Container buildLoading(BuildContext context) {
+  Container buildLoading(BuildContext context, double width) {
     return Container(
       width: width,
       height: height,
