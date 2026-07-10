@@ -14,6 +14,14 @@ enum TimeFormatOption {
     }
   }
 
+  /// Resolves the effective time format, falling back to the device's
+  /// 24-hour setting ([MediaQuery.alwaysUse24HourFormatOf]) when the user
+  /// hasn't customized it.
+  static TimeFormatOption resolve(BuildContext context, TimeFormatOption? preference) {
+    if (preference != null) return preference;
+    return MediaQuery.alwaysUse24HourFormatOf(context) ? TimeFormatOption.h24 : TimeFormatOption.h12;
+  }
+
   String formatTime(DateTime date, Locale locale) {
     if (this == h12) {
       return DateFormatHelper.jm(date, locale);

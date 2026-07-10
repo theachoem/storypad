@@ -28,7 +28,7 @@ class DevicePreferencesObject {
   /// `null` or a missing day key falls back to [kDefaultColorNamesByDay].
   final Map<int, String>? colorByDay;
   final double voicePlaybackSpeed;
-  final TimeFormatOption timeFormat;
+  final TimeFormatOption? timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
   final AssetCompressionOption assetCompression;
   final SpMapStyle mapStyle;
@@ -64,7 +64,7 @@ class DevicePreferencesObject {
     this.enablePeriodCalendar,
     this.reminders,
     ThemeMode? themeMode,
-    TimeFormatOption? timeFormat,
+    this.timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
     this.colorSeedValue,
@@ -77,7 +77,6 @@ class DevicePreferencesObject {
     SpMapStyle? mapStyle,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,
-       timeFormat = timeFormat ?? TimeFormatOption.h12,
        firstDayOfWeek = firstDayOfWeek ?? FirstDayOfWeekOption.defaultValue,
        assetCompression = assetCompression ?? AssetCompressionOption.defaultValue,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,

@@ -12,8 +12,8 @@ class SpTimeFormatSheet extends BaseBottomSheet {
     required this.onChanged,
   });
 
-  final TimeFormatOption timeFormat;
-  final void Function(TimeFormatOption timeFormat) onChanged;
+  final TimeFormatOption? timeFormat;
+  final void Function(TimeFormatOption? timeFormat) onChanged;
 
   @override
   bool get fullScreen => false;
@@ -30,9 +30,11 @@ class SpTimeFormatSheet extends BaseBottomSheet {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ...TimeFormatOption.values.map((timeFormat) {
+              ...[null, ...TimeFormatOption.values].map((timeFormat) {
+                final label = timeFormat?.label ?? "${context.tr('general.system')} (${context.tr('general.default')})";
+
                 return ListTile(
-                  title: Text(_label(context, timeFormat)),
+                  title: Text(label),
                   trailing: Visibility(
                     visible: timeFormat == selectedTimeFormat,
                     child: SpFadeIn.fromBottom(
@@ -54,15 +56,5 @@ class SpTimeFormatSheet extends BaseBottomSheet {
         );
       },
     );
-  }
-
-  String _label(BuildContext context, TimeFormatOption value) {
-    final baseLabel = value.label;
-
-    if (value == TimeFormatOption.values.first) {
-      return '$baseLabel (${context.tr('general.default')})';
-    }
-
-    return baseLabel;
   }
 }

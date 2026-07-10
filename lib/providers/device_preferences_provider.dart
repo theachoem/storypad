@@ -177,7 +177,7 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     );
   }
 
-  void setTimeFormat(TimeFormatOption timeFormat) {
+  void setTimeFormat(TimeFormatOption? timeFormat) {
     _preferences = _preferences.copyWith(timeFormat: timeFormat);
     storage.writeObject(_preferences);
     notifyListeners();
