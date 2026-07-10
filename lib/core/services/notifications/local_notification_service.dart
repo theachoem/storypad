@@ -65,11 +65,21 @@ class LocalNotificationService {
     // icon as that fallback.
     final androidSettings = AndroidInitializationSettings(NotificationChannel.reminderCustom.androidIcon);
     // Shared by iOS and macOS — both use the same Darwin notification APIs.
-    const darwinSettings = DarwinInitializationSettings(
+    // One category per built-in type (keyed by ReminderType.notificationActionId),
+    // each with its single action button — see _detailsFor.
+    final darwinSettings = DarwinInitializationSettings(
       // Permission is requested explicitly on first enable, not at init.
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
+      notificationCategories: [
+        for (final type in ReminderType.values)
+          if (type.notificationActionId case final actionId?)
+            DarwinNotificationCategory(
+              actionId,
+              actions: [DarwinNotificationAction.plain(actionId, type.notificationActionLabel!)],
+            ),
+      ],
     );
 
     await _plugin.initialize(
@@ -259,6 +269,7 @@ class LocalNotificationService {
 
   NotificationDetails _detailsFor(ReminderType type) {
     final channel = type.channel;
+    final actionId = type.notificationActionId;
     return NotificationDetails(
       android: AndroidNotificationDetails(
         channel.channelID,
@@ -266,9 +277,13 @@ class LocalNotificationService {
         importance: Importance.high,
         priority: Priority.high,
         icon: channel.androidIcon,
+        actions: [
+          if (actionId != null)
+            AndroidNotificationAction(actionId, type.notificationActionLabel!, showsUserInterface: true),
+        ],
       ),
-      iOS: const DarwinNotificationDetails(),
-      macOS: const DarwinNotificationDetails(),
+      iOS: DarwinNotificationDetails(categoryIdentifier: actionId),
+      macOS: DarwinNotificationDetails(categoryIdentifier: actionId),
     );
   }
 
