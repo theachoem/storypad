@@ -25,7 +25,10 @@ class TagsViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> load() async {
     await tagsProvider.reload();
     storiesCountByTagId = StoryDbModel.db.getStoryCountByTags(
-      tagIds: tagsProvider.tags?.items.map((e) => e.id).toList() ?? [],
+      tagIds: [
+        ...?tagsProvider.tags?.items.map((e) => e.id),
+        ...?tagsProvider.peopleTags?.items.map((e) => e.id),
+      ],
     );
     notifyListeners();
   }
