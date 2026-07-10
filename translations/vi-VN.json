@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "Vào ngày này",
   "reminder.on_this_day.title": "Vào ngày này",
   "reminder.period.description": "Nhận thông báo trước kỳ kinh nguyệt dự kiến ​​tiếp theo của bạn",
+  "reminder.period.needs_more_data": "Ghi lại 2 kỳ trở lên để nhận được ngày nhắc nhở dự kiến.",
   "reminder.period.notification_body": "Kỳ kinh nguyệt tiếp theo của bạn có thể sắp đến rồi.",
   "reminder.period.notification_title": "Nhắc nhở chu kỳ kinh nguyệt",
   "reminder.period.title": "Nhắc nhở chu kỳ kinh nguyệt",

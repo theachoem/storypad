@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "An diesem Tag",
   "reminder.on_this_day.title": "An diesem Tag",
   "reminder.period.description": "Lassen Sie sich vor Ihrer nächsten vorhergesagten Periode benachrichtigen.",
+  "reminder.period.needs_more_data": "Protokollieren Sie mindestens zwei Perioden, um ein voraussichtliches Erinnerungsdatum zu erhalten.",
   "reminder.period.notification_body": "Ihre nächste Menstruation könnte bald bevorstehen.",
   "reminder.period.notification_title": "Periodenerinnerung",
   "reminder.period.title": "Periodenerinnerung",

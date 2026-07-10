@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "この日",
   "reminder.on_this_day.title": "この日",
   "reminder.period.description": "次回の生理予定日前に通知を受け取る",
+  "reminder.period.needs_more_data": "予測リマインダー日を取得するには、2つ以上の期間を記録してください。",
   "reminder.period.notification_body": "次の生理がもうすぐ来るかもしれません。",
   "reminder.period.notification_title": "生理のリマインダー",
   "reminder.period.title": "生理のリマインダー",

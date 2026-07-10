@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "Bugün",
   "reminder.on_this_day.title": "Bugün",
   "reminder.period.description": "Bir sonraki tahmini adet döneminizden önce bildirim alın.",
+  "reminder.period.needs_more_data": "Tahmini hatırlatma tarihini almak için 2 veya daha fazla dönemi kaydedin.",
   "reminder.period.notification_body": "Bir sonraki adet döneminiz yakında başlayabilir.",
   "reminder.period.notification_title": "Adet dönemi hatırlatıcısı",
   "reminder.period.title": "Adet dönemi hatırlatıcısı",

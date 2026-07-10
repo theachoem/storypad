@@ -6,21 +6,40 @@ import 'package:storypad/core/databases/models/event_db_model.dart';
 /// groups consecutive days into cycles, takes each cycle's first day as a start,
 /// averages the gap between starts, and projects the next start.
 class PeriodPredictionService {
-  /// Pure prediction from a list of period day-dates. Returns null when there
-  /// isn't enough history (fewer than 2 distinct cycle starts).
-  static DateTime? predictNextPeriodStart(List<DateTime> periodDates, {DateTime? now}) {
-    if (periodDates.length < 2) return null;
+  /// Minimum number of logged cycle starts needed before we'll predict anything.
+  static const int minCycleStarts = 2;
 
+  /// Cycle starts older than this many months (relative to the most recent
+  /// start) are dropped before averaging — recent cycles predict better than
+  /// year-old ones, and capping the window keeps the average cheap and easy
+  /// to explain ("based on your last 6 months").
+  static const int maxHistoryMonths = 6;
+
+  /// Pure prediction from a list of period day-dates (flat, one entry per
+  /// logged day — a single cycle may span a month boundary, e.g. Jan
+  /// 27–Feb 2). Returns null when there isn't enough history (fewer than
+  /// [minCycleStarts] distinct cycle starts, grouped from consecutive days).
+  static DateTime? predictNextPeriodStart(List<DateTime> periodDates, {DateTime? now}) {
     final days = periodDates.map((d) => DateTime(d.year, d.month, d.day)).toSet().toList()..sort();
 
-    // A day is a cycle start when the previous calendar day isn't also a period day.
+    // A day is a cycle start when the previous calendar day isn't also a
+    // period day — this groups consecutive logged days (a single period,
+    // possibly spanning a month boundary) into one cycle start.
     final daySet = days.toSet();
-    final starts = <DateTime>[
+    final allStarts = <DateTime>[
       for (final day in days)
         if (!daySet.contains(day.subtract(const Duration(days: 1)))) day,
     ];
 
-    if (starts.length < 2) return null;
+    if (allStarts.length < minCycleStarts) return null;
+
+    final cutoff = DateTime(allStarts.last.year, allStarts.last.month - maxHistoryMonths, allStarts.last.day);
+    var starts = allStarts.where((d) => !d.isBefore(cutoff)).toList();
+    // The 6-month window can leave too few points (e.g. sparse logging) —
+    // fall back to the most recent [minCycleStarts] starts so we still predict.
+    if (starts.length < minCycleStarts) {
+      starts = allStarts.sublist(allStarts.length - minCycleStarts);
+    }
 
     int totalGap = 0;
     for (int i = 1; i < starts.length; i++) {

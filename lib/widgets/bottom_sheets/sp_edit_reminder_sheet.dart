@@ -215,8 +215,7 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
                       ),
                     ),
                   if (_isPeriod) _buildDaysAheadTile(context),
-                  if (_enabled && _predictionLoaded && _nextOccurrence != null)
-                    _buildNextOccurrenceHint(context, _nextOccurrence!),
+                  if (_enabled && _predictionLoaded) _buildScheduleHint(context),
                 ],
               ),
             ),
@@ -247,9 +246,31 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
     }
   }
 
-  /// "Your next reminder will be on ..." — lets the user confirm the schedule
-  /// (and that the feature is actually working) without waiting for it to fire.
-  Widget _buildNextOccurrenceHint(BuildContext context, DateTime nextOccurrence) {
+  /// Below the fields: either "Your next reminder will be on ..." (when a
+  /// future occurrence is known) or, for period reminders with too little
+  /// logged history to predict from, a note telling the user what's missing.
+  /// Shows nothing otherwise (e.g. a stale/past on-this-day prediction, or a
+  /// period prediction that has enough history but nothing to say yet).
+  Widget _buildScheduleHint(BuildContext context) {
+    final nextOccurrence = _nextOccurrence;
+    if (nextOccurrence != null && nextOccurrence.isAfter(DateTime.now())) {
+      return _buildHint(
+        context,
+        tr(
+          'reminder.next_occurrence.at',
+          namedArgs: {'SP_DATE': DateFormatHelper.yMMMd(nextOccurrence, context.locale)},
+        ),
+      );
+    }
+
+    if (_isPeriod && _predictedPeriodStart == null) {
+      return _buildHint(context, tr('reminder.period.needs_more_data'));
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildHint(BuildContext context, String message) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0),
       child: Row(
@@ -259,10 +280,7 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              tr(
-                'reminder.next_occurrence.at',
-                namedArgs: {'SP_DATE': DateFormatHelper.yMMMd(nextOccurrence, context.locale)},
-              ),
+              message,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ColorScheme.of(context).onSurfaceVariant),
             ),
           ),

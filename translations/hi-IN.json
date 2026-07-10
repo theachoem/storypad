@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "इस दिन",
   "reminder.on_this_day.title": "इस दिन",
   "reminder.period.description": "अपने अगले अनुमानित मासिक धर्म से पहले सूचना प्राप्त करें",
+  "reminder.period.needs_more_data": "अनुमानित अनुस्मारक तिथि प्राप्त करने के लिए 2 या अधिक अवधियों को लॉग करें।",
   "reminder.period.notification_body": "आपका अगला मासिक धर्म जल्द ही आने वाला हो सकता है।",
   "reminder.period.notification_title": "मासिक धर्म अनुस्मारक",
   "reminder.period.title": "मासिक धर्म अनुस्मारक",

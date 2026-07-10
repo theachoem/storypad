@@ -483,6 +483,7 @@
   "reminder.on_this_day.notification_title": "En este día",
   "reminder.on_this_day.title": "En este día",
   "reminder.period.description": "Recibe una notificación antes de tu próximo período previsto.",
+  "reminder.period.needs_more_data": "Registra 2 o más períodos para obtener una fecha de recordatorio prevista.",
   "reminder.period.notification_body": "Es posible que tu próxima menstruación llegue pronto.",
   "reminder.period.notification_title": "Recordatorio de la menstruación",
   "reminder.period.title": "Recordatorio de la menstruación",
