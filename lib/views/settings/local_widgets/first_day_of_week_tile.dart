@@ -35,7 +35,7 @@ class FirstDayOfWeekTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.calendar),
-      title: Text(tr('list_tile.first_day_of_week.title')),
+      title: Text(context.tr('list_tile.first_day_of_week.title')),
       subtitle: Text(_label(context, currentFirstDayOfWeek)),
       onTap: () {
         SpFirstDayOfWeekSheet(

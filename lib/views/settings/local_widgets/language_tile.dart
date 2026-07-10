@@ -22,7 +22,7 @@ class LanguageTile extends StatelessWidget {
       title: Text.rich(
         TextSpan(
           style: Theme.of(context).textTheme.bodyLarge,
-          text: "${tr("page.language.title")} ",
+          text: "${context.tr("page.language.title")} ",
           children: [
             // WidgetSpan(
             //   child: Material(

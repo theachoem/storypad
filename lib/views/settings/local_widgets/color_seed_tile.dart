@@ -7,9 +7,7 @@ import 'package:storypad/widgets/sp_adaptive_pop_up_button.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 
 class ColorSeedTile extends StatelessWidget {
-  // No need const so translation can be updated when locale changes.
-  // ignore: prefer_const_constructors_in_immutables
-  ColorSeedTile({
+  const ColorSeedTile({
     super.key,
   });
 
@@ -32,8 +30,10 @@ class ColorSeedTile extends StatelessWidget {
       },
       builder: (void Function() open) {
         return ListTile(
-          title: Text(tr("list_tile.color_seed.title")),
-          subtitle: Text(provider.preferences.colorSeedCustomized ? tr("general.custom") : tr("general.default")),
+          title: Text(context.tr("list_tile.color_seed.title")),
+          subtitle: Text(
+            provider.preferences.colorSeedCustomized ? context.tr("general.custom") : context.tr("general.default"),
+          ),
           leading: Container(
             width: 40,
             height: 40,

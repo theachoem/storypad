@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -11,8 +12,8 @@ class SpTimeFormatSheet extends BaseBottomSheet {
     required this.onChanged,
   });
 
-  final TimeFormatOption timeFormat;
-  final void Function(TimeFormatOption timeFormat) onChanged;
+  final TimeFormatOption? timeFormat;
+  final void Function(TimeFormatOption? timeFormat) onChanged;
 
   @override
   bool get fullScreen => false;
@@ -29,9 +30,11 @@ class SpTimeFormatSheet extends BaseBottomSheet {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ...TimeFormatOption.values.map((timeFormat) {
+              ...[null, ...TimeFormatOption.values].map((timeFormat) {
+                final label = timeFormat?.label ?? "${context.tr('general.system')} (${context.tr('general.default')})";
+
                 return ListTile(
-                  title: Text(timeFormat.label),
+                  title: Text(label),
                   trailing: Visibility(
                     visible: timeFormat == selectedTimeFormat,
                     child: SpFadeIn.fromBottom(

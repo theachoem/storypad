@@ -13,7 +13,6 @@ import 'package:storypad/widgets/sp_adaptive_pop_up_button.dart';
 import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/sp_theme_mode_icon.dart';
 
 part "local_widgets/day_color_tile.dart";
 
@@ -39,12 +38,6 @@ class DayColorsView extends StatelessWidget {
       appBar: AppBar(
         title: Text(tr("list_tile.day_colors.title")),
         actions: [
-          // Let the user preview day colors in light/dark instantly (mirrors the home end drawer toggle).
-          IconButton(
-            tooltip: AppTheme.isDarkMode(context) ? tr("general.theme_mode.light") : tr("general.theme_mode.dark"),
-            icon: SpThemeModeIcon(parentContext: context),
-            onPressed: () => context.read<DevicePreferencesProvider>().toggleThemeMode(context),
-          ),
           SpPopupMenuButton(
             fromAppBar: true,
             items: (context) {

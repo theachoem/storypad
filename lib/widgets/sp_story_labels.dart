@@ -14,6 +14,7 @@ import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
@@ -147,7 +148,10 @@ class SpStoryLabels extends StatelessWidget {
           builder: (context, provider, child) {
             return buildPin(
               context: context,
-              title: provider.preferences.timeFormat.formatTime(story.displayPathDate, context.locale),
+              title: TimeFormatOption.resolve(
+                context,
+                provider.preferences.timeFormat,
+              ).formatTime(story.displayPathDate, context.locale),
               onTap: () => showTimePicker(context),
             );
           },

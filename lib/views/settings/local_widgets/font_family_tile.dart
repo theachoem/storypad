@@ -41,7 +41,7 @@ class FontFamilyTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.font),
-      title: Text(tr("list_tile.font_family.title")),
+      title: Text(context.tr("list_tile.font_family.title")),
       subtitle: Text(currentFontFamily),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () {

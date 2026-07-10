@@ -38,8 +38,8 @@ class FontWeightTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.fontWeight),
-      title: Text(tr("list_tile.font_weight.title")),
-      subtitle: Text(getFontWeightTitle(currentFontWeight)),
+      title: Text(context.tr("list_tile.font_weight.title")),
+      subtitle: Text(getFontWeightTitle(currentFontWeight, context)),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () {
         SpFontWeightSheet(
@@ -51,17 +51,17 @@ class FontWeightTile extends StatelessWidget {
     );
   }
 
-  static String getFontWeightTitle(FontWeight fontWeight) {
+  static String getFontWeightTitle(FontWeight fontWeight, BuildContext context) {
     final descriptions = {
-      100: tr("general.font_weight.thin"),
-      200: tr("general.font_weight.extra_light"),
-      300: tr("general.font_weight.light"),
-      400: tr("general.font_weight.normal"),
-      500: tr("general.font_weight.medium"),
-      600: tr("general.font_weight.semi_bold"),
-      700: tr("general.font_weight.bold"),
-      800: tr("general.font_weight.extra_bold"),
-      900: tr("general.font_weight.black"),
+      100: context.tr("general.font_weight.thin"),
+      200: context.tr("general.font_weight.extra_light"),
+      300: context.tr("general.font_weight.light"),
+      400: context.tr("general.font_weight.normal"),
+      500: context.tr("general.font_weight.medium"),
+      600: context.tr("general.font_weight.semi_bold"),
+      700: context.tr("general.font_weight.bold"),
+      800: context.tr("general.font_weight.extra_bold"),
+      900: context.tr("general.font_weight.black"),
     };
 
     return "${fontWeight.value} - ${descriptions[fontWeight.value]}";

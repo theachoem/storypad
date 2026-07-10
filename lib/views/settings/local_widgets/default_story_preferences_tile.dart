@@ -9,7 +9,10 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_setting_icon_badge.dart';
 
 class DefaultStoryPreferencesTile extends StatelessWidget {
-  const DefaultStoryPreferencesTile({super.key, required this.weekday});
+  const DefaultStoryPreferencesTile({
+    super.key,
+    required this.weekday,
+  });
 
   final int weekday;
 
@@ -19,7 +22,7 @@ class DefaultStoryPreferencesTile extends StatelessWidget {
 
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.edit),
-      title: Text(tr("list_tile.default_story_preferences.title")),
+      title: Text(context.tr("list_tile.default_story_preferences.title")),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () async {
         // The sheet has no save button for pro users; it reports its live draft and

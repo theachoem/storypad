@@ -22,7 +22,7 @@ class AppIconTile extends StatelessWidget {
       initialValue: DateTime.now(),
       builder: (context, rebuildAt, notifier) {
         return ListTile(
-          title: Text(tr('general.app_icon')),
+          title: Text(context.tr('general.app_icon')),
           trailing: locked ? const Icon(SpIcons.lock) : null,
           leading: Container(
             width: 40,

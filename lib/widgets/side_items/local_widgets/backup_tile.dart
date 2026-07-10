@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/views/backup_services/backup_services_view.dart';
+import 'package:storypad/views/settings/data_backup/data_backup_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -151,7 +151,7 @@ class BackupTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          onTap: () => onNavigate.call(const BackupServicesRoute()),
+          onTap: () => onNavigate.call(const DataBackupRoute()),
           leading: leading,
           title: title,
           subtitle: subtitle,

@@ -13,6 +13,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
 import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -128,7 +129,10 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
       pages: pages,
       displayPathDate: widget.story.displayPathDate,
       tags: tags ?? [],
-      timeFormat: context.read<DevicePreferencesProvider>().preferences.timeFormat,
+      timeFormat: TimeFormatOption.resolve(
+        context,
+        context.read<DevicePreferencesProvider>().preferences.timeFormat,
+      ),
       locale: context.locale,
       emojis: emojis?.isNotEmpty == true ? emojis!.toList() : [],
       markdown: option == _ShareOption.markdown,

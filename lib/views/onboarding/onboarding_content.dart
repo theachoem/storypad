@@ -18,7 +18,6 @@ class _OnboardingContent extends StatelessWidget {
               icon: const Icon(SpIcons.globe),
               onPressed: () => LanguagesRoute(
                 showBetaBanner: false,
-                showThemeFAB: true,
                 fromOnboarding: true,
               ).push(context),
             ),
