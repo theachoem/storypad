@@ -83,6 +83,32 @@ void main() {
       expect(next, equals(DateTime(2026, 2, 22)));
     });
 
+    test('returns null when the most recent start is older than the history window', () {
+      // Two real cycles, but the last one started 8 months before "now" —
+      // way outside maxHistoryMonths (6). Nothing recent to extrapolate from.
+      final dates = [
+        DateTime(2025, 1, 1),
+        DateTime(2025, 1, 29),
+      ];
+      final next = PeriodPredictionService.predictNextPeriodStart(
+        dates,
+        now: DateTime(2025, 9, 29),
+      );
+      expect(next, isNull);
+    });
+
+    test('still predicts when the most recent start is just inside the history window', () {
+      final dates = [
+        DateTime(2025, 1, 1),
+        DateTime(2025, 1, 29),
+      ];
+      final next = PeriodPredictionService.predictNextPeriodStart(
+        dates,
+        now: DateTime(2025, 7, 20), // ~5.5 months after the last start.
+      );
+      expect(next, isNotNull);
+    });
+
     test('ignores duplicate day entries', () {
       final dates = [
         DateTime(2026, 1, 1),
