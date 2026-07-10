@@ -475,6 +475,7 @@
   "reminder.field.message": "信息",
   "reminder.field.message_hint": "例如：查看想法标签，撰写每周计划",
   "reminder.field.time": "时间",
+  "reminder.next_occurrence.at": "您的下一次提醒将在{SP_DATE}发出。",
   "reminder.on_this_day.description": "回顾往年条目",
   "reminder.on_this_day.notification_body": "看看你今天写了些什么。",
   "reminder.on_this_day.notification_title": "在这一天",

@@ -475,6 +475,7 @@
   "reminder.field.message": "メッセージ",
   "reminder.field.message_hint": "例：アイデアタグを確認する、週次計画を書く",
   "reminder.field.time": "時間",
+  "reminder.next_occurrence.at": "次回の通知は{SP_DATE}に送信されます。",
   "reminder.on_this_day.description": "過去の記事をもう一度ご覧ください",
   "reminder.on_this_day.notification_body": "あなたがこの日に書いたものを見てみましょう。",
   "reminder.on_this_day.notification_title": "この日",

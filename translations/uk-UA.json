@@ -475,6 +475,7 @@
   "reminder.field.message": "Повідомлення",
   "reminder.field.message_hint": "наприклад, тег «Перевірити ідеї», «Написати тижневий план»",
   "reminder.field.time": "Час",
+  "reminder.next_occurrence.at": "Ваше наступне нагадування буде {SP_DATE}",
   "reminder.on_this_day.description": "Перегляньте записи з минулих років",
   "reminder.on_this_day.notification_body": "Подивись, що ти написав цього дня.",
   "reminder.on_this_day.notification_title": "У цей день",

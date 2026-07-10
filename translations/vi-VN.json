@@ -475,6 +475,7 @@
   "reminder.field.message": "Tin nhắn",
   "reminder.field.message_hint": "Ví dụ: Kiểm tra thẻ ý tưởng, Viết kế hoạch hàng tuần",
   "reminder.field.time": "Thời gian",
+  "reminder.next_occurrence.at": "Lời nhắc tiếp theo của bạn sẽ vào ngày {SP_DATE}",
   "reminder.on_this_day.description": "Xem lại các bài viết từ những năm trước.",
   "reminder.on_this_day.notification_body": "Hãy xem những gì bạn đã viết vào ngày hôm nay.",
   "reminder.on_this_day.notification_title": "Vào ngày này",

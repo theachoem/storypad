@@ -475,6 +475,7 @@
   "reminder.field.message": "Nachricht",
   "reminder.field.message_hint": "z.B. Ideen-Tag prüfen, Wochenplan schreiben",
   "reminder.field.time": "Zeit",
+  "reminder.next_occurrence.at": "Ihre nächste Erinnerung erfolgt am {SP_DATE}",
   "reminder.on_this_day.description": "Einträge aus den vergangenen Jahren erneut ansehen",
   "reminder.on_this_day.notification_body": "Schau dir an, was du heute geschrieben hast.",
   "reminder.on_this_day.notification_title": "An diesem Tag",

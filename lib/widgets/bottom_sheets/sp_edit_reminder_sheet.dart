@@ -3,7 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart' show kIsCupertino;
+import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/reminder_object.dart';
+import 'package:storypad/core/services/on_this_day_prediction_service.dart';
+import 'package:storypad/core/services/period_prediction_service.dart';
 import 'package:storypad/core/types/reminder_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/reminders/local_widgets/reminder_weekdays_chips.dart';
@@ -52,7 +55,16 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
   late Set<int> _weekdays;
   late int _daysAhead;
 
+  // Predicted base dates (date only, no time) for the two types whose
+  // schedule isn't derivable from local state alone — fetched once on open
+  // so the "next reminder" preview can combine them with the live-edited
+  // time/daysAhead as the user adjusts those fields.
+  DateTime? _predictedOnThisDayDate;
+  DateTime? _predictedPeriodStart;
+  bool _predictionLoaded = false;
+
   bool get _isPeriod => widget.reminder.type == ReminderType.period;
+  bool get _isOnThisDay => widget.reminder.type == ReminderType.onThisDay;
 
   /// Only daily reminders schedule per weekday — on-this-day/period fire on
   /// precomputed one-shot dates and ignore [ReminderObject.weekdays].
@@ -68,6 +80,73 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
     // so the user can see the current schedule before pruning it down.
     _weekdays = r.weekdays.isEmpty ? ReminderObject.allWeekdays.toSet() : r.weekdays.toSet();
     _daysAhead = r.daysAhead ?? 2;
+
+    if (_isOnThisDay) {
+      _loadOnThisDayPrediction();
+    } else if (_isPeriod) {
+      _loadPeriodPrediction();
+    } else {
+      _predictionLoaded = true;
+    }
+  }
+
+  // Same horizon as LocalNotificationService._scheduleOnThisDay, so this
+  // preview matches what actually gets scheduled.
+  Future<void> _loadOnThisDayPrediction() async {
+    final dates = await OnThisDayPredictionService.loadUpcomingMemoryDates(maxResults: 1);
+    if (!mounted) return;
+    setState(() {
+      _predictedOnThisDayDate = dates.firstOrNull;
+      _predictionLoaded = true;
+    });
+  }
+
+  Future<void> _loadPeriodPrediction() async {
+    final predicted = await PeriodPredictionService.loadPredictedNextPeriodStart();
+    if (!mounted) return;
+    setState(() {
+      _predictedPeriodStart = predicted;
+      _predictionLoaded = true;
+    });
+  }
+
+  /// Next time this reminder would actually fire, given the in-progress edits
+  /// — lets the user sanity-check the schedule before saving. `null` means no
+  /// prediction is available yet (e.g. not enough period history, or no
+  /// upcoming on-this-day memories in the schedule horizon).
+  DateTime? get _nextOccurrence {
+    if (_isPeriod) {
+      final start = _predictedPeriodStart;
+      if (start == null) return null;
+      final target = start.subtract(Duration(days: _daysAhead));
+      return DateTime(target.year, target.month, target.day, _time.hour, _time.minute);
+    }
+
+    if (_isOnThisDay) {
+      final date = _predictedOnThisDayDate;
+      if (date == null) return null;
+      return DateTime(date.year, date.month, date.day, _time.hour, _time.minute);
+    }
+
+    // Daily: mirrors LocalNotificationService._nextInstance, in local time.
+    final now = DateTime.now();
+    final normalized = ReminderObject.normalizeWeekdays(_weekdays);
+    final slots = normalized.isEmpty ? const [0] : normalized;
+
+    DateTime nextForSlot(int weekday) {
+      var candidate = DateTime(now.year, now.month, now.day, _time.hour, _time.minute);
+      if (weekday != 0) {
+        while (candidate.weekday != weekday) {
+          candidate = candidate.add(const Duration(days: 1));
+        }
+      }
+      if (!candidate.isAfter(now)) {
+        candidate = candidate.add(Duration(days: weekday == 0 ? 1 : 7));
+      }
+      return candidate;
+    }
+
+    return slots.map(nextForSlot).reduce((a, b) => a.isBefore(b) ? a : b);
   }
 
   Future<void> _setEnabled(bool value) async {
@@ -136,6 +215,8 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
                       ),
                     ),
                   if (_isPeriod) _buildDaysAheadTile(context),
+                  if (_enabled && _predictionLoaded && _nextOccurrence != null)
+                    _buildNextOccurrenceHint(context, _nextOccurrence!),
                 ],
               ),
             ),
@@ -166,6 +247,30 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
     }
   }
 
+  /// "Your next reminder will be on ..." — lets the user confirm the schedule
+  /// (and that the feature is actually working) without waiting for it to fire.
+  Widget _buildNextOccurrenceHint(BuildContext context, DateTime nextOccurrence) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(SpIcons.info, size: 16, color: ColorScheme.of(context).onSurfaceVariant),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              tr(
+                'reminder.next_occurrence.at',
+                namedArgs: {'SP_DATE': DateFormatHelper.yMMMd(nextOccurrence, context.locale)},
+              ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ColorScheme.of(context).onSurfaceVariant),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDaysAheadTile(BuildContext context) {
     return ListTile(
       leading: const Icon(SpIcons.calendar),
@@ -178,10 +283,10 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
             icon: const Icon(SpIcons.remove),
             onPressed: _daysAhead > 0 ? () => setState(() => _daysAhead--) : null,
           ),
-          Text('$_daysAhead'),
+          Text('$_daysAhead', style: Theme.of(context).textTheme.bodyMedium),
           IconButton(
             icon: const Icon(SpIcons.add),
-            onPressed: _daysAhead < 14 ? () => setState(() => _daysAhead++) : null,
+            onPressed: _daysAhead < 31 ? () => setState(() => _daysAhead++) : null,
           ),
         ],
       ),

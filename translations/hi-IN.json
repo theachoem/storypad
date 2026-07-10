@@ -475,6 +475,7 @@
   "reminder.field.message": "संदेश",
   "reminder.field.message_hint": "उदाहरण के लिए, विचारों की जाँच करें टैग, साप्ताहिक योजना लिखें",
   "reminder.field.time": "समय",
+  "reminder.next_occurrence.at": "आपको अगला रिमाइंडर {SP_DATE} को भेजा जाएगा।",
   "reminder.on_this_day.description": "पिछले वर्षों की प्रविष्टियों को पुनः देखें",
   "reminder.on_this_day.notification_body": "देखो तुमने आज क्या लिखा।",
   "reminder.on_this_day.notification_title": "इस दिन",

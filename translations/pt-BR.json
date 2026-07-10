@@ -475,6 +475,7 @@
   "reminder.field.message": "Mensagem",
   "reminder.field.message_hint": "Exemplo: Verificar a etiqueta de ideias, Escrever um plano semanal",
   "reminder.field.time": "Tempo",
+  "reminder.next_occurrence.at": "Seu próximo lembrete será em {SP_DATE}",
   "reminder.on_this_day.description": "Relembre as publicações de anos anteriores.",
   "reminder.on_this_day.notification_body": "Veja o que você escreveu neste dia.",
   "reminder.on_this_day.notification_title": "Neste dia",

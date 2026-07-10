@@ -475,6 +475,7 @@
   "reminder.field.message": "Mesaj",
   "reminder.field.message_hint": "Örnek: Fikirleri kontrol et, Haftalık plan yaz",
   "reminder.field.time": "Zaman",
+  "reminder.next_occurrence.at": "Bir sonraki hatırlatmanız {SP_DATE} tarihinde gönderilecektir.",
   "reminder.on_this_day.description": "Geçmiş yıllardaki yazıları tekrar inceleyin.",
   "reminder.on_this_day.notification_body": "Bugün neler yazdığınıza bakın.",
   "reminder.on_this_day.notification_title": "Bugün",

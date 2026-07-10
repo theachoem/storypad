@@ -475,6 +475,7 @@
   "reminder.field.message": "Message",
   "reminder.field.message_hint": "e.g. Check ideas tag, Write weekly plan",
   "reminder.field.time": "Time",
+  "reminder.next_occurrence.at": "Your next reminder will be on {SP_DATE}",
   "reminder.on_this_day.description": "Revisit entries from past years",
   "reminder.on_this_day.notification_body": "See what you wrote on this day.",
   "reminder.on_this_day.notification_title": "On this day",

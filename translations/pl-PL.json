@@ -475,6 +475,7 @@
   "reminder.field.message": "Wiadomość",
   "reminder.field.message_hint": "np. Sprawdź tag pomysłów, Napisz plan tygodniowy",
   "reminder.field.time": "Czas",
+  "reminder.next_occurrence.at": "Następne przypomnienie będzie {SP_DATE}",
   "reminder.on_this_day.description": "Przejrzyj wpisy z poprzednich lat",
   "reminder.on_this_day.notification_body": "Zobacz, co napisałeś/aś tego dnia.",
   "reminder.on_this_day.notification_title": "W tym dniu",

@@ -475,6 +475,7 @@
   "reminder.field.message": "Pesan",
   "reminder.field.message_hint": "Contoh: Periksa tag ide, Tulis rencana mingguan",
   "reminder.field.time": "Waktu",
+  "reminder.next_occurrence.at": "Pengingat Anda berikutnya akan pada {SP_DATE}",
   "reminder.on_this_day.description": "Tinjau kembali entri dari tahun-tahun sebelumnya",
   "reminder.on_this_day.notification_body": "Lihat apa yang Anda tulis pada hari ini.",
   "reminder.on_this_day.notification_title": "Pada hari ini",

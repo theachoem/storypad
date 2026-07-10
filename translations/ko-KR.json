@@ -475,6 +475,7 @@
   "reminder.field.message": "메시지",
   "reminder.field.message_hint": "예: 아이디어 태그 확인, 주간 계획 작성",
   "reminder.field.time": "시간",
+  "reminder.next_occurrence.at": "다음 알림은 {SP_DATE}에 발송됩니다.",
   "reminder.on_this_day.description": "지난 몇 년간의 게시물을 다시 살펴보세요",
   "reminder.on_this_day.notification_body": "오늘 당신이 쓴 글을 보세요.",
   "reminder.on_this_day.notification_title": "오늘",
