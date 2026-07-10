@@ -35,6 +35,10 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
   bool enablePeriodCalendar(BuildContext context) =>
       preferences.enablePeriodCalendar ?? context.read<InAppPurchaseProvider>().periodCalendar;
 
+  /// Effective time format — falls back to the device's 24-hour setting when
+  /// the user hasn't customized [DevicePreferencesObject.timeFormat].
+  TimeFormatOption timeFormatOf(BuildContext context) => TimeFormatOption.resolve(context, preferences.timeFormat);
+
   final Map<String, List<void Function()>> _listeners = {};
 
   // Sometimes reading `ColorScheme.of(context).brightness` may not reflect the correct dark mode state,

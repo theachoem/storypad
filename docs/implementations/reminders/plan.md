@@ -179,6 +179,24 @@ Notification ids: weekday-based schedules use `reminderId * 10 + slot`;
 date-based one-shots use `reminderId * 100000 + month * 100 + day` — a much
 larger multiplier so the two id spaces can't collide.
 
+## Notification action buttons
+
+Each built-in type shows one action button (a shortcut for what tapping the
+notification body already does — see `ReminderNavigationService`; no distinct
+behavior, so `_onTap` doesn't need to branch on `actionId`):
+
+- `daily` → `button.write_now`
+- `onThisDay` → `button.view`
+- `period` → `button.view_calendar`
+- `custom` → `button.view`
+
+`ReminderType.notificationActionId`/`notificationActionLabel` drive both the
+Android `AndroidNotificationAction` (per-notification, `showsUserInterface:
+true`) and the Darwin `DarwinNotificationCategory`/`categoryIdentifier` (Darwin
+requires categories to be registered up front at `init()`, unlike Android).
+Snooze-style actions that need a background handler (no app launch) are out of
+scope for v1 — see `LocalNotificationService._detailsFor`.
+
 ## Provider — `DevicePreferencesProvider`
 
 Follow the `setX` pattern; call `LocalNotificationService.rescheduleAll` after

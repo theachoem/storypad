@@ -172,10 +172,7 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
         ];
       },
       builder: (callback) {
-        final timeFormat = TimeFormatOption.resolve(
-          context,
-          context.read<DevicePreferencesProvider>().preferences.timeFormat,
-        );
+        final timeFormat = context.read<DevicePreferencesProvider>().timeFormatOf(context);
         final createdTimeString = timeFormat.formatTime(asset.createdAt, context.locale);
         final storyCount = storiesCount[asset.id] ?? 0;
         final durationText = asset.formattedDuration ?? tr('general.unknown');

@@ -46,10 +46,7 @@ class _StoryTileContents extends StatelessWidget {
             Consumer<DevicePreferencesProvider>(
               builder: (context, provider, child) {
                 return Text(
-                  TimeFormatOption.resolve(
-                    context,
-                    provider.preferences.timeFormat,
-                  ).formatTime(story.displayPathDate, context.locale),
+                  provider.timeFormatOf(context).formatTime(story.displayPathDate, context.locale),
                   style: TextTheme.of(context).labelMedium,
                 );
               },
