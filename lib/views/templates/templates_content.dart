@@ -19,6 +19,16 @@ class _TemplatesContent extends StatelessWidget {
       );
     }
 
+    if (viewModel.params.onlyMyTemplates) {
+      return Scaffold(
+        appBar: AppBar(title: Text(tr('general.my_templates'))),
+        body: TemplatesTab(
+          params: viewModel.params,
+          appBarActionsLoaderCallback: null,
+        ),
+      );
+    }
+
     return DefaultTabController(
       length: 2,
       initialIndex: viewModel.initialTabIndex,

@@ -50,7 +50,7 @@ class App extends StatelessWidget {
             data: mediaQuery.copyWith(
               padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + topMainMenuPadding),
               textScaler: textScaler,
-              alwaysUse24HourFormat: preferences.timeFormat == TimeFormatOption.h24,
+              alwaysUse24HourFormat: TimeFormatOption.resolve(context, preferences.timeFormat) == TimeFormatOption.h24,
             ),
             child: MaterialApp(
               debugShowCheckedModeBanner: false,

@@ -40,14 +40,14 @@ class FontSizeTile extends StatelessWidget {
     String? label = currentFontSize?.label;
 
     if (isDefaultToSystem) {
-      label ??= tr('general.system');
+      label ??= context.tr('general.system');
     } else {
-      label ??= tr('general.default');
+      label ??= context.tr('general.default');
     }
 
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.fontSize),
-      title: Text(tr('general.font_size')),
+      title: Text(context.tr('general.font_size')),
       subtitle: Text(label),
       onTap: () {
         SpFontSizeSheet(

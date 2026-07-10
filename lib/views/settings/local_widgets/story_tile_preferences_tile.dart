@@ -19,7 +19,7 @@ class StoryTilePreferencesTile extends StatelessWidget {
 
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.tune),
-      title: Text(tr("list_tile.story_tile_preferences.title")),
+      title: Text(context.tr("list_tile.story_tile_preferences.title")),
       trailing: locked ? const Icon(SpIcons.lock) : null,
       onTap: () async {
         // The sheet has no save button for pro users; it reports its live draft and

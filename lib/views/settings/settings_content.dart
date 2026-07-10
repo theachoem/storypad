@@ -9,110 +9,47 @@ class _SettingsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr("page.settings.title")),
-        actions: [
-          SpPopupMenuButton(
-            items: (context) {
-              return [
-                SpPopMenuItem(
-                  leadingIconData: SpIcons.refresh,
-                  title: tr("button.reset"),
-                  onPressed: () {
-                    context.read<DevicePreferencesProvider>().reset();
-                  },
-                ),
-              ];
-            },
-            builder: (callback) {
-              return IconButton(
-                tooltip: tr("button.more_options"),
-                icon: const Icon(SpIcons.moreVert),
-                onPressed: callback,
-              );
-            },
-          ),
-        ],
+        title: Text(context.tr("page.settings.title")),
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 8),
           ...[
-            SpSectionTitle(title: tr("general.appearance")),
-            ThemeModeTile.globalTheme(weekday: 1),
-            ColorSeedTile(),
-            buildDayColorTile(context),
-            if (kStoryPad) const AppIconTile(),
-          ],
-          ...[
-            const Divider(),
-            SpSectionTitle(title: tr("general.text")),
-            FontSizeTile.globalTheme(weekday: 3),
-            FontFamilyTile.globalTheme(weekday: 4),
-            FontWeightTile.globalTheme(weekday: 5),
-          ],
-          ...[
-            const Divider(),
-            SpSectionTitle(title: tr("general.general")),
-            const LanguageTile(weekday: 6),
-            buildAppLockTile(context, weekday: 7),
-            if (LocalNotificationService.instance.supported)
+            SpSectionTitle(title: context.tr("general.general")),
+            ListTile(
+              leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.theme),
+              title: Text(context.tr("general.customization")),
+              onTap: () => const AppearanceRoute().push(context),
+            ),
+            buildAppLockTile(context, weekday: 2),
+            if (LocalNotificationService.instance.supported) ...[
               ListTile(
-                leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.alarm),
-                title: Text(tr('page.reminders.title')),
+                leading: const SpSettingIconBadge(weekday: 3, icon: SpIcons.alarm),
+                title: Text(context.tr('page.reminders.title')),
                 onTap: () => const RemindersRoute().push(context),
               ),
-            if (kSupportQuickActions) QuickActionsTile(),
-            TimeFormatTile.globalTheme(weekday: 3),
-            FirstDayOfWeekTile.globalTheme(weekday: 4),
+            ],
+            ListTile(
+              leading: const SpSettingIconBadge(weekday: 4, icon: SpIcons.googleDrive),
+              title: Text(context.tr("general.data_backup")),
+              onTap: () => const DataBackupRoute().push(context),
+            ),
           ],
           ...[
             const Divider(),
-            SpSectionTitle(title: tr("general.stories")),
-
-            // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            StoryTilePreferencesTile(weekday: 5),
-
-            // ignore: prefer_const_constructors, no need to make sure locals switching work.
-            DefaultStoryPreferencesTile(weekday: 6),
+            SpSectionTitle(title: context.tr("general.region")),
+            const LanguageTile(weekday: 5),
+            TimeFormatTile.globalTheme(weekday: 6),
+            FirstDayOfWeekTile.globalTheme(weekday: 7),
           ],
           ...[
             const Divider(),
-            SpSectionTitle(title: tr("general.data")),
-            ListTile(
-              leading: const SpSettingIconBadge(weekday: 7, icon: SpIcons.googleDrive),
-              title: Text(tr('page.backup_services.title')),
-              onTap: () => const BackupServicesRoute().push(context),
-            ),
-            ListTile(
-              leading: const SpSettingIconBadge(weekday: 1, icon: SpIcons.folderOpen),
-              title: Text(tr('page.import_export_backup')),
-              onTap: () => const ImportExportRoute().push(context),
-            ),
-            ListTile(
-              leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.storage),
-              title: Text(tr('page.storage_management.title')),
-              onTap: () => const StorageManagementRoute().push(context),
-            ),
-            AssetCompressionTile.globalTheme(weekday: 3),
+            SpSectionTitle(title: context.tr("general.stories")),
+            const DefaultStoryPreferencesTile(weekday: 1),
+            const MyTemplatesTile(weekday: 2),
           ],
           const SizedBox(height: 120),
         ],
       ),
-    );
-  }
-
-  Widget buildDayColorTile(BuildContext context) {
-    return Consumer<InAppPurchaseProvider>(
-      builder: (context, inAppPurchaseProvider, child) {
-        final locked = !inAppPurchaseProvider.isProUser;
-
-        return ListTile(
-          trailing: locked ? const Icon(SpIcons.lock) : null,
-          leading: const SpSettingIconBadge(weekday: 2, icon: SpIcons.theme),
-          title: Text(tr('list_tile.day_colors.title')),
-          onTap: () => const DayColorsRoute().push(context),
-        );
-      },
     );
   }
 
@@ -121,8 +58,8 @@ class _SettingsContent extends StatelessWidget {
       builder: (context, appLockProvider, child) {
         return ListTile(
           leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.lock),
-          title: Text(tr("page.app_lock.title")),
-          subtitle: appLockProvider.hasAppLock ? Text(tr("general.enabled")) : null,
+          title: Text(context.tr("page.app_lock.title")),
+          subtitle: appLockProvider.hasAppLock ? Text(context.tr("general.enabled")) : null,
           onTap: () => AppLocksRoute().push(context),
         );
       },

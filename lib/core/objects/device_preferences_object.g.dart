@@ -344,7 +344,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'color_seed_value': instance.colorSeedValue,
   'color_by_day': instance.colorByDay?.map((k, e) => MapEntry(k.toString(), e)),
   'voice_playback_speed': instance.voicePlaybackSpeed,
-  'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat]!,
+  'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat],
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
   'asset_compression':
       _$AssetCompressionOptionEnumMap[instance.assetCompression]!,

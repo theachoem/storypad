@@ -48,8 +48,8 @@ abstract class BaseAnalyticsUserPropertyAdaptor {
     return setUserProperty('font_size', newFontSize?.name ?? 'system');
   }
 
-  Future<void> logSetTimeFormat({required TimeFormatOption timeFormat}) {
-    return setUserProperty('time_format', timeFormat.label);
+  Future<void> logSetTimeFormat({required TimeFormatOption? timeFormat}) {
+    return setUserProperty('time_format', timeFormat?.label ?? 'system');
   }
 
   Future<void> logSetFirstDayOfWeek({required FirstDayOfWeekOption firstDayOfWeek}) {

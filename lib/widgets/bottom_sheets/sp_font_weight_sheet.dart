@@ -39,7 +39,7 @@ class SpFontWeightSheet extends BaseBottomSheet {
             mainAxisSize: MainAxisSize.min,
             children: [
               ...FontWeight.values.map((fontWeight) {
-                String title = FontWeightTile.getFontWeightTitle(fontWeight);
+                String title = FontWeightTile.getFontWeightTitle(fontWeight, context);
                 bool isDefault = defaultFontWeight == fontWeight;
 
                 if (isDefault && showDefaultLabel) {

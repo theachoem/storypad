@@ -17,8 +17,8 @@ class TimeFormatTile extends StatelessWidget {
 
   final int weekday;
 
-  final TimeFormatOption currentTimeFormat;
-  final void Function(TimeFormatOption value) onChanged;
+  final TimeFormatOption? currentTimeFormat;
+  final void Function(TimeFormatOption? value) onChanged;
 
   static Widget globalTheme({required int weekday}) {
     return Consumer<DevicePreferencesProvider>(
@@ -34,10 +34,12 @@ class TimeFormatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final label = TimeFormatOption.resolve(context, currentTimeFormat).label;
+
     return ListTile(
       leading: SpSettingIconBadge(weekday: weekday, icon: SpIcons.timer),
-      title: Text(tr('general.time_format')),
-      subtitle: Text(currentTimeFormat.label),
+      title: Text(context.tr('general.time_format')),
+      subtitle: Text(label),
       onTap: () {
         SpTimeFormatSheet(
           timeFormat: currentTimeFormat,

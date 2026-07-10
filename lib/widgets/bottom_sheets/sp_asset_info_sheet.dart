@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
@@ -24,6 +25,10 @@ class SpAssetInfoSheet extends BaseBottomSheet {
   @override
   Widget build(BuildContext context, double bottomPadding) {
     final fileSize = _getFileSizeString();
+    final timeFormat = TimeFormatOption.resolve(
+      context,
+      context.read<DevicePreferencesProvider>().preferences.timeFormat,
+    );
 
     return Stack(
       children: [
@@ -36,7 +41,7 @@ class SpAssetInfoSheet extends BaseBottomSheet {
               leading: const Icon(SpIcons.calendar),
               title: Text(tr("list_tile.updated_at.title")),
               subtitle: Text(
-                context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                timeFormat.formatDateTime(
                   asset.updatedAt,
                   context.locale,
                 ),
@@ -46,7 +51,7 @@ class SpAssetInfoSheet extends BaseBottomSheet {
               leading: const Icon(SpIcons.info),
               title: Text(tr("list_tile.created_at.title")),
               subtitle: Text(
-                context.read<DevicePreferencesProvider>().preferences.timeFormat.formatDateTime(
+                timeFormat.formatDateTime(
                   asset.createdAt,
                   context.locale,
                 ),

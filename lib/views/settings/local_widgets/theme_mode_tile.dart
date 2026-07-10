@@ -55,7 +55,7 @@ class ThemeModeTile extends StatelessWidget {
         ),
       ),
       title: Text(tr('list_tile.theme_mode.title')),
-      subtitle: Text(getLocalizedThemeMode(currentThemeMode)),
+      subtitle: Text(getLocalizedThemeMode(currentThemeMode, context)),
       onTap: () {
         SpThemeModeSheet(
           themeMode: currentThemeMode,
@@ -65,14 +65,14 @@ class ThemeModeTile extends StatelessWidget {
     );
   }
 
-  static String getLocalizedThemeMode(ThemeMode mode) {
+  static String getLocalizedThemeMode(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.dark:
-        return tr("general.theme_mode.dark");
+        return context.tr("general.theme_mode.dark");
       case ThemeMode.light:
-        return tr("general.theme_mode.light");
+        return context.tr("general.theme_mode.light");
       case ThemeMode.system:
-        return tr("general.theme_mode.system");
+        return context.tr("general.theme_mode.system");
     }
   }
 }
