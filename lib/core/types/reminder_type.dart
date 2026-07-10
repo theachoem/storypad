@@ -58,4 +58,35 @@ enum ReminderType {
         throw UnsupportedError('ReminderType.custom has no generic description.');
     }
   }
+
+  /// Stable id for this type's single notification action button, also used
+  /// as the Darwin notification category identifier. `null` means no action
+  /// button is shown (custom reminders — tapping the body is enough).
+  String? get notificationActionId {
+    switch (this) {
+      case ReminderType.daily:
+        return 'write_now';
+      case ReminderType.onThisDay:
+        return 'view';
+      case ReminderType.period:
+        return 'view_calendar';
+      case ReminderType.custom:
+        return 'view';
+    }
+  }
+
+  /// Label for [notificationActionId]. Every action does exactly what
+  /// tapping the notification body already does (see
+  /// ReminderNavigationService) — it's a shortcut, not a distinct behavior.
+  String? get notificationActionLabel {
+    switch (this) {
+      case ReminderType.daily:
+        return tr('button.write_now');
+      case ReminderType.onThisDay:
+      case ReminderType.custom:
+        return tr('button.view');
+      case ReminderType.period:
+        return tr('button.view_calendar');
+    }
+  }
 }

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
-import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -21,10 +20,7 @@ class SpTemplateInfoSheet extends BaseBottomSheet {
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
-    final timeFormat = TimeFormatOption.resolve(
-      context,
-      context.read<DevicePreferencesProvider>().preferences.timeFormat,
-    );
+    final timeFormat = context.read<DevicePreferencesProvider>().timeFormatOf(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

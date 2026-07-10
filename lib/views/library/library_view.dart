@@ -12,7 +12,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/types/asset_type.dart';
-import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
