@@ -290,10 +290,13 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
   Future<void> share(BuildContext context) async {
     AnalyticsService.instance.logShareStory(option: option.name);
 
+    final text = controller.text.trim();
+    if (text.isEmpty && files.isEmpty) return;
+
     RenderBox? box = context.findRenderObject() as RenderBox?;
     SharePlus.instance.share(
       ShareParams(
-        text: controller.text.trim(),
+        text: text.isNotEmpty ? text : null,
         files: files.isNotEmpty ? files : null,
 
         // iPad requires sharePositionOrigin for proper share sheet positioning
