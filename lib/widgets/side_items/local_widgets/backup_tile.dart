@@ -142,6 +142,7 @@ class BackupTile extends StatelessWidget {
         scale: 1.5,
         child: CircleAvatar(
           backgroundImage: CachedNetworkImageProvider(photoUrl),
+          onBackgroundImageError: (_, _) {},
           radius: 12.0,
         ),
       );

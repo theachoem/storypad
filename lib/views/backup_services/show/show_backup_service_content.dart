@@ -177,6 +177,7 @@ class _ShowBackupServiceContent extends StatelessWidget {
               backgroundImage: CachedNetworkImageProvider(
                 viewModel.params.service.currentUser!.photoUrl!,
               ),
+              onBackgroundImageError: (_, _) {},
             )
           : const Icon(SpIcons.profile),
       title: Text(

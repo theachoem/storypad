@@ -21,6 +21,7 @@ class _PurchaseSyncAvatarButton extends StatelessWidget {
         child: CircleAvatar(
           radius: 16,
           backgroundImage: photoUrl != null ? CachedNetworkImageProvider(photoUrl) : null,
+          onBackgroundImageError: photoUrl != null ? (_, _) {} : null,
           child: photoUrl == null ? const Icon(SpIcons.cloudOff, size: 20) : null,
         ),
       ),
