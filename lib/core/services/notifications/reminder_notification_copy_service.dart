@@ -11,10 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// the app feel unfinished in other languages).
 ///
 /// Unlike `WelcomeMessageService`, this can't rely on `context.locale` —
-/// reminder scheduling runs from `NotificationInitializer` at app startup,
-/// before any widget (and BuildContext) exists. Instead it reads the locale
-/// easy_localization itself persisted to SharedPreferences under the key
-/// `'locale'` (see EasyLocalizationController), which is the same source
+/// reminder scheduling runs from `RootProvider` (a ChangeNotifier, not a
+/// widget), so there's no BuildContext to read it from. Instead it reads the
+/// locale easy_localization itself persisted to SharedPreferences under the
+/// key `'locale'` (see EasyLocalizationController), which is the same source
 /// `context.locale` is initialized from.
 class ReminderNotificationCopyService {
   static Future<bool> _useEnglishVariants() async {

@@ -14,7 +14,6 @@ import 'package:storypad/core/initializers/remote_config_initializer.dart' show 
 import 'package:storypad/core/initializers/cloud_storage_initializer.dart';
 import 'package:storypad/core/initializers/legacy_storypad_initializer.dart' show LegacyStoryPadInitializer;
 import 'package:storypad/core/initializers/licenses_initializer.dart' show LicensesInitializer;
-import 'package:storypad/core/initializers/notification_initializer.dart' show NotificationInitializer;
 import 'package:storypad/core/initializers/onboarding_initializer.dart' show OnboardingInitializer;
 import 'package:storypad/core/initializers/theme_initializer.dart' show ThemeInitializer;
 import 'package:storypad/provider_scope.dart' show ProviderScope;
@@ -55,7 +54,6 @@ Future<void> _initializeApp({
   await ThemeInitializer.call();
   await LegacyStoryPadInitializer.call();
   await OnboardingInitializer.call();
-  if (!Platform.isLinux) await NotificationInitializer.call();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   if (Platform.isMacOS) {
