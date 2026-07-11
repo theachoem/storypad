@@ -232,7 +232,10 @@ class _StorageManagementContent extends StatelessWidget {
                   builder: (context, constraints) {
                     const minVisibleAppWidth = 2.0;
 
-                    final barWidth = constraints.maxWidth;
+                    // constraints.maxWidth can be negative or non-finite in squeezed/overflowing
+                    // layouts, which would make the clamps below throw ArgumentError.
+                    final rawBarWidth = constraints.maxWidth;
+                    final barWidth = rawBarWidth.isFinite ? math.max(rawBarWidth, 0.0) : 0.0;
                     final rawUsedWidth = (barWidth * usedFraction).clamp(0.0, barWidth).toDouble();
                     final rawAppWidth = (barWidth * appFraction).clamp(0.0, barWidth).toDouble();
 
