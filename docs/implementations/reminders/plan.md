@@ -138,11 +138,14 @@ Singleton (mirrors existing `*_service.dart`):
   `DateTimeComponents.dayOfWeekAndTime` (or `.time` when `isEveryDay`). Derived
   notification id = `reminder.id * 10 + weekday`. **Inexact** Android mode.
 
-### `ReminderInitializer` — `lib/core/initializers/notification_initializer.dart`
+### Init + reschedule — `lib/providers/root_provider.dart`
 
-`static Future<void> call()` → `LocalNotificationService.init()` then
-`rescheduleAll(prefs.reminders ?? [])`. Wire into `lib/main.dart` after
-`OnboardingInitializer.call()`, guarded off Linux.
+`RootProvider()` constructor → `LocalNotificationService.init(navigatorKey:)`
+then `rescheduleAll(prefs.reminders ?? [])`. Runs from inside the widget tree
+(RootProvider is only constructed lazily, the first time `RootView` reads it)
+so easy_localization's translations are guaranteed loaded — an earlier
+`NotificationInitializer` ran this from `main.dart` before any widget
+existed, which could bake in untranslated `tr()` strings.
 
 ### Tap routing (by `type`)
 

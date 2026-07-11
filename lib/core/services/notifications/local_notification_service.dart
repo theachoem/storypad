@@ -47,6 +47,16 @@ class LocalNotificationService {
 
   bool get supported => Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 
+  /// Initializes the plugin, handles a cold-launch tap, and schedules the
+  /// enabled reminders — a one-time, idempotent setup guarded by [_initialized].
+  ///
+  /// Must be called only from inside the widget tree (e.g. RootProvider, which
+  /// is constructed lazily the first time RootView reads it) rather than from
+  /// main.dart's imperative app bootstrap. Reminder titles and notification
+  /// action labels are built with tr(), which needs easy_localization's
+  /// translations to have finished loading; that only happens once the
+  /// EasyLocalization widget mounts. Calling this earlier resolves tr() to
+  /// raw keys like "button.write_now".
   Future<void> init({GlobalKey<NavigatorState>? navigatorKey}) async {
     if (navigatorKey != null) _navigatorKey = navigatorKey;
     if (_initialized || !supported) return;
@@ -93,6 +103,12 @@ class LocalNotificationService {
       final response = launchDetails!.notificationResponse;
       if (response != null) _onTap(response);
     }
+
+    // Reschedule on every launch so schedules stay consistent (e.g. across
+    // timezone changes) and survive app data restore. Done here (rather than
+    // leaving callers to do it) so init() always leaves reminders fully
+    // scheduled — see this method's doc comment for the ordering constraint.
+    await rescheduleAll(DevicePreferencesStorage.appInstance.preferences.reminders);
   }
 
   /// Requests OS notification permission. Returns true when granted.

@@ -26,8 +26,9 @@ class RootProvider extends ChangeNotifier with DisposeAwareMixin, DebounchedCall
   RootProvider() {
     if (kSupportQuickActions) AppQuickActionsService.instance.initialize(navigatorKey: navigatorKey);
 
-    // Register the navigator key so reminder notification taps can navigate
-    // (including cold-start taps handled during app initialization).
+    // Register the navigator key so reminder notification taps can navigate,
+    // and (re)schedule reminders — see LocalNotificationService.init's doc
+    // comment for why this must run from here rather than main.dart.
     LocalNotificationService.instance.init(navigatorKey: navigatorKey);
   }
 
