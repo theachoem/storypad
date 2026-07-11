@@ -100,16 +100,13 @@ class GoogleDriveAssetDownloaderService {
     _downloadingByPath[localFilePath] = completer;
 
     _performDownload(
-          asset: asset,
-          currentUser: currentUser,
-          localFilePath: localFilePath,
-        )
-        .then(completer.complete)
-        .catchError((Object e) => completer.completeError(e))
-        .whenComplete(() {
-          // Clean up the completer after completion to prevent memory leaks
-          _downloadingByPath.remove(localFilePath);
-        });
+      asset: asset,
+      currentUser: currentUser,
+      localFilePath: localFilePath,
+    ).then(completer.complete).catchError((Object e) => completer.completeError(e)).whenComplete(() {
+      // Clean up the completer after completion to prevent memory leaks
+      _downloadingByPath.remove(localFilePath);
+    });
 
     return completer.future;
   }
