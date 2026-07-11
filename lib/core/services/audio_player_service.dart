@@ -37,31 +37,41 @@ class AudioPlayerService {
   Future<bool> _setup() async {
     if (_setupCompleter != null) return _setupCompleter!.future;
 
-    _setupCompleter = Completer();
-    _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
+    final completer = Completer<bool>();
+    _setupCompleter = completer;
 
-    File? cachedFile = CloudStorageService.instance.getCachedFile(urlPath);
-    if (cachedFile != null) {
-      _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
-      _setupCompleter?.complete(true);
-      return true;
-    } else {
-      File? cachedFile = await CloudStorageService.instance.downloadFile(urlPath).then((e) => e.file);
-      if (cachedFile != null) {
+    try {
+      _setLoop ??= await _player.setLoopMode(LoopMode.one).then((e) => true);
+
+      File? cachedFile = CloudStorageService.instance.getCachedFile(urlPath);
+      cachedFile ??= await CloudStorageService.instance.downloadFile(urlPath).then((e) => e.file);
+
+      if (cachedFile != null && !_disposed) {
         _setAudioSource ??= await _player.setFilePath(cachedFile.path).then((value) => true);
-        _setupCompleter?.complete(true);
+        completer.complete(true);
         return true;
       } else {
+        completer.complete(false);
         return false;
       }
+    } catch (error) {
+      debugPrint('🎻 AudioPlayerService#_setup ${basename(urlPath)} failed: $error');
+      // Allow future retries instead of hanging every subsequent call on a broken setup.
+      _setAudioSource = null;
+      _setupCompleter = null;
+      completer.complete(false);
+      return false;
     }
   }
 
   Future<void> play() async {
     bool success = await _setup();
+    if (!success || _disposed) return;
 
     // no need to wait for play.
-    if (success) _player.play();
+    _player.play().catchError((error) {
+      debugPrint('🎻 AudioPlayerService#play ${basename(urlPath)} failed: $error');
+    });
   }
 
   Future<void> pause() async {
