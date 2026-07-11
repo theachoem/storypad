@@ -237,8 +237,9 @@ class _StorageManagementContent extends StatelessWidget {
                     final rawAppWidth = (barWidth * appFraction).clamp(0.0, barWidth).toDouble();
 
                     // Tiny app usage may be sub-pixel; keep it visible while preserving total used width.
+                    final appWidthUpperBound = math.max(rawUsedWidth > 0 ? rawUsedWidth : barWidth, minVisibleAppWidth);
                     final appWidth = appFraction > 0
-                        ? rawAppWidth.clamp(minVisibleAppWidth, rawUsedWidth > 0 ? rawUsedWidth : barWidth).toDouble()
+                        ? rawAppWidth.clamp(minVisibleAppWidth, appWidthUpperBound).toDouble()
                         : 0.0;
                     final otherWidth = (rawUsedWidth - appWidth).clamp(0.0, barWidth).toDouble();
 
