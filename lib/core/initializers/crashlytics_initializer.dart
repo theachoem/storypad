@@ -9,9 +9,13 @@ class CrashlyticsInitializer {
 
   /// Returns true if the error is caused by a network issue outside our control,
   /// e.g. font downloads failing when the user has no internet access.
+  ///
+  /// google_fonts wraps whatever the underlying http client throws (SocketException,
+  /// ClientException, TimeoutException, HandshakeException, ...) so match on the
+  /// gstatic font-fetch failure itself rather than a specific exception type.
   static bool _isIgnorable(Object error) {
     final message = error.toString();
-    return message.contains('fonts.gstatic.com') && message.contains('SocketException');
+    return message.contains('fonts.gstatic.com') && message.contains('Failed to load font');
   }
 
   static void _listenToErrors() {
