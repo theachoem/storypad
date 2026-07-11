@@ -84,6 +84,14 @@ class AudioPlayerService {
     if (_disposed) return;
     _disposed = true;
 
+    // Let any in-flight _setup() (downloading/loading the file) settle first.
+    // Calling stop()/dispose() while just_audio is mid-load throws
+    // PlayerInterruptedException ("Loading interrupted"), which _setup()'s own
+    // disposed check will no longer swallow once _disposed is already true.
+    if (_setupCompleter != null) {
+      await _setupCompleter!.future;
+    }
+
     // If not stop before dispose, it will raise:
     // Bad state: Cannot add new events after calling close
     await _player.stop();
