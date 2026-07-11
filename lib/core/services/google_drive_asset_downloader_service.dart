@@ -72,73 +72,82 @@ class GoogleDriveAssetDownloaderService {
     required AssetDbModel asset,
     required GoogleUserObject? currentUser,
     File? localFile,
-  }) async {
+  }) {
     // Check if file already exists locally
     if (localFile != null && localFile.existsSync()) {
-      return localFile.path;
+      return Future.value(localFile.path);
     }
 
     final localFilePath = asset.localFilePath;
 
     // Check if file exists at expected path (even if localFile wasn't provided)
     if (File(localFilePath).existsSync()) {
-      return localFilePath;
+      return Future.value(localFilePath);
     }
 
     // If download is already in progress, wait for it
-    if (_downloadingByPath[localFilePath] != null && !_downloadingByPath[localFilePath]!.isCompleted) {
-      return _downloadingByPath[localFilePath]!.future;
+    final inFlight = _downloadingByPath[localFilePath];
+    if (inFlight != null && !inFlight.isCompleted) {
+      return inFlight.future;
     }
 
-    // Create a new completer for this download
-    _downloadingByPath[localFilePath] = Completer<String>();
+    // Create a new completer for this download. `completer.future` is always
+    // returned below so the original caller is guaranteed to be a listener —
+    // otherwise `completeError` below has no listener when there's no
+    // concurrent waiter, which Dart reports as an unhandled async error even
+    // though the caller already receives it via the returned future.
+    final completer = Completer<String>();
+    _downloadingByPath[localFilePath] = completer;
 
-    try {
-      final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+    _performDownload(
+          asset: asset,
+          currentUser: currentUser,
+          localFilePath: localFilePath,
+        )
+        .then(completer.complete)
+        .catchError((Object e) => completer.completeError(e))
+        .whenComplete(() {
+          // Clean up the completer after completion to prevent memory leaks
+          _downloadingByPath.remove(localFilePath);
+        });
 
-      // Check if user has permission to download
-      if (uploadedEmails.isNotEmpty && !uploadedEmails.contains(currentUser?.email)) {
-        throw GoogleDriveAssetDownloaderException(
-          'Login with ${uploadedEmails.join(" or ")} to access this ${asset.type.name}.',
-        );
-      }
+    return completer.future;
+  }
 
-      // If no user or no Google Drive access, can't download
-      if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
-        throw GoogleDriveAssetDownloaderException('${asset.relativeLocalFilePath} cannot be loaded.');
-      }
+  Future<String> _performDownload({
+    required AssetDbModel asset,
+    required GoogleUserObject? currentUser,
+    required String localFilePath,
+  }) async {
+    final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
 
-      // Get download URL from Google Drive
-      final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
-      if (downloadUrl == null) {
-        throw GoogleDriveAssetDownloaderException(
-          '${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.',
-        );
-      }
-
-      // Download file from Google Drive
-      final path = await _downloadFromUrl(
-        downloadUrl: downloadUrl,
-        localFilePath: localFilePath,
-        authHeaders: currentUser.authHeaders,
-        embedLink: asset.relativeLocalFilePath,
+    // Check if user has permission to download
+    if (uploadedEmails.isNotEmpty && !uploadedEmails.contains(currentUser?.email)) {
+      throw GoogleDriveAssetDownloaderException(
+        'Login with ${uploadedEmails.join(" or ")} to access this ${asset.type.name}.',
       );
-
-      _downloadingByPath[localFilePath]?.complete(path);
-      return path;
-    } catch (e) {
-      final completer = _downloadingByPath[localFilePath];
-
-      // Propagate the error to any waiters
-      if (completer != null && !completer.isCompleted) {
-        completer.completeError(e);
-      }
-
-      rethrow;
-    } finally {
-      // Clean up the completer after completion to prevent memory leaks
-      _downloadingByPath.remove(localFilePath);
     }
+
+    // If no user or no Google Drive access, can't download
+    if (currentUser == null || asset.getGoogleDriveIdForEmail(currentUser.email) == null) {
+      throw GoogleDriveAssetDownloaderException('${asset.relativeLocalFilePath} cannot be loaded.');
+    }
+
+    // Get download URL from Google Drive
+    final downloadUrl = asset.getGoogleDriveUrlForEmail(currentUser.email);
+    if (downloadUrl == null) {
+      throw GoogleDriveAssetDownloaderException(
+        '${asset.relativeLocalFilePath} with no valid download URL cannot be loaded.',
+      );
+    }
+
+    // Download file from Google Drive
+    return _downloadFromUrl(
+      downloadUrl: downloadUrl,
+      localFilePath: localFilePath,
+      authHeaders: currentUser.authHeaders,
+      embedLink: asset.relativeLocalFilePath,
+    );
   }
 
   /// Internal method to handle the actual HTTP download and file saving.
