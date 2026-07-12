@@ -16,25 +16,29 @@ class GalleryTemplateUsageService {
   Future<void> recordTemplateUsage({
     required String templateId,
   }) async {
-    return avoidDublicatedCallService.run(() async {
-      final docRef = firestore.collection('templates').doc(templateId).collection('devices').doc(kDeviceInfo.id);
+    try {
+      return await avoidDublicatedCallService.run(() async {
+        final docRef = firestore.collection('templates').doc(templateId).collection('devices').doc(kDeviceInfo.id);
 
-      bool exist = await docRef.get().then((e) => e.exists);
-      if (exist) {
-        await docRef.update({
-          'last_used_at': FieldValue.serverTimestamp(),
-          'usage_count': FieldValue.increment(1),
-        });
-      } else {
-        Map<String, Object> data = {
-          'device_id': kDeviceInfo.id,
-          'last_used_at': FieldValue.serverTimestamp(),
-          'usage_count': 1,
-          'first_used_at': FieldValue.serverTimestamp(),
-          'model': kDeviceInfo.model,
-        };
-        await docRef.set(data);
-      }
-    });
+        bool exist = await docRef.get().then((e) => e.exists);
+        if (exist) {
+          await docRef.update({
+            'last_used_at': FieldValue.serverTimestamp(),
+            'usage_count': FieldValue.increment(1),
+          });
+        } else {
+          Map<String, Object> data = {
+            'device_id': kDeviceInfo.id,
+            'last_used_at': FieldValue.serverTimestamp(),
+            'usage_count': 1,
+            'first_used_at': FieldValue.serverTimestamp(),
+            'model': kDeviceInfo.model,
+          };
+          await docRef.set(data);
+        }
+      });
+    } catch (_) {
+      // Usage tracking is best-effort analytics; ignore failures (e.g. offline/unavailable).
+    }
   }
 }

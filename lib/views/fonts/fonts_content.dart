@@ -61,44 +61,33 @@ class _FontsContent extends StatelessWidget {
   }
 
   Widget buildListView(BuildContext context) {
+    final items = <(String label, String fontFamily)>[
+      for (final fontGroup in viewModel.fontGroups!)
+        for (final fontFamily in fontGroup.fontFamilies) (fontGroup.label, fontFamily),
+    ];
+
     return ListView.builder(
       controller: PrimaryScrollController.maybeOf(context),
       padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(bottom: MediaQuery.of(context).padding.bottom),
-      itemCount: viewModel.fonts.length + viewModel.fontGroups!.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        if (index < viewModel.fontGroups!.length) {
-          final fontGroup = viewModel.fontGroups![index];
-          return StickyHeader(
-            header: buildGroupHeader(context, fontGroup.label),
-            content: Container(
-              margin: const EdgeInsets.only(bottom: 16.0),
-              child: Column(
-                children: List.generate(fontGroup.fontFamilies.length, (index) {
-                  return buildFontFamilyTile(context, fontGroup.fontFamilies[index]);
-                }),
-              ),
-            ),
-          );
-        } else {
-          int actualIndex = index - viewModel.fontGroups!.length;
-          final previousFont = actualIndex > 0 ? viewModel.fonts[actualIndex - 1] : null;
-          final font = viewModel.fonts[actualIndex];
+        final (label, fontFamily) = items[index];
+        final previousLabel = index > 0 ? items[index - 1].$1 : null;
 
-          return Column(
-            children: [
-              if (previousFont == null || previousFont[0] != font[0]) buildGroupHeader(context, font[0]),
-              buildFontFamilyTile(context, font),
-            ],
-          );
-        }
+        return Column(
+          children: [
+            if (previousLabel != label) buildGroupHeader(context, label, isFirst: index == 0),
+            buildFontFamilyTile(context, fontFamily),
+          ],
+        );
       },
     );
   }
 
-  Widget buildGroupHeader(BuildContext context, String groupLabel) {
+  Widget buildGroupHeader(BuildContext context, String groupLabel, {bool isFirst = false}) {
     return Container(
       decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: isFirst ? 8.0 : 24.0, bottom: 8.0),
       child: Row(
         spacing: 16.0,
         children: [

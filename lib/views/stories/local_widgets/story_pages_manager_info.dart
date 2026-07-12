@@ -17,9 +17,15 @@ class StoryPagesManagerInfo {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       pageController.addListener(() => currentPageIndexNotifier.value = pageController.page?.toInt());
-      pageScrollController.addListener(() => pageScrollOffsetNotifier.value = pageScrollController.offset);
+      pageScrollController.addListener(() {
+        if (canReadScrollOffset) pageScrollOffsetNotifier.value = pageScrollController.offset;
+      });
     });
   }
+
+  // ScrollController.offset/position throw "Bad state" when 0 or 2+ ScrollPositions
+  // are attached (e.g. transiently while switching between list/grid layouts).
+  bool get canReadScrollOffset => pageScrollController.positions.length == 1;
 
   late final ScrollController pageScrollController;
   late final PageController pageController;
@@ -48,6 +54,8 @@ class StoryPagesManagerInfo {
   void setHeaderHeight(double height) => _headerHeight = height;
 
   Future<void> scrollToPage(int pageId) async {
+    if (!canReadScrollOffset) return;
+
     double? itemPosition = getPagePosition(pageId);
 
     if (itemPosition != null) {
@@ -72,6 +80,8 @@ class StoryPagesManagerInfo {
   }
 
   double? getPagePosition(int pageId) {
+    if (!canReadScrollOffset) return null;
+
     double scrollOffset = max(0.0, pageScrollController.offset);
     final renderBox = pagesMap[pageId]?.key.currentContext?.findRenderObject() as RenderBox?;
     return renderBox?.localToGlobal(Offset(0.0, scrollOffset)).dy;

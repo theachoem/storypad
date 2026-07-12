@@ -283,6 +283,7 @@ class GoogleDriveCloudService extends BackupCloudService {
             (data) => dataStore.insertAll(dataStore.length, data),
             onDone: () => completer.complete(dataStore),
             onError: (error) => completer.completeError(error),
+            cancelOnError: true,
           );
 
           final bytes = await completer.future;
@@ -295,7 +296,8 @@ class GoogleDriveCloudService extends BackupCloudService {
           media.stream.listen(
             (data) => dataStore.insertAll(dataStore.length, data),
             onDone: () => completer.complete(utf8.decode(dataStore)),
-            onError: (error) {},
+            onError: (error) => completer.completeError(error),
+            cancelOnError: true,
           );
 
           await completer.future;

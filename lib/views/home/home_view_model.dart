@@ -255,6 +255,8 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
           [],
     ];
 
+    if (allStories.isEmpty) return;
+
     final allPinned = allStories.every((story) => story.pinned == true);
     final firstStoryId = allStories.first.id;
 

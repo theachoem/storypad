@@ -67,7 +67,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     for (var storyBox in boxes) {
       if (storyBox.version == 1) {
-        storyBox.latestContent = storyBox.changes.last;
+        storyBox.latestContent = storyBox.changes.lastOrNull;
         storyBox.changes = [];
         storyBox.version = 2;
         await box.putAsync(storyBox);
@@ -699,7 +699,7 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       final changes = json['changes'];
 
       if (changes is List) {
-        final latestContent = changes.last;
+        final latestContent = changes.lastOrNull;
 
         if (latestContent is Map<String, dynamic>) {
           json['latest_content'] = latestContent;

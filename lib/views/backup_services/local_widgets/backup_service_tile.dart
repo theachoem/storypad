@@ -39,6 +39,7 @@ class BackupServiceTile extends StatelessWidget {
                 backgroundImage: CachedNetworkImageProvider(
                   service.currentUser!.photoUrl!,
                 ),
+                onBackgroundImageError: (_, _) {},
                 radius: 8.0,
               ),
             ),
