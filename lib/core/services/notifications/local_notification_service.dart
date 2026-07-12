@@ -111,8 +111,20 @@ class LocalNotificationService {
     await rescheduleAll(DevicePreferencesStorage.appInstance.preferences.reminders);
   }
 
+  // The OS rejects a second permission request while one is still pending
+  // (PlatformException: permissionRequestInProgress) — a rapid double-tap on
+  // the reminder switch is enough to trigger it. Sharing one in-flight future
+  // across overlapping callers keeps that from ever reaching the plugin twice.
+  Future<bool>? _pendingPermissionRequest;
+
   /// Requests OS notification permission. Returns true when granted.
-  Future<bool> requestPermission() async {
+  Future<bool> requestPermission() {
+    return _pendingPermissionRequest ??= _requestPermission().whenComplete(() {
+      _pendingPermissionRequest = null;
+    });
+  }
+
+  Future<bool> _requestPermission() async {
     if (!supported) return false;
 
     if (Platform.isAndroid) {

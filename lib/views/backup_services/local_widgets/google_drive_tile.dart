@@ -34,6 +34,7 @@ class GoogleDriveTile extends StatelessWidget {
                 backgroundImage: CachedNetworkImageProvider(
                   provider.currentGoogleUser!.photoUrl!,
                 ),
+                onBackgroundImageError: (_, _) {},
                 radius: 8.0,
               ),
             ),

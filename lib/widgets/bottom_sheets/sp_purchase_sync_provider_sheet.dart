@@ -101,6 +101,7 @@ class SpPurchaseSyncProviderSheet extends BaseBottomSheet {
     Widget leading = CircleAvatar(
       radius: 16,
       backgroundImage: isSignedIn && user?.photoUrl != null ? CachedNetworkImageProvider(user!.photoUrl!) : null,
+      onBackgroundImageError: isSignedIn && user?.photoUrl != null ? (_, _) {} : null,
       child: isSignedIn && user?.photoUrl != null ? null : Icon(service.serviceType.icon, size: 16),
     );
 

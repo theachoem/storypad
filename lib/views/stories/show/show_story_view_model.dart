@@ -67,7 +67,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     switch (story?.preferences.layoutType) {
       case PageLayoutType.grid:
       case PageLayoutType.list:
-        initialPageScrollOffet = pagesManager.pageScrollController.offset;
+        if (pagesManager.canReadScrollOffset) initialPageScrollOffet = pagesManager.pageScrollController.offset;
 
         for (int index = 0; index < (draftContent?.richPages?.length ?? 0); index++) {
           int pageId = draftContent!.richPages![index].id;
