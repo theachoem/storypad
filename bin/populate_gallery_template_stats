@@ -9,6 +9,9 @@
 #
 # Run this after deploying new gallery templates or periodically to sync usage statistics.
 
-export GOOGLE_APPLICATION_CREDENTIALS="../../private_keys/firebase_service_accounts/firestore_service_account.json"
+source "$(dirname "$0")/helpers"
+sync_private_keys
+
+export GOOGLE_APPLICATION_CREDENTIALS="../.tmp/private_keys/firebase_service_accounts/firestore_service_account.json"
 
 cd bin/firebase_admin && node populate_gallery_template_stats.js

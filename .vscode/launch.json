@@ -2,6 +2,10 @@
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  //
+  // Each config's preLaunchTask (see tasks.json) mirrors private_keys/ into
+  // bin/.tmp/private_keys/ via bin/helpers' sync_private_keys - falling back to an empty
+  // community/dart_defines.json so `community` still runs for contributors without it.
   "version": "0.2.0",
   "configurations": [
     {
@@ -10,10 +14,11 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_community.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "community",
-        "--dart-define-from-file=private_keys/dart_defines/community.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/community.json"
       ]
     },
     {
@@ -22,10 +27,11 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "storypad",
-        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/storypad.json"
       ]
     },
     {
@@ -34,10 +40,11 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_spooky.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "spooky",
-        "--dart-define-from-file=private_keys/dart_defines/spooky.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/spooky.json"
       ]
     },
     {
@@ -46,11 +53,12 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_community.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "community",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=private_keys/dart_defines/community.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/community.json"
       ]
     },
     {
@@ -59,11 +67,12 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "storypad",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/storypad.json"
       ]
     },
     {
@@ -72,11 +81,12 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_spooky.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "spooky",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=private_keys/dart_defines/spooky.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/spooky.json"
       ]
     },
     {
@@ -85,11 +95,12 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_community.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "community",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=private_keys/dart_defines/community.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/community.json"
       ],
       "deviceId": "macos"
     },
@@ -99,11 +110,12 @@
       "type": "dart",
       "flutterMode": "profile",
       "program": "lib/main_storypad.dart",
+      "preLaunchTask": "sync-private-keys",
       "args": [
         "--flavor",
         "storypad",
         "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=private_keys/dart_defines/storypad.json"
+        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/storypad.json"
       ],
       "deviceId": "macos"
     }

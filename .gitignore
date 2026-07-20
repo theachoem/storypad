@@ -66,8 +66,5 @@ lib/main_storypad.dart
 
 ios/Flutter/GeneratedDartDefines.xcconfig
 
-# All credentials and keys repository
-private_keys/
-
 # Temporary files from bin scripts
 bin/.tmp

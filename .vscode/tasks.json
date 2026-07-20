@@ -1,0 +1,15 @@
+{
+  // Mirrors private_keys/ (or generates a community/ fallback) into
+  // bin/.tmp/private_keys/ before each launch.json run - see sync_private_keys in
+  // bin/helpers for what it does and why.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "sync-private-keys",
+      "type": "shell",
+      "command": "source bin/helpers && sync_private_keys",
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}
