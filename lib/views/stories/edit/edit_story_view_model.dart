@@ -47,6 +47,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
     StoryPageObjectsMap? initialPagesMap,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
   }) async {
+    story = this.initialStory = initialStory;
+
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 

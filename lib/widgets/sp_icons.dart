@@ -131,6 +131,7 @@ class SpIcons {
   static const IconData download = kIsCupertino ? CupertinoIcons.cloud_download : Icons.download_outlined;
   static const IconData sideBarLeft = kIsCupertino ? CupertinoIcons.sidebar_left : MdiIcons.dockLeft;
   static const IconData starCircle = kIsCupertino ? CupertinoIcons.star_circle : MdiIcons.starCircleOutline;
+  static const IconData duplicate = kIsCupertino ? CupertinoIcons.doc_on_doc : Icons.copy_all_outlined;
 
   static const IconData bug = MdiIcons.bug;
   static const IconData rocketLaunch = MdiIcons.rocketLaunchOutline;

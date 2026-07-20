@@ -233,6 +233,15 @@ class _StoryThemeSheetState extends State<_StoryThemeSheet> with DebounchedCallb
                   },
           ),
           if (storyViewModel != null && story != null) ...[
+            if (storyViewModel.readOnly)
+              SpPopMenuItem(
+                title: tr('button.duplicate'),
+                leadingIconData: SpIcons.duplicate,
+                onPressed: () => StoryTileActions(
+                  story: story,
+                  storyListReloaderContext: null,
+                ).duplicate(context),
+              ),
             SpPopMenuItem(
               title: tr('button.save_as_template'),
               leadingIconData: SpIcons.lightBulb,
