@@ -9,7 +9,6 @@ class TemplatesViewModel extends ChangeNotifier with DisposeAwareMixin {
   final TemplatesRoute params;
 
   late int initialTabIndex;
-  final ValueNotifier<List<IconButton>?> appBarActionsNotifier = ValueNotifier(null);
 
   TemplatesViewModel({
     required this.params,
@@ -23,11 +22,5 @@ class TemplatesViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void setCurrentIndex(int index) {
     PreviouslyVisitedTemplateTabIndexStorage.appInstance.write(index);
-  }
-
-  @override
-  void dispose() {
-    appBarActionsNotifier.dispose();
-    super.dispose();
   }
 }

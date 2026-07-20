@@ -21,11 +21,9 @@ class GalleryTab extends StatefulWidget {
   const GalleryTab({
     super.key,
     required this.params,
-    required this.appBarActionsLoaderCallback,
   });
 
   final TemplatesRoute params;
-  final void Function(List<IconButton> icons)? appBarActionsLoaderCallback;
 
   @override
   State<GalleryTab> createState() => _GalleryTabState();
@@ -36,10 +34,6 @@ class _GalleryTabState extends State<GalleryTab> {
   void initState() {
     super.initState();
     load();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.appBarActionsLoaderCallback?.call([]);
-    });
   }
 
   Map<GalleryTemplateCategoryObject, List<GalleryTemplateObject>>? templates;
