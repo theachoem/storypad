@@ -18,8 +18,12 @@ class RestoreBackupService {
     _listeners.remove(callback);
   }
 
+  /// Set [notifyCallbacks] to false when restoring several backups in a row (e.g. one file
+  /// per year). Listeners rebuild from the whole database, so firing them between files
+  /// exposes a half-restored state — call [tri] once the batch is complete.
   Future<int> restoreOnlyNewData({
     required BackupObject backup,
+    bool notifyCallbacks = true,
   }) async {
     Map<String, dynamic> tables = backup.tables;
     Map<String, List<BaseDbModel>> datas = JsonTablesToModelService.decode(tables);
@@ -56,9 +60,12 @@ class RestoreBackupService {
       }
     }
 
-    await _triggerCallback();
+    if (notifyCallbacks) await _triggerCallback();
     return changesCount;
   }
+
+  /// Notify listeners that a batch of restores has finished. See [restoreOnlyNewData].
+  Future<void> notify() => _triggerCallback();
 
   Future<void> forceRestore({
     required BackupObject backup,
