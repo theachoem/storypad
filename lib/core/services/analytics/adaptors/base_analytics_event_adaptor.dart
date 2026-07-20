@@ -131,6 +131,10 @@ abstract class BaseAnalyticsEventAdaptor {
     return logEvent(sanitizeEventName('import_story_individually'), parameters: storyAnalyticParameters(story));
   }
 
+  Future<void> logDuplicateStory({required StoryDbModel story}) {
+    return logEvent(sanitizeEventName('duplicate_story'), parameters: storyAnalyticParameters(story));
+  }
+
   Future<void> logMoveStoryToBin({required StoryDbModel story}) {
     return logEvent(sanitizeEventName('move_story_to_bin'), parameters: storyAnalyticParameters(story));
   }

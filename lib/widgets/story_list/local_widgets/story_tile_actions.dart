@@ -6,6 +6,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
+import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_with_query.dart';
 
 class StoryTileActions {
@@ -199,6 +200,32 @@ class StoryTileActions {
     }
 
     return true;
+  }
+
+  Future<void> duplicate(BuildContext context) async {
+    final now = DateTime.now();
+
+    StoryDbModel duplicatedStory = story.copyWith(
+      id: now.millisecondsSinceEpoch,
+      createdAt: now,
+      updatedAt: now,
+      pinned: false,
+      movedToBinAt: null,
+      permanentlyDeletedAt: null,
+      lastSavedDeviceId: null,
+      draftContent: story.draftContent ?? story.latestContent,
+    );
+
+    AnalyticsService.instance.logDuplicateStory(story: story);
+
+    final addedStory = await EditStoryRoute(story: duplicatedStory).push(context);
+    if (addedStory is! StoryDbModel) return;
+
+    if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
+      await SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#duplicate');
+    }
+
+    await reloadHome('$runtimeType#duplicate');
   }
 
   Future<void> toggleStarred() async {
