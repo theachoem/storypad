@@ -62,6 +62,23 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     _peopleById = {for (var tag in _peopleTags?.items ?? <TagDbModel>[]) tag.id: tag};
   }
 
+  // A bucket only needs repairing when its indexes no longer describe an unambiguous
+  // order: duplicates (whose relative order the database is free to pick) or negatives
+  // (written by [createTag] before the tag has a real position). Plain gaps like 0,1,5
+  // still order correctly, so leave them alone — every rewrite here is a write that has
+  // to be synced and can lose a merge against a real user reorder.
+  bool _needsReindex(CollectionDbModel<TagDbModel>? bucket) {
+    if (bucket == null) return false;
+
+    final seen = <int>{};
+    for (final tag in bucket.items) {
+      if (tag.index < 0) return true;
+      if (!seen.add(tag.index)) return true;
+    }
+
+    return false;
+  }
+
   // pass null to allow reindex to notify only when needed.
   // Topics and people keep independent 0-based index sequences since they are filtered separately.
   Future<void> _reindex({
@@ -73,14 +90,18 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
       CollectionDbModel<TagDbModel>? bucket,
       void Function(TagDbModel updated) replace,
     ) async {
-      if (bucket == null) return;
+      if (bucket == null || !_needsReindex(bucket)) return;
+
       for (int i = 0; i < bucket.items.length; i++) {
         TagDbModel tag = bucket.items[i];
 
         if (tag.index != i) {
           tag =
               await TagDbModel.db.set(
-                tag.copyWith(index: i, updatedAt: DateTime.now()),
+                // Deliberately keep the original `updatedAt`: this repairs a local
+                // inconsistency, it is not new user intent, and bumping the timestamp would
+                // make it outrank an actual reorder made on another device.
+                tag.copyWith(index: i),
                 debugSource: '$runtimeType#setup',
 
                 // This is consider silent update, so no need to alert listeners for now.

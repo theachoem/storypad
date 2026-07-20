@@ -39,10 +39,14 @@ class BackupImporterService {
       final backup = entry.value;
 
       AppLogger.d('BackupImporter: Importing year $year');
-      final int changesCount = await restoreService.restoreOnlyNewData(backup: backup);
+      // Hold listeners until every year is in. Ordering (e.g. tag index) spans years,
+      // so rebuilding between files would expose a partially merged database.
+      final int changesCount = await restoreService.restoreOnlyNewData(backup: backup, notifyCallbacks: false);
       await importHistoryStorage.markAsImported(cloudService.serviceType, year, backup.fileInfo.createdAt);
       totalChangesCount += changesCount;
     }
+
+    await restoreService.notify();
 
     controller.add(
       BackupSyncMessage(

@@ -85,6 +85,24 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
     queryBuilder.order(TagObjectBox_.index, flags: order ?? 0);
 
+    // Duplicate indexes are possible while a multi-device sync settles, and the order of
+    // tied rows is otherwise undefined. Break the tie on createdAt so every device lists
+    // them the same way instead of inventing a different order each read.
+    //
+    // Example: a tag index is a single sequence, but backups are split into one file per
+    // createdAt year. Reordering to [Work(2021), Home(2026)] writes index 0 to the 2021
+    // file and index 1 to the 2026 file. If only the 2026 file reaches the other device,
+    // it merges Home=1 onto a Work that still has its old index 1:
+    //
+    //   id=Work  index=1  createdAt=2021-03-04
+    //   id=Home  index=1  createdAt=2026-01-09
+    //
+    // Ordering by index alone leaves those two rows in whatever order the query happens
+    // to return, and TagsProvider._reindex then writes that arbitrary order back as the
+    // real one. With createdAt as a tiebreaker the result is at least stable and
+    // identical on every device, so a later reorder sticks instead of fighting the reads.
+    queryBuilder.order(TagObjectBox_.createdAt, flags: order ?? 0);
+
     return queryBuilder;
   }
 
