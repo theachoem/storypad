@@ -9,7 +9,6 @@ import 'package:storypad/views/templates/local_widgets/gallery_tab.dart';
 import 'package:storypad/views/templates/local_widgets/templates_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
-import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'templates_view_model.dart';
 

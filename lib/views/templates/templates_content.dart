@@ -12,21 +12,12 @@ class _TemplatesContent extends StatelessWidget {
         appBar: AppBar(
           title: Text(tr('general.path_type.archives')),
         ),
-        body: TemplatesTab(
-          params: viewModel.params,
-          appBarActionsLoaderCallback: null,
-        ),
+        body: TemplatesTab(params: viewModel.params),
       );
     }
 
     if (viewModel.params.onlyMyTemplates) {
-      return Scaffold(
-        appBar: AppBar(title: Text(tr('general.my_templates'))),
-        body: TemplatesTab(
-          params: viewModel.params,
-          appBarActionsLoaderCallback: null,
-        ),
-      );
+      return TemplatesTab(params: viewModel.params);
     }
 
     return DefaultTabController(
@@ -46,21 +37,17 @@ class _TemplatesContent extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        viewModel.params.pickMode
-            ? tr("button.choose_template")
-            : viewModel.params.viewingArchives
-            ? tr('general.path_type.archives')
-            : tr("paywall_features.templates.title"),
+        viewModel.params.pickMode ? tr("button.choose_template") : tr("paywall_features.templates.title"),
       ),
-      actions: [
-        if (!viewModel.params.viewingArchives && !viewModel.params.pickMode) buildActions(),
-      ],
       bottom: TabBar(
         onTap: (index) {
           if (index == 0 && !context.read<InAppPurchaseProvider>().isProUser) {
             DefaultTabController.of(context).animateTo(1);
             const PaywallRoute(initialFocus: .templates).push(context);
+            return;
           }
+
+          viewModel.setCurrentIndex(index);
         },
         tabs: [
           Tab(
@@ -90,35 +77,12 @@ class _TemplatesContent extends StatelessWidget {
     );
   }
 
-  Widget buildActions() {
-    return ValueListenableBuilder(
-      valueListenable: viewModel.appBarActionsNotifier,
-      builder: (context, appBarActions, child) {
-        return Row(
-          children: appBarActions?.map((child) => SpFadeIn.bound(child: child)).toList() ?? [],
-        );
-      },
-    );
-  }
-
   Widget buildBody(BuildContext context) {
     return TabBarView(
       physics: context.read<InAppPurchaseProvider>().isProUser ? null : const NeverScrollableScrollPhysics(),
       children: [
-        TemplatesTab(
-          params: viewModel.params,
-          appBarActionsLoaderCallback: (List<IconButton> icons) {
-            viewModel.appBarActionsNotifier.value = icons;
-            viewModel.setCurrentIndex(0);
-          },
-        ),
-        GalleryTab(
-          params: viewModel.params,
-          appBarActionsLoaderCallback: (List<IconButton> icons) {
-            viewModel.appBarActionsNotifier.value = icons;
-            viewModel.setCurrentIndex(1);
-          },
-        ),
+        TemplatesTab(params: viewModel.params),
+        GalleryTab(params: viewModel.params),
       ],
     );
   }

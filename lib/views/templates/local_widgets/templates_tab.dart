@@ -19,11 +19,9 @@ class TemplatesTab extends StatefulWidget {
   const TemplatesTab({
     super.key,
     required this.params,
-    required this.appBarActionsLoaderCallback,
   });
 
   final TemplatesRoute params;
-  final void Function(List<IconButton> icons)? appBarActionsLoaderCallback;
 
   @override
   State<TemplatesTab> createState() => _TemplatesTabState();
@@ -37,20 +35,6 @@ class _TemplatesTabState extends State<TemplatesTab> {
   void initState() {
     super.initState();
     load();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final actions = params.pickMode
-          ? <IconButton>[]
-          : [
-              IconButton(
-                tooltip: tr('general.path_type.archives'),
-                icon: const Icon(SpIcons.archive),
-                onPressed: () => goToArchivesPage(context),
-              ),
-            ];
-
-      widget.appBarActionsLoaderCallback?.call(actions);
-    });
   }
 
   Future<void> load() async {
@@ -115,6 +99,18 @@ class _TemplatesTabState extends State<TemplatesTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: params.onlyMyTemplates
+          ? AppBar(
+              title: Text(tr('general.my_templates')),
+              actions: [
+                IconButton(
+                  tooltip: tr('general.path_type.archives'),
+                  icon: const Icon(SpIcons.archive),
+                  onPressed: () => goToArchivesPage(context),
+                ),
+              ],
+            )
+          : null,
       body: buildBody(context),
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
       floatingActionButton: params.viewingArchives || params.pickMode ? null : buildFAB(context),
