@@ -16,11 +16,12 @@
 #   bin/build_release_ios --spooky
 
 source "$(dirname "$0")/helpers"
+sync_private_keys
 
 function setup_signing_certificates() {
   run_command "keychain initialize"
   run_command "keychain add-certificates
-    --certificate private_keys/ios_certificates/ios_signing_certificate.p12
+    --certificate bin/.tmp/private_keys/ios_certificates/ios_signing_certificate.p12
     --certificate-password $(get_env_key 'APPLE_CERTIFICATE_PASSWORD')"
 }
 
@@ -83,7 +84,7 @@ function build_ipa() {
     --config-only
     --flavor=$FLAVOR
     --dart-define=CUPERTINO=yes
-    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json"
+    --dart-define-from-file=bin/.tmp/private_keys/dart_defines/$FLAVOR.json"
 
   # generates GeneratedDartDefines.xcconfig
   run_command "(cd ios && source Flutter/flutter_export_environment.sh && ./scripts/extract_dart_defines.sh)"
@@ -93,11 +94,11 @@ function build_ipa() {
     --flavor=$FLAVOR
     --target=lib/main_$FLAVOR.dart
     --dart-define=CUPERTINO=yes
-    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json
+    --dart-define-from-file=bin/.tmp/private_keys/dart_defines/$FLAVOR.json
     --export-options-plist=$PROVISIONING_EXPORT_PATH"
 }
 
-# xcrun CLI will automatically find the actual key at private_keys/AuthKey_<apikey>.p8 
+# xcrun CLI will automatically find the actual key at bin/.tmp/private_keys/AuthKey_<apikey>.p8
 function upload_ipa_to_app_store() {
   FLAVOR=$1
 

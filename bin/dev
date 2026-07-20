@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 # Use this [bin/dev] to run Flutter project in specific flavor.
 #
@@ -6,24 +6,39 @@
 # bin/dev --community
 # bin/dev --storypad
 # bin/dev --spooky
-# 
+#
 # bin/dev --community-ios
 # bin/dev --storypad-ios
 # bin/dev --spooky-ios
-# 
+#
 # bin/dev --community-macos
 # bin/dev --storypad-macos
 # bin/dev --spooky-macos
+#
+# Works without the private_keys/ submodule checked out (e.g. external contributors
+# who only cloned this repo) - see sync_private_keys / get_debug_keystore_path in
+# bin/helpers. `community` is the only flavor with public Firebase config, so it's the
+# only one that fully runs this way; storypad/spooky still need private_keys/.
+
+source "$(dirname "$0")/helpers"
 
 INPUT=$1
 FLAVOR=$(echo "$INPUT" | sed -E 's/--([a-z]+)(-ios|-macos)?/\1/')
-BASE_ARG="--target=lib/main_${FLAVOR}.dart --flavor $FLAVOR --dart-define-from-file=private_keys/dart_defines/${FLAVOR}.json"
+
+sync_private_keys
+
+BASE_ARG="--target=lib/main_${FLAVOR}.dart --flavor $FLAVOR --dart-define-from-file=bin/.tmp/private_keys/dart_defines/${FLAVOR}.json"
 
 # Export keystore paths: android/app/build.gradle.kts:80
-export DEBUG_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_debug.keystore"
-export DEBUG_KEYSTORE_PASSWORD="android"
-export DEBUG_KEY_PASSWORD="android"
-export DEBUG_KEY_ALIAS="androiddebugkey"
+# Skipped when private_keys/ isn't checked out - build.gradle.kts then falls back to
+# the Android Gradle Plugin's own auto-generated debug keystore.
+DEBUG_KEYSTORE_PATH=$(get_debug_keystore_path $FLAVOR)
+if [ -n "$DEBUG_KEYSTORE_PATH" ]; then
+  export DEBUG_KEYSTORE_PATH
+  export DEBUG_KEYSTORE_PASSWORD="android"
+  export DEBUG_KEY_PASSWORD="android"
+  export DEBUG_KEY_ALIAS="androiddebugkey"
+fi
 
 case "$INPUT" in
 --storypad)

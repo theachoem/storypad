@@ -40,9 +40,9 @@ function validate_flavor_inputs() {
 
 function get_provision_source_path() {
   case "$1" in
-    storypad) echo "private_keys/ios_mobileprovision/StoryPad.mobileprovision" ;;
-    spooky) echo "private_keys/ios_mobileprovision/Spooky.mobileprovision" ;;
-    community) echo "private_keys/ios_mobileprovision/Community.mobileprovision" ;;
+    storypad) echo "bin/.tmp/private_keys/ios_mobileprovision/StoryPad.mobileprovision" ;;
+    spooky) echo "bin/.tmp/private_keys/ios_mobileprovision/Spooky.mobileprovision" ;;
+    community) echo "bin/.tmp/private_keys/ios_mobileprovision/Community.mobileprovision" ;;
     *) echo "❌ Invalid flavor: $1" >&2; exit 1 ;;
   esac
 }
@@ -55,5 +55,46 @@ function get_provision_export_path() {
 
 # Usage: get_env_key KEY_NAME
 function get_env_key() {
-  grep "^$1=" private_keys/.env | cut -d'=' -f2
+  grep "^$1=" bin/.tmp/private_keys/.env | cut -d'=' -f2
+}
+
+# Mirrors the private_keys/ submodule (monorepo root, one level above app/) into
+# bin/.tmp/private_keys/, so every script here reads from ONE consistent path
+# regardless of flavor or whether private_keys/ is actually checked out. Call this
+# before referencing anything under bin/.tmp/private_keys/. Additive only - re-syncing
+# never deletes files already staged here, so generating community's fallback below
+# never gets clobbered by a later sync for another flavor, and vice versa.
+#
+# - private_keys/ checked out (team members): copies its real contents in, so every
+#   flavor gets real secrets.
+# - private_keys/ missing (e.g. external contributors who only cloned this repo):
+#   ensures `community`'s one required file (dart_defines/community.json) exists as an
+#   empty fallback, so optional integrations (RevenueCat, Maps, Google Sign-In, ...)
+#   just no-op instead of failing the build. storypad/spooky still need the real
+#   submodule - they have no public Firebase config to fall back to.
+function sync_private_keys() {
+  DEST="bin/.tmp/private_keys"
+  mkdir -p "$DEST/dart_defines"
+
+  if [ -d "../private_keys" ]; then
+    cp -R ../private_keys/. "$DEST/"
+    rm -rf "$DEST/.git"
+  fi
+
+  if [ ! -f "$DEST/dart_defines/community.json" ]; then
+    echo '{}' > "$DEST/dart_defines/community.json"
+  fi
+}
+
+# Echoes DEBUG_KEYSTORE_PATH (as android/app/build.gradle.kts needs it, relative to
+# android/app/) if FLAVOR's debug keystore was staged by sync_private_keys; empty
+# otherwise so callers skip exporting it and let the Android Gradle Plugin fall back to
+# its own auto-generated ~/.android/debug.keystore (same store/key password convention:
+# "android" / "androiddebugkey").
+function get_debug_keystore_path() {
+  FLAVOR=$1
+
+  if [ -f "bin/.tmp/private_keys/android_keystores/${FLAVOR}_debug.keystore" ]; then
+    echo "../../bin/.tmp/private_keys/android_keystores/${FLAVOR}_debug.keystore"
+  fi
 }

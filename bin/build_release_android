@@ -16,19 +16,20 @@
 #   bin/build_release_android --spooky
 
 source "$(dirname "$0")/helpers"
+sync_private_keys
 
 function export_keystore_vars() {
   FLAVOR=$1
   FLAVOR_UPPER=$(echo "$FLAVOR" | tr '[:lower:]' '[:upper:]') # eg. storypad -> STORYPAD
 
   # android/app/build.gradle.kts:69
-  export RELEASE_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_keystore.jks"
+  export RELEASE_KEYSTORE_PATH="../../bin/.tmp/private_keys/android_keystores/${FLAVOR}_keystore.jks"
   export RELEASE_KEYSTORE_PASSWORD=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_STORE_PASSWORD")
   export RELEASE_KEY_PASSWORD=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_KEY_PASSWORD")
   export RELEASE_KEY_ALIAS=$(get_env_key "RELEASE_${FLAVOR_UPPER}_KEYSTORE_KEY_ALIAS")
 
   # android/app/build.gradle.kts:80
-  export DEBUG_KEYSTORE_PATH="../../private_keys/android_keystores/${FLAVOR}_debug.keystore"
+  export DEBUG_KEYSTORE_PATH="../../bin/.tmp/private_keys/android_keystores/${FLAVOR}_debug.keystore"
   export DEBUG_KEYSTORE_PASSWORD="android"
   export DEBUG_KEY_PASSWORD="android"
   export DEBUG_KEY_ALIAS="androiddebugkey"
@@ -49,7 +50,7 @@ function build_apk() {
   run_command "(export_keystore_vars $FLAVOR && flutter build apk --release
     --flavor=$FLAVOR
     --target=lib/main_$FLAVOR.dart
-    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json)"
+    --dart-define-from-file=bin/.tmp/private_keys/dart_defines/$FLAVOR.json)"
 }
 
 function build_appbundle() {
@@ -59,7 +60,7 @@ function build_appbundle() {
   run_command "(flutter build appbundle --release
     --flavor=$FLAVOR
     --target=lib/main_$FLAVOR.dart
-    --dart-define-from-file=private_keys/dart_defines/$FLAVOR.json)"
+    --dart-define-from-file=bin/.tmp/private_keys/dart_defines/$FLAVOR.json)"
 }
 
 function upload_apk_to_firebase() {
@@ -86,26 +87,26 @@ function upload_appbundle_to_play_store() {
 
   run_command "google-play bundles publish
       --bundle "build/app/outputs/bundle/${FLAVOR}Release/app-${FLAVOR}-release.aab"
-      --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json"
+      --credentials "@file:bin/.tmp/private_keys/android_play_console_distributor_keys/${FLAVOR}.json"
       --track internal"
 
   # run_command "google-play tracks promote-release
   #     --package-name $APP_PACKAGE_NAME
   #     --source-track internal
   #     --target-track alpha
-  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+  #     --credentials "@file:bin/.tmp/private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
 
   # run_command "google-play tracks promote-release
   #     --package-name $APP_PACKAGE_NAME
   #     --source-track internal
   #     --target-track beta
-  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+  #     --credentials "@file:bin/.tmp/private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
 
   # run_command "google-play tracks promote-release
   #     --package-name $APP_PACKAGE_NAME
   #     --source-track internal
   #     --target-track production
-  #     --credentials "@file:private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
+  #     --credentials "@file:bin/.tmp/private_keys/android_play_console_distributor_keys/${FLAVOR}.json""
 }
 
 function main(){

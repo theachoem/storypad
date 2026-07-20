@@ -42,12 +42,17 @@ Before getting started, ensure you have the following tools:
 - Ruby: 3.3.5 (for IOS)
 - Flutter: 3.29.0
 
-> If you're using asdf, refer to this [guide](docs/setup_asdf.md). Otherwise, you can install above versions manually with fvm, rvm, rbenv or others.
+For easy setup and running, the GoogleService-Info.plist and google-services.json are provided directly in this repo, and `bin/dev` generates an empty Dart-defines fallback automatically (RevenueCat, Maps, Google Sign-In, etc. just no-op). Simply run the project with any of the following commands:
 
-For easy setup and running, the GoogleService-Info.plist, google-services.json, and Dart defines are provided directly in this repo. Simply run the project with:
+```sh
+# For android
+bin/dev --community
 
-```s
-flutter run --flavor community --dart-define-from-file=configs/community.json --target=lib/main_community.dart
+# For ios
+bin/dev --community-ios
+
+# For macos
+bin/dev --community-macos
 ```
 
 ## 🛠 <StoryPad> Project Overview
@@ -71,7 +76,7 @@ StoryPad leverages the MVVM (Model-View-ViewModel) pattern while each view is co
 - ViewContent: Displays the actual UI, keeping the visual layout separate from business logic, e.g., EditStoryContent.
 - ViewModel: Manages business logic, provides data & operations to the view, keeping the UI free from unnecessary logic, e.g., EditStoryViewModel.
 
-[![MVVM with layers](docs/architecture/mvvm-intro-with-layers.png)](https://docs.flutter.dev/app-architecture/guide#mvvm)
+[![MVVM with layers](https://docs.flutter.dev/assets/images/docs/app-architecture/guide/mvvm-intro-with-layers.png)](https://docs.flutter.dev/app-architecture/guide#mvvm)
 
 ### 3. Local Database:
 
