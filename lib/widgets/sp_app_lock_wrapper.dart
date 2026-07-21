@@ -116,34 +116,48 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
     switch (state) {
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
+        break;
       case AppLifecycleState.inactive:
+        // `inactive` fires the instant focus is lost — it's also the state the OS captures
+        // the app-switcher snapshot in, so the cover must be instant, not faded in, or the
+        // snapshot (and the first frame back on resume) can show unblurred content.
+        if (listenToLifeCycle) showBarrierInstantly();
         break;
       case AppLifecycleState.paused:
         if (listenToLifeCycle) {
           authenticated = false;
-          showBarrierIfNot();
+          showBarrierInstantly();
         }
         break;
       case AppLifecycleState.resumed:
-        // There are cases when the user has already canceled authentication, but the app resumes and may call authenticate() again.
-        // This check ensures we only re-authenticate when this route is not the current one, avoiding potential authentication loops.
-        if (listenToLifeCycle && ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
+        if (authenticated && barrierShown) {
+          // Only a transient `inactive` happened (e.g. control centre, share sheet) and we
+          // never actually reached `paused`, so no re-auth is needed — just reveal again.
+          revealBarrier();
+        } else if (listenToLifeCycle && ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
+          // There are cases when the user has already canceled authentication, but the app resumes and may call authenticate() again.
+          // This check ensures we only re-authenticate when this route is not the current one, avoiding potential authentication loops.
           authenticate();
         }
         break;
     }
   }
 
-  Future<void> showBarrierIfNot() async {
-    if (animationController.value != 1) animationController.animateTo(1);
+  void showBarrierInstantly() {
+    if (animationController.value != 1) animationController.value = 1;
     if (!barrierShown) setState(() => barrierShown = true);
+  }
+
+  Future<void> revealBarrier() async {
+    await animationController.reverse(from: 1.0);
+    if (mounted) setState(() => barrierShown = false);
   }
 
   Future<void> authenticate() async {
     await Future.microtask(() {});
 
     if (authenticated) return;
-    showBarrierIfNot();
+    showBarrierInstantly();
 
     final context = this.context;
     if (!context.mounted) return;
@@ -153,10 +167,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
         context: context,
         debugSource: '$runtimeType#authenticate',
       );
-      if (authenticated) {
-        await animationController.reverse(from: 1.0);
-        setState(() => barrierShown = false);
-      }
+      if (authenticated) await revealBarrier();
     }
   }
 
