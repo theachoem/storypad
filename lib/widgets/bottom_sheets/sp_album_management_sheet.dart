@@ -7,12 +7,13 @@ import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
 import 'package:storypad/widgets/sp_album_grid.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_image.dart';
-import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/sp_media_tile.dart';
+import 'package:storypad/widgets/media_viewer/sp_media_viewer.dart';
 
 class SpAlbumManagementSheet extends BaseBottomSheet {
   const SpAlbumManagementSheet({required this.paths});
@@ -61,6 +62,13 @@ class _ContentState extends State<_Content> {
     _paths = widget.paths.toSet().toList();
   }
 
+  void _addPaths(Iterable<String> paths) {
+    if (!mounted) return;
+    setState(() {
+      _paths = {..._paths, ...paths}.toList();
+    });
+  }
+
   Future<void> _takePhoto(BuildContext context) async {
     final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
     final XFile? photo = await SpAppLockWrapper.disableAppLockIfHas(
@@ -76,14 +84,65 @@ class _ContentState extends State<_Content> {
     final AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
     if (tookAsset == null) return;
 
-    if (mounted) {
-      setState(() {
-        _paths = {
-          ..._paths,
-          tookAsset.relativeLocalFilePath,
-        }.toList();
-      });
+    _addPaths([tookAsset.relativeLocalFilePath]);
+  }
+
+  Future<void> _recordVideo(BuildContext context) async {
+    final XFile? video = await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () => AppFilePickerService.pickVideo(source: ImageSource.camera),
+    );
+
+    if (video == null) return;
+
+    final AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+    if (tookAsset == null) return;
+
+    _addPaths([tookAsset.relativeLocalFilePath]);
+  }
+
+  Future<void> _pickFromLibrary(BuildContext context) async {
+    final picked = await SpImagePickerBottomSheet.showAlbumPicker(context: context);
+    if (picked != null && picked.isNotEmpty) {
+      _addPaths(picked.map((a) => a.relativeLocalFilePath));
     }
+  }
+
+  Future<void> _pickFromNativePhotos(BuildContext context) async {
+    final picked = await SpImagePickerBottomSheet.pickFromNativeLibrary(context: context);
+    if (picked.isNotEmpty) {
+      _addPaths(picked.map((a) => a.relativeLocalFilePath));
+    }
+  }
+
+  Future<void> _handleAddMedia(BuildContext context) async {
+    // Voice notes have nowhere to go in an album -- hide that option rather
+    // than showing an action this sheet can't handle.
+    final action = await SpAddMediaActionSheet.pick(context: context, showRecordVoiceNote: false);
+    if (!context.mounted || action == null) return;
+
+    switch (action) {
+      case SpAddMediaAction.selectFromLibrary:
+        await _pickFromLibrary(context);
+      case SpAddMediaAction.selectFromPhotos:
+        await _pickFromNativePhotos(context);
+      case SpAddMediaAction.takePhoto:
+        await _takePhoto(context);
+      case SpAddMediaAction.recordVideo:
+        await _recordVideo(context);
+      case SpAddMediaAction.recordVoiceNote:
+        break;
+    }
+  }
+
+  void _viewAssetAt(BuildContext context, int index) {
+    Feedback.forTap(context);
+
+    SpMediaViewer.fromString(
+      images: _paths,
+      initialIndex: index,
+      context: context,
+    ).show(context);
   }
 
   @override
@@ -108,22 +167,8 @@ class _ContentState extends State<_Content> {
               spacing: 8.0,
               children: [
                 IconButton.outlined(
-                  icon: Icon(SpIcons.camera, color: ColorScheme.of(context).primary),
-                  onPressed: () => _takePhoto(context),
-                ),
-                IconButton.outlined(
-                  icon: Icon(SpIcons.photo, color: ColorScheme.of(context).primary),
-                  onPressed: () async {
-                    final picked = await SpImagePickerBottomSheet.showAlbumPicker(context: context);
-                    if (picked != null && picked.isNotEmpty) {
-                      setState(() {
-                        _paths = {
-                          ..._paths,
-                          ...picked.map((a) => a.relativeLocalFilePath),
-                        }.toList();
-                      });
-                    }
-                  },
+                  icon: Icon(SpIcons.add, color: ColorScheme.of(context).primary),
+                  onPressed: () => _handleAddMedia(context),
                 ),
                 IconButton.filled(
                   icon: const Icon(SpIcons.save),
@@ -146,14 +191,7 @@ class _ContentState extends State<_Content> {
               child: SpAlbumGrid(
                 key: ValueKey(_paths.join(",")),
                 paths: _paths,
-                onTap: (index) {
-                  Feedback.forTap(context);
-                  SpImagesViewer.fromString(
-                    images: _paths,
-                    initialIndex: index,
-                    context: context,
-                  ).show(context);
-                },
+                onTap: (index) => _viewAssetAt(context, index),
               ),
             ),
           ),
@@ -174,7 +212,7 @@ class _ContentState extends State<_Content> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: SpImage(link: path, width: 56, height: 56),
+              child: SpMediaTile(link: path, width: 56, height: 56),
             ),
             title: Text(
               path.split('/').last,

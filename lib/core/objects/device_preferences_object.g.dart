@@ -35,6 +35,10 @@ abstract class _$DevicePreferencesObjectCWProxy {
 
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
 
+  DevicePreferencesObject videoPlaybackSpeed(double? videoPlaybackSpeed);
+
+  DevicePreferencesObject videoMuted(bool? videoMuted);
+
   DevicePreferencesObject storyTilePreferences(
     StoryTilePreferencesObject? storyTilePreferences,
   );
@@ -74,6 +78,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     int? colorSeedValue,
     Map<int, String>? colorByDay,
     double? voicePlaybackSpeed,
+    double? videoPlaybackSpeed,
+    bool? videoMuted,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     List<AppQuickActionObject>? homeQuickActions,
@@ -145,6 +151,14 @@ class _$DevicePreferencesObjectCWProxyImpl
       call(voicePlaybackSpeed: voicePlaybackSpeed);
 
   @override
+  DevicePreferencesObject videoPlaybackSpeed(double? videoPlaybackSpeed) =>
+      call(videoPlaybackSpeed: videoPlaybackSpeed);
+
+  @override
+  DevicePreferencesObject videoMuted(bool? videoMuted) =>
+      call(videoMuted: videoMuted);
+
+  @override
   DevicePreferencesObject storyTilePreferences(
     StoryTilePreferencesObject? storyTilePreferences,
   ) => call(storyTilePreferences: storyTilePreferences);
@@ -190,6 +204,8 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorByDay = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
+    Object? videoPlaybackSpeed = const $CopyWithPlaceholder(),
+    Object? videoMuted = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
     Object? homeQuickActions = const $CopyWithPlaceholder(),
@@ -249,6 +265,14 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.voicePlaybackSpeed
           // ignore: cast_nullable_to_non_nullable
           : voicePlaybackSpeed as double?,
+      videoPlaybackSpeed: videoPlaybackSpeed == const $CopyWithPlaceholder()
+          ? _value.videoPlaybackSpeed
+          // ignore: cast_nullable_to_non_nullable
+          : videoPlaybackSpeed as double?,
+      videoMuted: videoMuted == const $CopyWithPlaceholder()
+          ? _value.videoMuted
+          // ignore: cast_nullable_to_non_nullable
+          : videoMuted as bool?,
       storyTilePreferences: storyTilePreferences == const $CopyWithPlaceholder()
           ? _value.storyTilePreferences
           // ignore: cast_nullable_to_non_nullable
@@ -315,6 +339,8 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     (k, e) => MapEntry(int.parse(k), e as String),
   ),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
+  videoPlaybackSpeed: (json['video_playback_speed'] as num?)?.toDouble(),
+  videoMuted: json['video_muted'] as bool?,
   storyTilePreferences: json['story_tile_preferences'] == null
       ? null
       : StoryTilePreferencesObject.fromJson(
@@ -344,6 +370,8 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'color_seed_value': instance.colorSeedValue,
   'color_by_day': instance.colorByDay?.map((k, e) => MapEntry(k.toString(), e)),
   'voice_playback_speed': instance.voicePlaybackSpeed,
+  'video_playback_speed': instance.videoPlaybackSpeed,
+  'video_muted': instance.videoMuted,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat],
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
   'asset_compression':

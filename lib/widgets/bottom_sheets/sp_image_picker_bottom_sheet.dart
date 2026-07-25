@@ -17,7 +17,7 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_image.dart';
+import 'package:storypad/widgets/sp_media_tile.dart';
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
@@ -61,6 +61,85 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     );
   }
 
+  static Future<void> showVideoPicker({
+    required BuildContext context,
+    required RichTextController controller,
+    required ImageSource source,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final XFile? video = await AppFilePickerService.pickVideo(source: source);
+        if (video == null) return;
+
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+        if (tookAsset == null) return;
+
+        editorAdapter.insertImage(
+          controller: controller,
+          imagePath: tookAsset.relativeLocalFilePath,
+        );
+      },
+    );
+  }
+
+  /// Opens the native OS media picker (mixed image+video multi-select) and
+  /// inserts everything picked as a single embed (an album if more than one).
+  static Future<void> showNativePicker({
+    required BuildContext context,
+    required RichTextController controller,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final files = await AppFilePickerService.pickMultipleMedia(compression: compression);
+        if (files.isEmpty) return;
+
+        final List<AssetDbModel> savedAssets = [];
+        for (final file in files) {
+          final savedAsset = await InsertFileToDbService.insertMedia(file, await file.readAsBytes());
+          if (savedAsset != null) savedAssets.add(savedAsset);
+        }
+        if (savedAssets.isEmpty) return;
+
+        final mediaPath = savedAssets.map((a) => a.relativeLocalFilePath).join('|');
+        editorAdapter.insertImage(
+          controller: controller,
+          imagePath: mediaPath,
+        );
+
+        AnalyticsService.instance.logInsertNewPhoto();
+      },
+    );
+  }
+
+  /// Opens the native OS media picker (mixed image+video multi-select) and
+  /// returns the saved assets directly, for callers that aren't inserting
+  /// into a rich text [controller] (e.g. [SpAlbumManagementSheet]).
+  static Future<List<AssetDbModel>> pickFromNativeLibrary({
+    required BuildContext context,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final files = await AppFilePickerService.pickMultipleMedia(compression: compression);
+        if (files.isEmpty) return <AssetDbModel>[];
+
+        final List<AssetDbModel> savedAssets = [];
+        for (final file in files) {
+          final savedAsset = await InsertFileToDbService.insertMedia(file, await file.readAsBytes());
+          if (savedAsset != null) savedAssets.add(savedAsset);
+        }
+
+        if (savedAssets.isNotEmpty) AnalyticsService.instance.logInsertNewPhoto();
+
+        return savedAssets;
+      },
+    );
+  }
+
   static Future<void> showQuillPicker<T>({
     required BuildContext context,
     required RichTextController controller,
@@ -68,7 +147,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     await RetrieveLostPhotoService.call();
 
     final assets = await AssetDbModel.db
-        .where(filters: {'type': AssetType.image})
+        .where(
+          filters: {
+            'types': [AssetType.image, AssetType.video],
+          },
+        )
         .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return;
 
@@ -96,7 +179,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     await RetrieveLostPhotoService.call();
 
     final assets = await AssetDbModel.db
-        .where(filters: {'type': AssetType.image})
+        .where(
+          filters: {
+            'types': [AssetType.image, AssetType.video],
+          },
+        )
         .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return null;
 
@@ -143,41 +230,6 @@ class _ContentState extends State<_Content> {
 
   Map<int, AssetDbModel> selectedAssets = {};
 
-  Future<void> _insertFromPhotoLibrary(BuildContext context) async {
-    List<XFile> result = <XFile>[];
-
-    try {
-      result = await SpAppLockWrapper.disableAppLockIfHas(
-        context,
-        callback: () {
-          final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-
-          return AppFilePickerService.pickImageFiles(
-            allowMultiple: true,
-            compression: compression,
-          );
-        },
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    if (result.isNotEmpty) {
-      List<AssetDbModel> saveAssets = [];
-
-      for (var file in result) {
-        final bytes = await file.readAsBytes();
-
-        final savedAsset = await InsertFileToDbService.insertImage(file, bytes);
-        if (savedAsset != null) saveAssets.add(savedAsset);
-      }
-
-      if (context.mounted && saveAssets.isNotEmpty) {
-        Navigator.maybePop(context, saveAssets);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -209,11 +261,6 @@ class _ContentState extends State<_Content> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   spacing: 8.0,
                   children: [
-                    OutlinedButton.icon(
-                      icon: const Icon(SpIcons.addPhoto),
-                      label: Text(tr("button.insert_from_device")),
-                      onPressed: () => _insertFromPhotoLibrary(context),
-                    ),
                     FilledButton(
                       onPressed: selectedAssets.isNotEmpty
                           ? () => Navigator.maybePop(context, selectedAssets.values.toList())
@@ -281,7 +328,7 @@ class _ContentState extends State<_Content> {
                         borderRadius: BorderRadius.circular(8.0),
                         side: BorderSide(color: Theme.of(context).dividerColor),
                       ),
-                      child: SpImage(
+                      child: SpMediaTile(
                         link: asset.relativeLocalFilePath,
                         width: constraints.maxWidth,
                         height: 120,

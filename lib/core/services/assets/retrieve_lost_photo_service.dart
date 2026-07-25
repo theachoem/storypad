@@ -26,7 +26,12 @@ class RetrieveLostPhotoService {
 
       final List<XFile>? files = response.files;
       for (XFile file in files ?? []) {
-        InsertFileToDbService.insertImage(file, await file.readAsBytes());
+        final bytes = await file.readAsBytes();
+        if (response.type == RetrieveType.video) {
+          InsertFileToDbService.insertVideo(file, bytes);
+        } else {
+          InsertFileToDbService.insertImage(file, bytes);
+        }
       }
     } on PlatformException catch (e, s) {
       AppLogger.error("RetrieveLostData#_getLostData error: ${e.message}", stackTrace: s);

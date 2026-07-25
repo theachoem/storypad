@@ -12,6 +12,7 @@ import 'package:storypad/core/services/duration_format_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/voice_recorder_service.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_voice_player.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
@@ -111,7 +112,13 @@ class _VoiceRecordingContentState extends State<_VoiceRecordingContent> {
 
   Future<void> startRecording() async {
     try {
-      final success = await recorder.startRecording();
+      // `record`'s hasPermission() check can surface a native mic-permission prompt (or send
+      // the user to Settings if previously denied), which must not be mistaken for the app
+      // backgrounding and trigger the app-lock screen.
+      final success = await SpAppLockWrapper.disableAppLockIfHas(
+        context,
+        callback: () => recorder.startRecording(),
+      );
 
       if (success && mounted) {
         setState(() {

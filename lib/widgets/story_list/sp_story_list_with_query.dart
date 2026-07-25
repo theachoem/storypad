@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -46,6 +48,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     stories = await StoryDbModel.db.where(
       filters: widget.filter?.toDatabaseFilter(),
     );
+    _preloadAssetAspectRatios(stories?.items ?? []);
 
     if (widget.filter?.years.length == 1 && widget.filter?.month != null && widget.filter?.day != null) {
       _throwbackDates = await StoryDbModel.db
@@ -100,6 +103,17 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
 
   Future<void> _restoreServiceListener() async {
     load(debugSource: '$runtimeType#_restoreServiceListener');
+  }
+
+  // Bulk-warms the aspect-ratio cache for every asset referenced by the
+  // loaded stories in one native call, so story tiles don't each do their
+  // own `box.get` during scroll/build.
+  void _preloadAssetAspectRatios(List<StoryDbModel> loadedStories) {
+    final assetIds = <int>{};
+    for (final story in loadedStories) {
+      assetIds.addAll(StoryContentEmbedExtractor.assetIds(story.draftContent ?? story.latestContent));
+    }
+    AssetDbModel.db.preloadAspectRatios(assetIds);
   }
 
   @override

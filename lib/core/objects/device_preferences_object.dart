@@ -28,6 +28,8 @@ class DevicePreferencesObject {
   /// `null` or a missing day key falls back to [kDefaultColorNamesByDay].
   final Map<int, String>? colorByDay;
   final double voicePlaybackSpeed;
+  final double videoPlaybackSpeed;
+  final bool videoMuted;
   final TimeFormatOption? timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
   final AssetCompressionOption assetCompression;
@@ -70,6 +72,8 @@ class DevicePreferencesObject {
     this.colorSeedValue,
     this.colorByDay,
     double? voicePlaybackSpeed,
+    double? videoPlaybackSpeed,
+    bool? videoMuted,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     this.homeQuickActions,
@@ -80,6 +84,8 @@ class DevicePreferencesObject {
        firstDayOfWeek = firstDayOfWeek ?? FirstDayOfWeekOption.defaultValue,
        assetCompression = assetCompression ?? AssetCompressionOption.defaultValue,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
+       videoPlaybackSpeed = videoPlaybackSpeed ?? 1.0,
+       videoMuted = videoMuted ?? false,
        storyTilePreferences = storyTilePreferences ?? StoryTilePreferencesObject(),
        defaultStoryPreferences = defaultStoryPreferences ?? DefaultStoryPreferencesObject(),
        mapStyle = mapStyle ?? SpMapStyle.streets;

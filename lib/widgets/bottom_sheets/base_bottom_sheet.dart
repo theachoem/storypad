@@ -19,6 +19,7 @@ abstract class BaseBottomSheet {
 
   bool get showMaterialDragHandle => true;
   bool get barrierDismissible => true;
+  bool get includeKeyboardPadding => true;
 
   double get cupertinoPaddingTop => 16.0;
 
@@ -60,7 +61,8 @@ abstract class BaseBottomSheet {
             removeRight: true,
             child: build(
               context,
-              MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+              MediaQuery.of(context).padding.bottom +
+                  (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0),
             ),
           ),
         );
@@ -96,6 +98,7 @@ abstract class BaseBottomSheet {
         fullScreen: fullScreen,
         useRootNavigator: useRootNavigator,
         barrierDismissible: barrierDismissible,
+        includeKeyboardPadding: includeKeyboardPadding,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     } else {
@@ -106,6 +109,7 @@ abstract class BaseBottomSheet {
         backgroundColor: getBackgroundColor(context),
         useRootNavigator: useRootNavigator,
         barrierDismissible: barrierDismissible,
+        includeKeyboardPadding: includeKeyboardPadding,
         builder: (context, bottomPadding) => build(context, bottomPadding),
       );
     }
@@ -122,6 +126,7 @@ abstract class BaseBottomSheet {
     Color? backgroundColor,
     bool useRootNavigator = false,
     bool barrierDismissible = true,
+    bool includeKeyboardPadding = true,
   }) {
     return showModalBottomSheet<T>(
       useRootNavigator: useRootNavigator,
@@ -145,7 +150,8 @@ abstract class BaseBottomSheet {
             removeRight: true,
             child: builder(
               context,
-              MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+              MediaQuery.of(context).padding.bottom +
+                  (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0),
             ),
           ),
         );
@@ -177,6 +183,7 @@ abstract class BaseBottomSheet {
     Color? backgroundColor,
     bool useRootNavigator = false,
     bool barrierDismissible = true,
+    bool includeKeyboardPadding = true,
   }) {
     if (fullScreen) {
       return showCupertinoSheet(
@@ -188,7 +195,8 @@ abstract class BaseBottomSheet {
               builder: (context) {
                 return builder(
                   context,
-                  MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+                  MediaQuery.of(context).padding.bottom +
+                      (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0),
                 );
               },
             ),
@@ -217,7 +225,8 @@ abstract class BaseBottomSheet {
               ),
               child: builder(
                 context,
-                MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+                MediaQuery.of(context).padding.bottom +
+                    (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0),
               ),
             ),
           ),

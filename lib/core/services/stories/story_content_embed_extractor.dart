@@ -29,6 +29,18 @@ class StoryContentEmbedExtractor {
     ...audio(content),
   ];
 
+  /// All asset ids referenced anywhere in the content (any embed type),
+  /// e.g. to bulk-preload their aspect ratios before rendering (see
+  /// `AssetsBox.preloadAspectRatios`).
+  static Set<int> assetIds(StoryContentDbModel? content) {
+    final ids = <int>{};
+    for (final page in content?.richPages ?? []) {
+      if (page.body == null || page.body!.isEmpty) continue;
+      ids.addAll(AssetLinkParser.extractIds(page.body));
+    }
+    return ids;
+  }
+
   static List<String> _extractEmbedSources(StoryContentDbModel? content, String embedType) {
     final links = <String>[];
     final pages = content?.richPages ?? [];

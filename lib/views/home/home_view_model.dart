@@ -12,6 +12,7 @@ import 'package:storypad/core/objects/month_recap_stats_object.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/stories/monthly_story_stats_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -75,11 +76,23 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
 
     _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: stories?.items ?? []);
+    _preloadAssetAspectRatios([...?stories?.items, ...?pinnedStories?.items]);
 
     scrollInfo.setupStoryKeys(
       stories?.items ?? [],
       pinnedStories?.items ?? [],
     );
+  }
+
+  // Bulk-warms the aspect-ratio cache for every asset referenced by the
+  // loaded stories in one native call, so story tiles don't each do their
+  // own `box.get` during scroll/build.
+  void _preloadAssetAspectRatios(List<StoryDbModel> loadedStories) {
+    final assetIds = <int>{};
+    for (final story in loadedStories) {
+      assetIds.addAll(StoryContentEmbedExtractor.assetIds(story.draftContent ?? story.latestContent));
+    }
+    AssetDbModel.db.preloadAspectRatios(assetIds);
   }
 
   List<int> get months {
@@ -208,6 +221,29 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         if (asset == null) return;
 
         AnalyticsService.instance.logTakePhoto();
+
+        final addedStory = await EditStoryRoute(
+          id: null,
+          initialYear: year,
+          initialAsset: asset,
+        ).push(HomeView.homeContext!);
+
+        await _checkNewStoryResult(addedStory);
+      },
+    );
+  }
+
+  void recordVideo(BuildContext context) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final XFile? video = await AppFilePickerService.pickVideo(source: ImageSource.camera);
+        if (video == null) return;
+
+        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+        if (asset == null) return;
+
+        AnalyticsService.instance.logRecordVideo();
 
         final addedStory = await EditStoryRoute(
           id: null,

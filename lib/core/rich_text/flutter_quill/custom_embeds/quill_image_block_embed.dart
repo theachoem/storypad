@@ -115,7 +115,7 @@ class _QuillImageRenderer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                     side: BorderSide(color: Theme.of(context).dividerColor),
                   ),
-                  child: SpImage(
+                  child: SpMediaTile(
                     link: link,
                     width: width,
                     height: height,
@@ -290,16 +290,17 @@ class _QuillImageRenderer extends StatelessWidget {
 
   Future<void> viewImage(BuildContext context, String link) async {
     Feedback.forTap(context);
+
     List<String> images = fetchAllImages();
 
     if (images.contains(link)) {
-      SpImagesViewer.fromString(
+      SpMediaViewer.fromString(
         images: images,
         initialIndex: images.indexOf(link),
         context: context,
       ).show(context);
     } else {
-      SpImagesViewer.fromString(
+      SpMediaViewer.fromString(
         images: [link],
         initialIndex: 0,
         context: context,
@@ -309,7 +310,8 @@ class _QuillImageRenderer extends StatelessWidget {
 
   Future<void> _viewImageAt(BuildContext context, List<String> paths, int index) async {
     Feedback.forTap(context);
-    SpImagesViewer.fromString(
+
+    SpMediaViewer.fromString(
       images: paths,
       initialIndex: index,
       context: context,

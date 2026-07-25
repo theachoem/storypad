@@ -104,6 +104,7 @@ class SpIcons {
   static const IconData add = kIsCupertino ? CupertinoIcons.plus : Icons.add;
   static const IconData remove = kIsCupertino ? CupertinoIcons.minus : Icons.remove;
   static const IconData camera = kIsCupertino ? CupertinoIcons.photo_camera : Icons.photo_camera_outlined;
+  static const IconData videoCamera = kIsCupertino ? CupertinoIcons.video_camera : Icons.videocam_outlined;
   static const IconData factCheck = kIsCupertino ? CupertinoIcons.text_badge_checkmark : Icons.fact_check_outlined;
   static const IconData dragIndicator = Icons.drag_indicator;
   static const IconData imageNotSupported = kIsCupertino
@@ -113,8 +114,13 @@ class SpIcons {
   static const IconData hideSource = kIsCupertino ? CupertinoIcons.circle : Icons.hide_source;
   static const IconData playCircle = kIsCupertino ? CupertinoIcons.play_circle_fill : Icons.play_circle;
   static const IconData pauseCircle = kIsCupertino ? CupertinoIcons.pause_circle_fill : Icons.pause_circle;
+  static const IconData replay5 = MdiIcons.rewind5;
+  static const IconData forward5 = MdiIcons.fastForward5;
+  static const IconData volumeUp = kIsCupertino ? CupertinoIcons.volume_up : Icons.volume_up;
+  static const IconData volumeOff = kIsCupertino ? CupertinoIcons.volume_mute : Icons.volume_off;
   static const IconData storage = kIsCupertino ? CupertinoIcons.device_phone_portrait : Icons.storage_outlined;
   static const IconData musicNote = kIsCupertino ? CupertinoIcons.music_note : Icons.music_note_outlined;
+
   // ignore: deprecated_member_use, deprecated upstream by MDI, no replacement
   static const IconData markdown = MdiIcons.languageMarkdown;
   static const IconData text = MdiIcons.text;

@@ -15,20 +15,19 @@ class AppFilePickerService {
     );
   }
 
-  static Future<List<XFile>> pickImageFiles({
-    required bool allowMultiple,
+  static Future<XFile?> pickVideo({
+    required ImageSource source,
+  }) {
+    return _imagePicker.pickVideo(source: source);
+  }
+
+  /// Opens the native OS picker for a mixed image+video multi-select
+  /// (e.g. the system Photos picker). The result can contain both images and
+  /// videos -- callers must classify each file (see `InsertFileToDbService.insertMedia`).
+  static Future<List<XFile>> pickMultipleMedia({
     required AssetCompressionOption compression,
-  }) async {
-    if (allowMultiple) {
-      return _imagePicker.pickMultiImage(imageQuality: compression.imagePickerQuality);
-    }
-
-    final image = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: compression.imagePickerQuality,
-    );
-
-    return image == null ? <XFile>[] : <XFile>[image];
+  }) {
+    return _imagePicker.pickMultipleMedia(imageQuality: compression.imagePickerQuality);
   }
 
   static Future<XFile?> pickJsonFile() async {

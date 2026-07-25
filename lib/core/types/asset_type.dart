@@ -9,6 +9,7 @@ import 'package:storypad/core/types/support_directory_path.dart';
 /// Example relative paths:
 /// - Image: images/1762500783746.jpg
 /// - Audio: audio/1762500783747.m4a
+/// - Video: videos/1762500783748.mp4
 enum AssetType {
   /// Image asset type (photos, screenshots, etc.)
   ///
@@ -20,7 +21,13 @@ enum AssetType {
   ///
   /// Stores files in the 'audio' subdirectory.
   /// Example: audio/1762500783747.m4a
-  audio(subDirectory: .audio);
+  audio(subDirectory: .audio),
+
+  /// Video asset type (recorded/picked videos)
+  ///
+  /// Stores files in the 'videos' subdirectory.
+  /// Example: videos/1762500783748.mp4
+  video(subDirectory: .videos);
 
   final SupportDirectoryPath subDirectory;
 

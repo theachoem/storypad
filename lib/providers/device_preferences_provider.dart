@@ -282,6 +282,42 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     _listeners['voice_playback_speed']?.forEach((listener) => listener());
   }
 
+  void addListenerForVideoPlaybackSpeed(void Function() listener) {
+    _listeners['video_playback_speed'] ??= [];
+    _listeners['video_playback_speed']!.add(listener);
+  }
+
+  void removeListenerForVideoPlaybackSpeed(void Function() listener) {
+    _listeners['video_playback_speed']?.remove(listener);
+  }
+
+  // no need to notifyListeners as it will refresh the whole app UI
+  // but we do need to notify specific listeners for video playback speed changes
+  void setVideoPlaybackSpeed(double speed) {
+    _preferences = _preferences.copyWith(videoPlaybackSpeed: speed);
+    storage.writeObject(_preferences);
+
+    _listeners['video_playback_speed']?.forEach((listener) => listener());
+  }
+
+  void addListenerForVideoMuted(void Function() listener) {
+    _listeners['video_muted'] ??= [];
+    _listeners['video_muted']!.add(listener);
+  }
+
+  void removeListenerForVideoMuted(void Function() listener) {
+    _listeners['video_muted']?.remove(listener);
+  }
+
+  // no need to notifyListeners as it will refresh the whole app UI
+  // but we do need to notify specific listeners for video mute changes
+  void setVideoMuted(bool muted) {
+    _preferences = _preferences.copyWith(videoMuted: muted);
+    storage.writeObject(_preferences);
+
+    _listeners['video_muted']?.forEach((listener) => listener());
+  }
+
   List<String>? get hiddenStatsSections => preferences.hiddenStatsSections;
 
   // No need to notifyListeners: the stats view owns this state and only reads it

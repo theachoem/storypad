@@ -131,9 +131,16 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
   }
 
   Future<void> _loadPreviewImages() async {
-    final collection = await AssetDbModel.db.where(filters: {'type': AssetType.image, 'limit': 3});
+    final collection = await AssetDbModel.db.where(
+      filters: {
+        'types': [AssetType.image, AssetType.video],
+        'limit': 3,
+      },
+    );
+
     final images = collection?.items.map((e) => e.relativeLocalFilePath).toList();
     if (images == null || images.isEmpty || !mounted) return;
+
     setState(() {
       _previewImagePaths = images;
       story = _buildMockStory();
