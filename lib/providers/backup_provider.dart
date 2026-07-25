@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/services/auto_sync_trigger_service.dart';
+import 'package:storypad/core/services/network_type_service.dart';
+import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
@@ -105,6 +107,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   }
 
   late final AutoSyncTriggerService _autoSyncTriggerService;
+  final NetworkTypeService _networkTypeService = const NetworkTypeService();
   BackupRepository get repository => repoInstance;
 
   GoogleUserObject? get currentGoogleUser => repository.currentGoogleUser;
@@ -153,6 +156,28 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   bool _syncing = false;
   bool get syncing => _syncing;
 
+  /// Media deferred by the Wi-Fi-only setting. [allYearSynced] only reflects the
+  /// yearly backup files, so without this the app would report "Synced" while
+  /// media is still pending.
+  ///
+  /// Refreshed on demand rather than from [_databaseListener]: the underlying
+  /// scan touches every asset row and stats each local file, which is too much
+  /// to repeat on every database commit.
+  int _pendingMediaCount = 0;
+  int get pendingMediaCount => _pendingMediaCount;
+
+  Future<void> refreshPendingMediaCount() async {
+    try {
+      _pendingMediaCount = await repository.pendingMediaCount();
+    } catch (e) {
+      // Called from recheckAndSync's finally block — a throw here would mask
+      // the sync's own result.
+      AppLogger.d('$runtimeType#refreshPendingMediaCount failed: $e');
+    }
+
+    notifyListeners();
+  }
+
   List<BackupCloudService> get services => repository.services;
   List<BackupCloudService> get autoBackupServices =>
       repository.services.where((service) => service.autoBackupEnabled).toList();
@@ -177,8 +202,12 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     );
   }
 
+  /// [forceMediaUpload] bypasses the Wi-Fi-only media gate for an explicit
+  /// "Sync Media Now" — the deliberate escape hatch, since the setting otherwise
+  /// applies to manual "Sync now" as well as auto sync.
   Future<bool> recheckAndSync({
     bool setupConnection = true,
+    bool forceMediaUpload = false,
     required List<BackupCloudService> services,
   }) async {
     if (services.isEmpty) return false;
@@ -192,9 +221,13 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       if (setupConnection) await _setupConnection();
       if (!readyToSynced) return false;
 
-      return await _syncBackupAcrossDevices(services: services);
+      return await _syncBackupAcrossDevices(
+        services: services,
+        uploadAssets: forceMediaUpload || await _canUploadMedia(),
+      );
     } finally {
       _syncing = false;
+      await refreshPendingMediaCount();
       notifyListeners();
     }
   }
@@ -296,8 +329,18 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   ///    - Auth failures trigger connection status update
   ///    - Failed services retry on next sync
   ///
+  /// Resolved once per sync run and passed down as a plain bool, so no sync
+  /// service has to reach for preferences or connectivity itself.
+  Future<bool> _canUploadMedia() async {
+    final mediaSync = DevicePreferencesStorage.appInstance.preferences.mediaSync;
+    if (mediaSync == .wifiAndCellular) return true;
+
+    return _networkTypeService.isUnmetered();
+  }
+
   Future<bool> _syncBackupAcrossDevices({
     required List<BackupCloudService> services,
+    required bool uploadAssets,
   }) async {
     // Get current state of all years in local database
     _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
@@ -317,7 +360,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       attemptedSync = true;
       FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
 
-      final result = await repository.sync(service);
+      final result = await repository.sync(service, uploadAssets: uploadAssets);
       if (!result.isSuccess) {
         allSyncsSucceeded = false;
         FirebaseCrashlytics.instance.log(

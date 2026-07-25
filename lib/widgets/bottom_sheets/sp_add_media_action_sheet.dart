@@ -28,6 +28,9 @@ class SpAddMediaActionSheet extends BaseBottomSheet {
   @override
   bool get fullScreen => false;
 
+  @override
+  bool get includeKeyboardPadding => false;
+
   static Future<SpAddMediaAction?> pick({
     required BuildContext context,
     bool showRecordVoiceNote = true,
@@ -72,7 +75,7 @@ class SpAddMediaActionSheet extends BaseBottomSheet {
             _buildTile(
               context,
               icon: SpIcons.voice,
-              label: tr('button.record_voice_note'),
+              label: tr('button.record_voice'),
               action: .recordVoiceNote,
             ),
           SizedBox(height: bottomPadding + 24.0),

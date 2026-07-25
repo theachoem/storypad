@@ -34,6 +34,9 @@ class SpIcons {
   // ignore: deprecated_member_use, brand icon deprecated upstream by MDI (trademark), no replacement
   static const IconData googleDrive = MdiIcons.googleDrive;
   static const IconData cloudDone = Icons.cloud_done_outlined;
+  static const IconData mediaSync = kIsCupertino
+      ? CupertinoIcons.antenna_radiowaves_left_right
+      : MdiIcons.signalCellularOutline;
   static const IconData cloudOff = MdiIcons.cloudOff;
   static const IconData pinSlash = kIsCupertino ? CupertinoIcons.pin_slash : MdiIcons.pinOff;
   static const IconData pin = kIsCupertino ? CupertinoIcons.pin_fill : MdiIcons.pin;

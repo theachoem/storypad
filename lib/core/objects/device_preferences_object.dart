@@ -9,6 +9,7 @@ import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
 import 'package:storypad/core/types/font_size_option.dart';
+import 'package:storypad/core/types/media_sync_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 import 'package:storypad/widgets/maps/map_types.dart';
 
@@ -33,6 +34,7 @@ class DevicePreferencesObject {
   final TimeFormatOption? timeFormat;
   final FirstDayOfWeekOption firstDayOfWeek;
   final AssetCompressionOption assetCompression;
+  final MediaSyncOption mediaSync;
   final SpMapStyle mapStyle;
 
   final StoryTilePreferencesObject storyTilePreferences;
@@ -69,6 +71,7 @@ class DevicePreferencesObject {
     this.timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
+    MediaSyncOption? mediaSync,
     this.colorSeedValue,
     this.colorByDay,
     double? voicePlaybackSpeed,
@@ -83,6 +86,7 @@ class DevicePreferencesObject {
        themeMode = themeMode ?? ThemeMode.system,
        firstDayOfWeek = firstDayOfWeek ?? FirstDayOfWeekOption.defaultValue,
        assetCompression = assetCompression ?? AssetCompressionOption.defaultValue,
+       mediaSync = mediaSync ?? MediaSyncOption.defaultValue,
        voicePlaybackSpeed = voicePlaybackSpeed ?? 1.0,
        videoPlaybackSpeed = videoPlaybackSpeed ?? 1.0,
        videoMuted = videoMuted ?? false,

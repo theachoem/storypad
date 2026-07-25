@@ -29,6 +29,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     AssetCompressionOption? assetCompression,
   );
 
+  DevicePreferencesObject mediaSync(MediaSyncOption? mediaSync);
+
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
   DevicePreferencesObject colorByDay(Map<int, String>? colorByDay);
@@ -75,6 +77,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
+    MediaSyncOption? mediaSync,
     int? colorSeedValue,
     Map<int, String>? colorByDay,
     double? voicePlaybackSpeed,
@@ -139,6 +142,10 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(assetCompression: assetCompression);
 
   @override
+  DevicePreferencesObject mediaSync(MediaSyncOption? mediaSync) =>
+      call(mediaSync: mediaSync);
+
+  @override
   DevicePreferencesObject colorSeedValue(int? colorSeedValue) =>
       call(colorSeedValue: colorSeedValue);
 
@@ -201,6 +208,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? firstDayOfWeek = const $CopyWithPlaceholder(),
     Object? assetCompression = const $CopyWithPlaceholder(),
+    Object? mediaSync = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorByDay = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
@@ -253,6 +261,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.assetCompression
           // ignore: cast_nullable_to_non_nullable
           : assetCompression as AssetCompressionOption?,
+      mediaSync: mediaSync == const $CopyWithPlaceholder()
+          ? _value.mediaSync
+          // ignore: cast_nullable_to_non_nullable
+          : mediaSync as MediaSyncOption?,
       colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
@@ -334,6 +346,7 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     _$AssetCompressionOptionEnumMap,
     json['asset_compression'],
   ),
+  mediaSync: $enumDecodeNullable(_$MediaSyncOptionEnumMap, json['media_sync']),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   colorByDay: (json['color_by_day'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(int.parse(k), e as String),
@@ -376,6 +389,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
   'asset_compression':
       _$AssetCompressionOptionEnumMap[instance.assetCompression]!,
+  'media_sync': _$MediaSyncOptionEnumMap[instance.mediaSync]!,
   'map_style': _$SpMapStyleEnumMap[instance.mapStyle]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
@@ -414,6 +428,11 @@ const _$FirstDayOfWeekOptionEnumMap = {
 const _$AssetCompressionOptionEnumMap = {
   AssetCompressionOption.standard: 'standard',
   AssetCompressionOption.none: 'none',
+};
+
+const _$MediaSyncOptionEnumMap = {
+  MediaSyncOption.wifiAndCellular: 'wifiAndCellular',
+  MediaSyncOption.wifiOnly: 'wifiOnly',
 };
 
 const _$SpMapStyleEnumMap = {

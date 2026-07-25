@@ -13,6 +13,7 @@ dependencies:
   audio_service: 0.18.18
   cached_network_image: 3.4.1
   cloud_firestore: ^6.5.0
+  connectivity_plus: ^7.0.0
   copy_with_extension: ^15.0.1
   cupertino_icons: 1.0.9
   dart_quill_delta: 10.8.3
