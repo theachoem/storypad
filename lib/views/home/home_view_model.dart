@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -76,23 +75,12 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
 
     _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: stories?.items ?? []);
-    _preloadAssetAspectRatios([...?stories?.items, ...?pinnedStories?.items]);
+    StoryContentEmbedExtractor.preloadAssetAspectRatios([...?stories?.items, ...?pinnedStories?.items]);
 
     scrollInfo.setupStoryKeys(
       stories?.items ?? [],
       pinnedStories?.items ?? [],
     );
-  }
-
-  // Bulk-warms the aspect-ratio cache for every asset referenced by the
-  // loaded stories in one native call, so story tiles don't each do their
-  // own `box.get` during scroll/build.
-  void _preloadAssetAspectRatios(List<StoryDbModel> loadedStories) {
-    final assetIds = <int>{};
-    for (final story in loadedStories) {
-      assetIds.addAll(StoryContentEmbedExtractor.assetIds(story.draftContent ?? story.latestContent));
-    }
-    AssetDbModel.db.preloadAspectRatios(assetIds);
   }
 
   List<int> get months {
@@ -189,7 +177,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
         final asset = await InsertFileToDbService.insertAudio(
           result.filePath,
-          await File(result.filePath).readAsBytes(),
           durationInMs: result.durationInMs,
         );
 
@@ -237,10 +224,15 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () async {
-        final XFile? video = await AppFilePickerService.pickVideo(source: ImageSource.camera);
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final XFile? video = await AppFilePickerService.pickVideo(
+          context: context,
+          source: ImageSource.camera,
+          compression: compression,
+        );
         if (video == null) return;
 
-        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video);
         if (asset == null) return;
 
         AnalyticsService.instance.logRecordVideo();

@@ -88,14 +88,19 @@ class _ContentState extends State<_Content> {
   }
 
   Future<void> _recordVideo(BuildContext context) async {
+    final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
     final XFile? video = await SpAppLockWrapper.disableAppLockIfHas(
       context,
-      callback: () => AppFilePickerService.pickVideo(source: ImageSource.camera),
+      callback: () => AppFilePickerService.pickVideo(
+        context: context,
+        source: ImageSource.camera,
+        compression: compression,
+      ),
     );
 
     if (video == null) return;
 
-    final AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+    final AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video);
     if (tookAsset == null) return;
 
     _addPaths([tookAsset.relativeLocalFilePath]);

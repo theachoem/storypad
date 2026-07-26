@@ -243,7 +243,6 @@ class AppQuickActionsService {
 
         final asset = await InsertFileToDbService.insertAudio(
           result.filePath,
-          await File(result.filePath).readAsBytes(),
           durationInMs: result.durationInMs,
         );
         if (asset == null || !context.mounted) return;

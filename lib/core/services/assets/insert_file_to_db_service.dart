@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/services/assets/asset_file_type_service.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path show extension;
 
 class InsertFileToDbService {
@@ -12,13 +13,19 @@ class InsertFileToDbService {
   ///
   /// This is the core logic for file insertion, handling:
   /// - Creating directories
-  /// - Writing file bytes to disk
+  /// - Writing the file to disk
   /// - Cleaning up temporary files
   /// - Creating and saving the AssetDbModel
+  ///
+  /// [fileBytes] is only for callers that had to decode the file anyway (see
+  /// [insertImage]). Leave it null and the file is copied from [sourcePath]
+  /// natively instead -- video and audio must never be buffered whole, a few
+  /// minutes of 4K is hundreds of MB and the picker can hand over several at
+  /// once.
   static Future<AssetDbModel?> _insertAsset({
     required String sourcePath,
-    required Uint8List fileBytes,
     required AssetType assetType,
+    Uint8List? fileBytes,
     Map<String, dynamic>? metadata,
     double? width,
     double? height,
@@ -30,7 +37,11 @@ class InsertFileToDbService {
 
     // Write file to storage
     final newFile = File(storagePath)..createSync(recursive: true);
-    await newFile.writeAsBytes(fileBytes);
+    if (fileBytes != null) {
+      await newFile.writeAsBytes(fileBytes);
+    } else {
+      await File(sourcePath).copy(storagePath);
+    }
 
     // Clean up temporary source file
     if (File(sourcePath).existsSync()) File(sourcePath).deleteSync(recursive: true);
@@ -88,28 +99,22 @@ class InsertFileToDbService {
   }
 
   static Future<AssetDbModel?> insertAudio(
-    String filePath,
-    Uint8List fileBytes, {
+    String filePath, {
     int? durationInMs,
   }) {
     return _insertAsset(
       sourcePath: filePath,
-      fileBytes: fileBytes,
       assetType: AssetType.audio,
       metadata: durationInMs != null ? {AssetDbModel.DURATION_KEY: durationInMs} : null,
     );
   }
 
-  static Future<AssetDbModel?> insertVideo(
-    XFile file,
-    Uint8List fileBytes,
-  ) async {
+  static Future<AssetDbModel?> insertVideo(XFile file) async {
     // Extracted from the original (pre-move) file, since `_insertAsset` deletes it after copying.
     final size = await _extractVideoSize(file);
 
     return _insertAsset(
       sourcePath: file.path,
-      fileBytes: fileBytes,
       assetType: AssetType.video,
       width: size?.width,
       height: size?.height,
@@ -132,30 +137,13 @@ class InsertFileToDbService {
     }
   }
 
-  static const Set<String> _videoExtensions = {
-    '.mp4',
-    '.mov',
-    '.m4v',
-    '.avi',
-    '.mkv',
-    '.webm',
-    '.3gp',
-    '.wmv',
-    '.flv',
-  };
-
-  static bool _looksLikeVideo(XFile file) {
-    final mimeType = file.mimeType;
-    if (mimeType != null) return mimeType.startsWith('video/');
-    return _videoExtensions.contains(path.extension(file.path).toLowerCase());
-  }
-
   /// Inserts a file picked from a mixed image+video source (e.g. the native
   /// OS media picker), auto-detecting whether it's an image or a video.
-  static Future<AssetDbModel?> insertMedia(
-    XFile file,
-    Uint8List fileBytes,
-  ) {
-    return _looksLikeVideo(file) ? insertVideo(file, fileBytes) : insertImage(file, fileBytes);
+  ///
+  /// Reads the bytes itself, and only for the image branch -- a caller reading
+  /// them upfront would buffer every video in the batch for nothing.
+  static Future<AssetDbModel?> insertMedia(XFile file) async {
+    if (AssetFileTypeService.isVideo(file)) return insertVideo(file);
+    return insertImage(file, await file.readAsBytes());
   }
 }

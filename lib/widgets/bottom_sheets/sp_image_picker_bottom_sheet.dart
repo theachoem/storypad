@@ -69,10 +69,15 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () async {
-        final XFile? video = await AppFilePickerService.pickVideo(source: source);
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final XFile? video = await AppFilePickerService.pickVideo(
+          context: context,
+          source: source,
+          compression: compression,
+        );
         if (video == null) return;
 
-        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video, await video.readAsBytes());
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video);
         if (tookAsset == null) return;
 
         editorAdapter.insertImage(
@@ -93,12 +98,12 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final files = await AppFilePickerService.pickMultipleMedia(compression: compression);
+        final files = await AppFilePickerService.pickMultipleMedia(context: context, compression: compression);
         if (files.isEmpty) return;
 
         final List<AssetDbModel> savedAssets = [];
         for (final file in files) {
-          final savedAsset = await InsertFileToDbService.insertMedia(file, await file.readAsBytes());
+          final savedAsset = await InsertFileToDbService.insertMedia(file);
           if (savedAsset != null) savedAssets.add(savedAsset);
         }
         if (savedAssets.isEmpty) return;
@@ -124,12 +129,12 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final files = await AppFilePickerService.pickMultipleMedia(compression: compression);
+        final files = await AppFilePickerService.pickMultipleMedia(context: context, compression: compression);
         if (files.isEmpty) return <AssetDbModel>[];
 
         final List<AssetDbModel> savedAssets = [];
         for (final file in files) {
-          final savedAsset = await InsertFileToDbService.insertMedia(file, await file.readAsBytes());
+          final savedAsset = await InsertFileToDbService.insertMedia(file);
           if (savedAsset != null) savedAssets.add(savedAsset);
         }
 

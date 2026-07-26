@@ -1,4 +1,6 @@
+import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/assets/asset_link_parser.dart';
 
 /// Extract embed sources from story content.
@@ -39,6 +41,21 @@ class StoryContentEmbedExtractor {
       ids.addAll(AssetLinkParser.extractIds(page.body));
     }
     return ids;
+  }
+
+  /// Bulk-warms the aspect-ratio cache for every asset referenced by
+  /// [loadedStories] in one native call, so story tiles don't each do their own
+  /// `box.get` during scroll/build.
+  ///
+  /// Every list that renders story tiles calls this right after a batch loads
+  /// (`HomeViewModel.setStories`, `SpStoryListWithQuery`) -- it lives here so
+  /// they can't drift apart as embed parsing or the cache API change.
+  static void preloadAssetAspectRatios(List<StoryDbModel> loadedStories) {
+    final ids = <int>{};
+    for (final story in loadedStories) {
+      ids.addAll(assetIds(story.draftContent ?? story.latestContent));
+    }
+    AssetDbModel.db.preloadAspectRatios(ids);
   }
 
   static List<String> _extractEmbedSources(StoryContentDbModel? content, String embedType) {
