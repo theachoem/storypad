@@ -236,7 +236,7 @@ class _ContentState extends State<_Content> {
       builder: (context, constraints) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("$kAppName Library"),
+            title: Text(tr('page.library.title')),
             automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
             actions: [
               if (CupertinoSheetRoute.hasParentSheet(context))

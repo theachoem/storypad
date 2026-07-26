@@ -18,7 +18,9 @@ enum SpAddMediaAction {
 /// if dismissed) for the caller to act on -- this sheet doesn't know about
 /// the rich text editor itself, it's just a menu.
 class SpAddMediaActionSheet extends BaseBottomSheet {
-  const SpAddMediaActionSheet({this.showRecordVoiceNote = true});
+  const SpAddMediaActionSheet({
+    this.showRecordVoiceNote = true,
+  });
 
   // Callers that only collect image/video (e.g. SpAlbumManagementSheet) have
   // nowhere to put a voice note, so they hide this tile rather than showing
@@ -35,7 +37,9 @@ class SpAddMediaActionSheet extends BaseBottomSheet {
     required BuildContext context,
     bool showRecordVoiceNote = true,
   }) {
-    return SpAddMediaActionSheet(showRecordVoiceNote: showRecordVoiceNote).show<SpAddMediaAction>(context: context);
+    return SpAddMediaActionSheet(
+      showRecordVoiceNote: showRecordVoiceNote,
+    ).show<SpAddMediaAction>(context: context);
   }
 
   @override
