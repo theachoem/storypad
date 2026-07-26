@@ -50,6 +50,13 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
   // requests recreate the controller instead of reusing it.
   bool _hasReachedEnd = false;
 
+  // Set once initialize() has thrown for this page (unsupported codec, file
+  // truncated mid-copy, ...). `_buildBody` calls `_initController` on every
+  // rebuild and `controller` stays null after a failure, so without this the
+  // same failing file would be reopened forever behind a spinner that never
+  // resolves. Mirrors `_SpVideoPreviewTile`'s `failed`.
+  bool _failed = false;
+
   late final DevicePreferencesProvider _preferencesProvider;
   late double _playbackSpeed;
   late bool _muted;
@@ -206,7 +213,7 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
   }
 
   Future<void> _initController(File file) async {
-    if (controller != null) return;
+    if (controller != null || _failed) return;
     _file = file;
     await _createController(file, autoplay: true);
   }
@@ -228,8 +235,25 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
     final int generation = ++_controllerGeneration;
 
     final newController = VideoPlayerController.file(file);
-    await newController.initialize();
-    if (seekTo > Duration.zero) await newController.seekTo(seekTo);
+
+    try {
+      await newController.initialize();
+      if (seekTo > Duration.zero) await newController.seekTo(seekTo);
+    } catch (error, stackTrace) {
+      // Nothing is awaiting this call (it's kicked off from build), so an
+      // escaping exception here would surface as an unhandled async error
+      // rather than anything the user can act on.
+      AppLogger.error('$runtimeType: failed to initialize video', error: error, stackTrace: stackTrace);
+      await newController.dispose();
+
+      // Only surface the failure when there's nothing on screen to keep: a
+      // failed *re*-create (the EOS workaround) leaves the still-working
+      // controller alone instead of tearing the video off the page.
+      if (mounted && controller == null && generation == _controllerGeneration) {
+        setState(() => _failed = true);
+      }
+      return;
+    }
 
     if (!mounted || generation != _controllerGeneration) {
       newController.dispose();
@@ -393,7 +417,10 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
       builder: (context, file, error) {
         if (file != null) _initController(file);
 
-        if (error != null) {
+        // `_failed` covers a file that loaded fine but can't be decoded --
+        // same dead end for the user as a file that never loaded, so it gets
+        // the same icon rather than a spinner that would never resolve.
+        if (error != null || _failed) {
           return const Center(
             child: Icon(SpIcons.imageNotSupported, color: Colors.white, size: 40.0),
           );

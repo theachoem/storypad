@@ -13,6 +13,7 @@ import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/device_volume_service.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
