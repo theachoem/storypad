@@ -261,6 +261,12 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
     await oldController?.dispose();
   }
 
+  /// Deliberately does *not* setState: this fires several times a second while
+  /// the video plays, and rebuilding the whole page (PhotoView + chrome) at
+  /// that rate janks playback. The only widgets that actually read the
+  /// changing value -- the scrubber/timestamp in [_VideoControls] and the
+  /// play/pause icon in [_VideoCenterControls] -- listen to the controller
+  /// themselves via [ValueListenableBuilder], so they still update every tick.
   void _handleControllerValueChanged() {
     final isCompleted = controller?.value.isCompleted == true;
 
@@ -270,10 +276,7 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
       // them so the user isn't left staring at a frozen frame with no
       // visible way to replay.
       _revealControls();
-      return;
     }
-
-    setState(() {});
   }
 
   Future<void> _handlePlayPause() async {
@@ -426,11 +429,14 @@ class _VideoPageScaffoldState extends State<_VideoPageScaffold> {
               child: _Chrome(
                 visible: controlsVisible,
                 child: Center(
-                  child: _VideoCenterControls(
-                    isPlaying: playerController.value.isPlaying,
-                    onSeekBackward: () => _seekBy(-_kSeekStep),
-                    onSeekForward: () => _seekBy(_kSeekStep),
-                    onPlayPause: _handlePlayPause,
+                  child: ValueListenableBuilder<VideoPlayerValue>(
+                    valueListenable: playerController,
+                    builder: (context, value, child) => _VideoCenterControls(
+                      isPlaying: value.isPlaying,
+                      onSeekBackward: () => _seekBy(-_kSeekStep),
+                      onSeekForward: () => _seekBy(_kSeekStep),
+                      onPlayPause: _handlePlayPause,
+                    ),
                   ),
                 ),
               ),
@@ -467,9 +473,18 @@ class _VideoControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = this.controller;
-    if (controller == null || !controller.value.isInitialized) return const SizedBox.shrink();
+    if (controller == null) return const SizedBox.shrink();
 
-    return _buildContainer(context, controller.value);
+    // Listens to the controller directly so position/duration tick here
+    // without rebuilding the page around it -- see
+    // _VideoPageScaffoldState._handleControllerValueChanged.
+    return ValueListenableBuilder<VideoPlayerValue>(
+      valueListenable: controller,
+      builder: (context, value, child) {
+        if (!value.isInitialized) return const SizedBox.shrink();
+        return _buildContainer(context, value);
+      },
+    );
   }
 
   Widget _buildContainer(BuildContext context, VideoPlayerValue value) {

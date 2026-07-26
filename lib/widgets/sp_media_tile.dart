@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/widgets/asset_db/sp_db_asset_loader.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -104,6 +105,13 @@ class _SpVideoPreviewTileState extends State<_SpVideoPreviewTile> {
   VideoPlayerController? controller;
   bool initializing = false;
 
+  // Set once initialize() has thrown for this tile (unsupported codec, file
+  // truncated mid-copy, ...). `build` calls `_initController` on every rebuild,
+  // so without this the same failing file would be re-opened forever; a decode
+  // that failed once won't start succeeding, so the tile just keeps its
+  // placeholder + play icon instead.
+  bool failed = false;
+
   @override
   void dispose() {
     controller?.dispose();
@@ -113,17 +121,28 @@ class _SpVideoPreviewTileState extends State<_SpVideoPreviewTile> {
   // Video stays paused at its first decoded frame -- this is only ever a
   // preview tile, playback happens in the full-screen player.
   Future<void> _initController(File file) async {
-    if (controller != null || initializing) return;
+    if (controller != null || initializing || failed) return;
     initializing = true;
 
     final newController = VideoPlayerController.file(file);
-    await newController.initialize();
 
-    if (!mounted) {
-      newController.dispose();
+    try {
+      await newController.initialize();
+    } catch (error, stackTrace) {
+      AppLogger.error('$runtimeType: failed to initialize video preview', error: error, stackTrace: stackTrace);
+      await newController.dispose();
+      failed = true;
+      initializing = false;
       return;
     }
 
+    if (!mounted) {
+      await newController.dispose();
+      initializing = false;
+      return;
+    }
+
+    initializing = false;
     setState(() => controller = newController);
   }
 

@@ -98,7 +98,7 @@ class BackupImagesUploaderService {
           processing: false,
           success: true,
           message: switch (pendingCount) {
-            0 => 'No images to be uploaded.',
+            0 => 'No media files to be uploaded.',
             null => 'Media uploads are waiting for Wi-Fi.',
             _ => '$pendingCount media file(s) waiting for Wi-Fi.',
           },
@@ -115,7 +115,7 @@ class BackupImagesUploaderService {
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: '$uploadedCount images uploaded successfully.',
+          message: '$uploadedCount media file(s) uploaded successfully.',
         ),
       );
     } else {
@@ -123,7 +123,7 @@ class BackupImagesUploaderService {
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: 'No images to be uploaded.',
+          message: 'No media files to be uploaded.',
         ),
       );
     }
