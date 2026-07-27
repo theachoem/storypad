@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:storypad/core/objects/picked_media_object.dart';
 import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/insert_file_to_db_service.dart';
 import 'package:storypad/core/services/assets/video_compression_service.dart';
@@ -35,9 +36,11 @@ class RetrieveLostPhotoService {
           // (and nobody watching), so no spinner: it just runs unattended.
           final compression = DevicePreferencesStorage.appInstance.preferences.assetCompression;
           final compressed = await VideoCompressionService.compress(file, compression) ?? file;
-          InsertFileToDbService.insertVideo(compressed);
+          final picked = await PickedMediaObject.read(compressed);
+          InsertFileToDbService.insertVideo(picked.file, size: picked.size);
         } else {
-          InsertFileToDbService.insertImage(file, await file.readAsBytes());
+          final picked = await PickedMediaObject.read(file);
+          InsertFileToDbService.insertImage(picked.file, size: picked.size);
         }
       }
     } on PlatformException catch (e, s) {

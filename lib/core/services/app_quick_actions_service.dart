@@ -219,7 +219,7 @@ class AppQuickActionsService {
         final photo = await AppFilePickerService.pickImage(source: ImageSource.camera, compression: compression);
         if (photo == null) return;
 
-        final asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        final asset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (asset == null || !context.mounted) return;
 
         AnalyticsService.instance.logTakePhoto();

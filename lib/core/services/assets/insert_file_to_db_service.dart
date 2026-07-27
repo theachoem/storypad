@@ -1,11 +1,9 @@
 import 'dart:io' show File;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/services/assets/asset_file_type_service.dart';
+import 'package:storypad/core/objects/picked_media_object.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path show extension;
 
 class InsertFileToDbService {
@@ -13,19 +11,16 @@ class InsertFileToDbService {
   ///
   /// This is the core logic for file insertion, handling:
   /// - Creating directories
-  /// - Writing the file to disk
+  /// - Copying the file to storage
   /// - Cleaning up temporary files
   /// - Creating and saving the AssetDbModel
   ///
-  /// [fileBytes] is only for callers that had to decode the file anyway (see
-  /// [insertImage]). Leave it null and the file is copied from [sourcePath]
-  /// natively instead -- video and audio must never be buffered whole, a few
-  /// minutes of 4K is hundreds of MB and the picker can hand over several at
-  /// once.
+  /// The file is always copied from [sourcePath] natively, never buffered --
+  /// a few minutes of 4K video is hundreds of MB and the picker can hand over
+  /// several at once.
   static Future<AssetDbModel?> _insertAsset({
     required String sourcePath,
     required AssetType assetType,
-    Uint8List? fileBytes,
     Map<String, dynamic>? metadata,
     double? width,
     double? height,
@@ -36,12 +31,8 @@ class InsertFileToDbService {
     final storagePath = assetType.getStoragePath(id: id, extension: extension);
 
     // Write file to storage
-    final newFile = File(storagePath)..createSync(recursive: true);
-    if (fileBytes != null) {
-      await newFile.writeAsBytes(fileBytes);
-    } else {
-      await File(sourcePath).copy(storagePath);
-    }
+    File(storagePath).createSync(recursive: true);
+    await File(sourcePath).copy(storagePath);
 
     // Clean up temporary source file
     if (File(sourcePath).existsSync()) File(sourcePath).deleteSync(recursive: true);
@@ -63,39 +54,31 @@ class InsertFileToDbService {
     return asset.save();
   }
 
+  /// [size] is read at pick time (see [PickedMediaObject.read]), not here --
+  /// inserting only moves the file into storage.
   static Future<AssetDbModel?> insertImage(
-    XFile file,
-    Uint8List fileBytes,
-  ) async {
-    final size = await _extractImageSize(fileBytes);
-
+    XFile file, {
+    required ui.Size? size,
+  }) {
     return _insertAsset(
       sourcePath: file.path,
-      fileBytes: fileBytes,
       assetType: AssetType.image,
       width: size?.width,
       height: size?.height,
     );
   }
 
-  /// Reads the image's decoded dimensions once at insert time -- even though
-  /// `Image` can compute its own size once decoded, this lets loading
-  /// placeholders (and the quill "max size" single-embed layout, which gives
-  /// no fixed height) size correctly immediately via
-  /// `AssetsBox.findAspectRatioSync`, no reflow.
-  static Future<ui.Size?> _extractImageSize(Uint8List fileBytes) async {
-    ui.Codec? codec;
-    try {
-      codec = await ui.instantiateImageCodec(fileBytes);
-      final frame = await codec.getNextFrame();
-      final size = ui.Size(frame.image.width.toDouble(), frame.image.height.toDouble());
-      frame.image.dispose();
-      return size;
-    } catch (_) {
-      return null;
-    } finally {
-      codec?.dispose();
-    }
+  /// See [insertImage] for where [size] comes from.
+  static Future<AssetDbModel?> insertVideo(
+    XFile file, {
+    required ui.Size? size,
+  }) {
+    return _insertAsset(
+      sourcePath: file.path,
+      assetType: AssetType.video,
+      width: size?.width,
+      height: size?.height,
+    );
   }
 
   static Future<AssetDbModel?> insertAudio(
@@ -109,41 +92,10 @@ class InsertFileToDbService {
     );
   }
 
-  static Future<AssetDbModel?> insertVideo(XFile file) async {
-    // Extracted from the original (pre-move) file, since `_insertAsset` deletes it after copying.
-    final size = await _extractVideoSize(file);
-
-    return _insertAsset(
-      sourcePath: file.path,
-      assetType: AssetType.video,
-      width: size?.width,
-      height: size?.height,
-    );
-  }
-
-  /// Reads the video's dimensions once at insert time so tiles can size
-  /// themselves synchronously later without waiting on a full player
-  /// initialization (see `AssetsBox.findAspectRatioSync`).
-  static Future<ui.Size?> _extractVideoSize(XFile file) async {
-    VideoPlayerController? controller;
-    try {
-      controller = VideoPlayerController.file(File(file.path));
-      await controller.initialize();
-      return controller.value.size;
-    } catch (_) {
-      return null;
-    } finally {
-      await controller?.dispose();
-    }
-  }
-
   /// Inserts a file picked from a mixed image+video source (e.g. the native
   /// OS media picker), auto-detecting whether it's an image or a video.
-  ///
-  /// Reads the bytes itself, and only for the image branch -- a caller reading
-  /// them upfront would buffer every video in the batch for nothing.
-  static Future<AssetDbModel?> insertMedia(XFile file) async {
-    if (AssetFileTypeService.isVideo(file)) return insertVideo(file);
-    return insertImage(file, await file.readAsBytes());
+  static Future<AssetDbModel?> insertMedia(PickedMediaObject picked) {
+    if (picked.isVideo) return insertVideo(picked.file, size: picked.size);
+    return insertImage(picked.file, size: picked.size);
   }
 }

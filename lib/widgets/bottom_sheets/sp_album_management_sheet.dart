@@ -71,7 +71,7 @@ class _ContentState extends State<_Content> {
 
   Future<void> _takePhoto(BuildContext context) async {
     final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-    final XFile? photo = await SpAppLockWrapper.disableAppLockIfHas(
+    final photo = await SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () => AppFilePickerService.pickImage(
         source: ImageSource.camera,
@@ -81,7 +81,7 @@ class _ContentState extends State<_Content> {
 
     if (photo == null) return;
 
-    final AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+    final AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
     if (tookAsset == null) return;
 
     _addPaths([tookAsset.relativeLocalFilePath]);
@@ -89,7 +89,7 @@ class _ContentState extends State<_Content> {
 
   Future<void> _recordVideo(BuildContext context) async {
     final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-    final XFile? video = await SpAppLockWrapper.disableAppLockIfHas(
+    final video = await SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () => AppFilePickerService.pickVideo(
         context: context,
@@ -100,7 +100,7 @@ class _ContentState extends State<_Content> {
 
     if (video == null) return;
 
-    final AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video);
+    final AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
     if (tookAsset == null) return;
 
     _addPaths([tookAsset.relativeLocalFilePath]);

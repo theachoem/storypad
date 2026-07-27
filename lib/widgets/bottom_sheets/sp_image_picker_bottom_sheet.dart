@@ -38,13 +38,13 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? photo = await AppFilePickerService.pickImage(
+        final photo = await AppFilePickerService.pickImage(
           source: source,
           compression: compression,
         );
         if (photo == null) return;
 
-        AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (tookAsset == null) return;
 
         editorAdapter.insertImage(
@@ -70,14 +70,14 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? video = await AppFilePickerService.pickVideo(
+        final video = await AppFilePickerService.pickVideo(
           context: context,
           source: source,
           compression: compression,
         );
         if (video == null) return;
 
-        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video);
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
         if (tookAsset == null) return;
 
         editorAdapter.insertImage(

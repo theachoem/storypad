@@ -198,13 +198,13 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? photo = await AppFilePickerService.pickImage(
+        final photo = await AppFilePickerService.pickImage(
           source: ImageSource.camera,
           compression: compression,
         );
         if (photo == null) return;
 
-        AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        AssetDbModel? asset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (asset == null) return;
 
         AnalyticsService.instance.logTakePhoto();
@@ -225,14 +225,14 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? video = await AppFilePickerService.pickVideo(
+        final video = await AppFilePickerService.pickVideo(
           context: context,
           source: ImageSource.camera,
           compression: compression,
         );
         if (video == null) return;
 
-        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video);
+        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
         if (asset == null) return;
 
         AnalyticsService.instance.logRecordVideo();
