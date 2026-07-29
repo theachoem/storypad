@@ -30,7 +30,7 @@ void main() {
 
     group('tag actions', () {
       test('round-trips tag with label and emoji', () {
-        const original = AppQuickActionObject(
+        final original = AppQuickActionObject(
           label: '🌟 My Tag',
           type: AppQuickActionType.tag,
           nativeIcon: AppQuickActionObject.tagNativeIcon,
@@ -45,11 +45,11 @@ void main() {
 
     group('template actions — custom', () {
       test('round-trips custom template', () {
-        const original = AppQuickActionObject(
+        final original = AppQuickActionObject(
           label: 'My Template',
           type: AppQuickActionType.template,
           nativeIcon: AppQuickActionObject.templateNativeIcon,
-          templateReference: AppQuickActionTemplateReference(
+          templateReference: const AppQuickActionTemplateReference(
             type: AppQuickActionTemplateType.custom,
             id: '123',
           ),
@@ -64,11 +64,11 @@ void main() {
 
     group('template actions — gallery', () {
       test('round-trips gallery template', () {
-        const original = AppQuickActionObject(
+        final original = AppQuickActionObject(
           label: 'Daily Journal',
           type: AppQuickActionType.template,
           nativeIcon: AppQuickActionObject.templateNativeIcon,
-          templateReference: AppQuickActionTemplateReference(
+          templateReference: const AppQuickActionTemplateReference(
             type: AppQuickActionTemplateType.gallery,
             id: 'daily_journal',
           ),
@@ -112,7 +112,7 @@ void main() {
 
     group('toId reproducibility', () {
       test('same object always produces the same os key', () {
-        const object = AppQuickActionObject(
+        final object = AppQuickActionObject(
           label: 'Personal',
           type: AppQuickActionType.tag,
           nativeIcon: AppQuickActionObject.tagNativeIcon,
