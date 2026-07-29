@@ -468,7 +468,7 @@
   "plural.entry.one": "1件のエントリー",
   "plural.entry.other": "{} エントリ",
   "plural.media_more_to_sync.one": "同期対象があと1つ",
-  "plural.media_more_to_sync.other": "同期する項目がさらにあります",
+  "plural.media_more_to_sync.other": "同期対象があと{}つ",
   "plural.page.one": "1ページ",
   "plural.page.other": "{} ページ",
   "plural.photo.one": "写真1枚",
