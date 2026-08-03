@@ -354,7 +354,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4094713120589114734),
     name: 'AssetObjectBox',
-    lastPropertyId: const obx_int.IdUid(13, 8859144998009161825),
+    lastPropertyId: const obx_int.IdUid(15, 1493334910848739574),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -424,6 +424,18 @@ final _entities = <obx_int.ModelEntity>[
         type: 6,
         flags: 8,
         indexId: const obx_int.IdUid(1, 3213191916563326579),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(14, 2230481197199389868),
+        name: 'width',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(15, 1493334910848739574),
+        name: 'height',
+        type: 8,
+        flags: 0,
       ),
     ],
     relations: <obx_int.ModelRelation>[],
@@ -1247,7 +1259,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final tagsOffset = object.tags == null
             ? null
             : fbb.writeListInt64(object.tags!);
-        fbb.startTable(14);
+        fbb.startTable(16);
         fbb.addInt64(0, object.id);
         fbb.addOffset(2, cloudDestinationsOffset);
         fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
@@ -1259,6 +1271,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(10, metadataOffset);
         fbb.addOffset(11, tagsOffset);
         fbb.addInt64(12, object.version);
+        fbb.addFloat64(13, object.width);
+        fbb.addFloat64(14, object.height);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1303,6 +1317,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           28,
         );
+        final widthParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          30,
+        );
+        final heightParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          32,
+        );
         final lastSavedDeviceIdParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 16);
@@ -1317,6 +1341,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           metadata: metadataParam,
           tags: tagsParam,
           version: versionParam,
+          width: widthParam,
+          height: heightParam,
           lastSavedDeviceId: lastSavedDeviceIdParam,
         );
 
@@ -2010,6 +2036,16 @@ class AssetObjectBox_ {
   /// See [AssetObjectBox.version].
   static final version = obx.QueryIntegerProperty<AssetObjectBox>(
     _entities[3].properties[10],
+  );
+
+  /// See [AssetObjectBox.width].
+  static final width = obx.QueryDoubleProperty<AssetObjectBox>(
+    _entities[3].properties[11],
+  );
+
+  /// See [AssetObjectBox.height].
+  static final height = obx.QueryDoubleProperty<AssetObjectBox>(
+    _entities[3].properties[12],
   );
 }
 

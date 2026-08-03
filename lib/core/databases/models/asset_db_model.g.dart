@@ -31,6 +31,10 @@ abstract class _$AssetDbModelCWProxy {
 
   AssetDbModel metadata(Map<String, dynamic>? metadata);
 
+  AssetDbModel width(double? width);
+
+  AssetDbModel height(double? height);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -50,6 +54,8 @@ abstract class _$AssetDbModelCWProxy {
     List<int>? tags,
     int? version,
     Map<String, dynamic>? metadata,
+    double? width,
+    double? height,
   });
 }
 
@@ -100,6 +106,12 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
       call(metadata: metadata);
 
   @override
+  AssetDbModel width(double? width) => call(width: width);
+
+  @override
+  AssetDbModel height(double? height) => call(height: height);
+
+  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -119,6 +131,8 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
     Object? tags = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
     Object? metadata = const $CopyWithPlaceholder(),
+    Object? width = const $CopyWithPlaceholder(),
+    Object? height = const $CopyWithPlaceholder(),
   }) {
     return AssetDbModel(
       id: id == const $CopyWithPlaceholder() || id == null
@@ -169,6 +183,14 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
           ? _value.metadata
           // ignore: cast_nullable_to_non_nullable
           : metadata as Map<String, dynamic>?,
+      width: width == const $CopyWithPlaceholder()
+          ? _value.width
+          // ignore: cast_nullable_to_non_nullable
+          : width as double?,
+      height: height == const $CopyWithPlaceholder()
+          ? _value.height
+          // ignore: cast_nullable_to_non_nullable
+          : height as double?,
     );
   }
 }
@@ -207,6 +229,8 @@ AssetDbModel _$AssetDbModelFromJson(Map<String, dynamic> json) => AssetDbModel(
       .toList(),
   version: (json['version'] as num?)?.toInt() ?? 2,
   metadata: json['metadata'] as Map<String, dynamic>?,
+  width: (json['width'] as num?)?.toDouble(),
+  height: (json['height'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$AssetDbModelToJson(
@@ -219,6 +243,8 @@ Map<String, dynamic> _$AssetDbModelToJson(
   'cloud_destinations': instance.cloudDestinations,
   'type': _assetTypeToJson(instance.type),
   'metadata': instance.metadata,
+  'width': instance.width,
+  'height': instance.height,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,

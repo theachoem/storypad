@@ -29,11 +29,17 @@ abstract class _$DevicePreferencesObjectCWProxy {
     AssetCompressionOption? assetCompression,
   );
 
+  DevicePreferencesObject mediaSync(MediaSyncOption? mediaSync);
+
   DevicePreferencesObject colorSeedValue(int? colorSeedValue);
 
   DevicePreferencesObject colorByDay(Map<int, String>? colorByDay);
 
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed);
+
+  DevicePreferencesObject videoPlaybackSpeed(double? videoPlaybackSpeed);
+
+  DevicePreferencesObject videoMuted(bool? videoMuted);
 
   DevicePreferencesObject storyTilePreferences(
     StoryTilePreferencesObject? storyTilePreferences,
@@ -71,9 +77,12 @@ abstract class _$DevicePreferencesObjectCWProxy {
     TimeFormatOption? timeFormat,
     FirstDayOfWeekOption? firstDayOfWeek,
     AssetCompressionOption? assetCompression,
+    MediaSyncOption? mediaSync,
     int? colorSeedValue,
     Map<int, String>? colorByDay,
     double? voicePlaybackSpeed,
+    double? videoPlaybackSpeed,
+    bool? videoMuted,
     StoryTilePreferencesObject? storyTilePreferences,
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     List<AppQuickActionObject>? homeQuickActions,
@@ -133,6 +142,10 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(assetCompression: assetCompression);
 
   @override
+  DevicePreferencesObject mediaSync(MediaSyncOption? mediaSync) =>
+      call(mediaSync: mediaSync);
+
+  @override
   DevicePreferencesObject colorSeedValue(int? colorSeedValue) =>
       call(colorSeedValue: colorSeedValue);
 
@@ -143,6 +156,14 @@ class _$DevicePreferencesObjectCWProxyImpl
   @override
   DevicePreferencesObject voicePlaybackSpeed(double? voicePlaybackSpeed) =>
       call(voicePlaybackSpeed: voicePlaybackSpeed);
+
+  @override
+  DevicePreferencesObject videoPlaybackSpeed(double? videoPlaybackSpeed) =>
+      call(videoPlaybackSpeed: videoPlaybackSpeed);
+
+  @override
+  DevicePreferencesObject videoMuted(bool? videoMuted) =>
+      call(videoMuted: videoMuted);
 
   @override
   DevicePreferencesObject storyTilePreferences(
@@ -187,9 +208,12 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? timeFormat = const $CopyWithPlaceholder(),
     Object? firstDayOfWeek = const $CopyWithPlaceholder(),
     Object? assetCompression = const $CopyWithPlaceholder(),
+    Object? mediaSync = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? colorByDay = const $CopyWithPlaceholder(),
     Object? voicePlaybackSpeed = const $CopyWithPlaceholder(),
+    Object? videoPlaybackSpeed = const $CopyWithPlaceholder(),
+    Object? videoMuted = const $CopyWithPlaceholder(),
     Object? storyTilePreferences = const $CopyWithPlaceholder(),
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
     Object? homeQuickActions = const $CopyWithPlaceholder(),
@@ -237,6 +261,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.assetCompression
           // ignore: cast_nullable_to_non_nullable
           : assetCompression as AssetCompressionOption?,
+      mediaSync: mediaSync == const $CopyWithPlaceholder()
+          ? _value.mediaSync
+          // ignore: cast_nullable_to_non_nullable
+          : mediaSync as MediaSyncOption?,
       colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
           ? _value.colorSeedValue
           // ignore: cast_nullable_to_non_nullable
@@ -249,6 +277,14 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.voicePlaybackSpeed
           // ignore: cast_nullable_to_non_nullable
           : voicePlaybackSpeed as double?,
+      videoPlaybackSpeed: videoPlaybackSpeed == const $CopyWithPlaceholder()
+          ? _value.videoPlaybackSpeed
+          // ignore: cast_nullable_to_non_nullable
+          : videoPlaybackSpeed as double?,
+      videoMuted: videoMuted == const $CopyWithPlaceholder()
+          ? _value.videoMuted
+          // ignore: cast_nullable_to_non_nullable
+          : videoMuted as bool?,
       storyTilePreferences: storyTilePreferences == const $CopyWithPlaceholder()
           ? _value.storyTilePreferences
           // ignore: cast_nullable_to_non_nullable
@@ -310,11 +346,14 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
     _$AssetCompressionOptionEnumMap,
     json['asset_compression'],
   ),
+  mediaSync: $enumDecodeNullable(_$MediaSyncOptionEnumMap, json['media_sync']),
   colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   colorByDay: (json['color_by_day'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(int.parse(k), e as String),
   ),
   voicePlaybackSpeed: (json['voice_playback_speed'] as num?)?.toDouble(),
+  videoPlaybackSpeed: (json['video_playback_speed'] as num?)?.toDouble(),
+  videoMuted: json['video_muted'] as bool?,
   storyTilePreferences: json['story_tile_preferences'] == null
       ? null
       : StoryTilePreferencesObject.fromJson(
@@ -344,10 +383,13 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
   'color_seed_value': instance.colorSeedValue,
   'color_by_day': instance.colorByDay?.map((k, e) => MapEntry(k.toString(), e)),
   'voice_playback_speed': instance.voicePlaybackSpeed,
+  'video_playback_speed': instance.videoPlaybackSpeed,
+  'video_muted': instance.videoMuted,
   'time_format': _$TimeFormatOptionEnumMap[instance.timeFormat],
   'first_day_of_week': _$FirstDayOfWeekOptionEnumMap[instance.firstDayOfWeek]!,
   'asset_compression':
       _$AssetCompressionOptionEnumMap[instance.assetCompression]!,
+  'media_sync': _$MediaSyncOptionEnumMap[instance.mediaSync]!,
   'map_style': _$SpMapStyleEnumMap[instance.mapStyle]!,
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
@@ -386,6 +428,11 @@ const _$FirstDayOfWeekOptionEnumMap = {
 const _$AssetCompressionOptionEnumMap = {
   AssetCompressionOption.standard: 'standard',
   AssetCompressionOption.none: 'none',
+};
+
+const _$MediaSyncOptionEnumMap = {
+  MediaSyncOption.wifiAndCellular: 'wifiAndCellular',
+  MediaSyncOption.wifiOnly: 'wifiOnly',
 };
 
 const _$SpMapStyleEnumMap = {

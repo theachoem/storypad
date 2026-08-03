@@ -142,7 +142,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
     if (story == null) return null;
 
     List<String>? assetPaths = story.draftContent != null || story.latestContent != null
-        ? StoryContentEmbedExtractor.images(story.draftContent ?? story.latestContent)
+        ? StoryContentEmbedExtractor.media(story.draftContent ?? story.latestContent)
         : null;
 
     const String legacyPrefix = 'storypad://assets/';

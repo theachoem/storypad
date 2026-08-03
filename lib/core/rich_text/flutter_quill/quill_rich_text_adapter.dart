@@ -101,13 +101,13 @@ class QuillRichTextAdapter implements RichTextAdapter {
   }
 
   @override
-  void insertImage({
+  void insertMedia({
     required RichTextController controller,
-    required String imagePath,
+    required String mediaPath,
   }) {
     controller.insertEmbed(
-      embedType: quill.BlockEmbed.imageType,
-      value: imagePath,
+      embedType: 'media',
+      value: mediaPath,
       attributes: {
         _EmbedSizeAttribute.maxSize.key: _EmbedSizeAttribute.maxSize.value,
       },

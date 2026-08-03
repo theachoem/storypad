@@ -8,6 +8,7 @@ enum SupportDirectoryPath {
   objectbox,
   images,
   audio,
+  videos,
   backups,
   export_assets,
   downloaded_from_firestore,
@@ -23,6 +24,8 @@ enum SupportDirectoryPath {
         return 'images';
       case SupportDirectoryPath.audio:
         return 'audio';
+      case SupportDirectoryPath.videos:
+        return 'videos';
       case SupportDirectoryPath.backups:
         return 'backups';
       case SupportDirectoryPath.export_assets:

@@ -84,7 +84,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
       final asset = params.initialAsset!;
       final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
       final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
-      final embedKey = asset.type == AssetType.audio ? 'audio' : 'image';
+      final embedKey = asset.type == AssetType.audio ? 'audio' : 'media';
       pagesManager.pagesMap.first.bodyController.replaceText(
         index,
         length,

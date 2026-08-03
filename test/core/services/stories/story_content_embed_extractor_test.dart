@@ -5,9 +5,9 @@ import 'package:storypad/core/services/stories/story_content_embed_extractor.dar
 
 void main() {
   group('StoryContentEmbedExtractor', () {
-    group('images()', () {
+    group('media()', () {
       test('returns empty list when content is null', () {
-        final result = StoryContentEmbedExtractor.images(null);
+        final result = StoryContentEmbedExtractor.media(null);
         expect(result, isEmpty);
       });
 
@@ -20,7 +20,7 @@ void main() {
           pages: [],
           richPages: [],
         );
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
         expect(result, isEmpty);
       });
 
@@ -29,13 +29,13 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/12345.jpg',
+                'media': 'images/12345.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/12345.jpg']);
       });
@@ -45,18 +45,18 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/111.jpg',
+                'media': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'image': 'images/222.png',
+                'media': 'images/222.png',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/111.jpg', 'images/222.png']);
       });
@@ -66,20 +66,20 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/100.jpg',
+                'media': 'images/100.jpg',
               },
             },
           ]),
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/200.jpg',
+                'media': 'images/200.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/100.jpg', 'images/200.jpg']);
       });
@@ -89,7 +89,7 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/111.jpg',
+                'media': 'images/111.jpg',
               },
             },
             {
@@ -99,13 +99,13 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/333.jpg',
+                'media': 'images/333.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/111.jpg', 'images/333.jpg']);
         expect(result, isNot(contains('audio/222.m4a')));
@@ -116,18 +116,18 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'https://example.com/image.jpg',
+                'media': 'https://example.com/image.jpg',
               },
             },
             {
               'insert': {
-                'image': 'images/123.jpg',
+                'media': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['https://example.com/image.jpg', 'images/123.jpg']);
       });
@@ -137,18 +137,18 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': {'url': 'images/123.jpg'},
+                'media': {'url': 'images/123.jpg'},
               },
             },
             {
               'insert': {
-                'image': 'images/456.jpg',
+                'media': 'images/456.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/456.jpg']);
       });
@@ -159,13 +159,13 @@ void main() {
             {'text': 'just text'},
             {
               'insert': {
-                'image': 'images/123.jpg',
+                'media': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/123.jpg']);
       });
@@ -178,13 +178,13 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/456.jpg',
+                'media': 'images/456.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/456.jpg']);
       });
@@ -195,13 +195,13 @@ void main() {
             'just a string',
             {
               'insert': {
-                'image': 'images/789.jpg',
+                'media': 'images/789.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/789.jpg']);
       });
@@ -221,7 +221,7 @@ void main() {
           pages: [],
           richPages: [page],
         );
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, isEmpty);
       });
@@ -229,7 +229,7 @@ void main() {
       test('handles page with empty body', () {
         final content = _createContentWithPages([_createPageWithBody([])]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, isEmpty);
       });
@@ -240,7 +240,7 @@ void main() {
             {
               'insert': {
                 'text': 'Some text',
-                'image': 'images/111.jpg',
+                'media': 'images/111.jpg',
                 'audio': 'audio/222.m4a',
                 'attributes': {'bold': true},
               },
@@ -248,7 +248,7 @@ void main() {
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/111.jpg']);
       });
@@ -263,7 +263,7 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/100.jpg',
+                'media': 'images/100.jpg',
               },
             },
             {
@@ -273,25 +273,25 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/300.jpg',
+                'media': 'images/300.jpg',
               },
             },
           ]),
           _createPageWithBody([
             {
               'insert': {
-                'image': 'https://external.com/img.png',
+                'media': 'https://external.com/img.png',
               },
             },
             {
               'insert': {
-                'image': 'images/400.jpg',
+                'media': 'images/400.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/100.jpg', 'images/300.jpg', 'https://external.com/img.png', 'images/400.jpg']);
       });
@@ -301,23 +301,23 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/999.jpg',
+                'media': 'images/999.jpg',
               },
             },
             {
               'insert': {
-                'image': 'images/111.jpg',
+                'media': 'images/111.jpg',
               },
             },
             {
               'insert': {
-                'image': 'images/222.jpg',
+                'media': 'images/222.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, orderedEquals(['images/999.jpg', 'images/111.jpg', 'images/222.jpg']));
       });
@@ -327,20 +327,64 @@ void main() {
           _createPageWithBody([
             {
               'insert': {
-                'image': '',
+                'media': '',
               },
             },
             {
               'insert': {
-                'image': 'images/123.jpg',
+                'media': 'images/123.jpg',
               },
             },
           ]),
         ]);
 
-        final result = StoryContentEmbedExtractor.images(content);
+        final result = StoryContentEmbedExtractor.media(content);
 
         expect(result, ['images/123.jpg']);
+      });
+
+      test('reads the legacy `image` key the same as `media`', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'image': 'images/legacy.jpg',
+              },
+            },
+          ]),
+        ]);
+
+        final result = StoryContentEmbedExtractor.media(content);
+
+        expect(result, ['images/legacy.jpg']);
+      });
+
+      test('preserves order across mixed legacy `image` and current `media` embeds on one page', () {
+        // A page can genuinely mix both keys: an untouched legacy embed next
+        // to one that was edited (and so upgraded to `media`).
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'image': 'images/1.jpg',
+              },
+            },
+            {
+              'insert': {
+                'media': 'images/2.jpg',
+              },
+            },
+            {
+              'insert': {
+                'image': 'videos/3.mp4',
+              },
+            },
+          ]),
+        ]);
+
+        final result = StoryContentEmbedExtractor.media(content);
+
+        expect(result, orderedEquals(['images/1.jpg', 'images/2.jpg', 'videos/3.mp4']));
       });
     });
 
@@ -410,7 +454,7 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/222.jpg',
+                'media': 'images/222.jpg',
               },
             },
             {
@@ -428,18 +472,89 @@ void main() {
       });
     });
 
+    group('photos() / videos()', () {
+      test('returns empty lists when content is null', () {
+        expect(StoryContentEmbedExtractor.photos(null), isEmpty);
+        expect(StoryContentEmbedExtractor.videos(null), isEmpty);
+      });
+
+      test('splits the image embed into photos and videos by path', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'media': 'images/100.jpg',
+              },
+            },
+            {
+              'insert': {
+                'media': 'videos/200.mp4',
+              },
+            },
+            {
+              'insert': {
+                'media': 'images/300.jpg',
+              },
+            },
+            {
+              'insert': {
+                'media': 'videos/400.mp4',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.photos(content), ['images/100.jpg', 'images/300.jpg']);
+        expect(StoryContentEmbedExtractor.videos(content), ['videos/200.mp4', 'videos/400.mp4']);
+      });
+
+      test('media() still returns the union (photos and videos together)', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'media': 'images/1.jpg',
+              },
+            },
+            {
+              'insert': {
+                'media': 'videos/2.mp4',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.media(content), ['images/1.jpg', 'videos/2.mp4']);
+      });
+
+      test('external URLs are treated as photos, not videos', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'media': 'https://example.com/image.jpg',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.photos(content), ['https://example.com/image.jpg']);
+        expect(StoryContentEmbedExtractor.videos(content), isEmpty);
+      });
+    });
+
     group('all()', () {
       test('returns empty list when content is null', () {
         final result = StoryContentEmbedExtractor.all(null);
         expect(result, isEmpty);
       });
 
-      test('returns both images and audio in order', () {
+      test('returns photos, videos, and audio in that order', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
               'insert': {
-                'image': 'images/100.jpg',
+                'media': 'images/100.jpg',
               },
             },
             {
@@ -449,7 +564,12 @@ void main() {
             },
             {
               'insert': {
-                'image': 'images/300.jpg',
+                'media': 'videos/250.mp4',
+              },
+            },
+            {
+              'insert': {
+                'media': 'images/300.jpg',
               },
             },
             {
@@ -465,6 +585,7 @@ void main() {
         expect(result, [
           'images/100.jpg',
           'images/300.jpg',
+          'videos/250.mp4',
           'audio/200.m4a',
           'audio/400.m4a',
         ]);

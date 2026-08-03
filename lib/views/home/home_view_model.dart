@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +11,7 @@ import 'package:storypad/core/objects/month_recap_stats_object.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/services/stories/monthly_story_stats_service.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/providers/backup_provider.dart';
@@ -75,6 +75,7 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
 
     _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: stories?.items ?? []);
+    StoryContentEmbedExtractor.preloadAssetAspectRatios([...?stories?.items, ...?pinnedStories?.items]);
 
     scrollInfo.setupStoryKeys(
       stories?.items ?? [],
@@ -176,7 +177,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
         final asset = await InsertFileToDbService.insertAudio(
           result.filePath,
-          await File(result.filePath).readAsBytes(),
           durationInMs: result.durationInMs,
         );
 
@@ -198,16 +198,44 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? photo = await AppFilePickerService.pickImage(
+        final photo = await AppFilePickerService.pickImage(
           source: ImageSource.camera,
           compression: compression,
         );
         if (photo == null) return;
 
-        AssetDbModel? asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        AssetDbModel? asset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (asset == null) return;
 
         AnalyticsService.instance.logTakePhoto();
+
+        final addedStory = await EditStoryRoute(
+          id: null,
+          initialYear: year,
+          initialAsset: asset,
+        ).push(HomeView.homeContext!);
+
+        await _checkNewStoryResult(addedStory);
+      },
+    );
+  }
+
+  void recordVideo(BuildContext context) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final video = await AppFilePickerService.pickVideo(
+          context: context,
+          source: ImageSource.camera,
+          compression: compression,
+        );
+        if (video == null) return;
+
+        AssetDbModel? asset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
+        if (asset == null) return;
+
+        AnalyticsService.instance.logRecordVideo();
 
         final addedStory = await EditStoryRoute(
           id: null,

@@ -415,7 +415,7 @@ void main() {
             body: [
               {"insert": "Check out this image:\n"},
               {
-                "insert": {"image": "images/1759081859921.jpg"},
+                "insert": {"media": "images/1759081859921.jpg"},
               },
               {"insert": "\n"},
             ],
@@ -437,6 +437,41 @@ void main() {
       expect(content, contains('Title: Story with Image'));
       expect(content, contains('Check out this image:'));
       expect(content, contains('![image](images/1759081859921.jpg)'));
+    });
+
+    test('should include videos as links, not image embeds', () async {
+      // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
+      final story = _createStoryWithRichPages(
+        id: 2,
+        year: 2025,
+        month: 1,
+        day: 4,
+        pages: [
+          StoryPageDbModel(
+            id: 1,
+            title: "Story with Video",
+            body: [
+              {"insert": "Check out this video:\n"},
+              {
+                "insert": {"media": "videos/1759081859922.mp4"},
+              },
+              {"insert": "\n"},
+            ],
+          ),
+        ],
+      );
+
+      final outputFile = File('${tempDir.path}/export_video.txt');
+
+      await ExportStoriesToTextService.call(
+        stories: [story],
+        outputFile: outputFile,
+      );
+
+      final content = await outputFile.readAsString();
+      expect(content, contains('Check out this video:'));
+      expect(content, contains('[video](videos/1759081859922.mp4)'));
+      expect(content, isNot(contains('![video]')));
     });
 
     test('should handle single page story without page title', () async {

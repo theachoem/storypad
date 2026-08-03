@@ -98,6 +98,17 @@ class _HomeFloatingButtonsState extends State<_HomeFloatingButtons> with SingleT
             widget.viewModel.takePhoto(context);
           },
         ),
+      // if (kStoryPad && kSupportCamera)
+      //   IconButton.outlined(
+      //     tooltip: tr("button.record_video"),
+      //     visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),
+      //     icon: const Icon(SpIcons.videoCamera),
+      //     color: Colors.white,
+      //     onPressed: () {
+      //       toggle(context);
+      //       widget.viewModel.recordVideo(context);
+      //     },
+      //   ),
       IconButton.outlined(
         tooltip: tr("button.record_voice"),
         visualDensity: const VisualDensity(horizontal: 1.5, vertical: 1.5),

@@ -5,6 +5,7 @@ import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/local_widgets/backup_service_tile.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
 import 'package:storypad/views/settings/local_widgets/asset_compression_tile.dart';
+import 'package:storypad/views/settings/local_widgets/media_sync_tile.dart';
 import 'package:storypad/views/storage_management/storage_management_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -28,6 +29,7 @@ class DataBackupView extends StatelessWidget {
         children: [
           SpSectionTitle(title: tr("general.cloud_backup")),
           ..._buildCloudServiceTiles(context),
+          MediaSyncTile.globalTheme(),
           const Divider(),
           SpSectionTitle(title: tr("general.local_backup")),
           ListTile(

@@ -16,11 +16,14 @@ class BackupImagesUploaderService {
     controller.add(null);
   }
 
-  Future<bool> start(BackupCloudService cloudService) async {
+  Future<bool> start(
+    BackupCloudService cloudService, {
+    required bool uploadAssets,
+  }) async {
     AppLogger.d('🚧 $runtimeType#start ...');
 
     try {
-      return await _start(cloudService);
+      return await _start(cloudService, uploadAssets: uploadAssets);
     } on exp.AuthException catch (e) {
       controller.add(
         BackupSyncMessage(
@@ -61,13 +64,48 @@ class BackupImagesUploaderService {
     }
   }
 
-  Future<bool> _start(BackupCloudService cloudService) async {
+  Future<bool> _start(
+    BackupCloudService cloudService, {
+    required bool uploadAssets,
+  }) async {
     if (!cloudService.isSignedIn) {
       throw exp.AuthException(
         'Service ${cloudService.serviceType.displayName} is not signed in',
         exp.AuthExceptionType.signInRequired,
         serviceType: cloudService.serviceType,
       );
+    }
+
+    // Deferring media is a success, not a failure: BackupRepository#sync aborts
+    // the entire run if this step reports failure, and the rest of the backup
+    // (entries, tags, everything text) must still go through. The deferred
+    // assets stay in pendingAssets and upload themselves on the next
+    // unmetered run — cloudDestinations is the pending queue.
+    if (!uploadAssets) {
+      // The count is cosmetic, so it must never be able to fail this step —
+      // a throw here would abort the entire backup over a status message.
+      int? pendingCount;
+      try {
+        pendingCount = (await pendingAssets(cloudService)).length;
+      } catch (e) {
+        AppLogger.d('$runtimeType: could not count pending assets: $e');
+      }
+
+      AppLogger.d('$runtimeType: deferring ${pendingCount ?? 'unknown'} asset(s) — media sync is limited to Wi-Fi.');
+
+      controller.add(
+        BackupSyncMessage(
+          processing: false,
+          success: true,
+          message: switch (pendingCount) {
+            0 => 'No media files to be uploaded.',
+            null => 'Media uploads are waiting for Wi-Fi.',
+            _ => '$pendingCount media file(s) waiting for Wi-Fi.',
+          },
+        ),
+      );
+
+      return true;
     }
 
     final uploadedCount = await _uploadAssetsForService(cloudService);
@@ -77,7 +115,7 @@ class BackupImagesUploaderService {
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: '$uploadedCount images uploaded successfully.',
+          message: '$uploadedCount media file(s) uploaded successfully.',
         ),
       );
     } else {
@@ -85,7 +123,7 @@ class BackupImagesUploaderService {
         BackupSyncMessage(
           processing: false,
           success: true,
-          message: 'No images to be uploaded.',
+          message: 'No media files to be uploaded.',
         ),
       );
     }
@@ -178,20 +216,34 @@ class BackupImagesUploaderService {
   ///
   /// Returns: List of assets needing backup
   Future<List<AssetDbModel>?> _getLocalAsset(BackupCloudService cloudService) async {
+    if (cloudService.currentUser?.identifier == null) {
+      return (await AssetDbModel.db.where())?.items;
+    }
+
+    return pendingAssets(cloudService);
+  }
+
+  /// Assets that still need uploading to [cloudService] — the single definition
+  /// of "not yet backed up", shared with the UI's pending-media count so the two
+  /// can never disagree.
+  ///
+  /// There is no separate queue: an asset is pending precisely while its
+  /// cloudDestinations entry for this service+account is missing, which is why
+  /// skipping an upload needs no bookkeeping to resume later.
+  Future<List<AssetDbModel>> pendingAssets(BackupCloudService cloudService) async {
+    final identifier = cloudService.currentUser?.identifier;
+    if (identifier == null) return [];
+
     CollectionDbModel<AssetDbModel>? assets = await AssetDbModel.db.where();
 
-    if (cloudService.currentUser?.identifier != null) {
-      return assets?.items
-          .where(
-            (e) =>
-                e.cloudDestinations[cloudService.serviceType.id] == null ||
-                e.cloudDestinations[cloudService.serviceType.id]?[cloudService.currentUser?.identifier] == null,
-          )
-          .toList()
-          .where((e) => e.localFile?.existsSync() == true)
-          .toList();
-    } else {
-      return assets?.items;
-    }
+    return assets?.items
+            .where(
+              (e) =>
+                  e.cloudDestinations[cloudService.serviceType.id] == null ||
+                  e.cloudDestinations[cloudService.serviceType.id]?[identifier] == null,
+            )
+            .where((e) => e.localFile?.existsSync() == true)
+            .toList() ??
+        [];
   }
 }

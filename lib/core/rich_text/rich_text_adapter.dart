@@ -83,13 +83,13 @@ abstract class RichTextAdapter {
   // Embed Operations
   // ========================================================================
 
-  /// Inserts an image embed at the current cursor position.
+  /// Inserts a media embed (photo or video) at the current cursor position.
   ///
   /// [controller]: The rich text controller
-  /// [imagePath]: Relative path to the image file
-  void insertImage({
+  /// [mediaPath]: Relative path to the image or video file
+  void insertMedia({
     required RichTextController controller,
-    required String imagePath,
+    required String mediaPath,
   });
 
   /// Inserts an audio embed at the current cursor position.
@@ -115,6 +115,6 @@ abstract class RichTextAdapter {
 /// editorAdapter.buildEditor(context: context, controller: controller, ...)
 ///
 /// // In bottom sheet:
-/// editorAdapter.insertImage(controller: controller, imagePath: path)
+/// editorAdapter.insertMedia(controller: controller, mediaPath: path)
 /// ```
 final RichTextAdapter editorAdapter = QuillRichTextAdapter();

@@ -65,6 +65,41 @@ void main() {
       expect(stats.wordCount, 15);
     });
 
+    test('counts videos separately from photos, and excludes them from photoCount', () {
+      final stats = StoryStatsService.compute(
+        stories: [
+          _story(id: 1, year: 2024, month: 6, day: 3, images: 2, videos: 1),
+          // A video-only story -- must count toward videoCount, never photoCount.
+          _story(id: 2, year: 2024, month: 6, day: 4, videos: 2),
+        ],
+        allTags: tags,
+        range: StatsRange.month(DateTime(2024, 6, 1)),
+        now: DateTime(2024, 12, 31),
+      );
+
+      expect(stats.photoCount, 2);
+      expect(stats.videoCount, 3);
+    });
+
+    test('videoStoryIds only contains stories with a video, never a photo-only story', () {
+      final stats = StoryStatsService.compute(
+        stories: [
+          _story(id: 1, year: 2024, month: 6, day: 1, images: 1), // photo only
+          _story(id: 2, year: 2024, month: 6, day: 2, videos: 1), // video only
+          _story(id: 3, year: 2024, month: 6, day: 3, images: 1, videos: 1), // both
+        ],
+        allTags: tags,
+        range: StatsRange.month(DateTime(2024, 6, 1)),
+        now: DateTime(2024, 12, 31),
+      );
+
+      // Regression guard: tapping the "Photos" chip must never open a story
+      // that has no photo in it (a video-only story previously leaked in via
+      // the shared `media()` extractor).
+      expect(stats.photoStoryIds, {1, 3});
+      expect(stats.videoStoryIds, {2, 3});
+    });
+
     test('ranks top feelings, activities, people and tags', () {
       final stats = StoryStatsService.compute(
         stories: [
@@ -174,6 +209,7 @@ StoryDbModel _story({
   required int month,
   required int day,
   int images = 0,
+  int videos = 0,
   int audios = 0,
   int words = 0,
   List<int> tagIds = const [],
@@ -185,7 +221,12 @@ StoryDbModel _story({
     {"insert": "Entry\n"},
     for (int i = 0; i < images; i++)
       {
-        "insert": {"image": "images/$id-$i.jpg"},
+        "insert": {"media": "images/$id-$i.jpg"},
+      },
+    // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
+    for (int i = 0; i < videos; i++)
+      {
+        "insert": {"media": "videos/$id-$i.mp4"},
       },
     for (int i = 0; i < audios; i++)
       {

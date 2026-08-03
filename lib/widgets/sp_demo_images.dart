@@ -6,7 +6,7 @@ import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
-import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/media_viewer/sp_media_viewer.dart';
 
 class SpDemoImages extends StatelessWidget {
   const SpDemoImages({
@@ -114,7 +114,7 @@ class SpDemoImages extends StatelessWidget {
       child: SizedBox(
         width: itemWidth,
         child: GestureDetector(
-          onTap: () => SpImagesViewer.fromString(
+          onTap: () => SpMediaViewer.fromString(
             initialIndex: index,
             images: urls,
             context: context,
@@ -176,7 +176,7 @@ class SpDemoImages extends StatelessWidget {
 
     if (localFilePaths.isEmpty || !context.mounted) return;
 
-    await SpImagesViewer.fromString(
+    await SpMediaViewer.fromString(
       initialIndex: demoImageUrlPaths?.length == localFilePaths.length ? initialIndex : 0,
       images: localFilePaths,
       context: context,

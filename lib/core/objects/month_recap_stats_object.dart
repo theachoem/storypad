@@ -15,8 +15,12 @@ class MonthRecapStatsObject {
   /// Number of stories written this month.
   final int storyCount;
 
-  /// Total photos embedded across this month's stories.
+  /// Total photos embedded across this month's stories (video excluded — see
+  /// [StoryContentEmbedExtractor.photos]).
   final int photoCount;
+
+  /// Total videos embedded across this month's stories.
+  final int videoCount;
 
   /// Total voice notes embedded across this month's stories.
   final int voiceCount;
@@ -33,6 +37,7 @@ class MonthRecapStatsObject {
     required this.month,
     required this.storyCount,
     required this.photoCount,
+    required this.videoCount,
     required this.voiceCount,
     required this.activeDays,
     required this.totalDays,
@@ -56,6 +61,7 @@ class MonthRecapStatsObject {
   List<String> get labels => [
     plural('plural.entry', storyCount),
     if (photoCount > 0) plural('plural.photo', photoCount),
+    if (videoCount > 0) plural('plural.video', videoCount),
     if (voiceCount > 0) plural('plural.voice', voiceCount),
   ];
 }

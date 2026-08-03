@@ -28,12 +28,14 @@ class MonthlyStoryStatsService {
       final int year = monthStories.first.year;
 
       int photoCount = 0;
+      int videoCount = 0;
       int voiceCount = 0;
       final Set<int> activeDays = {};
 
       for (final StoryDbModel story in monthStories) {
         final content = story.latestContent ?? story.draftContent;
-        photoCount += StoryContentEmbedExtractor.images(content).length;
+        photoCount += StoryContentEmbedExtractor.photos(content).length;
+        videoCount += StoryContentEmbedExtractor.videos(content).length;
         voiceCount += StoryContentEmbedExtractor.audio(content).length;
         activeDays.add(story.displayPathDate.day);
       }
@@ -45,6 +47,7 @@ class MonthlyStoryStatsService {
         month: month,
         storyCount: monthStories.length,
         photoCount: photoCount,
+        videoCount: videoCount,
         voiceCount: voiceCount,
         activeDays: activeDays.length,
         totalDays: totalDays,

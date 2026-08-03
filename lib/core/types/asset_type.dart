@@ -1,4 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 /// Asset type enumeration with storage subdirectory management.
 ///
@@ -9,6 +12,7 @@ import 'package:storypad/core/types/support_directory_path.dart';
 /// Example relative paths:
 /// - Image: images/1762500783746.jpg
 /// - Audio: audio/1762500783747.m4a
+/// - Video: videos/1762500783748.mp4
 enum AssetType {
   /// Image asset type (photos, screenshots, etc.)
   ///
@@ -20,13 +24,44 @@ enum AssetType {
   ///
   /// Stores files in the 'audio' subdirectory.
   /// Example: audio/1762500783747.m4a
-  audio(subDirectory: .audio);
+  audio(subDirectory: .audio),
+
+  /// Video asset type (recorded/picked videos)
+  ///
+  /// Stores files in the 'videos' subdirectory.
+  /// Example: videos/1762500783748.mp4
+  video(subDirectory: .videos);
 
   final SupportDirectoryPath subDirectory;
 
   const AssetType({
     required this.subDirectory,
   });
+
+  /// Icon representing this asset type, so call sites don't branch on the type
+  /// themselves (media stats rows, import review tabs, ...).
+  IconData get icon {
+    switch (this) {
+      case AssetType.image:
+        return SpIcons.photo;
+      case AssetType.audio:
+        return SpIcons.voice;
+      case AssetType.video:
+        return SpIcons.videoCamera;
+    }
+  }
+
+  /// Localized plural label for this asset type ("Photos", "Voices", "Videos").
+  String get label {
+    switch (this) {
+      case AssetType.image:
+        return tr('general.photos');
+      case AssetType.audio:
+        return tr('general.voices');
+      case AssetType.video:
+        return tr('general.videos');
+    }
+  }
 
   String getStoragePath({
     required int id,

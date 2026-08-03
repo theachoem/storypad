@@ -80,6 +80,17 @@ class AssetLinkParser {
   /// // imageSources == ['images/1762500783746.jpg', 'https://example.com/image.jpg']
   /// ```
   static List<String> extractEmbedSources(List<dynamic>? body, String embedType) {
+    return extractEmbedSourcesAny(body, {embedType});
+  }
+
+  /// Same as [extractEmbedSources], but matches any of [embedTypes] per node.
+  ///
+  /// Used to read a renamed embed key alongside its legacy predecessor (e.g.
+  /// `media` and the older `image`) as a single logical type -- a page can
+  /// mix both keys (an untouched legacy embed next to a freshly-edited one),
+  /// so this has to check node-by-node rather than concatenating two
+  /// single-type scans, which would scramble the original order.
+  static List<String> extractEmbedSourcesAny(List<dynamic>? body, Set<String> embedTypes) {
     final links = <String>[];
     if (body == null || body.isEmpty) return links;
 
@@ -87,14 +98,17 @@ class AssetLinkParser {
       if (node is! Map || node['insert'] is! Map) continue;
 
       final insert = node['insert'] as Map;
-      if (insert[embedType] is String) {
-        final raw = insert[embedType] as String;
-        for (final path in raw.split('|')) {
-          // Include: local asset paths (images/, audio/) or external URLs (http://, https://)
-          // Exclude: empty strings and other invalid values
-          if (path.isNotEmpty) {
-            links.add(path);
+      for (final embedType in embedTypes) {
+        if (insert[embedType] is String) {
+          final raw = insert[embedType] as String;
+          for (final path in raw.split('|')) {
+            // Include: local asset paths (images/, audio/) or external URLs (http://, https://)
+            // Exclude: empty strings and other invalid values
+            if (path.isNotEmpty) {
+              links.add(path);
+            }
           }
+          break; // a node's insert map has exactly one relevant key
         }
       }
     }

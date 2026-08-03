@@ -272,6 +272,11 @@ class AssetObjectBox extends BaseObjectBox {
   // JSON metadata for flexible storage (duration, transcription, etc.)
   String? metadata;
 
+  // Original decoded dimensions of an image/video asset, captured once at
+  // insert time -- lets tiles derive an aspect ratio without decoding metadata.
+  double? width;
+  double? height;
+
   List<int>? tags;
 
   @override
@@ -300,6 +305,8 @@ class AssetObjectBox extends BaseObjectBox {
     required this.metadata,
     required this.tags,
     required this.version,
+    this.width,
+    this.height,
     this.lastSavedDeviceId,
   });
 

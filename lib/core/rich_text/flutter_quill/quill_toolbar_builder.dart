@@ -63,31 +63,10 @@ class _QuillToolbarWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          if (kSupportCamera)
-            IconButton(
-              tooltip: tr('button.take_photo'),
-              icon: const Icon(SpIcons.camera),
-              onPressed: () => SpImagePickerBottomSheet.showImagePicker(
-                context: context,
-                controller: controller,
-                source: ImageSource.camera,
-              ),
-            ),
           IconButton(
             tooltip: quill.FlutterQuillLocalizations.of(context)?.image,
             icon: const Icon(SpIcons.photo),
-            onPressed: () => SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller),
-          ),
-          Consumer<InAppPurchaseProvider>(
-            builder: (context, provider, child) {
-              return IconButton(
-                tooltip: tr('button.record_voice'),
-                icon: const Icon(SpIcons.voice),
-                onPressed: () {
-                  SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
-                },
-              );
-            },
+            onPressed: () => _handleAddMedia(context: context, controller: controller),
           ),
           Container(
             width: 1,
@@ -190,5 +169,40 @@ class _QuillToolbarWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _handleAddMedia({
+    required BuildContext context,
+    required RichTextController controller,
+  }) async {
+    final action = await SpAddMediaActionSheet.pick(context: context);
+    if (!context.mounted || action == null) return;
+
+    switch (action) {
+      case SpAddMediaAction.selectFromLibrary:
+        await SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller);
+        break;
+      case SpAddMediaAction.selectFromPhotos:
+        await SpImagePickerBottomSheet.showNativePicker(context: context, controller: controller);
+        break;
+      case SpAddMediaAction.takePhoto:
+        await SpImagePickerBottomSheet.showImagePicker(
+          context: context,
+          controller: controller,
+          source: ImageSource.camera,
+        );
+        break;
+      case SpAddMediaAction.recordVideo:
+        await SpImagePickerBottomSheet.showVideoPicker(
+          context: context,
+          controller: controller,
+          source: ImageSource.camera,
+        );
+        break;
+      case SpAddMediaAction.recordVoiceNote:
+        if (!context.mounted) return;
+        await SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
+        break;
+    }
   }
 }

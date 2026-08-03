@@ -145,31 +145,47 @@ class QuillDeltaToPlainTextService {
           currentLineText += formattedText;
         }
       } else if (insert is Map) {
-        // Handle embeds (images, videos, audio, custom embeds)
-        // Example: {"insert": {"image": "images/1759081859921.jpg"}}
+        // Handle embeds (media, audio, custom embeds)
+        // Example: {"insert": {"media": "images/1759081859921.jpg"}}
         final embedType = insert.keys.first;
 
-        if (embedType == 'image' || embedType == 'audio') {
+        // 'image' is the legacy embed key from before the image->media
+        // rename -- stories saved before that still use it, and it means
+        // exactly the same thing (see _QuillMediaBlockEmbed's doc).
+        if (embedType == 'media' || embedType == 'image' || embedType == 'audio') {
           if (includeMarkdownEmbeds) {
             final raw = insert[embedType].toString();
             final urls = raw.split('|').where((s) => s.isNotEmpty);
 
             for (final url in urls) {
+              // Photos and videos share the `media` embed key by design (see
+              // docs/app/features/media.md), so a path here can resolve to
+              // either. An image tag pointing at a `.mp4` is misleading, so
+              // give video a link instead.
+              //
+              // This branch only runs when includeMarkdownEmbeds is true --
+              // don't reuse the link form when it's false (word-count path,
+              // see generate_body_plain_text_service.dart): unlike `![...]()`,
+              // which MarkdownContentFilterService strips entirely, `[...]()`
+              // keeps its visible text and would silently inflate wordCount.
+              final isVideo = AssetType.getTypeFromLink(url) == AssetType.video;
+              final label = isVideo ? 'video' : (embedType == 'audio' ? 'audio' : 'image');
+
               if (AssetType.values
                   .map((e) => e.subDirectory)
                   .any((subDirectory) => url.startsWith(subDirectory.relativePath))) {
                 // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
                 // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
-                currentLineText += '![$embedType]($embedRelativePath$url)';
+                currentLineText += isVideo ? '[$label]($embedRelativePath$url)' : '![$label]($embedRelativePath$url)';
               } else {
                 // Markdown image syntax: ![alt text](url)
-                currentLineText += '![$embedType]($url)';
+                currentLineText += isVideo ? '[$label]($url)' : '![$label]($url)';
               }
             }
           }
-          // Skip images and audio - don't include in text output
+          // Skip media and audio - don't include in text output
         } else {
-          // For other embeds (like video), use Unicode object replacement character
+          // For other embeds (e.g. date blocks), use Unicode object replacement character
           currentLineText += '\uFFFC';
         }
       }

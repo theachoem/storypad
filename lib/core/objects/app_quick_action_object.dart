@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,6 +12,7 @@ enum AppQuickActionTemplateType { custom, gallery }
 enum AppDefaultQuickActionType {
   newStory('new_story'),
   takePhoto('take_photo'),
+  recordVideo('record_video'),
   recordVoice('record_voice'),
   editShortcuts('edit_shortcuts'),
   ;
@@ -19,12 +21,25 @@ enum AppDefaultQuickActionType {
 
   final String id;
 
-  String get nativeIcon => switch (this) {
-    AppDefaultQuickActionType.newStory => 'qa_new_story',
-    AppDefaultQuickActionType.takePhoto => 'qa_take_photo',
-    AppDefaultQuickActionType.recordVoice => 'qa_record_voice',
-    AppDefaultQuickActionType.editShortcuts => 'qa_new_story',
+  // Android: drawable name from Android Studio's Vector Asset picker (Clip art, default name).
+  String get _androidIcon => switch (this) {
+    AppDefaultQuickActionType.newStory => 'outline_edit_24',
+    AppDefaultQuickActionType.takePhoto => 'outline_photo_camera_24',
+    AppDefaultQuickActionType.recordVideo => 'outline_videocam_24',
+    AppDefaultQuickActionType.recordVoice => 'outline_keyboard_voice_24',
+    AppDefaultQuickActionType.editShortcuts => 'outline_edit_24',
   };
+
+  // iOS: SF Symbol name, matching the imageset folder in Assets.xcassets.
+  String get _iosIcon => switch (this) {
+    AppDefaultQuickActionType.newStory => 'pencil.and.outline',
+    AppDefaultQuickActionType.takePhoto => 'camera',
+    AppDefaultQuickActionType.recordVideo => 'video',
+    AppDefaultQuickActionType.recordVoice => 'microphone',
+    AppDefaultQuickActionType.editShortcuts => 'pencil.and.outline',
+  };
+
+  String get nativeIcon => Platform.isIOS ? _iosIcon : _androidIcon;
 
   static AppDefaultQuickActionType? fromId(String id) {
     for (final action in values) {
@@ -51,8 +66,8 @@ class AppQuickActionTemplateReference {
 
 @JsonSerializable(explicitToJson: true)
 class AppQuickActionObject {
-  static const String templateNativeIcon = 'qa_template';
-  static const String tagNativeIcon = 'qa_tag';
+  static String get templateNativeIcon => Platform.isIOS ? 'lightbulb' : 'outline_lightbulb_24';
+  static String get tagNativeIcon => Platform.isIOS ? 'tag' : 'outline_sell_24';
 
   const AppQuickActionObject({
     required this.label,

@@ -157,7 +157,7 @@ void main() {
 
     group('Embeds', () {
       test('should return an empty string for image embeds', () {
-        final doc = _docFromJson('[{"insert":{"image":"path/to/image.png"}},{"insert":"\\n"}]');
+        final doc = _docFromJson('[{"insert":{"media":"path/to/image.png"}},{"insert":"\\n"}]');
         final result = QuillDeltaToPlainTextService.call(doc.root.toDelta().toJson());
         expect(result, '\n'); // The newline character still exists
       });
@@ -170,9 +170,29 @@ void main() {
         expect(result, '\uFFFC\n');
       });
 
+      test('the legacy `image` embed key is treated the same as `media`', () {
+        const delta = '[{"insert":{"image":"images/1.jpg"}},{"insert":"\\n"}]';
+        final doc = _docFromJson(delta);
+        final result = QuillDeltaToPlainTextService.call(
+          doc.root.toDelta().toJson(),
+          includeMarkdownEmbeds: true,
+        );
+        expect(result, '![image](images/1.jpg)\n');
+      });
+
+      test('a legacy `image` embed holding a video path still emits a link', () {
+        const delta = '[{"insert":{"image":"videos/1.mp4"}},{"insert":"\\n"}]';
+        final doc = _docFromJson(delta);
+        final result = QuillDeltaToPlainTextService.call(
+          doc.root.toDelta().toJson(),
+          includeMarkdownEmbeds: true,
+        );
+        expect(result, '[video](videos/1.mp4)\n');
+      });
+
       group('Album embed (pipe-delimited format)', () {
         test('single image embed is unchanged with includeMarkdownEmbeds=true', () {
-          const delta = '[{"insert":{"image":"images/1.jpg"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"images/1.jpg"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
@@ -182,7 +202,7 @@ void main() {
         });
 
         test('album embed emits one markdown entry per image', () {
-          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg|images/3.jpg"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"images/1.jpg|images/2.jpg|images/3.jpg"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
@@ -192,7 +212,7 @@ void main() {
         });
 
         test('album embed with embedRelativePath prefix applies to each image', () {
-          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
@@ -203,7 +223,7 @@ void main() {
         });
 
         test('album embed with external URLs is not prefixed', () {
-          const delta = '[{"insert":{"image":"https://a.com/1.jpg|https://b.com/2.jpg"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"https://a.com/1.jpg|https://b.com/2.jpg"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
@@ -214,7 +234,7 @@ void main() {
         });
 
         test('album embed without includeMarkdownEmbeds produces only newline', () {
-          const delta = '[{"insert":{"image":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"images/1.jpg|images/2.jpg"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
@@ -224,13 +244,64 @@ void main() {
         });
 
         test('trailing pipe in album embed is ignored', () {
-          const delta = '[{"insert":{"image":"images/1.jpg|"}},{"insert":"\\n"}]';
+          const delta = '[{"insert":{"media":"images/1.jpg|"}},{"insert":"\\n"}]';
           final doc = _docFromJson(delta);
           final result = QuillDeltaToPlainTextService.call(
             doc.root.toDelta().toJson(),
             includeMarkdownEmbeds: true,
           );
           expect(result, '![image](images/1.jpg)\n');
+        });
+
+        // Photos and video share the `media` embed key by design (see
+        // docs/app/features/media.md), so a `videos/` path arriving through
+        // the `media` embedType must emit a link, not an image tag pointing
+        // at an .mp4.
+        test('a video path under the image embed emits a link, not an image tag', () {
+          const delta = '[{"insert":{"media":"videos/1.mp4"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+          );
+          expect(result, '[video](videos/1.mp4)\n');
+        });
+
+        test('a mixed photo+video album emits an image tag and a link respectively', () {
+          const delta = '[{"insert":{"media":"images/1.jpg|videos/2.mp4"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+          );
+          expect(result, '![image](images/1.jpg)[video](videos/2.mp4)\n');
+        });
+
+        test('video link respects embedRelativePath the same way image tags do', () {
+          const delta = '[{"insert":{"media":"videos/1.mp4"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: true,
+            embedRelativePath: '../',
+          );
+          expect(result, '[video](../videos/1.mp4)\n');
+        });
+
+        test('video path without includeMarkdownEmbeds produces only newline', () {
+          // Regression guard: the link form must stay inside the
+          // includeMarkdownEmbeds branch. If it leaked into the
+          // includeMarkdownEmbeds=false path (used for word counting), the
+          // link's visible text would survive MarkdownContentFilterService --
+          // unlike an image tag, which it strips entirely -- silently
+          // inflating wordCount for any story with an embedded video.
+          const delta = '[{"insert":{"media":"videos/1.mp4"}},{"insert":"\\n"}]';
+          final doc = _docFromJson(delta);
+          final result = QuillDeltaToPlainTextService.call(
+            doc.root.toDelta().toJson(),
+            includeMarkdownEmbeds: false,
+          );
+          expect(result, '\n');
         });
       });
     });

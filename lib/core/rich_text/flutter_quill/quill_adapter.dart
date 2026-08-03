@@ -26,7 +26,7 @@ import 'package:storypad/core/services/stories/story_content_embed_extractor.dar
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
@@ -35,8 +35,8 @@ import 'package:storypad/widgets/sp_color_picker.dart';
 import 'package:storypad/widgets/sp_album_grid.dart';
 import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_image.dart';
-import 'package:storypad/widgets/sp_images_viewer.dart';
+import 'package:storypad/widgets/sp_media_tile.dart';
+import 'package:storypad/widgets/media_viewer/sp_media_viewer.dart';
 import 'package:storypad/widgets/sp_voice_player.dart';
 
 // ignore: experimental_member_use
@@ -50,7 +50,7 @@ part 'quill_context_menu_helper.dart';
 part 'custom_attributes/quill_embed_alignment_attribute.dart';
 part 'custom_attributes/quill_embed_size_attribute.dart';
 part 'custom_embeds/quill_audio_block_embed.dart';
-part 'custom_embeds/quill_image_block_embed.dart';
+part 'custom_embeds/quill_media_block_embed.dart';
 part 'custom_embeds/quill_date_block_embed.dart';
 part 'custom_embeds/quill_unknown_embed_builder.dart';
 

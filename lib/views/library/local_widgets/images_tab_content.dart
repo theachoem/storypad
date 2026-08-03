@@ -18,7 +18,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> {
 
   int? selectedTagId;
   Map<String, dynamic> get filters => {
-    'type': AssetType.image,
+    'types': [AssetType.image, AssetType.video],
     'tag': selectedTagId,
   };
 
@@ -212,7 +212,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> {
             title: tr("button.view"),
             onPressed: () {
               final embedLinks = assets?.items.map((e) => e.relativeLocalFilePath).toList() ?? [];
-              SpImagesViewer.fromString(
+              SpMediaViewer.fromString(
                 images: embedLinks,
                 initialIndex: embedLinks.indexOf(asset.relativeLocalFilePath),
                 context: context,
@@ -262,7 +262,7 @@ class _ImagesTabContentState extends State<_ImagesTabContent> {
                             borderRadius: BorderRadius.circular(8.0),
                             side: BorderSide(color: Theme.of(context).dividerColor),
                           ),
-                          child: SpImage(
+                          child: SpMediaTile(
                             link: asset.relativeLocalFilePath,
                             width: constraints.maxWidth,
                             height: 120,

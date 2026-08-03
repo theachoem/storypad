@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
+import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/path_type.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
@@ -46,6 +47,7 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
     stories = await StoryDbModel.db.where(
       filters: widget.filter?.toDatabaseFilter(),
     );
+    StoryContentEmbedExtractor.preloadAssetAspectRatios(stories?.items ?? []);
 
     if (widget.filter?.years.length == 1 && widget.filter?.month != null && widget.filter?.day != null) {
       _throwbackDates = await StoryDbModel.db

@@ -69,6 +69,7 @@ const _$AppQuickActionTypeEnumMap = {
 const _$AppDefaultQuickActionTypeEnumMap = {
   AppDefaultQuickActionType.newStory: 'newStory',
   AppDefaultQuickActionType.takePhoto: 'takePhoto',
+  AppDefaultQuickActionType.recordVideo: 'recordVideo',
   AppDefaultQuickActionType.recordVoice: 'recordVoice',
   AppDefaultQuickActionType.editShortcuts: 'editShortcuts',
 };

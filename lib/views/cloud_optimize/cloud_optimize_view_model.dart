@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/cloud_optimize/cloud_asset_analyzer.dart';
+import 'package:storypad/core/types/asset_type.dart';
 
 import 'cloud_optimize_view.dart';
 
@@ -176,12 +177,14 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   Future<List<CloudFileObject>> _fetchFiles() async {
-    final results = await Future.wait([
-      service.listFilesInFolder('images'),
-      service.listFilesInFolder('audio'),
-    ]);
+    // Driven by the enum rather than folder literals: assets upload to
+    // `asset.type.subDirectory.relativePath`, so a new asset type must never be
+    // able to hide its files from the optimizer.
+    final results = await Future.wait(
+      AssetType.values.map((type) => service.listFilesInFolder(type.subDirectory.relativePath)),
+    );
 
-    final allFiles = [...results[0], ...results[1]];
+    final allFiles = results.expand((files) => files).toList();
 
     fetchedFilesCount = allFiles.length;
     notifyListeners();

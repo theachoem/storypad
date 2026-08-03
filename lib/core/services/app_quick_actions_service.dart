@@ -139,6 +139,9 @@ class AppQuickActionsService {
       case AppDefaultQuickActionType.takePhoto:
         await _takePhoto(context);
         break;
+      case AppDefaultQuickActionType.recordVideo:
+        await _recordVideo(context);
+        break;
       case AppDefaultQuickActionType.recordVoice:
         await _recordVoice(context);
         break;
@@ -219,10 +222,37 @@ class AppQuickActionsService {
         final photo = await AppFilePickerService.pickImage(source: ImageSource.camera, compression: compression);
         if (photo == null) return;
 
-        final asset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        final asset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (asset == null || !context.mounted) return;
 
         AnalyticsService.instance.logTakePhoto();
+        await _openStoryWithAsset(context, asset);
+      },
+    );
+  }
+
+  Future<void> _recordVideo(BuildContext context) async {
+    final homeContext = HomeView.homeContext;
+    if (homeContext?.mounted == true) {
+      homeContext!.read<HomeViewModel>().recordVideo(homeContext);
+      return;
+    }
+
+    await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final video = await AppFilePickerService.pickVideo(
+          context: context,
+          source: ImageSource.camera,
+          compression: compression,
+        );
+        if (video == null) return;
+
+        final asset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
+        if (asset == null || !context.mounted) return;
+
+        AnalyticsService.instance.logRecordVideo();
         await _openStoryWithAsset(context, asset);
       },
     );
@@ -243,7 +273,6 @@ class AppQuickActionsService {
 
         final asset = await InsertFileToDbService.insertAudio(
           result.filePath,
-          await File(result.filePath).readAsBytes(),
           durationInMs: result.durationInMs,
         );
         if (asset == null || !context.mounted) return;
