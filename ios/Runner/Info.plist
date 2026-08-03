@@ -82,7 +82,7 @@
         <key>NSMicrophoneUsageDescription</key>
         <string>This app needs access to your microphone to record voice notes and videos for your stories.</string>
         <key>NSPhotoLibraryUsageDescription</key>
-        <string>This app needs to access to the Photos library to add photos and videos to your stories.</string>
+        <string>This app needs access to the Photos library to add photos and videos to your stories.</string>
         <key>UIApplicationSceneManifest</key>
         <dict>
             <key>UIApplicationSupportsMultipleScenes</key>

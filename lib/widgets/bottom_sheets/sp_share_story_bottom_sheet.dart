@@ -332,7 +332,11 @@ class _AttachmentVideoThumbState extends State<_AttachmentVideoThumb> {
     controller
         .initialize()
         .then((_) {
-          if (mounted) setState(() => _controller = controller);
+          if (!mounted) {
+            controller.dispose();
+            return;
+          }
+          setState(() => _controller = controller);
         })
         .catchError((_) {
           controller.dispose();
