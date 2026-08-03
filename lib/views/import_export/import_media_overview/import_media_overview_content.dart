@@ -9,7 +9,10 @@ class _ImportMediaOverviewContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final entries = viewModel.entries;
 
-    final imageEntries = entries?.where((e) => e.scanEntry.type == AssetType.image).toList() ?? const [];
+    // Photos and videos share one tab, same as everywhere else media is
+    // browsed (Library, the image picker's "types" filter) — see
+    // docs/app/features/media.md ("Video is merged into the images tab").
+    final imageEntries = entries?.where((e) => e.scanEntry.type != AssetType.audio).toList() ?? const [];
     final audioEntries = entries?.where((e) => e.scanEntry.type == AssetType.audio).toList() ?? const [];
     final hasImages = imageEntries.isNotEmpty;
     final hasAudio = audioEntries.isNotEmpty;
@@ -181,25 +184,31 @@ class _ImageImportTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.0),
                       side: BorderSide(color: Theme.of(context).dividerColor),
                     ),
-                    child: Image.file(
-                      entry.previewFile,
-                      width: constraints.maxWidth,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) {
-                        return Container(
-                          width: constraints.maxWidth,
-                          height: 120,
-                          color: ColorScheme.of(context).surfaceContainerHighest,
-                          child: Center(
-                            child: Icon(
-                              SpIcons.photo,
-                              color: ColorScheme.of(context).onSurfaceVariant,
-                            ),
+                    child: entry.scanEntry.type == AssetType.video
+                        ? _VideoImportPreview(
+                            file: entry.previewFile,
+                            width: constraints.maxWidth,
+                            height: 120,
+                          )
+                        : Image.file(
+                            entry.previewFile,
+                            width: constraints.maxWidth,
+                            height: 120,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) {
+                              return Container(
+                                width: constraints.maxWidth,
+                                height: 120,
+                                color: ColorScheme.of(context).surfaceContainerHighest,
+                                child: Center(
+                                  child: Icon(
+                                    SpIcons.photo,
+                                    color: ColorScheme.of(context).onSurfaceVariant,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   );
                 },
               ),
@@ -214,6 +223,98 @@ class _ImageImportTile extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Paused first-frame preview + play-icon overlay for a scanned video entry,
+/// mirroring `SpMediaTile`'s `_SpVideoPreviewTile` -- but against a raw
+/// [File] straight from the archive, since these aren't DB-backed assets yet
+/// (the import hasn't happened) so `SpMediaTile`'s asset-loader path doesn't
+/// apply here.
+class _VideoImportPreview extends StatefulWidget {
+  const _VideoImportPreview({
+    required this.file,
+    required this.width,
+    required this.height,
+  });
+
+  final File file;
+  final double width;
+  final double height;
+
+  @override
+  State<_VideoImportPreview> createState() => _VideoImportPreviewState();
+}
+
+class _VideoImportPreviewState extends State<_VideoImportPreview> {
+  VideoPlayerController? _controller;
+  bool _failed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    final controller = VideoPlayerController.file(widget.file);
+    try {
+      await controller.initialize();
+    } catch (_) {
+      await controller.dispose();
+      if (mounted) setState(() => _failed = true);
+      return;
+    }
+    if (!mounted) {
+      await controller.dispose();
+      return;
+    }
+    setState(() => _controller = controller);
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = _controller;
+
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (controller != null && controller.value.isInitialized)
+            FittedBox(
+              fit: BoxFit.cover,
+              clipBehavior: Clip.hardEdge,
+              child: SizedBox(
+                width: controller.value.size.width,
+                height: controller.value.size.height,
+                child: VideoPlayer(controller),
+              ),
+            )
+          else
+            Container(
+              color: ColorScheme.of(context).surfaceContainerHighest,
+              child: Center(
+                child: Icon(
+                  _failed ? SpIcons.imageNotSupported : SpIcons.videoCamera,
+                  color: ColorScheme.of(context).onSurfaceVariant,
+                ),
+              ),
+            ),
+          if (!_failed)
+            const Center(
+              child: Icon(SpIcons.playCircle, color: Colors.white, size: 32.0),
+            ),
         ],
       ),
     );

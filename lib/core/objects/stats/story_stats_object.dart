@@ -38,8 +38,11 @@ class StoryStatsObject {
   /// Words written across all stories' latest content.
   final int wordCount;
 
-  /// Photos embedded across the range.
+  /// Photos embedded across the range (video excluded).
   final int photoCount;
+
+  /// Videos embedded across the range.
+  final int videoCount;
 
   /// Voice notes embedded across the range.
   final int voiceCount;
@@ -50,6 +53,9 @@ class StoryStatsObject {
   /// Ids of stories that embed at least one photo, used to open the filtered
   /// stories sheet when the overview "photos" chip is tapped.
   final Set<int> photoStoryIds;
+
+  /// Ids of stories that embed at least one video (overview "videos" chip).
+  final Set<int> videoStoryIds;
 
   /// Ids of stories that embed at least one voice note (overview "voices" chip).
   final Set<int> voiceStoryIds;
@@ -74,9 +80,11 @@ class StoryStatsObject {
     required this.totalDays,
     required this.wordCount,
     required this.photoCount,
+    required this.videoCount,
     required this.voiceCount,
     required this.locatedCount,
     required this.photoStoryIds,
+    required this.videoStoryIds,
     required this.voiceStoryIds,
     required this.locatedStoryIds,
     required this.topFeelings,

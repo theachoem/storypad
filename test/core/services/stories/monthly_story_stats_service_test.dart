@@ -52,6 +52,20 @@ void main() {
       expect(stats[2]!.voiceCount, 1);
     });
 
+    test('sums embedded videos separately from photos', () {
+      final stats = MonthlyStoryStatsService.getByMonth(
+        stories: [
+          _story(id: 1, year: 2024, month: 2, day: 1, images: 1, videos: 2),
+          // A video-only story must still count toward videoCount, not photoCount.
+          _story(id: 2, year: 2024, month: 2, day: 2, videos: 1),
+        ],
+        now: DateTime(2024, 12, 31),
+      );
+
+      expect(stats[2]!.photoCount, 1);
+      expect(stats[2]!.videoCount, 3);
+    });
+
     test('totalDays is the full calendar length for a past month', () {
       final stats = MonthlyStoryStatsService.getByMonth(
         stories: [_story(id: 1, year: 2024, month: 2, day: 1)],
@@ -79,6 +93,7 @@ StoryDbModel _story({
   required int month,
   required int day,
   int images = 0,
+  int videos = 0,
   int audios = 0,
 }) {
   final DateTime now = DateTime(year, month, day);
@@ -88,6 +103,11 @@ StoryDbModel _story({
     for (int i = 0; i < images; i++)
       {
         "insert": {"image": "images/$id-$i.jpg"},
+      },
+    // Video reuses the `image` embed key -- see docs/app/features/media.md.
+    for (int i = 0; i < videos; i++)
+      {
+        "insert": {"image": "videos/$id-$i.mp4"},
       },
     for (int i = 0; i < audios; i++)
       {

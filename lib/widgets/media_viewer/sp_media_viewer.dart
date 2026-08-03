@@ -131,7 +131,8 @@ class SpMediaViewer extends StatefulWidget {
     if (items.isEmpty) return;
 
     AnalyticsService.instance.logViewImages(
-      imagesCount: items.length,
+      imagesCount: items.where((item) => item.type != AssetType.video).length,
+      videosCount: items.where((item) => item.type == AssetType.video).length,
     );
 
     await context.pushTransparentRoute(

@@ -428,13 +428,84 @@ void main() {
       });
     });
 
+    group('photos() / videos()', () {
+      test('returns empty lists when content is null', () {
+        expect(StoryContentEmbedExtractor.photos(null), isEmpty);
+        expect(StoryContentEmbedExtractor.videos(null), isEmpty);
+      });
+
+      test('splits the image embed into photos and videos by path', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'image': 'images/100.jpg',
+              },
+            },
+            {
+              'insert': {
+                'image': 'videos/200.mp4',
+              },
+            },
+            {
+              'insert': {
+                'image': 'images/300.jpg',
+              },
+            },
+            {
+              'insert': {
+                'image': 'videos/400.mp4',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.photos(content), ['images/100.jpg', 'images/300.jpg']);
+        expect(StoryContentEmbedExtractor.videos(content), ['videos/200.mp4', 'videos/400.mp4']);
+      });
+
+      test('images() still returns the union (photos and videos together)', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'image': 'images/1.jpg',
+              },
+            },
+            {
+              'insert': {
+                'image': 'videos/2.mp4',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.images(content), ['images/1.jpg', 'videos/2.mp4']);
+      });
+
+      test('external URLs are treated as photos, not videos', () {
+        final content = _createContentWithPages([
+          _createPageWithBody([
+            {
+              'insert': {
+                'image': 'https://example.com/image.jpg',
+              },
+            },
+          ]),
+        ]);
+
+        expect(StoryContentEmbedExtractor.photos(content), ['https://example.com/image.jpg']);
+        expect(StoryContentEmbedExtractor.videos(content), isEmpty);
+      });
+    });
+
     group('all()', () {
       test('returns empty list when content is null', () {
         final result = StoryContentEmbedExtractor.all(null);
         expect(result, isEmpty);
       });
 
-      test('returns both images and audio in order', () {
+      test('returns photos, videos, and audio in that order', () {
         final content = _createContentWithPages([
           _createPageWithBody([
             {
@@ -445,6 +516,11 @@ void main() {
             {
               'insert': {
                 'audio': 'audio/200.m4a',
+              },
+            },
+            {
+              'insert': {
+                'image': 'videos/250.mp4',
               },
             },
             {
@@ -465,6 +541,7 @@ void main() {
         expect(result, [
           'images/100.jpg',
           'images/300.jpg',
+          'videos/250.mp4',
           'audio/200.m4a',
           'audio/400.m4a',
         ]);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 
 // ignore: depend_on_referenced_packages
@@ -23,11 +24,10 @@ class StorageInfoService {
   static const String downloadTempSuffix = '.download';
 
   /// Asset directories where interrupted downloads can leave orphaned
-  /// `*.download` temp files.
-  static const List<SupportDirectoryPath> assetDirectories = [
-    SupportDirectoryPath.images,
-    SupportDirectoryPath.audio,
-  ];
+  /// `*.download` temp files. Derived from [AssetType] so every asset kind is
+  /// covered — a missed directory means its temp files are never reclaimed,
+  /// and video leftovers are the largest of them.
+  static List<SupportDirectoryPath> get assetDirectories => AssetType.values.map((type) => type.subDirectory).toList();
 
   /// Deletes all files inside [path]'s directory without removing the directory itself.
   Future<void> clearDirectory(SupportDirectoryPath path) async {

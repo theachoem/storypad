@@ -84,6 +84,12 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
           controller: controller,
           imagePath: tookAsset.relativeLocalFilePath,
         );
+
+        if (source == ImageSource.camera) {
+          AnalyticsService.instance.logRecordVideo();
+        } else {
+          AnalyticsService.instance.logInsertNewVideo();
+        }
       },
     );
   }
@@ -114,7 +120,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
           imagePath: mediaPath,
         );
 
-        AnalyticsService.instance.logInsertNewPhoto();
+        _logInsertedMedia(savedAssets);
       },
     );
   }
@@ -138,7 +144,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
           if (savedAsset != null) savedAssets.add(savedAsset);
         }
 
-        if (savedAssets.isNotEmpty) AnalyticsService.instance.logInsertNewPhoto();
+        _logInsertedMedia(savedAssets);
 
         return savedAssets;
       },
@@ -174,7 +180,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         imagePath: imagePath,
       );
 
-      AnalyticsService.instance.logInsertNewPhoto();
+      _logInsertedMedia(pickAssets);
     }
   }
 
@@ -197,6 +203,19 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     ).show(context: context);
 
     return result is List<AssetDbModel> ? result : null;
+  }
+
+  /// Logs one photo/video insert event per resulting [AssetType], for the
+  /// mixed-pick call sites (native OS picker, in-app album picker) that can
+  /// return either kind in a single batch -- a single `logInsertNewPhoto` call
+  /// would misreport a video-only or mixed pick as photos.
+  static void _logInsertedMedia(List<AssetDbModel> savedAssets) {
+    if (savedAssets.any((a) => a.type == AssetType.image)) {
+      AnalyticsService.instance.logInsertNewPhoto();
+    }
+    if (savedAssets.any((a) => a.type == AssetType.video)) {
+      AnalyticsService.instance.logInsertNewVideo();
+    }
   }
 
   @override

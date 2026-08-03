@@ -1,4 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
+import 'package:storypad/widgets/sp_icons.dart';
 
 /// Asset type enumeration with storage subdirectory management.
 ///
@@ -34,6 +37,31 @@ enum AssetType {
   const AssetType({
     required this.subDirectory,
   });
+
+  /// Icon representing this asset type, so call sites don't branch on the type
+  /// themselves (media stats rows, import review tabs, ...).
+  IconData get icon {
+    switch (this) {
+      case AssetType.image:
+        return SpIcons.photo;
+      case AssetType.audio:
+        return SpIcons.voice;
+      case AssetType.video:
+        return SpIcons.videoCamera;
+    }
+  }
+
+  /// Localized plural label for this asset type ("Photos", "Voices", "Videos").
+  String get label {
+    switch (this) {
+      case AssetType.image:
+        return tr('general.photos');
+      case AssetType.audio:
+        return tr('general.voices');
+      case AssetType.video:
+        return tr('general.videos');
+    }
+  }
 
   String getStoragePath({
     required int id,

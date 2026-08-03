@@ -202,9 +202,10 @@ class _StatsContent extends StatelessWidget {
   /// Compact summary chips, three per row. Core metrics always show; media/place
   /// chips only appear when they carry a value, so quiet ranges stay uncluttered.
   ///
-  /// Chips backed by a list of stories (entries/photos/voices/places) open the
-  /// filtered stories sheet on tap; metrics without a story list (active days,
-  /// words) carry a null [onTap] and stay inert to avoid confusion.
+  /// Chips backed by a list of stories (entries/photos/videos/voices/places)
+  /// open the filtered stories sheet on tap; metrics without a story list
+  /// (active days, words) carry a null [onTap] and stay inert to avoid
+  /// confusion.
   Widget _buildOverview(BuildContext context, StoryStatsObject stats, int tabIndex) {
     final List<({IconData icon, String value, String label, VoidCallback? onTap})> metrics = [
       (
@@ -232,6 +233,13 @@ class _StatsContent extends StatelessWidget {
           value: '${stats.photoCount}',
           label: tr('general.photos'),
           onTap: () => viewModel.openStoriesForIds(context, stats.photoStoryIds, tabIndex),
+        ),
+      if (stats.videoCount > 0)
+        (
+          icon: SpIcons.videoCamera,
+          value: '${stats.videoCount}',
+          label: tr('general.videos'),
+          onTap: () => viewModel.openStoriesForIds(context, stats.videoStoryIds, tabIndex),
         ),
       if (stats.voiceCount > 0)
         (

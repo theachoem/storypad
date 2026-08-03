@@ -268,14 +268,22 @@ abstract class BaseAnalyticsEventAdaptor {
 
   Future<void> logInsertNewPhoto() => logEvent(sanitizeEventName('insert_new_photo'));
 
+  Future<void> logInsertNewVideo() => logEvent(sanitizeEventName('insert_new_video'));
+
   Future<void> logTakePhoto() => logEvent(sanitizeEventName('take_photo'));
 
   Future<void> logRecordVideo() => logEvent(sanitizeEventName('record_video'));
 
-  Future<void> logViewImages({required int imagesCount}) {
+  Future<void> logViewImages({
+    required int imagesCount,
+    int videosCount = 0,
+  }) {
     return logEvent(
       sanitizeEventName('view_images'),
-      parameters: sanitizeParameters({'images_count': imagesCount.toString()}),
+      parameters: sanitizeParameters({
+        'images_count': imagesCount.toString(),
+        'videos_count': videosCount.toString(),
+      }),
     );
   }
 

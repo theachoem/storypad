@@ -2,6 +2,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/services/assets/asset_link_parser.dart';
+import 'package:storypad/core/types/asset_type.dart';
 
 /// Extract embed sources from story content.
 ///
@@ -23,11 +24,25 @@ import 'package:storypad/core/services/assets/asset_link_parser.dart';
 /// // ["audio/1762500783747.m4a"]
 /// ```
 class StoryContentEmbedExtractor {
+  /// All **visual media** — photos *and* videos. Video reuses the `image` embed
+  /// key (see docs/app/features/media.md), so this is deliberately the union,
+  /// which is what viewers and story tiles want. Use [photos]/[videos] when you
+  /// mean one kind specifically (counts, labels, filters).
   static List<String> images(StoryContentDbModel? content) => _extractEmbedSources(content, 'image');
+
   static List<String> audio(StoryContentDbModel? content) => _extractEmbedSources(content, 'audio');
 
+  /// Photos only — [images] minus anything stored under `videos/`.
+  static List<String> photos(StoryContentDbModel? content) =>
+      images(content).where((link) => AssetType.getTypeFromLink(link) != AssetType.video).toList();
+
+  /// Videos only — the complement of [photos] within [images].
+  static List<String> videos(StoryContentDbModel? content) =>
+      images(content).where((link) => AssetType.getTypeFromLink(link) == AssetType.video).toList();
+
   static List<String> all(StoryContentDbModel? content) => [
-    ...images(content),
+    ...photos(content),
+    ...videos(content),
     ...audio(content),
   ];
 

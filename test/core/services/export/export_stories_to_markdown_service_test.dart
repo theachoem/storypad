@@ -495,6 +495,42 @@ void main() {
       expect(content, contains('![image](../images/1759081859921.jpg)'));
     });
 
+    test('should include video embeds as links, not image tags', () async {
+      // Video reuses the `image` embed key -- see docs/app/features/media.md.
+      final story = _createStoryWithRichPages(
+        id: 2,
+        year: 2025,
+        month: 1,
+        day: 4,
+        pages: [
+          StoryPageDbModel(
+            id: 1,
+            title: "Story with Video",
+            body: [
+              {"insert": "Check out this video:\n"},
+              {
+                "insert": {"image": "videos/1759081859922.mp4"},
+              },
+              {"insert": "\n"},
+            ],
+          ),
+        ],
+      );
+
+      await ExportStoriesToMarkdownService.call(
+        stories: [story],
+        outputDir: tempDir,
+      );
+
+      final yearDir = Directory('${tempDir.path}/2025');
+      final file = yearDir.listSync().whereType<File>().first;
+      final content = await file.readAsString();
+
+      expect(content, contains('Check out this video:'));
+      expect(content, contains('[video](../videos/1759081859922.mp4)'));
+      expect(content, isNot(contains('![video]')));
+    });
+
     test('should escape special characters in YAML values', () async {
       // Arrange: Story with special characters in feeling
       final story = _createStory(

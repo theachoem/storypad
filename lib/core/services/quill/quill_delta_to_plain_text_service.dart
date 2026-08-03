@@ -155,15 +155,28 @@ class QuillDeltaToPlainTextService {
             final urls = raw.split('|').where((s) => s.isNotEmpty);
 
             for (final url in urls) {
+              // Video reuses the `image` embed key (no separate embed type --
+              // see docs/app/features/media.md), so a path here can resolve to
+              // a video even though embedType == 'image'. An image tag pointing
+              // at a `.mp4` is misleading, so give it a link instead.
+              //
+              // This branch only runs when includeMarkdownEmbeds is true --
+              // don't reuse the link form when it's false (word-count path,
+              // see generate_body_plain_text_service.dart): unlike `![...]()`,
+              // which MarkdownContentFilterService strips entirely, `[...]()`
+              // keeps its visible text and would silently inflate wordCount.
+              final isVideo = AssetType.getTypeFromLink(url) == AssetType.video;
+              final label = isVideo ? 'video' : embedType;
+
               if (AssetType.values
                   .map((e) => e.subDirectory)
                   .any((subDirectory) => url.startsWith(subDirectory.relativePath))) {
                 // Markdown image syntax: ![alt text](../images/001.jpg) when embedRelativePath is '../'
                 // Markdown image syntax: ![alt text](images/001.jpg) when embedRelativePath is ''
-                currentLineText += '![$embedType]($embedRelativePath$url)';
+                currentLineText += isVideo ? '[$label]($embedRelativePath$url)' : '![$label]($embedRelativePath$url)';
               } else {
                 // Markdown image syntax: ![alt text](url)
-                currentLineText += '![$embedType]($url)';
+                currentLineText += isVideo ? '[$label]($url)' : '![$label]($url)';
               }
             }
           }

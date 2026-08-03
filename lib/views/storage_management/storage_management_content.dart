@@ -44,8 +44,12 @@ class _StorageManagementContent extends StatelessWidget {
         _buildLocalTile(
           context,
           icon: SpIcons.photo,
-          label: tr('page.storage_management.label.images_and_audio'),
-          paths: [SupportDirectoryPath.images, SupportDirectoryPath.audio],
+          // Reuses the Library page title rather than a new key -- both
+          // screens mean the same "images + videos" merged bucket.
+          label: tr('page.library.title'),
+          // Every asset directory, so the rows always add up to the total —
+          // `computeLocalSizes` walks all of `SupportDirectoryPath.values`.
+          paths: AssetType.values.map((type) => type.subDirectory).toList(),
         ),
         _buildLocalTile(
           context,
