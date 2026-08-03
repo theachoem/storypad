@@ -49,9 +49,9 @@
 // );
 //
 // // Insert embeds
-// editorAdapter.insertImage(
+// editorAdapter.insertMedia(
 //   controller: controller,
-//   imagePath: 'path/to/image.jpg',
+//   mediaPath: 'path/to/image.jpg',
 // );
 //
 // // Serialize for storage

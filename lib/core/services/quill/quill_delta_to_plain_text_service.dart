@@ -145,20 +145,23 @@ class QuillDeltaToPlainTextService {
           currentLineText += formattedText;
         }
       } else if (insert is Map) {
-        // Handle embeds (images, videos, audio, custom embeds)
-        // Example: {"insert": {"image": "images/1759081859921.jpg"}}
+        // Handle embeds (media, audio, custom embeds)
+        // Example: {"insert": {"media": "images/1759081859921.jpg"}}
         final embedType = insert.keys.first;
 
-        if (embedType == 'image' || embedType == 'audio') {
+        // 'image' is the legacy embed key from before the image->media
+        // rename -- stories saved before that still use it, and it means
+        // exactly the same thing (see _QuillMediaBlockEmbed's doc).
+        if (embedType == 'media' || embedType == 'image' || embedType == 'audio') {
           if (includeMarkdownEmbeds) {
             final raw = insert[embedType].toString();
             final urls = raw.split('|').where((s) => s.isNotEmpty);
 
             for (final url in urls) {
-              // Video reuses the `image` embed key (no separate embed type --
-              // see docs/app/features/media.md), so a path here can resolve to
-              // a video even though embedType == 'image'. An image tag pointing
-              // at a `.mp4` is misleading, so give it a link instead.
+              // Photos and videos share the `media` embed key by design (see
+              // docs/app/features/media.md), so a path here can resolve to
+              // either. An image tag pointing at a `.mp4` is misleading, so
+              // give video a link instead.
               //
               // This branch only runs when includeMarkdownEmbeds is true --
               // don't reuse the link form when it's false (word-count path,
@@ -166,7 +169,7 @@ class QuillDeltaToPlainTextService {
               // which MarkdownContentFilterService strips entirely, `[...]()`
               // keeps its visible text and would silently inflate wordCount.
               final isVideo = AssetType.getTypeFromLink(url) == AssetType.video;
-              final label = isVideo ? 'video' : embedType;
+              final label = isVideo ? 'video' : (embedType == 'audio' ? 'audio' : 'image');
 
               if (AssetType.values
                   .map((e) => e.subDirectory)
@@ -180,9 +183,9 @@ class QuillDeltaToPlainTextService {
               }
             }
           }
-          // Skip images and audio - don't include in text output
+          // Skip media and audio - don't include in text output
         } else {
-          // For other embeds (like video), use Unicode object replacement character
+          // For other embeds (e.g. date blocks), use Unicode object replacement character
           currentLineText += '\uFFFC';
         }
       }

@@ -47,9 +47,9 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (tookAsset == null) return;
 
-        editorAdapter.insertImage(
+        editorAdapter.insertMedia(
           controller: controller,
-          imagePath: tookAsset.relativeLocalFilePath,
+          mediaPath: tookAsset.relativeLocalFilePath,
         );
 
         if (source == ImageSource.camera) {
@@ -80,9 +80,9 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
         if (tookAsset == null) return;
 
-        editorAdapter.insertImage(
+        editorAdapter.insertMedia(
           controller: controller,
-          imagePath: tookAsset.relativeLocalFilePath,
+          mediaPath: tookAsset.relativeLocalFilePath,
         );
 
         if (source == ImageSource.camera) {
@@ -115,9 +115,9 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
         if (savedAssets.isEmpty) return;
 
         final mediaPath = savedAssets.map((a) => a.relativeLocalFilePath).join('|');
-        editorAdapter.insertImage(
+        editorAdapter.insertMedia(
           controller: controller,
-          imagePath: mediaPath,
+          mediaPath: mediaPath,
         );
 
         _logInsertedMedia(savedAssets);
@@ -171,13 +171,13 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     ).show(context: context);
 
     if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
-      // Image embed support multiple images by joining paths with '|', and parsing them in the embed builder.
+      // Media embed supports multiple items by joining paths with '|', and parsing them in the embed builder.
       // See docs/features/album-embed.md for details.
-      final imagePath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
+      final mediaPath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
 
-      editorAdapter.insertImage(
+      editorAdapter.insertMedia(
         controller: controller,
-        imagePath: imagePath,
+        mediaPath: mediaPath,
       );
 
       _logInsertedMedia(pickAssets);

@@ -181,23 +181,28 @@ class _QuillToolbarWidget extends StatelessWidget {
     switch (action) {
       case SpAddMediaAction.selectFromLibrary:
         await SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller);
+        break;
       case SpAddMediaAction.selectFromPhotos:
         await SpImagePickerBottomSheet.showNativePicker(context: context, controller: controller);
+        break;
       case SpAddMediaAction.takePhoto:
         await SpImagePickerBottomSheet.showImagePicker(
           context: context,
           controller: controller,
           source: ImageSource.camera,
         );
+        break;
       case SpAddMediaAction.recordVideo:
         await SpImagePickerBottomSheet.showVideoPicker(
           context: context,
           controller: controller,
           source: ImageSource.camera,
         );
+        break;
       case SpAddMediaAction.recordVoiceNote:
         if (!context.mounted) return;
         await SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
+        break;
     }
   }
 }

@@ -95,7 +95,7 @@ void main() {
 
       // Regression guard: tapping the "Photos" chip must never open a story
       // that has no photo in it (a video-only story previously leaked in via
-      // the shared `images()` extractor).
+      // the shared `media()` extractor).
       expect(stats.photoStoryIds, {1, 3});
       expect(stats.videoStoryIds, {2, 3});
     });
@@ -221,12 +221,12 @@ StoryDbModel _story({
     {"insert": "Entry\n"},
     for (int i = 0; i < images; i++)
       {
-        "insert": {"image": "images/$id-$i.jpg"},
+        "insert": {"media": "images/$id-$i.jpg"},
       },
-    // Video reuses the `image` embed key -- see docs/app/features/media.md.
+    // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
     for (int i = 0; i < videos; i++)
       {
-        "insert": {"image": "videos/$id-$i.mp4"},
+        "insert": {"media": "videos/$id-$i.mp4"},
       },
     for (int i = 0; i < audios; i++)
       {

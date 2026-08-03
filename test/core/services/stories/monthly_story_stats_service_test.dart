@@ -102,12 +102,12 @@ StoryDbModel _story({
     {"insert": "Entry\n"},
     for (int i = 0; i < images; i++)
       {
-        "insert": {"image": "images/$id-$i.jpg"},
+        "insert": {"media": "images/$id-$i.jpg"},
       },
-    // Video reuses the `image` embed key -- see docs/app/features/media.md.
+    // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
     for (int i = 0; i < videos; i++)
       {
-        "insert": {"image": "videos/$id-$i.mp4"},
+        "insert": {"media": "videos/$id-$i.mp4"},
       },
     for (int i = 0; i < audios; i++)
       {

@@ -1,35 +1,46 @@
 part of '../quill_adapter.dart';
 
-class _QuillImageBlockEmbed extends quill.EmbedBuilder {
-  final List<String> Function() fetchAllImages;
+/// Registered twice in `quill_editor_builder.dart` — once for [key] `'media'`
+/// (what every new/edited embed is written as) and once for the legacy
+/// `'image'` key, so stories saved before this rename keep rendering exactly
+/// as before with no migration. Both instances share this one implementation;
+/// `_updatePaths` always writes back as `'media'` regardless of which key the
+/// node originally had, so a legacy embed upgrades to `'media'` the moment
+/// it's edited (album add/remove) -- untouched ones stay `'image'` forever,
+/// which is fine, since both are treated identically everywhere else
+/// (`StoryContentEmbedExtractor.media()` reads both).
+class _QuillMediaBlockEmbed extends quill.EmbedBuilder {
+  final List<String> Function() fetchAllMedia;
   final PageLayoutType? layoutType;
+  final String embedKey;
 
-  _QuillImageBlockEmbed({
-    required this.fetchAllImages,
+  _QuillMediaBlockEmbed({
+    required this.fetchAllMedia,
     required this.layoutType,
+    this.embedKey = 'media',
   });
 
   @override
-  String get key => quill.BlockEmbed.imageType;
+  String get key => embedKey;
 
   @override
   Widget build(BuildContext context, quill.EmbedContext embedContext) {
-    return _QuillImageRenderer(
+    return _QuillMediaRenderer(
       controller: embedContext.controller,
       readOnly: embedContext.readOnly,
       node: embedContext.node,
-      fetchAllImages: fetchAllImages,
+      fetchAllMedia: fetchAllMedia,
       layoutType: layoutType,
     );
   }
 }
 
-class _QuillImageRenderer extends StatelessWidget {
-  const _QuillImageRenderer({
+class _QuillMediaRenderer extends StatelessWidget {
+  const _QuillMediaRenderer({
     required this.node,
     required this.controller,
     required this.readOnly,
-    required this.fetchAllImages,
+    required this.fetchAllMedia,
     required this.layoutType,
   });
 
@@ -37,7 +48,7 @@ class _QuillImageRenderer extends StatelessWidget {
   final quill.QuillController controller;
   final PageLayoutType? layoutType;
   final bool readOnly;
-  final List<String> Function() fetchAllImages;
+  final List<String> Function() fetchAllMedia;
 
   static List<String> _parsePaths(String value) => value.split('|').where((s) => s.isNotEmpty).toList();
 
@@ -56,7 +67,7 @@ class _QuillImageRenderer extends StatelessWidget {
     final op = node.toDelta().operations.first;
     final attributes = op.attributes == null ? null : Map<String, dynamic>.from(op.attributes!);
     final delta = QuillRichTextController._buildEmbedDelta(
-      embedType: quill.BlockEmbed.imageType,
+      embedType: 'media',
       value: newPaths.join('|'),
       attributes: attributes,
     );
@@ -98,7 +109,7 @@ class _QuillImageRenderer extends StatelessWidget {
           child: Stack(
             children: [
               GestureDetector(
-                onTap: readOnly ? () => viewImage(context, link) : null,
+                onTap: readOnly ? () => viewMedia(context, link) : null,
                 onLongPress: () async {
                   Feedback.forLongPress(context);
                   final relativePath = node.value.data;
@@ -159,7 +170,7 @@ class _QuillImageRenderer extends StatelessWidget {
                 constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
                 child: SpAlbumGrid(
                   paths: paths,
-                  onTap: readOnly ? (index) => _viewImageAt(context, paths, index) : null,
+                  onTap: readOnly ? (index) => _viewMediaAt(context, paths, index) : null,
                 ),
               ),
               if (!readOnly)
@@ -288,15 +299,15 @@ class _QuillImageRenderer extends StatelessWidget {
     );
   }
 
-  Future<void> viewImage(BuildContext context, String link) async {
+  Future<void> viewMedia(BuildContext context, String link) async {
     Feedback.forTap(context);
 
-    List<String> images = fetchAllImages();
+    List<String> media = fetchAllMedia();
 
-    if (images.contains(link)) {
+    if (media.contains(link)) {
       SpMediaViewer.fromString(
-        images: images,
-        initialIndex: images.indexOf(link),
+        images: media,
+        initialIndex: media.indexOf(link),
         context: context,
       ).show(context);
     } else {
@@ -308,7 +319,7 @@ class _QuillImageRenderer extends StatelessWidget {
     }
   }
 
-  Future<void> _viewImageAt(BuildContext context, List<String> paths, int index) async {
+  Future<void> _viewMediaAt(BuildContext context, List<String> paths, int index) async {
     Feedback.forTap(context);
 
     SpMediaViewer.fromString(

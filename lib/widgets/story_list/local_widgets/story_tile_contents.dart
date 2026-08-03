@@ -31,9 +31,9 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // `images()` shares the same embed type as video (both use the image/album embed),
-    // so this can include video paths too -- rendering/tap-handling branches per path.
-    final assetPaths = content != null ? StoryContentEmbedExtractor.images(content) : null;
+    // `media()` returns both photos and videos (they share one embed type by
+    // design) -- rendering/tap-handling branches per path.
+    final assetPaths = content != null ? StoryContentEmbedExtractor.media(content) : null;
 
     final audioPaths = (story.draftContent ?? story.latestContent) != null
         ? StoryContentEmbedExtractor.audio(story.draftContent ?? story.latestContent)

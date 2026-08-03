@@ -129,9 +129,17 @@ class _QuillEditorWidgetState extends State<_QuillEditorWidget> {
         placeholder: "...",
         onLaunchUrl: (value) => UrlOpenerService.openForRichContent(context: context, url: value),
         embedBuilders: [
-          _QuillImageBlockEmbed(
+          _QuillMediaBlockEmbed(
             layoutType: widget.layoutType,
-            fetchAllImages: () => StoryContentEmbedExtractor.images(widget.storyContent),
+            fetchAllMedia: () => StoryContentEmbedExtractor.media(widget.storyContent),
+          ),
+          // Legacy key, kept for backward compatibility -- stories saved
+          // before the image->media rename still use `image` and must keep
+          // rendering exactly as before. See _QuillMediaBlockEmbed's doc.
+          _QuillMediaBlockEmbed(
+            layoutType: widget.layoutType,
+            fetchAllMedia: () => StoryContentEmbedExtractor.media(widget.storyContent),
+            embedKey: 'image',
           ),
           _QuillAudioBlockEmbed(),
           _QuillDateBlockEmbed(),

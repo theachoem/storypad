@@ -8,37 +8,44 @@ import 'package:storypad/core/types/asset_type.dart';
 ///
 /// Example:
 /// ```dart
-/// // Input: Content with pages containing image and audio embeds
+/// // Input: Content with pages containing media and audio embeds
 /// // {
-/// //   "insert": {"image": "images/1762500783746.jpg"}
+/// //   "insert": {"media": "images/1762500783746.jpg"}
 /// // },
 /// // {
 /// //   "insert": {"audio": "audio/1762500783747.m4a"}
 /// // }
 ///
 /// // Output:
-/// final images = StoryContentEmbedExtractor.images(content);
+/// final media = StoryContentEmbedExtractor.media(content);
 /// // ["images/1762500783746.jpg"]
 ///
 /// final audios = StoryContentEmbedExtractor.audio(content);
 /// // ["audio/1762500783747.m4a"]
 /// ```
 class StoryContentEmbedExtractor {
-  /// All **visual media** — photos *and* videos. Video reuses the `image` embed
-  /// key (see docs/app/features/media.md), so this is deliberately the union,
-  /// which is what viewers and story tiles want. Use [photos]/[videos] when you
-  /// mean one kind specifically (counts, labels, filters).
-  static List<String> images(StoryContentDbModel? content) => _extractEmbedSources(content, 'image');
+  /// All **visual media** — photos *and* videos. Photos and videos share one
+  /// `media` embed type by design (albums/grids mix both kinds — see
+  /// docs/app/features/media.md), so this is deliberately the union.
+  ///
+  /// Also reads the legacy `image` key: every embed saved before the
+  /// image->media rename is still stored as `image` and stays that way until
+  /// it's next edited (see `_QuillMediaBlockEmbed`'s doc) — both keys mean
+  /// exactly the same thing, so every caller must see them as one list.
+  ///
+  /// Use [photos]/[videos] when you mean one kind specifically (counts,
+  /// labels, filters).
+  static List<String> media(StoryContentDbModel? content) => _extractEmbedSources(content, {'media', 'image'});
 
-  static List<String> audio(StoryContentDbModel? content) => _extractEmbedSources(content, 'audio');
+  static List<String> audio(StoryContentDbModel? content) => _extractEmbedSources(content, {'audio'});
 
-  /// Photos only — [images] minus anything stored under `videos/`.
+  /// Photos only — [media] minus anything stored under `videos/`.
   static List<String> photos(StoryContentDbModel? content) =>
-      images(content).where((link) => AssetType.getTypeFromLink(link) != AssetType.video).toList();
+      media(content).where((link) => AssetType.getTypeFromLink(link) != AssetType.video).toList();
 
-  /// Videos only — the complement of [photos] within [images].
+  /// Videos only — the complement of [photos] within [media].
   static List<String> videos(StoryContentDbModel? content) =>
-      images(content).where((link) => AssetType.getTypeFromLink(link) == AssetType.video).toList();
+      media(content).where((link) => AssetType.getTypeFromLink(link) == AssetType.video).toList();
 
   static List<String> all(StoryContentDbModel? content) => [
     ...photos(content),
@@ -73,13 +80,13 @@ class StoryContentEmbedExtractor {
     AssetDbModel.db.preloadAspectRatios(ids);
   }
 
-  static List<String> _extractEmbedSources(StoryContentDbModel? content, String embedType) {
+  static List<String> _extractEmbedSources(StoryContentDbModel? content, Set<String> embedTypes) {
     final links = <String>[];
     final pages = content?.richPages ?? [];
 
     for (final page in pages) {
       if (page.body == null || page.body!.isEmpty) continue;
-      links.addAll(AssetLinkParser.extractEmbedSources(page.body, embedType));
+      links.addAll(AssetLinkParser.extractEmbedSourcesAny(page.body, embedTypes));
     }
 
     return links;

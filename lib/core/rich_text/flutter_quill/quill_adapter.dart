@@ -50,7 +50,7 @@ part 'quill_context_menu_helper.dart';
 part 'custom_attributes/quill_embed_alignment_attribute.dart';
 part 'custom_attributes/quill_embed_size_attribute.dart';
 part 'custom_embeds/quill_audio_block_embed.dart';
-part 'custom_embeds/quill_image_block_embed.dart';
+part 'custom_embeds/quill_media_block_embed.dart';
 part 'custom_embeds/quill_date_block_embed.dart';
 part 'custom_embeds/quill_unknown_embed_builder.dart';
 

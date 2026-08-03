@@ -161,7 +161,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
       ..insert("\n");
     if (_previewImagePaths.isNotEmpty) {
       delta
-        ..insert({"image": _previewImagePaths.join('|')})
+        ..insert({"media": _previewImagePaths.join('|')})
         ..insert("\n");
     }
     delta

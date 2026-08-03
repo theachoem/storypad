@@ -415,7 +415,7 @@ void main() {
             body: [
               {"insert": "Check out this image:\n"},
               {
-                "insert": {"image": "images/1759081859921.jpg"},
+                "insert": {"media": "images/1759081859921.jpg"},
               },
               {"insert": "\n"},
             ],
@@ -440,7 +440,7 @@ void main() {
     });
 
     test('should include videos as links, not image embeds', () async {
-      // Video reuses the `image` embed key -- see docs/app/features/media.md.
+      // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
       final story = _createStoryWithRichPages(
         id: 2,
         year: 2025,
@@ -453,7 +453,7 @@ void main() {
             body: [
               {"insert": "Check out this video:\n"},
               {
-                "insert": {"image": "videos/1759081859922.mp4"},
+                "insert": {"media": "videos/1759081859922.mp4"},
               },
               {"insert": "\n"},
             ],
