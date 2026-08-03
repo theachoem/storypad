@@ -26,6 +26,7 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
   }) {
     int? createdYear = filters?["created_year"];
     AssetType? type = filters?["type"];
+    List<AssetType>? types = filters?["types"]?.cast<AssetType>();
     int? version = filters?["version"];
     List<int>? ids = filters?["ids"]?.cast<int>();
     int? tag = filters?["tag"];
@@ -33,7 +34,14 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
     Condition<AssetObjectBox> conditions = AssetObjectBox_.id.notNull();
 
     if (!returnDeleted) conditions = conditions.and(AssetObjectBox_.permanentlyDeletedAt.isNull());
-    if (type == AssetType.image) {
+    if (types != null && types.isNotEmpty) {
+      // Legacy rows saved before `type` existed have a null type and were always images.
+      Condition<AssetObjectBox> typeCondition = AssetObjectBox_.type.oneOf(types.map((t) => t.name).toList());
+      if (types.contains(AssetType.image)) {
+        typeCondition = typeCondition.or(AssetObjectBox_.type.isNull());
+      }
+      conditions = conditions.and(typeCondition);
+    } else if (type == AssetType.image) {
       conditions = conditions.and(
         AssetObjectBox_.type.equals(AssetType.image.name).or(AssetObjectBox_.type.isNull()),
       );
@@ -80,6 +88,8 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       type: model.type.name,
       tags: model.tags,
       metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
+      width: model.width,
+      height: model.height,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
       permanentlyDeletedAt: model.permanentlyDeletedAt,
@@ -100,6 +110,8 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         type: model.type.name,
         tags: model.tags,
         metadata: model.metadata != null ? jsonEncode(model.metadata) : null,
+        width: model.width,
+        height: model.height,
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
         permanentlyDeletedAt: model.permanentlyDeletedAt,
@@ -117,6 +129,8 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
       type: AssetType.fromValue(object.type),
       tags: object.tags,
       metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
+      width: object.width,
+      height: object.height,
       createdAt: object.createdAt,
       updatedAt: object.updatedAt,
       lastSavedDeviceId: object.lastSavedDeviceId,
@@ -161,6 +175,8 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
         type: AssetType.fromValue(object.type),
         tags: object.tags,
         metadata: object.metadata != null ? jsonDecode(object.metadata!) as Map<String, dynamic> : null,
+        width: object.width,
+        height: object.height,
         createdAt: object.createdAt,
         updatedAt: object.updatedAt,
         lastSavedDeviceId: object.lastSavedDeviceId,
@@ -176,5 +192,45 @@ class AssetsBox extends BaseBox<AssetObjectBox, AssetDbModel> {
     PreferencesBox().invalidateStorageQuotaCache();
 
     await super.afterCommit(id, model);
+  }
+
+  // In-memory only; keyed by asset id. Caches misses too (as `null`) so an
+  // asset with no persisted width/height doesn't repeat a native read every lookup.
+  final Map<int, double?> _aspectRatioCache = {};
+
+  /// Reads an image/video asset's persisted aspect ratio, derived from the
+  /// dedicated `width`/`height` columns (see
+  /// `InsertFileToDbService.insertImage`/`insertVideo`), without going through
+  /// `find()`/`objectToModel()`, which are `Future`-returning by interface
+  /// contract -- this is a genuinely synchronous read (plain `box.get` field
+  /// access, no JSON decode needed) so tiles can size themselves correctly on
+  /// first build, with no async gap at all. Checks the in-memory cache first
+  /// -- warmed by [preloadAspectRatios] wherever a batch of assets is about to
+  /// be rendered (e.g. a loaded story list), so most lookups hit the cache
+  /// instead of a fresh native read.
+  double? findAspectRatioSync(int id) {
+    if (_aspectRatioCache.containsKey(id)) return _aspectRatioCache[id];
+    return _aspectRatioCache[id] = _aspectRatioOf(box.get(id));
+  }
+
+  /// Bulk-warms the aspect-ratio cache for many assets in a single native
+  /// call (`Box.getMany`) instead of one `box.get` per asset -- call this
+  /// once after loading a batch of content that will render asset tiles (a
+  /// story list, a library page, etc.), before those tiles build.
+  void preloadAspectRatios(Iterable<int> ids) {
+    final idsToLoad = ids.where((id) => !_aspectRatioCache.containsKey(id)).toSet().toList();
+    if (idsToLoad.isEmpty) return;
+
+    final objects = box.getMany(idsToLoad);
+    for (var i = 0; i < idsToLoad.length; i++) {
+      _aspectRatioCache[idsToLoad[i]] = _aspectRatioOf(objects[i]);
+    }
+  }
+
+  double? _aspectRatioOf(AssetObjectBox? object) {
+    final width = object?.width;
+    final height = object?.height;
+    if (width == null || height == null || height <= 0) return null;
+    return width / height;
   }
 }

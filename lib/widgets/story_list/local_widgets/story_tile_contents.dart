@@ -21,9 +21,9 @@ class _StoryTileContents extends StatelessWidget {
   final String? displayShortBody;
   final StoryTilePreferencesObject preferences;
 
-  void _viewAssetImageAt(BuildContext context, List<String> imagePaths, int index) {
-    SpImagesViewer.fromString(
-      images: imagePaths,
+  void _viewAssetImageAt(BuildContext context, List<String> assetPaths, int index) {
+    SpMediaViewer.fromString(
+      images: assetPaths,
       initialIndex: index,
       context: context,
     ).show(context);
@@ -31,8 +31,9 @@ class _StoryTileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // display only images for now.
-    final assetPaths = content != null ? StoryContentEmbedExtractor.images(content) : null;
+    // `media()` returns both photos and videos (they share one embed type by
+    // design) -- rendering/tap-handling branches per path.
+    final assetPaths = content != null ? StoryContentEmbedExtractor.media(content) : null;
 
     final audioPaths = (story.draftContent ?? story.latestContent) != null
         ? StoryContentEmbedExtractor.audio(story.draftContent ?? story.latestContent)

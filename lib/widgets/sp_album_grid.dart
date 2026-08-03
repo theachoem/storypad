@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:storypad/widgets/sp_image.dart';
+import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/widgets/sp_media_tile.dart';
 
 class SpAlbumGrid extends StatelessWidget {
   const SpAlbumGrid({
@@ -24,7 +26,7 @@ class SpAlbumGrid extends StatelessWidget {
 
     if (paths.length == 1) {
       return AspectRatio(
-        aspectRatio: 1,
+        aspectRatio: _aspectRatioOf(paths[0]) ?? 1,
         child: _buildTile(
           context,
           path: paths[0],
@@ -377,6 +379,15 @@ class SpAlbumGrid extends StatelessWidget {
     );
   }
 
+  // Single-item albums display at the asset's real aspect ratio instead of a
+  // forced square, via the same synchronous lookup `SpMediaTile` uses (see
+  // `AssetsBox.findAspectRatioSync`) -- falls back to square if unavailable
+  // (non-DB-tracked link, or predates this feature).
+  double? _aspectRatioOf(String path) {
+    final id = AssetType.parseAssetId(path);
+    return id != null ? AssetDbModel.db.findAspectRatioSync(id) : null;
+  }
+
   BorderRadius _radiusFor(_TileEdges edges) {
     return BorderRadius.only(
       topLeft: Radius.circular(edges.top && edges.left ? outerRadius : innerRadius),
@@ -404,7 +415,7 @@ class SpAlbumGrid extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            SpImage(
+            SpMediaTile(
               link: path,
               width: double.infinity,
               height: double.infinity,

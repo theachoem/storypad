@@ -6,6 +6,7 @@ import 'package:storypad/core/services/analytics/adaptors/none_analytics_user_pr
 import 'package:storypad/core/types/add_on_type.dart';
 import 'package:storypad/core/types/app_logo.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
+import 'package:storypad/core/types/media_sync_option.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
 
@@ -54,6 +55,10 @@ abstract class BaseAnalyticsUserPropertyAdaptor {
 
   Future<void> logSetFirstDayOfWeek({required FirstDayOfWeekOption firstDayOfWeek}) {
     return setUserProperty('first_day_of_week', firstDayOfWeek.name);
+  }
+
+  Future<void> logSetMediaSync({required MediaSyncOption mediaSync}) {
+    return setUserProperty('media_sync', mediaSync.name);
   }
 
   Future<void> logToggleAddOn({required AddOnType addOn, required bool enabled}) {

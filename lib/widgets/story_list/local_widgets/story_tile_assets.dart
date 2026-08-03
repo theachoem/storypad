@@ -33,7 +33,7 @@ class _StoryTileAssets extends StatelessWidget {
   }
 }
 
-/// Displays a single asset tile from a relative path (image or audio)
+/// Displays a single asset tile from a relative path (image, video, or audio)
 class _AssetTile extends StatelessWidget {
   const _AssetTile({
     required this.assetPath,
@@ -45,7 +45,6 @@ class _AssetTile extends StatelessWidget {
   final bool displayMoreButton;
   final List<String> allAssetPaths;
 
-  // Detect if path is audio or image
   bool get _isAudio => AssetType.getTypeFromLink(assetPath) == AssetType.audio;
 
   @override
@@ -63,7 +62,7 @@ class _AssetTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             side: BorderSide(color: Theme.of(context).dividerColor),
           ),
-          child: SpImage(
+          child: SpMediaTile(
             link: assetPath,
             height: 72,
             width: 72,
@@ -133,11 +132,9 @@ class _AssetTile extends StatelessWidget {
   }
 
   void _viewImages(BuildContext context) {
-    // Filter to only image links for the viewer
-    final imageLinks = allAssetPaths.where((link) => AssetType.getTypeFromLink(link) != AssetType.audio).toList();
-    SpImagesViewer.fromString(
-      images: imageLinks,
-      initialIndex: 0,
+    SpMediaViewer.fromString(
+      images: allAssetPaths,
+      initialIndex: allAssetPaths.indexOf(assetPath),
       context: context,
     ).show(context);
   }

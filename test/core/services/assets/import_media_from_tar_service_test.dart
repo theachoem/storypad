@@ -128,6 +128,57 @@ void main() {
         expect(fakes.savedAssets.single.type, AssetType.audio);
       });
 
+      test('infers video type from videos/ subdirectory prefix', () async {
+        const id = 1714986140005;
+        final fakes = _fakes();
+        final stream = _buildTarGz([
+          ('videos/$id.mp4', [1, 2, 3]),
+        ]);
+
+        await _run(fakes, stream);
+
+        expect(fakes.savedAssets.single.type, AssetType.video);
+      });
+
+      test('infers video type for root-level mp4', () async {
+        const id = 1714986140006;
+        final fakes = _fakes();
+        final stream = _buildTarGz([
+          ('$id.mp4', [1, 2, 3]),
+        ]);
+
+        await _run(fakes, stream);
+
+        expect(fakes.savedAssets.single.type, AssetType.video);
+      });
+
+      for (final ext in ['.mov', '.m4v', '.avi', '.mkv', '.webm', '.3gp', '.wmv', '.flv']) {
+        test('infers video for root-level $ext', () async {
+          const id = 1714986140007;
+          final fakes = _fakes();
+          final stream = _buildTarGz([
+            ('$id$ext', [1]),
+          ]);
+          await _run(fakes, stream);
+          expect(fakes.savedAssets.single.type, AssetType.video);
+        });
+      }
+
+      test('a subdirectory that merely starts with "videos" is not treated as the videos/ prefix', () async {
+        // Regression guard for the trailing-slash check in _inferType: a
+        // subdirectory name like "videosextra" must not be misread as the
+        // `videos/` prefix -- falls back to the (image) extension here.
+        const id = 1714986140008;
+        final fakes = _fakes();
+        final stream = _buildTarGz([
+          ('videosextra/$id.jpg', [1]),
+        ]);
+
+        await _run(fakes, stream);
+
+        expect(fakes.savedAssets.single.type, AssetType.image);
+      });
+
       test('infers image type for root-level jpg', () async {
         const id = 1714986140002;
         final fakes = _fakes();

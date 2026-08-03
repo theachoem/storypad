@@ -183,12 +183,21 @@ class BackupRepository {
   /// 3. Import downloaded changes (only newer records)
   /// 4. Upload new/updated yearly backups to this service
   ///
+  /// [uploadAssets] false defers media uploads (see MediaSyncOption) — steps 2-4
+  /// still run in full, and the deferred assets upload on a later unmetered run.
+  ///
   /// Throws: Never throws - all errors wrapped in BackupResult.failure
-  Future<BackupResult<SyncResponse>> sync(BackupCloudService service) async {
+  Future<BackupResult<SyncResponse>> sync(
+    BackupCloudService service, {
+    required bool uploadAssets,
+  }) async {
     AppLogger.d('🔄 Starting sync for service: ${service.serviceType.displayName}');
 
-    // Step 1: Upload images for this service
-    final step1Result = await startStep1(service);
+    // Step 1: Upload images for this service.
+    // Runs before getLastDbUpdatedAtByYear() below on purpose: uploading bumps
+    // each asset's updatedAt, so the years it touched come out dirty here and
+    // step 4 republishes them with the new cloud pointers.
+    final step1Result = await startStep1(service, uploadAssets: uploadAssets);
     if (!step1Result.isSuccess) {
       AppLogger.warning('Step 1 failed for ${service.serviceType.displayName}: ${step1Result.error!.message}');
       return BackupResult.failure(step1Result.error!);
@@ -254,9 +263,12 @@ class BackupRepository {
     );
   }
 
-  Future<BackupResult<bool>> startStep1(BackupCloudService service) async {
+  Future<BackupResult<bool>> startStep1(
+    BackupCloudService service, {
+    required bool uploadAssets,
+  }) async {
     try {
-      final result = await _step1ImagesUploader.start(service);
+      final result = await _step1ImagesUploader.start(service, uploadAssets: uploadAssets);
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
       if (e.requiresSignOut && e.serviceType != null) await signOut(e.serviceType!);
@@ -432,6 +444,24 @@ class BackupRepository {
     } catch (e) {
       return const BackupResult.success(BackupConnectionStatus.unknownError);
     }
+  }
+
+  /// How many distinct local assets are still waiting to reach any signed-in
+  /// service — i.e. media deferred by the Wi-Fi-only setting.
+  ///
+  /// Counts distinct assets rather than summing per service, so an asset
+  /// pending on two services isn't reported twice.
+  Future<int> pendingMediaCount() async {
+    final Set<int> assetIds = {};
+
+    for (final service in services) {
+      if (!service.isSignedIn) continue;
+
+      final pending = await _step1ImagesUploader.pendingAssets(service);
+      assetIds.addAll(pending.map((asset) => asset.id));
+    }
+
+    return assetIds.length;
   }
 
   Future<Map<int, DateTime?>> getLastDbUpdatedAtByYear() async {

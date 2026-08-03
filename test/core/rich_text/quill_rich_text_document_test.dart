@@ -37,7 +37,7 @@ void main() {
         final json = [
           {'insert': 'Before embed'},
           {
-            'insert': {'image': 'images/test.jpg'},
+            'insert': {'media': 'images/test.jpg'},
           },
           {'insert': 'After embed'},
           {'insert': '\n'},
@@ -121,7 +121,7 @@ void main() {
         final json = [
           {'insert': 'Text'},
           {
-            'insert': {'image': 'images/test.jpg'},
+            'insert': {'media': 'images/test.jpg'},
           },
           {'insert': 'More'},
           {'insert': '\n'},
@@ -173,7 +173,7 @@ void main() {
         final json = [
           {'insert': 'Text before'},
           {
-            'insert': {'image': 'images/photo.jpg'},
+            'insert': {'media': 'images/photo.jpg'},
           },
           {'insert': 'Text after'},
           {'insert': '\n'},
@@ -237,7 +237,7 @@ void main() {
       test('preserves embed data correctly', () {
         final originalJson = [
           {
-            'insert': {'image': 'images/photo.jpg'},
+            'insert': {'media': 'images/photo.jpg'},
           },
           {
             'insert': {'audio': 'audio/recording.m4a'},
@@ -309,7 +309,7 @@ void main() {
           },
           {'insert': ' content with '},
           {
-            'insert': {'image': 'images/test.jpg'},
+            'insert': {'media': 'images/test.jpg'},
           },
           {'insert': ' and more text'},
           {'insert': '\n'},

@@ -65,6 +65,15 @@ class HomeQuickActionsViewModel extends ChangeNotifier with DisposeAwareMixin {
     ),
     HomeQuickActionItem(
       object: AppQuickActionObject(
+        label: tr('button.record_video'),
+        type: AppQuickActionType.defaultAction,
+        nativeIcon: AppDefaultQuickActionType.recordVideo.nativeIcon,
+        defaultActionType: AppDefaultQuickActionType.recordVideo,
+      ),
+      icon: SpIcons.videoCamera,
+    ),
+    HomeQuickActionItem(
+      object: AppQuickActionObject(
         label: tr('button.record_voice'),
         type: AppQuickActionType.defaultAction,
         nativeIcon: AppDefaultQuickActionType.recordVoice.nativeIcon,

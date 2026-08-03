@@ -3,10 +3,11 @@ import 'package:storypad/core/types/asset_type.dart';
 
 void main() {
   group('AssetType - Enum Values', () {
-    test('has image and audio types', () {
-      expect(AssetType.values, hasLength(2));
+    test('has image, audio and video types', () {
+      expect(AssetType.values, hasLength(3));
       expect(AssetType.values, contains(AssetType.image));
       expect(AssetType.values, contains(AssetType.audio));
+      expect(AssetType.values, contains(AssetType.video));
     });
 
     test('image type has correct properties', () {
@@ -17,6 +18,11 @@ void main() {
     test('audio type has correct properties', () {
       expect(AssetType.audio.name, equals('audio'));
       expect(AssetType.audio.subDirectory.relativePath, equals('audio'));
+    });
+
+    test('video type has correct properties', () {
+      expect(AssetType.video.name, equals('video'));
+      expect(AssetType.video.subDirectory.relativePath, equals('videos'));
     });
   });
 
@@ -29,6 +35,10 @@ void main() {
       expect(AssetType.audio.subDirectory.relativePath, equals('audio'));
     });
 
+    test('video uses videos subdirectory', () {
+      expect(AssetType.video.subDirectory.relativePath, equals('videos'));
+    });
+
     test('subdirectories match storage paths structure', () {
       // The getStoragePath method uses subDirectory in its path construction
       // verify the subDirectory values are correctly set
@@ -38,6 +48,10 @@ void main() {
       );
       expect(
         AssetType.audio.subDirectory.relativePath,
+        isNotEmpty,
+      );
+      expect(
+        AssetType.video.subDirectory.relativePath,
         isNotEmpty,
       );
     });
@@ -56,15 +70,19 @@ void main() {
       expect(AssetType.fromValue('audio'), equals(AssetType.audio));
     });
 
+    test('returns video for "video" value', () {
+      expect(AssetType.fromValue('video'), equals(AssetType.video));
+    });
+
     test('returns image for unknown value', () {
       expect(AssetType.fromValue('unknown'), equals(AssetType.image));
-      expect(AssetType.fromValue('video'), equals(AssetType.image));
     });
 
     test('is case-sensitive', () {
       // Should return default (image) for incorrect case
       expect(AssetType.fromValue('IMAGE'), equals(AssetType.image));
       expect(AssetType.fromValue('Audio'), equals(AssetType.image));
+      expect(AssetType.fromValue('Video'), equals(AssetType.image));
     });
   });
 
@@ -84,6 +102,15 @@ void main() {
       expect(
         AssetType.audio.getRelativeStoragePath(id: id, extension: extension),
         equals('audio/1762500783747.m4a'),
+      );
+    });
+
+    test('generates correct relative path for video', () {
+      const id = 1762500783748;
+      const extension = '.mp4';
+      expect(
+        AssetType.video.getRelativeStoragePath(id: id, extension: extension),
+        equals('videos/1762500783748.mp4'),
       );
     });
 
@@ -112,6 +139,11 @@ void main() {
     test('parses audio asset ID from relative path', () {
       const path = 'audio/1762500783747.m4a';
       expect(AssetType.parseAssetId(path), equals(1762500783747));
+    });
+
+    test('parses video asset ID from relative path', () {
+      const path = 'videos/1762500783748.mp4';
+      expect(AssetType.parseAssetId(path), equals(1762500783748));
     });
 
     test('returns null for invalid path format', () {
@@ -152,6 +184,11 @@ void main() {
     test('identifies audio type from relative path', () {
       const path = 'audio/123.m4a';
       expect(AssetType.getTypeFromLink(path), equals(AssetType.audio));
+    });
+
+    test('identifies video type from relative path', () {
+      const path = 'videos/123.mp4';
+      expect(AssetType.getTypeFromLink(path), equals(AssetType.video));
     });
 
     test('returns null for invalid path', () {
@@ -208,6 +245,26 @@ void main() {
       expect(parsedId, equals(assetId));
     });
 
+    test('complete workflow for video asset path', () {
+      const assetId = 1762500783748;
+      const extension = '.mp4';
+
+      // Generate relative path
+      final path = AssetType.video.getRelativeStoragePath(
+        id: assetId,
+        extension: extension,
+      );
+      expect(path, equals('videos/1762500783748.mp4'));
+
+      // Get type from path
+      final type = AssetType.getTypeFromLink(path);
+      expect(type, equals(AssetType.video));
+
+      // Parse ID from path
+      final parsedId = AssetType.parseAssetId(path);
+      expect(parsedId, equals(assetId));
+    });
+
     test('type identification consistency', () {
       for (final type in AssetType.values) {
         for (final id in [1, 123, 999999]) {
@@ -230,6 +287,12 @@ void main() {
     test('getRelativeStoragePath works for audio', () {
       final path = AssetType.audio.getRelativeStoragePath(id: 456, extension: '.m4a');
       expect(path, equals('audio/456.m4a'));
+      expect(path, isNot(startsWith('/')));
+    });
+
+    test('getRelativeStoragePath works for video', () {
+      final path = AssetType.video.getRelativeStoragePath(id: 789, extension: '.mp4');
+      expect(path, equals('videos/789.mp4'));
       expect(path, isNot(startsWith('/')));
     });
   });

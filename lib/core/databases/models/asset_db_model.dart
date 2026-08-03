@@ -57,6 +57,11 @@ class AssetDbModel extends BaseDbModel {
   // Flexible metadata storage (duration, transcription, etc.)
   final Map<String, dynamic>? metadata;
 
+  // Original decoded dimensions of an image/video asset, captured once at
+  // insert time -- lets tiles derive an aspect ratio without decoding metadata.
+  final double? width;
+  final double? height;
+
   final DateTime createdAt;
 
   @override
@@ -78,6 +83,8 @@ class AssetDbModel extends BaseDbModel {
     required this.tags,
     this.version = 2,
     this.metadata,
+    this.width,
+    this.height,
   });
 
   bool get needBackup => !originalSource.startsWith("http") && cloudDestinations.isEmpty;
@@ -86,7 +93,10 @@ class AssetDbModel extends BaseDbModel {
 
   bool get isAudio => type == AssetType.audio;
   bool get isImage => type == AssetType.image;
+  bool get isVideo => type == AssetType.video;
   int? get durationInMs => (metadata?[DURATION_KEY] is int) ? metadata![DURATION_KEY] as int : null;
+
+  double? get aspectRatio => (width != null && height != null && height! > 0) ? width! / height! : null;
 
   /// Format duration to readable string (MM:SS)
   String? get formattedDuration {
@@ -134,6 +144,8 @@ class AssetDbModel extends BaseDbModel {
     required String localPath,
     required AssetType type,
     int? durationInMs,
+    double? width,
+    double? height,
     List<int>? tags,
     DateTime? createdAt,
   }) {
@@ -154,6 +166,8 @@ class AssetDbModel extends BaseDbModel {
       lastSavedDeviceId: null,
       type: type,
       metadata: metadata,
+      width: width,
+      height: height,
       tags: tags,
     );
   }

@@ -11,6 +11,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   objectbox_flutter_libs
   record_linux
   url_launcher_linux
+  volume_controller
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

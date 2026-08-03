@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart' as path;
+import 'package:storypad/core/services/assets/asset_file_type_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:tar/tar.dart';
 
@@ -182,12 +183,20 @@ class ImportMediaFromTarService {
   /// Determines the [AssetType] for a tar entry.
   ///
   /// Priority:
-  /// 1. Subdirectory prefix (`images/` → image, `audio/` → audio).
-  /// 2. File extension for root-level entries.
+  /// 1. Subdirectory prefix (`images/` → image, `audio/` → audio, `videos/` →
+  ///    video), resolved through [AssetType.getTypeFromLink] so this can never
+  ///    drift from the storage layout — our own asset export writes entries as
+  ///    `asset.relativeLocalFilePath`, so the prefix is the common path.
+  /// 2. File extension for root-level entries (no prefix to go on).
   static AssetType _inferType(String entryName, String ext) {
-    if (entryName.startsWith('audio/')) return AssetType.audio;
-    if (entryName.startsWith('images/')) return AssetType.image;
-    return _audioExtensions.contains(ext.toLowerCase()) ? AssetType.audio : AssetType.image;
+    for (final type in AssetType.values) {
+      // Trailing slash matters: a root-level `videos_2024.mp4` is not a `videos/` entry.
+      if (entryName.startsWith('${type.subDirectory.relativePath}/')) return type;
+    }
+
+    if (_audioExtensions.contains(ext.toLowerCase())) return AssetType.audio;
+    if (AssetFileTypeService.isVideoExtension(ext)) return AssetType.video;
+    return AssetType.image;
   }
 
   static DateTime? _createdAtFromId(int id) {

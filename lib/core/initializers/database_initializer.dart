@@ -74,9 +74,12 @@ class DatabaseInitializer {
       /// Automatically routes to correct scheme based on asset type:
       /// - Audio: storypad://audio/{id}
       /// - Image (or null): storypad://assets/{id}
+      /// Video didn't exist in this legacy v1 scheme, so it can never actually
+      /// appear here -- falls back to the image scheme just to keep this exhaustive.
       final legacyEmbedLink = switch (asset.type) {
         .image => 'storypad://assets/${asset.id}',
         .audio => 'storypad://audio/${asset.id}',
+        .video => 'storypad://assets/${asset.id}',
       };
 
       for (int j = 0; j < result.length; j++) {

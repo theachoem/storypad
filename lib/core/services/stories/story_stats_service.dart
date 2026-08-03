@@ -32,10 +32,12 @@ class StoryStatsService {
     int entryCount = 0;
     int wordCount = 0;
     int photoCount = 0;
+    int videoCount = 0;
     int voiceCount = 0;
     int locatedCount = 0;
 
     final Set<int> photoStoryIds = {};
+    final Set<int> videoStoryIds = {};
     final Set<int> voiceStoryIds = {};
     final Set<int> locatedStoryIds = {};
 
@@ -62,11 +64,14 @@ class StoryStatsService {
       final content = story.latestContent ?? story.draftContent;
       wordCount += content?.wordCount ?? 0;
 
-      final int storyPhotoCount = StoryContentEmbedExtractor.images(content).length;
+      final int storyPhotoCount = StoryContentEmbedExtractor.photos(content).length;
+      final int storyVideoCount = StoryContentEmbedExtractor.videos(content).length;
       final int storyVoiceCount = StoryContentEmbedExtractor.audio(content).length;
       photoCount += storyPhotoCount;
+      videoCount += storyVideoCount;
       voiceCount += storyVoiceCount;
       if (storyPhotoCount > 0) photoStoryIds.add(story.id);
+      if (storyVideoCount > 0) videoStoryIds.add(story.id);
       if (storyVoiceCount > 0) voiceStoryIds.add(story.id);
 
       if (story.hasLocation) {
@@ -104,9 +109,11 @@ class StoryStatsService {
       totalDays: _elapsedDays(range, today),
       wordCount: wordCount,
       photoCount: photoCount,
+      videoCount: videoCount,
       voiceCount: voiceCount,
       locatedCount: locatedCount,
       photoStoryIds: photoStoryIds,
+      videoStoryIds: videoStoryIds,
       voiceStoryIds: voiceStoryIds,
       locatedStoryIds: locatedStoryIds,
       topFeelings: _topEmojis(feelingCounts, tagById),

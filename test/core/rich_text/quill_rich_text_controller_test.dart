@@ -164,7 +164,7 @@ void main() {
 
     test('replaceText handles embed objects through adapter', () {
       // Note: Direct replaceText requires Embeddable objects, not plain maps.
-      // Use the adapter's insertImage method instead.
+      // Use the adapter's insertMedia method instead.
       final controller = QuillRichTextController.fromJson(
         json: [
           {'insert': 'Text before'},
@@ -174,16 +174,16 @@ void main() {
         readOnly: false,
       );
 
-      // Use adapter to insert image (it handles the Embeddable conversion)
-      editorAdapter.insertImage(
+      // Use adapter to insert media (it handles the Embeddable conversion)
+      editorAdapter.insertMedia(
         controller: controller,
-        imagePath: 'images/test.jpg',
+        mediaPath: 'images/test.jpg',
       );
 
       final serialized = controller.serialize();
       final hasImage = serialized.any((op) {
         final insert = op['insert'];
-        return insert is Map && insert['image'] == 'images/test.jpg';
+        return insert is Map && insert['media'] == 'images/test.jpg';
       });
       expect(hasImage, isTrue);
     });
@@ -199,7 +199,7 @@ void main() {
       );
 
       controller.insertEmbed(
-        embedType: 'image',
+        embedType: 'media',
         value: 'images/2.jpg|images/3.jpg',
         attributes: {
           'custom-embed-alignment': 'left',
@@ -208,8 +208,8 @@ void main() {
       );
 
       final serialized = controller.serialize();
-      final embedOp = serialized.firstWhere((op) => op['insert'] is Map && op['insert']['image'] != null);
-      expect(embedOp['insert'], {'image': 'images/2.jpg|images/3.jpg'});
+      final embedOp = serialized.firstWhere((op) => op['insert'] is Map && op['insert']['media'] != null);
+      expect(embedOp['insert'], {'media': 'images/2.jpg|images/3.jpg'});
       expect(embedOp['attributes'], {
         'custom-embed-alignment': 'left',
         'custom-embed-size': 'max',
@@ -220,7 +220,7 @@ void main() {
       final controller = QuillRichTextController.fromJson(
         json: [
           {
-            'insert': {'image': 'images/1.jpg'},
+            'insert': {'media': 'images/1.jpg'},
             'attributes': {
               'custom-embed-alignment': 'left',
               'custom-embed-size': 'max',
@@ -235,13 +235,13 @@ void main() {
       controller.replaceEmbed(
         offset: 0,
         length: 1,
-        embedType: 'image',
+        embedType: 'media',
         value: 'images/2.jpg|images/3.jpg',
       );
 
       final serialized = controller.serialize();
       expect(serialized[0]['insert'], {
-        'image': 'images/2.jpg|images/3.jpg',
+        'media': 'images/2.jpg|images/3.jpg',
       });
       expect(serialized[0]['attributes'], {
         'custom-embed-alignment': 'left',

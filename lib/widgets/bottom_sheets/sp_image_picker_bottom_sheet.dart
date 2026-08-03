@@ -17,7 +17,7 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_image.dart';
+import 'package:storypad/widgets/sp_media_tile.dart';
 
 class SpImagePickerBottomSheet extends BaseBottomSheet {
   const SpImagePickerBottomSheet({
@@ -38,18 +38,18 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
       context,
       callback: () async {
         final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-        final XFile? photo = await AppFilePickerService.pickImage(
+        final photo = await AppFilePickerService.pickImage(
           source: source,
           compression: compression,
         );
         if (photo == null) return;
 
-        AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo, await photo.readAsBytes());
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertImage(photo.file, size: photo.size);
         if (tookAsset == null) return;
 
-        editorAdapter.insertImage(
+        editorAdapter.insertMedia(
           controller: controller,
-          imagePath: tookAsset.relativeLocalFilePath,
+          mediaPath: tookAsset.relativeLocalFilePath,
         );
 
         if (source == ImageSource.camera) {
@@ -61,6 +61,96 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     );
   }
 
+  static Future<void> showVideoPicker({
+    required BuildContext context,
+    required RichTextController controller,
+    required ImageSource source,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final video = await AppFilePickerService.pickVideo(
+          context: context,
+          source: source,
+          compression: compression,
+        );
+        if (video == null) return;
+
+        AssetDbModel? tookAsset = await InsertFileToDbService.insertVideo(video.file, size: video.size);
+        if (tookAsset == null) return;
+
+        editorAdapter.insertMedia(
+          controller: controller,
+          mediaPath: tookAsset.relativeLocalFilePath,
+        );
+
+        if (source == ImageSource.camera) {
+          AnalyticsService.instance.logRecordVideo();
+        } else {
+          AnalyticsService.instance.logInsertNewVideo();
+        }
+      },
+    );
+  }
+
+  /// Opens the native OS media picker (mixed image+video multi-select) and
+  /// inserts everything picked as a single embed (an album if more than one).
+  static Future<void> showNativePicker({
+    required BuildContext context,
+    required RichTextController controller,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final files = await AppFilePickerService.pickMultipleMedia(context: context, compression: compression);
+        if (files.isEmpty) return;
+
+        final List<AssetDbModel> savedAssets = [];
+        for (final file in files) {
+          final savedAsset = await InsertFileToDbService.insertMedia(file);
+          if (savedAsset != null) savedAssets.add(savedAsset);
+        }
+        if (savedAssets.isEmpty) return;
+
+        final mediaPath = savedAssets.map((a) => a.relativeLocalFilePath).join('|');
+        editorAdapter.insertMedia(
+          controller: controller,
+          mediaPath: mediaPath,
+        );
+
+        _logInsertedMedia(savedAssets);
+      },
+    );
+  }
+
+  /// Opens the native OS media picker (mixed image+video multi-select) and
+  /// returns the saved assets directly, for callers that aren't inserting
+  /// into a rich text [controller] (e.g. [SpAlbumManagementSheet]).
+  static Future<List<AssetDbModel>> pickFromNativeLibrary({
+    required BuildContext context,
+  }) async {
+    return SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
+        final files = await AppFilePickerService.pickMultipleMedia(context: context, compression: compression);
+        if (files.isEmpty) return <AssetDbModel>[];
+
+        final List<AssetDbModel> savedAssets = [];
+        for (final file in files) {
+          final savedAsset = await InsertFileToDbService.insertMedia(file);
+          if (savedAsset != null) savedAssets.add(savedAsset);
+        }
+
+        _logInsertedMedia(savedAssets);
+
+        return savedAssets;
+      },
+    );
+  }
+
   static Future<void> showQuillPicker<T>({
     required BuildContext context,
     required RichTextController controller,
@@ -68,7 +158,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     await RetrieveLostPhotoService.call();
 
     final assets = await AssetDbModel.db
-        .where(filters: {'type': AssetType.image})
+        .where(
+          filters: {
+            'types': [AssetType.image, AssetType.video],
+          },
+        )
         .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return;
 
@@ -77,16 +171,16 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     ).show(context: context);
 
     if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
-      // Image embed support multiple images by joining paths with '|', and parsing them in the embed builder.
+      // Media embed supports multiple items by joining paths with '|', and parsing them in the embed builder.
       // See docs/features/album-embed.md for details.
-      final imagePath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
+      final mediaPath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
 
-      editorAdapter.insertImage(
+      editorAdapter.insertMedia(
         controller: controller,
-        imagePath: imagePath,
+        mediaPath: mediaPath,
       );
 
-      AnalyticsService.instance.logInsertNewPhoto();
+      _logInsertedMedia(pickAssets);
     }
   }
 
@@ -96,7 +190,11 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     await RetrieveLostPhotoService.call();
 
     final assets = await AssetDbModel.db
-        .where(filters: {'type': AssetType.image})
+        .where(
+          filters: {
+            'types': [AssetType.image, AssetType.video],
+          },
+        )
         .then((e) => e?.items ?? <AssetDbModel>[]);
     if (!context.mounted) return null;
 
@@ -105,6 +203,19 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     ).show(context: context);
 
     return result is List<AssetDbModel> ? result : null;
+  }
+
+  /// Logs one photo/video insert event per resulting [AssetType], for the
+  /// mixed-pick call sites (native OS picker, in-app album picker) that can
+  /// return either kind in a single batch -- a single `logInsertNewPhoto` call
+  /// would misreport a video-only or mixed pick as photos.
+  static void _logInsertedMedia(List<AssetDbModel> savedAssets) {
+    if (savedAssets.any((a) => a.type == AssetType.image)) {
+      AnalyticsService.instance.logInsertNewPhoto();
+    }
+    if (savedAssets.any((a) => a.type == AssetType.video)) {
+      AnalyticsService.instance.logInsertNewVideo();
+    }
   }
 
   @override
@@ -143,48 +254,13 @@ class _ContentState extends State<_Content> {
 
   Map<int, AssetDbModel> selectedAssets = {};
 
-  Future<void> _insertFromPhotoLibrary(BuildContext context) async {
-    List<XFile> result = <XFile>[];
-
-    try {
-      result = await SpAppLockWrapper.disableAppLockIfHas(
-        context,
-        callback: () {
-          final compression = context.read<DevicePreferencesProvider>().preferences.assetCompression;
-
-          return AppFilePickerService.pickImageFiles(
-            allowMultiple: true,
-            compression: compression,
-          );
-        },
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    if (result.isNotEmpty) {
-      List<AssetDbModel> saveAssets = [];
-
-      for (var file in result) {
-        final bytes = await file.readAsBytes();
-
-        final savedAsset = await InsertFileToDbService.insertImage(file, bytes);
-        if (savedAsset != null) saveAssets.add(savedAsset);
-      }
-
-      if (context.mounted && saveAssets.isNotEmpty) {
-        Navigator.maybePop(context, saveAssets);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("$kAppName Library"),
+            title: Text(tr('page.library.title')),
             automaticallyImplyLeading: !CupertinoSheetRoute.hasParentSheet(context),
             actions: [
               if (CupertinoSheetRoute.hasParentSheet(context))
@@ -209,11 +285,6 @@ class _ContentState extends State<_Content> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   spacing: 8.0,
                   children: [
-                    OutlinedButton.icon(
-                      icon: const Icon(SpIcons.addPhoto),
-                      label: Text(tr("button.insert_from_device")),
-                      onPressed: () => _insertFromPhotoLibrary(context),
-                    ),
                     FilledButton(
                       onPressed: selectedAssets.isNotEmpty
                           ? () => Navigator.maybePop(context, selectedAssets.values.toList())
@@ -281,7 +352,7 @@ class _ContentState extends State<_Content> {
                         borderRadius: BorderRadius.circular(8.0),
                         side: BorderSide(color: Theme.of(context).dividerColor),
                       ),
-                      child: SpImage(
+                      child: SpMediaTile(
                         link: asset.relativeLocalFilePath,
                         width: constraints.maxWidth,
                         height: 120,

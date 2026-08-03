@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:video_player/video_player.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -222,6 +223,8 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
                       builder: (context) {
                         if (file.path.contains(AssetType.image.subDirectory.relativePath)) {
                           return Image.file(File(file.path), fit: BoxFit.cover);
+                        } else if (file.path.contains(AssetType.video.subDirectory.relativePath)) {
+                          return _AttachmentVideoThumb(file: File(file.path));
                         } else if (file.path.contains(AssetType.audio.subDirectory.relativePath)) {
                           return Icon(
                             SpIcons.voice,
@@ -303,6 +306,70 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
         // Ensure passing correct button context to have proper positioning.
         sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       ),
+    );
+  }
+}
+
+/// Paused first-frame preview for a video attachment chip, matching
+/// `SpMediaTile`'s video tile but against a raw [File] -- the chip works off
+/// absolute [XFile] paths, not the DB-relative paths `SpMediaTile` resolves.
+class _AttachmentVideoThumb extends StatefulWidget {
+  const _AttachmentVideoThumb({required this.file});
+
+  final File file;
+
+  @override
+  State<_AttachmentVideoThumb> createState() => _AttachmentVideoThumbState();
+}
+
+class _AttachmentVideoThumbState extends State<_AttachmentVideoThumb> {
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = VideoPlayerController.file(widget.file);
+    controller
+        .initialize()
+        .then((_) {
+          if (mounted) setState(() => _controller = controller);
+        })
+        .catchError((_) {
+          controller.dispose();
+        });
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = _controller;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (controller != null && controller.value.isInitialized)
+          FittedBox(
+            fit: BoxFit.cover,
+            clipBehavior: Clip.hardEdge,
+            child: SizedBox(
+              width: controller.value.size.width,
+              height: controller.value.size.height,
+              child: VideoPlayer(controller),
+            ),
+          ),
+        Center(
+          child: Icon(
+            SpIcons.playCircle,
+            size: 20.0,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
+        ),
+      ],
     );
   }
 }

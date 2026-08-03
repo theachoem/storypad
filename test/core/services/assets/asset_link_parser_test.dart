@@ -160,5 +160,33 @@ void main() {
         );
       });
     });
+
+    group('extractEmbedSourcesAny', () {
+      test('matches any of the given embed types, preserving node order', () {
+        final body = [
+          {
+            'insert': {'image': 'images/1.jpg'},
+          },
+          {
+            'insert': {'media': 'images/2.jpg'},
+          },
+          {
+            'insert': {'audio': 'audio/1.m4a'},
+          },
+          {
+            'insert': {'image': 'videos/3.mp4'},
+          },
+        ];
+        expect(
+          AssetLinkParser.extractEmbedSourcesAny(body, {'media', 'image'}),
+          ['images/1.jpg', 'images/2.jpg', 'videos/3.mp4'],
+        );
+      });
+
+      test('returns empty list when body is null or empty', () {
+        expect(AssetLinkParser.extractEmbedSourcesAny(null, {'media', 'image'}), isEmpty);
+        expect(AssetLinkParser.extractEmbedSourcesAny([], {'media', 'image'}), isEmpty);
+      });
+    });
   });
 }

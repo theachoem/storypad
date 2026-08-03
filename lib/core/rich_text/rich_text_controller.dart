@@ -29,7 +29,7 @@ abstract class RichTextController extends ChangeNotifier {
   ///
   /// [data] can be:
   /// - String: Plain text
-  /// - Map: Embed data (e.g., {"image": "path/to/image.jpg"})
+  /// - Map: Embed data (e.g., {"media": "path/to/image.jpg"})
   ///
   /// [textSelection] is the new cursor position after replacement.
   void replaceText(
@@ -57,7 +57,7 @@ abstract class RichTextController extends ChangeNotifier {
 
   /// Inserts an embed at the current cursor position.
   ///
-  /// [embedType]: The embed type key (e.g., 'image', 'audio')
+  /// [embedType]: The embed type key (e.g., 'media', 'audio')
   /// [value]: The embed value (e.g., file path or pipe-delimited paths)
   /// [attributes]: Optional formatting attributes to apply (e.g., size, alignment)
   void insertEmbed({
@@ -73,7 +73,7 @@ abstract class RichTextController extends ChangeNotifier {
   ///
   /// [offset]: The document offset of the embed
   /// [length]: The length of the embed (typically 1)
-  /// [embedType]: The embed type key (e.g., 'image')
+  /// [embedType]: The embed type key (e.g., 'media')
   /// [value]: The new embed value
   void replaceEmbed({
     required int offset,

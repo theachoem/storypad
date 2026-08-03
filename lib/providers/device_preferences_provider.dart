@@ -15,6 +15,7 @@ import 'package:storypad/core/types/reminder_type.dart';
 import 'package:storypad/core/services/app_quick_actions_service.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
 import 'package:storypad/core/types/first_day_of_week_option.dart';
+import 'package:storypad/core/types/media_sync_option.dart';
 import 'package:storypad/core/services/analytics/analytics_user_propery_service.dart';
 import 'package:storypad/core/storages/device_preferences_storage.dart';
 import 'package:storypad/core/types/add_on_type.dart';
@@ -207,6 +208,14 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     notifyListeners();
   }
 
+  void setMediaSync(MediaSyncOption value) {
+    _preferences = _preferences.copyWith(mediaSync: value);
+    storage.writeObject(_preferences);
+    notifyListeners();
+
+    AnalyticsUserProperyService.instance.logSetMediaSync(mediaSync: value);
+  }
+
   void setStoryTilePreferences(StoryTilePreferencesObject preferences) {
     _preferences = _preferences.copyWith(storyTilePreferences: preferences);
     storage.writeObject(_preferences);
@@ -280,6 +289,42 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     storage.writeObject(_preferences);
 
     _listeners['voice_playback_speed']?.forEach((listener) => listener());
+  }
+
+  void addListenerForVideoPlaybackSpeed(void Function() listener) {
+    _listeners['video_playback_speed'] ??= [];
+    _listeners['video_playback_speed']!.add(listener);
+  }
+
+  void removeListenerForVideoPlaybackSpeed(void Function() listener) {
+    _listeners['video_playback_speed']?.remove(listener);
+  }
+
+  // no need to notifyListeners as it will refresh the whole app UI
+  // but we do need to notify specific listeners for video playback speed changes
+  void setVideoPlaybackSpeed(double speed) {
+    _preferences = _preferences.copyWith(videoPlaybackSpeed: speed);
+    storage.writeObject(_preferences);
+
+    _listeners['video_playback_speed']?.forEach((listener) => listener());
+  }
+
+  void addListenerForVideoMuted(void Function() listener) {
+    _listeners['video_muted'] ??= [];
+    _listeners['video_muted']!.add(listener);
+  }
+
+  void removeListenerForVideoMuted(void Function() listener) {
+    _listeners['video_muted']?.remove(listener);
+  }
+
+  // no need to notifyListeners as it will refresh the whole app UI
+  // but we do need to notify specific listeners for video mute changes
+  void setVideoMuted(bool muted) {
+    _preferences = _preferences.copyWith(videoMuted: muted);
+    storage.writeObject(_preferences);
+
+    _listeners['video_muted']?.forEach((listener) => listener());
   }
 
   List<String>? get hiddenStatsSections => preferences.hiddenStatsSections;

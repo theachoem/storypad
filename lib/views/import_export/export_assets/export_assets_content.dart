@@ -53,13 +53,16 @@ Media files are exported separately from stories for flexibility and smaller fil
 **How it works:**
 - Any files stored in the cloud will be downloaded to your device first
 - Make sure you have enough free storage space before exporting
-- All your images and audio files are packaged into a single compressed file (.tar.gz)
+- All your images, videos, and audio files are packaged into a single compressed file (.tar.gz)
 
 **Export Structure:**
 ```
 images/
     ├── 001.jpg
     ├── 002.png
+    └── ...
+videos/
+    ├── 001.mp4
     └── ...
 audio/
     ├── 001.m4a
@@ -96,8 +99,8 @@ audio/
 
               return _buildStatRow(
                 context,
-                type == AssetType.image ? SpIcons.photo : SpIcons.voice,
-                '${type.name.substring(0, 1).toUpperCase()}${type.name.substring(1)}s',
+                type.icon,
+                type.label,
                 '$downloaded / $total',
               );
             }),

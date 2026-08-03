@@ -116,7 +116,7 @@ void main() {
         final json = [
           {'insert': 'Text'},
           {
-            'insert': {'image': 'images/test.jpg'},
+            'insert': {'media': 'images/test.jpg'},
           },
           {'insert': '\n'},
         ];
@@ -128,7 +128,7 @@ void main() {
         );
 
         final serialized = controller.serialize();
-        expect(serialized[1]['insert'], equals({'image': 'images/test.jpg'}));
+        expect(serialized[1]['insert'], equals({'media': 'images/test.jpg'}));
       });
     });
 
@@ -201,7 +201,7 @@ void main() {
       test('creates document with embeds', () {
         final json = [
           {
-            'insert': {'image': 'images/photo.jpg'},
+            'insert': {'media': 'images/photo.jpg'},
           },
           {'insert': '\n'},
         ];
@@ -209,7 +209,7 @@ void main() {
         final document = adapter.createDocument(json: json);
 
         final serialized = document.toJson();
-        expect(serialized[0]['insert'], equals({'image': 'images/photo.jpg'}));
+        expect(serialized[0]['insert'], equals({'media': 'images/photo.jpg'}));
       });
     });
 
@@ -236,7 +236,7 @@ void main() {
       });
     });
 
-    group('insertImage()', () {
+    group('insertMedia()', () {
       test('inserts image at cursor position', () {
         final controller = adapter.createController(
           json: [
@@ -247,15 +247,15 @@ void main() {
           readOnly: false,
         );
 
-        adapter.insertImage(
+        adapter.insertMedia(
           controller: controller,
-          imagePath: 'images/test.jpg',
+          mediaPath: 'images/test.jpg',
         );
 
         final serialized = controller.serialize();
         final hasImage = serialized.any((op) {
           final insert = op['insert'];
-          return insert is Map && insert['image'] == 'images/test.jpg';
+          return insert is Map && insert['media'] == 'images/test.jpg';
         });
 
         expect(hasImage, isTrue);
@@ -271,9 +271,9 @@ void main() {
           readOnly: false,
         );
 
-        adapter.insertImage(
+        adapter.insertMedia(
           controller: controller,
-          imagePath: 'images/replacement.jpg',
+          mediaPath: 'images/replacement.jpg',
         );
 
         final plainText = controller.getPlainText();
@@ -291,9 +291,9 @@ void main() {
           readOnly: false,
         );
 
-        adapter.insertImage(
+        adapter.insertMedia(
           controller: controller,
-          imagePath: 'images/test.jpg',
+          mediaPath: 'images/test.jpg',
         );
 
         // Cursor should be after the image (position 5: "Test" + image)
@@ -310,15 +310,15 @@ void main() {
           readOnly: false,
         );
 
-        adapter.insertImage(
+        adapter.insertMedia(
           controller: controller,
-          imagePath: 'images/test.jpg',
+          mediaPath: 'images/test.jpg',
         );
 
         final serialized = controller.serialize();
         final imageOp = serialized.firstWhere((op) {
           final insert = op['insert'];
-          return insert is Map && insert['image'] == 'images/test.jpg';
+          return insert is Map && insert['media'] == 'images/test.jpg';
         });
 
         expect(imageOp['attributes'], isA<Map>());
@@ -335,15 +335,15 @@ void main() {
         for (final path in testPaths) {
           final controller = adapter.createEmptyController(readOnly: false);
 
-          adapter.insertImage(
+          adapter.insertMedia(
             controller: controller,
-            imagePath: path,
+            mediaPath: path,
           );
 
           final serialized = controller.serialize();
           final hasImage = serialized.any((op) {
             final insert = op['insert'];
-            return insert is Map && insert['image'] == path;
+            return insert is Map && insert['media'] == path;
           });
 
           expect(hasImage, isTrue, reason: 'Failed for path: $path');
@@ -498,9 +498,9 @@ void main() {
       test('inserting image and then serializing maintains data', () {
         final controller = adapter.createEmptyController(readOnly: false);
 
-        adapter.insertImage(
+        adapter.insertMedia(
           controller: controller,
-          imagePath: 'images/test.jpg',
+          mediaPath: 'images/test.jpg',
         );
 
         final json = controller.serialize();
@@ -512,7 +512,7 @@ void main() {
 
         final hasImage = newController.serialize().any((op) {
           final insert = op['insert'];
-          return insert is Map && insert['image'] == 'images/test.jpg';
+          return insert is Map && insert['media'] == 'images/test.jpg';
         });
 
         expect(hasImage, isTrue);
