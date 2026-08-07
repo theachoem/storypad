@@ -61,7 +61,6 @@ class DataBackupView extends StatelessWidget {
 
     for (int i = 0; i < services.length; i++) {
       tiles.add(BackupServiceTile(service: services[i]));
-      if (i < services.length - 1) tiles.add(const Divider());
     }
 
     return tiles;

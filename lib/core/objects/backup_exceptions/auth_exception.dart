@@ -39,4 +39,11 @@ class AuthException extends BackupException {
   bool get requiresSignOut => type == AuthExceptionType.tokenRevoked;
   bool get requiresReauth => type == AuthExceptionType.tokenExpired || type == AuthExceptionType.signInRequired;
   bool get requiresScopeRequest => type == AuthExceptionType.insufficientScopes;
+
+  /// A revoked grant needs the user to actively reconnect (fresh OAuth consent
+  /// for Drive, a new app password for Nextcloud) — unlike [requiresReauth],
+  /// which is a silent/automatic retry. Distinct from [requiresSignOut]: this
+  /// no longer implies wiping the stored account first, just picking the right
+  /// reconnect UI.
+  bool get requiresReconnect => type == AuthExceptionType.tokenRevoked;
 }

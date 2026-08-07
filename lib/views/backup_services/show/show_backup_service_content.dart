@@ -214,6 +214,12 @@ class _ShowBackupServiceContent extends StatelessWidget {
                 icon: const Icon(SpIcons.refresh),
                 label: Text(tr('button.retry')),
               )
+            else if (error is AuthException && error.requiresReconnect)
+              FilledButton.icon(
+                onPressed: () => viewModel.reconnect(context),
+                icon: const Icon(SpIcons.refresh),
+                label: Text(tr('button.reconnect')),
+              )
             else if (error.isRetryable)
               FilledButton.icon(
                 onPressed: () => viewModel.retry(context),

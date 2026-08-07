@@ -11,7 +11,7 @@ class _HomeAppBarMessage extends StatelessWidget {
     Widget? trailing;
 
     // only show when pass step 3, we don't want to distract user showing syncing message during checking.
-    bool syncing = backupProvider.syncing && backupProvider.step3Message != null;
+    bool syncing = backupProvider.isSyncingDeepStep;
     Widget child = Text(
       WelcomeMessageService.get(context),
       maxLines: 3,

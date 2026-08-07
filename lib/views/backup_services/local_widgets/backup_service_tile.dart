@@ -5,9 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/backup_sync_state_store.dart';
 import 'package:storypad/views/backup_services/show/show_backup_service_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 /// Generic backup service tile that displays a cloud service status
@@ -23,6 +26,7 @@ class BackupServiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BackupProvider>(context);
+    final status = provider.statusFor(service.serviceType);
     final metadata = service.serviceType;
 
     Widget leading = Icon(metadata.icon);
@@ -53,7 +57,9 @@ class BackupServiceTile extends StatelessWidget {
     if (!service.isSignedIn) {
       trailing = const Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
-      onPressed = () => provider.signIn(context, service.serviceType);
+      onPressed = service.serviceType == BackupServiceType.nextcloud
+          ? () => const SpConnectNextcloudSheet().show(context: context)
+          : () => provider.signIn(context, service.serviceType);
     } else {
       trailing = Icon(
         SpIcons.keyboardRight,
@@ -63,25 +69,26 @@ class BackupServiceTile extends StatelessWidget {
       subtitle = Text(service.currentUser?.identifier ?? '...');
       onPressed = () => ShowBackupServiceRoute(service: service).push(context);
 
-      switch (provider.connectionStatus) {
+      final needsAttention = status.connectionStatus == BackupConnectionStatus.needServicePermission;
+
+      switch (status.connectionStatus) {
         case BackupConnectionStatus.unknownError:
           subtitle = Text(tr('list_tile.backup.unknown_error'));
           break;
         case BackupConnectionStatus.noInternet:
           subtitle = Text(tr('list_tile.backup.no_internet_subtitle'));
           break;
-        case BackupConnectionStatus.needGoogleDrivePermission:
+        case BackupConnectionStatus.needServicePermission:
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
           break;
         case BackupConnectionStatus.readyToSync:
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
-          onPressed = () => ShowBackupServiceRoute(service: service).push(context);
           break;
         case null:
           break;
       }
 
-      if (provider.allYearSynced) {
+      if (!needsAttention && provider.allYearSynced) {
         subtitle = Text(
           DateFormatHelper.yMEd_jmNullable(
                 provider.lastSyncedAt,
@@ -92,7 +99,7 @@ class BackupServiceTile extends StatelessWidget {
       }
     }
 
-    if (service.isSignedIn && provider.syncing) {
+    if (service.isSignedIn && status.activity == SyncActivity.active) {
       trailing = const SizedBox.square(
         dimension: 24,
         child: CircularProgressIndicator.adaptive(),
@@ -100,10 +107,16 @@ class BackupServiceTile extends StatelessWidget {
       subtitle = Text(tr("general.syncing"));
       onPressed = () => ShowBackupServiceRoute(service: service).push(context);
 
-      if (provider.step1Message != null) subtitle = Text("${tr("general.syncing")} 1/4");
-      if (provider.step2Message != null) subtitle = Text("${tr("general.syncing")} 2/4");
-      if (provider.step3Message != null) subtitle = Text("${tr("general.syncing")} 3/4");
-      if (provider.step4Message != null) subtitle = Text("${tr("general.syncing")} 4/4");
+      if (status.currentStep != null) {
+        subtitle = Text("${tr("general.syncing")} ${status.currentStep!.stepNumber}/4");
+      }
+    } else if (service.isSignedIn && status.activity == SyncActivity.queued) {
+      trailing = const SizedBox.square(
+        dimension: 24,
+        child: CircularProgressIndicator.adaptive(),
+      );
+      subtitle = Text(tr("list_tile.backup.waiting_to_sync_subtitle"));
+      onPressed = () => ShowBackupServiceRoute(service: service).push(context);
     }
 
     return ListTile(

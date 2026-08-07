@@ -77,6 +77,23 @@ void main() {
       );
     });
 
+    test('creates with correct properties for local storage full', () {
+      const exception = ServiceException(
+        'Disk full',
+        ServiceExceptionType.localStorageFull,
+        context: 'backfill_asset_42',
+      );
+
+      expect(exception.message, equals('Disk full'));
+      expect(exception.type, equals(ServiceExceptionType.localStorageFull));
+      expect(exception.context, equals('backfill_asset_42'));
+      expect(exception.isRetryable, isFalse);
+      expect(
+        exception.userFriendlyMessage,
+        equals('Not enough storage space on this device. Free up space and try again.'),
+      );
+    });
+
     test('is not retryable by default', () {
       const exception = ServiceException(
         'Service error',
@@ -113,12 +130,13 @@ void main() {
 
     group('ServiceExceptionType enum', () {
       test('has all expected values', () {
-        expect(ServiceExceptionType.values, hasLength(5));
+        expect(ServiceExceptionType.values, hasLength(6));
         expect(ServiceExceptionType.values, contains(ServiceExceptionType.validationFailed));
         expect(ServiceExceptionType.values, contains(ServiceExceptionType.compressionFailed));
         expect(ServiceExceptionType.values, contains(ServiceExceptionType.decompressionFailed));
         expect(ServiceExceptionType.values, contains(ServiceExceptionType.dataCorrupted));
         expect(ServiceExceptionType.values, contains(ServiceExceptionType.unexpectedError));
+        expect(ServiceExceptionType.values, contains(ServiceExceptionType.localStorageFull));
       });
     });
   });

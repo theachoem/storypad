@@ -203,6 +203,16 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[BackupServiceType.google_drive.id]?[email]?['file_id'];
   }
 
+  /// Generic counterpart to [getGoogleDriveIdForEmail] — usable for any
+  /// connected service, e.g. to check whether another already-signed-in
+  /// service has this asset before it's ever been downloaded to this device.
+  String? cloudFileIdFor({
+    required BackupServiceType serviceType,
+    required String identifier,
+  }) {
+    return cloudDestinations[serviceType.id]?[identifier]?['file_id'];
+  }
+
   Future<AssetDbModel?> save({
     bool runCallbacks = true,
   }) async => db.set(this, runCallbacks: runCallbacks);
@@ -238,6 +248,27 @@ class AssetDbModel extends BaseDbModel {
       'file_id': cloudFile.id,
       'file_name': cloudFile.fileName!,
     };
+
+    return copyWith(
+      cloudDestinations: newCloudDestinations,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  /// Removal counterpart to [copyWithCloudFile] — drops a single stale
+  /// destination (e.g. once a download 404 confirms the remote copy is
+  /// actually gone), so [pendingAssets]-style lookups stop treating this
+  /// service+identifier as a valid source/destination for this asset.
+  AssetDbModel copyWithoutCloudFile({
+    required BackupServiceType serviceType,
+    required String identifier,
+  }) {
+    Map<String, Map<String, Map<String, String>>> newCloudDestinations = {...cloudDestinations};
+
+    final forService = newCloudDestinations[serviceType.id];
+    if (forService != null && forService.containsKey(identifier)) {
+      newCloudDestinations[serviceType.id] = {...forService}..remove(identifier);
+    }
 
     return copyWith(
       cloudDestinations: newCloudDestinations,

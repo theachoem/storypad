@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
+import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/providers/backup_sync_state_store.dart';
+import 'package:storypad/views/backup_services/show/show_backup_service_view.dart';
 import 'package:storypad/views/settings/data_backup/data_backup_view.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -33,12 +38,12 @@ class BackupTile extends StatelessWidget {
       title = Text(tr("list_tile.backup.title"));
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
       action = FilledButton.icon(
-        icon: const Icon(SpIcons.googleDrive),
+        icon: const Icon(SpIcons.cloudUpload),
         label: Text(tr('button.connect')),
-        onPressed: () => provider.signIn(context, .google_drive),
+        onPressed: () => onNavigate(const DataBackupRoute()),
       );
     } else {
-      switch (provider.connectionStatus) {
+      switch (_aggregateConnectionStatus(provider)) {
         case .unknownError:
           leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
@@ -59,18 +64,22 @@ class BackupTile extends StatelessWidget {
             onPressed: () => provider.recheckAndSync(services: provider.services),
           );
           break;
-        case .needGoogleDrivePermission:
+        case .needServicePermission:
           leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.no_permission_subtitle'));
           action = FilledButton.icon(
-            icon: const Icon(SpIcons.googleDrive),
-            label: Text(tr('button.grant_permission')),
-            onPressed: () => provider.requestScope(context, .google_drive),
+            icon: const Icon(SpIcons.warning),
+            label: Text(tr('button.fix_connection')),
+            onPressed: () => onNavigate(
+              ShowBackupServiceRoute(
+                service: _serviceWithStatus(provider, BackupConnectionStatus.needServicePermission),
+              ),
+            ),
           );
           break;
         case .readyToSync:
-          leading = const Icon(SpIcons.googleDrive);
+          leading = Icon(_connectedServiceIcon(provider));
           title = Text(tr("list_tile.backup.title"));
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
           action = FilledButton(
@@ -88,7 +97,7 @@ class BackupTile extends StatelessWidget {
     }
 
     if (provider.allYearSynced) {
-      leading = const Icon(SpIcons.googleDrive);
+      leading = Icon(_connectedServiceIcon(provider));
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;
       title = Text.rich(
@@ -114,10 +123,8 @@ class BackupTile extends StatelessWidget {
       subtitle = Text(tr("general.syncing"));
       action = null;
 
-      if (provider.step1Message != null) subtitle = Text("${tr("general.syncing")} 1/4");
-      if (provider.step2Message != null) subtitle = Text("${tr("general.syncing")} 2/4");
-      if (provider.step3Message != null) subtitle = Text("${tr("general.syncing")} 3/4");
-      if (provider.step4Message != null) subtitle = Text("${tr("general.syncing")} 4/4");
+      final currentStep = _currentActiveStep(provider);
+      if (currentStep != null) subtitle = Text("${tr("general.syncing")} ${currentStep.stepNumber}/4");
 
       title = Text.rich(
         TextSpan(
@@ -136,7 +143,7 @@ class BackupTile extends StatelessWidget {
       );
     }
 
-    String? photoUrl = provider.currentGoogleUser?.photoUrl;
+    String? photoUrl = _firstAvailablePhotoUrl(provider);
     if (photoUrl != null) {
       leading = Transform.scale(
         scale: 1.5,
@@ -166,5 +173,69 @@ class BackupTile extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  BackupCloudService? _firstSignedInService(BackupProvider provider) {
+    for (final service in provider.services) {
+      if (service.isSignedIn) return service;
+    }
+    return null;
+  }
+
+  String? _firstAvailablePhotoUrl(BackupProvider provider) {
+    for (final user in provider.availableUsers) {
+      if (user.photoUrl != null) return user.photoUrl;
+    }
+    return null;
+  }
+
+  IconData _connectedServiceIcon(BackupProvider provider) {
+    return _firstSignedInService(provider)?.serviceType.icon ?? SpIcons.cloudDone;
+  }
+
+  /// Worst-case-wins summary across every signed-in service's own connection
+  /// status (`provider.statusFor(type).connectionStatus`) — a problem on any
+  /// one of them surfaces here, in order of how actionable it is to the user.
+  /// Null means every signed-in service is still being checked.
+  BackupConnectionStatus? _aggregateConnectionStatus(BackupProvider provider) {
+    final signedInTypes = provider.services.where((s) => s.isSignedIn).map((s) => s.serviceType).toList();
+    if (signedInTypes.isEmpty) return null;
+
+    const priority = [
+      BackupConnectionStatus.needServicePermission,
+      BackupConnectionStatus.unknownError,
+      BackupConnectionStatus.noInternet,
+    ];
+
+    for (final candidate in priority) {
+      if (signedInTypes.any((type) => provider.statusFor(type).connectionStatus == candidate)) {
+        return candidate;
+      }
+    }
+
+    final allReady = signedInTypes.every(
+      (type) => provider.statusFor(type).connectionStatus == BackupConnectionStatus.readyToSync,
+    );
+    return allReady ? BackupConnectionStatus.readyToSync : null;
+  }
+
+  /// Which service's detail page to open when the aggregate status needs
+  /// attention. Falls back to the first connected service if none matches —
+  /// this branch only runs when at least one service is signed in.
+  BackupCloudService _serviceWithStatus(BackupProvider provider, BackupConnectionStatus status) {
+    for (final service in provider.services) {
+      if (service.isSignedIn && provider.statusFor(service.serviceType).connectionStatus == status) return service;
+    }
+    return _firstSignedInService(provider) ?? provider.services.first;
+  }
+
+  /// The step of whichever service is currently mid-sync — sync runs are
+  /// sequential, so at most one service is ever [SyncActivity.active].
+  SyncStep? _currentActiveStep(BackupProvider provider) {
+    for (final service in provider.services) {
+      final status = provider.statusFor(service.serviceType);
+      if (status.activity == SyncActivity.active) return status.currentStep;
+    }
+    return null;
   }
 }

@@ -31,6 +31,7 @@ void main() {
       expect(exception.context, equals('auth_test'));
       expect(exception.requiresReauth, isTrue);
       expect(exception.requiresSignOut, isFalse);
+      expect(exception.requiresReconnect, isFalse);
     });
 
     test('creates AuthException for token revoked', () {
@@ -41,6 +42,7 @@ void main() {
 
       expect(exception.requiresSignOut, isTrue);
       expect(exception.requiresReauth, isFalse);
+      expect(exception.requiresReconnect, isTrue);
     });
 
     test('creates QuotaException for storage quota', () {

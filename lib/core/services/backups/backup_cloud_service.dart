@@ -15,7 +15,7 @@ abstract class BackupCloudService {
   bool get isSignedIn => currentUser != null;
   bool get autoBackupEnabled => currentUser?.autoBackupEnabled ?? true;
 
-  bool get hasCompression => serviceType == BackupServiceType.google_drive;
+  bool get hasCompression => true;
 
   /// Initialize the cloud service (load stored credentials)
   Future<void> initialize();
@@ -44,6 +44,12 @@ abstract class BackupCloudService {
   /// Get file content and size
   /// Returns: Tuple of (content, size)
   Future<(String, int)?> getFileContent(CloudFileObject file);
+
+  /// Raw bytes for an arbitrary file (e.g. a media asset). Unlike
+  /// [getFileContent] — which UTF-8-decodes its result, correct for backup
+  /// JSON text but corrupting for binary media — this returns the bytes
+  /// untouched. Returns null if not found or not signed in.
+  Future<List<int>?> downloadFileBytes(String fileId);
 
   /// Upload a new yearly backup file to the backups/ folder
   Future<CloudFileObject?> uploadYearlyBackup({
