@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Validates a user-typed Nextcloud storage folder name *before* it's handed
 /// to [NextcloudCloudService.connect] — catches characters/lengths a WebDAV
 /// server (or the filesystem underneath it) would reject, so the user gets
@@ -26,7 +28,10 @@ class NextcloudFolderNameValidator {
   static final RegExp _forbiddenCharacterPattern = RegExp(r'[\\<>:"|?*\x00-\x1F]');
 
   /// Most filesystems (ext4, NTFS, APFS) cap a single path component at 255
-  /// bytes; 250 leaves headroom for multi-byte UTF-8 characters.
+  /// *bytes* — checked against the UTF-8 encoding, not [String.length]
+  /// (UTF-16 code units), which would undercount multi-byte characters and
+  /// let through segments the filesystem actually rejects (e.g. 250 CJK
+  /// characters is ~750 bytes). 250 leaves headroom below the 255 cap.
   static const int _maxSegmentLength = 250;
 
   /// Null/blank input is always valid — it means "use the default".
@@ -43,7 +48,7 @@ class NextcloudFolderNameValidator {
       if (_forbiddenCharacterPattern.hasMatch(segment)) {
         return NextcloudFolderNameValidationError.invalidCharacters;
       }
-      if (segment.length > _maxSegmentLength) {
+      if (utf8.encode(segment).length > _maxSegmentLength) {
         return NextcloudFolderNameValidationError.segmentTooLong;
       }
     }

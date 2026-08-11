@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'library_view.dart';
@@ -68,6 +69,23 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
     // orphan it with no way to find it again.
     for (final destination in destinations) {
       final service = provider.repository.getService(destination.serviceType);
+
+      // A destination is scoped to a specific account/folder (destinationKey),
+      // not just a provider — if the user switched accounts (Drive) or
+      // reconnected under a different folder (Nextcloud) since this asset was
+      // uploaded, the currently signed-in credential is the *wrong* one for
+      // this destination. There's no credential retained for the old
+      // account/folder to delete it properly, so skip it rather than either
+      // acting against the wrong account or blocking local deletion forever
+      // over a destination that's now unreachable.
+      if (destination.identifier != service.currentUser?.destinationKey) {
+        AppLogger.d(
+          'LibraryViewModel#_deleteAsset: skipping remote delete for asset ${asset.id} on '
+          '${destination.serviceType.displayName} — destination ${destination.identifier} does not match the '
+          'currently signed-in account (${service.currentUser?.destinationKey}).',
+        );
+        continue;
+      }
 
       bool deleted = false;
       bool notFound = false;

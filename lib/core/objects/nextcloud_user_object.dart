@@ -45,14 +45,22 @@ class NextcloudUserObject extends CloudServiceUser {
     this.folderName,
   });
 
-  /// Host (with port, if any) but no scheme — e.g. `example.com`,
-  /// `192.168.1.5:8080`. Falls back to the raw [serverUrl] if it doesn't
-  /// parse as a URL with an authority (shouldn't happen in practice: the
-  /// connect flow always requires a full URL to actually reach the server).
-  String get _hostWithPort {
+  /// Host[:port] plus a non-root deployment path, if any — no scheme. E.g.
+  /// `example.com`, `192.168.1.5:8080`, or `example.com/cloud-a`. The path is
+  /// included because path-based multi-tenant Nextcloud setups (several
+  /// instances reverse-proxied under one host, e.g. `example.com/cloud-a` vs
+  /// `example.com/cloud-b`) are common — dropping it would collide two
+  /// genuinely distinct installs' identifiers/globalIds/destinationKeys.
+  /// Falls back to the raw [serverUrl] if it doesn't parse as a URL with an
+  /// authority (shouldn't happen in practice: the connect flow always
+  /// requires a full URL to actually reach the server).
+  String get _hostAndPath {
     final uri = Uri.tryParse(serverUrl);
     if (uri == null || uri.host.isEmpty) return serverUrl;
-    return uri.hasPort ? '${uri.host}:${uri.port}' : uri.host;
+
+    final hostAndPort = uri.hasPort ? '${uri.host}:${uri.port}' : uri.host;
+    final path = uri.path.replaceAll(RegExp(r'^/+|/+$'), '');
+    return path.isEmpty ? hostAndPort : '$hostAndPort/$path';
   }
 
   /// `localhost` or a bare IP isn't a stable, globally-unique host the way a
@@ -67,12 +75,14 @@ class NextcloudUserObject extends CloudServiceUser {
     return false;
   }
 
-  /// Host[:port] only, no scheme — e.g. `admin@example.com`,
-  /// `admin@192.168.1.5:8080`. The port is kept (unlike the scheme) because
-  /// cloudDestinations/import-history are keyed by this value, and two
-  /// distinct self-hosted instances can share a LAN IP on different ports.
+  /// Host[:port][/path] only, no scheme — e.g. `admin@example.com`,
+  /// `admin@192.168.1.5:8080`, `admin@example.com/cloud-a`. The port/path
+  /// are kept (unlike the scheme) because cloudDestinations/import-history
+  /// are keyed by this value, and two distinct self-hosted instances can
+  /// share a LAN IP on different ports, or a host on different deployment
+  /// paths.
   @override
-  String get identifier => '$username@$_hostWithPort';
+  String get identifier => '$username@$_hostAndPath';
 
   /// Self-hosted instances aren't a single globally-unique account space the way
   /// Google's is, so this is scoped to serviceType+identifier rather than a bare

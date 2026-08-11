@@ -71,6 +71,56 @@ void main() {
       expect(ip.globalId, isNull);
     });
 
+    test('identifier includes a non-root deployment path', () {
+      final pathed = NextcloudUserObject(
+        serverUrl: 'https://example.com/cloud-a',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+      );
+
+      expect(pathed.identifier, 'admin@example.com/cloud-a');
+    });
+
+    test('identifier distinguishes two installs sharing a host under different paths', () {
+      final cloudA = NextcloudUserObject(
+        serverUrl: 'https://example.com/cloud-a',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+      );
+      final cloudB = NextcloudUserObject(
+        serverUrl: 'https://example.com/cloud-b',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+      );
+
+      expect(cloudA.identifier, isNot(cloudB.identifier));
+    });
+
+    test('identifier includes both port and path when both are present', () {
+      final pathed = NextcloudUserObject(
+        serverUrl: 'http://192.168.1.5:8080/cloud-a',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+      );
+
+      expect(pathed.identifier, 'admin@192.168.1.5:8080/cloud-a');
+    });
+
+    test('identifier strips leading/trailing slashes from the deployment path', () {
+      final pathed = NextcloudUserObject(
+        serverUrl: 'https://example.com/cloud-a/',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+      );
+
+      expect(pathed.identifier, 'admin@example.com/cloud-a');
+    });
+
     test('authHeaders sends HTTP Basic auth with username:appPassword', () {
       final headers = user.authHeaders;
       expect(headers['Authorization'], startsWith('Basic '));

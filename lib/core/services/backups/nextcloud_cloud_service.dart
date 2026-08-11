@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 
-// ignore: depend_on_referenced_packages
 import 'package:dio/dio.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -12,7 +11,6 @@ import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/nextcloud_user_storage.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:webdav_client/webdav_client.dart' as webdav;
 
@@ -95,7 +93,12 @@ class NextcloudCloudService extends BackupCloudService {
       serverUrl: normalizedServerUrl,
       username: username.trim(),
       appPassword: appPassword,
-      autoBackupEnabled: true,
+      // Reconnect (a revoked app password swapped for a new one) calls this
+      // for the *same* account without signing out first, so `_currentUser`
+      // still holds the prior preference — preserve it rather than silently
+      // re-enabling auto-backup for someone who'd turned it off. A genuinely
+      // fresh connect has no `_currentUser` yet, so it still defaults on.
+      autoBackupEnabled: _currentUser?.autoBackupEnabled ?? true,
       folderName: sanitizeFolderName(folderName),
     );
 
@@ -145,14 +148,13 @@ class NextcloudCloudService extends BackupCloudService {
       await _client!.ping();
       return true;
     } catch (e) {
-      // App passwords don't refresh themselves — if the ping fails the
-      // credentials were revoked server-side, so the user must reconnect.
-      throw exp.AuthException(
-        'Nextcloud credentials are no longer valid: $e',
-        exp.AuthExceptionType.tokenRevoked,
-        context: 'reauthenticateIfNeeded',
-        serviceType: serviceType,
-      );
+      // App passwords don't refresh themselves, so a confirmed 401/403 does
+      // mean the credentials were revoked server-side and the user must
+      // reconnect — but a transient network/DNS/timeout failure is not that,
+      // and must not be reported as needing reconnect (changing credentials
+      // can't fix an outage). Route through the same classifier the rest of
+      // this service uses so the two cases aren't conflated.
+      throw _buildException(e, 'reauthenticateIfNeeded');
     }
   }
 
@@ -235,15 +237,22 @@ class NextcloudCloudService extends BackupCloudService {
 
     return _executeWithRetry(
       methodName: 'downloadFileBytes',
-      operation: () => _readBytes(client, fileId),
+      // Unlike getFileContent below, a 404 here must NOT be swallowed to
+      // null: this is the raw read backfillFromOtherService uses to source
+      // an asset from another connected service, and it specifically needs
+      // a 404 to surface as a FileOperationException (via _buildException,
+      // through the catch in _executeWithRetry) so it can clear the stale
+      // cloudDestinations entry instead of retrying the same missing file
+      // forever.
+      operation: () => _readBytes(client, fileId, swallow404: false),
     );
   }
 
-  Future<List<int>?> _readBytes(webdav.Client client, String fileId) async {
+  Future<List<int>?> _readBytes(webdav.Client client, String fileId, {bool swallow404 = true}) async {
     try {
       return await client.read(fileId);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 404) return null;
+      if (swallow404 && e.response?.statusCode == 404) return null;
       rethrow;
     }
   }

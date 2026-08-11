@@ -69,8 +69,6 @@ class BackupServiceTile extends StatelessWidget {
       subtitle = Text(service.currentUser?.identifier ?? '...');
       onPressed = () => ShowBackupServiceRoute(service: service).push(context);
 
-      final needsAttention = status.connectionStatus == BackupConnectionStatus.needServicePermission;
-
       switch (status.connectionStatus) {
         case BackupConnectionStatus.unknownError:
           subtitle = Text(tr('list_tile.backup.unknown_error'));
@@ -88,7 +86,12 @@ class BackupServiceTile extends StatelessWidget {
           break;
       }
 
-      if (!needsAttention && provider.allYearSynced) {
+      // Only paint the success/synced subtitle when THIS service's own
+      // status is ready — allYearSynced is a global flag (year-file
+      // freshness across every service), so an unknownError/noInternet
+      // service must still show its own state even if another service made
+      // the global flag true.
+      if (status.connectionStatus == BackupConnectionStatus.readyToSync && provider.allYearSynced) {
         subtitle = Text(
           DateFormatHelper.yMEd_jmNullable(
                 provider.lastSyncedAt,

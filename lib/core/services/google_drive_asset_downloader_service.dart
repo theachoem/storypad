@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/google_user_object.dart';

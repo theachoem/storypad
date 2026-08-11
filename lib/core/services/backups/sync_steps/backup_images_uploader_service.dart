@@ -375,8 +375,28 @@ class BackupImagesUploaderService {
     // per-asset skip.
     try {
       final file = io.File(asset.localFilePath);
-      await file.create(recursive: true);
-      await file.writeAsBytes(bytes);
+      await file.parent.create(recursive: true);
+
+      // Write to a temp path and rename into place only once the write is
+      // fully flushed — writing directly to the final path would leave a
+      // truncated/empty file there if the write failed partway, and the
+      // next sync's `localFile` check would treat that as a valid asset
+      // and upload the corrupted bytes onward.
+      final tempFile = io.File('${file.path}.part');
+      try {
+        await tempFile.writeAsBytes(bytes, flush: true);
+        await tempFile.rename(file.path);
+      } catch (e) {
+        if (await tempFile.exists()) {
+          try {
+            await tempFile.delete();
+          } catch (_) {
+            // Best-effort cleanup — the write/rename failure below is what
+            // actually matters and must still propagate.
+          }
+        }
+        rethrow;
+      }
     } on io.FileSystemException catch (e) {
       throw exp.ServiceException(
         'Not enough local storage to backfill asset ${asset.id}: $e',

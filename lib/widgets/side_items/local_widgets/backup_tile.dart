@@ -33,6 +33,8 @@ class BackupTile extends StatelessWidget {
     Widget subtitle = const Text("...");
     Widget? action;
 
+    final aggregateStatus = provider.isSignedIn ? _aggregateConnectionStatus(provider) : null;
+
     if (!provider.isSignedIn) {
       leading = const Icon(SpIcons.cloudOff);
       title = Text(tr("list_tile.backup.title"));
@@ -43,7 +45,7 @@ class BackupTile extends StatelessWidget {
         onPressed: () => onNavigate(const DataBackupRoute()),
       );
     } else {
-      switch (_aggregateConnectionStatus(provider)) {
+      switch (aggregateStatus) {
         case .unknownError:
           leading = const Icon(SpIcons.cloudOff);
           title = Text(tr("list_tile.backup.title"));
@@ -96,7 +98,11 @@ class BackupTile extends StatelessWidget {
       }
     }
 
-    if (provider.allYearSynced) {
+    // Don't let a global "all years synced" flag paint a success state over
+    // a real per-service problem — e.g. a previously-synced Drive plus a
+    // revoked Nextcloud credential can still leave allYearSynced true, since
+    // it only tracks year-file freshness, not per-service connection health.
+    if (aggregateStatus == BackupConnectionStatus.readyToSync && provider.allYearSynced) {
       leading = Icon(_connectedServiceIcon(provider));
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;

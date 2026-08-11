@@ -12,7 +12,6 @@ import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/google_user_storage.dart';
 
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class _GoogleAuthClient extends http.BaseClient {

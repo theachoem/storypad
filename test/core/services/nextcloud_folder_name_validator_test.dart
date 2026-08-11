@@ -61,5 +61,30 @@ void main() {
         NextcloudFolderNameValidationError.invalidCharacters,
       );
     });
+
+    test('checks UTF-8 byte length, not UTF-16 code units', () {
+      // Each 'あ' is one UTF-16 code unit (so String.length undercounts it)
+      // but three UTF-8 bytes — 250 of them is 750 bytes, well past what a
+      // WebDAV server/filesystem actually allows for one path segment.
+      final segment = 'あ' * 250;
+      expect(segment.length, 250); // would have passed the old (buggy) check
+      expect(
+        NextcloudFolderNameValidator.validate(segment),
+        NextcloudFolderNameValidationError.segmentTooLong,
+      );
+    });
+
+    test('accepts a multi-byte segment within the real byte limit', () {
+      final segment = 'あ' * 83; // 249 bytes
+      expect(NextcloudFolderNameValidator.validate(segment), isNull);
+    });
+
+    test('rejects a multi-byte segment just over the real byte limit', () {
+      final segment = 'あ' * 84; // 252 bytes
+      expect(
+        NextcloudFolderNameValidator.validate(segment),
+        NextcloudFolderNameValidationError.segmentTooLong,
+      );
+    });
   });
 }
