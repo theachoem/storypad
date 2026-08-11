@@ -19,7 +19,7 @@
   "button.cursor_left": "Sola Hareket Et",
   "button.cursor_right": "Sağa Hareket Et",
   "button.delete": "Sil",
-  "button.delete_from_google_drive": "Google Drive'dan sil",
+  "button.delete_from_args": "{SP_SERVICES} tablosundan sil",
   "button.dimiss": "Vazgeç",
   "button.discard": "Geri Al",
   "button.discard_draft": "Taslağı Geri Al",

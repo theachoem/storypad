@@ -213,6 +213,36 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[serviceType.id]?[identifier]?['file_id'];
   }
 
+  /// Every service this asset has an upload record for — e.g. to label a
+  /// delete confirmation "Delete from Google Drive, Nextcloud" rather than
+  /// assuming Drive is the only place it could live.
+  List<BackupServiceType> get uploadedServiceTypes =>
+      BackupServiceType.values.where((type) => cloudDestinations[type.id]?.isNotEmpty == true).toList();
+
+  /// Every (serviceType, identifier, fileId) this asset has been uploaded
+  /// to, across every connected service — unlike [getGoogleDriveIdForEmail]
+  /// and friends, this isn't scoped to one provider. Used wherever an asset
+  /// needs to be fully cleaned up or fully described: deleting it must
+  /// remove every remote copy, not just Drive's, and the asset info sheet
+  /// should list every destination, not just Drive's.
+  List<({BackupServiceType serviceType, String identifier, String fileId})> get allCloudDestinations {
+    final destinations = <({BackupServiceType serviceType, String identifier, String fileId})>[];
+
+    for (final serviceType in BackupServiceType.values) {
+      final forService = cloudDestinations[serviceType.id];
+      if (forService == null) continue;
+
+      for (final entry in forService.entries) {
+        final fileId = entry.value['file_id'];
+        if (fileId != null) {
+          destinations.add((serviceType: serviceType, identifier: entry.key, fileId: fileId));
+        }
+      }
+    }
+
+    return destinations;
+  }
+
   Future<AssetDbModel?> save({
     bool runCallbacks = true,
   }) async => db.set(this, runCallbacks: runCallbacks);

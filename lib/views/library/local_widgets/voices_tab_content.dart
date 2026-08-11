@@ -284,21 +284,16 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
     AssetDbModel asset,
     int storyCount,
   ) {
-    if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
-      return SpPopMenuItem(
-        leadingIconData: SpIcons.delete,
-        titleStyle: TextStyle(color: ColorScheme.of(context).error),
-        title: tr("button.delete_from_google_drive"),
-        onPressed: () => _deleteAsset(context, asset, storyCount),
-      );
-    } else {
-      return SpPopMenuItem(
-        leadingIconData: SpIcons.delete,
-        titleStyle: TextStyle(color: ColorScheme.of(context).error),
-        title: tr("button.delete"),
-        onPressed: () => _deleteAsset(context, asset, storyCount),
-      );
-    }
+    final uploadedTo = asset.uploadedServiceTypes;
+
+    return SpPopMenuItem(
+      leadingIconData: SpIcons.delete,
+      titleStyle: TextStyle(color: ColorScheme.of(context).error),
+      title: uploadedTo.isEmpty
+          ? tr("button.delete")
+          : tr("button.delete_from_args", namedArgs: {'SP_SERVICES': uploadedTo.map((e) => e.displayName).join(', ')}),
+      onPressed: () => _deleteAsset(context, asset, storyCount),
+    );
   }
 
   Future<void> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {

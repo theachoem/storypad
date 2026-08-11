@@ -19,7 +19,7 @@
   "button.cursor_left": "Move Left",
   "button.cursor_right": "Move Right",
   "button.delete": "Delete",
-  "button.delete_from_google_drive": "Delete from Google Drive",
+  "button.delete_from_args": "Delete from {SP_SERVICES}",
   "button.dimiss": "Dismiss",
   "button.discard": "Discard",
   "button.discard_draft": "Discard Draft",

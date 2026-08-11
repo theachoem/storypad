@@ -19,7 +19,7 @@
   "button.cursor_left": "Przesuń w lewo",
   "button.cursor_right": "Przesuń w prawo",
   "button.delete": "Usuwać",
-  "button.delete_from_google_drive": "Usuń z Dysku Google",
+  "button.delete_from_args": "Usuń z {SP_SERVICES}",
   "button.dimiss": "Odrzucać",
   "button.discard": "Wyrzucać",
   "button.discard_draft": "Odrzuć wersję roboczą",

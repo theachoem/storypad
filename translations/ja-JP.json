@@ -19,7 +19,7 @@
   "button.cursor_left": "左へ移動",
   "button.cursor_right": "右に進む",
   "button.delete": "削除",
-  "button.delete_from_google_drive": "Googleドライブから削除",
+  "button.delete_from_args": "{SP_SERVICES}から削除します",
   "button.dimiss": "却下する",
   "button.discard": "破棄",
   "button.discard_draft": "下書きを破棄",

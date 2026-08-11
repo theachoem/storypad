@@ -19,7 +19,7 @@
   "button.cursor_left": "왼쪽으로 이동",
   "button.cursor_right": "오른쪽으로 이동",
   "button.delete": "삭제",
-  "button.delete_from_google_drive": "Google Drive에서 삭제",
+  "button.delete_from_args": "{SP_SERVICES}에서 삭제",
   "button.dimiss": "닫기",
   "button.discard": "버리기",
   "button.discard_draft": "초안 버리기",

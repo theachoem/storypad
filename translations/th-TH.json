@@ -19,7 +19,7 @@
   "button.cursor_left": "เลื่อนไปทางซ้าย",
   "button.cursor_right": "เลื่อนไปทางขวา",
   "button.delete": "ลบ",
-  "button.delete_from_google_drive": "ลบออกจาก Google Drive แล้ว",
+  "button.delete_from_args": "ลบออกจาก {SP_SERVICES}",
   "button.dimiss": "อนุญาตให้ออกไป",
   "button.discard": "ทิ้ง",
   "button.discard_draft": "ทิ้งร่าง",

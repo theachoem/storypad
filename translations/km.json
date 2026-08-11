@@ -19,7 +19,7 @@
   "button.cursor_left": "ផ្លាស់ទីទៅឆ្វេង",
   "button.cursor_right": "ផ្លាស់ទីទៅស្តាំ",
   "button.delete": "លុប",
-  "button.delete_from_google_drive": "លុបចេញពី Google Drive",
+  "button.delete_from_args": "លុបចេញពី {SP_SERVICES}",
   "button.dimiss": "បដិសេធ",
   "button.discard": "លុបចោលការផ្លាស់ប្តូរ",
   "button.discard_draft": "បោះបង់សេចក្តីព្រាង",

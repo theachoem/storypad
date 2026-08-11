@@ -19,7 +19,7 @@
   "button.cursor_left": "向左移动",
   "button.cursor_right": "向右移动",
   "button.delete": "删除",
-  "button.delete_from_google_drive": "从 Google 云端硬盘中删除",
+  "button.delete_from_args": "从 {SP_SERVICES} 中删除",
   "button.dimiss": "关闭",
   "button.discard": "丢弃",
   "button.discard_draft": "丢弃草稿",

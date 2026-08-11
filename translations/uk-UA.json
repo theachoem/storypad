@@ -19,7 +19,7 @@
   "button.cursor_left": "Рухатися ліворуч",
   "button.cursor_right": "Рухатися праворуч",
   "button.delete": "Видалити",
-  "button.delete_from_google_drive": "Видалити з Google Drive",
+  "button.delete_from_args": "Видалити з {SP_SERVICES}",
   "button.dimiss": "Відхилити",
   "button.discard": "Відкинути",
   "button.discard_draft": "Відкинути чернетку",

@@ -52,40 +52,38 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<bool> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
     AnalyticsService.instance.logDeleteAsset(asset: asset);
 
-    final provider = context.read<BackupProvider>();
-    final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+    final destinations = asset.allCloudDestinations;
 
-    // when image is not yet upload, allow delete locally.
-    if (uploadedEmails.isEmpty) {
+    // Never uploaded anywhere — safe to delete locally right away.
+    if (destinations.isEmpty) {
       await asset.delete();
       return true;
     }
 
-    if (provider.currentGoogleUser?.email == null) return false;
-    final fileId = asset.getGoogleDriveIdForEmail(provider.currentGoogleUser!.email);
+    final provider = context.read<BackupProvider>();
 
-    if (fileId != null) {
-      bool? deleted;
-      bool? notFound;
+    // Every destination (across every service, not just Drive) must be
+    // deleted — or already confirmed gone via 404 — before the local record
+    // goes. Losing the local copy while a remote one still exists would
+    // orphan it with no way to find it again.
+    for (final destination in destinations) {
+      final service = provider.repository.getService(destination.serviceType);
+
+      bool deleted = false;
+      bool notFound = false;
 
       try {
-        deleted = await provider.repository.googleDriveService.deleteFile(fileId);
+        deleted = await service.deleteFile(destination.fileId);
       } catch (e) {
         if (e is exp.FileOperationException) {
           notFound = e.statusCode == 404;
         }
       }
 
-      if (notFound == true || deleted == true) {
-        await asset.delete();
-        return true;
-      }
-    } else {
-      // Allow delete db asset when no file ID for current email found.
-      await asset.delete();
-      return true;
+      if (!deleted && !notFound) return false;
     }
 
-    return false;
+    await asset.delete();
+    return true;
   }
 }
