@@ -102,7 +102,11 @@ class BackupTile extends StatelessWidget {
     // a real per-service problem — e.g. a previously-synced Drive plus a
     // revoked Nextcloud credential can still leave allYearSynced true, since
     // it only tracks year-file freshness, not per-service connection health.
-    if (aggregateStatus == BackupConnectionStatus.readyToSync && provider.allYearSynced) {
+    // pendingMediaCount is tracked separately for the same reason: media
+    // deferred by the Wi-Fi-only setting doesn't move allYearSynced either.
+    if (aggregateStatus == BackupConnectionStatus.readyToSync &&
+        provider.allYearSynced &&
+        provider.pendingMediaCount == 0) {
       leading = Icon(_connectedServiceIcon(provider));
       subtitle = Text(DateFormatHelper.yMEd_jmNullable(provider.lastSyncedAt, context.locale) ?? '...');
       action = null;

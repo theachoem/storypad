@@ -87,14 +87,16 @@ class BackupServiceTile extends StatelessWidget {
       }
 
       // Only paint the success/synced subtitle when THIS service's own
-      // status is ready — allYearSynced is a global flag (year-file
-      // freshness across every service), so an unknownError/noInternet
-      // service must still show its own state even if another service made
-      // the global flag true.
-      if (status.connectionStatus == BackupConnectionStatus.readyToSync && provider.allYearSynced) {
+      // status is ready AND it has actually completed a sync at least once
+      // — connectionStatus can turn readyToSync right after connecting
+      // (a plain ping), before any of the 4 sync steps have run. Show this
+      // service's own lastSyncedAt, not provider.lastSyncedAt (a global max
+      // across every service) — otherwise a freshly-connected Nextcloud tile
+      // could show Drive's timestamp despite never having synced itself.
+      if (status.connectionStatus == BackupConnectionStatus.readyToSync && status.lastSyncedAt != null) {
         subtitle = Text(
           DateFormatHelper.yMEd_jmNullable(
-                provider.lastSyncedAt,
+                status.lastSyncedAt,
                 context.locale,
               ) ??
               '...',

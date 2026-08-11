@@ -74,17 +74,20 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
       // not just a provider — if the user switched accounts (Drive) or
       // reconnected under a different folder (Nextcloud) since this asset was
       // uploaded, the currently signed-in credential is the *wrong* one for
-      // this destination. There's no credential retained for the old
-      // account/folder to delete it properly, so skip it rather than either
-      // acting against the wrong account or blocking local deletion forever
-      // over a destination that's now unreachable.
+      // this destination, and there's no credential retained for the old
+      // one to delete it properly. This must NOT fall through to deleting
+      // the local record below: doing so would silently orphan the still-live
+      // remote copy with no trace left to ever find it again. Report it as
+      // undeleted, same as any other destination that couldn't be confirmed
+      // gone — the user sees the item wasn't removed rather than losing the
+      // only record of where it lives.
       if (destination.identifier != service.currentUser?.destinationKey) {
         AppLogger.d(
-          'LibraryViewModel#_deleteAsset: skipping remote delete for asset ${asset.id} on '
+          'LibraryViewModel#_deleteAsset: cannot delete asset ${asset.id} on '
           '${destination.serviceType.displayName} — destination ${destination.identifier} does not match the '
           'currently signed-in account (${service.currentUser?.destinationKey}).',
         );
-        continue;
+        return false;
       }
 
       bool deleted = false;

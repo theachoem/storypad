@@ -403,6 +403,16 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
             _hasInternet = connectionResult.data!.hasInternet;
             _syncState.onConnectionChecked(connectionResult.data!.statusByService);
           }
+        } else {
+          // onServiceSyncFinished alone leaves connectionStatus untouched —
+          // if this service was readyToSync before the run (which is what
+          // let it run at all), a non-auth failure would otherwise go
+          // completely invisible: the tile keeps painting the last-known
+          // success state through repeated silent failures.
+          final failureStatus = result.error?.type == BackupErrorType.network
+              ? BackupConnectionStatus.noInternet
+              : BackupConnectionStatus.unknownError;
+          _syncState.onConnectionChecked({service.serviceType: failureStatus});
         }
 
         _syncState.onServiceSyncFinished(service.serviceType);

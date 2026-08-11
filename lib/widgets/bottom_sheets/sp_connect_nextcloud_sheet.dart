@@ -261,14 +261,32 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
         initialValue: controller.text,
         validator: _requiredValidator,
         builder: (state) {
-          return CupertinoTextField(
-            controller: controller,
-            placeholder: hint,
-            keyboardType: keyboardType,
-            obscureText: obscureText,
-            autocorrect: false,
-            autofocus: autofocus,
-            onChanged: (value) => state.didChange(value),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4.0,
+            children: [
+              CupertinoTextField(
+                controller: controller,
+                placeholder: hint,
+                keyboardType: keyboardType,
+                obscureText: obscureText,
+                autocorrect: false,
+                autofocus: autofocus,
+                onChanged: (value) => state.didChange(value),
+              ),
+              // Material's TextFormField shows this via its own decoration
+              // automatically — Cupertino has no equivalent, so without this
+              // a failed validation (e.g. tapping Connect with an empty
+              // field) blocks submission with zero visible feedback.
+              if (state.hasError)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Text(
+                    state.errorText!,
+                    style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).error),
+                  ),
+                ),
+            ],
           );
         },
       );
