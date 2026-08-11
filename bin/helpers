@@ -84,6 +84,25 @@ function sync_private_keys() {
   if [ ! -f "$DEST/dart_defines/community.json" ]; then
     echo '{}' > "$DEST/dart_defines/community.json"
   fi
+
+  sync_app_store_connect_auth_keys
+}
+
+# xcrun altool/notarytool only look for AuthKey_*.p8 files in a fixed set of
+# locations (cwd/private_keys, ~/private_keys, ~/.private_keys,
+# ~/.appstoreconnect/private_keys) - bin/.tmp/private_keys isn't one of them.
+# Mirror the keys into Apple's documented standard location so uploads keep
+# working regardless of where private_keys/ is checked out in the repo.
+function sync_app_store_connect_auth_keys() {
+  DEST_KEYS_DIR="$HOME/.appstoreconnect/private_keys"
+  shopt -s nullglob
+  AUTH_KEYS=(bin/.tmp/private_keys/AuthKey_*.p8)
+  shopt -u nullglob
+
+  if [ ${#AUTH_KEYS[@]} -gt 0 ]; then
+    mkdir -p "$DEST_KEYS_DIR"
+    cp "${AUTH_KEYS[@]}" "$DEST_KEYS_DIR/"
+  fi
 }
 
 # Echoes DEBUG_KEYSTORE_PATH (as android/app/build.gradle.kts needs it, relative to

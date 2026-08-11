@@ -98,7 +98,8 @@ function build_ipa() {
     --export-options-plist=$PROVISIONING_EXPORT_PATH"
 }
 
-# xcrun CLI will automatically find the actual key at bin/.tmp/private_keys/AuthKey_<apikey>.p8
+# sync_private_keys mirrors AuthKey_<apikey>.p8 into ~/.appstoreconnect/private_keys/,
+# which is where the xcrun CLI actually looks for it.
 function upload_ipa_to_app_store() {
   FLAVOR=$1
 
