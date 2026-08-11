@@ -6,6 +6,10 @@ enum ServiceExceptionType {
   decompressionFailed,
   dataCorrupted,
   unexpectedError,
+
+  /// The device's own local disk is full — distinct from [QuotaException],
+  /// which is about remote cloud storage quota.
+  localStorageFull,
 }
 
 /// Service-level business logic exceptions
@@ -33,6 +37,8 @@ class ServiceException extends BackupException {
         return 'Backup data is corrupted and cannot be restored.';
       case ServiceExceptionType.unexpectedError:
         return 'An unexpected error occurred. Please try again or contact support.';
+      case ServiceExceptionType.localStorageFull:
+        return 'Not enough storage space on this device. Free up space and try again.';
     }
   }
 }

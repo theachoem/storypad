@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
-import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
+import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
@@ -27,12 +27,9 @@ class BackupLatestCheckerResponse {
 }
 
 class BackupLatestCheckerService {
-  final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
-  Stream<BackupSyncMessage?> get message => controller.stream;
+  BackupLatestCheckerService({required BackupSyncMessenger messenger}) : _messenger = messenger;
 
-  void reset() {
-    controller.add(null);
-  }
+  final BackupSyncMessenger _messenger;
 
   Future<BackupLatestCheckerResponse> start(
     BackupCloudService cloudService,
@@ -48,33 +45,33 @@ class BackupLatestCheckerService {
         lastDbUpdatedAtByYear,
       );
     } on exp.AuthException catch (e) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: e.userFriendlyMessage,
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.checkLatest,
+        processing: false,
+        success: false,
+        message: e.userFriendlyMessage,
       );
       rethrow; // Let repository handle auth exceptions
     } on exp.BackupException catch (e) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: e.userFriendlyMessage,
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.checkLatest,
+        processing: false,
+        success: false,
+        message: e.userFriendlyMessage,
       );
       return BackupLatestCheckerResponse(
         hasError: true,
       );
     } catch (e, stackTrace) {
       AppLogger.d('$runtimeType#start unexpected error: $e $stackTrace');
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: 'Failed to check backup due to unexpected error.',
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.checkLatest,
+        processing: false,
+        success: false,
+        message: 'Failed to check backup due to unexpected error.',
       );
       return BackupLatestCheckerResponse(
         hasError: true,
@@ -95,7 +92,13 @@ class BackupLatestCheckerService {
       );
     }
 
-    controller.add(BackupSyncMessage(processing: true, success: null, message: null));
+    _messenger.report(
+      serviceType: cloudService.serviceType,
+      step: SyncStep.checkLatest,
+      processing: true,
+      success: null,
+      message: null,
+    );
 
     // Fetch yearly backups from this service
     final Map<int, CloudFileObject> backupCloudFileByYear = {};
@@ -110,12 +113,12 @@ class BackupLatestCheckerService {
 
     if (remoteYearlyBackupFiles.isEmpty) {
       AppLogger.d('No backups found in ${cloudService.serviceType.displayName}');
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'No backups found',
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.checkLatest,
+        processing: false,
+        success: true,
+        message: 'No backups found',
       );
 
       return BackupLatestCheckerResponse(
@@ -143,12 +146,12 @@ class BackupLatestCheckerService {
     }
 
     if (yearsToDownload.isEmpty) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'Everything is up to date',
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.checkLatest,
+        processing: false,
+        success: true,
+        message: 'Everything is up to date',
       );
 
       return BackupLatestCheckerResponse(
@@ -191,12 +194,12 @@ class BackupLatestCheckerService {
       }
     }
 
-    controller.add(
-      BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: 'Found ${backupContentsByYear.length} year(s) to sync',
-      ),
+    _messenger.report(
+      serviceType: cloudService.serviceType,
+      step: SyncStep.checkLatest,
+      processing: false,
+      success: true,
+      message: 'Found ${backupContentsByYear.length} year(s) to sync',
     );
 
     return BackupLatestCheckerResponse(

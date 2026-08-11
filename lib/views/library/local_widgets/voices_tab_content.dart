@@ -241,10 +241,10 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
   }
 
   Widget _buildBackupStatus(AssetDbModel asset, BackupProvider provider, BuildContext context) {
-    Widget child;
+    final destination = asset.matchingCloudDestinationFor(provider.signedInServices);
 
-    if (!asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
-      child = CircleAvatar(
+    if (destination == null) {
+      return CircleAvatar(
         radius: 10.0,
         backgroundColor: ColorScheme.of(context).bootstrap.warning.color,
         foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
@@ -253,29 +253,17 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
           size: 14.0,
         ),
       );
-    } else if (asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
-      child = CircleAvatar(
-        radius: 10.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.success.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
-        child: const Icon(
-          SpIcons.cloudDone,
-          size: 14.0,
-        ),
-      );
-    } else {
-      child = CircleAvatar(
-        radius: 10.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.info.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
-        child: const Icon(
-          SpIcons.warning,
-          size: 14.0,
-        ),
-      );
     }
 
-    return child;
+    return CircleAvatar(
+      radius: 10.0,
+      backgroundColor: ColorScheme.of(context).bootstrap.success.color,
+      foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
+      child: const Icon(
+        SpIcons.cloudDone,
+        size: 14.0,
+      ),
+    );
   }
 
   SpPopMenuItem _buildDeleteButton(
@@ -284,21 +272,16 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
     AssetDbModel asset,
     int storyCount,
   ) {
-    if (asset.getGoogleDriveForEmails()?.isNotEmpty == true) {
-      return SpPopMenuItem(
-        leadingIconData: SpIcons.delete,
-        titleStyle: TextStyle(color: ColorScheme.of(context).error),
-        title: tr("button.delete_from_google_drive"),
-        onPressed: () => _deleteAsset(context, asset, storyCount),
-      );
-    } else {
-      return SpPopMenuItem(
-        leadingIconData: SpIcons.delete,
-        titleStyle: TextStyle(color: ColorScheme.of(context).error),
-        title: tr("button.delete"),
-        onPressed: () => _deleteAsset(context, asset, storyCount),
-      );
-    }
+    final uploadedTo = asset.uploadedServiceTypes;
+
+    return SpPopMenuItem(
+      leadingIconData: SpIcons.delete,
+      titleStyle: TextStyle(color: ColorScheme.of(context).error),
+      title: uploadedTo.isEmpty
+          ? tr("button.delete")
+          : tr("button.delete_from_args", namedArgs: {'SP_SERVICES': uploadedTo.map((e) => e.displayName).join(', ')}),
+      onPressed: () => _deleteAsset(context, asset, storyCount),
+    );
   }
 
   Future<void> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {

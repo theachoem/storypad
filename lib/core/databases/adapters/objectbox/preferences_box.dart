@@ -14,6 +14,7 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   _DefinedPreference<String> storageQuotaFor(BackupServiceType serviceType) {
     return switch (serviceType) {
       BackupServiceType.google_drive => _DefinedPreference<String>(id: 3, key: 'storage_quota_google_drive'),
+      BackupServiceType.nextcloud => _DefinedPreference<String>(id: 5, key: 'storage_quota_nextcloud'),
     };
   }
 
@@ -22,6 +23,10 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
       BackupServiceType.google_drive => _DefinedPreference<DateTime>(
         id: 4,
         key: 'storage_quota_fetched_at_google_drive',
+      ),
+      BackupServiceType.nextcloud => _DefinedPreference<DateTime>(
+        id: 6,
+        key: 'storage_quota_fetched_at_nextcloud',
       ),
     };
   }

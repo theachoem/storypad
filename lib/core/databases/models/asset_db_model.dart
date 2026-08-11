@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
@@ -203,6 +204,75 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[BackupServiceType.google_drive.id]?[email]?['file_id'];
   }
 
+  /// Generic counterpart to [getGoogleDriveIdForEmail] — usable for any
+  /// connected service, e.g. to check whether another already-signed-in
+  /// service has this asset before it's ever been downloaded to this device.
+  String? cloudFileIdFor({
+    required BackupServiceType serviceType,
+    required String identifier,
+  }) {
+    return cloudDestinations[serviceType.id]?[identifier]?['file_id'];
+  }
+
+  /// Every service this asset has an upload record for — e.g. to label a
+  /// delete confirmation "Delete from Google Drive, Nextcloud" rather than
+  /// assuming Drive is the only place it could live.
+  List<BackupServiceType> get uploadedServiceTypes =>
+      BackupServiceType.values.where((type) => cloudDestinations[type.id]?.isNotEmpty == true).toList();
+
+  /// Every (serviceType, identifier, fileId) this asset has been uploaded
+  /// to, across every connected service — unlike [getGoogleDriveIdForEmail]
+  /// and friends, this isn't scoped to one provider. Used wherever an asset
+  /// needs to be fully cleaned up or fully described: deleting it must
+  /// remove every remote copy, not just Drive's, and the asset info sheet
+  /// should list every destination, not just Drive's.
+  List<({BackupServiceType serviceType, String identifier, String fileId})> get allCloudDestinations {
+    final destinations = <({BackupServiceType serviceType, String identifier, String fileId})>[];
+
+    for (final serviceType in BackupServiceType.values) {
+      final forService = cloudDestinations[serviceType.id];
+      if (forService == null) continue;
+
+      for (final entry in forService.entries) {
+        final fileId = entry.value['file_id'];
+        if (fileId != null) {
+          destinations.add((serviceType: serviceType, identifier: entry.key, fileId: fileId));
+        }
+      }
+    }
+
+    return destinations;
+  }
+
+  /// Every [allCloudDestinations] entry that matches a currently signed-in
+  /// account, in the same order as [allCloudDestinations] — a destination
+  /// left over from a since-switched account/folder doesn't count, since it
+  /// can't be acted on with today's credentials. An asset can have valid
+  /// copies on more than one connected service; callers that can retry
+  /// (e.g. [BackupAssetDownloaderService]) should try each rather than
+  /// assuming the first is the only option.
+  List<({BackupServiceType serviceType, String identifier, String fileId})> matchingCloudDestinationsFor(
+    List<BackupCloudService> signedInServices,
+  ) {
+    return allCloudDestinations
+        .where(
+          (d) => signedInServices.any(
+            (s) => s.serviceType == d.serviceType && s.currentUser?.destinationKey == d.identifier,
+          ),
+        )
+        .toList();
+  }
+
+  /// The first of [matchingCloudDestinationsFor], if any — for callers that
+  /// only need to know whether *some* destination is reachable (e.g. the
+  /// Library status badges, the export view model's downloadable check),
+  /// not which ones or in what order.
+  ({BackupServiceType serviceType, String identifier, String fileId})? matchingCloudDestinationFor(
+    List<BackupCloudService> signedInServices,
+  ) {
+    return matchingCloudDestinationsFor(signedInServices).firstOrNull;
+  }
+
   Future<AssetDbModel?> save({
     bool runCallbacks = true,
   }) async => db.set(this, runCallbacks: runCallbacks);
@@ -238,6 +308,27 @@ class AssetDbModel extends BaseDbModel {
       'file_id': cloudFile.id,
       'file_name': cloudFile.fileName!,
     };
+
+    return copyWith(
+      cloudDestinations: newCloudDestinations,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  /// Removal counterpart to [copyWithCloudFile] — drops a single stale
+  /// destination (e.g. once a download 404 confirms the remote copy is
+  /// actually gone), so [pendingAssets]-style lookups stop treating this
+  /// service+identifier as a valid source/destination for this asset.
+  AssetDbModel copyWithoutCloudFile({
+    required BackupServiceType serviceType,
+    required String identifier,
+  }) {
+    Map<String, Map<String, Map<String, String>>> newCloudDestinations = {...cloudDestinations};
+
+    final forService = newCloudDestinations[serviceType.id];
+    if (forService != null && forService.containsKey(identifier)) {
+      newCloudDestinations[serviceType.id] = {...forService}..remove(identifier);
+    }
 
     return copyWith(
       cloudDestinations: newCloudDestinations,

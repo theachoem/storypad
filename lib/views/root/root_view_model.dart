@@ -21,7 +21,10 @@ class RootViewModel extends ChangeNotifier with DebounchedCallback {
           return;
         }
 
-        if (backupProvider.readyToSynced && !backupProvider.allYearSynced) {
+        // recheckAndSync (via autoSync) already re-checks the connection and
+        // isolates any broken service on its own — no need to pre-gate on a
+        // single global "ready" status here.
+        if (!backupProvider.allYearSynced) {
           backupProvider.autoSync(context: context);
         }
       }

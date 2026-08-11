@@ -1,21 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
+import 'package:storypad/core/services/assets/backup_asset_downloader_service.dart';
 import 'package:storypad/core/services/assets/db_asset_loader_service.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 
 class SpDbAssetLoader extends StatefulWidget {
   const SpDbAssetLoader({
     super.key,
     required this.builder,
-    required this.currentUser,
+    required this.signedInServices,
     required this.relativePath,
   });
 
   final String relativePath;
-  final GoogleUserObject? currentUser;
+  final List<BackupCloudService> signedInServices;
   final Widget Function(BuildContext context, File? file, Object? error) builder;
 
   static Widget withUser({
@@ -25,9 +26,16 @@ class SpDbAssetLoader extends StatefulWidget {
     return Consumer<BackupProvider>(
       builder: (context, backupProvider, child) {
         return SpDbAssetLoader(
-          key: ValueKey('SpDbAssetLoader-$relativePath-${backupProvider.currentGoogleUser?.refreshedAt}'),
+          // Signed-in accounts rarely change mid-session, but a rebuild on
+          // reconnect/sign-out must still bust this widget's state — the
+          // account set itself (not any single account's refresh timestamp)
+          // is what determines which destination is even reachable now.
+          key: ValueKey(
+            'SpDbAssetLoader-$relativePath-'
+            '${backupProvider.signedInServices.map((s) => s.currentUser?.destinationKey).join(',')}',
+          ),
           relativePath: relativePath,
-          currentUser: backupProvider.currentGoogleUser,
+          signedInServices: backupProvider.signedInServices,
           builder: builder,
         );
       },
@@ -36,11 +44,11 @@ class SpDbAssetLoader extends StatefulWidget {
 
   static Future<File> load(
     String relativePath,
-    GoogleUserObject? currentUser,
+    List<BackupCloudService> signedInServices,
   ) async {
     return DbAssetLoaderService.instance.load(
       relativePath: relativePath,
-      currentUser: currentUser,
+      signedInServices: signedInServices,
     );
   }
 
@@ -50,7 +58,7 @@ class SpDbAssetLoader extends StatefulWidget {
 
 class _SpDbAssetLoaderState extends State<SpDbAssetLoader> {
   String get relativePath => widget.relativePath;
-  GoogleUserObject? get currentUser => widget.currentUser;
+  List<BackupCloudService> get signedInServices => widget.signedInServices;
 
   File? file;
   Object? error;
@@ -63,9 +71,15 @@ class _SpDbAssetLoaderState extends State<SpDbAssetLoader> {
 
   Future<void> load() async {
     try {
-      file = await SpDbAssetLoader.load(relativePath, currentUser);
+      file = await SpDbAssetLoader.load(relativePath, signedInServices);
     } catch (e) {
-      error = e is GoogleDriveAssetDownloaderException ? e.message : e;
+      if (e is BackupAssetDownloadException) {
+        error = e.message;
+      } else if (e is exp.BackupException) {
+        error = e.userFriendlyMessage;
+      } else {
+        error = e;
+      }
     }
 
     if (mounted) setState(() {});

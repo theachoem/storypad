@@ -19,7 +19,7 @@ class StorageInfoService {
   }
 
   /// Suffix used for in-progress/atomic asset downloads (see
-  /// GoogleDriveAssetDownloaderService). A leftover `*.download` file means a
+  /// BackupAssetDownloaderService). A leftover `*.download` file means a
   /// download was interrupted; it's never a valid asset.
   static const String downloadTempSuffix = '.download';
 

@@ -6,7 +6,8 @@ enum QuotaExceptionType {
   dailyLimitExceeded,
 }
 
-/// Google Drive API quota and storage exceptions
+/// Cloud provider quota and storage exceptions — any [BackupCloudService]
+/// (Drive's API quota, Nextcloud's WebDAV 507) can throw one of these.
 class QuotaException extends BackupException {
   final QuotaExceptionType type;
 
@@ -22,7 +23,8 @@ class QuotaException extends BackupException {
   String get userFriendlyMessage {
     switch (type) {
       case QuotaExceptionType.storageQuotaExceeded:
-        return 'Google Drive storage is full. Please free up space or upgrade your storage plan.';
+        final provider = serviceType?.displayName ?? 'Cloud';
+        return '$provider storage is full. Please free up space or upgrade your storage plan.';
       case QuotaExceptionType.rateLimitExceeded:
         return 'Too many requests. Please wait a moment before trying again.';
       case QuotaExceptionType.dailyLimitExceeded:

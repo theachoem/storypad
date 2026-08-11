@@ -1,6 +1,7 @@
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/device_info_object.dart';
+import 'package:webdav_client/webdav_client.dart' as webdav;
 
 class CloudFileObject {
   final String? fileName;
@@ -30,6 +31,24 @@ class CloudFileObject {
       createdAt: file.createdTime,
       modifiedAt: file.modifiedTime,
       trashed: file.trashed,
+    );
+  }
+
+  /// [remotePath] is the file's full WebDAV path — used as [id] since Nextcloud
+  /// has no separate stable file-ID concept exposed over plain WebDAV.
+  factory CloudFileObject.fromNextcloud(
+    webdav.File file, {
+    required String remotePath,
+    bool trashed = false,
+  }) {
+    return CloudFileObject(
+      fileName: file.name,
+      id: remotePath,
+      description: null,
+      sizeInBytes: file.size,
+      createdAt: file.cTime,
+      modifiedAt: file.mTime,
+      trashed: trashed,
     );
   }
 
