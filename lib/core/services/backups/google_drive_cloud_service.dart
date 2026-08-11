@@ -12,7 +12,6 @@ import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/google_user_storage.dart';
 
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class _GoogleAuthClient extends http.BaseClient {
@@ -269,42 +268,47 @@ class GoogleDriveCloudService extends BackupCloudService {
         CloudFileObject? fileInfo = await findFileById(file.id);
         if (fileInfo == null) return null;
 
-        Object? media = await client.files.get(
-          fileInfo.id,
-          downloadOptions: drive.DownloadOptions.fullMedia,
-        );
-        if (media is! drive.Media) return null;
+        final bytes = await _fetchMediaBytes(client, fileInfo.id);
+        if (bytes == null) return null;
 
         if (file.getFileInfo()?.hasCompression == true) {
-          List<int> dataStore = [];
-
-          final completer = Completer<List<int>>();
-          media.stream.listen(
-            (data) => dataStore.insertAll(dataStore.length, data),
-            onDone: () => completer.complete(dataStore),
-            onError: (error) => completer.completeError(error),
-            cancelOnError: true,
-          );
-
-          final bytes = await completer.future;
           final decodedBytes = io.gzip.decode(bytes);
           return (utf8.decode(decodedBytes), bytes.length);
         } else {
-          List<int> dataStore = [];
-
-          Completer completer = Completer();
-          media.stream.listen(
-            (data) => dataStore.insertAll(dataStore.length, data),
-            onDone: () => completer.complete(utf8.decode(dataStore)),
-            onError: (error) => completer.completeError(error),
-            cancelOnError: true,
-          );
-
-          await completer.future;
-          return (utf8.decode(dataStore), dataStore.length);
+          return (utf8.decode(bytes), bytes.length);
         }
       },
     );
+  }
+
+  @override
+  Future<List<int>?> downloadFileBytes(String fileId) async {
+    drive.DriveApi? client = await googleDriveClient;
+    if (client == null) return null;
+
+    return _executeWithRetry(
+      methodName: 'downloadFileBytes',
+      operation: () => _fetchMediaBytes(client, fileId),
+    );
+  }
+
+  Future<List<int>?> _fetchMediaBytes(drive.DriveApi client, String fileId) async {
+    Object? media = await client.files.get(
+      fileId,
+      downloadOptions: drive.DownloadOptions.fullMedia,
+    );
+    if (media is! drive.Media) return null;
+
+    List<int> dataStore = [];
+    final completer = Completer<List<int>>();
+    media.stream.listen(
+      (data) => dataStore.insertAll(dataStore.length, data),
+      onDone: () => completer.complete(dataStore),
+      onError: (error) => completer.completeError(error),
+      cancelOnError: true,
+    );
+
+    return completer.future;
   }
 
   @override

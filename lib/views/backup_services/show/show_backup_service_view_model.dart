@@ -8,11 +8,13 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/nextcloud_user_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/backups/show/show_backup_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
 import 'show_backup_service_view.dart';
 
 class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -146,5 +148,37 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
         await load();
       },
     );
+  }
+
+  /// A revoked grant needs fresh user input, not a silent retry: OAuth
+  /// re-consent for Drive (same account), or a new app password for
+  /// Nextcloud — pre-filled with the server/username that's still known
+  /// since a revoked auth no longer wipes the stored account.
+  Future<void> reconnect(BuildContext context) async {
+    if (serviceType == BackupServiceType.nextcloud) {
+      final service = backupProvider.repository.getService(serviceType);
+      final currentUser = service.currentUser as NextcloudUserObject?;
+
+      final connected = await SpConnectNextcloudSheet(
+        initialServerUrl: currentUser?.serverUrl,
+        initialUsername: currentUser?.username,
+        initialFolderName: currentUser?.folderName,
+      ).show<bool>(context: context);
+
+      if (connected != true || !context.mounted) return;
+
+      // A successful connect() only fixes the stored credentials — without
+      // this, this service's status in BackupSyncStateStore (driving the
+      // sidebar tile and the Data & Backup list) stays stuck on "needs
+      // permission" until the next unrelated sync happens to run.
+      await MessengerService.of(context).showLoading(
+        debugSource: '$runtimeType#reconnect',
+        future: () => backupProvider.recheckAndSync(services: [service]),
+      );
+      await load();
+    } else {
+      await backupProvider.requestScope(context, serviceType);
+      await load();
+    }
   }
 }

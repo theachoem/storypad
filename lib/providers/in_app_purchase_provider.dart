@@ -129,7 +129,14 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     UserChangeType? changeType,
   }) async {
     final services = BackupProvider.repoInstance.services;
-    final eligibleServices = services.where((s) => s.serviceType.hasGlobalUserId).toList();
+    // Must actually have a usable global ID right now, not just be signed in
+    // to a service *type* that's capable of one — a signed-out service
+    // earlier in the list (e.g. Drive) would otherwise get picked over an
+    // actually-connected one (e.g. Nextcloud-only), and a Nextcloud account
+    // on localhost/a bare IP has a null globalId (not globally unique) even
+    // while signed in, which must fall through to the anonymous/logout path
+    // below rather than being treated as a usable identity.
+    final eligibleServices = services.where((s) => s.currentUser?.globalId != null).toList();
 
     // Resolve the active service: prefer the user's selection, fall back to first available.
     BackupCloudService? activeService = eligibleServices

@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 enum BackupServiceType {
-  google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true);
+  google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true),
+  nextcloud(id: 'nextcloud', displayName: 'Nextcloud', hasGlobalUserId: true);
 
   final String id;
   final String displayName;
   final bool hasGlobalUserId;
 
   bool get googleDrive => this == google_drive;
+  bool get nextcloudService => this == nextcloud;
 
   const BackupServiceType({
     required this.id,
@@ -25,6 +27,8 @@ enum BackupServiceType {
     switch (this) {
       case BackupServiceType.google_drive:
         return SpIcons.googleDrive;
+      case BackupServiceType.nextcloud:
+        return SpIcons.nextcloud;
     }
   }
 }

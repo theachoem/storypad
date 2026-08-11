@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -59,27 +58,11 @@ class SpAssetInfoSheet extends BaseBottomSheet {
                 title: Text(tr("list_tile.file_size.title")),
                 subtitle: Text(fileSize),
               ),
-            if (context.read<BackupProvider>().currentGoogleUser != null)
+            for (final destination in asset.allCloudDestinations)
               ListTile(
-                leading: const Icon(SpIcons.googleDrive),
-                title: Text(
-                  tr(
-                    'general.uploaded_to_args',
-                    namedArgs: {
-                      'URL':
-                          asset.getGoogleDriveForEmails()?.contains(
-                                context.read<BackupProvider>().currentGoogleUser!.email,
-                              ) ==
-                              true
-                          ? context.read<BackupProvider>().currentGoogleUser!.email
-                          : tr('general.na'),
-                    },
-                  ),
-                ),
-                subtitle: Text(
-                  asset.getGoogleDriveUrlForEmail(context.read<BackupProvider>().currentGoogleUser!.email) ??
-                      tr('general.na'),
-                ),
+                leading: Icon(destination.serviceType.icon),
+                title: Text(destination.serviceType.displayName),
+                subtitle: Text(destination.identifier),
               ),
             SizedBox(height: MediaQuery.of(context).padding.bottom),
           ],

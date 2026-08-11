@@ -7,6 +7,7 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
+import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'library_view.dart';
@@ -52,40 +53,58 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<bool> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
     AnalyticsService.instance.logDeleteAsset(asset: asset);
 
-    final provider = context.read<BackupProvider>();
-    final uploadedEmails = asset.getGoogleDriveForEmails() ?? [];
+    final destinations = asset.allCloudDestinations;
 
-    // when image is not yet upload, allow delete locally.
-    if (uploadedEmails.isEmpty) {
+    // Never uploaded anywhere — safe to delete locally right away.
+    if (destinations.isEmpty) {
       await asset.delete();
       return true;
     }
 
-    if (provider.currentGoogleUser?.email == null) return false;
-    final fileId = asset.getGoogleDriveIdForEmail(provider.currentGoogleUser!.email);
+    final provider = context.read<BackupProvider>();
 
-    if (fileId != null) {
-      bool? deleted;
-      bool? notFound;
+    // Every destination (across every service, not just Drive) must be
+    // deleted — or already confirmed gone via 404 — before the local record
+    // goes. Losing the local copy while a remote one still exists would
+    // orphan it with no way to find it again.
+    for (final destination in destinations) {
+      final service = provider.repository.getService(destination.serviceType);
+
+      // A destination is scoped to a specific account/folder (destinationKey),
+      // not just a provider — if the user switched accounts (Drive) or
+      // reconnected under a different folder (Nextcloud) since this asset was
+      // uploaded, the currently signed-in credential is the *wrong* one for
+      // this destination, and there's no credential retained for the old
+      // one to delete it properly. This must NOT fall through to deleting
+      // the local record below: doing so would silently orphan the still-live
+      // remote copy with no trace left to ever find it again. Report it as
+      // undeleted, same as any other destination that couldn't be confirmed
+      // gone — the user sees the item wasn't removed rather than losing the
+      // only record of where it lives.
+      if (destination.identifier != service.currentUser?.destinationKey) {
+        AppLogger.d(
+          'LibraryViewModel#_deleteAsset: cannot delete asset ${asset.id} on '
+          '${destination.serviceType.displayName} — destination ${destination.identifier} does not match the '
+          'currently signed-in account (${service.currentUser?.destinationKey}).',
+        );
+        return false;
+      }
+
+      bool deleted = false;
+      bool notFound = false;
 
       try {
-        deleted = await provider.repository.googleDriveService.deleteFile(fileId);
+        deleted = await service.deleteFile(destination.fileId);
       } catch (e) {
         if (e is exp.FileOperationException) {
           notFound = e.statusCode == 404;
         }
       }
 
-      if (notFound == true || deleted == true) {
-        await asset.delete();
-        return true;
-      }
-    } else {
-      // Allow delete db asset when no file ID for current email found.
-      await asset.delete();
-      return true;
+      if (!deleted && !notFound) return false;
     }
 
-    return false;
+    await asset.delete();
+    return true;
   }
 }

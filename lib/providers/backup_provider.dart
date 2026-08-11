@@ -16,53 +16,40 @@ import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
 import 'package:storypad/core/services/backups/google_drive_linux_cloud_service.dart';
+import 'package:storypad/core/services/backups/nextcloud_cloud_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
+import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
-import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
+import 'package:storypad/providers/backup_sync_state_store.dart';
 import 'package:storypad/views/home/home_view.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   BackupProvider() {
-    step1MessageStream.listen((message) {
+    repository.syncMessages.listen((message) {
       AppLogger.d(
-        '$runtimeType: step1 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
+        '$runtimeType: ${message.step} message success: ${message.success} processing: ${message.processing} message: ${message.message}',
       );
-      step1Message = message;
-      notifyListeners();
+      _syncState.onSyncMessage(message);
+
+      // Only past the quick pre-check steps (upload assets/check latest) is a
+      // sync "deep" enough to be worth surfacing in the home app bar — see
+      // isSyncingDeepStep.
+      if (message.step == SyncStep.importChanges || message.step == SyncStep.uploadBackup) {
+        _reachedDeepSyncStep = true;
+      }
     });
 
-    step2MessageStream.listen((message) {
-      AppLogger.d(
-        '$runtimeType: step2 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
-      );
-      step2Message = message;
-      notifyListeners();
-    });
-
-    step3MessageStream.listen((message) {
-      AppLogger.d(
-        '$runtimeType: step3 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
-      );
-      step3Message = message;
-      notifyListeners();
-    });
-
-    step4MessageStream.listen((message) {
-      AppLogger.d(
-        '$runtimeType: step4 message success: ${message?.success} processing: ${message?.processing} message: ${message?.message}',
-      );
-      step4Message = message;
-      notifyListeners();
-    });
+    _syncState.addListener(notifyListeners);
 
     for (var database in BackupRepository.databases) {
       database.addGlobalListener(_databaseListener);
@@ -89,14 +76,18 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
   static final BackupRepository repoInstance = _createRepoInstance();
   static BackupRepository _createRepoInstance() {
+    final messenger = BackupSyncMessenger();
+
     return BackupRepository(
       restoreService: RestoreBackupService(),
-      step1ImagesUploader: BackupImagesUploaderService(),
-      step2LatestBackupChecker: BackupLatestCheckerService(),
-      step3LatestBackupImporter: BackupImporterService(),
-      step4NewBackupUploader: BackupUploaderService(),
+      messenger: messenger,
+      step1ImagesUploader: BackupImagesUploaderService(messenger: messenger),
+      step2LatestBackupChecker: BackupLatestCheckerService(messenger: messenger),
+      step3LatestBackupImporter: BackupImporterService(messenger: messenger),
+      step4NewBackupUploader: BackupUploaderService(messenger: messenger),
       internetChecker: InternetCheckerService(),
       googleDriveService: _createGoogleDriveService(),
+      nextcloudService: NextcloudCloudService(),
       importHistoryStorage: BackupImportHistoryStorage(),
     );
   }
@@ -110,24 +101,23 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   final NetworkTypeService _networkTypeService = const NetworkTypeService();
   BackupRepository get repository => repoInstance;
 
+  final BackupSyncStateStore _syncState = BackupSyncStateStore();
+  ServiceSyncStatus statusFor(BackupServiceType type) => _syncState.statusFor(type);
+
   GoogleUserObject? get currentGoogleUser => repository.currentGoogleUser;
   bool get isSignedIn => repository.isSignedIn;
 
   /// Get all authenticated cloud service users for asset downloads
   List<CloudServiceUser> get availableUsers => repository.availableUsers;
 
-  Stream<BackupSyncMessage?> get step1MessageStream => repository.step1MessageStream;
-  Stream<BackupSyncMessage?> get step2MessageStream => repository.step2MessageStream;
-  Stream<BackupSyncMessage?> get step3MessageStream => repository.step3MessageStream;
-  Stream<BackupSyncMessage?> get step4MessageStream => repository.step4MessageStream;
+  /// Set once a sync run's messages reach import/upload — see the
+  /// constructor's `syncMessages` listener. Reset at the start of every run.
+  bool _reachedDeepSyncStep = false;
 
-  BackupSyncMessage? step1Message;
-  BackupSyncMessage? step2Message;
-  BackupSyncMessage? step3Message;
-  BackupSyncMessage? step4Message;
-
-  BackupConnectionStatus? _connectionStatus;
-  BackupConnectionStatus? get connectionStatus => _connectionStatus;
+  /// Whether the home app bar should show its "we're syncing" banner — only
+  /// once a run is past the quick pre-check steps, so a fast no-op check
+  /// doesn't flash the banner for no reason.
+  bool get isSyncingDeepStep => _syncing && _reachedDeepSyncStep;
 
   bool get allYearSynced =>
       _lastDbUpdatedAtByYear?.entries.every(
@@ -135,7 +125,10 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       ) ==
       true;
 
-  bool get readyToSynced => _connectionStatus == BackupConnectionStatus.readyToSync;
+  /// Whether the last connectivity check found internet at all — the one
+  /// remaining global gate on [recheckAndSync]. Per-service auth/permission
+  /// problems no longer block the whole batch; see [statusFor].
+  bool _hasInternet = true;
 
   DateTime? get lastSyncedAt => _lastSyncedAtByYear?.values.whereType<DateTime>().fold<DateTime?>(
     null,
@@ -182,10 +175,17 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   List<BackupCloudService> get autoBackupServices =>
       repository.services.where((service) => service.autoBackupEnabled).toList();
 
+  /// Every service with an active account — the set an asset could actually
+  /// be downloaded from right now. Used by [BackupAssetDownloaderService]
+  /// callers instead of assuming Drive is the only possible source.
+  List<BackupCloudService> get signedInServices => repository.services.where((service) => service.isSignedIn).toList();
+
   Future<void> _setupConnection() async {
     final connectionResult = await repository.checkConnection();
-    _connectionStatus = connectionResult.data;
-    notifyListeners();
+    if (connectionResult.data != null) {
+      _hasInternet = connectionResult.data!.hasInternet;
+      _syncState.onConnectionChecked(connectionResult.data!.statusByService);
+    }
 
     if (connectionResult.error != null) {
       AppLogger.d('Connection check failed: ${connectionResult.error!.message}');
@@ -214,12 +214,13 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     if (_syncing) return false;
 
     _syncing = true;
-    repository.resetMessages();
+    _reachedDeepSyncStep = false;
+    _syncState.onSyncQueueStarted(services.map((service) => service.serviceType).toList());
     notifyListeners();
 
     try {
       if (setupConnection) await _setupConnection();
-      if (!readyToSynced) return false;
+      if (!_hasInternet) return false;
 
       return await _syncBackupAcrossDevices(
         services: services,
@@ -227,6 +228,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       );
     } finally {
       _syncing = false;
+      _syncState.onSyncFinished();
       await refreshPendingMediaCount();
       notifyListeners();
     }
@@ -241,7 +243,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     if (result.isSuccess == true) {
       AnalyticsService.instance.logSignInWithGoogle();
 
-      _connectionStatus = BackupConnectionStatus.readyToSync;
+      _syncState.onConnectionChecked({serviceType: BackupConnectionStatus.readyToSync});
       _lastSyncedAtByYear = null;
       _lastDbUpdatedAtByYear = null;
     } else if (result.error != null) {
@@ -255,6 +257,37 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     notifyListeners();
+  }
+
+  Future<bool> connectNextcloud(
+    BuildContext context, {
+    required String serverUrl,
+    required String username,
+    required String appPassword,
+    String? folderName,
+  }) async {
+    final result = await repository.connectNextcloud(
+      serverUrl: serverUrl,
+      username: username,
+      appPassword: appPassword,
+      folderName: folderName,
+    );
+
+    if (result.isSuccess == true) {
+      _syncState.onConnectionChecked({BackupServiceType.nextcloud: BackupConnectionStatus.readyToSync});
+      _lastSyncedAtByYear = null;
+      _lastDbUpdatedAtByYear = null;
+    } else if (result.error != null) {
+      AppLogger.d('Nextcloud connect failed: ${result.error!.message}');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.error!.message)),
+        );
+      }
+    }
+
+    notifyListeners();
+    return result.isSuccess == true;
   }
 
   Future<void> requestScope(
@@ -294,14 +327,9 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
     AnalyticsService.instance.logSignOut();
 
-    _connectionStatus = null;
+    _syncState.resetService(serviceType);
     _lastSyncedAtByYear = null;
     _lastDbUpdatedAtByYear = null;
-
-    step1Message = null;
-    step2Message = null;
-    step3Message = null;
-    step4Message = null;
 
     if (result?.error != null) {
       AppLogger.d('Sign-out had issues: ${result!.error!.message}');
@@ -358,6 +386,9 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
       final serviceId = service.serviceType.id;
       attemptedSync = true;
+
+      _syncState.onServiceSyncStarted(service.serviceType);
+
       FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
 
       final result = await repository.sync(service, uploadAssets: uploadAssets);
@@ -368,9 +399,23 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         );
         if (result.error?.type == BackupErrorType.authentication) {
           final connectionResult = await repository.checkConnection();
-          _connectionStatus = connectionResult.data;
+          if (connectionResult.data != null) {
+            _hasInternet = connectionResult.data!.hasInternet;
+            _syncState.onConnectionChecked(connectionResult.data!.statusByService);
+          }
+        } else {
+          // onServiceSyncFinished alone leaves connectionStatus untouched —
+          // if this service was readyToSync before the run (which is what
+          // let it run at all), a non-auth failure would otherwise go
+          // completely invisible: the tile keeps painting the last-known
+          // success state through repeated silent failures.
+          final failureStatus = result.error?.type == BackupErrorType.network
+              ? BackupConnectionStatus.noInternet
+              : BackupConnectionStatus.unknownError;
+          _syncState.onConnectionChecked({service.serviceType: failureStatus});
         }
 
+        _syncState.onServiceSyncFinished(service.serviceType);
         // Skip to next service on failure
         continue;
       }
@@ -393,6 +438,13 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
           lastSyncedAtByYearPerService[entry.key] = entry.value.lastUpdatedAt;
         }
       }
+
+      // This service's own latest synced-at, independent of the cross-service merge below.
+      final serviceLastSyncedAt = lastSyncedAtByYearPerService.values.whereType<DateTime>().fold<DateTime?>(
+        null,
+        (latest, current) => latest == null || current.isAfter(latest) ? current : latest,
+      );
+      _syncState.onServiceSyncFinished(service.serviceType, lastSyncedAt: serviceLastSyncedAt);
 
       // Update global sync status using "Latest Wins" strategy:
       // - Compare timestamps across all services per year
@@ -417,6 +469,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   @override
   void dispose() {
     _autoSyncTriggerService.dispose();
+    _syncState.dispose();
     repository.dispose();
     super.dispose();
   }

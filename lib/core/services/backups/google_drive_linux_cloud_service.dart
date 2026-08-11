@@ -44,6 +44,9 @@ class GoogleDriveLinuxCloudService extends BackupCloudService {
   Future<(String, int)?> getFileContent(CloudFileObject file) async => null;
 
   @override
+  Future<List<int>?> downloadFileBytes(String fileId) async => null;
+
+  @override
   Future<bool> deleteFile(String cloudFileId) async => false;
 
   @override

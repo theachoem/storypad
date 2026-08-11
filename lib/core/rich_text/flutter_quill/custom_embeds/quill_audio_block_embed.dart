@@ -62,13 +62,12 @@ class _QuillAudioRendererState extends State<_QuillAudioRenderer> {
       throw StateError('Asset metadata not loaded');
     }
 
-    final currentUser = context.read<BackupProvider>().currentGoogleUser;
-    final downloader = GoogleDriveAssetDownloaderService();
+    final signedInServices = context.read<BackupProvider>().signedInServices;
+    final downloader = BackupAssetDownloaderService();
 
     return downloader.downloadAsset(
       asset: _asset!,
-      currentUser: currentUser,
-      localFile: _asset!.localFile,
+      signedInServices: signedInServices,
     );
   }
 

@@ -101,7 +101,7 @@ class SpMediaViewer extends StatefulWidget {
       if (path.startsWith('images/') || path.startsWith('audio/')) {
         imageProvider = SpDbImageProvider(
           relativePath: path,
-          currentUser: context.read<BackupProvider>().currentGoogleUser,
+          signedInServices: context.read<BackupProvider>().signedInServices,
         );
       } else if (path.startsWith('http')) {
         imageProvider = CachedNetworkImageProvider(path);

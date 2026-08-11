@@ -1,19 +1,15 @@
-import 'dart:async';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
-import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
+import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/restore_backup_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
 
 class BackupImporterService {
-  final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
+  BackupImporterService({required BackupSyncMessenger messenger}) : _messenger = messenger;
 
-  Stream<BackupSyncMessage?> get message => controller.stream;
-
-  void reset() {
-    controller.add(null);
-  }
+  final BackupSyncMessenger _messenger;
 
   Future<bool> start(
     RestoreBackupService restoreService,
@@ -27,11 +23,23 @@ class BackupImporterService {
 
     if (backupContentsByYear == null || backupContentsByYear.isEmpty) {
       AppLogger.d('$runtimeType#start completed: No backup contents to import.');
-      controller.add(BackupSyncMessage(processing: false, success: true, message: 'No new data to import.'));
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.importChanges,
+        processing: false,
+        success: true,
+        message: 'No new data to import.',
+      );
       return true;
     }
 
-    controller.add(BackupSyncMessage(processing: true, success: true, message: null));
+    _messenger.report(
+      serviceType: cloudService.serviceType,
+      step: SyncStep.importChanges,
+      processing: true,
+      success: true,
+      message: null,
+    );
 
     int totalChangesCount = 0;
     for (var entry in backupContentsByYear.entries) {
@@ -48,12 +56,12 @@ class BackupImporterService {
 
     await restoreService.notify();
 
-    controller.add(
-      BackupSyncMessage(
-        processing: false,
-        success: true,
-        message: '$totalChangesCount records are imported or updated.',
-      ),
+    _messenger.report(
+      serviceType: cloudService.serviceType,
+      step: SyncStep.importChanges,
+      processing: false,
+      success: true,
+      message: '$totalChangesCount records are imported or updated.',
     );
 
     return true;

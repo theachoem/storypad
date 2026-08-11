@@ -1,6 +1,6 @@
 enum BackupConnectionStatus {
   noInternet,
-  needGoogleDrivePermission,
+  needServicePermission,
   readyToSync,
   unknownError,
 }

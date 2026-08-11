@@ -18,6 +18,7 @@ dependencies:
   cupertino_icons: 1.0.9
   dart_quill_delta: 10.8.3
   device_info_plus: ^12.4.0
+  dio: ^5.11.0
   dismissible_page: 1.0.2
   dynamic_color: 1.8.1
   easy_localization: 3.0.8
@@ -52,6 +53,7 @@ dependencies:
   google_sign_in: 7.2.0
   googleapis: 16.0.0
   html_character_entities: 1.0.0+1
+  http: ^1.6.0
   image_picker: ^1.2.2
   in_app_review: ^2.0.12
   in_app_update: 4.2.5
@@ -83,6 +85,7 @@ dependencies:
   flutter_timezone: ^5.1.0
   volume_controller: ^3.6.0
   video_compress: ^3.1.4
+  webdav_client: ^1.2.2
 
 dev_dependencies:
   build_runner: ^2.15.0

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
@@ -7,7 +6,8 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/utils/backup_databases_to_backup_object_service.dart';
-import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
+import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
+import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/gzip_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -27,13 +27,9 @@ class BackupUploaderResponse {
 }
 
 class BackupUploaderService {
-  final StreamController<BackupSyncMessage?> controller = StreamController<BackupSyncMessage?>.broadcast();
+  BackupUploaderService({required BackupSyncMessenger messenger}) : _messenger = messenger;
 
-  Stream<BackupSyncMessage?> get message => controller.stream;
-
-  void reset() {
-    controller.add(null);
-  }
+  final BackupSyncMessenger _messenger;
 
   Future<BackupUploaderResponse> startStep4(
     BackupCloudService service,
@@ -44,12 +40,12 @@ class BackupUploaderService {
   ) async {
     try {
       if (lastDbUpdatedAtByYear == null || lastDbUpdatedAtByYear.isEmpty) {
-        controller.add(
-          BackupSyncMessage(
-            processing: false,
-            success: true,
-            message: 'No new stories to upload.',
-          ),
+        _messenger.report(
+          serviceType: service.serviceType,
+          step: SyncStep.uploadBackup,
+          processing: false,
+          success: true,
+          message: 'No new stories to upload.',
         );
 
         return BackupUploaderResponse(
@@ -66,31 +62,31 @@ class BackupUploaderService {
         existingYearlyBackups,
       );
     } on exp.AuthException catch (e) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: e.userFriendlyMessage,
-        ),
+      _messenger.report(
+        serviceType: service.serviceType,
+        step: SyncStep.uploadBackup,
+        processing: false,
+        success: false,
+        message: e.userFriendlyMessage,
       );
       rethrow; // Let repository handle auth exceptions
     } on exp.BackupException catch (e) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: e.userFriendlyMessage,
-        ),
+      _messenger.report(
+        serviceType: service.serviceType,
+        step: SyncStep.uploadBackup,
+        processing: false,
+        success: false,
+        message: e.userFriendlyMessage,
       );
       return BackupUploaderResponse(hasError: true);
     } catch (e, stackTrace) {
       AppLogger.d('$runtimeType#start unexpected error: $e $stackTrace');
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: false,
-          message: 'Failed to upload backup due to unexpected error.',
-        ),
+      _messenger.report(
+        serviceType: service.serviceType,
+        step: SyncStep.uploadBackup,
+        processing: false,
+        success: false,
+        message: 'Failed to upload backup due to unexpected error.',
       );
       return BackupUploaderResponse(hasError: true);
     }
@@ -128,12 +124,12 @@ class BackupUploaderService {
     }
 
     if (yearsToUpload.isEmpty) {
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: true,
-          message: 'No new stories to upload.',
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.uploadBackup,
+        processing: false,
+        success: true,
+        message: 'No new stories to upload.',
       );
 
       return BackupUploaderResponse(
@@ -142,7 +138,13 @@ class BackupUploaderService {
       );
     }
 
-    controller.add(BackupSyncMessage(processing: true, success: null, message: null));
+    _messenger.report(
+      serviceType: cloudService.serviceType,
+      step: SyncStep.uploadBackup,
+      processing: true,
+      success: null,
+      message: null,
+    );
 
     try {
       Map<int, CloudFileObject> uploadedYearlyFiles = {};
@@ -221,13 +223,13 @@ class BackupUploaderService {
         );
       }
 
-      controller.add(
-        BackupSyncMessage(
-          processing: false,
-          success: true,
-          message:
-              'Uploaded ${uploadedYearlyFiles.length} year(s) successfully to ${cloudService.serviceType.displayName}.',
-        ),
+      _messenger.report(
+        serviceType: cloudService.serviceType,
+        step: SyncStep.uploadBackup,
+        processing: false,
+        success: true,
+        message:
+            'Uploaded ${uploadedYearlyFiles.length} year(s) successfully to ${cloudService.serviceType.displayName}.',
       );
 
       return BackupUploaderResponse(
