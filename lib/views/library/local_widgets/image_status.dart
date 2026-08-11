@@ -13,7 +13,9 @@ class _ImageStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
+    final destination = asset.matchingCloudDestinationFor(provider.signedInServices);
+
+    if (destination == null) {
       return SpAssetStatusBadge(
         top: 8.0,
         right: 8.0,
@@ -23,27 +25,17 @@ class _ImageStatus extends StatelessWidget {
         foregroundColor: ColorScheme.of(context).bootstrap.warning.onColor,
         icon: SpIcons.cloudOff,
       );
-    } else if (asset.isGoogleDriveUploadedFor(provider.currentGoogleUser?.email)) {
-      return SpAssetStatusBadge(
-        top: 8.0,
-        right: 8.0,
-        radius: 16.0,
-        iconSize: 20.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.success.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
-        icon: SpIcons.cloudDone,
-        tooltipMessage: asset.getGoogleDriveUrlForEmail(provider.currentGoogleUser!.email),
-      );
-    } else {
-      return SpAssetStatusBadge(
-        top: 8.0,
-        right: 8.0,
-        radius: 16.0,
-        iconSize: 20.0,
-        backgroundColor: ColorScheme.of(context).bootstrap.info.color,
-        foregroundColor: ColorScheme.of(context).bootstrap.info.onColor,
-        icon: SpIcons.warning,
-      );
     }
+
+    return SpAssetStatusBadge(
+      top: 8.0,
+      right: 8.0,
+      radius: 16.0,
+      iconSize: 20.0,
+      backgroundColor: ColorScheme.of(context).bootstrap.success.color,
+      foregroundColor: ColorScheme.of(context).bootstrap.success.onColor,
+      icon: SpIcons.cloudDone,
+      tooltipMessage: '${destination.serviceType.displayName}: ${destination.identifier}',
+    );
   }
 }

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/objects/google_user_object.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/assets/backup_asset_downloader_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 
 /// Shared service for loading asset files with in-memory caching and deduplication.
@@ -28,7 +28,7 @@ class DbAssetLoaderService {
   /// On errors, removes in-flight entry to allow retry.
   Future<File> load({
     required String relativePath,
-    required GoogleUserObject? currentUser,
+    required List<BackupCloudService> signedInServices,
   }) {
     // Check if already cached and file still exists on disk
     final cached = _resolvedByRelativePath[relativePath];
@@ -46,7 +46,7 @@ class DbAssetLoaderService {
 
     _loadInternal(
           relativePath: relativePath,
-          currentUser: currentUser,
+          signedInServices: signedInServices,
         )
         .then((file) {
           _resolvedByRelativePath[relativePath] = file;
@@ -65,13 +65,13 @@ class DbAssetLoaderService {
 
   Future<File> _loadInternal({
     required String relativePath,
-    required GoogleUserObject? currentUser,
+    required List<BackupCloudService> signedInServices,
   }) async {
     int? id = AssetType.parseAssetId(relativePath);
     AssetType? type = AssetType.getTypeFromLink(relativePath);
 
     if (id == null || type == null) {
-      throw GoogleDriveAssetDownloaderException('$relativePath is invalid.');
+      throw BackupAssetDownloadException('$relativePath is invalid.');
     }
 
     String filePath = type.getStoragePath(id: id, extension: extension(relativePath));
@@ -82,19 +82,18 @@ class DbAssetLoaderService {
     AssetDbModel? asset = await AssetDbModel.db.find(id);
     File? localFile = asset?.localFile;
 
-    if (asset != null && localFile == null && currentUser != null) {
-      final downloader = GoogleDriveAssetDownloaderService();
+    if (asset != null && localFile == null && signedInServices.isNotEmpty) {
+      final downloader = BackupAssetDownloaderService();
       final localFilePath = await downloader.downloadAsset(
         asset: asset,
-        currentUser: currentUser,
-        localFile: localFile,
+        signedInServices: signedInServices,
       );
 
       return File(localFilePath);
     }
 
     if (localFile != null) return localFile;
-    throw GoogleDriveAssetDownloaderException('Asset file for $relativePath not found.');
+    throw BackupAssetDownloadException('Asset file for $relativePath not found.');
   }
 
   /// Remove oldest inserted cached entry if max capacity exceeded (FIFO eviction).

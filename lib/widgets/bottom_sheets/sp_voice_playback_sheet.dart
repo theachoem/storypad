@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/services/assets/backup_asset_downloader_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_voice_player.dart';
@@ -45,13 +45,12 @@ class _VoicePlaybackContent extends StatelessWidget {
   final double bottomPadding;
 
   Future<String> _downloadAudio(BuildContext context) async {
-    final currentUser = context.read<BackupProvider>().currentGoogleUser;
-    final downloader = GoogleDriveAssetDownloaderService();
+    final signedInServices = context.read<BackupProvider>().signedInServices;
+    final downloader = BackupAssetDownloaderService();
 
     return downloader.downloadAsset(
       asset: asset,
-      currentUser: currentUser,
-      localFile: asset.localFile,
+      signedInServices: signedInServices,
     );
   }
 

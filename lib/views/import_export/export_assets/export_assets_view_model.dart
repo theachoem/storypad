@@ -5,7 +5,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
-import 'package:storypad/core/services/google_drive_asset_downloader_service.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
+import 'package:storypad/core/services/assets/backup_asset_downloader_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
@@ -32,9 +34,9 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool get isDownloading => _isDownloading;
 
   /// Assets that couldn't be included in the last export — either nothing was
-  /// available to download (not backed up for the current user) or the download
-  /// failed (e.g. the Google Drive file is gone — 404). We export as much as
-  /// possible and report the rest as skipped.
+  /// available to download (not backed up to any currently signed-in account)
+  /// or the download failed (e.g. the remote file is gone — 404). We export
+  /// as much as possible and report the rest as skipped.
   final List<AssetDbModel> _skippedAssets = [];
 
   Map<AssetType, int> get assetCountsByType {
@@ -65,13 +67,13 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   /// Downloads any assets that aren't available locally so they can be exported.
   ///
-  /// Individual failures (e.g. a missing Google Drive file — 404) are skipped
-  /// and collected in [_skippedAssets] so we can still "export as much as
-  /// possible". Returns `false` only on an auth error (401/403), which affects
-  /// every download and means the caller should abort; disposal mid-download is
-  /// a graceful stop and returns `true`.
+  /// Individual failures (e.g. a missing file — 404) are skipped and
+  /// collected in [_skippedAssets] so we can still "export as much as
+  /// possible". Returns `false` only on an auth error, which affects every
+  /// remaining download for that service and means the caller should abort;
+  /// disposal mid-download is a graceful stop and returns `true`.
   Future<bool> downloadAssets(BuildContext context) async {
-    final currentUser = context.read<BackupProvider>().currentGoogleUser;
+    final signedInServices = context.read<BackupProvider>().signedInServices;
 
     _skippedAssets.clear();
 
@@ -92,18 +94,21 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
         // mid-download. Not a failure — just halt where we are.
         if (disposed) break;
 
-        // Not uploaded to Google Drive for this user — nothing to download.
-        if (currentUser == null || !asset.isGoogleDriveUploadedFor(currentUser.email)) {
+        // Not uploaded to any currently signed-in account — nothing to
+        // download. Same identity check as the downloader itself (a
+        // destination for a since-switched account doesn't count).
+        if (!_hasDownloadableDestination(asset, signedInServices)) {
           _skippedAssets.add(asset);
           continue;
         }
 
         try {
-          await GoogleDriveAssetDownloaderService().downloadAsset(asset: asset, currentUser: currentUser);
+          await BackupAssetDownloaderService().downloadAsset(asset: asset, signedInServices: signedInServices);
         } catch (e) {
-          // Auth errors affect every remaining download — surface and abort.
-          if (e is GoogleDriveAssetDownloaderException && e.isAuthError) {
-            if (context.mounted) MessengerService.of(context).showError(e.message);
+          // Auth errors affect every remaining download from that service —
+          // surface and abort rather than skip-and-continue.
+          if (e is exp.AuthException) {
+            if (context.mounted) MessengerService.of(context).showError(e.userFriendlyMessage);
             return false;
           }
 
@@ -122,6 +127,10 @@ class ExportAssetsViewModel extends ChangeNotifier with DisposeAwareMixin {
       _isDownloading = false;
       notifyListeners();
     }
+  }
+
+  bool _hasDownloadableDestination(AssetDbModel asset, List<BackupCloudService> signedInServices) {
+    return asset.matchingCloudDestinationFor(signedInServices) != null;
   }
 
   Future<void> exportAssets(BuildContext context) async {

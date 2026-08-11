@@ -175,6 +175,11 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   List<BackupCloudService> get autoBackupServices =>
       repository.services.where((service) => service.autoBackupEnabled).toList();
 
+  /// Every service with an active account — the set an asset could actually
+  /// be downloaded from right now. Used by [BackupAssetDownloaderService]
+  /// callers instead of assuming Drive is the only possible source.
+  List<BackupCloudService> get signedInServices => repository.services.where((service) => service.isSignedIn).toList();
+
   Future<void> _setupConnection() async {
     final connectionResult = await repository.checkConnection();
     if (connectionResult.data != null) {

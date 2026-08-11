@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/adapters/objectbox/assets_box.dart';
@@ -241,6 +242,25 @@ class AssetDbModel extends BaseDbModel {
     }
 
     return destinations;
+  }
+
+  /// The [allCloudDestinations] entry that matches a currently signed-in
+  /// account, if any — a destination left over from a since-switched
+  /// account/folder doesn't count, since it can't be acted on with today's
+  /// credentials. Single source of truth for "is this asset backed up
+  /// (from here)?" across every provider: used by the Library status badges,
+  /// [BackupAssetDownloaderService], and the export view model's
+  /// downloadable check.
+  ({BackupServiceType serviceType, String identifier, String fileId})? matchingCloudDestinationFor(
+    List<BackupCloudService> signedInServices,
+  ) {
+    return allCloudDestinations
+        .where(
+          (d) => signedInServices.any(
+            (s) => s.serviceType == d.serviceType && s.currentUser?.destinationKey == d.identifier,
+          ),
+        )
+        .firstOrNull;
   }
 
   Future<AssetDbModel?> save({

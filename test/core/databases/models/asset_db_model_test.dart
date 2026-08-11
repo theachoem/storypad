@@ -1,5 +1,11 @@
+import 'dart:io' as io;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
+import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/asset_type.dart';
 
@@ -111,4 +117,127 @@ void main() {
       expect(asset.allCloudDestinations, isEmpty);
     });
   });
+
+  group('AssetDbModel.matchingCloudDestinationFor', () {
+    test('is null when the asset has no destinations at all', () {
+      final asset = buildAsset(cloudDestinations: {});
+      final nextcloud = _FakeCloudService(currentUser: _FakeUser());
+
+      expect(asset.matchingCloudDestinationFor([nextcloud]), isNull);
+    });
+
+    test('is null when no signed-in service matches the destination\'s serviceType', () {
+      final asset = buildAsset(
+        cloudDestinations: {
+          BackupServiceType.nextcloud.id: {
+            'admin@example.com/StoryPad': {'file_id': '/StoryPad/images/1.jpg', 'file_name': '1.jpg'},
+          },
+        },
+      );
+      final drive = _FakeCloudService(currentUser: _FakeUser(), serviceType: BackupServiceType.google_drive);
+
+      expect(asset.matchingCloudDestinationFor([drive]), isNull);
+    });
+
+    test('is null when the destination belongs to a different (switched) account on the same service', () {
+      final asset = buildAsset(
+        cloudDestinations: {
+          BackupServiceType.nextcloud.id: {
+            'old-admin@example.com/StoryPad': {'file_id': '/StoryPad/images/1.jpg', 'file_name': '1.jpg'},
+          },
+        },
+      );
+      final nextcloud = _FakeCloudService(currentUser: _FakeUser(identifier: 'new-admin@example.com/StoryPad'));
+
+      expect(asset.matchingCloudDestinationFor([nextcloud]), isNull);
+    });
+
+    test('finds the destination matching the currently signed-in account', () {
+      final asset = buildAsset(
+        cloudDestinations: {
+          BackupServiceType.nextcloud.id: {
+            'admin@example.com/StoryPad': {'file_id': '/StoryPad/images/1.jpg', 'file_name': '1.jpg'},
+          },
+        },
+      );
+      final nextcloud = _FakeCloudService(currentUser: _FakeUser(identifier: 'admin@example.com/StoryPad'));
+
+      final destination = asset.matchingCloudDestinationFor([nextcloud]);
+
+      expect(destination?.serviceType, BackupServiceType.nextcloud);
+      expect(destination?.identifier, 'admin@example.com/StoryPad');
+      expect(destination?.fileId, '/StoryPad/images/1.jpg');
+    });
+  });
+}
+
+class _FakeUser implements CloudServiceUser {
+  _FakeUser({this.identifier = 'admin@example.com/StoryPad'});
+
+  @override
+  final BackupServiceType serviceType = BackupServiceType.nextcloud;
+
+  @override
+  final String identifier;
+
+  @override
+  String get destinationKey => identifier;
+
+  @override
+  List<({String label, String value})> get configuration => const [];
+
+  @override
+  String? get displayName => 'Tester';
+
+  @override
+  String? get photoUrl => null;
+
+  @override
+  bool? get autoBackupEnabled => true;
+
+  @override
+  String? get globalId => 'global-id';
+}
+
+class _FakeCloudService implements BackupCloudService {
+  _FakeCloudService({
+    required this.currentUser,
+    this.serviceType = BackupServiceType.nextcloud,
+  });
+
+  @override
+  final CloudServiceUser? currentUser;
+
+  @override
+  final BackupServiceType serviceType;
+
+  @override
+  bool get isSignedIn => currentUser != null;
+
+  @override
+  bool get autoBackupEnabled => true;
+
+  @override
+  bool get hasCompression => true;
+
+  @override
+  Future<List<int>?> downloadFileBytes(String fileId) async => null;
+
+  @override
+  Future<CloudFileObject?> uploadFile(String fileName, io.File file, {String? folderName}) async => null;
+
+  @override
+  Future<CloudStorageQuotaObject?> fetchStorageQuota() async => null;
+
+  @override
+  Future<List<CloudFileObject>> listFilesInFolder(String folderName) async => [];
+
+  @override
+  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async => {};
+
+  @override
+  Future<(String, int)?> getFileContent(CloudFileObject file) async => null;
+
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
