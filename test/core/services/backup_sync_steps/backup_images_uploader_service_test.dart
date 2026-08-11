@@ -280,6 +280,9 @@ class _FakeUser implements CloudServiceUser {
   String get destinationKey => identifier;
 
   @override
+  List<({String label, String value})> get configuration => const [];
+
+  @override
   String? get displayName => 'Tester';
 
   @override

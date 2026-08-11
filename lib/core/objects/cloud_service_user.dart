@@ -16,4 +16,11 @@ abstract class CloudServiceUser {
   /// Defaults to [identifier] for providers where the account itself *is*
   /// the destination (Drive).
   String get destinationKey => identifier;
+
+  /// Ordered label/value pairs describing this connection's configuration —
+  /// rendered on the service's detail screen (see `show_backup_service_content.dart`).
+  /// Empty by default: most providers (Drive) have nothing user-configurable
+  /// beyond the identifier already shown in the profile tile. Never include
+  /// secrets (passwords, tokens) here — this is displayed as plain text.
+  List<({String label, String value})> get configuration => const [];
 }

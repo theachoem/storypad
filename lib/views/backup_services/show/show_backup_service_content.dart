@@ -81,7 +81,13 @@ class _ShowBackupServiceContent extends StatelessWidget {
               viewModel.setAutoBackupEnabled(context, value);
             },
           ),
-        const Divider(),
+        const SizedBox(height: 4),
+        if ((viewModel.params.service.currentUser?.configuration ?? const []).isNotEmpty) ...[
+          const Divider(height: 1),
+          ..._buildConfigurationSection(context),
+        ],
+        const Divider(height: 1),
+        const SizedBox(height: 12),
         if (viewModel.error != null) ..._buildErrorSection(context),
         if (viewModel.error == null && viewModel.yearlyBackups!.isEmpty)
           Padding(
@@ -185,6 +191,19 @@ class _ShowBackupServiceContent extends StatelessWidget {
       ),
       subtitle: lastSyncAt != null ? Text(lastSyncAt) : null,
     );
+  }
+
+  List<Widget> _buildConfigurationSection(BuildContext context) {
+    final configuration = viewModel.params.service.currentUser?.configuration ?? const [];
+
+    return [
+      for (final entry in configuration)
+        ListTile(
+          leading: const Icon(SpIcons.info),
+          title: Text(entry.label),
+          subtitle: Text(entry.value),
+        ),
+    ];
   }
 
   List<Widget> _buildErrorSection(BuildContext context) {

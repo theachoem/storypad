@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
@@ -91,6 +92,13 @@ class NextcloudUserObject extends CloudServiceUser {
   /// default.
   @override
   String get destinationKey => '$identifier/${folderName ?? defaultFolderName}';
+
+  /// Deliberately excludes [appPassword] — this is rendered as plain text on
+  /// the service's detail screen, never a place for secrets.
+  @override
+  List<({String label, String value})> get configuration => [
+    (label: tr("input.nextcloud_folder_name.hint"), value: "~/${folderName ?? defaultFolderName}"),
+  ];
 
   Map<String, String> get authHeaders {
     final credentials = base64Encode(utf8.encode('$username:$appPassword'));

@@ -140,5 +140,24 @@ void main() {
       expect(folderA.identifier, folderB.identifier); // same account
       expect(folderA.destinationKey, isNot(folderB.destinationKey)); // different storage location
     });
+
+    test('configuration shows the folder as a ~/-prefixed path — never the app password', () {
+      final withFolder = NextcloudUserObject(
+        serverUrl: 'https://cloud.example.com',
+        username: 'thea',
+        appPassword: 'super-secret-token',
+        autoBackupEnabled: true,
+        folderName: 'Journals/MyDiary',
+      );
+
+      expect(withFolder.configuration, hasLength(1));
+      expect(withFolder.configuration.single.value, '~/Journals/MyDiary');
+      expect(withFolder.configuration.any((e) => e.value.contains('super-secret-token')), isFalse);
+    });
+
+    test('configuration folder falls back to the default when folderName is null', () {
+      expect(user.folderName, isNull);
+      expect(user.configuration.single.value, '~/${NextcloudUserObject.defaultFolderName}');
+    });
   });
 }
