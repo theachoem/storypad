@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 void main() {
   group('QuotaException', () {
@@ -8,6 +9,7 @@ void main() {
         'Storage full',
         QuotaExceptionType.storageQuotaExceeded,
         context: 'upload_backup',
+        serviceType: BackupServiceType.google_drive,
       );
 
       expect(exception.message, equals('Storage full'));
@@ -17,6 +19,31 @@ void main() {
       expect(
         exception.userFriendlyMessage,
         equals('Google Drive storage is full. Please free up space or upgrade your storage plan.'),
+      );
+    });
+
+    test('userFriendlyMessage names the actual provider, not always Google Drive', () {
+      const exception = QuotaException(
+        'Storage full',
+        QuotaExceptionType.storageQuotaExceeded,
+        serviceType: BackupServiceType.nextcloud,
+      );
+
+      expect(
+        exception.userFriendlyMessage,
+        equals('Nextcloud storage is full. Please free up space or upgrade your storage plan.'),
+      );
+    });
+
+    test('userFriendlyMessage falls back to a neutral provider name when serviceType is unset', () {
+      const exception = QuotaException(
+        'Storage full',
+        QuotaExceptionType.storageQuotaExceeded,
+      );
+
+      expect(
+        exception.userFriendlyMessage,
+        equals('Cloud storage is full. Please free up space or upgrade your storage plan.'),
       );
     });
 

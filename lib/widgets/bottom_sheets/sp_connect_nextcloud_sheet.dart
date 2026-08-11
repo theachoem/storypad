@@ -143,11 +143,19 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
               controller: _serverUrlController,
               hint: tr("input.nextcloud_server_url.hint"),
               keyboardType: TextInputType.url,
+              // Reconnect only replaces the app password for the same
+              // account — editing the server/username here would silently
+              // switch to a different account through connect() without any
+              // of the sign-out cleanup that normally goes with that (stale
+              // folder/auto-backup preference/import history would all
+              // carry over from the old account).
+              enabled: !widget.isReconnect,
             ),
             _buildField(
               controller: _usernameController,
               hint: tr("input.nextcloud_username.hint"),
               keyboardType: TextInputType.text,
+              enabled: !widget.isReconnect,
             ),
             _buildField(
               controller: _appPasswordController,
@@ -251,6 +259,7 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     bool autofocus = false,
+    bool enabled = true,
   }) {
     if (kIsCupertino) {
       return FormField<String>(
@@ -272,6 +281,7 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
                 obscureText: obscureText,
                 autocorrect: false,
                 autofocus: autofocus,
+                enabled: enabled,
                 onChanged: (value) => state.didChange(value),
               ),
               // Material's TextFormField shows this via its own decoration
@@ -299,6 +309,7 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
       obscureText: obscureText,
       autocorrect: false,
       autofocus: autofocus,
+      enabled: enabled,
       decoration: InputDecoration(hintText: hint),
     );
   }

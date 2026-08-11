@@ -85,21 +85,45 @@ class BackupAssetDownloaderService {
     // account/folder for that service — a stale destination left over from a
     // since-switched account can't be downloaded with today's credentials.
     // Same identity check used when deleting an asset (LibraryViewModel).
-    final destination = asset.matchingCloudDestinationFor(signedInServices);
+    final destinations = asset.matchingCloudDestinationsFor(signedInServices);
 
-    if (destination == null) {
+    if (destinations.isEmpty) {
       throw BackupAssetDownloadException(
         '${asset.relativeLocalFilePath} is not available from any currently connected account.',
       );
     }
 
-    final service = signedInServices.firstWhere((s) => s.serviceType == destination.serviceType);
+    // An asset can have valid copies on more than one connected service — a
+    // stale 404, revoked auth, or transient failure on the first one tried
+    // must not block loading it from a second, still-working provider. Only
+    // give up once every matching destination has failed.
+    List<int>? bytes;
+    Object? lastError;
 
-    final bytes = await service.downloadFileBytes(destination.fileId);
+    for (final destination in destinations) {
+      final service = signedInServices.firstWhere((s) => s.serviceType == destination.serviceType);
+
+      try {
+        final downloaded = await service.downloadFileBytes(destination.fileId);
+        if (downloaded == null) {
+          lastError = BackupAssetDownloadException(
+            '${asset.relativeLocalFilePath} could not be downloaded from ${destination.serviceType.displayName}.',
+          );
+          continue;
+        }
+
+        bytes = downloaded;
+        break;
+      } catch (e) {
+        lastError = e;
+      }
+    }
+
     if (bytes == null) {
-      throw BackupAssetDownloadException(
-        '${asset.relativeLocalFilePath} could not be downloaded from ${destination.serviceType.displayName}.',
-      );
+      throw lastError ??
+          BackupAssetDownloadException(
+            '${asset.relativeLocalFilePath} could not be downloaded from any currently connected account.',
+          );
     }
 
     if (bytes.length > maxDownloadSize) {

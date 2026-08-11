@@ -244,14 +244,14 @@ class AssetDbModel extends BaseDbModel {
     return destinations;
   }
 
-  /// The [allCloudDestinations] entry that matches a currently signed-in
-  /// account, if any — a destination left over from a since-switched
-  /// account/folder doesn't count, since it can't be acted on with today's
-  /// credentials. Single source of truth for "is this asset backed up
-  /// (from here)?" across every provider: used by the Library status badges,
-  /// [BackupAssetDownloaderService], and the export view model's
-  /// downloadable check.
-  ({BackupServiceType serviceType, String identifier, String fileId})? matchingCloudDestinationFor(
+  /// Every [allCloudDestinations] entry that matches a currently signed-in
+  /// account, in the same order as [allCloudDestinations] — a destination
+  /// left over from a since-switched account/folder doesn't count, since it
+  /// can't be acted on with today's credentials. An asset can have valid
+  /// copies on more than one connected service; callers that can retry
+  /// (e.g. [BackupAssetDownloaderService]) should try each rather than
+  /// assuming the first is the only option.
+  List<({BackupServiceType serviceType, String identifier, String fileId})> matchingCloudDestinationsFor(
     List<BackupCloudService> signedInServices,
   ) {
     return allCloudDestinations
@@ -260,7 +260,17 @@ class AssetDbModel extends BaseDbModel {
             (s) => s.serviceType == d.serviceType && s.currentUser?.destinationKey == d.identifier,
           ),
         )
-        .firstOrNull;
+        .toList();
+  }
+
+  /// The first of [matchingCloudDestinationsFor], if any — for callers that
+  /// only need to know whether *some* destination is reachable (e.g. the
+  /// Library status badges, the export view model's downloadable check),
+  /// not which ones or in what order.
+  ({BackupServiceType serviceType, String identifier, String fileId})? matchingCloudDestinationFor(
+    List<BackupCloudService> signedInServices,
+  ) {
+    return matchingCloudDestinationsFor(signedInServices).firstOrNull;
   }
 
   Future<AssetDbModel?> save({

@@ -100,8 +100,15 @@ class NextcloudUserObject extends CloudServiceUser {
   /// back to [defaultFolderName]) so every account has one consistent key
   /// format, rather than branching on whether it happens to match the
   /// default.
+  ///
+  /// The folder segment is percent-encoded (never contributes a raw `/`)
+  /// because [identifier] can itself contain a `/` (a path-based multi-tenant
+  /// deployment, e.g. `example.com/cloud-a`) and so can a nested folder name
+  /// (e.g. `cloud-a/StoryPad`) — plain-joining both with `/` would let
+  /// `example.com/cloud-a` + folder `StoryPad` collide with `example.com` +
+  /// folder `cloud-a/StoryPad`, both producing `example.com/cloud-a/StoryPad`.
   @override
-  String get destinationKey => '$identifier/${folderName ?? defaultFolderName}';
+  String get destinationKey => '$identifier/${Uri.encodeComponent(folderName ?? defaultFolderName)}';
 
   /// Deliberately excludes [appPassword] — this is rendered as plain text on
   /// the service's detail screen, never a place for secrets.

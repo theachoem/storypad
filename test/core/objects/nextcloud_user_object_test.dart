@@ -164,7 +164,7 @@ void main() {
       expect(explicitDefault.destinationKey, '${explicitDefault.identifier}/${NextcloudUserObject.defaultFolderName}');
     });
 
-    test('destinationKey folds in a custom folder name', () {
+    test('destinationKey folds in a custom folder name, percent-encoding its own slashes', () {
       final customFolder = NextcloudUserObject(
         serverUrl: 'https://cloud.example.com',
         username: 'thea',
@@ -173,7 +173,30 @@ void main() {
         folderName: 'Journals/MyDiary',
       );
 
-      expect(customFolder.destinationKey, '${customFolder.identifier}/Journals/MyDiary');
+      expect(customFolder.destinationKey, '${customFolder.identifier}/Journals%2FMyDiary');
+    });
+
+    test('destinationKey is unambiguous when a deployment path and a nested folder could otherwise collide', () {
+      // Without escaping, "example.com/cloud-a" + folder "StoryPad" and
+      // "example.com" + folder "cloud-a/StoryPad" both naively join to
+      // "example.com/cloud-a/StoryPad" — two genuinely different
+      // installs/folders that must never be treated as the same destination.
+      final deploymentPath = NextcloudUserObject(
+        serverUrl: 'https://example.com/cloud-a',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+        folderName: 'StoryPad',
+      );
+      final nestedFolder = NextcloudUserObject(
+        serverUrl: 'https://example.com',
+        username: 'admin',
+        appPassword: 'pw',
+        autoBackupEnabled: true,
+        folderName: 'cloud-a/StoryPad',
+      );
+
+      expect(deploymentPath.destinationKey, isNot(nestedFolder.destinationKey));
     });
 
     test('destinationKey differs between two accounts using different folders, '

@@ -169,13 +169,54 @@ void main() {
       expect(destination?.fileId, '/StoryPad/images/1.jpg');
     });
   });
+
+  group('AssetDbModel.matchingCloudDestinationsFor', () {
+    test('is empty when nothing matches', () {
+      final asset = buildAsset(cloudDestinations: {});
+      final nextcloud = _FakeCloudService(currentUser: _FakeUser());
+
+      expect(asset.matchingCloudDestinationsFor([nextcloud]), isEmpty);
+    });
+
+    test('returns every matching destination, not just the first, when both Drive and Nextcloud have it', () {
+      final asset = buildAsset(
+        cloudDestinations: {
+          BackupServiceType.google_drive.id: {
+            'tester@example.com': {'file_id': 'drive-id', 'file_name': '1.jpg'},
+          },
+          BackupServiceType.nextcloud.id: {
+            'admin@example.com/StoryPad': {'file_id': '/StoryPad/images/1.jpg', 'file_name': '1.jpg'},
+          },
+        },
+      );
+      final drive = _FakeCloudService(
+        currentUser: _FakeUser(identifier: 'tester@example.com', serviceType: BackupServiceType.google_drive),
+        serviceType: BackupServiceType.google_drive,
+      );
+      final nextcloud = _FakeCloudService(
+        currentUser: _FakeUser(identifier: 'admin@example.com/StoryPad'),
+        serviceType: BackupServiceType.nextcloud,
+      );
+
+      final destinations = asset.matchingCloudDestinationsFor([drive, nextcloud]);
+
+      expect(destinations, hasLength(2));
+      expect(
+        destinations.map((d) => d.serviceType),
+        containsAll([BackupServiceType.google_drive, BackupServiceType.nextcloud]),
+      );
+    });
+  });
 }
 
 class _FakeUser implements CloudServiceUser {
-  _FakeUser({this.identifier = 'admin@example.com/StoryPad'});
+  _FakeUser({
+    this.identifier = 'admin@example.com/StoryPad',
+    this.serviceType = BackupServiceType.nextcloud,
+  });
 
   @override
-  final BackupServiceType serviceType = BackupServiceType.nextcloud;
+  final BackupServiceType serviceType;
 
   @override
   final String identifier;

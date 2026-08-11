@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
+import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 void main() {
   group('GoogleDriveCloudService', () {
@@ -49,6 +50,7 @@ void main() {
       const exception = QuotaException(
         'Storage full',
         QuotaExceptionType.storageQuotaExceeded,
+        serviceType: BackupServiceType.google_drive,
       );
 
       expect(exception.type, equals(QuotaExceptionType.storageQuotaExceeded));
@@ -152,7 +154,11 @@ void main() {
       const authException = AuthException('Token expired', AuthExceptionType.tokenExpired);
       expect(authException.userFriendlyMessage, equals('Your session has expired. Please sign in again.'));
 
-      const quotaException = QuotaException('Storage full', QuotaExceptionType.storageQuotaExceeded);
+      const quotaException = QuotaException(
+        'Storage full',
+        QuotaExceptionType.storageQuotaExceeded,
+        serviceType: BackupServiceType.google_drive,
+      );
       expect(
         quotaException.userFriendlyMessage,
         equals('Google Drive storage is full. Please free up space or upgrade your storage plan.'),
