@@ -23,6 +23,8 @@ class DbAssetLoaderService {
   final Map<String, Completer<File>> _inFlightByRelativePath = {};
   final Map<String, File> _resolvedByRelativePath = {};
 
+  File? getCachedFile(String relativePath) => _resolvedByRelativePath[relativePath];
+
   /// Load a file by relative path.
   /// Returns cached result if exists and still valid; deduplicates concurrent requests for same path.
   /// On errors, removes in-flight entry to allow retry.
