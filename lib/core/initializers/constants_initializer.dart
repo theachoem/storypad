@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
@@ -25,7 +26,18 @@ class ConstantsInitializer {
 
     /// package:flutter/src/widgets/editable_text.dart [_processTextActions]
     kProcessTextActions = await DefaultProcessTextService().queryTextActions();
+    kLocalTimezone = await _getLocalTimezone();
     kAppLogo = await AppLogoService().getCurrent();
+  }
+
+  /// Never throws: a device that won't report its timezone just falls back to
+  /// whatever the caller does without one.
+  static Future<String?> _getLocalTimezone() async {
+    try {
+      return (await FlutterTimezone.getLocalTimezone()).identifier;
+    } catch (_) {
+      return null;
+    }
   }
 
   static Directory get _homeDirectory {

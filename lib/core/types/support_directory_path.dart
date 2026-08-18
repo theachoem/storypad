@@ -12,6 +12,7 @@ enum SupportDirectoryPath {
   backups,
   export_assets,
   downloaded_from_firestore,
+  map_markers,
   ;
 
   String get relativePath {
@@ -32,6 +33,8 @@ enum SupportDirectoryPath {
         return 'export_assets';
       case SupportDirectoryPath.downloaded_from_firestore:
         return 'downloaded_from_firestore';
+      case SupportDirectoryPath.map_markers:
+        return 'map_markers';
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
@@ -10,7 +11,65 @@ enum SpMapRenderer {
   googleMap,
   flutterMap;
 
-  static SpMapRenderer get defaultRenderer => Platform.isAndroid || Platform.isIOS ? googleMap : flutterMap;
+  /// `google_maps_flutter` ships no macOS/Linux implementation, so desktop can
+  /// only ever render flutter_map.
+  static bool get googleMapSupported => Platform.isAndroid || Platform.isIOS;
+
+  /// Platform capability, not user taste — the fallback when the user hasn't
+  /// picked a provider. Read `DevicePreferencesProvider.mapRenderer` instead
+  /// of this directly.
+  static SpMapRenderer get defaultRenderer => googleMapSupported ? googleMap : flutterMap;
+
+  /// IANA timezones covering mainland China, where Google Maps tiles don't
+  /// load at all.
+  ///
+  /// `Asia/Shanghai` and `Asia/Urumqi` are the two current zones; the rest are
+  /// legacy aliases some platforms still report. Hong Kong, Macau and Taipei
+  /// are deliberately absent — Google Maps works there.
+  static const Set<String> _googleMapsUnavailableTimezones = {
+    'Asia/Shanghai',
+    'Asia/Urumqi',
+    'Asia/Chongqing',
+    'Asia/Chungking',
+    'Asia/Harbin',
+    'Asia/Kashgar',
+    'PRC',
+  };
+
+  /// Whether [timezone] places the device somewhere Google Maps can't load.
+  ///
+  /// Keyed on timezone rather than app language because the question is where
+  /// the device *is*, not what it reads: someone in Shanghai running the app in
+  /// English has the same blank map, and is the person most likely to go
+  /// looking for this setting.
+  static bool googleMapsUnavailableIn(String? timezone) {
+    return timezone != null && _googleMapsUnavailableTimezones.contains(timezone);
+  }
+
+  /// Whether to offer the provider choice at all. Desktop has only one working
+  /// engine, and everywhere else Google Maps loads fine, so the setting would
+  /// just be one more thing to read past. Pass `kLocalTimezone`.
+  static bool selectable(String? timezone) {
+    return googleMapSupported && googleMapsUnavailableIn(timezone);
+  }
+
+  String get label {
+    switch (this) {
+      case SpMapRenderer.googleMap:
+        return tr('general.map_provider.google_maps');
+      case SpMapRenderer.flutterMap:
+        return tr('general.map_provider.map_tiler');
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case SpMapRenderer.googleMap:
+        return tr('general.map_provider.google_maps_description');
+      case SpMapRenderer.flutterMap:
+        return tr('general.map_provider.map_tiler_description');
+    }
+  }
 }
 
 enum SpMapStyle {
@@ -79,6 +138,7 @@ class SpMapMarker<T> {
     this.clusterable = true,
     this.size = const Size.square(42.0),
     this.anchor = const Offset(0.5, 0.5),
+    this.iconCacheKey,
   });
 
   final String id;
@@ -89,4 +149,13 @@ class SpMapMarker<T> {
   final bool clusterable;
   final Size size;
   final Offset anchor;
+
+  /// Identifies the *rendered appearance* of this marker, not the marker
+  /// itself — two markers with the same key are drawn identically and can
+  /// share one cached bitmap. Null means "uncacheable, redraw every time".
+  ///
+  /// Keying on appearance rather than [id] is what lets a hundred pins that
+  /// all fall back to the same weekday-coloured placeholder collapse onto a
+  /// single bitmap, and lets a pin keep its bitmap while panning.
+  final String? iconCacheKey;
 }
