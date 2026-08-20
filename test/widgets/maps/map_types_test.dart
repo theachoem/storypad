@@ -4,7 +4,15 @@ import 'package:storypad/widgets/maps/map_types.dart';
 void main() {
   group('SpMapRenderer.googleMapsUnavailableIn', () {
     test('matches every mainland China timezone, including legacy aliases', () {
-      for (final timezone in ['Asia/Shanghai', 'Asia/Urumqi', 'Asia/Chongqing', 'Asia/Harbin', 'PRC']) {
+      for (final timezone in [
+        'Asia/Shanghai',
+        'Asia/Urumqi',
+        'Asia/Chongqing',
+        'Asia/Chungking',
+        'Asia/Harbin',
+        'Asia/Kashgar',
+        'PRC',
+      ]) {
         expect(SpMapRenderer.googleMapsUnavailableIn(timezone), isTrue, reason: timezone);
       }
     });

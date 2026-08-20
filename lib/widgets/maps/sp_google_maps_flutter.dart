@@ -212,8 +212,13 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
       return;
     }
 
-    // A pixel ratio change invalidates every bitmap we drew for the old one.
-    if (_preparedPixelRatio != pixelRatio) _iconByCacheKey.clear();
+    // A pixel ratio change invalidates every bitmap we drew for the old one,
+    // including the per-marker fallbacks — otherwise stale, wrong-ratio
+    // bitmaps keep showing until each pin's new icon finishes rendering.
+    if (_preparedPixelRatio != pixelRatio) {
+      _iconByCacheKey.clear();
+      _displayedIconByMarkerId.clear();
+    }
 
     _preparedPixelRatio = pixelRatio;
     _preparedMarkerSignature = markerSignature;

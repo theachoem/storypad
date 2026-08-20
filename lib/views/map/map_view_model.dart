@@ -79,7 +79,10 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> _reloadVisibleStories() async {
     if (_lastViewport == null) return;
     _imageAssetIdByStoryId.clear();
-    await handleViewportChanged(_lastViewport!, forceReload: true);
+    // Not awaited: this runs as a DB global listener inside afterCommit, and
+    // awaiting the full viewport reload here would make every story write
+    // block on map refresh/image-download work.
+    unawaited(handleViewportChanged(_lastViewport!, forceReload: true));
   }
 
   Future<void> resolveInitialCamera() async {
@@ -346,8 +349,9 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
       _imageAssetIdByStoryId[story.id] = firstImageAsset?.id;
 
-      // A null value means "this story has an image we don't hold yet", which
-      // is what _downloadMissingImages looks for. Absent means never resolved.
+      // A null value means "this story has no image" — _downloadMissingImages
+      // filters those out and instead looks for a non-null asset id whose
+      // entry in _assetFileById is still null. Absent means never resolved.
       if (firstImageAsset != null) {
         _assetFileById.putIfAbsent(firstImageAsset.id, () => firstImageAsset!.localFile);
       }

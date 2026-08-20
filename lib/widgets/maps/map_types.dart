@@ -152,7 +152,10 @@ class SpMapMarker<T> {
 
   /// Identifies the *rendered appearance* of this marker, not the marker
   /// itself — two markers with the same key are drawn identically and can
-  /// share one cached bitmap. Null means "uncacheable, redraw every time".
+  /// share one cached bitmap. Null means the caller has no stable appearance
+  /// key yet; renderers still cache the result, but fall back to keying by
+  /// [id] (or a placeholder color) instead, so it won't be shared with other
+  /// markers.
   ///
   /// Keying on appearance rather than [id] is what lets a hundred pins that
   /// all fall back to the same weekday-coloured placeholder collapse onto a
