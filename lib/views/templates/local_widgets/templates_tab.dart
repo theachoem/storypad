@@ -195,7 +195,12 @@ class _TemplatesTabState extends State<TemplatesTab> {
           onTap: () => goToShowPage(context, template),
           template: template,
         ),
-        if (!isLast) const Divider(height: 1.0),
+        if (!isLast)
+          Divider(
+            height: 1.0,
+            indent: MediaQuery.paddingOf(context).left,
+            endIndent: MediaQuery.paddingOf(context).right,
+          ),
       ],
     );
   }

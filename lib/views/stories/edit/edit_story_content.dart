@@ -118,8 +118,10 @@ class _EditStoryContent extends StatelessWidget {
         if (!viewModel.pagesManager.managingPage) ...[
           _DoneButton(viewModel: viewModel),
           const SizedBox(width: 8.0),
-          StoryShareButton(viewModel: viewModel),
-          const SizedBox(width: 8.0),
+          if (viewModel.canShare) ...[
+            StoryShareButton(viewModel: viewModel),
+            const SizedBox(width: 8.0),
+          ],
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),

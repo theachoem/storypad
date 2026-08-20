@@ -101,8 +101,10 @@ class _ShowStoryContent extends StatelessWidget {
             icon: const Icon(SpIcons.edit),
           ),
           const SizedBox(width: 8.0),
-          StoryShareButton(viewModel: viewModel),
-          const SizedBox(width: 8.0),
+          if (viewModel.canShare) ...[
+            StoryShareButton(viewModel: viewModel),
+            const SizedBox(width: 8.0),
+          ],
           StoryThemeButton(viewModel: viewModel),
         ],
         const SizedBox(width: 8.0),

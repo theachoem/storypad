@@ -14,8 +14,7 @@ class StoryShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final story = viewModel.story;
-    if (story == null || viewModel.draftContent == null) return const SizedBox.shrink();
+    if (!viewModel.canShare) return const SizedBox.shrink();
 
     return IconButton(
       color: Theme.of(context).appBarTheme.foregroundColor,
@@ -23,7 +22,7 @@ class StoryShareButton extends StatelessWidget {
       icon: const Icon(SpIcons.share),
       onPressed: () {
         SpShareStoryBottomSheet(
-          story: story,
+          story: viewModel.story!,
           draftContent: viewModel.draftContent!,
           pagesManager: viewModel.pagesManager,
         ).show(context: context);
