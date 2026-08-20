@@ -10,7 +10,7 @@ import 'package:storypad/views/templates/show/show_template_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_fab_location.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_markdown_body.dart';
+import 'package:storypad/widgets/sp_scroll_configuration.dart';
 
 part 'template_tile.dart';
 part 'empty_body.dart';
@@ -150,45 +150,58 @@ class _TemplatesTabState extends State<TemplatesTab> {
     }
 
     final padding = EdgeInsets.only(
-      top: 8.0,
-      left: MediaQuery.of(context).padding.left + 10.0,
-      right: MediaQuery.of(context).padding.right + 10.0,
       bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 24.0,
     );
 
     if (params.pickMode) {
-      return ListView.builder(
-        itemCount: templates!.items.length,
-        padding: padding,
-        itemBuilder: (context, index) {
-          return _buildTemplateTile(context, templates!.items[index]);
-        },
+      return SpScrollConfiguration(
+        child: ListView.builder(
+          itemCount: templates!.items.length,
+          padding: padding,
+          itemBuilder: (context, index) {
+            return _buildTemplateTile(context, templates!.items[index], index);
+          },
+        ),
       );
     }
 
-    return ReorderableListView.builder(
-      itemCount: templates!.items.length,
-      padding: padding,
-      onReorderItem: (int oldIndex, int newIndex) => reorder(oldIndex, newIndex),
-      itemBuilder: (context, index) {
-        return _buildTemplateTile(context, templates!.items[index]);
-      },
+    return SpScrollConfiguration(
+      child: ReorderableListView.builder(
+        itemCount: templates!.items.length,
+        padding: padding,
+        buildDefaultDragHandles: true,
+        onReorderItem: (int oldIndex, int newIndex) => reorder(oldIndex, newIndex),
+        proxyDecorator: (child, index, animation) {
+          return Container(
+            color: ColorScheme.of(context).readOnly.surface5,
+            child: child,
+          );
+        },
+        itemBuilder: (context, index) {
+          return _buildTemplateTile(context, templates!.items[index], index);
+        },
+      ),
     );
   }
 
-  Widget _buildTemplateTile(BuildContext context, TemplateDbModel template) {
-    return Container(
+  Widget _buildTemplateTile(BuildContext context, TemplateDbModel template, int index) {
+    final isLast = index == templates!.items.length - 1;
+
+    return Column(
       key: ValueKey(template.id),
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6.0),
-      child: Material(
-        color: ColorScheme.of(context).readOnly.surface1,
-        borderRadius: BorderRadiusGeometry.circular(8.0),
-        clipBehavior: Clip.antiAlias,
-        child: _TemplateTile(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _TemplateTile(
           onTap: () => goToShowPage(context, template),
           template: template,
         ),
-      ),
+        if (!isLast)
+          Divider(
+            height: 1.0,
+            indent: MediaQuery.paddingOf(context).left,
+            endIndent: MediaQuery.paddingOf(context).right,
+          ),
+      ],
     );
   }
 }
