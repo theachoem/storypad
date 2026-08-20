@@ -290,8 +290,11 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> exportJson(BuildContext context) async {
     AnalyticsService.instance.logExportOfflineBackup();
 
-    DateTime? lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt;
-    if (lastDbUpdatedAt == null) return;
+    // lastDbUpdatedAt is only populated after a DB write or a cloud sync run this
+    // session, so it can legitimately still be null here (e.g. fresh session, no
+    // sync configured). It's only used as the backup's "created at" metadata, so
+    // falling back to now() is safe — don't reintroduce a null-guard early return.
+    DateTime lastDbUpdatedAt = context.read<BackupProvider>().lastDbUpdatedAt ?? DateTime.now();
 
     final String exportFileName = "$kAppName-${kDeviceInfo.model}-backup-${DateTime.now().toIso8601String()}.json";
 
