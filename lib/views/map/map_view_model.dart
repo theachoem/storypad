@@ -44,6 +44,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.viewContext,
   }) {
     unawaited(resolveInitialCamera());
+    StoryDbModel.db.addGlobalListener(_reloadVisibleStories);
   }
 
   SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
@@ -61,9 +62,24 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   @override
   void dispose() {
+    StoryDbModel.db.removeGlobalListener(_reloadVisibleStories);
     _imageResolveDebounce?.cancel();
     _notifyDebounce?.cancel();
     super.dispose();
+  }
+
+  /// Refreshes visible pins after a story's place or photos change elsewhere
+  /// (e.g. edited from the story detail sheet). Bottom sheet story lists
+  /// already know how to refresh themselves; this only concerns the map's
+  /// own pins and pin images.
+  ///
+  /// The global listener carries no record id, so which story changed is
+  /// unknown here — clear the per-story image cache entirely rather than
+  /// leaving a stale pin photo behind for the one that did.
+  Future<void> _reloadVisibleStories() async {
+    if (_lastViewport == null) return;
+    _imageAssetIdByStoryId.clear();
+    await handleViewportChanged(_lastViewport!, forceReload: true);
   }
 
   Future<void> resolveInitialCamera() async {
@@ -178,7 +194,10 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     final visibleStories = _limitStoriesByDistance(_fetchedStories, viewport.center);
-    if (_hasSameStoryIds(_visibleStories, visibleStories)) return;
+    // Same ids can still mean different pins when forced: forceReload is what
+    // a story edit (place, photos) triggers, and that never changes which
+    // stories are visible, only what their pins should look like.
+    if (!forceReload && _hasSameStoryIds(_visibleStories, visibleStories)) return;
 
     // Before publishing, not after: a pin drawn now and given its photo later
     // has to visibly change twice. Only new stories cost anything here, and

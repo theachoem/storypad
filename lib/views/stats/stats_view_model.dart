@@ -23,6 +23,7 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     _tabController.addListener(_onTabChanged);
     loadAvailableYears();
     _loadTabThenPrefetch(_tabController.index);
+    StoryDbModel.db.addGlobalListener(_reloadStats);
   }
 
   int _selectedYear;
@@ -255,8 +256,20 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  /// Refreshes cached stats after a story changes elsewhere (e.g. edited from
+  /// a bottom sheet). Story lists inside those sheets already know how to
+  /// refresh themselves; this only concerns the aggregates cached here.
+  Future<void> _reloadStats() async {
+    _statsCache.clear();
+    _loadingByKey.clear();
+    notifyListeners();
+    await loadAvailableYears();
+    await _loadTabThenPrefetch(_tabController.index);
+  }
+
   @override
   void dispose() {
+    StoryDbModel.db.removeGlobalListener(_reloadStats);
     _tabController.removeListener(_onTabChanged);
     super.dispose();
   }
