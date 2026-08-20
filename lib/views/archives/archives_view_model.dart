@@ -54,6 +54,6 @@ class ArchivesViewModel extends ChangeNotifier with DisposeAwareMixin {
       shouldPop = result == OkCancelResult.ok;
     }
 
-    if (shouldPop && context.mounted) Navigator.of(context).pop(result);
+    if (shouldPop && context.mounted && ModalRoute.of(context)?.isCurrent == true) Navigator.of(context).pop(result);
   }
 }

@@ -205,7 +205,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
         if (userAction == OkCancelResult.ok) {
           await StoryDbModel.db.delete(story!.id, softDelete: false);
           story = null;
-          if (context.mounted) return Navigator.of(context).pop(null);
+          if (context.mounted && ModalRoute.of(context)?.isCurrent == true) return Navigator.of(context).pop(null);
         } else {
           return;
         }
@@ -218,7 +218,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
         if (userAction == OkCancelResult.ok) {
           await StoryDbModel.db.set(initialStory!);
           story = initialStory;
-          if (context.mounted) return Navigator.of(context).pop(null);
+          if (context.mounted && ModalRoute.of(context)?.isCurrent == true) return Navigator.of(context).pop(null);
         }
       } else {
         if (context.mounted) Navigator.of(context).pop(null);

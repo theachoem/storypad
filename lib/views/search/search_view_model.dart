@@ -169,7 +169,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
       shouldPop = result == OkCancelResult.ok;
     }
 
-    if (shouldPop && context.mounted) Navigator.of(context).pop(result);
+    if (shouldPop && context.mounted && ModalRoute.of(context)?.isCurrent == true) Navigator.of(context).pop(result);
   }
 
   @override

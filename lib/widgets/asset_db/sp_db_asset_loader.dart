@@ -60,13 +60,13 @@ class _SpDbAssetLoaderState extends State<SpDbAssetLoader> {
   String get relativePath => widget.relativePath;
   List<BackupCloudService> get signedInServices => widget.signedInServices;
 
-  File? file;
+  late File? file = DbAssetLoaderService.instance.getCachedFile(widget.relativePath);
   Object? error;
 
   @override
   void initState() {
     super.initState();
-    load();
+    if (file == null) load();
   }
 
   Future<void> load() async {
