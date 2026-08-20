@@ -55,6 +55,8 @@ dependencies:
   html_character_entities: 1.0.0+1
   http: ^1.6.0
   image_picker: ^1.2.2
+  image_picker_android: ^0.8.13+19
+  image_picker_platform_interface: ^2.11.1
   in_app_review: ^2.0.12
   in_app_update: 4.2.5
   json_annotation: ^4.12.0

@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart' show EasyLocalization;
 import 'package:firebase_core/firebase_core.dart' show Firebase, FirebaseOptions;
 import 'package:macos_window_utils/window_manipulator.dart' show WindowManipulator;
 import 'package:storypad/app.dart' show App;
+import 'package:storypad/core/initializers/android_photo_picker_initializer.dart' show AndroidPhotoPickerInitializer;
 import 'package:storypad/core/initializers/app_lock_initializer.dart' show AppLockInitializer;
 import 'package:storypad/core/initializers/backup_initializer.dart' show BackupRepositoryInitializer;
 import 'package:storypad/core/initializers/constants_initializer.dart' show ConstantsInitializer;
@@ -62,6 +63,8 @@ Future<void> _initializeApp({
     await WindowManipulator.hideTitle();
     await WindowManipulator.enableFullSizeContentView();
   }
+
+  if (Platform.isAndroid) AndroidPhotoPickerInitializer.call();
 
   // initialize & cleanup old assets
   if (!Platform.isLinux) await CloudStorageInitializer.call();
