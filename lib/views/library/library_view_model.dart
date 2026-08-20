@@ -7,7 +7,6 @@ import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/internet_checker_service.dart';
-import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'library_view.dart';
@@ -53,42 +52,22 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<bool> _deleteAsset(BuildContext context, AssetDbModel asset, int storyCount) async {
     AnalyticsService.instance.logDeleteAsset(asset: asset);
 
-    final destinations = asset.allCloudDestinations;
-
-    // Never uploaded anywhere — safe to delete locally right away.
-    if (destinations.isEmpty) {
-      await asset.delete();
-      return true;
-    }
-
     final provider = context.read<BackupProvider>();
 
-    // Every destination (across every service, not just Drive) must be
-    // deleted — or already confirmed gone via 404 — before the local record
-    // goes. Losing the local copy while a remote one still exists would
-    // orphan it with no way to find it again.
+    // Only destinations on a currently signed-in account/folder are
+    // reachable from this device — a destination on a provider this device
+    // isn't connected to (or reconnected under a different account/folder)
+    // can't be deleted here. Those are skipped rather than blocking the
+    // whole operation: Cloud Optimize's detached-file cleanup already
+    // identifies remote files with no live local record (by parsing the
+    // asset id out of the filename, independent of cloudDestinations) and
+    // trashes them after a grace period, so an unreachable leftover gets
+    // caught the next time this asset's other provider is connected and
+    // Optimize runs there.
+    final destinations = asset.matchingCloudDestinationsFor(provider.signedInServices);
+
     for (final destination in destinations) {
       final service = provider.repository.getService(destination.serviceType);
-
-      // A destination is scoped to a specific account/folder (destinationKey),
-      // not just a provider — if the user switched accounts (Drive) or
-      // reconnected under a different folder (Nextcloud) since this asset was
-      // uploaded, the currently signed-in credential is the *wrong* one for
-      // this destination, and there's no credential retained for the old
-      // one to delete it properly. This must NOT fall through to deleting
-      // the local record below: doing so would silently orphan the still-live
-      // remote copy with no trace left to ever find it again. Report it as
-      // undeleted, same as any other destination that couldn't be confirmed
-      // gone — the user sees the item wasn't removed rather than losing the
-      // only record of where it lives.
-      if (destination.identifier != service.currentUser?.destinationKey) {
-        AppLogger.d(
-          'LibraryViewModel#_deleteAsset: cannot delete asset ${asset.id} on '
-          '${destination.serviceType.displayName} — destination ${destination.identifier} does not match the '
-          'currently signed-in account (${service.currentUser?.destinationKey}).',
-        );
-        return false;
-      }
 
       bool deleted = false;
       bool notFound = false;
@@ -101,6 +80,9 @@ class LibraryViewModel extends ChangeNotifier with DisposeAwareMixin {
         }
       }
 
+      // A destination we ARE connected to that still failed (not a
+      // confirmed 404) is a real failure, not an unreachable-provider case
+      // — still worth reporting as undeleted.
       if (!deleted && !notFound) return false;
     }
 
