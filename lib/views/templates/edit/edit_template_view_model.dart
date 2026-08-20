@@ -240,7 +240,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         OkCancelResult userAction = await showDiscardConfirmation(context);
         if (userAction == OkCancelResult.ok) {
           await TemplateDbModel.db.delete(template.id, softDelete: false);
-          if (context.mounted) return Navigator.of(context).pop(null);
+          if (context.mounted && ModalRoute.of(context)?.isCurrent == true) return Navigator.of(context).pop(null);
         } else {
           return;
         }
@@ -253,7 +253,7 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
         if (userAction == OkCancelResult.ok) {
           await TemplateDbModel.db.set(params.initialTemplate!);
           template = params.initialTemplate!;
-          if (context.mounted) return Navigator.of(context).pop(null);
+          if (context.mounted && ModalRoute.of(context)?.isCurrent == true) return Navigator.of(context).pop(null);
         }
       } else {
         if (context.mounted) Navigator.of(context).pop(null);
