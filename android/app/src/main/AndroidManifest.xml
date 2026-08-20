@@ -116,5 +116,12 @@
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
         </intent>
+
+        <!-- Lets image_picker detect the Android Photo Picker on Android 11-12 devices
+             that have it backported via Google Play services - see
+             https://pub.dev/packages/image_picker_android#android-13-photo-picker. -->
+        <intent>
+            <action android:name="android.provider.action.PICK_IMAGES" />
+        </intent>
     </queries>
 </manifest>
