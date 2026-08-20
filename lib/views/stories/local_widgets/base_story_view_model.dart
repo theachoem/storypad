@@ -29,6 +29,8 @@ part 'story_pages_manager_info.dart';
 abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   StoryDbModel? story;
   StoryContentDbModel? draftContent;
+
+  bool get canShare => story != null && draftContent != null;
   final DateTime openedOn = DateTime.now();
 
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);

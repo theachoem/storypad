@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleSignIn-iOS.git",
       "state" : {
-        "revision" : "913b4005ea26aebe1c97d54e35ad82a515924c71",
-        "version" : "9.1.0"
+        "revision" : "08d8dcecafb575f98879ffdbb8302c1b9ad65d19",
+        "version" : "9.2.0"
       }
     },
     {

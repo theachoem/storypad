@@ -11,6 +11,7 @@ import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_manager.dart';
 import 'package:storypad/views/stories/local_widgets/story_header.dart';
 import 'package:storypad/views/stories/local_widgets/story_pages_builder.dart';
+import 'package:storypad/views/stories/local_widgets/story_share_button.dart';
 import 'package:storypad/views/stories/local_widgets/story_theme_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
