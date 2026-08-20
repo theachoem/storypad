@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:video_compress/video_compress.dart';
 
 /// Shared state between the pick-time compression loop (`AppFilePickerService`)
-/// and the screen covering it (`SpVideoCompressionScreen`): which video of the
+/// and the screen covering it (`VideoCompressionView`): which video of the
 /// batch is being re-encoded, how far along it is, and whether the user asked
 /// to stop.
 ///

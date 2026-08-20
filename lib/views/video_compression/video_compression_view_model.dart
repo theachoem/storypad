@@ -29,7 +29,7 @@ class VideoCompressionViewModel extends ChangeNotifier with DisposeAwareMixin {
   /// "Video 2 of 3" only earns its place in a batch; a single pick says the
   /// plain message instead.
   String get message {
-    if (progress.total <= 1) return tr('page.video_compression.message');
+    if (progress.total <= 1 || progress.current == 0) return tr('page.video_compression.message');
 
     return tr(
       'page.video_compression.progress_args',
@@ -38,7 +38,7 @@ class VideoCompressionViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   String get statusLabel {
-    if (!started) return tr('page.map.picker.messages.please_wait');
+    if (!started) return tr('page.video_compression.please_wait');
     return '${(value * 100).round()}%';
   }
 

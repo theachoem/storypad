@@ -139,7 +139,7 @@ class VideoCompressionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<VideoCompressionViewModel>(
       create: (context) => VideoCompressionViewModel(params: params),
-      builder: (context, child) => _VideoCompressionContent(Provider.of(context)),
+      builder: (context, child) => _VideoCompressionContent(context.watch<VideoCompressionViewModel>()),
     );
   }
 }
