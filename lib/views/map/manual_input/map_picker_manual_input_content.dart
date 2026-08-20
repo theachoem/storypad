@@ -182,7 +182,7 @@ class _MapPreviewState extends State<_MapPreview> {
       child: IgnorePointer(
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.0),
-          child: switch (SpMapRenderer.defaultRenderer) {
+          child: switch (context.watch<DevicePreferencesProvider>().mapRenderer) {
             SpMapRenderer.googleMap => SpGoogleMap<PlaceDbModel>(
               mapController: _mapController,
               initialCamera: _camera,

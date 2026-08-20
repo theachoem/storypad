@@ -210,11 +210,27 @@ class _MapStoryMarkerIconFactory {
     required File? imageFile,
     required Color color,
   }) async {
-    final ui.Image? image = imageFile == null ? null : await _loadImage(imageFile);
-    final Uint8List bytes = await _drawMarker(
-      image: image,
+    final Uint8List bytes = await MapMarkerBitmapCache.instance.resolve(
+      cacheKey: marker.iconCacheKey ?? 'plc:${color.toARGB32()}',
       pixelRatio: pixelRatio,
-      color: color,
+      render: () async {
+        final ui.Image? image = imageFile == null ? null : await _loadImage(imageFile, pixelRatio);
+
+        try {
+          final Uint8List rendered = await _drawMarker(
+            image: image,
+            pixelRatio: pixelRatio,
+            color: color,
+          );
+
+          // A photo that wouldn't decode has just been drawn as the plain
+          // placeholder. Keeping that under the photo's key would make one
+          // bad decode permanent, so leave it unsaved and retry next time.
+          return (bytes: rendered, cacheable: imageFile == null || image != null);
+        } finally {
+          image?.dispose();
+        }
+      },
     );
 
     return gm.BitmapDescriptor.bytes(
@@ -225,30 +241,44 @@ class _MapStoryMarkerIconFactory {
     );
   }
 
-  static Future<ui.Image?> _loadImage(File imageFile) async {
-    final Completer<ui.Image?> completer = Completer<ui.Image?>();
-    final ImageStream stream = FileImage(imageFile).resolve(ImageConfiguration.empty);
-    late final ImageStreamListener listener;
+  /// Decodes straight to marker size. Going through `FileImage` instead would
+  /// decode the original at full camera resolution — tens of megabytes per
+  /// photo, and routed through the global image cache, which a hundred of
+  /// them then evict each other out of.
+  static Future<ui.Image?> _loadImage(File imageFile, double pixelRatio) async {
+    Future<ui.Image?> decode() async {
+      final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromUint8List(await imageFile.readAsBytes());
+      final int target = (_logicalSize * pixelRatio).round();
 
-    listener = ImageStreamListener(
-      (ImageInfo image, bool synchronousCall) {
-        stream.removeListener(listener);
-        if (!completer.isCompleted) completer.complete(image.image);
-      },
-      onError: (Object error, StackTrace? stackTrace) {
-        stream.removeListener(listener);
-        if (!completer.isCompleted) completer.complete(null);
-      },
-    );
+      ui.ImageDescriptor? descriptor;
+      ui.Codec? codec;
 
-    stream.addListener(listener);
-    return completer.future.timeout(
-      const Duration(seconds: 4),
-      onTimeout: () {
-        stream.removeListener(listener);
-        return null;
-      },
-    );
+      try {
+        descriptor = await ui.ImageDescriptor.encoded(buffer);
+
+        // Scale the *shorter* edge to the marker size and let the other keep
+        // its ratio. Pinning both edges would square the photo up, and the
+        // BoxFit.cover crop in _drawMarker would then have nothing to crop.
+        final bool widthIsShorter = descriptor.width <= descriptor.height;
+        codec = await descriptor.instantiateCodec(
+          targetWidth: widthIsShorter ? target : null,
+          targetHeight: widthIsShorter ? null : target,
+        );
+
+        final ui.FrameInfo frame = await codec.getNextFrame();
+        return frame.image;
+      } finally {
+        codec?.dispose();
+        descriptor?.dispose();
+        buffer.dispose();
+      }
+    }
+
+    try {
+      return await decode().timeout(const Duration(seconds: 4));
+    } catch (_) {
+      return null;
+    }
   }
 
   static Future<Uint8List> _drawMarker({

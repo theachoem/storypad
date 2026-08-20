@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
+import 'package:storypad/core/services/map/map_marker_bitmap_cache.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gm;
 import 'package:storypad/widgets/maps/sp_map_overlay_theme.dart';
 import 'package:storypad/widgets/maps/sp_flutter_map.dart';
@@ -20,7 +20,6 @@ import 'map_view_model.dart';
 import '../../widgets/maps/map_types.dart';
 
 part 'map_content.dart';
-part 'local_widgets/marker_preparing_pill.dart';
 
 class MapRoute extends BaseRoute {
   const MapRoute();

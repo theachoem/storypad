@@ -47,7 +47,7 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool _showCurrentLocation = false;
   bool get showCurrentLocation => _showCurrentLocation;
 
-  SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
+  SpMapRenderer get mapRenderer => viewContext.read<DevicePreferencesProvider>().mapRenderer;
 
   late SpMapStyle _mapStyle = viewContext.read<DevicePreferencesProvider>().preferences.mapStyle;
   SpMapStyle get mapStyle => _mapStyle;

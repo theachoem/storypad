@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
 import 'package:storypad/widgets/maps/map_types.dart';
 import 'package:storypad/widgets/maps/sp_flutter_map.dart';

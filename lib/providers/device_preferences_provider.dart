@@ -343,6 +343,22 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     storage.writeObject(_preferences);
   }
 
+  /// The single answer to "which map engine do we render".
+  ///
+  /// Where there's no real choice the platform wins outright — Google Maps has
+  /// no desktop support at all, so a stored preference must never be able to
+  /// hand desktop an engine that can't run there.
+  SpMapRenderer get mapRenderer {
+    if (!SpMapRenderer.googleMapSupported) return SpMapRenderer.defaultRenderer;
+    return preferences.mapRenderer ?? SpMapRenderer.defaultRenderer;
+  }
+
+  void setMapRenderer(SpMapRenderer mapRenderer) {
+    _preferences = _preferences.copyWith(mapRenderer: mapRenderer);
+    storage.writeObject(_preferences);
+    notifyListeners();
+  }
+
   List<ReminderObject> get reminders => preferences.reminders ?? const [];
   ReminderObject? reminderOfType(ReminderType type) => reminders.where((r) => r.type == type).firstOrNull;
 
