@@ -54,6 +54,13 @@ class SpGoogleMap<T> extends StatefulWidget {
 class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback {
   // Cluster only show when there are at least 4 markers.
   static const ClusterManagerId _clusterManagerId = ClusterManagerId('sp_map_markers');
+
+  /// How many freshly drawn icons to accumulate before pushing them to the
+  /// map, trading a few extra rebuilds for pins that appear progressively.
+  static const int _emitMarkersBatchSize = 5;
+
+  static const int _maxCachedIcons = 300;
+
   late final Map<ClusterManagerId, ClusterManager> _clusterManagers;
 
   GoogleMapController? _googleMapController;
@@ -64,6 +71,18 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
   String? _preparedMarkerSignature;
   int _prepareVersion = 0;
   final Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+
+  /// Drawn icons keyed by [SpMapMarker.iconCacheKey] — by appearance, not by
+  /// marker, so panning back over a pin reuses its bitmap and identical
+  /// placeholder pins share one.
+  final Map<String, BitmapDescriptor> _iconByCacheKey = <String, BitmapDescriptor>{};
+
+  /// What each pin is showing *right now*, keyed by marker. Answers a
+  /// different question from [_iconByCacheKey]: when a pin's appearance
+  /// changes (its photo finished loading) the new bitmap isn't drawn yet, and
+  /// without something to fall back on the pin would blink off the map until
+  /// it is. Holding the old one keeps the swap to a single visible change.
+  final Map<String, BitmapDescriptor> _displayedIconByMarkerId = <String, BitmapDescriptor>{};
 
   @override
   void initState() {
@@ -193,22 +212,25 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
       return;
     }
 
+    // A pixel ratio change invalidates every bitmap we drew for the old one,
+    // including the per-marker fallbacks — otherwise stale, wrong-ratio
+    // bitmaps keep showing until each pin's new icon finishes rendering.
+    if (_preparedPixelRatio != pixelRatio) {
+      _iconByCacheKey.clear();
+      _displayedIconByMarkerId.clear();
+    }
+
     _preparedPixelRatio = pixelRatio;
     _preparedMarkerSignature = markerSignature;
     _prepareVersion += 1;
 
+    // Show whatever is already cached before awaiting anything, so markers
+    // that have been drawn before appear on this frame rather than after the
+    // first async gap.
+    _emitMarkers();
+
     final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder = widget.markerIconBuilder;
-    if (markerIconBuilder == null) {
-      final Map<MarkerId, Marker> markers = _buildGoogleMarkers(
-        iconForMarker: (_) => BitmapDescriptor.defaultMarker,
-      );
-      setState(() {
-        _markers
-          ..clear()
-          ..addAll(markers);
-      });
-      return;
-    }
+    if (markerIconBuilder == null) return;
 
     unawaited(
       _prepareMarkerIcons(
@@ -219,24 +241,68 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
     );
   }
 
+  /// Draws the icons this marker set needs that aren't cached yet.
+  ///
+  /// Deliberately sequential: the decode parallelises on engine workers, but
+  /// `toImage()` lands on the raster thread, so running these concurrently
+  /// mostly just competes with the drag the user is in the middle of.
+  /// Throughput isn't the goal — [_emitMarkersBatchSize] is, since pins that
+  /// trickle in read as faster than a set that appears all at once later.
   Future<void> _prepareMarkerIcons({
     required SpGoogleMapMarkerIconBuilder<T> markerIconBuilder,
     required double pixelRatio,
     required int prepareVersion,
   }) async {
-    final Map<MarkerId, BitmapDescriptor> icons = <MarkerId, BitmapDescriptor>{};
+    int builtSinceEmit = 0;
+    _evictUnusedIcons();
+
     for (final SpMapMarker<T> marker in widget.markers) {
-      final MarkerId markerId = MarkerId(marker.id);
-      icons[markerId] = await markerIconBuilder(context, marker, pixelRatio);
-      if (!mounted || prepareVersion != _prepareVersion) return;
+      final String cacheKey = marker.iconCacheKey ?? marker.id;
+      if (_iconByCacheKey.containsKey(cacheKey)) continue;
+
+      final BitmapDescriptor icon = await markerIconBuilder(context, marker, pixelRatio);
+      if (!mounted) return;
+
+      _iconByCacheKey[cacheKey] = icon;
+      builtSinceEmit++;
+
+      if (builtSinceEmit >= _emitMarkersBatchSize) {
+        builtSinceEmit = 0;
+        _emitMarkers();
+      }
+
+      // A newer run has taken over. Everything drawn so far is already in the
+      // cache, so stopping here costs nothing — the old code discarded it and
+      // redrew from scratch on every viewport change during a drag.
+      if (prepareVersion != _prepareVersion) return;
     }
 
-    if (!mounted || prepareVersion != _prepareVersion) return;
+    if (builtSinceEmit > 0) _emitMarkers();
+  }
 
-    final Map<MarkerId, Marker> markers = _buildGoogleMarkers(
-      iconForMarker: (marker) => icons[MarkerId(marker.id)] ?? BitmapDescriptor.defaultMarker,
-    );
+  /// Trims the cache oldest-first, but never drops an icon the current marker
+  /// set still needs — evicting one of those would leave a default pin on
+  /// screen with nothing to trigger a redraw. The cap can be exceeded by at
+  /// most the number of visible markers, which is bounded by the caller.
+  void _evictUnusedIcons() {
+    if (_iconByCacheKey.length <= _maxCachedIcons) return;
 
+    final Set<String> inUse = <String>{
+      for (final SpMapMarker<T> marker in widget.markers) marker.iconCacheKey ?? marker.id,
+    };
+
+    for (final String key in _iconByCacheKey.keys.toList()) {
+      if (_iconByCacheKey.length <= _maxCachedIcons) break;
+      if (inUse.contains(key)) continue;
+      _iconByCacheKey.remove(key);
+    }
+  }
+
+  void _emitMarkers() {
+    if (!mounted) return;
+
+    final Map<MarkerId, Marker> markers = _buildGoogleMarkers();
+    _displayedIconByMarkerId.removeWhere((markerId, _) => !markers.containsKey(MarkerId(markerId)));
     setState(() {
       _markers
         ..clear()
@@ -244,17 +310,33 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
     });
   }
 
-  Map<MarkerId, Marker> _buildGoogleMarkers({
-    required BitmapDescriptor Function(SpMapMarker<T> marker) iconForMarker,
-  }) {
+  Map<MarkerId, Marker> _buildGoogleMarkers() {
     final Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
     for (final SpMapMarker<T> marker in widget.markers) {
       final MarkerId markerId = MarkerId(marker.id);
+
+      // Reusing the cached instance matters beyond skipping the redraw:
+      // BitmapDescriptor has no `operator ==`, so Marker equality falls back
+      // to identity here. A freshly built descriptor makes every marker look
+      // changed, and the plugin re-sends all of them over the platform
+      // channel to be decoded natively again.
+      //
+      // Falling back to whatever this pin already shows covers the gap while
+      // its next appearance is still being drawn.
+      final BitmapDescriptor? icon =
+          _iconByCacheKey[marker.iconCacheKey ?? marker.id] ?? _displayedIconByMarkerId[marker.id];
+
+      // Never drawn at all: leave it off the map rather than flashing Google's
+      // default red pin where a photo is about to land. Pins appear as their
+      // bitmaps finish instead of all at once at the end.
+      if (icon == null && widget.markerIconBuilder != null) continue;
+      if (icon != null) _displayedIconByMarkerId[marker.id] = icon;
+
       markers[markerId] = Marker(
         markerId: markerId,
         clusterManagerId: marker.clusterable ? _clusterManagerId : null,
         position: _toLatLng(marker.point),
-        icon: iconForMarker(marker),
+        icon: icon ?? BitmapDescriptor.defaultMarker,
         anchor: marker.anchor,
         consumeTapEvents: widget.onMarkerTap != null,
         infoWindow: InfoWindow(
@@ -281,6 +363,10 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
             marker.size.height,
             marker.anchor.dx,
             marker.anchor.dy,
+            // Without this, a pin whose photo finished loading keeps the
+            // placeholder it was first drawn with: the marker set is
+            // unchanged, so the early return above skips the redraw.
+            marker.iconCacheKey,
           ].join(':'),
         )
         .join('|');

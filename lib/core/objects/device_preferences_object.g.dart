@@ -57,6 +57,8 @@ abstract class _$DevicePreferencesObjectCWProxy {
     List<String>? hiddenStatsSections,
   );
 
+  DevicePreferencesObject mapRenderer(SpMapRenderer? mapRenderer);
+
   DevicePreferencesObject mapStyle(SpMapStyle? mapStyle);
 
   /// Creates a new instance with the provided field values.
@@ -87,6 +89,7 @@ abstract class _$DevicePreferencesObjectCWProxy {
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     List<AppQuickActionObject>? homeQuickActions,
     List<String>? hiddenStatsSections,
+    SpMapRenderer? mapRenderer,
     SpMapStyle? mapStyle,
   });
 }
@@ -186,6 +189,10 @@ class _$DevicePreferencesObjectCWProxyImpl
   ) => call(hiddenStatsSections: hiddenStatsSections);
 
   @override
+  DevicePreferencesObject mapRenderer(SpMapRenderer? mapRenderer) =>
+      call(mapRenderer: mapRenderer);
+
+  @override
   DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) =>
       call(mapStyle: mapStyle);
 
@@ -218,6 +225,7 @@ class _$DevicePreferencesObjectCWProxyImpl
     Object? defaultStoryPreferences = const $CopyWithPlaceholder(),
     Object? homeQuickActions = const $CopyWithPlaceholder(),
     Object? hiddenStatsSections = const $CopyWithPlaceholder(),
+    Object? mapRenderer = const $CopyWithPlaceholder(),
     Object? mapStyle = const $CopyWithPlaceholder(),
   }) {
     return DevicePreferencesObject(
@@ -302,6 +310,10 @@ class _$DevicePreferencesObjectCWProxyImpl
           ? _value.hiddenStatsSections
           // ignore: cast_nullable_to_non_nullable
           : hiddenStatsSections as List<String>?,
+      mapRenderer: mapRenderer == const $CopyWithPlaceholder()
+          ? _value.mapRenderer
+          // ignore: cast_nullable_to_non_nullable
+          : mapRenderer as SpMapRenderer?,
       mapStyle: mapStyle == const $CopyWithPlaceholder()
           ? _value.mapStyle
           // ignore: cast_nullable_to_non_nullable
@@ -370,6 +382,10 @@ DevicePreferencesObject _$DevicePreferencesObjectFromJson(
   hiddenStatsSections: (json['hidden_stats_sections'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
+  mapRenderer: $enumDecodeNullable(
+    _$SpMapRendererEnumMap,
+    json['map_renderer'],
+  ),
   mapStyle: $enumDecodeNullable(_$SpMapStyleEnumMap, json['map_style']),
 );
 
@@ -391,6 +407,7 @@ Map<String, dynamic> _$DevicePreferencesObjectToJson(
       _$AssetCompressionOptionEnumMap[instance.assetCompression]!,
   'media_sync': _$MediaSyncOptionEnumMap[instance.mediaSync]!,
   'map_style': _$SpMapStyleEnumMap[instance.mapStyle]!,
+  'map_renderer': _$SpMapRendererEnumMap[instance.mapRenderer],
   'story_tile_preferences': instance.storyTilePreferences.toJson(),
   'default_story_preferences': instance.defaultStoryPreferences.toJson(),
   'home_quick_actions': instance.homeQuickActions
@@ -433,6 +450,11 @@ const _$AssetCompressionOptionEnumMap = {
 const _$MediaSyncOptionEnumMap = {
   MediaSyncOption.wifiAndCellular: 'wifiAndCellular',
   MediaSyncOption.wifiOnly: 'wifiOnly',
+};
+
+const _$SpMapRendererEnumMap = {
+  SpMapRenderer.googleMap: 'googleMap',
+  SpMapRenderer.flutterMap: 'flutterMap',
 };
 
 const _$SpMapStyleEnumMap = {

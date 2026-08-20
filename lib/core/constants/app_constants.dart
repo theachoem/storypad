@@ -43,6 +43,11 @@ late final DeviceInfoObject kDeviceInfo;
 late final PackageInfo kPackageInfo;
 late final List<ProcessTextAction> kProcessTextActions;
 
+/// The device's IANA timezone (e.g. `Asia/Shanghai`), or null when it couldn't
+/// be read. Resolved once at startup because it stands in for "where is this
+/// device", which the platform only answers asynchronously.
+late final String? kLocalTimezone;
+
 AppLogo? kAppLogo;
 
 final BaseAnalyticsEventAdaptor kAnalyticsService = BaseAnalyticsEventAdaptor.create();

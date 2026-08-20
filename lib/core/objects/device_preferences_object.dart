@@ -37,6 +37,12 @@ class DevicePreferencesObject {
   final MediaSyncOption mediaSync;
   final SpMapStyle mapStyle;
 
+  /// Which map provider to render with. `null` means "never chosen", which
+  /// falls back to `SpMapRenderer.defaultRenderer` — that fallback has to stay
+  /// platform-aware, since Google Maps has no desktop support at all. Read it
+  /// through `DevicePreferencesProvider.mapRenderer`, never directly.
+  final SpMapRenderer? mapRenderer;
+
   final StoryTilePreferencesObject storyTilePreferences;
   final DefaultStoryPreferencesObject defaultStoryPreferences;
   final List<AppQuickActionObject>? homeQuickActions;
@@ -81,6 +87,7 @@ class DevicePreferencesObject {
     DefaultStoryPreferencesObject? defaultStoryPreferences,
     this.homeQuickActions,
     this.hiddenStatsSections,
+    this.mapRenderer,
     SpMapStyle? mapStyle,
   }) : fontFamily = fontFamily ?? kDefaultFontFamily,
        themeMode = themeMode ?? ThemeMode.system,

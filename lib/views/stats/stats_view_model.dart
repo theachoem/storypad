@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
@@ -23,6 +25,7 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     _tabController.addListener(_onTabChanged);
     loadAvailableYears();
     _loadTabThenPrefetch(_tabController.index);
+    StoryDbModel.db.addGlobalListener(_reloadStats);
   }
 
   int _selectedYear;
@@ -255,8 +258,27 @@ class StatsViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
+  /// Refreshes cached stats after a story changes elsewhere (e.g. edited from
+  /// a bottom sheet). Story lists inside those sheets already know how to
+  /// refresh themselves; this only concerns the aggregates cached here.
+  Future<void> _reloadStats() async {
+    _statsCache.clear();
+    _loadingByKey.clear();
+    notifyListeners();
+    // Not awaited: this runs as a DB global listener inside afterCommit, and
+    // awaiting the full reload here would make every story write block on
+    // stats recomputation.
+    unawaited(_reloadStatsData());
+  }
+
+  Future<void> _reloadStatsData() async {
+    await loadAvailableYears();
+    await _loadTabThenPrefetch(_tabController.index);
+  }
+
   @override
   void dispose() {
+    StoryDbModel.db.removeGlobalListener(_reloadStats);
     _tabController.removeListener(_onTabChanged);
     super.dispose();
   }

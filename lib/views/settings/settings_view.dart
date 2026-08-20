@@ -8,6 +8,7 @@ import 'package:storypad/views/settings/appearance/appearance_view.dart';
 import 'package:storypad/views/settings/data_backup/data_backup_view.dart';
 import 'package:storypad/views/settings/local_widgets/first_day_of_week_tile.dart';
 import 'package:storypad/views/settings/local_widgets/language_tile.dart';
+import 'package:storypad/views/settings/local_widgets/map_provider_tile.dart';
 import 'package:storypad/views/settings/local_widgets/my_templates_tile.dart';
 import 'package:storypad/views/settings/local_widgets/time_format_tile.dart';
 import 'package:flutter/material.dart';

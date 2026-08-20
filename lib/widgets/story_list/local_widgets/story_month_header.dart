@@ -24,7 +24,7 @@ class _StoryMonthHeader extends StatelessWidget {
           const SizedBox(width: 16.0),
           _MonthChip(story: story),
           if (showYear) ...[
-            const SizedBox(width: 4.0),
+            const SizedBox(width: 7.0),
             Container(
               width: 2,
               height: 2,
@@ -33,7 +33,7 @@ class _StoryMonthHeader extends StatelessWidget {
                 color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
               ),
             ),
-            const SizedBox(width: 4.0),
+            const SizedBox(width: 7.0),
             Text(
               story.year.toString(),
               style: TextTheme.of(

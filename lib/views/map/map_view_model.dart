@@ -6,16 +6,19 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/adapters/objectbox/stories_box.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
+import 'package:storypad/core/services/assets/backup_asset_downloader_service.dart';
+import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/color_from_day_service.dart';
 import 'package:storypad/core/services/location/sp_app_location_service.dart';
 import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/map/initial_map_camera_resolver.dart';
+import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -31,6 +34,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const double _minExpansionZoom = 4.0;
   static const double _maxExpansionZoom = 16.0;
   static const double _storiesSheetMapFocusOffsetFactor = 0.18;
+  static const int _imageResolveConcurrency = 3;
 
   final MapRoute params;
   final BuildContext viewContext;
@@ -40,6 +44,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     required this.viewContext,
   }) {
     unawaited(resolveInitialCamera());
+    StoryDbModel.db.addGlobalListener(_reloadVisibleStories);
   }
 
   SpMapCamera _initialSpMapCamera = InitialMapCameraResolver.fallbackCamera;
@@ -51,9 +56,34 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool _showCurrentLocation = false;
   bool get showCurrentLocation => _showCurrentLocation;
 
-  SpMapRenderer get mapRenderer => SpMapRenderer.defaultRenderer;
+  SpMapRenderer get mapRenderer => viewContext.read<DevicePreferencesProvider>().mapRenderer;
 
   final SpMapController mapController = SpMapController();
+
+  @override
+  void dispose() {
+    StoryDbModel.db.removeGlobalListener(_reloadVisibleStories);
+    _imageResolveDebounce?.cancel();
+    _notifyDebounce?.cancel();
+    super.dispose();
+  }
+
+  /// Refreshes visible pins after a story's place or photos change elsewhere
+  /// (e.g. edited from the story detail sheet). Bottom sheet story lists
+  /// already know how to refresh themselves; this only concerns the map's
+  /// own pins and pin images.
+  ///
+  /// The global listener carries no record id, so which story changed is
+  /// unknown here — clear the per-story image cache entirely rather than
+  /// leaving a stale pin photo behind for the one that did.
+  Future<void> _reloadVisibleStories() async {
+    if (_lastViewport == null) return;
+    _imageAssetIdByStoryId.clear();
+    // Not awaited: this runs as a DB global listener inside afterCommit, and
+    // awaiting the full viewport reload here would make every story write
+    // block on map refresh/image-download work.
+    unawaited(handleViewportChanged(_lastViewport!, forceReload: true));
+  }
 
   Future<void> resolveInitialCamera() async {
     final resolver = InitialMapCameraResolver(
@@ -107,6 +137,15 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   final Map<int, File?> _assetFileById = {};
   final Map<int, Future<File?>> _assetFileFutureById = {};
 
+  /// Story id → the asset that supplies its pin image, or null when it has
+  /// none. Absent means "not looked up yet", which is why this is a map and
+  /// not a nullable field.
+  final Map<int, int?> _imageAssetIdByStoryId = {};
+  final Set<int> _failedAssetIds = {};
+
+  Timer? _imageResolveDebounce;
+  Timer? _notifyDebounce;
+
   List<SpMapMarker<MapStoryObject>> get mapMarkers {
     return visibleStories
         .map(
@@ -114,12 +153,26 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
             id: story.id.toString(),
             point: story.location,
             data: story,
-            title: DateFormatHelper.yMEd_Hm(story.storyDate, Localizations.localeOf(viewContext)),
             size: const Size.square(60.0),
             anchor: const Offset(0.5, 1.0),
+            iconCacheKey: _iconCacheKeyForStory(story),
           ),
         )
         .toList();
+  }
+
+  /// What the pin will *look* like, so identical pins share a bitmap.
+  ///
+  /// With a photo the marker is the photo under a fixed scrim and the weekday
+  /// colour never shows, so it stays out of the key — otherwise every photo
+  /// pin would be redrawn on a light/dark switch for no visible change.
+  /// Without one, the pin is nothing but that colour, and all of them collapse
+  /// onto the seven weekday bitmaps.
+  String _iconCacheKeyForStory(MapStoryObject story) {
+    final int? assetId = _firstImageAssetId(story);
+    if (assetId != null && _assetFileById[assetId] != null) return 'img:$assetId';
+
+    return 'plc:${markerColorForStory(story).toARGB32()}';
   }
 
   int _loadVersion = 0;
@@ -144,15 +197,34 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     }
 
     final visibleStories = _limitStoriesByDistance(_fetchedStories, viewport.center);
-    if (_hasSameStoryIds(_visibleStories, visibleStories)) return;
+    // Same ids can still mean different pins when forced: forceReload is what
+    // a story edit (place, photos) triggers, and that never changes which
+    // stories are visible, only what their pins should look like.
+    if (!forceReload && _hasSameStoryIds(_visibleStories, visibleStories)) return;
+
+    // Before publishing, not after: a pin drawn now and given its photo later
+    // has to visibly change twice. Only new stories cost anything here, and
+    // the first paint is already waiting on far slower bitmap rendering.
+    await _resolveLocalImages(visibleStories);
+    if (disposed || loadVersion != _loadVersion) return;
 
     _visibleStories = visibleStories;
     notifyListeners();
-    unawaited(_cacheFirstAssetFiles(visibleStories));
+    _scheduleImageDownloads(visibleStories);
+  }
+
+  /// Waits for the camera to settle before going near the network. Downloading
+  /// mid-drag competes with the gesture for exactly the frames it needs; the
+  /// pins fill in a moment later either way.
+  void _scheduleImageDownloads(List<MapStoryObject> stories) {
+    _imageResolveDebounce?.cancel();
+    _imageResolveDebounce = Timer(const Duration(milliseconds: 400), () {
+      unawaited(_downloadMissingImages(stories));
+    });
   }
 
   File? firstAssetFileForStory(MapStoryObject story) {
-    final int? assetId = _firstAssetId(story);
+    final int? assetId = _firstImageAssetId(story);
     if (assetId == null) return null;
     return _assetFileById[assetId];
   }
@@ -238,49 +310,137 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
   }
 
-  Future<void> _cacheFirstAssetFiles(List<MapStoryObject> stories) async {
-    final List<int> uncachedAssetIds = stories
-        .map(_firstAssetId)
-        .whereType<int>()
-        .where((assetId) => !_assetFileById.containsKey(assetId) && !_assetFileFutureById.containsKey(assetId))
+  /// Works out which asset gives each story its pin, and whether it's already
+  /// on disk. Database and filesystem only — never the network, because this
+  /// runs before the first paint.
+  ///
+  /// [MapStoryObject.assets] is bare ids with no type, so the first one can
+  /// just as easily be a voice note or a video — which the pin can't draw, and
+  /// which downloading would be a waste of megabytes. A single query answers
+  /// both "which asset is the image" and "is it downloaded" for the whole
+  /// visible set.
+  Future<void> _resolveLocalImages(List<MapStoryObject> stories) async {
+    final List<MapStoryObject> unresolved = stories
+        .where((story) => !_imageAssetIdByStoryId.containsKey(story.id))
         .toList();
+    if (unresolved.isEmpty) return;
 
-    if (uncachedAssetIds.isEmpty) return;
+    final List<int> candidateIds = unresolved.expand((story) => story.assets ?? const <int>[]).toList();
 
-    bool changed = false;
-    await Future.wait(
-      uncachedAssetIds.map((assetId) async {
-        final future = _loadAssetFile(assetId);
-        _assetFileFutureById[assetId] = future;
+    Map<int, AssetDbModel> imageAssetsById = const {};
+    if (candidateIds.isNotEmpty) {
+      final collection = await AssetDbModel.db.where(
+        filters: {"ids": candidateIds, "type": AssetType.image},
+      );
+      if (disposed) return;
 
-        try {
-          final file = await future;
-          if (_assetFileById[assetId]?.path != file?.path || (_assetFileById[assetId] == null && file != null)) {
-            _assetFileById[assetId] = file;
-            changed = true;
-          } else {
-            _assetFileById.putIfAbsent(assetId, () => file);
-          }
-        } finally {
-          _assetFileFutureById.remove(assetId);
+      imageAssetsById = {for (final asset in collection?.items ?? const <AssetDbModel>[]) asset.id: asset};
+    }
+
+    for (final MapStoryObject story in unresolved) {
+      AssetDbModel? firstImageAsset;
+      for (final int assetId in story.assets ?? const <int>[]) {
+        final AssetDbModel? asset = imageAssetsById[assetId];
+        if (asset != null) {
+          firstImageAsset = asset;
+          break;
         }
-      }),
-    );
+      }
 
-    if (!disposed && changed) {
-      notifyListeners();
+      _imageAssetIdByStoryId[story.id] = firstImageAsset?.id;
+
+      // A null value means "this story has no image" — _downloadMissingImages
+      // filters those out and instead looks for a non-null asset id whose
+      // entry in _assetFileById is still null. Absent means never resolved.
+      if (firstImageAsset != null) {
+        _assetFileById.putIfAbsent(firstImageAsset.id, () => firstImageAsset!.localFile);
+      }
     }
   }
 
-  Future<File?> _loadAssetFile(int assetId) async {
-    final asset = await AssetDbModel.db.find(assetId);
-    return asset?.localFile;
+  Future<void> _downloadMissingImages(List<MapStoryObject> stories) async {
+    if (!viewContext.mounted) return;
+
+    // Read once up front: the downloads below are awaited, and reaching back
+    // into the context after that is exactly what `use_build_context_
+    // synchronously` is warning about.
+    final List<BackupCloudService> signedInServices = viewContext.read<BackupProvider>().signedInServices;
+    if (signedInServices.isEmpty) return;
+
+    final List<int> pendingAssetIds = stories
+        .map(_firstImageAssetId)
+        .whereType<int>()
+        .where(
+          (assetId) =>
+              _assetFileById[assetId] == null &&
+              !_assetFileFutureById.containsKey(assetId) &&
+              !_failedAssetIds.contains(assetId),
+        )
+        .toList();
+
+    if (pendingAssetIds.isEmpty) return;
+
+    // A few at a time: a hundred visible pins would otherwise open a hundred
+    // connections at once.
+    for (int start = 0; start < pendingAssetIds.length; start += _imageResolveConcurrency) {
+      if (disposed) return;
+
+      final Iterable<int> chunk = pendingAssetIds.skip(start).take(_imageResolveConcurrency);
+      await Future.wait(chunk.map((assetId) => _resolveAssetFile(assetId, signedInServices)));
+    }
   }
 
-  int? _firstAssetId(MapStoryObject story) {
-    final assets = story.assets;
-    if (assets == null || assets.isEmpty) return null;
-    return assets.first;
+  Future<void> _resolveAssetFile(int assetId, List<BackupCloudService> signedInServices) async {
+    final Future<File?> future = _loadAssetFile(assetId, signedInServices);
+    _assetFileFutureById[assetId] = future;
+
+    try {
+      final File? file = await future;
+      if (disposed) return;
+
+      _assetFileById[assetId] = file;
+      // Each arrival changes one pin's cache key, and every notify rebuilds
+      // the whole marker list — so let a burst settle into one rebuild.
+      if (file != null) _notifyListenersCoalesced();
+    } finally {
+      _assetFileFutureById.remove(assetId);
+    }
+  }
+
+  /// The download path. Only reached for images [_resolveLocalImages] found
+  /// no local file for, so the `localFile` check below is a race guard for a
+  /// copy that arrived from another screen in the meantime.
+  Future<File?> _loadAssetFile(int assetId, List<BackupCloudService> signedInServices) async {
+    final AssetDbModel? asset = await AssetDbModel.db.find(assetId);
+    if (asset == null || disposed) return null;
+
+    final File? localFile = asset.localFile;
+    if (localFile != null) return localFile;
+
+    // One failure per asset is enough. Without this, a failed download leaves
+    // the id uncached, and every viewport change queues the same doomed
+    // request again.
+    if (_failedAssetIds.contains(assetId)) return null;
+    if (signedInServices.isEmpty) return null;
+
+    try {
+      final String localFilePath = await BackupAssetDownloaderService().downloadAsset(
+        asset: asset,
+        signedInServices: signedInServices,
+      );
+      return File(localFilePath);
+    } catch (e) {
+      _failedAssetIds.add(assetId);
+      AppLogger.d('$runtimeType#_loadAssetFile failed to download asset $assetId: $e');
+      return null;
+    }
+  }
+
+  int? _firstImageAssetId(MapStoryObject story) => _imageAssetIdByStoryId[story.id];
+
+  void _notifyListenersCoalesced() {
+    _notifyDebounce?.cancel();
+    _notifyDebounce = Timer(const Duration(milliseconds: 150), notifyListeners);
   }
 
   double _viewportFetchExpansionFactor(double zoom) {
