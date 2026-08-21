@@ -194,7 +194,7 @@ class _MapPickerContent extends StatelessWidget {
     final String? subtitle = selectedPlace == null
         ? null
         : isResolving
-        ? tr("page.map.picker.messages.please_wait")
+        ? tr("general.messages.please_wait")
         : () {
             final List<String> parts = <String>[
               if (selectedPlace.locality != null && selectedPlace.locality!.trim().isNotEmpty)
