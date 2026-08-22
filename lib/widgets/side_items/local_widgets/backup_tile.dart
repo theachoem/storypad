@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
-import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/backup_sync_state_store.dart';
@@ -133,8 +132,8 @@ class BackupTile extends StatelessWidget {
       subtitle = Text(tr("general.syncing"));
       action = null;
 
-      final currentStep = _currentActiveStep(provider);
-      if (currentStep != null) subtitle = Text("${tr("general.syncing")} ${currentStep.stepNumber}/4");
+      final progress = _overallSyncProgress(provider);
+      if (progress != null) subtitle = Text("${tr("general.syncing")} ${progress.current}/${progress.total}");
 
       title = Text.rich(
         TextSpan(
@@ -239,12 +238,22 @@ class BackupTile extends StatelessWidget {
     return _firstSignedInService(provider) ?? provider.services.first;
   }
 
-  /// The step of whichever service is currently mid-sync — sync runs are
-  /// sequential, so at most one service is ever [SyncActivity.active].
-  SyncStep? _currentActiveStep(BackupProvider provider) {
-    for (final service in provider.services) {
-      final status = provider.statusFor(service.serviceType);
-      if (status.activity == SyncActivity.active) return status.currentStep;
+  /// Combines every signed-in service's 4 steps into one running count, so
+  /// syncing e.g. 2 services shows 1/8..8/8 instead of restarting at 1/4 for
+  /// each service in turn. Sync runs sequentially through provider.services
+  /// (see BackupProvider._syncBackupAcrossDevices), so a signed-in service
+  /// earlier in that order than the currently active one has already
+  /// completed all 4 of its own steps.
+  ({int current, int total})? _overallSyncProgress(BackupProvider provider) {
+    final signedIn = provider.services.where((service) => service.isSignedIn).toList();
+    if (signedIn.isEmpty) return null;
+
+    for (var i = 0; i < signedIn.length; i++) {
+      final status = provider.statusFor(signedIn[i].serviceType);
+      final step = status.currentStep;
+      if (status.activity == SyncActivity.active && step != null) {
+        return (current: i * 4 + step.stepNumber, total: signedIn.length * 4);
+      }
     }
     return null;
   }

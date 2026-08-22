@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 class AutoSyncTriggerService with WidgetsBindingObserver {
   AutoSyncTriggerService({
     required this.onTrigger,
-    this.throttleDuration = const Duration(minutes: 30),
+    this.throttleDuration = const Duration(seconds: 5),
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
 

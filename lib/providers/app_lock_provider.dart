@@ -11,6 +11,7 @@ import 'package:storypad/core/storages/app_lock_storage.dart';
 import 'package:storypad/core/types/app_lock_question.dart';
 import 'package:storypad/views/app_locks/security_questions/security_questions_view.dart';
 import 'package:storypad/views/pin_unlock/pin_unlock_view.dart';
+import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 
 class AppLockProvider extends ChangeNotifier {
   AppLockProvider() {
@@ -117,12 +118,20 @@ class AppLockProvider extends ChangeNotifier {
   }
 
   Future<void> toggleBiometrics(BuildContext context) async {
-    bool authenticated = await localAuth.authenticate(title: tr('dialog.unlock_to_continue.title'));
+    // The native biometric prompt can itself trigger inactive/resumed lifecycle events, which
+    // would otherwise pop the app-lock barrier over this Settings screen while it's showing —
+    // same reasoning as disabling the lock around the camera/image picker.
+    await SpAppLockWrapper.disableAppLockIfHas(
+      context,
+      callback: () async {
+        bool authenticated = await localAuth.authenticate(title: tr('dialog.unlock_to_continue.title'));
 
-    if (authenticated) {
-      await storage.writeObject(appLock.copyWith(enabledBiometric: !(appLock.enabledBiometric == true)));
-      await reload();
-    }
+        if (authenticated) {
+          await storage.writeObject(appLock.copyWith(enabledBiometric: !(appLock.enabledBiometric == true)));
+          await reload();
+        }
+      },
+    );
   }
 
   Future<void> forgotPin(BuildContext context) async {
