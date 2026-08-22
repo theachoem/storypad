@@ -10,4 +10,8 @@ abstract class BaseErrorReportingAdaptor {
 
   Future<void> recordError(Object error, StackTrace? stack, {bool fatal = false});
   Future<void> recordFlutterFatalError(FlutterErrorDetails details);
+
+  /// Breadcrumb log attached to the next crash/error report, not a report on
+  /// its own — no-ops when the underlying backend is unavailable.
+  Future<void> log(String message);
 }

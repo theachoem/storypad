@@ -1,5 +1,5 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
@@ -90,35 +90,35 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
     // Step 1: sync preflight. Detached cleanup is disabled unless this succeeds.
     currentStep = OptimizeStep.syncing;
     notifyListeners();
-    FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: syncing latest data');
+    kErrorReportingService.log('$runtimeType#startOptimize: syncing latest data');
 
     try {
       syncSucceeded = await syncCallback();
-      FirebaseCrashlytics.instance.log(
+      kErrorReportingService.log(
         syncSucceeded
             ? '$runtimeType#startOptimize: sync preflight succeeded'
             : '$runtimeType#startOptimize: sync preflight did not complete; detached cleanup disabled',
       );
     } catch (e) {
-      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: sync preflight failed — $e');
+      kErrorReportingService.log('$runtimeType#startOptimize: sync preflight failed — $e');
       syncSucceeded = false;
     }
     notifyListeners();
 
     currentStep = OptimizeStep.fetchingFiles;
     notifyListeners();
-    FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: fetching cloud files');
+    kErrorReportingService.log('$runtimeType#startOptimize: fetching cloud files');
 
     try {
       final allFiles = await _fetchFiles();
-      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: fetched ${allFiles.length} files');
+      kErrorReportingService.log('$runtimeType#startOptimize: fetched ${allFiles.length} files');
 
       currentStep = OptimizeStep.analyzing;
       notifyListeners();
-      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: analyzing files');
+      kErrorReportingService.log('$runtimeType#startOptimize: analyzing files');
 
       await _analyzeFiles(allFiles);
-      FirebaseCrashlytics.instance.log(
+      kErrorReportingService.log(
         '$runtimeType#startOptimize: analysis done — '
         '${staleDuplicates.length} stale, '
         '${detachedCandidates.length} detached candidates '
@@ -126,7 +126,7 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
       );
 
       if (!hasFindings) {
-        FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: nothing to clean, done');
+        kErrorReportingService.log('$runtimeType#startOptimize: nothing to clean, done');
         currentStep = OptimizeStep.done;
         notifyListeners();
         return;
@@ -136,7 +136,7 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
       notifyListeners();
       // Wait for user to call startCleanup()
     } catch (e) {
-      FirebaseCrashlytics.instance.log('$runtimeType#startOptimize: failed — $e');
+      kErrorReportingService.log('$runtimeType#startOptimize: failed — $e');
       errorMessage = e.toString();
       currentStep = OptimizeStep.error;
       notifyListeners();
@@ -146,17 +146,17 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> startCleanup() async {
     currentStep = OptimizeStep.cleaningUp;
     notifyListeners();
-    FirebaseCrashlytics.instance.log('$runtimeType#startCleanup: started — $totalToClean files to trash');
+    kErrorReportingService.log('$runtimeType#startCleanup: started — $totalToClean files to trash');
 
     try {
       await _cleanUpFiles();
-      FirebaseCrashlytics.instance.log(
+      kErrorReportingService.log(
         '$runtimeType#startCleanup: done — $deletedCount trashed, $failedCount failed',
       );
       currentStep = OptimizeStep.done;
       notifyListeners();
     } catch (e) {
-      FirebaseCrashlytics.instance.log('$runtimeType#startCleanup: failed — $e');
+      kErrorReportingService.log('$runtimeType#startCleanup: failed — $e');
       errorMessage = e.toString();
       currentStep = OptimizeStep.error;
       if (!disposed) notifyListeners();
@@ -272,7 +272,7 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
     // Stale duplicates: re-verify before trashing
     for (final file in staleDuplicates.map((r) => r.file)) {
       if (!safeStaleIds.contains(file.id)) {
-        FirebaseCrashlytics.instance.log(
+        kErrorReportingService.log(
           '$runtimeType#_cleanUpFiles: skipping ${file.fileName} — no longer safe to trash',
         );
         failedCount++;
@@ -286,7 +286,7 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     // Detached candidates: re-apply the sync and age gates with fresh records, then trash
     if (!syncSucceeded) {
-      FirebaseCrashlytics.instance.log('$runtimeType#_cleanUpFiles: detached cleanup skipped because sync failed');
+      kErrorReportingService.log('$runtimeType#_cleanUpFiles: detached cleanup skipped because sync failed');
       return;
     }
 
@@ -298,7 +298,7 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
       final tombstone = assetId != null ? freshTombstones[assetId] : null;
 
       if (!CloudAssetAnalyzer.isDetachedEligibleForCleanup(file, tombstone: tombstone)) {
-        FirebaseCrashlytics.instance.log(
+        kErrorReportingService.log(
           '$runtimeType#_cleanUpFiles: ${file.fileName} no longer eligible after re-check',
         );
         failedCount++;
@@ -320,14 +320,14 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
       }
     } on BackupException catch (e) {
       if (e.toString().toLowerCase().contains('not found')) {
-        FirebaseCrashlytics.instance.log('$runtimeType#_trashOne: ${file.fileName} already gone, counting as trashed');
+        kErrorReportingService.log('$runtimeType#_trashOne: ${file.fileName} already gone, counting as trashed');
         deletedCount++;
       } else {
-        FirebaseCrashlytics.instance.log('$runtimeType#_trashOne: failed — ${file.fileName}: $e');
+        kErrorReportingService.log('$runtimeType#_trashOne: failed — ${file.fileName}: $e');
         failedCount++;
       }
     } catch (e) {
-      FirebaseCrashlytics.instance.log('$runtimeType#_trashOne: failed — ${file.fileName}: $e');
+      kErrorReportingService.log('$runtimeType#_trashOne: failed — ${file.fileName}: $e');
       failedCount++;
     }
     if (!disposed) notifyListeners();

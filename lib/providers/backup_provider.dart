@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/services/auto_sync_trigger_service.dart';
@@ -226,6 +226,9 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         services: services,
         uploadAssets: forceMediaUpload || await _canUploadMedia(),
       );
+    } catch (e) {
+      AppLogger.d('$runtimeType#recheckAndSync failed: $e');
+      return false;
     } finally {
       _syncing = false;
       _syncState.onSyncFinished();
@@ -389,12 +392,13 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
       _syncState.onServiceSyncStarted(service.serviceType);
 
-      FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
+      kErrorReportingService.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
 
       final result = await repository.sync(service, uploadAssets: uploadAssets);
+
       if (!result.isSuccess) {
         allSyncsSucceeded = false;
-        FirebaseCrashlytics.instance.log(
+        kErrorReportingService.log(
           '$runtimeType#_syncBackupAcrossDevices[$serviceId]: failed — ${result.error?.message}',
         );
         if (result.error?.type == BackupErrorType.authentication) {
@@ -420,7 +424,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         continue;
       }
 
-      FirebaseCrashlytics.instance.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: succeeded');
+      kErrorReportingService.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: succeeded');
 
       // Update local DB timestamps after successful sync (in case import happened)
       _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();

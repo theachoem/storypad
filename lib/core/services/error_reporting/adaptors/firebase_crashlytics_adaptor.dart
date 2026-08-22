@@ -14,4 +14,10 @@ class FirebaseCrashlyticsAdaptor extends BaseErrorReportingAdaptor {
     if (kIsWeb) return Future.value();
     return FirebaseCrashlytics.instance.recordFlutterFatalError(details);
   }
+
+  @override
+  Future<void> log(String message) {
+    if (kIsWeb) return Future.value();
+    return FirebaseCrashlytics.instance.log(message);
+  }
 }
