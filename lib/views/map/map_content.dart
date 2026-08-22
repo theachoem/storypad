@@ -14,54 +14,44 @@ class _MapContent extends StatelessWidget {
         leading: BackButton(
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          IconButton(
+            tooltip: tr("button.switch_map_style"),
+            icon: SpAnimatedIcons.fadeScale(
+              duration: Durations.long1,
+              firstChild: const Icon(SpIcons.map),
+              secondChild: const Icon(SpIcons.satellite),
+              showFirst: viewModel.mapStyle == SpMapStyle.streets,
+            ),
+            onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
+          ),
+          SpSingleStateWidget.listen(
+            initialValue: false,
+            builder: (context, loading, notifier) {
+              return IconButton(
+                tooltip: tr("button.move_to_current_location"),
+                icon: loading
+                    ? const SizedBox.square(
+                        dimension: 24.0,
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const Icon(SpIcons.myLocation),
+                onPressed: () async {
+                  notifier.value = true;
+                  await viewModel.goToCurrentLocation(context);
+                  notifier.value = false;
+                },
+              );
+            },
+          ),
+          const SizedBox(width: 4.0),
+        ],
       ),
       floatingActionButtonLocation: SpFabLocation.endFloat(context),
-      floatingActionButton: Column(
-        mainAxisSize: .min,
-        crossAxisAlignment: .end,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 4.0),
-            child: IconButton(
-              tooltip: tr("button.switch_map_style"),
-              icon: SpAnimatedIcons.fadeScale(
-                duration: Durations.long1,
-                firstChild: const Icon(SpIcons.map),
-                secondChild: const Icon(SpIcons.satellite),
-                showFirst: viewModel.mapStyle == SpMapStyle.streets,
-              ),
-              onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 4.0),
-            child: SpSingleStateWidget.listen(
-              initialValue: false,
-              builder: (context, loading, notifier) {
-                return IconButton(
-                  tooltip: tr("button.move_to_current_location"),
-                  icon: loading
-                      ? const SizedBox.square(
-                          dimension: 24.0,
-                          child: CircularProgressIndicator.adaptive(),
-                        )
-                      : const Icon(SpIcons.myLocation),
-                  onPressed: () async {
-                    notifier.value = true;
-                    await viewModel.goToCurrentLocation(context);
-                    notifier.value = false;
-                  },
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 4.0),
-          FloatingActionButton(
-            tooltip: tr("button.new_story"),
-            child: const Icon(SpIcons.newStory),
-            onPressed: () => viewModel.goToNewPage(),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        tooltip: tr("button.new_story"),
+        child: const Icon(SpIcons.newStory),
+        onPressed: () => viewModel.goToNewPage(),
       ),
       body: _buildMapLayer(context),
     );

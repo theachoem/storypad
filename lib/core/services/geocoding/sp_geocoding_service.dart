@@ -5,7 +5,6 @@ import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
-import 'package:storypad/core/services/geocoding/maptiler/sp_maptiler_geocoding_service.dart';
 import 'package:storypad/core/services/geocoding/sp_null_geocoding_service.dart';
 import 'package:storypad/core/services/geocoding/system/sp_system_geocoding_service.dart';
 
@@ -32,7 +31,7 @@ abstract class SpGeocodingService {
       ? SpSystemGeocodingService()
       : const SpNullGeocodingService();
 
-  static final onlineInstance = SpMapTilerGeocodingService();
+  static const onlineInstance = SpNullGeocodingService();
 
   /// Convert coordinates to a human-readable place.
   ///

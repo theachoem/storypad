@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/cloud_storage/adaptors/cdn_cloud_storage_adaptor.dart';
 
 /// Thrown when download is rejected due to access denial.
@@ -10,9 +11,7 @@ class CloudStorageUnauthorizedException implements Exception {
 
 abstract class BaseCloudStorageAdaptor {
   static BaseCloudStorageAdaptor create() {
-    // CDN base URL can be overridden via --dart-define=CDN_BASE_URL=https://...
-    const cdnBaseUrl = String.fromEnvironment('CDN_BASE_URL', defaultValue: 'https://static.storypad.me');
-    return CdnCloudStorageAdaptor(baseUrl: cdnBaseUrl);
+    return CdnCloudStorageAdaptor(baseUrl: kCdnBaseUrl);
   }
 
   /// Download the raw bytes for [hashPath] (e.g. `/relax_sounds/animal/forest_birds-abc123.svg`).

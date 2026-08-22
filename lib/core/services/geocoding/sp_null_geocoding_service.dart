@@ -14,5 +14,9 @@ class SpNullGeocodingService implements SpGeocodingService {
   Future<PlaceDbModel?> reverseGeocode(SpLatLng latLng) async => null;
 
   @override
-  Future<List<PlaceDbModel>> searchPlaces(String query, {SpLatLng? proximity}) async => [];
+  Future<List<PlaceDbModel>> searchPlaces(
+    String query, {
+    SpLatLng? proximity,
+    List<String> countries = const [],
+  }) async => [];
 }

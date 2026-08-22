@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/remote_config/adaptors/base_remote_config_adaptor.dart';
 import 'package:storypad/core/storages/base_object_storages/map_storage.dart';
 
@@ -22,7 +23,7 @@ class HttpRemoteConfigAdaptor extends BaseRemoteConfigAdaptor {
   final RemoteConfigCacheStorage _cache;
 
   HttpRemoteConfigAdaptor({
-    this.baseUrl = 'https://static.storypad.me',
+    this.baseUrl = kCdnBaseUrl,
     http.Client? httpClient,
     RemoteConfigCacheStorage? cache,
   }) : _httpClient = httpClient ?? http.Client(),

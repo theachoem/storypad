@@ -162,6 +162,9 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
         TileLayer(
           urlTemplate: widget.mapStyle.mapTilerUrlTemplate,
           userAgentPackageName: kPackageInfo.packageName,
+          tileProvider: NetworkTileProvider(
+            headers: {'X-Map-Proxy-Secret': kMapTileProxySecret},
+          ),
         ),
         if (_currentLocation != null)
           CircleLayer(

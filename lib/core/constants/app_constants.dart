@@ -16,7 +16,11 @@ const String kRevenueCatIosApiKey = String.fromEnvironment('REVENUE_CAT_IOS_API_
 const String kEmailHasherSecreyKey = String.fromEnvironment('EMAIL_HASHER_SECRET_KEY');
 const String kGoogleMapsAndroidApiKey = String.fromEnvironment('GOOGLE_MAPS_ANDROID_API_KEY');
 const String kGoogleMapsIosApiKey = String.fromEnvironment('GOOGLE_MAPS_IOS_API_KEY');
-const String kMapTilerApiKey = String.fromEnvironment('MAPTILER_API_KEY');
+const String kMapTileProxySecret = String.fromEnvironment('MAP_TILE_PROXY_SECRET');
+
+/// Base URL for static.storypad.me — serves remote config, cloud-stored assets,
+/// and the MapTiler tile proxy. Override via `--dart-define=CDN_BASE_URL=https://...`.
+const String kCdnBaseUrl = String.fromEnvironment('CDN_BASE_URL', defaultValue: 'https://static.storypad.me');
 
 const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 

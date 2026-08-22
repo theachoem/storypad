@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -31,7 +32,8 @@ class MapProviderTile extends StatelessWidget {
         // Shown where Google Maps can't load — but also to anyone who has
         // already switched, wherever they are now. Hiding it the moment they
         // travel out of the region would be a one-way door.
-        final bool visible = SpMapRenderer.selectable(kLocalTimezone) || provider.preferences.mapRenderer != null;
+        final bool visible =
+            SpMapRenderer.selectable(kLocalTimezone) || provider.preferences.mapRenderer != null || kDebugMode;
         if (!visible) return const SizedBox.shrink();
 
         return MapProviderTile(
