@@ -3,10 +3,17 @@ import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart'
 import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_demo_images.dart';
 
+/// Generic "preview a feature" sheet: an optional [header] (e.g. an enable
+/// switch) above a horizontal carousel of demo screenshots. Callers own what
+/// the header looks like and what it toggles — this sheet only lays it out.
 class SpDemoImagesSheet extends BaseBottomSheet {
   const SpDemoImagesSheet({
     required this.demoImages,
+    this.header,
   });
+
+  final List<String> demoImages;
+  final Widget? header;
 
   static const List<String> periodCalendarDemoImages = [
     "/feature_demos/period_calendar/period_calendar_1__1080x2400.jpg",
@@ -33,25 +40,19 @@ class SpDemoImagesSheet extends BaseBottomSheet {
     }
   }
 
-  final List<String> demoImages;
   @override
   bool get fullScreen => false;
-
-  double get height => 380.0;
-
-  factory SpDemoImagesSheet.periodCalendarDemo() {
-    return const SpDemoImagesSheet(demoImages: periodCalendarDemoImages);
-  }
-
-  factory SpDemoImagesSheet.relaxSoundDemo() {
-    return const SpDemoImagesSheet(demoImages: relaxSoundDemoImages);
-  }
 
   @override
   Widget build(BuildContext context, double bottomPadding) {
     return Column(
       mainAxisSize: .min,
       children: [
+        if (header case final header?) ...[
+          const SizedBox(height: 8),
+          header,
+          const SizedBox(height: 8),
+        ],
         SpDemoImages(
           demoImageUrlPaths: demoImages,
           skeletonCount: demoImages.length,
