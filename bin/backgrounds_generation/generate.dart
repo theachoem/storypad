@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_print
 
-// This script processes background images from firestore_storages/story_backgrounds
-// and generates Dart code in lib/gen/story_backgrounds.dart
+// This script processes background images from ../static/sources/story_backgrounds
+// (the static.storypad.me submodule, checked out as a sibling of app/) and
+// generates Dart code in lib/gen/story_backgrounds.dart
 // To run, use:
 // ```
 // dart bin/backgrounds_generation/generate.dart
@@ -12,10 +13,10 @@ import 'dart:io';
 void main() async {
   print('Starting story backgrounds generation...');
 
-  final backgroundsDir = Directory('firestore_storages/story_backgrounds');
+  final backgroundsDir = Directory('../static/sources/story_backgrounds');
 
   if (!await backgroundsDir.exists()) {
-    print('Error: Directory firestore_storages/story_backgrounds not found');
+    print('Error: Directory ../static/sources/story_backgrounds not found');
     exit(1);
   }
 
