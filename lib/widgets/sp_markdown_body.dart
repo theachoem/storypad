@@ -9,11 +9,13 @@ class SpMarkdownBody extends StatelessWidget {
     required this.body,
     this.align = WrapAlignment.start,
     this.onTapLink,
+    this.style,
   });
 
   final String body;
   final WrapAlignment align;
   final void Function(String, String?, String)? onTapLink;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class SpMarkdownBody extends StatelessWidget {
       onTapLink:
           onTapLink ?? (text, href, title) => UrlOpenerService.openForRichContent(context: context, url: href ?? ''),
       styleSheet: MarkdownStyleSheet(
+        p: style,
         textAlign: align,
         blockquoteDecoration: BoxDecoration(
           color: Colors.transparent,

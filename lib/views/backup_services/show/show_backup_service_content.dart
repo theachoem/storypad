@@ -73,6 +73,10 @@ class _ShowBackupServiceContent extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: _SyncButton(viewModel: viewModel),
         ),
+        if (viewModel.serviceType.googleDrive) ...[
+          const SizedBox(height: 4.0),
+          buildGoogleDriveStorageInfo(context),
+        ],
         if (viewModel.params.service.currentUser != null)
           SwitchListTile.adaptive(
             value: viewModel.params.service.autoBackupEnabled,
@@ -173,6 +177,33 @@ class _ShowBackupServiceContent extends StatelessWidget {
         //   trailing: Text("50mb"),
         // ),
       ],
+    );
+  }
+
+  Widget buildGoogleDriveStorageInfo(BuildContext context) {
+    Color outline = ColorScheme.of(context).outline;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(SpIcons.info, size: 14, color: outline),
+          const SizedBox(width: 6),
+          Expanded(
+            child: SpMarkdownBody(
+              style: TextTheme.of(context).bodySmall?.copyWith(color: outline),
+              body: tr(
+                'page.show_backup_service.google_drive_storage_info',
+                namedArgs: {
+                  'SP_LEARN_MORE_LINK':
+                      '[${tr("button.learn_more")}](https://developers.google.com/workspace/drive/api/guides/appdata)',
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
