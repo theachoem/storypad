@@ -16,6 +16,8 @@ class GalleryTemplateUsageService {
   Future<void> recordTemplateUsage({
     required String templateId,
   }) async {
+    if (!kFirebaseAvailable) return;
+
     try {
       return await avoidDublicatedCallService.run(() async {
         final docRef = firestore.collection('templates').doc(templateId).collection('devices').doc(kDeviceInfo.id);
