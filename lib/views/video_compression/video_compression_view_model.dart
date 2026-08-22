@@ -38,7 +38,7 @@ class VideoCompressionViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   String get statusLabel {
-    if (!started) return tr('page.video_compression.please_wait');
+    if (!started) return tr('general.messages.please_wait');
     return '${(value * 100).round()}%';
   }
 
