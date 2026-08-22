@@ -50,6 +50,13 @@ late final String? kLocalTimezone;
 
 AppLogo? kAppLogo;
 
+/// Whether `Firebase.initializeApp()` completed successfully. False on Linux
+/// (Firebase isn't linked there) and whenever init failed or timed out, e.g.
+/// because Firebase/Google domains are blocked or throttled on the user's
+/// network. Firebase-backed adaptors must check this before constructing a
+/// `Firebase*` instance, since doing so throws `[core/no-app]` otherwise.
+bool kFirebaseAvailable = false;
+
 final BaseAnalyticsEventAdaptor kAnalyticsService = BaseAnalyticsEventAdaptor.create();
 final BaseAnalyticsUserPropertyAdaptor kAnalyticsUserPropertyService = BaseAnalyticsUserPropertyAdaptor.create();
 final BaseErrorReportingAdaptor kErrorReportingService = BaseErrorReportingAdaptor.create();

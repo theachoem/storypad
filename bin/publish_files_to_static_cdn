@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cd bin/cdn && node publish_files_to_static_cdn.js

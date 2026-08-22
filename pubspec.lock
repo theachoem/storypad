@@ -624,54 +624,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.8.24"
-  firebase_remote_config:
-    dependency: "direct main"
-    description:
-      name: firebase_remote_config
-      sha256: "6f310b2dfbb84d781992ac5e4be741be5606c3e971741517869b21099a1a82b0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.5.3"
-  firebase_remote_config_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_remote_config_platform_interface
-      sha256: "59a20db282c7f6166b02d5158e6bcd998937b1c1711307af8f55cb5da110bb2a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.3"
-  firebase_remote_config_web:
-    dependency: transitive
-    description:
-      name: firebase_remote_config_web
-      sha256: a97dced4db76235b1680cf647e8a23528dff1b94fab6e7ed1cfc3e2f9d9f4b72
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.10.10"
-  firebase_storage:
-    dependency: "direct main"
-    description:
-      name: firebase_storage
-      sha256: f732bbcd82d21cfbe49b6fe5f4c50334f5f3660a151f004f58da388f8e39e6d3
-      url: "https://pub.dev"
-    source: hosted
-    version: "13.4.3"
-  firebase_storage_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_storage_platform_interface
-      sha256: "2515a8d16be44fffb3782669543804a651e73f637bb668db77d76a5bd38c396f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.3"
-  firebase_storage_web:
-    dependency: transitive
-    description:
-      name: firebase_storage_web
-      sha256: "05813d665afa2c2bafaba62c97dc1b510886b1b4fcec49bf05934bd78795c6e7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.11.9"
   fixnum:
     dependency: transitive
     description:

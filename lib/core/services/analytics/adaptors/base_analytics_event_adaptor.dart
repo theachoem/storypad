@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -15,7 +14,7 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 
 abstract class BaseAnalyticsEventAdaptor {
   static BaseAnalyticsEventAdaptor create() {
-    return (!kIsWeb && Platform.isLinux) ? NoneAnalyticsEventAdaptor() : FirebaseAnalyticsEventAdaptor();
+    return kFirebaseAvailable ? FirebaseAnalyticsEventAdaptor() : NoneAnalyticsEventAdaptor();
   }
 
   // ---------------------------------------------------------------------------

@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'dart:convert';
 import 'package:storypad/core/helpers/path_helper.dart' as path;
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/cloud_storage/adaptors/base_cloud_storage_adaptor.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
+import 'package:storypad/gen/storage_hash_map.dart';
 
 enum FirestoreStorageState { success, connectionFailed, unauthorized, unknown }
 
@@ -27,21 +26,14 @@ class FirestoreStorageResponse {
 class CloudStorageService {
   static CloudStorageService instance = CloudStorageService();
 
-  Map<String, dynamic>? _hash;
   Map<String, String>? _downloadUrlsByUrlPath;
 
   final Map<String, Completer<FirestoreStorageResponse>> _downloadingFileByUrlPath = {};
 
-  Future<void> loadHash() async {
-    _hash = await rootBundle.loadString('assets/firestore_storage_map.json').then((jsonString) {
-      return json.decode(jsonString);
-    });
-  }
-
   // input: /relax_sounds/animal/forest_birds.svg"
   // output: /relax_sounds/animal/forest_birds-8ce3ba7e37ca67690cc3c180abfdffc8.svg"
   String getHashPath(String originalUrlPath) {
-    return _hash![originalUrlPath];
+    return kStorageHashMap[originalUrlPath]!;
   }
 
   File? getCachedFile(String urlPath) {
@@ -73,7 +65,7 @@ class CloudStorageService {
   }
 
   // max download is 20mb, we will validate during uploading in:
-  // bin/firebase_admin/upload_files_to_firestore_storages.js
+  // bin/cdn/publish_files_to_static_cdn.js
   Future<FirestoreStorageResponse> downloadFile(String urlPath) async {
     assert(urlPath.startsWith("/"));
 
@@ -127,7 +119,7 @@ class CloudStorageService {
       //   "/relax_sounds/water/ocean_waves-130d1d326a06fe0f21d4650a4f7065b7.txt",
       //   "/relax_sounds/water/droplets-ec36e00209a8cece33eef6f5c3f80e61.txt",
       // };
-      final validBasenames = (_hash ?? {}).values.map((e) => path.basename(e.toString())).toSet();
+      final validBasenames = kStorageHashMap.values.map((e) => path.basename(e)).toSet();
 
       final files = await downloadDir.list(recursive: true).where((entity) => entity is File).toList();
       final deletedFiles = <String>[];
