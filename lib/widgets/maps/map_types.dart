@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
+import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/objects/sp_latlng_bounds.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 
@@ -99,9 +100,9 @@ extension SpMapStyleExtension on SpMapStyle {
   String get mapTilerUrlTemplate {
     switch (this) {
       case SpMapStyle.streets:
-        return 'https://static.storypad.me/maptiler/streets/{z}/{x}/{y}.png';
+        return '$kCdnBaseUrl/maptiler/streets/{z}/{x}/{y}.png';
       case SpMapStyle.satellite:
-        return 'https://static.storypad.me/maptiler/hybrid-v4/{z}/{x}/{y}.png';
+        return '$kCdnBaseUrl/maptiler/hybrid-v4/{z}/{x}/{y}.png';
     }
   }
 }
