@@ -214,12 +214,6 @@ class AssetDbModel extends BaseDbModel {
     return cloudDestinations[serviceType.id]?[identifier]?['file_id'];
   }
 
-  /// Every service this asset has an upload record for — e.g. to label a
-  /// delete confirmation "Delete from Google Drive, Nextcloud" rather than
-  /// assuming Drive is the only place it could live.
-  List<BackupServiceType> get uploadedServiceTypes =>
-      BackupServiceType.values.where((type) => cloudDestinations[type.id]?.isNotEmpty == true).toList();
-
   /// Every (serviceType, identifier, fileId) this asset has been uploaded
   /// to, across every connected service — unlike [getGoogleDriveIdForEmail]
   /// and friends, this isn't scoped to one provider. Used wherever an asset

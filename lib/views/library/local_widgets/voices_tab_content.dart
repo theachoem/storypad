@@ -272,14 +272,20 @@ class _VoicesTabContentState extends State<_VoicesTabContent> with AutomaticKeep
     AssetDbModel asset,
     int storyCount,
   ) {
-    final uploadedTo = asset.uploadedServiceTypes;
+    final reachableServices = asset
+        .matchingCloudDestinationsFor(provider.signedInServices)
+        .map((d) => d.serviceType)
+        .toSet();
 
     return SpPopMenuItem(
       leadingIconData: SpIcons.delete,
       titleStyle: TextStyle(color: ColorScheme.of(context).error),
-      title: uploadedTo.isEmpty
+      title: reachableServices.isEmpty
           ? tr("button.delete")
-          : tr("button.delete_from_args", namedArgs: {'SP_SERVICES': uploadedTo.map((e) => e.displayName).join(', ')}),
+          : tr(
+              "button.delete_from_args",
+              namedArgs: {'SP_SERVICES': reachableServices.map((e) => e.displayName).join(', ')},
+            ),
       onPressed: () => _deleteAsset(context, asset, storyCount),
     );
   }

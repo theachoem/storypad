@@ -25,41 +25,6 @@ void main() {
     );
   }
 
-  group('AssetDbModel.uploadedServiceTypes', () {
-    test('is empty when never uploaded anywhere', () {
-      final asset = buildAsset(cloudDestinations: {});
-      expect(asset.uploadedServiceTypes, isEmpty);
-    });
-
-    test('lists every service with at least one destination', () {
-      final asset = buildAsset(
-        cloudDestinations: {
-          BackupServiceType.google_drive.id: {
-            'tester@example.com': {'file_id': 'abc', 'file_name': '1.jpg'},
-          },
-          BackupServiceType.nextcloud.id: {
-            'admin@example.com/StoryPad': {'file_id': '/StoryPad/images/1.jpg', 'file_name': '1.jpg'},
-          },
-        },
-      );
-
-      expect(
-        asset.uploadedServiceTypes,
-        unorderedEquals([BackupServiceType.google_drive, BackupServiceType.nextcloud]),
-      );
-    });
-
-    test('excludes a service whose entry map is empty', () {
-      final asset = buildAsset(
-        cloudDestinations: {
-          BackupServiceType.google_drive.id: {},
-        },
-      );
-
-      expect(asset.uploadedServiceTypes, isEmpty);
-    });
-  });
-
   group('AssetDbModel.allCloudDestinations', () {
     test('is empty when never uploaded anywhere', () {
       final asset = buildAsset(cloudDestinations: {});
