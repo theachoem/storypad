@@ -51,6 +51,7 @@ class InitialMapCameraResolver {
     required this.fetchDeviceLocation,
     required this.fetchStoryLocations,
     this.preferDevicePlace = true,
+    this.closeZoomBoost = 0.0,
   });
 
   static const SpMapCamera fallbackCamera = SpMapCamera(
@@ -62,10 +63,16 @@ class InitialMapCameraResolver {
   final StoryLocationsLoader fetchStoryLocations;
   final bool preferDevicePlace;
 
+  /// Added to the device/story-derived zoom levels below. Callers that want
+  /// the initial camera closer in (e.g. the map picker, so a place name
+  /// resolves instantly) can pass a positive value here instead of every
+  /// call site re-deriving its own zoom levels.
+  final double closeZoomBoost;
+
   Future<InitialMapCameraResult> resolve({PlaceDbModel? selectedPlace}) async {
     if (selectedPlace != null && _isValidPoint(selectedPlace.latLng)) {
       return InitialMapCameraResult(
-        camera: SpMapCamera(target: selectedPlace.latLng, zoom: 15.0),
+        camera: SpMapCamera(target: selectedPlace.latLng, zoom: 15.0 + closeZoomBoost),
         source: InitialMapCameraSource.selectedPlace,
       );
     }
@@ -95,7 +102,7 @@ class InitialMapCameraResolver {
     if (location == null || !_isValidPoint(location)) return null;
 
     return InitialMapCameraResult(
-      camera: SpMapCamera(target: location, zoom: 13.0),
+      camera: SpMapCamera(target: location, zoom: 13.0 + closeZoomBoost),
       source: InitialMapCameraSource.devicePlace,
     );
   }
@@ -115,9 +122,9 @@ class InitialMapCameraResolver {
   /// - 1 location  → zoomed in (zoom 12)
   /// - tight cluster near the first point → averaged center, zoom derived from spread
   /// - scattered locations → falls back to the most recent point (zoom 12)
-  static SpMapCamera _storyCameraFor(List<SpLatLng> locations) {
+  SpMapCamera _storyCameraFor(List<SpLatLng> locations) {
     if (locations.length == 1) {
-      return SpMapCamera(target: locations.single, zoom: 12.0);
+      return SpMapCamera(target: locations.single, zoom: 12.0 + closeZoomBoost);
     }
 
     final SpLatLng anchor = locations.first;
@@ -127,7 +134,7 @@ class InitialMapCameraResolver {
         .toList();
 
     if (recentCluster.length < 2) {
-      return SpMapCamera(target: anchor, zoom: 12.0);
+      return SpMapCamera(target: anchor, zoom: 12.0 + closeZoomBoost);
     }
 
     final SpLatLng center = _average(recentCluster);
@@ -137,7 +144,7 @@ class InitialMapCameraResolver {
 
     return SpMapCamera(
       target: center,
-      zoom: _zoomForSpan(maxSpan),
+      zoom: _zoomForSpan(maxSpan) + closeZoomBoost,
     );
   }
 

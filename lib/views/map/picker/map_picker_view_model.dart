@@ -100,6 +100,10 @@ class MapPickerViewModel extends ChangeNotifier with DisposeAwareMixin {
         final stories = await StoryDbModel.db.getRecentStoriesWithLocation(limit: 20);
         return stories.map((story) => story.location).toList();
       },
+      // The picker is about choosing one precise place, so start closer in
+      // than the overview map's default — a place name should be visible
+      // right away instead of requiring a manual zoom-in.
+      closeZoomBoost: 4.0,
     );
 
     final result = await resolver.resolve(selectedPlace: params.initialSelectedPlace);

@@ -20,46 +20,40 @@ class _MapContent extends StatelessWidget {
         mainAxisSize: .min,
         crossAxisAlignment: .end,
         children: [
-          IconButton(
-            tooltip: tr("button.switch_map_style"),
-            style: IconButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(8.0),
+          Container(
+            margin: const EdgeInsets.only(right: 4.0),
+            child: IconButton(
+              tooltip: tr("button.switch_map_style"),
+              icon: SpAnimatedIcons.fadeScale(
+                duration: Durations.long1,
+                firstChild: const Icon(SpIcons.map),
+                secondChild: const Icon(SpIcons.satellite),
+                showFirst: viewModel.mapStyle == SpMapStyle.streets,
               ),
+              onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
             ),
-            icon: SpAnimatedIcons.fadeScale(
-              duration: Durations.long1,
-              firstChild: const Icon(SpIcons.map),
-              secondChild: const Icon(SpIcons.satellite),
-              showFirst: viewModel.mapStyle == SpMapStyle.streets,
-            ),
-            onPressed: () => viewModel.setMapStyle(viewModel.mapStyle == .streets ? .satellite : .streets),
           ),
-          SpSingleStateWidget.listen(
-            initialValue: false,
-            builder: (context, loading, notifier) {
-              return IconButton(
-                tooltip: tr("button.move_to_current_location"),
-                style: IconButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).dividerColor),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                icon: loading
-                    ? const SizedBox.square(
-                        dimension: 24.0,
-                        child: CircularProgressIndicator.adaptive(),
-                      )
-                    : const Icon(SpIcons.myLocation),
-                onPressed: () async {
-                  notifier.value = true;
-                  await viewModel.goToCurrentLocation(context);
-                  notifier.value = false;
-                },
-              );
-            },
+          Container(
+            margin: const EdgeInsets.only(right: 4.0),
+            child: SpSingleStateWidget.listen(
+              initialValue: false,
+              builder: (context, loading, notifier) {
+                return IconButton(
+                  tooltip: tr("button.move_to_current_location"),
+                  icon: loading
+                      ? const SizedBox.square(
+                          dimension: 24.0,
+                          child: CircularProgressIndicator.adaptive(),
+                        )
+                      : const Icon(SpIcons.myLocation),
+                  onPressed: () async {
+                    notifier.value = true;
+                    await viewModel.goToCurrentLocation(context);
+                    notifier.value = false;
+                  },
+                );
+              },
+            ),
           ),
           const SizedBox(height: 4.0),
           FloatingActionButton(

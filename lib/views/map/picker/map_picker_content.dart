@@ -32,6 +32,7 @@ class _MapPickerContent extends StatelessWidget {
         // title: buildSearchAnchor(context),
         actions: [
           const SizedBox(width: 4.0),
+          ...buildZoomButtons(context),
           buildMyLocationButton(context),
           buildMoreOptionsButton(context),
           const SizedBox(width: 4.0),
@@ -129,6 +130,21 @@ class _MapPickerContent extends StatelessWidget {
     );
   }
 
+  List<Widget> buildZoomButtons(BuildContext context) {
+    return [
+      IconButton(
+        tooltip: tr("button.zoom_out"),
+        icon: const Icon(SpIcons.zoomOut),
+        onPressed: () => viewModel.mapController.zoomBy(-1.0),
+      ),
+      IconButton(
+        tooltip: tr("button.zoom_in"),
+        icon: const Icon(SpIcons.zoomIn),
+        onPressed: () => viewModel.mapController.zoomBy(1.0),
+      ),
+    ];
+  }
+
   Widget buildMoreOptionsButton(BuildContext context) {
     return SpPopupMenuButton(
       fromAppBar: true,
@@ -146,16 +162,6 @@ class _MapPickerContent extends StatelessWidget {
             title: tr("button.reset"),
             onPressed: viewModel.resetToInitial,
           ),
-        SpPopMenuItem(
-          leadingIconData: SpIcons.zoomIn,
-          title: tr("button.zoom_in"),
-          onPressed: () => viewModel.mapController.zoomBy(1.0),
-        ),
-        SpPopMenuItem(
-          leadingIconData: SpIcons.zoomOut,
-          title: tr("button.zoom_out"),
-          onPressed: () => viewModel.mapController.zoomBy(-1.0),
-        ),
         SpPopMenuItem(
           leadingIconData: SpIcons.locationPin,
           title: tr("button.manual_input"),
