@@ -64,6 +64,12 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
   bool barrierShown = true;
   bool listenToLifeCycle = true;
 
+  // Set only when we actually reach `paused` (a real backgrounding), and consumed the next
+  // time we reach `resumed`. This is what tells resume to re-authenticate automatically —
+  // relying on `isCurrent` for that instead caused a loop, because presenting the native
+  // biometric prompt itself fires `inactive`/`resumed` without ever pausing the app.
+  bool _needsReAuthOnResume = false;
+
   Timer? _reEnableLifeCycleTimer;
 
   Future<T> disableAppLockIfHas<T>(
@@ -126,6 +132,7 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
       case AppLifecycleState.paused:
         if (listenToLifeCycle) {
           authenticated = false;
+          _needsReAuthOnResume = true;
           showBarrierInstantly();
         }
         break;
@@ -134,10 +141,12 @@ class _LockedBarrierState extends State<_LockedBarrier> with SingleTickerProvide
           // Only a transient `inactive` happened (e.g. control centre, share sheet) and we
           // never actually reached `paused`, so no re-auth is needed — just reveal again.
           revealBarrier();
-        } else if (listenToLifeCycle && ModalRoute.of(context) != null && ModalRoute.of(context)?.isCurrent == false) {
-          // There are cases when the user has already canceled authentication, but the app resumes and may call authenticate() again.
-          // This check ensures we only re-authenticate when this route is not the current one, avoiding potential authentication loops.
-          authenticate();
+        } else if (listenToLifeCycle && _needsReAuthOnResume) {
+          _needsReAuthOnResume = false;
+          // Belt-and-suspenders: skip if an authentication attempt is already in flight
+          // (e.g. the native biometric prompt itself caused a real pause/resume on some
+          // platform), so we never fire a second concurrent prompt.
+          if (!context.read<AppLockProvider>().avoidDublciated.isRunning) authenticate();
         }
         break;
     }

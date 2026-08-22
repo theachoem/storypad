@@ -61,7 +61,14 @@ class _PeriodCalendarContent extends StatelessWidget {
                 child: buildCalendar(context, showBottomBorder: false, scrollable: true),
               ),
             ),
-            Flexible(child: buildStoryList(context)),
+            Flexible(
+              child: Stack(
+                children: [
+                  buildStoryList(context),
+                  buildReminderTile(context),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -81,7 +88,54 @@ class _PeriodCalendarContent extends StatelessWidget {
           ),
         ];
       },
-      body: buildStoryList(context),
+      body: Stack(
+        children: [
+          buildStoryList(context),
+          buildReminderTile(context),
+        ],
+      ),
+    );
+  }
+
+  /// Compact entry point to the built-in period reminder — full editing
+  /// (time, enable/disable) happens in [SpEditReminderSheet], same as the
+  /// reminders page. Scoped to `periodReminder` via `context.select` so this
+  /// tile only rebuilds when that specific reminder changes.
+  Widget buildReminderTile(BuildContext context) {
+    final reminder = context.select((DevicePreferencesProvider provider) => provider.periodReminder);
+    final enabled = reminder?.enabled ?? false;
+
+    void openSheet() =>
+        SpEditReminderSheet(reminder: reminder ?? ReminderObject.builtin(ReminderType.period)).show(context: context);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).scaffoldBackgroundColor,
+            Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.0),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: ListTile(
+        tileColor: Colors.transparent,
+        leading: const Icon(SpIcons.alarm),
+        title: Text(ReminderType.period.title),
+        subtitle: Text(
+          enabled && reminder != null
+              ? tr(
+                  'reminder.summary.around_time',
+                  namedArgs: {'S_TIME': MaterialLocalizations.of(context).formatTimeOfDay(reminder.timeOfDay)},
+                )
+              : ReminderType.period.description,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Switch.adaptive(value: enabled, onChanged: (_) => openSheet()),
+        onTap: openSheet,
+      ),
     );
   }
 
@@ -120,10 +174,14 @@ class _PeriodCalendarContent extends StatelessWidget {
     }
   }
 
+  // Matches the two-line ListTile in buildReminderTile — the story list needs
+  // this much top padding so its content clears the tile floating over it.
+  static const double _reminderTileHeight = 72.0;
+
   Widget buildStoryList(BuildContext context) {
     if (viewModel.selectedEventStories?.items == null || viewModel.selectedEventStories?.items.isEmpty == true) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0).copyWith(top: 16.0 + _reminderTileHeight),
         child: Text(
           tr('general.no_story_yet'),
           style: Theme.of(context).textTheme.bodyMedium,
@@ -132,10 +190,13 @@ class _PeriodCalendarContent extends StatelessWidget {
       );
     }
 
-    return SpStoryList(
-      stories: viewModel.selectedEventStories,
-      onChanged: (item) => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
-      onDeleted: () => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
+    return Padding(
+      padding: const EdgeInsets.only(top: _reminderTileHeight),
+      child: SpStoryList(
+        stories: viewModel.selectedEventStories,
+        onChanged: (item) => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
+        onDeleted: () => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
+      ),
     );
   }
 }
