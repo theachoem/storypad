@@ -43,7 +43,7 @@ Future<void> _initializeApp({
   // firebase initialize (never blocks startup beyond its own timeout)
   await FirebaseInitializer.call(options: firebaseOptions);
   if (!Platform.isLinux) CrashlyticsInitializer.call();
-  if (!Platform.isLinux) RemoteConfigInitializer.call();
+  RemoteConfigInitializer.call();
 
   // core
   await EasyLocalization.ensureInitialized();
@@ -68,7 +68,7 @@ Future<void> _initializeApp({
   if (Platform.isAndroid) AndroidPhotoPickerInitializer.call();
 
   // cleanup old cached assets
-  if (!Platform.isLinux) CloudStorageInitializer.call();
+  CloudStorageInitializer.call();
 
   LicensesInitializer.call();
 }

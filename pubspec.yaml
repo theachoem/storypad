@@ -27,8 +27,6 @@ dependencies:
   firebase_analytics: ^12.4.2
   firebase_core: ^4.10.0
   firebase_crashlytics: ^5.2.3
-  firebase_remote_config: ^6.5.2
-  firebase_storage: ^13.4.2
   flutter:
     sdk: flutter
   flutter_custom_tabs: 2.5.0
