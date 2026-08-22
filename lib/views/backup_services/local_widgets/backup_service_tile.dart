@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
-import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/providers/backup_sync_state_store.dart';
 import 'package:storypad/views/backup_services/show/show_backup_service_view.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 
 /// Generic backup service tile that displays a cloud service status
@@ -57,9 +55,7 @@ class BackupServiceTile extends StatelessWidget {
     if (!service.isSignedIn) {
       trailing = const Icon(SpIcons.cloudOff);
       subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
-      onPressed = service.serviceType == BackupServiceType.nextcloud
-          ? () => const SpConnectNextcloudSheet().show(context: context)
-          : () => provider.signIn(context, service.serviceType);
+      onPressed = () => provider.signIn(context, service.serviceType);
     } else {
       trailing = Icon(
         SpIcons.keyboardRight,

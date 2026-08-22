@@ -32,6 +32,7 @@ import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/backup_sync_state_store.dart';
 import 'package:storypad/views/home/home_view.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   BackupProvider() {
@@ -241,6 +242,15 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     BuildContext context,
     BackupServiceType serviceType,
   ) async {
+    // Nextcloud's auth is a server/username/app-password form, not a
+    // no-argument OAuth flow — route through its connect sheet (which calls
+    // connectNextcloud and updates state itself) instead of the generic
+    // repository.signIn, which is a no-op for this service.
+    if (serviceType == BackupServiceType.nextcloud) {
+      await const SpConnectNextcloudSheet().show(context: context);
+      return;
+    }
+
     final result = await repository.signIn(serviceType);
 
     if (result.isSuccess == true) {
