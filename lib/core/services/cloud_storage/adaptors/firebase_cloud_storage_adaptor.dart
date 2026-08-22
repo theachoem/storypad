@@ -5,7 +5,7 @@ import 'package:storypad/core/services/cloud_storage/adaptors/base_cloud_storage
 import 'package:storypad/core/services/logger/app_logger.dart';
 
 class FirebaseCloudStorageAdaptor extends BaseCloudStorageAdaptor {
-  // 20mb — validated during upload in bin/firebase_admin/upload_files_to_firestore_storages.js
+  // 20mb — validated during publish in bin/cdn/publish_files_to_static_cdn.js
   static const int _maxDownloadSize = 20 * 1024 * 1024;
 
   final _storageRef = FirebaseStorage.instance.ref();

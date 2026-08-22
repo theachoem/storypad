@@ -6,6 +6,7 @@ import 'package:storypad/core/objects/gallery_template_category_object.dart';
 import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/services/gallery_template_service.dart';
 import 'package:storypad/gen/assets.gen.dart';
+import 'package:storypad/gen/storage_hash_map.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -56,15 +57,8 @@ void main() {
   });
 
   group('GalleryTemplateService icon validation', () {
-    test('should validate that icon_url_path exists in firestore_storage_map & is PNG', () async {
-      // Load real firestore_storage_map.json
-      final firestoreMapString = File('assets/firestore_storage_map.json').readAsStringSync();
-      final firestoreMap = jsonDecode(firestoreMapString) as Map<String, dynamic>;
-
+    test('should validate that icon_url_path exists in kStorageHashMap & is PNG', () async {
       final yamlFiles = Assets.templates.values;
-
-      final firestoreBytes = utf8.encode(firestoreMapString);
-      final firestoreByteData = ByteData.view(Uint8List.fromList(firestoreBytes).buffer);
 
       final binding = TestDefaultBinaryMessengerBinding.instance;
       binding.defaultBinaryMessenger.setMockMessageHandler(
@@ -75,8 +69,6 @@ void main() {
             final content = File(assetPath).readAsStringSync();
             final bytes = utf8.encode(content);
             return ByteData.view(Uint8List.fromList(bytes).buffer);
-          } else if (assetPath == 'assets/firestore_storage_map.json') {
-            return firestoreByteData;
           }
           return null;
         },
@@ -87,11 +79,11 @@ void main() {
       // Validate all templates' icons
       for (final category in result.keys) {
         for (final template in category.templates) {
-          // Check that icon_url_path exists in firestore_storage_map
+          // Check that icon_url_path exists in kStorageHashMap
           expect(
-            firestoreMap.containsKey(template.iconUrlPath),
+            kStorageHashMap.containsKey(template.iconUrlPath),
             isTrue,
-            reason: 'Icon ${template.iconUrlPath} not found in firestore_storage_map for template ${template.id}',
+            reason: 'Icon ${template.iconUrlPath} not found in kStorageHashMap for template ${template.id}',
           );
 
           // Check that it ends with .png

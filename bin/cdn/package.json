@@ -1,0 +1,7 @@
+{
+  "name": "cdn",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Publish app/firestore CDN assets into the sibling static.storypad.me repo"
+}

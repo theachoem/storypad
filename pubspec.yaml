@@ -103,7 +103,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/firestore_storage_map.json
     - translations/
     - templates/
     - assets/images/
