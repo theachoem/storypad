@@ -246,14 +246,23 @@ class _SpEditReminderSheetBodyState extends State<_SpEditReminderSheetBody> {
     }
   }
 
+  /// Predictions built from sparse/irregular history (mainly period cycles)
+  /// can land unreasonably far out — showing "next reminder in 4 months"
+  /// reads as broken rather than helpful, so the hint is suppressed past
+  /// this horizon instead.
+  static const int _maxHintHorizonDays = 60;
+
   /// Below the fields: either "Your next reminder will be on ..." (when a
-  /// future occurrence is known) or, for period reminders with too little
-  /// logged history to predict from, a note telling the user what's missing.
-  /// Shows nothing otherwise (e.g. a stale/past on-this-day prediction, or a
-  /// period prediction that has enough history but nothing to say yet).
+  /// future occurrence is known and not too far out) or, for period
+  /// reminders with too little logged history to predict from, a note
+  /// telling the user what's missing. Shows nothing otherwise (e.g. a
+  /// stale/past on-this-day prediction, a period prediction that has enough
+  /// history but nothing to say yet, or one too far in the future).
   Widget _buildScheduleHint(BuildContext context) {
     final nextOccurrence = _nextOccurrence;
-    if (nextOccurrence != null && nextOccurrence.isAfter(DateTime.now())) {
+    if (nextOccurrence != null &&
+        nextOccurrence.isAfter(DateTime.now()) &&
+        nextOccurrence.difference(DateTime.now()).inDays <= _maxHintHorizonDays) {
       return _buildHint(
         context,
         tr(

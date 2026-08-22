@@ -16,6 +16,7 @@ class SpStoryList extends StatelessWidget {
   final void Function(StoryDbModel) onChanged;
   final void Function() onDeleted;
   final bool viewOnly;
+  final double? paddingTop;
   final Future<void> Function()? onRefresh;
 
   bool get hasThrowback => throwbackDates?.isNotEmpty == true;
@@ -28,6 +29,7 @@ class SpStoryList extends StatelessWidget {
     required this.onDeleted,
     this.onRefresh,
     this.viewOnly = false,
+    this.paddingTop,
   });
 
   static SpStoryListWithQuery withQuery({
@@ -70,6 +72,7 @@ class SpStoryList extends StatelessWidget {
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.only(
+        top: paddingTop ?? 0.0,
         left: MediaQuery.of(listContext).padding.left,
         right: MediaQuery.of(listContext).padding.right,
         bottom: MediaQuery.of(listContext).padding.bottom + 48.0,

@@ -120,6 +120,7 @@ class _PeriodCalendarContent extends StatelessWidget {
         ),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.only(left: 16.0, right: 12.0),
         tileColor: Colors.transparent,
         leading: const Icon(SpIcons.alarm),
         title: Text(ReminderType.period.title),
@@ -190,13 +191,11 @@ class _PeriodCalendarContent extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: _reminderTileHeight),
-      child: SpStoryList(
-        stories: viewModel.selectedEventStories,
-        onChanged: (item) => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
-        onDeleted: () => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
-      ),
+    return SpStoryList(
+      paddingTop: _reminderTileHeight,
+      stories: viewModel.selectedEventStories,
+      onChanged: (item) => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
+      onDeleted: () => viewModel.load(initialSelectedDate: viewModel.selectedEventDate),
     );
   }
 }
