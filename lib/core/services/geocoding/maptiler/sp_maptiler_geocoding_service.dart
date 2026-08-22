@@ -2,8 +2,6 @@ import 'dart:convert';
 
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-
-import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
@@ -15,6 +13,8 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 /// API documentation: https://docs.maptiler.com/cloud/api/geocoding/
 class SpMapTilerGeocodingService implements SpGeocodingService {
   static const String _baseUrl = 'https://api.maptiler.com/geocoding';
+
+  static const String kMapTilerApiKey = '';
 
   @override
   Future<PlaceDbModel?> reverseGeocode(SpLatLng latLng) async {

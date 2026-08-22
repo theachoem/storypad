@@ -99,9 +99,9 @@ extension SpMapStyleExtension on SpMapStyle {
   String get mapTilerUrlTemplate {
     switch (this) {
       case SpMapStyle.streets:
-        return 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=cWUdEifZoUYEaZRNo6nt';
+        return 'https://static.storypad.me/maptiler/streets/{z}/{x}/{y}.png';
       case SpMapStyle.satellite:
-        return 'https://api.maptiler.com/maps/hybrid-v4/{z}/{x}/{y}.png?key=cWUdEifZoUYEaZRNo6nt';
+        return 'https://static.storypad.me/maptiler/hybrid-v4/{z}/{x}/{y}.png';
     }
   }
 }
