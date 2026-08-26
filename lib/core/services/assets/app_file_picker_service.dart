@@ -126,7 +126,7 @@ class AppFilePickerService {
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
-    return result?.files.firstOrNull?.xFile;
+    return result.firstOrNull?.xFile;
   }
 
   static Future<XFile?> pickGzipFile() async {
@@ -134,7 +134,7 @@ class AppFilePickerService {
       type: FileType.custom,
       allowedExtensions: ['gz'],
     );
-    return result?.files.firstOrNull?.xFile;
+    return result.firstOrNull?.xFile;
   }
 
   static Future<LostDataResponse> retrieveLostData() {

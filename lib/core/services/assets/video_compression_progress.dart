@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:video_compress/video_compress.dart';
+import 'package:video_compressor_plus/video_compressor_plus.dart';
 
 /// Shared state between the pick-time compression loop (`AppFilePickerService`)
 /// and the screen covering it (`VideoCompressionView`): which video of the

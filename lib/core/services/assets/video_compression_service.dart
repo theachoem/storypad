@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:video_compress/video_compress.dart';
+import 'package:video_compressor_plus/video_compressor_plus.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/asset_compression_option.dart';
