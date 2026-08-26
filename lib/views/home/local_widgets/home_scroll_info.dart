@@ -90,11 +90,15 @@ class _HomeScrollInfo {
     await moveToItemIndex(targetIndex);
 
     int monthIndex = months.indexWhere((e) => e == story.month);
+    final targetTabIndex = item is HomePinnedStoryItem ? 0 : monthIndex;
 
-    // for pinned, month tab should be first tab (0)
+    // for pinned, month tab should be first tab (0); -1 means [months]
+    // doesn't have this story's month (shouldn't happen — HomeViewModel
+    // keeps it fresh via _refreshMonthsForYear — but don't feed
+    // TabController an invalid index if it somehow does).
     final context = item.key.currentContext;
-    if (context != null && context.mounted) {
-      DefaultTabController.of(context).animateTo(item is HomePinnedStoryItem ? 0 : monthIndex);
+    if (context != null && context.mounted && targetTabIndex != -1) {
+      DefaultTabController.of(context).animateTo(targetTabIndex);
     }
 
     await Future.delayed(Durations.medium2, () {
@@ -109,7 +113,16 @@ class _HomeScrollInfo {
     if (targetMonthIndex < 0 || targetMonthIndex >= months.length) return;
     final targetMonth = months[targetMonthIndex];
 
-    int targetIndex = items.indexWhere((item) => item is HomeStoryItem && item.story.month == targetMonth);
+    // Prefer the month's recap tile (if it has one)
+    // over its first story tile, so tapping a month tab lands on the
+    // recap summary rather than scrolling past it.
+    int findTargetIndex() {
+      final recapIndex = items.indexWhere((item) => item is HomeMonthRecapItem && item.story.month == targetMonth);
+      if (recapIndex != -1) return recapIndex;
+      return items.indexWhere((item) => item is HomeStoryItem && item.story.month == targetMonth);
+    }
+
+    int targetIndex = findTargetIndex();
 
     // Target month may not have loaded yet (pagination hasn't reached it).
     // Pages load strictly newest-first, so loading forward always converges.
@@ -118,7 +131,7 @@ class _HomeScrollInfo {
     }
     while (targetIndex == -1 && viewModel().hasMoreStories) {
       await viewModel().loadNextPage();
-      targetIndex = items.indexWhere((item) => item is HomeStoryItem && item.story.month == targetMonth);
+      targetIndex = findTargetIndex();
     }
     if (targetIndex == -1) {
       AppLogger.d('🚧 $runtimeType#moveToMonthIndex gave up: month $targetMonth not found after loading all pages');
