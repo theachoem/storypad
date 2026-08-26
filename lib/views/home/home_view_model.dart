@@ -291,7 +291,6 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
 
     final completer = Completer<void>();
     _pageFetchCompleter = completer;
-    notifyListeners();
 
     _fetchNextPage(reset: reset).then(completer.complete, onError: completer.completeError).whenComplete(() {
       _pageFetchCompleter = null;
