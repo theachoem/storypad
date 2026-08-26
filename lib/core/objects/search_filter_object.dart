@@ -21,6 +21,7 @@ class SearchFilterObject {
   final bool? starred;
   final bool? pinned;
   final int? limit;
+  final int? offset;
 
   SearchFilterObject({
     required this.years,
@@ -37,6 +38,7 @@ class SearchFilterObject {
     this.starred,
     this.pinned,
     this.limit,
+    this.offset,
   }) : tagIds = tagIds ?? {};
 
   Map<String, dynamic>? toDatabaseFilter() {
@@ -56,6 +58,7 @@ class SearchFilterObject {
     if (pinned != null) filters['pinned'] = pinned;
     if (types.isNotEmpty) filters['types'] = types.map((e) => e.name).toList();
     if (limit != null) filters['limit'] = limit;
+    if (offset != null) filters['offset'] = offset;
 
     // Search whole database when has query.
     if (query?.trim().isNotEmpty == true) {

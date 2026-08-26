@@ -360,6 +360,25 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return SplayTreeMap<int, int>.from(storyCountsByYear, (a, b) => b.compareTo(a));
   }
 
+  /// Distinct months (1-12) that have at least one story matching [filters]
+  /// within [year]. A property-distinct query — no row materialization, no
+  /// content decode — so it's cheap enough to run upfront regardless of how
+  /// many pages of stories have been fetched (used to drive the home month
+  /// tab bar independent of pagination).
+  List<int> getMonthsForYear({
+    required int year,
+    Map<String, dynamic>? filters,
+  }) {
+    AppLogger.info("Triggering $tableName#getMonthsForYear 🍎");
+
+    List<int> months = (buildQuery(
+      filters: {...filters ?? {}, 'year': year},
+    ).build().property(StoryObjectBox_.month)..distinct = true).find();
+
+    months.sort((a, b) => b.compareTo(a));
+    return months;
+  }
+
   Map<PathType, int> getStoryCountsByType({
     Map<String, dynamic>? filters,
   }) {
@@ -525,6 +544,9 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     int? limit = filters != null && filters.containsKey('limit') ? filters['limit'] as int : null;
     if (limit != null) query.limit = limit;
 
+    int? offset = filters != null && filters.containsKey('offset') ? filters['offset'] as int : null;
+    if (offset != null) query.offset = offset;
+
     objects = await query.findAsync();
 
     // Load period events keyed by date so a story shows the period marker purely by
@@ -687,7 +709,10 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
       ..order(StoryObjectBox_.month, flags: order ?? Order.descending)
       ..order(StoryObjectBox_.day, flags: order ?? Order.descending)
       ..order(StoryObjectBox_.hour, flags: order ?? Order.descending)
-      ..order(StoryObjectBox_.minute, flags: order ?? Order.descending);
+      ..order(StoryObjectBox_.minute, flags: order ?? Order.descending)
+      // Final tiebreaker so rows with identical year/month/day/hour/minute keep a
+      // deterministic order across separate offset-paginated queries.
+      ..order(StoryObjectBox_.id, flags: order ?? Order.descending);
 
     return queryBuilder;
   }
