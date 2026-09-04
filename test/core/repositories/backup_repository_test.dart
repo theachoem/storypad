@@ -26,11 +26,12 @@ void main() {
   BackupRepository buildRepository({
     required BackupCloudService googleDriveService,
     required NextcloudCloudService nextcloudService,
+    BackupCloudService? icloudService,
     bool hasInternet = true,
   }) {
     final messenger = BackupSyncMessenger();
     return BackupRepository(
-      icloudService: null,
+      icloudService: icloudService,
       restoreService: RestoreBackupService(),
       messenger: messenger,
       step1ImagesUploader: BackupImagesUploaderService(messenger: messenger),
@@ -111,6 +112,68 @@ void main() {
       expect(result.data!.statusByService.containsKey(BackupServiceType.google_drive), isFalse);
       expect(result.data!.statusByService[BackupServiceType.nextcloud], BackupConnectionStatus.readyToSync);
     });
+
+    // Unlike Drive/Nextcloud (excluded above when not signed in), iCloud is
+    // always included even while unsigned-in — see checkConnection's own doc
+    // comment: reauthenticateIfNeeded is how an iCloud tile recovers on its
+    // own after the user enables iCloud Drive in Settings and returns to the
+    // app, so it must be probed every time regardless of currentUser.
+    test('iCloud available reports readyToSync even though other services are unrelated', () async {
+      final repository = buildRepository(
+        googleDriveService: _FakeCloudService(serviceType: BackupServiceType.google_drive, signedIn: false),
+        nextcloudService: _FakeNextcloudService(shouldThrow: false, signedIn: false),
+        icloudService: _FakeCloudService(serviceType: BackupServiceType.icloud, signedIn: true),
+      );
+
+      final result = await repository.checkConnection();
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data!.statusByService[BackupServiceType.icloud], BackupConnectionStatus.readyToSync);
+    });
+
+    test('iCloud still disabled in Settings reports needServicePermission, not unknownError', () async {
+      final repository = buildRepository(
+        googleDriveService: _FakeCloudService(serviceType: BackupServiceType.google_drive, signedIn: false),
+        nextcloudService: _FakeNextcloudService(shouldThrow: false, signedIn: false),
+        icloudService: _FakeCloudService(
+          serviceType: BackupServiceType.icloud,
+          signedIn: false,
+          reauthenticateError: const AuthException(
+            'iCloud is not available',
+            AuthExceptionType.signInRequired,
+            serviceType: BackupServiceType.icloud,
+          ),
+        ),
+      );
+
+      final result = await repository.checkConnection();
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data!.statusByService.containsKey(BackupServiceType.icloud), isTrue);
+      expect(result.data!.statusByService[BackupServiceType.icloud], BackupConnectionStatus.needServicePermission);
+    });
+
+    test('iCloud transient network failure reports noInternet for that service specifically', () async {
+      final repository = buildRepository(
+        googleDriveService: _FakeCloudService(serviceType: BackupServiceType.google_drive, shouldThrow: false),
+        nextcloudService: _FakeNextcloudService(shouldThrow: false),
+        icloudService: _FakeCloudService(
+          serviceType: BackupServiceType.icloud,
+          signedIn: false,
+          reauthenticateError: const NetworkException(
+            'Could not verify iCloud account',
+            serviceType: BackupServiceType.icloud,
+          ),
+        ),
+      );
+
+      final result = await repository.checkConnection();
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data!.statusByService[BackupServiceType.icloud], BackupConnectionStatus.noInternet);
+      // The other services aren't affected by iCloud's own transient failure.
+      expect(result.data!.statusByService[BackupServiceType.google_drive], BackupConnectionStatus.readyToSync);
+    });
   });
 }
 
@@ -166,6 +229,7 @@ class _FakeCloudService implements BackupCloudService {
     required this.serviceType,
     this.shouldThrow = false,
     this.signedIn = true,
+    this.reauthenticateError,
   });
 
   @override
@@ -173,6 +237,11 @@ class _FakeCloudService implements BackupCloudService {
 
   final bool shouldThrow;
   final bool signedIn;
+
+  /// Overrides [shouldThrow]'s hardcoded `tokenRevoked` when a test needs a
+  /// specific exception type/message out of [reauthenticateIfNeeded] (e.g.
+  /// iCloud's `signInRequired` or a transient `NetworkException`).
+  final Exception? reauthenticateError;
 
   @override
   CloudServiceUser? get currentUser => signedIn ? _FakeUser(serviceType) : null;
@@ -188,6 +257,7 @@ class _FakeCloudService implements BackupCloudService {
 
   @override
   Future<bool> reauthenticateIfNeeded() async {
+    if (reauthenticateError != null) throw reauthenticateError!;
     if (shouldThrow) {
       throw AuthException('Broken', AuthExceptionType.tokenRevoked, serviceType: serviceType);
     }

@@ -23,6 +23,10 @@ import UIKit
 class ICloudBackupService {
   private static let dataFolderName = "Data"
 
+  /// Apple documents `url(forUbiquityContainerIdentifier:)` as unsafe to call
+  /// on the main thread (it can do real first-call container setup work) —
+  /// every accessor below resolves this from inside a background dispatch,
+  /// never synchronously in a method-channel callback.
   private static var containerURL: URL? {
     // Passing nil resolves to the first container identifier listed in the
     // entitlements — avoids hardcoding a per-flavor container ID here.
@@ -190,19 +194,33 @@ class ICloudBackupService {
 
   // MARK: - File operations
 
+  /// Resolves the container and reads file metadata entirely off the calling
+  /// thread — both `dataRootURL` (which can do first-call container setup
+  /// work) and `fileExists`/`attributesOfItem` (real filesystem I/O) are
+  /// unsafe to run synchronously on whatever thread the method channel
+  /// handed us (typically main).
   static func statFile(relativePath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
+    DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
+        return
+      }
 
-    let url = dataRoot.appendingPathComponent(relativePath)
-    guard FileManager.default.fileExists(atPath: url.path) else {
-      result(nil)
-      return
-    }
+      let url = dataRoot.appendingPathComponent(relativePath)
+      guard FileManager.default.fileExists(atPath: url.path) else {
+        DispatchQueue.main.async {
+          result(nil)
+        }
+        return
+      }
 
-    result(metadataDictionary(for: url, dataRoot: dataRoot))
+      let metadata = metadataDictionary(for: url, dataRoot: dataRoot)
+      DispatchQueue.main.async {
+        result(metadata)
+      }
+    }
   }
 
   /// Plain (coordinated) directory listing rather than `NSMetadataQuery` —
@@ -216,16 +234,18 @@ class ICloudBackupService {
   /// already downloaded locally, since iCloud syncs the file list/metadata
   /// ahead of content.
   static func listFiles(relativeFolderPath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
-
-    let folderURL = relativeFolderPath.isEmpty
-      ? dataRoot
-      : dataRoot.appendingPathComponent(relativeFolderPath, isDirectory: true)
-
     DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
+        return
+      }
+
+      let folderURL = relativeFolderPath.isEmpty
+        ? dataRoot
+        : dataRoot.appendingPathComponent(relativeFolderPath, isDirectory: true)
+
       var entries: [URL] = []
       var coordinatorError: NSError?
       var readError: Error?
@@ -269,15 +289,17 @@ class ICloudBackupService {
   }
 
   static func uploadFile(localPath: String, relativePath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
-
-    let destURL = dataRoot.appendingPathComponent(relativePath)
-    let sourceURL = URL(fileURLWithPath: localPath)
-
     DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
+        return
+      }
+
+      let destURL = dataRoot.appendingPathComponent(relativePath)
+      let sourceURL = URL(fileURLWithPath: localPath)
+
       var coordinatorError: NSError?
       var operationError: Error?
       let coordinator = NSFileCoordinator()
@@ -309,56 +331,65 @@ class ICloudBackupService {
   }
 
   static func downloadFile(relativePath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
-
-    let fileURL = dataRoot.appendingPathComponent(relativePath)
-    guard FileManager.default.fileExists(atPath: fileURL.path) else {
-      result(nil)
-      return
-    }
-
-    do {
-      try FileManager.default.startDownloadingUbiquitousItem(at: fileURL)
-    } catch {
-      result(fileOperationError(error))
-      return
-    }
-
-    waitForDownload(at: fileURL) { downloadError in
-      if let downloadError = downloadError {
-        result(downloadError)
+    DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
         return
       }
 
-      // waitForDownload's completion runs on the main queue (see its own doc
-      // comment) — reading the whole file synchronously here would block the
-      // UI for any large backup/asset, so hop off before doing it.
-      DispatchQueue.global(qos: .userInitiated).async {
-        var coordinatorError: NSError?
-        var readData: Data?
-        var readError: Error?
-        let coordinator = NSFileCoordinator()
+      let fileURL = dataRoot.appendingPathComponent(relativePath)
+      guard FileManager.default.fileExists(atPath: fileURL.path) else {
+        DispatchQueue.main.async {
+          result(nil)
+        }
+        return
+      }
 
-        coordinator.coordinate(readingItemAt: fileURL, options: [], error: &coordinatorError) { url in
-          do {
-            readData = try Data(contentsOf: url)
-          } catch {
-            readError = error
-          }
+      do {
+        try FileManager.default.startDownloadingUbiquitousItem(at: fileURL)
+      } catch {
+        let downloadStartError = fileOperationError(error)
+        DispatchQueue.main.async {
+          result(downloadStartError)
+        }
+        return
+      }
+
+      waitForDownload(at: fileURL) { downloadError in
+        if let downloadError = downloadError {
+          result(downloadError)
+          return
         }
 
-        DispatchQueue.main.async {
-          if let coordinatorError = coordinatorError {
-            result(coordinationError(coordinatorError))
-          } else if let readError = readError {
-            result(fileOperationError(readError))
-          } else if let readData = readData {
-            result(FlutterStandardTypedData(bytes: readData))
-          } else {
-            result(nil)
+        // waitForDownload's completion runs on the main queue (see its own doc
+        // comment) — reading the whole file synchronously here would block the
+        // UI for any large backup/asset, so hop off before doing it.
+        DispatchQueue.global(qos: .userInitiated).async {
+          var coordinatorError: NSError?
+          var readData: Data?
+          var readError: Error?
+          let coordinator = NSFileCoordinator()
+
+          coordinator.coordinate(readingItemAt: fileURL, options: [], error: &coordinatorError) { url in
+            do {
+              readData = try Data(contentsOf: url)
+            } catch {
+              readError = error
+            }
+          }
+
+          DispatchQueue.main.async {
+            if let coordinatorError = coordinatorError {
+              result(coordinationError(coordinatorError))
+            } else if let readError = readError {
+              result(fileOperationError(readError))
+            } else if let readData = readData {
+              result(FlutterStandardTypedData(bytes: readData))
+            } else {
+              result(nil)
+            }
           }
         }
       }
@@ -377,14 +408,16 @@ class ICloudBackupService {
   /// the file from the still-intact cloud copy, which is exactly the bug
   /// reported: delete appears to succeed, then the file reappears.
   static func deleteFile(relativePath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
-
-    let url = dataRoot.appendingPathComponent(relativePath)
-
     DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
+        return
+      }
+
+      let url = dataRoot.appendingPathComponent(relativePath)
+
       var coordinatorError: NSError?
       var operationError: Error?
       let coordinator = NSFileCoordinator()
@@ -422,15 +455,17 @@ class ICloudBackupService {
   /// a properly-scoped signal, so it can silently restore the source file
   /// from the cloud after the fact.
   static func moveFile(fromRelativePath: String, toRelativePath: String, result: @escaping FlutterResult) {
-    guard let dataRoot = dataRootURL else {
-      result(containerUnavailableError())
-      return
-    }
-
-    let sourceURL = dataRoot.appendingPathComponent(fromRelativePath)
-    let destURL = dataRoot.appendingPathComponent(toRelativePath)
-
     DispatchQueue.global(qos: .userInitiated).async {
+      guard let dataRoot = dataRootURL else {
+        DispatchQueue.main.async {
+          result(containerUnavailableError())
+        }
+        return
+      }
+
+      let sourceURL = dataRoot.appendingPathComponent(fromRelativePath)
+      let destURL = dataRoot.appendingPathComponent(toRelativePath)
+
       var coordinatorError: NSError?
       var operationError: Error?
       let coordinator = NSFileCoordinator()
