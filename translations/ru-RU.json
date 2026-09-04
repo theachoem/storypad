@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "Ваш пароль от приложения больше не работает. Введите новый пароль для повторного подключения.",
   "dialog.connect_nextcloud.reconnect_title": "Переподключитесь к Nextcloud",
   "dialog.connect_nextcloud.title": "Подключитесь к Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "Настройки → iCloud → Посмотреть все → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Нам нужно разрешение на определение местоположения",
   "dialog.location_access_needed.title": "Необходим доступ к местоположению",
   "dialog.location_access_turned_off.message": "Включите разрешение на определение местоположения в настройках, чтобы использовать текущее местоположение.",

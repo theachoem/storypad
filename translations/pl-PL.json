@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "Twoje hasło do aplikacji już nie działa. Wprowadź nowe, aby ponownie się połączyć.",
   "dialog.connect_nextcloud.reconnect_title": "Połącz się ponownie z NextCloud",
   "dialog.connect_nextcloud.title": "Połącz się z NextCloud",
+  "dialog.icloud_settings.navigation_steps": "Ustawienia → iCloud → Zobacz wszystko → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Potrzebujemy pozwolenia na lokalizację, aby przenieść mapę do Twojej bieżącej lokalizacji.",
   "dialog.location_access_needed.title": "Wymagany dostęp do lokalizacji",
   "dialog.location_access_turned_off.message": "Włącz uprawnienia do lokalizacji w Ustawieniach, aby korzystać z bieżącej lokalizacji.",

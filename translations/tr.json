@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "Uygulama parolanız artık çalışmıyor. Yeniden bağlanmak için yeni bir parola girin.",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloud'a yeniden bağlanın",
   "dialog.connect_nextcloud.title": "Nextcloud'a bağlanın",
+  "dialog.icloud_settings.navigation_steps": "Ayarlar → iCloud → Tümünü Gör → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Нам потрібен дозвіл на місцезнаходження, щоб перемістити карту до вашого поточного місцезнаходження.",
   "dialog.location_access_needed.title": "Konum erişimi gerekli",
   "dialog.location_access_turned_off.message": "Mevcut konumu kullanmak için Ayarlar'da konum iznini etkinleştirin.",

@@ -116,8 +116,19 @@ class ICloudBackupService {
   /// container right now" — true regardless of *why* it might be
   /// unavailable (device not signed in, this app's access specifically
   /// revoked, or anything else).
+  ///
+  /// Dispatched off the calling thread: `url(forUbiquityContainerIdentifier:)`
+  /// can do real first-call setup work and Apple documents it as unsafe to
+  /// call on the main thread — this is invoked from every resume/connection
+  /// check, so staying on whatever thread the method channel handed us
+  /// (typically main) risked a UI hitch on every one of those.
   static func isAvailable(result: @escaping FlutterResult) {
-    result(dataRootURL != nil)
+    DispatchQueue.global(qos: .userInitiated).async {
+      let available = dataRootURL != nil
+      DispatchQueue.main.async {
+        result(available)
+      }
+    }
   }
 
   /// `CKRecord.ID.recordName` for the default CloudKit container's current
@@ -217,15 +228,27 @@ class ICloudBackupService {
     DispatchQueue.global(qos: .userInitiated).async {
       var entries: [URL] = []
       var coordinatorError: NSError?
+      var readError: Error?
       let coordinator = NSFileCoordinator()
 
       coordinator.coordinate(readingItemAt: folderURL, options: [], error: &coordinatorError) { url in
-        entries =
-          (try? FileManager.default.contentsOfDirectory(
+        do {
+          entries = try FileManager.default.contentsOfDirectory(
             at: url,
             includingPropertiesForKeys: [.isDirectoryKey],
             options: [.skipsHiddenFiles]
-          )) ?? []
+          )
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError {
+          // Genuinely nothing there yet (e.g. no uploads yet) — distinct
+          // from every other failure below, which must not be silently
+          // reported as "zero files": a transient network/permission error
+          // here previously looked identical to an empty folder, which sync
+          // and the cloud-optimize orphan detector could misread as "there's
+          // nothing to preserve".
+          entries = []
+        } catch {
+          readError = error
+        }
       }
 
       let files = entries.compactMap { itemURL -> [String: Any?]? in
@@ -235,10 +258,9 @@ class ICloudBackupService {
 
       DispatchQueue.main.async {
         if let coordinatorError = coordinatorError {
-          // A folder that doesn't exist yet (e.g. no uploads yet) coordinates
-          // fine and just yields an empty `entries` — this branch is for a
-          // genuine coordination failure, not "nothing there yet".
           result(coordinationError(coordinatorError))
+        } else if let readError = readError {
+          result(fileOperationError(readError))
         } else {
           result(files)
         }
@@ -266,10 +288,9 @@ class ICloudBackupService {
             at: url.deletingLastPathComponent(),
             withIntermediateDirectories: true
           )
-          if FileManager.default.fileExists(atPath: url.path) {
-            try FileManager.default.removeItem(at: url)
+          try replaceItem(at: url, placingContentFrom: sourceURL) { source, temp in
+            try FileManager.default.copyItem(at: source, to: temp)
           }
-          try FileManager.default.copyItem(at: sourceURL, to: url)
         } catch {
           operationError = error
         }
@@ -312,27 +333,34 @@ class ICloudBackupService {
         return
       }
 
-      var coordinatorError: NSError?
-      var readData: Data?
-      var readError: Error?
-      let coordinator = NSFileCoordinator()
+      // waitForDownload's completion runs on the main queue (see its own doc
+      // comment) — reading the whole file synchronously here would block the
+      // UI for any large backup/asset, so hop off before doing it.
+      DispatchQueue.global(qos: .userInitiated).async {
+        var coordinatorError: NSError?
+        var readData: Data?
+        var readError: Error?
+        let coordinator = NSFileCoordinator()
 
-      coordinator.coordinate(readingItemAt: fileURL, options: [], error: &coordinatorError) { url in
-        do {
-          readData = try Data(contentsOf: url)
-        } catch {
-          readError = error
+        coordinator.coordinate(readingItemAt: fileURL, options: [], error: &coordinatorError) { url in
+          do {
+            readData = try Data(contentsOf: url)
+          } catch {
+            readError = error
+          }
         }
-      }
 
-      if let coordinatorError = coordinatorError {
-        result(coordinationError(coordinatorError))
-      } else if let readError = readError {
-        result(fileOperationError(readError))
-      } else if let readData = readData {
-        result(FlutterStandardTypedData(bytes: readData))
-      } else {
-        result(nil)
+        DispatchQueue.main.async {
+          if let coordinatorError = coordinatorError {
+            result(coordinationError(coordinatorError))
+          } else if let readError = readError {
+            result(fileOperationError(readError))
+          } else if let readData = readData {
+            result(FlutterStandardTypedData(bytes: readData))
+          } else {
+            result(nil)
+          }
+        }
       }
     }
   }
@@ -358,14 +386,46 @@ class ICloudBackupService {
         at: destURL.deletingLastPathComponent(),
         withIntermediateDirectories: true
       )
-      if FileManager.default.fileExists(atPath: destURL.path) {
-        try FileManager.default.removeItem(at: destURL)
+      try replaceItem(at: destURL, placingContentFrom: sourceURL) { source, temp in
+        try FileManager.default.moveItem(at: source, to: temp)
       }
-      try FileManager.default.moveItem(at: sourceURL, to: destURL)
     }
   }
 
   // MARK: - Helpers
+
+  /// Places new content at `destURL` without ever deleting whatever's
+  /// already there before the replacement is confirmed on disk. The
+  /// previous pattern (`if exists { removeItem }` then `copyItem`/`moveItem`)
+  /// had a real data-loss window: if the second step threw (disk pressure, a
+  /// source race, an iCloud error), the destination was left empty/gone —
+  /// and that deletion could itself sync to iCloud, destroying the only
+  /// remaining copy. `operation` writes the new content to a temporary
+  /// sibling first; only once that succeeds does this touch `destURL`, via
+  /// an atomic swap when something was already there.
+  ///
+  /// If the final swap itself fails, the temp file is deliberately left in
+  /// place rather than deleted — for `moveFile` in particular, `operation`
+  /// has already moved the only copy of the file out of its original
+  /// location by this point, so the temp copy is the sole surviving copy;
+  /// an orphaned `.tmp-*` file is a far safer failure mode than actively
+  /// destroying it.
+  private static func replaceItem(
+    at destURL: URL,
+    placingContentFrom sourceURL: URL,
+    using operation: (_ source: URL, _ temp: URL) throws -> Void
+  ) throws {
+    let tempURL = destURL.deletingLastPathComponent()
+      .appendingPathComponent(".tmp-\(UUID().uuidString)-\(destURL.lastPathComponent)")
+
+    try operation(sourceURL, tempURL)
+
+    if FileManager.default.fileExists(atPath: destURL.path) {
+      _ = try FileManager.default.replaceItemAt(destURL, withItemAt: tempURL)
+    } else {
+      try FileManager.default.moveItem(at: tempURL, to: destURL)
+    }
+  }
 
   private static func performCoordinatedOperation(
     result: @escaping FlutterResult,

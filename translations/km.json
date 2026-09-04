@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "ពាក្យសម្ងាត់កម្មវិធីរបស់អ្នកលែងដំណើរការទៀតហើយ។ សូមបញ្ចូលពាក្យសម្ងាត់ថ្មីដើម្បីភ្ជាប់ឡើងវិញ។",
   "dialog.connect_nextcloud.reconnect_title": "ភ្ជាប់ទៅ Nextcloud ឡើងវិញ",
   "dialog.connect_nextcloud.title": "ភ្ជាប់ទៅ Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "ការកំណត់ → iCloud → មើលទាំងអស់ → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "យើងត្រូវការការអនុញ្ញាតទីតាំងដើម្បីផ្លាស់ទីផែនទីទៅកាន់ទីតាំងបច្ចុប្បន្នរបស់អ្នក។",
   "dialog.location_access_needed.title": "ត្រូវការការចូលប្រើទីតាំង",
   "dialog.location_access_turned_off.message": "បើកការអនុញ្ញាតទីតាំងនៅក្នុងការកំណត់ដើម្បីប្រើទីតាំងបច្ចុប្បន្ន។",

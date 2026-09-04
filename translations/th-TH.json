@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "รหัสผ่านแอปของคุณใช้การไม่ได้แล้ว โปรดป้อนรหัสผ่านใหม่เพื่อเชื่อมต่ออีกครั้ง",
   "dialog.connect_nextcloud.reconnect_title": "เชื่อมต่อกับ Nextcloud อีกครั้ง",
   "dialog.connect_nextcloud.title": "เชื่อมต่อกับ Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "การตั้งค่า → iCloud → ดูทั้งหมด → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "เราต้องการสิทธิ์ในการเข้าถึงตำแหน่งที่ตั้งเพื่อย้ายแผนที่ไปยังตำแหน่งปัจจุบันของคุณ",
   "dialog.location_access_needed.title": "จำเป็นต้องเข้าถึงตำแหน่งที่ตั้ง",
   "dialog.location_access_turned_off.message": "เปิดใช้งานการอนุญาตตำแหน่งที่ตั้งในเมนูการตั้งค่าเพื่อใช้ตำแหน่งที่ตั้งปัจจุบัน",

@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "Votre mot de passe d'application ne fonctionne plus. Veuillez en saisir un nouveau pour vous reconnecter.",
   "dialog.connect_nextcloud.reconnect_title": "Reconnectez-vous à Nextcloud",
   "dialog.connect_nextcloud.title": "Se connecter à Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "Réglages → iCloud → Tout afficher → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Nous avons besoin de l'autorisation de localisation pour déplacer la carte vers votre emplacement actuel.",
   "dialog.location_access_needed.title": "Accès à l'emplacement nécessaire",
   "dialog.location_access_turned_off.message": "Activez l'autorisation de localisation dans les paramètres pour utiliser l'emplacement actuel.",

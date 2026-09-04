@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "Ihr App-Passwort funktioniert nicht mehr. Geben Sie ein neues ein, um die Verbindung wiederherzustellen.",
   "dialog.connect_nextcloud.reconnect_title": "Stellen Sie die Verbindung zu Nextcloud wieder her.",
   "dialog.connect_nextcloud.title": "Verbindung zu Nextcloud herstellen",
+  "dialog.icloud_settings.navigation_steps": "Einstellungen → iCloud → Alle anzeigen → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Wir benötigen die Standortberechtigung, um die Karte an Ihren aktuellen Standort zu verschieben.",
   "dialog.location_access_needed.title": "Standortzugriff erforderlich",
   "dialog.location_access_turned_off.message": "Aktivieren Sie die Standortberechtigung in den Einstellungen, um den aktuellen Standort zu verwenden.",

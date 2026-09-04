@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "A senha do seu aplicativo não funciona mais. Digite uma nova para se reconectar.",
   "dialog.connect_nextcloud.reconnect_title": "Reconecte-se ao Nextcloud",
   "dialog.connect_nextcloud.title": "Conecte-se ao Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "Configurações → iCloud → Ver tudo → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "Precisamos de permissão de localização para mover o mapa para sua localização atual.",
   "dialog.location_access_needed.title": "Acesso à localização necessário",
   "dialog.location_access_turned_off.message": "Ative a permissão de localização nas Configurações para usar a localização atual.",

@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "앱 비밀번호가 더 이상 작동하지 않습니다. 새 비밀번호를 입력하여 다시 연결하세요.",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloud에 다시 연결하세요",
   "dialog.connect_nextcloud.title": "Nextcloud에 연결",
+  "dialog.icloud_settings.navigation_steps": "설정 → iCloud → 모두 보기 → {SP_APP_NAME}",
   "dialog.location_access_needed.message": "지도를 현재 위치로 이동하려면 위치 권한이 필요합니다.",
   "dialog.location_access_needed.title": "위치 권한 필요",
   "dialog.location_access_turned_off.message": "현재 위치를 사용하려면 설정에서 위치 권한을 켜세요.",

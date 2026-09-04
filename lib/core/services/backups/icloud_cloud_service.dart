@@ -75,11 +75,19 @@ class ICloudCloudService extends BackupCloudService {
       return (status: _AvailabilityStatus.notAvailable, hasCachedUser: false);
     }
 
-    final stored = _currentUser;
+    // _currentUser is nulled above whenever iCloud goes unavailable, so on
+    // its own it can't tell "same account, was briefly off" from "genuinely
+    // different account" — falling back to the persisted record (which
+    // unavailability never clears, only signOut does) is what actually makes
+    // that distinction, preserving things like autoBackupEnabled across a
+    // toggle-off-then-back-on instead of treating every reconnect as fresh.
+    final stored = _currentUser ?? await ICloudUserStorage().readObject();
     if (stored == null || stored.accountId != accountId) {
       final fresh = ICloudUserObject(accountId: accountId, autoBackupEnabled: true);
       _currentUser = fresh;
       await ICloudUserStorage().writeObject(fresh);
+    } else {
+      _currentUser = stored;
     }
 
     return (status: _AvailabilityStatus.available, hasCachedUser: true);

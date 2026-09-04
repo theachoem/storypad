@@ -128,6 +128,7 @@
   "dialog.connect_nextcloud.reconnect_message": "كلمة مرور التطبيق الخاصة بك لم تعد تعمل. أدخل كلمة مرور جديدة لإعادة الاتصال.",
   "dialog.connect_nextcloud.reconnect_title": "أعد الاتصال بـ Nextcloud",
   "dialog.connect_nextcloud.title": "اتصل بـ Nextcloud",
+  "dialog.icloud_settings.navigation_steps": "الإعدادات ← iCloud ← عرض الكل ← {SP_APP_NAME}",
   "dialog.location_access_needed.message": "نحتاج إلى إذن الموقع لنقل الخريطة إلى موقعك الحالي.",
   "dialog.location_access_needed.title": "يلزم الوصول إلى الموقع",
   "dialog.location_access_turned_off.message": "قم بتمكين إذن الموقع في الإعدادات لاستخدام الموقع الحالي.",
