@@ -106,15 +106,24 @@ class ICloudCloudService extends BackupCloudService {
   /// availability check, which can legitimately come back false (iCloud
   /// Drive still disabled in Settings) without that being an error. The UI
   /// routes a false result to Settings guidance instead of a generic error.
-  /// A transient CloudKit network failure falls back to whatever was already
-  /// cached, rather than flipping the tile to "disconnected" over a blip.
+  /// A transient CloudKit network failure with a cached user falls back to
+  /// that cache rather than flipping the tile to "disconnected" over a blip;
+  /// with no cached user (nothing to fall back to, e.g. a first-time sign-in
+  /// attempted offline) this throws instead of returning `false`, since a
+  /// bare `false` here is indistinguishable from iCloud actually being
+  /// disabled and would send an offline user to Settings guidance that can't
+  /// help them — see [reauthenticateIfNeeded], which makes the same choice.
   @override
   Future<bool> signIn() async {
     final result = await _checkAvailability();
     return switch (result.status) {
       _AvailabilityStatus.available => true,
       _AvailabilityStatus.notAvailable => false,
-      _AvailabilityStatus.transientFailure => result.hasCachedUser,
+      _AvailabilityStatus.transientFailure when result.hasCachedUser => true,
+      _AvailabilityStatus.transientFailure => throw exp.NetworkException(
+        'Could not verify iCloud account — check your connection and try again',
+        serviceType: serviceType,
+      ),
     };
   }
 

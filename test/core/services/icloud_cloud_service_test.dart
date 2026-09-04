@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/icloud_cloud_service.dart';
 import 'package:storypad/core/storages/icloud_user_storage.dart';
@@ -101,21 +102,26 @@ void main() {
       expect(service.currentUser?.accountId, 'record-a', reason: 'cached account must survive a transient failure');
     });
 
-    test('transient network failure with no cached user reports not signed in, without wiping anything', () async {
-      mockNative(available: true, accountIdError: PlatformException(code: 'NETWORK'));
-      final service = ICloudCloudService();
+    // A bare `false` here would be indistinguishable from iCloud actually
+    // being disabled — the caller (BackupProvider.signIn) would send an
+    // offline first-time user to Settings guidance that can't help them, so
+    // this must throw instead. See icloud_cloud_service.dart's signIn doc.
+    test(
+      'signIn throws NetworkException on a transient failure with no cached user, without wiping anything',
+      () async {
+        mockNative(available: true, accountIdError: PlatformException(code: 'NETWORK'));
+        final service = ICloudCloudService();
 
-      final signedIn = await service.signIn();
-
-      expect(signedIn, isFalse);
-      expect(service.currentUser, isNull);
-    });
+        await expectLater(service.signIn(), throwsA(isA<NetworkException>()));
+        expect(service.currentUser, isNull);
+      },
+    );
 
     test('reauthenticateIfNeeded throws NetworkException on a transient failure with no cached user', () async {
       mockNative(available: true, accountIdError: PlatformException(code: 'NETWORK'));
       final service = ICloudCloudService();
 
-      await expectLater(service.reauthenticateIfNeeded(), throwsA(isA<Exception>()));
+      await expectLater(service.reauthenticateIfNeeded(), throwsA(isA<NetworkException>()));
     });
 
     // Regression test for the bug where re-enabling iCloud after it was

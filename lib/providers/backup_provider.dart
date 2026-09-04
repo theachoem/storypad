@@ -272,12 +272,21 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     // availability and can legitimately come back false (iCloud Drive still
     // disabled in Settings) without that being an error. Route that case to
     // Settings guidance instead of the generic error snackbar below, which
-    // assumes a false/failed result always means something went wrong.
+    // assumes a false/failed result always means something went wrong. A
+    // transient network failure with nothing cached yet is a distinct third
+    // case — Settings can't help there, so it gets the generic error
+    // snackbar instead of the Settings sheet.
     if (serviceType == BackupServiceType.icloud) {
       if (result.data == true) {
         _syncState.onConnectionChecked({serviceType: BackupConnectionStatus.readyToSync});
         _lastSyncedAtByYear = null;
         _lastDbUpdatedAtByYear = null;
+      } else if (result.error?.type == BackupErrorType.network) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.error!.message)),
+          );
+        }
       } else if (context.mounted) {
         final service = repository.getService(serviceType);
         if (service is ICloudCloudService) {

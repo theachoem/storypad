@@ -195,6 +195,8 @@ class BackupRepository {
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
+    } on exp.NetworkException catch (e) {
+      return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
       return BackupResult.failure(
         BackupError.unknown(
