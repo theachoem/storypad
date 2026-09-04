@@ -10,6 +10,8 @@ abstract class BackupCloudService {
   /// The service type metadata for this implementation
   BackupServiceType get serviceType;
 
+  bool get icloud => serviceType == BackupServiceType.icloud;
+
   /// User currently authenticated with this cloud service
   CloudServiceUser? get currentUser;
   bool get isSignedIn => currentUser != null;

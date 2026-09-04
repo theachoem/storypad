@@ -30,6 +30,7 @@ void main() {
   }) {
     final messenger = BackupSyncMessenger();
     return BackupRepository(
+      icloudService: null,
       restoreService: RestoreBackupService(),
       messenger: messenger,
       step1ImagesUploader: BackupImagesUploaderService(messenger: messenger),

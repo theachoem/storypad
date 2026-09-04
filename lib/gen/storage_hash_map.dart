@@ -33,6 +33,12 @@ const Map<String, String> kStorageHashMap = {
       "/feature_demos/customizations/customization_5__1080x2400-90c2319738d5724b4db0deae229d9f7d.jpg",
   "/feature_demos/customizations/customization_6__1080x2400.jpg":
       "/feature_demos/customizations/customization_6__1080x2400-b8768964280d914b98fbba246ef50221.jpg",
+  "/feature_demos/icloud/icloud_1__1206x2622.jpg":
+      "/feature_demos/icloud/icloud_1__1206x2622-53ee560c55834181c4501a50a1dc4e79.jpg",
+  "/feature_demos/icloud/icloud_2__1206x2622.jpg":
+      "/feature_demos/icloud/icloud_2__1206x2622-11cd42f1f034b5af3c22960bca039d17.jpg",
+  "/feature_demos/icloud/icloud_3__1206x2622.jpg":
+      "/feature_demos/icloud/icloud_3__1206x2622-6e21712ec14212d061f70d47b3c4db3a.jpg",
   "/feature_demos/markdown_export/markdown_export_1__1080x2400.jpg":
       "/feature_demos/markdown_export/markdown_export_1__1080x2400-daf7485e19e7d8770c267eea386ebf3f.jpg",
   "/feature_demos/markdown_export/markdown_export_2__1080x2400.jpg":

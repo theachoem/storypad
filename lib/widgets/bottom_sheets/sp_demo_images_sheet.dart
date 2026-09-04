@@ -4,16 +4,19 @@ import 'package:storypad/widgets/bottom_sheets/base_bottom_sheet.dart';
 import 'package:storypad/widgets/sp_demo_images.dart';
 
 /// Generic "preview a feature" sheet: an optional [header] (e.g. an enable
-/// switch) above a horizontal carousel of demo screenshots. Callers own what
-/// the header looks like and what it toggles — this sheet only lays it out.
+/// switch) above, and an optional [bottom] (e.g. an action button) below, a
+/// horizontal carousel of demo screenshots. Callers own what either looks
+/// like and does — this sheet only lays them out.
 class SpDemoImagesSheet extends BaseBottomSheet {
   const SpDemoImagesSheet({
     required this.demoImages,
     this.header,
+    this.bottom,
   });
 
   final List<String> demoImages;
   final Widget? header;
+  final Widget? bottom;
 
   static const List<String> periodCalendarDemoImages = [
     "/feature_demos/period_calendar/period_calendar_1__1080x2400.jpg",
@@ -28,9 +31,16 @@ class SpDemoImagesSheet extends BaseBottomSheet {
     "/feature_demos/relax_sounds/relax_sound_4__1080x2400.jpg",
   ];
 
+  static const List<String> icloudSettingsDemoImages = [
+    "/feature_demos/icloud/icloud_1__1206x2622.jpg",
+    "/feature_demos/icloud/icloud_2__1206x2622.jpg",
+    "/feature_demos/icloud/icloud_3__1206x2622.jpg",
+  ];
+
   static const List<String> allDemoImages = [
     ...periodCalendarDemoImages,
     ...relaxSoundDemoImages,
+    ...icloudSettingsDemoImages,
   ];
 
   static void preloadDemoImages() {
@@ -57,7 +67,11 @@ class SpDemoImagesSheet extends BaseBottomSheet {
           demoImageUrlPaths: demoImages,
           skeletonCount: demoImages.length,
         ),
-        SizedBox(height: bottomPadding),
+        if (bottom case final bottom?) ...[
+          const SizedBox(height: 8),
+          bottom,
+        ],
+        SizedBox(height: bottomPadding + 16.0),
       ],
     );
   }

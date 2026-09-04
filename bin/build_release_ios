@@ -125,9 +125,9 @@ function main(){
   echo "Building appbundle for $FLAVOR flavor..."
   echo ""
 
-  setup_signing_certificates
-  copy_provisioning_profile_to_xcode_home $FLAVOR
-  install_provisioning_profile $FLAVOR
+  # setup_signing_certificates
+  # copy_provisioning_profile_to_xcode_home $FLAVOR
+  # install_provisioning_profile $FLAVOR
   build_ipa $FLAVOR
   upload_ipa_to_app_store $FLAVOR
 }

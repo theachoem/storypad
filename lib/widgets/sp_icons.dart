@@ -35,6 +35,7 @@ class SpIcons {
   static const IconData googleDrive = MdiIcons.googleDrive;
   // Self-hosted, so a generic server icon rather than a Nextcloud brand mark.
   static const IconData nextcloud = MdiIcons.server;
+  static const IconData icloud = Icons.cloud;
   static const IconData cloudDone = Icons.cloud_done_outlined;
   static const IconData mediaSync = kIsCupertino
       ? CupertinoIcons.antenna_radiowaves_left_right

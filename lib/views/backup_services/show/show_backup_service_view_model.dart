@@ -11,10 +11,12 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/nextcloud_user_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/icloud_cloud_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/backup_services/backups/show/show_backup_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_icloud_settings_sheet.dart';
 import 'show_backup_service_view.dart';
 
 class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -129,6 +131,23 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (context.mounted) Navigator.maybePop(context);
   }
 
+  /// Shows [SpICloudSettingsSheet] then hands off to Settings, the only real
+  /// way to disable iCloud Drive for the app (mirrors `BackupProvider.signIn`'s
+  /// "enable" flow, which does the same for the opposite direction).
+  /// Deliberately does *not* call [BackupCloudService.signOut] / clear
+  /// [ICloudUserStorage]: unlike an explicit Drive/Nextcloud sign-out, this
+  /// isn't a confirmed disconnect — the user might cancel in Settings, or
+  /// toggle it back on shortly after. Clearing the stored account here would
+  /// mean losing the `autoBackupEnabled` preference and misreading a
+  /// re-enable as a "new" account. The next live availability check (already
+  /// running on every app resume) reflects whatever the user actually did.
+  Future<void> disableICloud(BuildContext context) async {
+    final service = backupProvider.repository.getService(serviceType);
+    if (service is ICloudCloudService) {
+      await SpICloudSettingsSheet.show(context, service: service);
+    }
+  }
+
   Future<void> retry(BuildContext context) async {
     await load();
   }
@@ -153,9 +172,15 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
   /// A revoked grant needs fresh user input, not a silent retry: OAuth
   /// re-consent for Drive (same account), or a new app password for
   /// Nextcloud — pre-filled with the server/username that's still known
-  /// since a revoked auth no longer wipes the stored account.
+  /// since a revoked auth no longer wipes the stored account. iCloud has
+  /// neither: reconnecting just means re-checking live OS availability
+  /// (via BackupProvider.signIn, which shows Settings guidance if it's
+  /// still off) rather than any credential flow.
   Future<void> reconnect(BuildContext context) async {
-    if (serviceType == BackupServiceType.nextcloud) {
+    if (serviceType == BackupServiceType.icloud) {
+      await backupProvider.signIn(context, serviceType);
+      await load();
+    } else if (serviceType == BackupServiceType.nextcloud) {
       final service = backupProvider.repository.getService(serviceType);
       final currentUser = service.currentUser as NextcloudUserObject?;
 

@@ -52,6 +52,31 @@ class CloudFileObject {
     );
   }
 
+  /// [remotePath] is the file's path relative to the app's private iCloud
+  /// container data root — used as [id] since, like Nextcloud, ubiquity
+  /// containers have no separate stable file-ID concept. [file] is the
+  /// metadata dictionary returned by the native `ICloudBackupService`.
+  factory CloudFileObject.fromICloud(
+    Map<Object?, Object?> file, {
+    required String remotePath,
+    bool trashed = false,
+  }) {
+    DateTime? epochSecondsToDateTime(Object? value) {
+      if (value is num) return DateTime.fromMillisecondsSinceEpoch((value * 1000).round());
+      return null;
+    }
+
+    return CloudFileObject(
+      fileName: file['name'] as String?,
+      id: remotePath,
+      description: null,
+      sizeInBytes: file['sizeInBytes'] as int?,
+      createdAt: epochSecondsToDateTime(file['createdAt']),
+      modifiedAt: epochSecondsToDateTime(file['modifiedAt']),
+      trashed: trashed,
+    );
+  }
+
   factory CloudFileObject.fromLegacyStoryPad(drive.File file) {
     return CloudFileObject(
       fileName: file.name,

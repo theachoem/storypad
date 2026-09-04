@@ -5,7 +5,11 @@ import 'package:storypad/widgets/sp_icons.dart';
 
 enum BackupServiceType {
   google_drive(id: 'google_drive', displayName: 'Google Drive', hasGlobalUserId: true),
-  nextcloud(id: 'nextcloud', displayName: 'Nextcloud', hasGlobalUserId: true);
+  nextcloud(id: 'nextcloud', displayName: 'Nextcloud', hasGlobalUserId: true),
+  // CloudKit's fetchUserRecordID gives a real, stable per-account identifier
+  // — aliased into RevenueCat identity same as Drive/Nextcloud. See
+  // ICloudUserObject.globalId.
+  icloud(id: 'icloud', displayName: 'iCloud', hasGlobalUserId: true);
 
   final String id;
   final String displayName;
@@ -13,6 +17,7 @@ enum BackupServiceType {
 
   bool get googleDrive => this == google_drive;
   bool get nextcloudService => this == nextcloud;
+  bool get icloudService => this == icloud;
 
   const BackupServiceType({
     required this.id,
@@ -29,6 +34,8 @@ enum BackupServiceType {
         return SpIcons.googleDrive;
       case BackupServiceType.nextcloud:
         return SpIcons.nextcloud;
+      case BackupServiceType.icloud:
+        return SpIcons.icloud;
     }
   }
 }

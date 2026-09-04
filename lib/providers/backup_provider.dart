@@ -16,6 +16,7 @@ import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
 import 'package:storypad/core/services/backups/google_drive_linux_cloud_service.dart';
+import 'package:storypad/core/services/backups/icloud_cloud_service.dart';
 import 'package:storypad/core/services/backups/nextcloud_cloud_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
@@ -33,6 +34,7 @@ import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/backup_sync_state_store.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_icloud_settings_sheet.dart';
 
 class BackupProvider extends ChangeNotifier with DebounchedCallback {
   BackupProvider() {
@@ -89,6 +91,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       internetChecker: InternetCheckerService(),
       googleDriveService: _createGoogleDriveService(),
       nextcloudService: NextcloudCloudService(),
+      icloudService: _createICloudService(),
       importHistoryStorage: BackupImportHistoryStorage(),
     );
   }
@@ -96,6 +99,18 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   static BackupCloudService _createGoogleDriveService() {
     if (!kIsWeb && Platform.isLinux) return GoogleDriveLinuxCloudService();
     return GoogleDriveCloudService();
+  }
+
+  /// iCloud doesn't conceptually exist off-Apple platforms (unlike Drive,
+  /// which is at least meant to work everywhere) — so unlike
+  /// [_createGoogleDriveService]'s Linux stub, there's no always-registered
+  /// disabled placeholder here. `null` means no connect tile renders at all
+  /// on that platform; per-asset "backed up to iCloud" badges still work
+  /// everywhere regardless, since those read straight off the
+  /// [BackupServiceType] enum rather than this registration.
+  static BackupCloudService? _createICloudService() {
+    if (!kIsWeb && Platform.isIOS) return ICloudCloudService();
+    return null;
   }
 
   late final AutoSyncTriggerService _autoSyncTriggerService;
@@ -252,6 +267,26 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     final result = await repository.signIn(serviceType);
+
+    // iCloud has no OAuth/credential flow — signIn() just re-checks live OS
+    // availability and can legitimately come back false (iCloud Drive still
+    // disabled in Settings) without that being an error. Route that case to
+    // Settings guidance instead of the generic error snackbar below, which
+    // assumes a false/failed result always means something went wrong.
+    if (serviceType == BackupServiceType.icloud) {
+      if (result.data == true) {
+        _syncState.onConnectionChecked({serviceType: BackupConnectionStatus.readyToSync});
+        _lastSyncedAtByYear = null;
+        _lastDbUpdatedAtByYear = null;
+      } else if (context.mounted) {
+        final service = repository.getService(serviceType);
+        if (service is ICloudCloudService) {
+          await SpICloudSettingsSheet.show(context, service: service);
+        }
+      }
+      notifyListeners();
+      return;
+    }
 
     if (result.isSuccess == true) {
       AnalyticsService.instance.logSignInWithGoogle();
