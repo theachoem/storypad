@@ -1,22 +1,25 @@
-part of '../sp_story_tile_list_item.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/helpers/date_format_helper.dart';
+import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
-class _StoryMonthHeader extends StatelessWidget {
-  const _StoryMonthHeader({
-    required this.index,
-    required this.context,
+class StoryMonthHeader extends StatelessWidget {
+  const StoryMonthHeader({
+    super.key,
+    required this.isFirstOfRun,
     required this.story,
     required this.showYear,
   });
 
-  final int index;
-  final BuildContext context;
+  final bool isFirstOfRun;
   final StoryDbModel story;
   final bool showYear;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 0.0, top: index == 0 ? 8.0 : 16),
+      margin: EdgeInsets.only(bottom: 0.0, top: isFirstOfRun ? 8.0 : 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,

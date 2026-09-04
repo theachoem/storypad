@@ -35,6 +35,7 @@ import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dar
 
 part 'local_widgets/home_scroll_info.dart';
 part 'local_widgets/home_scroll_app_bar_info.dart';
+part 'local_widgets/home_item.dart';
 
 class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final scrollInfo = _HomeScrollInfo(viewModel: () => this);
@@ -60,11 +61,65 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   CollectionDbModel<StoryDbModel>? _pinnedStories;
   CollectionDbModel<StoryDbModel>? get pinnedStories => _pinnedStories;
 
+  /// Unpinned stories load a page at a time (see [loadNextPage]) so initial
+  /// paint stays fast regardless of how many stories the year has. Pinned
+  /// stories are always loaded in full — typically a small set.
+  static const int _pageSize = 60;
+
+  /// Non-null while a page fetch is in flight. A second caller (the eager
+  /// background pager and, redundantly, [HomeLoadMoreItem] scrolling into
+  /// view) awaits this same [Completer] instead of racing a duplicate fetch.
+  Completer<void>? _pageFetchCompleter;
+
+  /// Bumped at the start of every [reload]. A page fetch captures the
+  /// generation it started under; if it resolves after a newer [reload] has
+  /// begun (e.g. a pull-to-refresh or a restore-triggered reload firing
+  /// while a background page was still loading — same year, so the old
+  /// `year` check alone wouldn't catch it), it discards its result instead
+  /// of mutating [_stories] under the new generation, and only clears
+  /// [_pageFetchCompleter] if it's still the one it set.
+  int _loadGeneration = 0;
+
+  bool _hasMoreStories = true;
+  bool get hasMoreStories => _hasMoreStories;
+
+  /// (year, month) of the oldest story in the most recently *fetched* DB
+  /// page — the only month that might still be incomplete (more of it could
+  /// be in a page not yet fetched). Set from the raw page result in
+  /// [_fetchNextPage], not inferred from [stories]' sorted tail: a local
+  /// insert/edit (e.g. a backdated new story) can reorder that list without
+  /// changing what pagination has actually confirmed, so inferring
+  /// completeness from "last in the merged list" can hide the wrong month
+  /// or reveal an actually-incomplete one. Null once nothing is pending.
+  (int year, int month)? _pendingBoundaryMonth;
+
+  /// Distinct months (1-12) with at least one *docs*-type story in [year] —
+  /// matches exactly what [_buildRunItems] ever renders (archived/binned
+  /// stories are excluded), so a month tab always resolves to something
+  /// `moveToMonthIndex`/`moveToStory` can actually find. Recomputed
+  /// synchronously in [setStories] (a cheap DB-side distinct query,
+  /// independent of how many pages of [stories] have loaded) so it never
+  /// drifts stale after a mutation adds/empties a month.
+  List<int> _monthsForYear = [];
+
   /// Per-month recap stats for the current year, keyed by month (1–12).
-  /// Computed from [stories] each time they are set; consumed by the timeline
-  /// recap tile.
+  /// Recomputed synchronously in [setStories] from the *confirmed-complete*
+  /// prefix of [stories] (see [_confirmedCompleteUnpinnedStories]) — the
+  /// same data already fetched for the story list, no separate DB fetch. A
+  /// month's recap tile and its own story tiles are therefore always built
+  /// together in the same [_buildItems] pass — never a retroactive pop-in
+  /// once a month "catches up".
   Map<int, MonthRecapStatsObject> _monthlyStats = {};
   Map<int, MonthRecapStatsObject> get monthlyStats => _monthlyStats;
+
+  List<HomeItem> _items = [];
+
+  /// Flattened, single-source-of-truth render list for the home `SliverList`:
+  /// throwback tile, then pinned run, then unpinned run — each run interleaved
+  /// with its own month-header/recap items. Rebuilt in full on every
+  /// [setStories] call, mirroring the old behavior of regenerating all
+  /// GlobalKeys unconditionally on every data change.
+  List<HomeItem> get items => _items;
 
   void setStories(CollectionDbModel<StoryDbModel>? value, CollectionDbModel<StoryDbModel>? pinnedValue) {
     _stories = value?.deduplicateAndSort(
@@ -74,19 +129,115 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
       comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
     );
 
-    _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: stories?.items ?? []);
     StoryContentEmbedExtractor.preloadAssetAspectRatios([...?stories?.items, ...?pinnedStories?.items]);
 
-    scrollInfo.setupStoryKeys(
-      stories?.items ?? [],
-      pinnedStories?.items ?? [],
-    );
+    _refreshMonthsForYear();
+
+    final renderableStories = _confirmedCompleteUnpinnedStories(stories?.items ?? []);
+    _monthlyStats = MonthlyStoryStatsService.getByMonth(stories: renderableStories);
+    _items = _buildItems(renderableStories);
   }
 
-  List<int> get months {
-    List<int> months = stories?.items.map((e) => e.month).toSet().toList() ?? [];
-    if (months.isEmpty) months.add(DateTime.now().month);
-    return months;
+  /// Filters out [_pendingBoundaryMonth] (the possibly still-loading month)
+  /// from [allUnpinnedStories], so it never renders — nor gets a recap tile
+  /// — until every one of its stories has loaded. Filters by content rather
+  /// than trimming the sorted list's tail, since a local insert/edit can
+  /// move that month's stories away from the tail after a re-sort (see the
+  /// field doc on [_pendingBoundaryMonth]); same (year, month) stories are
+  /// always contiguous in a date-sorted list regardless of insertion order,
+  /// so this is equivalent to removing one contiguous run.
+  List<StoryDbModel> _confirmedCompleteUnpinnedStories(List<StoryDbModel> allUnpinnedStories) {
+    final boundary = _pendingBoundaryMonth;
+    if (boundary == null) return allUnpinnedStories;
+
+    return allUnpinnedStories.where((story) => (story.year, story.month) != boundary).toList();
+  }
+
+  List<HomeItem> _buildItems(List<StoryDbModel> renderableStories) {
+    final items = <HomeItem>[];
+
+    if (hasThrowback) {
+      items.add(
+        HomeThrowbackItem(
+          throwbackDates: throwbackDates ?? [],
+          listHasStories: stories?.items.isNotEmpty == true,
+        ),
+      );
+    }
+
+    // Pinned run: headers yes, recap tiles never (matches the previous
+    // `eligibleToShowRecap: false` behavior for pinned stories). Pinned
+    // stories aren't paginated, so no completeness trimming needed here.
+    items.addAll(_buildRunItems(pinnedStories?.items ?? [], pinned: true, monthlyStats: null));
+    items.addAll(_buildRunItems(renderableStories, pinned: false, monthlyStats: _monthlyStats));
+
+    if (_hasMoreStories) items.add(HomeLoadMoreItem());
+
+    return items;
+  }
+
+  List<HomeItem> _buildRunItems(
+    List<StoryDbModel> run, {
+    required bool pinned,
+    required Map<int, MonthRecapStatsObject>? monthlyStats,
+  }) {
+    final result = <HomeItem>[];
+
+    for (int i = 0; i < run.length; i++) {
+      final story = run[i];
+      final previous = i > 0 ? run[i - 1] : null;
+      final next = i + 1 < run.length ? run[i + 1] : null;
+      final showFullTimelineDivider = next != null;
+      final showMonogram = previous == null || !previous.sameDayAs(story);
+
+      if (previous?.month != story.month || previous?.year != story.year) {
+        result.add(HomeMonthHeaderItem(story: story, isFirstOfRun: i == 0, pinned: pinned));
+
+        final monthStats = monthlyStats?[story.month];
+        if (monthStats != null && monthStats.shouldShowRecap) {
+          result.add(
+            HomeMonthRecapItem(
+              story: story,
+              stats: monthStats,
+              showFullTimelineDivider: showFullTimelineDivider,
+            ),
+          );
+        }
+      }
+
+      result.add(
+        pinned
+            ? HomePinnedStoryItem(
+                story: story,
+                showMonogram: showMonogram,
+                showFullTimelineDivider: showFullTimelineDivider,
+              )
+            : HomeStoryItem(
+                story: story,
+                showMonogram: showMonogram,
+                showFullTimelineDivider: showFullTimelineDivider,
+              ),
+      );
+    }
+
+    return result;
+  }
+
+  List<int> get months => _monthsForYear.isNotEmpty ? _monthsForYear : [DateTime.now().month];
+
+  /// Re-derives [_monthsForYear] from the DB. Called unconditionally from
+  /// [setStories] — cheap (no content decode), so simpler to always keep it
+  /// fresh there than to gate it per call site (page load vs. mutation);
+  /// which months exist doesn't depend on how many pages have loaded, so a
+  /// page-load-triggered call just repeats the same query result until a
+  /// mutation actually changes it.
+  void _refreshMonthsForYear() {
+    _monthsForYear = StoryDbModel.db.getMonthsForYear(
+      year: year,
+      filters: {
+        'types': [PathType.docs.name],
+      },
+    );
   }
 
   Future<void> reload({
@@ -94,14 +245,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }) async {
     AppLogger.d('🚧 Reload home from $debugSource 🏠');
 
-    final stories = await StoryDbModel.db.where(
-      filters: SearchFilterObject(
-        years: {year},
-        types: {PathType.docs},
-        pinned: false,
-        assetId: null,
-      ).toDatabaseFilter(),
-    );
+    final generation = ++_loadGeneration;
+    _pageFetchCompleter = null;
+    _hasMoreStories = true;
+    _pendingBoundaryMonth = null;
 
     final pinnedStories = await StoryDbModel.db.where(
       filters: SearchFilterObject(
@@ -110,6 +257,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
         pinned: true,
         assetId: null,
       ).toDatabaseFilter(),
+    );
+
+    _pinnedStories = pinnedStories?.deduplicateAndSort(
+      comparator: (a, b) => b.displayPathDate.compareTo(a.displayPathDate),
     );
 
     _throwbackDates = DateTime.now().year == year
@@ -127,7 +278,101 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
               .then((e) => e?.items.map((e) => e.displayPathDate).toSet().toList())
         : null;
 
-    setStories(stories, pinnedStories);
+    if (generation != _loadGeneration) return; // superseded while awaiting the above
+
+    // reset: true so this fetches offset 0 regardless of whatever [_stories]
+    // still holds from before this reload (the old year/search-refresh data,
+    // kept visible on screen until this swaps it in — not cleared upfront,
+    // to avoid flashing the loading spinner on every year switch / pull to
+    // refresh). setStories()/notifyListeners() happen inside.
+    await loadNextPage(reset: true);
+
+    unawaited(_prefetchRemainingPages(generation));
+  }
+
+  /// Eagerly works through every remaining page in the background right
+  /// after page 1, rather than waiting for the user to scroll near the
+  /// loaded edge — [loadNextPage] is cheap to also call from scroll/jump
+  /// paths since it just joins this same in-flight fetch instead of racing
+  /// a duplicate one.
+  Future<void> _prefetchRemainingPages(int generation) async {
+    while (_hasMoreStories && generation == _loadGeneration) {
+      await loadNextPage();
+    }
+  }
+
+  /// Loads the next page of unpinned stories (see [_pageSize]), appending
+  /// into [stories]. Uses `stories.items.length` as the offset rather than a
+  /// separately tracked cursor, so a concurrent delete/pin-toggle that
+  /// shrinks the in-memory list can't desync the cursor — worst case is one
+  /// re-fetched row, which [setStories]'s dedupe already discards.
+  ///
+  /// [reset] is for [reload] only: fetches offset 0 and *replaces* [stories]
+  /// instead of appending, regardless of whatever's currently loaded (the
+  /// old year/search's data — deliberately left in place until this swaps
+  /// it, so switching years doesn't flash the loading spinner). This gives
+  /// page 1 and every later page the same fetch path instead of a
+  /// near-duplicate inline fetch for "just the first one".
+  ///
+  /// If a fetch is already in flight (typically [_prefetchRemainingPages]),
+  /// this joins that same fetch via [_pageFetchCompleter] instead of racing
+  /// a duplicate query.
+  Future<void> loadNextPage({bool reset = false}) {
+    if (_pageFetchCompleter != null) return _pageFetchCompleter!.future;
+    if (!reset && !_hasMoreStories) return Future.value();
+
+    final generation = _loadGeneration;
+    final completer = Completer<void>();
+    _pageFetchCompleter = completer;
+
+    _fetchNextPage(reset: reset, generation: generation).then(completer.complete, onError: completer.completeError);
+    completer.future.whenComplete(() {
+      // Only clear if this call's completer is still the current one — an
+      // older, now-superseded call's whenComplete must not clear a newer
+      // reload's in-flight completer out from under it.
+      if (identical(_pageFetchCompleter, completer)) _pageFetchCompleter = null;
+    });
+
+    return completer.future;
+  }
+
+  Future<void> _fetchNextPage({required bool reset, required int generation}) async {
+    final offset = reset ? 0 : (stories?.items.length ?? 0);
+    AppLogger.d('🚧 $runtimeType#loadNextPage fetching offset: $offset, limit: $_pageSize, year: $year');
+
+    final nextPage = await StoryDbModel.db.where(
+      filters: SearchFilterObject(
+        years: {year},
+        types: {PathType.docs},
+        pinned: false,
+        assetId: null,
+        limit: _pageSize,
+        offset: offset,
+      ).toDatabaseFilter(),
+    );
+
+    if (generation != _loadGeneration) {
+      // A newer reload() started while this page was in flight (same year
+      // counts too — e.g. pull-to-refresh, or a restore-triggered reload —
+      // not just a year switch) — it already started its own fetch, discard
+      // this stale one instead of mutating _stories under it.
+      AppLogger.d('🚧 $runtimeType#loadNextPage discarded: generation $generation -> $_loadGeneration mid-flight');
+      return;
+    }
+
+    _hasMoreStories = (nextPage?.items.length ?? 0) == _pageSize;
+    _pendingBoundaryMonth = _hasMoreStories && nextPage!.items.isNotEmpty
+        ? (nextPage.items.last.year, nextPage.items.last.month)
+        : null;
+    AppLogger.d(
+      '🚧 $runtimeType#loadNextPage loaded ${nextPage?.items.length ?? 0} more stories '
+      '(total: ${offset + (nextPage?.items.length ?? 0)}), hasMore: $_hasMoreStories',
+    );
+
+    setStories(
+      CollectionDbModel<StoryDbModel>(items: [if (!reset) ...?stories?.items, ...?nextPage?.items]),
+      pinnedStories,
+    );
     notifyListeners();
   }
 

@@ -91,11 +91,6 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext listContext) {
-    int itemsCount = viewModel.stories?.items.length ?? 0;
-
-    bool hasPinnedOrThrowback = viewModel.hasPinned || viewModel.hasThrowback;
-    if (hasPinnedOrThrowback) itemsCount += 1;
-
     if (viewModel.stories == null) {
       return const SliverFillRemaining(
         child: Center(
@@ -104,7 +99,8 @@ class _HomeContent extends StatelessWidget {
       );
     }
 
-    if (itemsCount == 0) {
+    final items = viewModel.items;
+    if (items.isEmpty) {
       return SliverFillRemaining(
         child: _HomeEmpty(viewModel: viewModel),
       );
@@ -118,54 +114,85 @@ class _HomeContent extends StatelessWidget {
         bottom: kToolbarHeight + 200 + MediaQuery.of(listContext).padding.bottom,
       ),
       sliver: SliverList.builder(
-        itemCount: itemsCount,
-        itemBuilder: (context, itemIndex) {
-          if (itemIndex == 0 && hasPinnedOrThrowback) {
-            return Column(
-              children: [
-                if (viewModel.hasThrowback)
-                  SpThrowbackTile(
-                    listHasStories: viewModel.stories?.items.isNotEmpty == true,
-                    throwbackDates: viewModel.throwbackDates,
-                  ),
-                for (int pinnedIndex = 0; pinnedIndex < (viewModel.pinnedStories?.items.length ?? 0); pinnedIndex++)
-                  buildStoryTile(
-                    index: pinnedIndex,
-                    context: context,
-                    listContext: listContext,
-                    stories: viewModel.pinnedStories!,
-                    eligibleToShowRecap: false,
-                  ),
-              ],
-            );
-          }
-
-          int storyIndex = itemIndex;
-          if (hasPinnedOrThrowback) storyIndex = itemIndex - 1;
-
-          return buildStoryTile(
-            index: storyIndex,
-            context: context,
-            listContext: listContext,
-            stories: viewModel.stories!,
-            eligibleToShowRecap: true,
-          );
-        },
+        itemCount: items.length,
+        itemBuilder: (context, i) => buildItem(context, listContext, items[i]),
       ),
     );
   }
 
-  Widget buildStoryTile({
-    required int index,
-    required BuildContext context,
-    required BuildContext listContext,
-    required CollectionDbModel<StoryDbModel> stories,
-    required bool eligibleToShowRecap,
-  }) {
-    StoryDbModel story = stories.items[index];
+  Widget buildItem(BuildContext context, BuildContext listContext, HomeItem item) {
+    return switch (item) {
+      HomeThrowbackItem() => SpThrowbackTile(throwbackDates: item.throwbackDates, listHasStories: item.listHasStories),
+      HomeMonthHeaderItem() => buildMonthHeader(item),
+      HomeMonthRecapItem() => buildMonthRecap(item),
+      HomeLoadMoreItem() => _HomeLoadMoreTile(key: item.key, viewModel: viewModel),
+      HomeStoryItem(:final story, :final showMonogram, :final showFullTimelineDivider) => buildStoryTile(
+        context,
+        listContext,
+        item.key,
+        story,
+        showMonogram,
+        showFullTimelineDivider,
+      ),
+      HomePinnedStoryItem(:final story, :final showMonogram, :final showFullTimelineDivider) => buildStoryTile(
+        context,
+        listContext,
+        item.key,
+        story,
+        showMonogram,
+        showFullTimelineDivider,
+      ),
+    };
+  }
 
+  Widget buildMonthHeader(HomeMonthHeaderItem item) {
+    return Column(
+      key: item.key,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // when this is the first header of its run and there is no throwback,
+        // add extra spacing at top; else no padding to make UI look nicer
+        // relative to the throwback tile / previous section above it.
+        if (item.isFirstOfRun && !viewModel.hasThrowback) const SizedBox(height: 12.0),
+
+        Stack(
+          children: [
+            // connector divider from the previous section's last story to
+            // this header, when this header isn't the first of its run.
+            if (!item.isFirstOfRun)
+              const Positioned(
+                left: 32.0,
+                top: 0,
+                bottom: 0,
+                child: VerticalDivider(width: 1),
+              ),
+            StoryMonthHeader(isFirstOfRun: item.isFirstOfRun, story: item.story, showYear: false),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildMonthRecap(HomeMonthRecapItem item) {
+    return Stack(
+      key: item.key,
+      children: [
+        buildTimelineDivider(item.showFullTimelineDivider),
+        StoryMonthRecapTile(story: item.story, stats: item.stats),
+      ],
+    );
+  }
+
+  Widget buildStoryTile(
+    BuildContext context,
+    BuildContext listContext,
+    GlobalKey key,
+    StoryDbModel story,
+    bool showMonogram,
+    bool showFullTimelineDivider,
+  ) {
     return SpStoryListenerBuilder(
-      key: viewModel.scrollInfo.getKeyForStoryIndex(story.pinned, index),
+      key: key,
       story: story,
       onChanged: (StoryDbModel updatedStory) => viewModel.onAStoryReloaded(updatedStory),
       onDeleted: () => viewModel.onAStoryDeleted(story),
@@ -184,19 +211,83 @@ class _HomeContent extends StatelessWidget {
                 },
               ),
             ),
-            SpStoryTileListItem(
-              listHasPinned: viewModel.hasPinned,
-              showYear: false,
-              index: index,
-              stories: stories,
-              onTap: () => viewModel.goToViewPage(context, story),
-              listContext: listContext,
-              listHasThrowback: viewModel.hasThrowback,
-              monthlyStats: eligibleToShowRecap ? viewModel.monthlyStats : null,
+            Stack(
+              children: [
+                buildTimelineDivider(showFullTimelineDivider),
+                Consumer<DevicePreferencesProvider>(
+                  builder: (context, provider, child) {
+                    return SpStoryTile(
+                      story: story,
+                      preferences: provider.preferences.storyTilePreferences,
+                      showMonogram: showMonogram,
+                      viewOnly: false,
+                      onTap: () => viewModel.goToViewPage(context, story),
+                      listContext: listContext,
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget buildTimelineDivider(bool showFullTimelineDivider) {
+    if (showFullTimelineDivider) {
+      // 1. show line all the way from header to bottom.
+      return const Positioned(
+        left: 32.0,
+        top: 0,
+        bottom: 0,
+        child: VerticalDivider(width: 1),
+      );
+    } else {
+      // 2. only show line from header to dot/monogram when there is no story.
+      return const Positioned(
+        left: 32.0,
+        height: 16.0,
+        child: VerticalDivider(width: 1),
+      );
+    }
+  }
+}
+
+/// Trailing loading tile for [HomeLoadMoreItem]. `SliverList.builder` only
+/// builds items near the viewport, so this widget being built (mounted) is
+/// itself the "scrolled near the loaded edge" signal — [initState] uses it to
+/// kick [HomeViewModel.loadNextPage], which is cheap to call redundantly here
+/// since [HomeViewModel.reload] already eagerly works through remaining
+/// pages in the background regardless of scroll — this is a catch-up path
+/// for when that background work hasn't reached this point yet.
+class _HomeLoadMoreTile extends StatefulWidget {
+  const _HomeLoadMoreTile({super.key, required this.viewModel});
+
+  final HomeViewModel viewModel;
+
+  @override
+  State<_HomeLoadMoreTile> createState() => _HomeLoadMoreTileState();
+}
+
+class _HomeLoadMoreTileState extends State<_HomeLoadMoreTile> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.viewModel.loadNextPage());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 24.0),
+      child: Center(
+        child: SizedBox(
+          width: 20.0,
+          height: 20.0,
+          child: CircularProgressIndicator.adaptive(strokeWidth: 2.0),
+        ),
+      ),
     );
   }
 }

@@ -12,7 +12,7 @@ class SpSystemGeocodingService implements SpGeocodingService {
   @override
   Future<PlaceDbModel?> reverseGeocode(SpLatLng latLng) async {
     try {
-      final placemarks = await geo.placemarkFromCoordinates(
+      final placemarks = await geo.Geocoding().placemarkFromCoordinates(
         latLng.latitude,
         latLng.longitude,
       );
@@ -48,7 +48,7 @@ class SpSystemGeocodingService implements SpGeocodingService {
     SpLatLng? proximity, // Optional proximity hint for better search results
   }) async {
     try {
-      final locations = await geo.locationFromAddress(query);
+      final locations = await geo.Geocoding().locationFromAddress(query);
       return locations.map((loc) {
         return PlaceDbModel(
           latitude: loc.latitude,

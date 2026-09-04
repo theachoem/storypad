@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/extensions/color_scheme_extension.dart';
 import 'package:storypad/core/helpers/date_format_helper.dart';
@@ -35,9 +34,11 @@ import 'package:storypad/widgets/sp_scroll_configuration.dart';
 import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/widgets/sp_throwback_tile.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_month_header.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_month_recap_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
-import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
+import 'package:storypad/widgets/story_list/sp_story_tile.dart';
 
 import 'home_view_model.dart';
 

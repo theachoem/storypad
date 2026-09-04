@@ -1,21 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/objects/month_recap_stats_object.dart';
-import 'package:storypad/core/extensions/color_scheme_extension.dart';
-import 'package:storypad/core/helpers/date_format_helper.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/providers/in_app_purchase_provider.dart';
-import 'package:storypad/views/paywall/paywall_view.dart';
-import 'package:storypad/views/stats/stats_view.dart';
-import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_tap_effect.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_month_header.dart';
+import 'package:storypad/widgets/story_list/local_widgets/story_month_recap_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile.dart';
-
-part 'local_widgets/story_month_header.dart';
-part 'local_widgets/story_month_recap_tile.dart';
 
 class SpStoryTileListItem extends StatelessWidget {
   const SpStoryTileListItem({
@@ -92,7 +83,7 @@ class SpStoryTileListItem extends StatelessWidget {
                   bottom: 0,
                   child: VerticalDivider(width: 1),
                 ),
-              _StoryMonthHeader(index: index, context: context, story: story, showYear: showYear),
+              StoryMonthHeader(isFirstOfRun: index == 0, story: story, showYear: showYear),
             ],
           ),
 
@@ -102,7 +93,7 @@ class SpStoryTileListItem extends StatelessWidget {
             Stack(
               children: [
                 timelineDivider,
-                _StoryMonthRecapTile(story: story, stats: monthStats),
+                StoryMonthRecapTile(story: story, stats: monthStats),
               ],
             ),
           ],
