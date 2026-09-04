@@ -1,6 +1,6 @@
+import Cocoa
 import CloudKit
-import Flutter
-import UIKit
+import FlutterMacOS
 
 /// Native side of `ICloudCloudService` (Dart) — file storage in the app's
 /// private iCloud ubiquity container, under a non-Documents `Data/` root so
@@ -8,10 +8,18 @@ import UIKit
 /// documents-visible container). All paths passed across the channel are
 /// relative to that `Data/` root.
 ///
+/// Platform port of `ios/Runner/services/ICloudBackupService.swift` — kept as
+/// a separate file rather than a shared/symlinked source (no precedent for
+/// sharing native source between the `ios/` and `macos/` Xcode projects
+/// exists in this repo, and the two files differ only in `openAppSettings`
+/// below and this import line). Keep the two in sync when changing anything
+/// else — CloudKit/FileManager/NSFileCoordinator logic here is intentionally
+/// identical to the iOS version.
+///
 /// There is no in-app sign-in: availability is derived live from whether
 /// the ubiquity container resolves at all (fast, local, no network — see
 /// `isAvailable`), true only when the device is signed into iCloud AND the
-/// user has iCloud Drive enabled for this app in system Settings — see
+/// user has iCloud Drive enabled for this app in System Settings — see
 /// `openAppSettings`, the only way to change that from inside the app.
 /// Actual account *identity* (for `AssetDbModel.cloudDestinations`
 /// bookkeeping and RevenueCat's `globalId` alias) comes from CloudKit's
@@ -36,9 +44,10 @@ class ICloudBackupService {
   // MARK: - Dispatch
 
   /// Routes a `default_platform_channel` call to this service if it's one of
-  /// ours, returning whether it was handled — see `AppDelegate.swift`, which
-  /// chains every service's `handle` rather than switching on method names
-  /// itself. Owns its own argument extraction so `AppDelegate` doesn't have to.
+  /// ours, returning whether it was handled — see `MainFlutterWindow.swift`,
+  /// which chains every service's `handle` rather than switching on method
+  /// names itself. Owns its own argument extraction so the caller doesn't
+  /// have to.
   static func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
     let arguments = call.arguments as? [String: Any]
 
@@ -171,20 +180,23 @@ class ICloudBackupService {
     }
   }
 
-  /// Apple gives apps no API to enable iCloud Drive access for themselves —
-  /// this opens the app's own Settings page, where the iCloud toggle lives
-  /// once the entitlement is present. There is no direct deep link to the
-  /// iCloud sub-page itself.
+  /// macOS has no per-app Settings page the way iOS does (no
+  /// `UIApplication.openSettingsURLString` analogue) — the closest genuinely
+  /// public, documented equivalent is launching the System Settings app
+  /// itself via its bundle identifier, never an undocumented
+  /// `x-apple.systempreferences:` pane URL (same "no private deep link"
+  /// principle already applied on iOS). The user still has to navigate to
+  /// iCloud → See All → this app themselves — the demo-image sheet on the
+  /// Dart side carries that guidance, same as iOS.
   static func openAppSettings(result: @escaping FlutterResult) {
-    guard let url = URL(string: UIApplication.openSettingsURLString) else {
-      result(FlutterError(code: "FAILED", message: "Could not build Settings URL", details: nil))
+    guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences") else {
+      result(FlutterError(code: "FAILED", message: "Could not locate System Settings", details: nil))
       return
     }
 
     DispatchQueue.main.async {
-      UIApplication.shared.open(url, options: [:]) { success in
-        result(success)
-      }
+      NSWorkspace.shared.open(url)
+      result(true)
     }
   }
 
@@ -501,6 +513,7 @@ class ICloudBackupService {
       try FileManager.default.moveItem(at: tempURL, to: destURL)
     }
   }
+
 
   /// Polls `url`'s `ubiquitousItemDownloadingStatus` directly until it's
   /// `.current`, or [timeout] elapses. A freshly-`startDownloadingUbiquitousItem`

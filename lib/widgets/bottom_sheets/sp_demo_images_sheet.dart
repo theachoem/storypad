@@ -37,6 +37,13 @@ class SpDemoImagesSheet extends BaseBottomSheet {
     "/feature_demos/icloud/icloud_3__1206x2622.jpg",
   ];
 
+  /// Real macOS System Settings screenshots don't exist yet — aliased to an
+  /// unrelated existing set as filler for now, same bootstrapping trick used
+  /// for [icloudSettingsDemoImages] before its real screenshots existed.
+  /// Already covered by [relaxSoundDemoImages] in [allDemoImages]'s preload,
+  /// so not repeated there.
+  static const List<String> macosICloudSettingsDemoImages = relaxSoundDemoImages;
+
   static const List<String> allDemoImages = [
     ...periodCalendarDemoImages,
     ...relaxSoundDemoImages,

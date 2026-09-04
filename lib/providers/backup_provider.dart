@@ -109,7 +109,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   /// everywhere regardless, since those read straight off the
   /// [BackupServiceType] enum rather than this registration.
   static BackupCloudService? _createICloudService() {
-    if (!kIsWeb && Platform.isIOS) return ICloudCloudService();
+    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) return ICloudCloudService();
     return null;
   }
 
