@@ -13,6 +13,7 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
+import 'package:storypad/core/objects/icloud_user_object.dart';
 import 'package:storypad/core/objects/nextcloud_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/nextcloud_cloud_service.dart';
@@ -72,6 +73,12 @@ class BackupRepository {
   final RestoreBackupService restoreService;
   final BackupCloudService googleDriveService;
   final NextcloudCloudService nextcloudService;
+
+  /// Null on platforms where iCloud doesn't conceptually exist (Android,
+  /// Linux, Windows) — unlike Drive's Linux stub, there's no always-registered
+  /// disabled placeholder for iCloud; it's simply absent from [services]
+  /// there, so no connect tile renders. See `BackupProvider._createICloudService`.
+  final BackupCloudService? icloudService;
   final BackupSyncMessenger messenger;
 
   final BackupImagesUploaderService _step1ImagesUploader;
@@ -84,6 +91,7 @@ class BackupRepository {
   BackupRepository({
     required this.googleDriveService,
     required this.nextcloudService,
+    required this.icloudService,
     required this.restoreService,
     required this.messenger,
     required BackupImagesUploaderService step1ImagesUploader,
@@ -102,11 +110,13 @@ class BackupRepository {
   Future<void> initialize() async {
     await googleDriveService.initialize();
     await nextcloudService.initialize();
+    await icloudService?.initialize();
   }
 
   // currentUser & isSignedIn are load in initializer - before rendering UI.
   GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser as GoogleUserObject?;
   NextcloudUserObject? get currentNextcloudUser => nextcloudService.currentUser;
+  ICloudUserObject? get currentICloudUser => icloudService?.currentUser as ICloudUserObject?;
   bool get isSignedIn => availableUsers.isNotEmpty;
 
   /// Get all authenticated cloud service users for asset downloads
@@ -153,6 +163,7 @@ class BackupRepository {
   Stream<BackupSyncMessage> get syncMessages => messenger.messages;
 
   List<BackupCloudService> get services => [
+    ?icloudService,
     googleDriveService,
     nextcloudService,
   ];
@@ -183,6 +194,8 @@ class BackupRepository {
       if (result) _userChangesController.add(UserChangeType.signIn);
       return BackupResult.success(result);
     } on exp.AuthException catch (e) {
+      return BackupResult.failure(BackupError.fromException(e));
+    } on exp.NetworkException catch (e) {
       return BackupResult.failure(BackupError.fromException(e));
     } catch (e) {
       return BackupResult.failure(
@@ -445,8 +458,21 @@ class BackupRepository {
   /// Checks every signed-in service independently — one service throwing
   /// (auth failure, or anything unexpected) no longer prevents checking the
   /// rest, and credentials are never wiped here regardless of outcome.
+  ///
+  /// iCloud is included even while *not* currently signed in: unlike Drive/
+  /// Nextcloud (where "not signed in" means there's nothing to check),
+  /// [ICloudCloudService.reauthenticateIfNeeded] is a cheap local
+  /// availability re-probe, not a network credential check — and it's the
+  /// only way an iCloud tile ever recovers on its own after the user enables
+  /// iCloud Drive in Settings and returns to the app (this runs on every app
+  /// resume via [AutoSyncTriggerService]). Without this, the tile would stay
+  /// stuck on "unavailable" until the user happened to tap it again.
   Future<BackupResult<ConnectionCheckResult>> checkConnection() async {
-    if (!isSignedIn) {
+    final checkableServices = services
+        .where((service) => service.isSignedIn || service.serviceType == BackupServiceType.icloud)
+        .toList();
+
+    if (checkableServices.isEmpty) {
       return BackupResult.failure(
         BackupError.authentication(
           'User not signed in',
@@ -454,8 +480,6 @@ class BackupRepository {
         ),
       );
     }
-
-    final signedInServices = services.where((service) => service.isSignedIn).toList();
 
     bool hasInternet;
     try {
@@ -468,14 +492,14 @@ class BackupRepository {
       return BackupResult.success((
         hasInternet: false,
         statusByService: {
-          for (final service in signedInServices) service.serviceType: BackupConnectionStatus.noInternet,
+          for (final service in checkableServices) service.serviceType: BackupConnectionStatus.noInternet,
         },
       ));
     }
 
     final statusByService = <BackupServiceType, BackupConnectionStatus>{};
 
-    for (final service in signedInServices) {
+    for (final service in checkableServices) {
       try {
         await service.reauthenticateIfNeeded();
         await service.canAccessRequestedScopes();
@@ -485,6 +509,9 @@ class BackupRepository {
           exp.AuthExceptionType.tokenExpired => BackupConnectionStatus.needServicePermission,
           exp.AuthExceptionType.tokenRevoked => BackupConnectionStatus.needServicePermission,
           exp.AuthExceptionType.insufficientScopes => BackupConnectionStatus.needServicePermission,
+          // Still off in Settings — an expected, recoverable state for
+          // iCloud specifically, not an unknown/broken one.
+          exp.AuthExceptionType.signInRequired => BackupConnectionStatus.needServicePermission,
           _ => BackupConnectionStatus.unknownError,
         };
       } on exp.NetworkException {

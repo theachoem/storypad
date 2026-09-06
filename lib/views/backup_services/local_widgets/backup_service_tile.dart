@@ -54,7 +54,25 @@ class BackupServiceTile extends StatelessWidget {
 
     if (!service.isSignedIn) {
       trailing = const Icon(SpIcons.cloudOff);
-      subtitle = Text(tr('list_tile.backup.unsignin_subtitle'));
+      // iCloud has no "Connect" flow to prompt — availability is driven
+      // entirely by the OS's own iCloud Drive toggle, so the subtitle
+      // explains that up front rather than inviting a tap-to-sign-in that
+      // doesn't exist. Tapping still re-checks live availability first (via
+      // BackupProvider.signIn) in case it's already on, and opens Settings
+      // directly — no confirm dialog — if it's still off.
+      // checkConnection still probes iCloud while signed out (it's the only
+      // way an unsigned-in iCloud tile ever recovers on its own — see
+      // BackupRepository.checkConnection), so a fresh/offline iCloud user
+      // can carry a noInternet status here; that must win over the generic
+      // "iCloud is off" copy, or an offline user gets sent to Settings for
+      // a network outage Settings can't fix.
+      subtitle = Text(
+        status.connectionStatus == BackupConnectionStatus.noInternet
+            ? tr('list_tile.backup.no_internet_subtitle')
+            : metadata.icloudService
+            ? tr('list_tile.backup.icloud_unavailable_subtitle')
+            : tr('list_tile.backup.unsignin_subtitle'),
+      );
       onPressed = () => provider.signIn(context, service.serviceType);
     } else {
       trailing = Icon(

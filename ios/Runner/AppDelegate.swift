@@ -27,15 +27,19 @@ import UserNotifications
       binaryMessenger: engineBridge.applicationRegistrar.messenger()
     )
 
+    // Each service owns matching its own method names and extracting its own
+    // arguments via `handle(_:result:)` — this just chains them in order and
+    // falls back to FlutterMethodNotImplemented if none claim the call.
+    let services: [(FlutterMethodCall, @escaping FlutterResult) -> Bool] = [
+      AppLogoService.handle,
+      ICloudBackupService.handle,
+    ]
+
     channel.setMethodCallHandler { call, result in
-      switch call.method {
-      case "AppLogoService.set":
-        let arguments = call.arguments as? [String: Any]
-        let xcodeLogoName = arguments?["xcodeLogoName"] as? String
-        AppLogoService.set(xcodeLogoName: xcodeLogoName, result: result)
-      default:
-        result(FlutterMethodNotImplemented)
+      for handle in services where handle(call, result) {
+        return
       }
+      result(FlutterMethodNotImplemented)
     }
 
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)

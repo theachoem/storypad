@@ -31,6 +31,7 @@
 		62DAA06D2F41ADD300CC9E4F /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0692F41ADD300CC9E4F /* storypad_logo_1_0.icon */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		92B6E6BC28E36EC26D07CB16 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3C7576DA2E84F8A8AE10F6E /* Pods_RunnerTests.framework */; };
+		CA3E542E445E451C89DA861E /* ICloudBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */; };
 		FCF31576F1661BB3728F2C91 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E9219F9FF30D98F729CB2D7 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -79,21 +80,24 @@
 		33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Debug.xcconfig"; sourceTree = "<group>"; };
 		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
 		33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Flutter-Generated.xcconfig"; path = "ephemeral/Flutter-Generated.xcconfig"; sourceTree = "<group>"; };
-		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
-		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		387FFED6859D865F061196A1 /* Pods-RunnerTests.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-spooky.xcconfig"; sourceTree = "<group>"; };
 		42FB6C2612FEF7389AB15953 /* Pods-Runner.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-spooky.xcconfig"; sourceTree = "<group>"; };
 		4624778AFD367CC6BE8A4446 /* Pods-RunnerTests.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-community.xcconfig"; sourceTree = "<group>"; };
 		4E141ECC5FCF72640A3D1092 /* Pods-RunnerTests.profile-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-community.xcconfig"; sourceTree = "<group>"; };
+		617EF3007015471C9EC2FCE5 /* Release-spooky.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-spooky.entitlements"; sourceTree = "<group>"; };
 		62DAA0692F41ADD300CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
 		62DAA06A2F41ADD300CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
+		64201C1DF9F048729E71111A /* Release-community.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-community.entitlements"; sourceTree = "<group>"; };
 		6C07ADFFC5B7B643D221A23D /* Pods-Runner.release-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-community.xcconfig"; sourceTree = "<group>"; };
 		74116ACA916E441FC8D9A848 /* Pods-Runner.release-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-spooky.xcconfig"; sourceTree = "<group>"; };
 		75BB8522CFB6652374A95031 /* Pods-Runner.profile-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-spooky.xcconfig"; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		7DC73084E8E04810AD81F213 /* Release-storypad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-storypad.entitlements"; sourceTree = "<group>"; };
 		871734F7C2C1C756850EBDE3 /* Pods-Runner.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-community.xcconfig"; sourceTree = "<group>"; };
+		8CB810C2EFA54D399FEAE30A /* DebugProfile-spooky.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DebugProfile-spooky.entitlements"; sourceTree = "<group>"; };
+		8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudBackupService.swift; sourceTree = "<group>"; };
 		9244CEC2FF884D160FCFF6EC /* Pods-RunnerTests.release-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-storypad.xcconfig"; sourceTree = "<group>"; };
 		957DBB949DD25F4F4A34640F /* Pods-RunnerTests.debug-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-storypad.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -103,9 +107,11 @@
 		AACC57F14C08B0D37CECEA57 /* Pods-RunnerTests.release-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-spooky.xcconfig"; sourceTree = "<group>"; };
 		C1AB7A1034ABA8601F241D03 /* Pods-RunnerTests.release-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-community.xcconfig"; sourceTree = "<group>"; };
 		CAF0B61115129202CB05B96F /* Pods-Runner.release-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-storypad.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-storypad.xcconfig"; sourceTree = "<group>"; };
+		DEE8AD14F5A94628B974908E /* DebugProfile-storypad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DebugProfile-storypad.entitlements"; sourceTree = "<group>"; };
 		EAF7CCCF311FBAE5D0781568 /* Pods-Runner.debug-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-storypad.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-storypad.xcconfig"; sourceTree = "<group>"; };
 		F6D218DE375F62AB8F833648 /* Pods-RunnerTests.profile-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-storypad.xcconfig"; sourceTree = "<group>"; };
 		F71BD256CBA9F59B0B38DFCF /* Pods-Runner.profile-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-community.xcconfig"; sourceTree = "<group>"; };
+		FDACDA51D8BA49A2837F76A3 /* DebugProfile-community.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DebugProfile-community.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,8 +203,13 @@
 			children = (
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
-				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
-				33E51914231749380026EE4D /* Release.entitlements */,
+				66AF0A7B8F74450F89C84311 /* services */,
+				DEE8AD14F5A94628B974908E /* DebugProfile-storypad.entitlements */,
+				FDACDA51D8BA49A2837F76A3 /* DebugProfile-community.entitlements */,
+				8CB810C2EFA54D399FEAE30A /* DebugProfile-spooky.entitlements */,
+				7DC73084E8E04810AD81F213 /* Release-storypad.entitlements */,
+				64201C1DF9F048729E71111A /* Release-community.entitlements */,
+				617EF3007015471C9EC2FCE5 /* Release-spooky.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
 				62DAA06B2F41ADD300CC9E4F /* logos */,
@@ -215,6 +226,14 @@
 			name = logos;
 			path = ../assets/logos;
 			sourceTree = SOURCE_ROOT;
+		};
+		66AF0A7B8F74450F89C84311 /* services */ = {
+			isa = PBXGroup;
+			children = (
+				8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */,
+			);
+			path = services;
+			sourceTree = "<group>";
 		};
 		B25753D53A6FABA0E1A4031F /* Pods */ = {
 			isa = PBXGroup;
@@ -317,9 +336,7 @@
 					};
 					33CC10EC2044A3C60003C045 = {
 						CreatedOnToolsVersion = 9.2;
-						DevelopmentTeam = XF9U464CCP;
 						LastSwiftMigration = 1100;
-						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -529,6 +546,7 @@
 			files = (
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
+				CA3E542E445E451C89DA861E /* ICloudBackupService.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -671,7 +689,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-spooky.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -808,7 +826,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-spooky.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -833,7 +851,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/Release-spooky.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -929,9 +947,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-storypad.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -941,7 +959,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1039,7 +1057,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-community.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1139,9 +1157,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "Runner/Release-storypad.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -1151,7 +1169,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-storypad";
@@ -1241,7 +1259,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/Release-community.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1340,9 +1358,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-storypad.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -1352,7 +1370,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = StoryPad;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Profile-storypad";
@@ -1442,7 +1460,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-community.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

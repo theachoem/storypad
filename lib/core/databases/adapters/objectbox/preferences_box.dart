@@ -15,6 +15,10 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
     return switch (serviceType) {
       BackupServiceType.google_drive => _DefinedPreference<String>(id: 3, key: 'storage_quota_google_drive'),
       BackupServiceType.nextcloud => _DefinedPreference<String>(id: 5, key: 'storage_quota_nextcloud'),
+      // iCloud has no per-app storage quota API (ICloudCloudService.fetchStorageQuota
+      // always returns null), but a defined preference is still needed so this
+      // switch stays exhaustive.
+      BackupServiceType.icloud => _DefinedPreference<String>(id: 7, key: 'storage_quota_icloud'),
     };
   }
 
@@ -27,6 +31,10 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
       BackupServiceType.nextcloud => _DefinedPreference<DateTime>(
         id: 6,
         key: 'storage_quota_fetched_at_nextcloud',
+      ),
+      BackupServiceType.icloud => _DefinedPreference<DateTime>(
+        id: 8,
+        key: 'storage_quota_fetched_at_icloud',
       ),
     };
   }

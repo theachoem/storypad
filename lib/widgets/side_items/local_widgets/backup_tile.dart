@@ -128,7 +128,6 @@ class BackupTile extends StatelessWidget {
     }
 
     if (provider.syncing) {
-      leading = const SizedBox.square(dimension: 24, child: CircularProgressIndicator.adaptive());
       subtitle = Text(tr("general.syncing"));
       action = null;
 

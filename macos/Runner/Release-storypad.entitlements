@@ -4,11 +4,7 @@
     <dict>
         <key>com.apple.security.app-sandbox</key>
         <true />
-        <key>com.apple.security.cs.allow-jit</key>
-        <true />
         <key>com.apple.security.network.client</key>
-        <true />
-        <key>com.apple.security.network.server</key>
         <true />
         <key>com.apple.security.personal-information.location</key>
         <true />
@@ -21,6 +17,21 @@
         <key>keychain-access-groups</key>
         <array>
             <string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
+        </array>
+        <key>com.apple.security.device.audio-input</key>
+        <true />
+        <key>com.apple.developer.icloud-container-identifiers</key>
+        <array>
+            <string>iCloud.com.tc.writestory</string>
+        </array>
+        <key>com.apple.developer.icloud-services</key>
+        <array>
+            <string>CloudDocuments</string>
+            <string>CloudKit</string>
+        </array>
+        <key>com.apple.developer.ubiquity-container-identifiers</key>
+        <array>
+            <string>iCloud.com.tc.writestory</string>
         </array>
     </dict>
 </plist>
