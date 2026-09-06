@@ -163,8 +163,8 @@ class BackupRepository {
   Stream<BackupSyncMessage> get syncMessages => messenger.messages;
 
   List<BackupCloudService> get services => [
-    ?icloudService,
     googleDriveService,
+    ?icloudService,
     nextcloudService,
   ];
 

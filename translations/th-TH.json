@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "ทำให้เป็นของคุณเอง",
   "paywall_features.markdown_export.subtitle": "ใช้งานได้กับ Obsidian, Notion และโปรแกรมแก้ไขข้อความแบบ Markdown",
   "paywall_features.markdown_export.title": "การส่งออกมาร์คดาวน์",
+  "paywall_features.multi_cloud_sync.subtitle": "เก็บไฟล์สำรองข้อมูลของคุณไว้ในที่ที่คุณต้องการได้เลย",
+  "paywall_features.multi_cloud_sync.title": "ตัวเลือกการซิงค์เพิ่มเติม",
   "paywall_features.relax_sounds.subtitle": "สร้างบรรยากาศที่เหมาะสมก่อนเริ่มเขียนหรืออ่าน",
   "paywall_features.relax_sounds.title": "เสียงที่ช่วยให้ผ่อนคลาย",
   "paywall_features.stats.subtitle": "ดูรูปแบบการเขียน ช่วงเวลาสำคัญ และแนวโน้มต่างๆ ของคุณ",

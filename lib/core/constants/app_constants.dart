@@ -19,7 +19,7 @@ const String kGoogleMapsIosApiKey = String.fromEnvironment('GOOGLE_MAPS_IOS_API_
 const String kMapTileProxySecret = String.fromEnvironment('MAP_TILE_PROXY_SECRET');
 
 /// Base URL for static.storypad.me — serves remote config, cloud-stored assets,
-/// and the MapTiler tile proxy. Override via `--dart-define=CDN_BASE_URL=https://...`.
+/// and the MapTiler tile proxy.
 const String kCdnBaseUrl = String.fromEnvironment('CDN_BASE_URL', defaultValue: 'https://static.storypad.me');
 
 const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
@@ -31,7 +31,8 @@ const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
 final bool kIAPEnabled =
     (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
-    (Platform.isIOS && kRevenueCatIosApiKey.trim().isNotEmpty);
+    (Platform.isIOS && kRevenueCatIosApiKey.trim().isNotEmpty) ||
+    (Platform.isMacOS && kRevenueCatIosApiKey.trim().isNotEmpty);
 
 final bool kSupportCamera = Platform.isAndroid || Platform.isIOS;
 final bool kSupportQuickActions = Platform.isAndroid || Platform.isIOS;

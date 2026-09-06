@@ -19,6 +19,9 @@ enum BackupServiceType {
   bool get nextcloudService => this == nextcloud;
   bool get icloudService => this == icloud;
 
+  /// Only Google Drive syncs for free — Nextcloud and iCloud require Pro.
+  bool get isProOnly => this != google_drive;
+
   const BackupServiceType({
     required this.id,
     required this.displayName,

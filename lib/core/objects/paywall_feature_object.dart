@@ -8,6 +8,7 @@ enum PaywallFeature {
   customizations,
   markdown_export,
   stats,
+  multi_cloud_sync,
 }
 
 class PaywallFeatureObject {

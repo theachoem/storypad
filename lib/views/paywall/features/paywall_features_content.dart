@@ -125,17 +125,19 @@ class _Page extends StatelessWidget {
           ),
           child: buildHeaderContents(context, iapProvider),
         ),
-        const SizedBox(height: 16.0),
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).padding.left,
-            right: MediaQuery.of(context).padding.right,
+        if (feature.demoImagePaths.isNotEmpty) ...[
+          const SizedBox(height: 16.0),
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).padding.left,
+              right: MediaQuery.of(context).padding.right,
+            ),
+            child: SpDemoImages(
+              demoImageUrlPaths: feature.demoImagePaths,
+              skeletonCount: feature.demoImagePaths.length,
+            ),
           ),
-          child: SpDemoImages(
-            demoImageUrlPaths: feature.demoImagePaths,
-            skeletonCount: feature.demoImagePaths.length,
-          ),
-        ),
+        ],
       ],
     );
   }

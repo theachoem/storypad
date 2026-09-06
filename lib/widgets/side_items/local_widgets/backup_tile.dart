@@ -52,7 +52,7 @@ class BackupTile extends StatelessWidget {
           action = FilledButton.icon(
             icon: const Icon(SpIcons.refresh),
             label: Text(tr('button.retry')),
-            onPressed: () => provider.recheckAndSync(services: provider.services),
+            onPressed: () => provider.recheckAndSync(services: provider.services, context: context),
           );
           break;
         case .noInternet:
@@ -62,7 +62,7 @@ class BackupTile extends StatelessWidget {
           action = FilledButton.icon(
             icon: const Icon(SpIcons.refresh),
             label: Text(tr('button.refresh')),
-            onPressed: () => provider.recheckAndSync(services: provider.services),
+            onPressed: () => provider.recheckAndSync(services: provider.services, context: context),
           );
           break;
         case .needServicePermission:
@@ -85,7 +85,7 @@ class BackupTile extends StatelessWidget {
           subtitle = Text(tr('list_tile.backup.some_data_has_not_sync_subtitle'));
           action = FilledButton(
             child: Text(tr('button.sync')),
-            onPressed: () => provider.recheckAndSync(services: provider.services),
+            onPressed: () => provider.recheckAndSync(services: provider.services, context: context),
           );
           break;
         case null:

@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "اجعل التطبيق ملكك حقًا",
   "paywall_features.markdown_export.subtitle": "متوافق مع برامج تحرير Obsidian و Notion و Markdown.",
   "paywall_features.markdown_export.title": "تصدير Markdown",
+  "paywall_features.multi_cloud_sync.subtitle": "احتفظ بنسخك الاحتياطية في المكان الذي تريده بالضبط.",
+  "paywall_features.multi_cloud_sync.title": "خيارات مزامنة إضافية",
   "paywall_features.relax_sounds.subtitle": "حدد حالتك المزاجية قبل الكتابة أو القراءة.",
   "paywall_features.relax_sounds.title": "أصوات مريحة",
   "paywall_features.stats.subtitle": "اطلع على أنماط كتابتك، وأهم لحظاتك، والاتجاهات السائدة.",

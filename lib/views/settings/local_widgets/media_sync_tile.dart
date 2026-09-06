@@ -89,6 +89,7 @@ class _MediaSyncTileState extends State<MediaSyncTile> {
           : () => provider.recheckAndSync(
               services: provider.autoBackupServices,
               forceMediaUpload: true,
+              context: context,
             ),
       child: Text(context.tr('button.sync_now')),
     );

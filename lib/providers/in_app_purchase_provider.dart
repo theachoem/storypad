@@ -75,7 +75,7 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
 
       if (Platform.isAndroid) {
         configuration = PurchasesConfiguration(kRevenueCatAndroidApiKey);
-      } else if (Platform.isIOS) {
+      } else if (Platform.isIOS || Platform.isMacOS) {
         configuration = PurchasesConfiguration(kRevenueCatIosApiKey);
       }
 
