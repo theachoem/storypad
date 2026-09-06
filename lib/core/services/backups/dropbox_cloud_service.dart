@@ -216,6 +216,26 @@ class DropboxCloudService extends BackupCloudService {
     throw _DropboxApiException(response.statusCode, response.body);
   }
 
+  /// Dropbox reports most "no such file" conditions as HTTP 409, but 409 also
+  /// covers many *other*, distinct structured errors (`restricted_content`,
+  /// `malformed_path`, ...) — treating every 409 as "not found" would
+  /// silently swallow those into a missing backup instead of surfacing them.
+  /// `error_summary` is a stable, always-present plain string Dropbox
+  /// includes on every structured error response, so it's checked instead of
+  /// just the status code.
+  bool _isPathNotFound(http.Response response) {
+    if (response.statusCode != 409) return false;
+    return _errorSummary(response.body)?.startsWith('path/not_found') == true;
+  }
+
+  String? _errorSummary(String body) {
+    try {
+      return (jsonDecode(body) as Map<String, dynamic>)['error_summary'] as String?;
+    } catch (_) {
+      return null;
+    }
+  }
+
   String _filePath(String fileName, {String? folderName}) =>
       folderName != null ? '/$folderName/$fileName' : '/$fileName';
 
@@ -287,7 +307,7 @@ class DropboxCloudService extends BackupCloudService {
       },
     );
 
-    if (swallow404 && response.statusCode == 409) return null;
+    if (swallow404 && _isPathNotFound(response)) return null;
     _throwIfError(response);
     return response.bodyBytes;
   }
@@ -298,7 +318,7 @@ class DropboxCloudService extends BackupCloudService {
       methodName: 'findFileById',
       operation: () async {
         final response = await _postJson(_apiUri('files/get_metadata'), {'path': fileId});
-        if (response.statusCode == 409) return null;
+        if (_isPathNotFound(response)) return null;
         _throwIfError(response);
 
         final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -317,7 +337,7 @@ class DropboxCloudService extends BackupCloudService {
           'path': fileId,
           'include_deleted': true,
         });
-        if (response.statusCode == 409) return null;
+        if (_isPathNotFound(response)) return null;
         _throwIfError(response);
 
         final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -499,7 +519,7 @@ class DropboxCloudService extends BackupCloudService {
   }) async {
     var response = await _postJson(_apiUri('files/list_folder'), {'path': folderPath, 'recursive': recursive});
 
-    if (swallow404 && response.statusCode == 409) return [];
+    if (swallow404 && _isPathNotFound(response)) return [];
     _throwIfError(response);
 
     final entries = <Map<String, dynamic>>[];
@@ -588,9 +608,9 @@ class DropboxCloudService extends BackupCloudService {
       }
 
       if (error.statusCode == 409) {
-        final lowerBody = error.body.toLowerCase();
+        final summary = _errorSummary(error.body) ?? '';
 
-        if (lowerBody.contains('not_found')) {
+        if (summary.startsWith('path/not_found')) {
           return exp.FileOperationException(
             'File not found during $methodName',
             _getFileOperationType(methodName),
@@ -600,7 +620,7 @@ class DropboxCloudService extends BackupCloudService {
           );
         }
 
-        if (lowerBody.contains('insufficient_space')) {
+        if (summary.contains('insufficient_space')) {
           return exp.QuotaException(
             'Storage quota exceeded during $methodName',
             exp.QuotaExceptionType.storageQuotaExceeded,

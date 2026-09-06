@@ -74,7 +74,11 @@ class DropboxOAuthService {
     return base64UrlEncode(bytes).replaceAll('=', '');
   }
 
-  String _codeChallengeFor(String codeVerifier) {
+  /// PKCE's `code_challenge` derivation (RFC 7636 §4.2, S256 method) — pure
+  /// over its input, so exposed as a public static method for direct testing
+  /// (same reasoning as `NextcloudCloudService.sanitizeFolderName`), unlike
+  /// the rest of this class which needs live network/browser interaction.
+  static String codeChallengeFor(String codeVerifier) {
     final digest = sha256.convert(utf8.encode(codeVerifier));
     return base64UrlEncode(digest.bytes).replaceAll('=', '');
   }
@@ -85,7 +89,7 @@ class DropboxOAuthService {
   /// same [DropboxCloudService] exception mapping used for every other call.
   Future<DropboxTokenResponse> authenticate() async {
     final codeVerifier = _generateCodeVerifier();
-    final codeChallenge = _codeChallengeFor(codeVerifier);
+    final codeChallenge = codeChallengeFor(codeVerifier);
     final redirectUri = _redirectUri;
     final useWebview = !(!kIsWeb && io.Platform.isLinux);
 
@@ -105,7 +109,13 @@ class DropboxOAuthService {
 
     final result = await FlutterWebAuth2.authenticate(
       url: authorizeUri.toString(),
-      callbackUrlScheme: Uri.parse(redirectUri).scheme,
+      // On every other platform this is just the scheme (ASWebAuthentication-
+      // Session/Custom Tabs match on it directly); Linux's loopback-server
+      // implementation (useWebview: false) instead parses this value as a
+      // full URI and requires the complete `http://localhost:{port}` string
+      // to bind the right port — passing just "http" throws before the
+      // browser even opens. See flutter_web_auth_2's FlutterWebAuth2ServerPlugin.
+      callbackUrlScheme: useWebview ? Uri.parse(redirectUri).scheme : redirectUri,
       options: FlutterWebAuth2Options(useWebview: useWebview),
     );
 
