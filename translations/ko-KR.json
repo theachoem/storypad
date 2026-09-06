@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "내 취향대로 꾸미기",
   "paywall_features.markdown_export.subtitle": "Obsidian, Notion 및 Markdown 편집기와 호환됩니다.",
   "paywall_features.markdown_export.title": "Markdown 내보내기",
+  "paywall_features.multi_cloud_sync.subtitle": "백업 파일을 원하는 위치에 정확하게 보관하세요.",
+  "paywall_features.multi_cloud_sync.title": "추가 동기화 옵션",
   "paywall_features.relax_sounds.subtitle": "글을 쓰거나 읽기 전에 기분을 정하세요.",
   "paywall_features.relax_sounds.title": "편안한 소리",
   "paywall_features.stats.subtitle": "글쓰기 패턴, 주요 순간 및 추세를 확인하세요.",

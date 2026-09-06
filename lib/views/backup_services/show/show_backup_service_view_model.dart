@@ -122,6 +122,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
   Future<void> sync(BuildContext context) async {
     await context.read<BackupProvider>().recheckAndSync(
       services: [backupProvider.repository.getService(serviceType)],
+      context: context,
     );
     await load();
   }
@@ -198,7 +199,7 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
       // permission" until the next unrelated sync happens to run.
       await MessengerService.of(context).showLoading(
         debugSource: '$runtimeType#reconnect',
-        future: () => backupProvider.recheckAndSync(services: [service]),
+        future: () => backupProvider.recheckAndSync(services: [service], context: context),
       );
       await load();
     } else {

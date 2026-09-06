@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "打造真正属于你的专属应用",
   "paywall_features.markdown_export.subtitle": "兼容 Obsidian、Notion 和 Markdown 编辑器。",
   "paywall_features.markdown_export.title": "Markdown 导出",
+  "paywall_features.multi_cloud_sync.subtitle": "将备份文件保存在您希望的位置。",
+  "paywall_features.multi_cloud_sync.title": "更多同步选项",
   "paywall_features.relax_sounds.subtitle": "在写作或阅读之前调整好自己的心情。",
   "paywall_features.relax_sounds.title": "舒缓音效",
   "paywall_features.stats.subtitle": "查看您的写作模式、精彩瞬间和趋势。",

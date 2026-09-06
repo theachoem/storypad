@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/stats/stats_range.dart';
 import 'package:storypad/core/services/cloud_storage/cloud_storage_service.dart';
 import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/import_export/import_export_view.dart';
+import 'package:storypad/views/settings/data_backup/data_backup_view.dart';
 import 'package:storypad/views/stats/stats_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
@@ -112,7 +113,7 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         title: tr('paywall_features.markdown_export.title'),
         subtitle: tr('paywall_features.markdown_export.subtitle'),
         iconData: SpIcons.markdown,
-        weekdayColor: 4,
+        weekdayColor: 7,
         demoImagePaths: [
           '/feature_demos/markdown_export/markdown_export_1__1080x2400.jpg',
           '/feature_demos/markdown_export/markdown_export_2__1080x2400.jpg',
@@ -121,6 +122,15 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/markdown_export/markdown_export_5__2070x2400.jpg',
         ],
         onOpen: (BuildContext context) => const ImportExportRoute(initialExportOption: .markdown).push(context),
+      ),
+      PaywallFeatureObject(
+        type: PaywallFeature.multi_cloud_sync,
+        title: tr('paywall_features.multi_cloud_sync.title'),
+        subtitle: tr('paywall_features.multi_cloud_sync.subtitle'),
+        iconData: SpIcons.nextcloud,
+        weekdayColor: 6,
+        demoImagePaths: [],
+        onOpen: (BuildContext context) => const DataBackupRoute().push(context),
       ),
     ];
 

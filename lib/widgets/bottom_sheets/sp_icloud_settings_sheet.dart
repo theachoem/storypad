@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
@@ -27,9 +25,7 @@ class SpICloudSettingsSheet {
     required ICloudCloudService service,
   }) {
     return SpDemoImagesSheet(
-      demoImages: Platform.isMacOS
-          ? SpDemoImagesSheet.macosICloudSettingsDemoImages
-          : SpDemoImagesSheet.icloudSettingsDemoImages,
+      demoImages: SpDemoImagesSheet.icloudSettingsDemoImages,
       bottom: _ICloudSettingsButton(service: service),
     ).show(context: context);
   }

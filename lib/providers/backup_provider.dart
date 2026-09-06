@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
@@ -32,6 +33,7 @@ import 'package:storypad/core/types/backup_connection_status.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/types/backup_result.dart';
 import 'package:storypad/providers/backup_sync_state_store.dart';
+import 'package:storypad/providers/in_app_purchase_provider.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_connect_nextcloud_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_icloud_settings_sheet.dart';
@@ -215,6 +217,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     await recheckAndSync(
       setupConnection: setupConnection,
       services: autoBackupServices,
+      context: context,
     );
   }
 
@@ -225,9 +228,28 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     bool setupConnection = true,
     bool forceMediaUpload = false,
     required List<BackupCloudService> services,
+    required BuildContext context,
   }) async {
     if (services.isEmpty) return false;
     if (_syncing) return false;
+
+    // Free users only get Google Drive — Nextcloud/iCloud stay sign-in-able
+    // (e.g. via SpPurchaseSyncProviderSheet for purchase-identity linking)
+    // but never actually sync without Pro. Pinned to Drive explicitly rather
+    // than "first signed-in", since a first-signed-in rule would let a free
+    // user who only linked iCloud/Nextcloud for purchase identity get free
+    // sync through that service depending on BackupRepository.services' order.
+    final iapProvider = context.read<InAppPurchaseProvider>();
+    // RevenueCat's customer info loads asynchronously after InAppPurchaseProvider
+    // is constructed — without this, a startup auto-sync can race ahead of
+    // initialization and see isProUser as false for an actual Pro user,
+    // silently dropping their iCloud/Nextcloud sync for that run with no
+    // guaranteed retry once initialization finishes.
+    await iapProvider.ensureInitialized();
+    if (!iapProvider.isProUser) {
+      services = services.where((service) => service.serviceType == BackupServiceType.google_drive).toList();
+      if (services.isEmpty) return false;
+    }
 
     _syncing = true;
     _reachedDeepSyncStep = false;
@@ -368,8 +390,10 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     notifyListeners();
+    if (!context.mounted) return;
     await recheckAndSync(
       services: [repository.getService(serviceType)],
+      context: context,
     );
   }
 

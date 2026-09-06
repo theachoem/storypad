@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "Зробіть додаток справді своїм",
   "paywall_features.markdown_export.subtitle": "Сумісний з Obsidian, Notion та редакторами Markdown.",
   "paywall_features.markdown_export.title": "Експорт у форматі Markdown",
+  "paywall_features.multi_cloud_sync.subtitle": "Зберігайте резервні копії саме там, де вам потрібно.",
+  "paywall_features.multi_cloud_sync.title": "Більше параметрів синхронізації",
   "paywall_features.relax_sounds.subtitle": "Створіть відповідний настрій перед тим, як писати або читати.",
   "paywall_features.relax_sounds.title": "Розслаблювальні звуки",
   "paywall_features.stats.subtitle": "Перегляньте свої шаблони письма, найкращі моменти та тенденції.",

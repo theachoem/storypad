@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "アプリを真に自分だけのものにしよう",
   "paywall_features.markdown_export.subtitle": "Obsidian、Notion、マークダウン エディターと互換性があります。",
   "paywall_features.markdown_export.title": "マークダウンエクスポート",
+  "paywall_features.multi_cloud_sync.subtitle": "バックアップデータは、自分が望む場所に正確に保存してください。",
+  "paywall_features.multi_cloud_sync.title": "その他の同期オプション",
   "paywall_features.relax_sounds.subtitle": "書く前や読む前に気分を整えましょう。",
   "paywall_features.relax_sounds.title": "リラックスできる音",
   "paywall_features.stats.subtitle": "あなたの文章のパターン、最高の瞬間、そして傾向を確認しましょう。",

@@ -484,6 +484,8 @@
   "paywall_features.customizations.title": "Personnalisez l'application à votre image",
   "paywall_features.markdown_export.subtitle": "Compatible avec les éditeurs Obsidian, Notion et Markdown.",
   "paywall_features.markdown_export.title": "Exportation Markdown",
+  "paywall_features.multi_cloud_sync.subtitle": "Conservez vos sauvegardes exactement où vous le souhaitez.",
+  "paywall_features.multi_cloud_sync.title": "Plus d'options de synchronisation",
   "paywall_features.relax_sounds.subtitle": "Définissez votre humeur avant d’écrire ou de lire.",
   "paywall_features.relax_sounds.title": "Sons relaxants",
   "paywall_features.stats.subtitle": "Découvrez vos habitudes d'écriture, vos meilleurs moments et les tendances.",
