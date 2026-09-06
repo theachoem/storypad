@@ -236,10 +236,17 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     // Free users only get Google Drive — Nextcloud/iCloud stay sign-in-able
     // (e.g. via SpPurchaseSyncProviderSheet for purchase-identity linking)
     // but never actually sync without Pro. Pinned to Drive explicitly rather
-    // than "first signed-in", since BackupRepository.services orders
-    // [iCloud, Drive, Nextcloud] and a first-signed-in rule would let a free
-    // user who only linked iCloud for purchase identity get free iCloud sync.
-    if (!context.read<InAppPurchaseProvider>().isProUser) {
+    // than "first signed-in", since a first-signed-in rule would let a free
+    // user who only linked iCloud/Nextcloud for purchase identity get free
+    // sync through that service depending on BackupRepository.services' order.
+    final iapProvider = context.read<InAppPurchaseProvider>();
+    // RevenueCat's customer info loads asynchronously after InAppPurchaseProvider
+    // is constructed — without this, a startup auto-sync can race ahead of
+    // initialization and see isProUser as false for an actual Pro user,
+    // silently dropping their iCloud/Nextcloud sync for that run with no
+    // guaranteed retry once initialization finishes.
+    await iapProvider.ensureInitialized();
+    if (!iapProvider.isProUser) {
       services = services.where((service) => service.serviceType == BackupServiceType.google_drive).toList();
       if (services.isEmpty) return false;
     }

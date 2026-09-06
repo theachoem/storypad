@@ -66,6 +66,12 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     await _initializerCompleter.future;
   }
 
+  /// Public wrapper for callers outside this provider (e.g. [BackupProvider])
+  /// that need [isProUser] to reflect the real entitlement rather than the
+  /// pre-initialization default of `false` — RevenueCat's [_customerInfo] is
+  /// only populated once [_initialize] completes.
+  Future<void> ensureInitialized() => _ensureInitialized();
+
   Future<void> _initialize() async {
     try {
       if (!kIAPEnabled) return;
