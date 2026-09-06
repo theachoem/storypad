@@ -9,6 +9,7 @@ import 'package:storypad/core/objects/nextcloud_user_object.dart';
 import 'package:storypad/core/repositories/backup_repository.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/dropbox_cloud_service.dart';
 import 'package:storypad/core/services/backups/nextcloud_cloud_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_images_uploader_service.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_importer_service.dart';
@@ -32,6 +33,10 @@ void main() {
     final messenger = BackupSyncMessenger();
     return BackupRepository(
       icloudService: icloudService,
+      // Not exercised by these checkConnection tests — a plain, never-signed-in
+      // instance is inert (excluded from checkableServices) without needing a
+      // dedicated fake, unlike Nextcloud/iCloud which these tests do assert on.
+      dropboxService: DropboxCloudService(),
       restoreService: RestoreBackupService(),
       messenger: messenger,
       step1ImagesUploader: BackupImagesUploaderService(messenger: messenger),

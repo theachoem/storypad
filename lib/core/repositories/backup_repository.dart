@@ -12,10 +12,12 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
+import 'package:storypad/core/objects/dropbox_user_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/objects/icloud_user_object.dart';
 import 'package:storypad/core/objects/nextcloud_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
+import 'package:storypad/core/services/backups/dropbox_cloud_service.dart';
 import 'package:storypad/core/services/backups/nextcloud_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_message.dart';
@@ -79,6 +81,11 @@ class BackupRepository {
   /// disabled placeholder for iCloud; it's simply absent from [services]
   /// there, so no connect tile renders. See `BackupProvider._createICloudService`.
   final BackupCloudService? icloudService;
+
+  /// Unlike iCloud, Dropbox is pure REST — it works identically on every
+  /// platform this app targets, so there's no platform gate and no
+  /// disabled-stub case the way Drive's Linux build needs.
+  final DropboxCloudService dropboxService;
   final BackupSyncMessenger messenger;
 
   final BackupImagesUploaderService _step1ImagesUploader;
@@ -92,6 +99,7 @@ class BackupRepository {
     required this.googleDriveService,
     required this.nextcloudService,
     required this.icloudService,
+    required this.dropboxService,
     required this.restoreService,
     required this.messenger,
     required BackupImagesUploaderService step1ImagesUploader,
@@ -111,12 +119,14 @@ class BackupRepository {
     await googleDriveService.initialize();
     await nextcloudService.initialize();
     await icloudService?.initialize();
+    await dropboxService.initialize();
   }
 
   // currentUser & isSignedIn are load in initializer - before rendering UI.
   GoogleUserObject? get currentGoogleUser => googleDriveService.currentUser as GoogleUserObject?;
   NextcloudUserObject? get currentNextcloudUser => nextcloudService.currentUser;
   ICloudUserObject? get currentICloudUser => icloudService?.currentUser as ICloudUserObject?;
+  DropboxUserObject? get currentDropboxUser => dropboxService.currentUser;
   bool get isSignedIn => availableUsers.isNotEmpty;
 
   /// Get all authenticated cloud service users for asset downloads
@@ -165,6 +175,7 @@ class BackupRepository {
   List<BackupCloudService> get services => [
     googleDriveService,
     ?icloudService,
+    dropboxService,
     nextcloudService,
   ];
 

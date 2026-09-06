@@ -27,7 +27,7 @@ class _ShowBackupContent extends StatelessWidget {
                   Text(
                     [
                       backup.fileInfo.device.model,
-                      sizeInKB,
+                      ?sizeInKB,
                     ].join(" - "),
                     style: TextTheme.of(context).titleSmall,
                   ),

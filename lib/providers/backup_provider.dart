@@ -15,6 +15,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/assets/db_asset_loader_service.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
+import 'package:storypad/core/services/backups/dropbox_cloud_service.dart';
 import 'package:storypad/core/services/backups/google_drive_cloud_service.dart';
 import 'package:storypad/core/services/backups/google_drive_linux_cloud_service.dart';
 import 'package:storypad/core/services/backups/icloud_cloud_service.dart';
@@ -94,6 +95,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       googleDriveService: _createGoogleDriveService(),
       nextcloudService: NextcloudCloudService(),
       icloudService: _createICloudService(),
+      dropboxService: DropboxCloudService(),
       importHistoryStorage: BackupImportHistoryStorage(),
     );
   }
@@ -313,6 +315,28 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         final service = repository.getService(serviceType);
         if (service is ICloudCloudService) {
           await SpICloudSettingsSheet.show(context, service: service);
+        }
+      }
+      notifyListeners();
+      return;
+    }
+
+    // Dropbox runs its own interactive OAuth2 PKCE flow inside signIn() (no
+    // google_sign_in involved), so it can't share the generic branch below,
+    // which assumes success always means Drive — that call would otherwise
+    // mislabel a Dropbox connection as a Google sign-in in analytics.
+    if (serviceType == BackupServiceType.dropbox) {
+      if (result.isSuccess == true) {
+        AnalyticsService.instance.logLogin(loginMethod: 'dropbox');
+        _syncState.onConnectionChecked({serviceType: BackupConnectionStatus.readyToSync});
+        _lastSyncedAtByYear = null;
+        _lastDbUpdatedAtByYear = null;
+      } else if (result.error != null) {
+        AppLogger.d('Dropbox sign-in failed: ${result.error!.message}');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.error!.message)),
+          );
         }
       }
       notifyListeners();

@@ -55,6 +55,26 @@
             </intent-filter>
         </activity>
 
+        <!-- https://pub.dev/packages/flutter_web_auth_2 — receives the Dropbox
+             OAuth2 redirect back into the app after the system browser / Custom
+             Tab hand-off. Scheme is a per-flavor Gradle manifest placeholder
+             (build.gradle.kts productFlavors) matching DropboxOAuthService's
+             scheme constant and the redirect URI registered in the Dropbox
+             app console — plain deep link, no hosted redirect domain needed
+             (PKCE already defeats a code-interception attack, which is the
+             only thing a hosted/Universal-Link redirect would add). -->
+        <activity
+            android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
+            android:exported="true"
+            android:taskAffinity="">
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${dropboxCallbackScheme}" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

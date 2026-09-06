@@ -103,6 +103,10 @@ android {
             applicationId = "com.juniorise.spooky"
             namespace = "com.juniorise.spooky"
             manifestPlaceholders["appLogo"] = "ic_launcher"
+            // Dropbox OAuth2 redirect scheme — must match DropboxOAuthService's
+            // per-flavor scheme constant and the redirect URI registered in the
+            // Dropbox app console.
+            manifestPlaceholders["dropboxCallbackScheme"] = "spooky"
         }
 
         create("storypad") {
@@ -110,6 +114,7 @@ android {
             applicationId = "com.tc.writestory"
             namespace = "com.tc.writestory"
             manifestPlaceholders["appLogo"] = "storypad_logo_1_0"
+            manifestPlaceholders["dropboxCallbackScheme"] = "storypad"
         }
 
         create("community") {
@@ -117,6 +122,7 @@ android {
             applicationId = "com.juniorise.spooky.community"
             namespace = "com.juniorise.spooky.community"
             manifestPlaceholders["appLogo"] = "ic_launcher"
+            manifestPlaceholders["dropboxCallbackScheme"] = "spookycommunity"
         }
     }
 

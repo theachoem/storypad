@@ -77,6 +77,25 @@ class CloudFileObject {
     );
   }
 
+  /// [file] is the decoded JSON metadata object Dropbox returns from
+  /// `files/upload`, `files/get_metadata`, `files/list_folder`, etc. Unlike
+  /// Nextcloud/iCloud, Dropbox assigns a real stable file ID (`id:xxxx`)
+  /// independent of path — that ID is used as [id] here, not the path.
+  factory CloudFileObject.fromDropbox(Map<String, dynamic> file, {bool trashed = false, String? idOverride}) {
+    return CloudFileObject(
+      fileName: file['name'] as String?,
+      // Deleted-file metadata (`.tag == 'deleted'`) carries no `id` field at
+      // all (only live FileMetadata does) — callers resolving a possibly-
+      // trashed file pass the already-known query key as [idOverride].
+      id: idOverride ?? file['id'] as String,
+      description: null,
+      sizeInBytes: file['size'] as int?,
+      createdAt: DateTime.tryParse(file['client_modified'] as String? ?? ''),
+      modifiedAt: DateTime.tryParse(file['server_modified'] as String? ?? ''),
+      trashed: trashed,
+    );
+  }
+
   factory CloudFileObject.fromLegacyStoryPad(drive.File file) {
     return CloudFileObject(
       fileName: file.name,
