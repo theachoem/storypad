@@ -265,7 +265,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     if (result == null) return;
 
     // Share/save the text file
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       RenderBox? box = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(
         ShareParams(
@@ -309,7 +309,7 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
 
     if (backup == null || !context.mounted) return;
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       final file = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
 
       await file.create(recursive: true);

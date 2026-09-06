@@ -202,6 +202,13 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
         future: () => backupProvider.recheckAndSync(services: [service], context: context),
       );
       await load();
+    } else if (serviceType == BackupServiceType.dropbox) {
+      // Dropbox's revoked-grant fix is the same interactive OAuth2 flow as a
+      // fresh sign-in (there's no separate "re-request scope" concept the
+      // way Drive has) — signIn() re-runs the PKCE flow and persists the new
+      // tokens itself.
+      await backupProvider.signIn(context, serviceType);
+      await load();
     } else {
       await backupProvider.requestScope(context, serviceType);
       await load();

@@ -18,6 +18,10 @@ const String kGoogleMapsAndroidApiKey = String.fromEnvironment('GOOGLE_MAPS_ANDR
 const String kGoogleMapsIosApiKey = String.fromEnvironment('GOOGLE_MAPS_IOS_API_KEY');
 const String kMapTileProxySecret = String.fromEnvironment('MAP_TILE_PROXY_SECRET');
 
+/// Dropbox OAuth2 "App key" (client ID) — not a secret (Dropbox's PKCE flow
+/// for public/native clients needs no client secret).
+const String kDropboxAppKey = String.fromEnvironment('DROPBOX_APP_KEY');
+
 /// Base URL for static.storypad.me — serves remote config, cloud-stored assets,
 /// and the MapTiler tile proxy.
 const String kCdnBaseUrl = String.fromEnvironment('CDN_BASE_URL', defaultValue: 'https://static.storypad.me');

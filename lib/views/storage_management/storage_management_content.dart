@@ -128,12 +128,12 @@ class _StorageManagementContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SpSectionTitle(title: tr('page.storage_management.section.cloud_storage')),
-        for (final entry in viewModel.cloudQuotas.entries) _buildCloudTile(context, entry.key, entry.value),
+        for (final entry in viewModel.cloudQuotas.entries) ?_buildCloudTile(context, entry.key, entry.value),
       ],
     );
   }
 
-  Widget _buildCloudTile(
+  Widget? _buildCloudTile(
     BuildContext context,
     BackupServiceType serviceType,
     CloudStorageQuotaObject? quota,
@@ -142,11 +142,7 @@ class _StorageManagementContent extends StatelessWidget {
     final email = provider.currentGoogleUser?.email;
 
     if (quota == null) {
-      return ListTile(
-        leading: Icon(serviceType.icon),
-        title: Text(serviceType.displayName),
-        subtitle: const Text('N/A'),
-      );
+      return null;
     }
 
     final appUsageBytes = quota.appUsageInBytes;
