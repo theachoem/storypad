@@ -24,12 +24,25 @@ class ICloudUserObject extends CloudServiceUser {
   @override
   final bool? autoBackupEnabled;
 
+  /// Opaque, local-only snapshot of `FileManager.ubiquityIdentityToken` at
+  /// the time [accountId] was last confirmed via a successful CloudKit
+  /// round-trip (native `fetchIdentityTokenFingerprint`) — never used as
+  /// identity itself (CloudKit's `fetchUserRecordID` stays the sole identity
+  /// source), only compared for equality. Its one job: when a *later* check
+  /// hits a transient CloudKit failure and can't re-confirm [accountId], this
+  /// lets `ICloudCloudService` tell "the same account, briefly unreachable"
+  /// apart from "the local iCloud sign-in has changed since we last
+  /// confirmed this" — persisted (not just in-memory) so the distinction
+  /// still holds on a fresh app launch, not only within one running session.
+  final String? identityTokenFingerprint;
+
   @override
   BackupServiceType get serviceType => BackupServiceType.icloud;
 
   ICloudUserObject({
     required this.accountId,
     required this.autoBackupEnabled,
+    this.identityTokenFingerprint,
   });
 
   /// CloudKit exposes no Apple ID/email for privacy reasons, so this is the

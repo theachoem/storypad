@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart';
+import 'package:storypad/core/objects/icloud_user_object.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/icloud_cloud_service.dart';
 import 'package:storypad/core/storages/icloud_user_storage.dart';
@@ -18,8 +19,19 @@ void main() {
   late Map<String, String> secureStorageValues;
 
   /// Mocks the native iCloud method channel. [available] backs
-  /// `isAvailable`; [accountId] (or [accountIdError]) backs `fetchAccountId`.
-  void mockNative({required bool available, String? accountId, PlatformException? accountIdError}) {
+  /// `isAvailable`; [accountId] (or [accountIdError]) backs `fetchAccountId`;
+  /// [fingerprint] backs `fetchIdentityTokenFingerprint` — defaults to a
+  /// fixed value so tests that don't care about it (most of them) keep
+  /// behaving as if nothing local ever changed between calls. Pass a
+  /// different value to simulate the local iCloud identity actually
+  /// changing (e.g. to exercise the account-switch-during-transient-failure
+  /// guard).
+  void mockNative({
+    required bool available,
+    String? accountId,
+    PlatformException? accountIdError,
+    String? fingerprint = 'stable-fingerprint',
+  }) {
     messenger.setMockMethodCallHandler(nativeChannel, (call) async {
       switch (call.method) {
         case 'ICloudBackupService.isAvailable':
@@ -27,6 +39,8 @@ void main() {
         case 'ICloudBackupService.fetchAccountId':
           if (accountIdError != null) throw accountIdError;
           return accountId;
+        case 'ICloudBackupService.fetchIdentityTokenFingerprint':
+          return fingerprint;
         default:
           throw MissingPluginException();
       }
@@ -101,6 +115,74 @@ void main() {
       expect(signedIn, isTrue, reason: 'a network blip must not be treated as signed out');
       expect(service.currentUser?.accountId, 'record-a', reason: 'cached account must survive a transient failure');
     });
+
+    // Regression test for the account-switch race Copilot flagged on PR
+    // #725: a cached account can't prove the *current* ubiquity container
+    // still belongs to it. If the local iCloud identity changed while
+    // fetchAccountId happens to fail transiently, the cache must not be
+    // trusted — otherwise the old account's bookkeeping/RevenueCat identity
+    // could keep being used while files are actually written to the new
+    // account's container.
+    test(
+      'transient network failure where the local identity changed does not trust the cache',
+      () async {
+        mockNative(available: true, accountId: 'record-a', fingerprint: 'token-a');
+        final service = ICloudCloudService();
+        await service.signIn();
+        expect(service.currentUser?.identityTokenFingerprint, 'token-a');
+
+        // Simulate an account switch (A -> B) landing at the exact moment
+        // the CloudKit identity fetch fails transiently: the local token has
+        // already changed, but fetchAccountId can't confirm the new account.
+        mockNative(
+          available: true,
+          accountIdError: PlatformException(code: 'NETWORK'),
+          fingerprint: 'token-b',
+        );
+
+        await expectLater(
+          service.signIn(),
+          throwsA(isA<NetworkException>()),
+          reason: 'a changed local identity must not fall back to the old cached account',
+        );
+        expect(
+          service.currentUser,
+          isNull,
+          reason: 'must not keep exposing account A as signed in once the local identity no longer matches it',
+        );
+      },
+    );
+
+    // Same guard, but verified across a fresh app launch rather than within
+    // one running service instance — the fingerprint has to be persisted
+    // (not just held in memory) for this to work on a cold start.
+    test(
+      'transient network failure on a fresh launch with a persisted user but no recorded fingerprint does not trust it',
+      () async {
+        mockNative(available: true, accountId: 'record-a', fingerprint: 'token-a');
+        final service = ICloudCloudService();
+        await service.signIn();
+
+        // A record from before this fingerprint existed (or one that just
+        // never got a successful confirmation yet).
+        final stored = await ICloudUserStorage().readObject();
+        await ICloudUserStorage().writeObject(stored!.copyWith(identityTokenFingerprint: null));
+
+        final freshLaunch = ICloudCloudService();
+        mockNative(
+          available: true,
+          accountIdError: PlatformException(code: 'NETWORK'),
+          fingerprint: 'token-a',
+        );
+        await freshLaunch.initialize();
+
+        expect(
+          freshLaunch.currentUser,
+          isNull,
+          reason: 'no recorded fingerprint to compare against means the match can\'t be confirmed',
+        );
+      },
+    );
 
     // A bare `false` here would be indistinguishable from iCloud actually
     // being disabled — the caller (BackupProvider.signIn) would send an

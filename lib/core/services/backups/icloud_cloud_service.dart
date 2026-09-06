@@ -52,12 +52,8 @@ class ICloudCloudService extends BackupCloudService {
   }
 
   /// Two-tiered live check: [_isAvailable] (fast, local, offline) gates
-  /// whether to even attempt [_fetchAccountId] (a real CloudKit network
-  /// round-trip). [_AvailabilityStatus.transientFailure] is deliberately
-  /// distinct from [_AvailabilityStatus.notAvailable] — a network hiccup
-  /// while fetching identity must never be treated the same as "signed out"
-  /// (which would wipe [_currentUser] and misreport a spurious account
-  /// switch just because CloudKit was briefly unreachable).
+  /// whether to attempt [_fetchAccountId] (a real CloudKit round-trip) — see
+  /// [_AvailabilityStatus] for why its outcomes are handled differently.
   Future<({_AvailabilityStatus status, bool hasCachedUser})> _checkAvailability() async {
     final available = await _isAvailable();
     if (!available) {
@@ -69,23 +65,50 @@ class ICloudCloudService extends BackupCloudService {
     final accountId = fetched.accountId;
     if (accountId == null) {
       if (fetched.transientFailure) {
-        return (status: _AvailabilityStatus.transientFailure, hasCachedUser: _currentUser != null);
+        final stored = _currentUser ?? await ICloudUserStorage().readObject();
+        final currentFingerprint = await _fetchIdentityTokenFingerprint();
+        final identityConfirmedUnchanged =
+            stored != null &&
+            stored.identityTokenFingerprint != null &&
+            currentFingerprint != null &&
+            stored.identityTokenFingerprint == currentFingerprint;
+
+        if (identityConfirmedUnchanged) {
+          _currentUser = stored;
+          return (status: _AvailabilityStatus.transientFailure, hasCachedUser: true);
+        }
+
+        // No match (or nothing cached) — don't trust it. Only the in-memory
+        // reference is cleared; the persisted record survives, so
+        // autoBackupEnabled/account recover normally next successful check.
+        _currentUser = null;
+        return (status: _AvailabilityStatus.transientFailure, hasCachedUser: false);
       }
       _currentUser = null;
       return (status: _AvailabilityStatus.notAvailable, hasCachedUser: false);
     }
 
-    // _currentUser is nulled above whenever iCloud goes unavailable, so on
-    // its own it can't tell "same account, was briefly off" from "genuinely
-    // different account" — falling back to the persisted record (which
-    // unavailability never clears, only signOut does) is what actually makes
-    // that distinction, preserving things like autoBackupEnabled across a
-    // toggle-off-then-back-on instead of treating every reconnect as fresh.
+    final currentFingerprint = await _fetchIdentityTokenFingerprint();
+
+    // _currentUser is nulled on every unavailable check, so the persisted
+    // record (cleared only by signOut) is what tells "same account, was
+    // briefly off" apart from "genuinely different" — preserving
+    // autoBackupEnabled across a toggle-off-then-back-on.
     final stored = _currentUser ?? await ICloudUserStorage().readObject();
     if (stored == null || stored.accountId != accountId) {
-      final fresh = ICloudUserObject(accountId: accountId, autoBackupEnabled: true);
+      final fresh = ICloudUserObject(
+        accountId: accountId,
+        autoBackupEnabled: true,
+        identityTokenFingerprint: currentFingerprint,
+      );
       _currentUser = fresh;
       await ICloudUserStorage().writeObject(fresh);
+    } else if (stored.identityTokenFingerprint != currentFingerprint) {
+      // Keep the preference, refresh the fingerprint so a later transient
+      // failure has a current value to compare against.
+      final refreshed = stored.copyWith(identityTokenFingerprint: currentFingerprint);
+      _currentUser = refreshed;
+      await ICloudUserStorage().writeObject(refreshed);
     } else {
       _currentUser = stored;
     }
@@ -401,6 +424,31 @@ class ICloudCloudService extends BackupCloudService {
     }
   }
 
+  /// Local, no-network "is this still the same iCloud account" check, used
+  /// only by [_checkAvailability] when a live `fetchAccountId` fails
+  /// transiently and can't confirm the account itself. Why it's needed:
+  ///
+  /// - t0: signed in as account A, `fetchAccountId` succeeds, fingerprint
+  ///   for A saved.
+  /// - t1: device's iCloud account is switched to B.
+  /// - t2: app re-checks; `fetchAccountId` happens to fail (network blip),
+  ///   right as B's container has already taken over.
+  ///   - Before this check: A's cached account gets reused for B's files.
+  ///   - After: the fingerprint at t2 no longer matches A's, so the cache
+  ///     is dropped instead of silently reused for the wrong account.
+  ///
+  /// A failed fetch returns `null` rather than throwing — a missing
+  /// fingerprint just means "no match", already the safe default.
+  Future<String?> _fetchIdentityTokenFingerprint() async {
+    try {
+      final result = await _channel.invokeMethod('ICloudBackupService.fetchIdentityTokenFingerprint');
+      return result as String?;
+    } catch (e) {
+      AppLogger.d('ICloudCloudService#_fetchIdentityTokenFingerprint failed: $e');
+      return null;
+    }
+  }
+
   Future<T> _run<T>(String methodName, Future<T> Function() operation) async {
     if (!isSignedIn) {
       throw exp.AuthException(
@@ -485,4 +533,12 @@ class ICloudCloudService extends BackupCloudService {
   }
 }
 
+/// [transientFailure] exists separately from [notAvailable] because
+/// `fetchAccountId` can fail for reasons that have nothing to do with iCloud
+/// actually being off — e.g. the app resumes with no signal yet (subway,
+/// weak wifi). Collapsing that into [notAvailable] would wrongly disconnect
+/// a correctly-configured user and send them to Settings guidance over a
+/// momentary blip, so it falls back to the cached account instead — guarded
+/// by [ICloudCloudService._fetchIdentityTokenFingerprint] so a genuine
+/// account switch at the same moment still isn't silently trusted.
 enum _AvailabilityStatus { available, notAvailable, transientFailure }

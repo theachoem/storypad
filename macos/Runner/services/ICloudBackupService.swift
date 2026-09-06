@@ -28,6 +28,14 @@ import FlutterMacOS
 /// `FileManager.ubiquityIdentityToken`, which Apple only documents as
 /// stable across launches on the *same* device (and which `isAvailable`
 /// deliberately avoids for a second reason — see its own doc comment).
+///
+/// `ubiquityIdentityToken` does get one narrow, supplementary use —
+/// `fetchIdentityTokenFingerprint` — as a cheap, local, no-network "has the
+/// signed-in iCloud account changed" signal for the Dart layer to fall back
+/// on specifically when `fetchAccountId` fails transiently (so it can't just
+/// ask CloudKit "is this still the same account"). It is never treated as
+/// identity itself, only compared for equality against a previously-recorded
+/// value.
 class ICloudBackupService {
   private static let dataFolderName = "Data"
 
@@ -60,6 +68,8 @@ class ICloudBackupService {
       isAvailable(result: result)
     case "ICloudBackupService.fetchAccountId":
       fetchAccountId(result: result)
+    case "ICloudBackupService.fetchIdentityTokenFingerprint":
+      fetchIdentityTokenFingerprint(result: result)
     case "ICloudBackupService.openAppSettings":
       openAppSettings(result: result)
     case "ICloudBackupService.statFile":
@@ -182,6 +192,32 @@ class ICloudBackupService {
     default:
       return FlutterError(code: "FAILED", message: ckError.localizedDescription, details: nil)
     }
+  }
+
+  /// A cheap, local, no-network stand-in for "is this still the same signed-in
+  /// iCloud account as before" — used only when `fetchAccountId` can't answer
+  /// that authoritatively itself (a transient CloudKit failure). Never
+  /// exposed/used as identity: just an opaque string the Dart layer persists
+  /// alongside the confirmed account and compares for equality later. Archived
+  /// with `requiringSecureCoding: false` deliberately — the token's underlying
+  /// type doesn't conform to `NSSecureCoding`, so `true` here throws on every
+  /// call (this bit us once already, back when this token was tried as the
+  /// primary identity source before CloudKit replaced it).
+  static func fetchIdentityTokenFingerprint(result: @escaping FlutterResult) {
+    DispatchQueue.global(qos: .userInitiated).async {
+      let fingerprint = currentIdentityTokenFingerprint()
+      DispatchQueue.main.async {
+        result(fingerprint)
+      }
+    }
+  }
+
+  private static func currentIdentityTokenFingerprint() -> String? {
+    guard let token = FileManager.default.ubiquityIdentityToken else { return nil }
+    guard let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: false) else {
+      return nil
+    }
+    return data.base64EncodedString()
   }
 
   /// macOS has no per-app Settings page the way iOS does (no

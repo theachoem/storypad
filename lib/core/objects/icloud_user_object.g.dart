@@ -11,6 +11,8 @@ abstract class _$ICloudUserObjectCWProxy {
 
   ICloudUserObject autoBackupEnabled(bool? autoBackupEnabled);
 
+  ICloudUserObject identityTokenFingerprint(String? identityTokenFingerprint);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `ICloudUserObject(...).copyWith.fieldName(value)`.
   ///
@@ -18,7 +20,11 @@ abstract class _$ICloudUserObjectCWProxy {
   /// ```dart
   /// ICloudUserObject(...).copyWith(id: 12, name: "My name")
   /// ```
-  ICloudUserObject call({String accountId, bool? autoBackupEnabled});
+  ICloudUserObject call({
+    String accountId,
+    bool? autoBackupEnabled,
+    String? identityTokenFingerprint,
+  });
 }
 
 /// Callable proxy for `copyWith` functionality.
@@ -35,6 +41,10 @@ class _$ICloudUserObjectCWProxyImpl implements _$ICloudUserObjectCWProxy {
   ICloudUserObject autoBackupEnabled(bool? autoBackupEnabled) =>
       call(autoBackupEnabled: autoBackupEnabled);
 
+  @override
+  ICloudUserObject identityTokenFingerprint(String? identityTokenFingerprint) =>
+      call(identityTokenFingerprint: identityTokenFingerprint);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `ICloudUserObject(...).copyWith.fieldName(value)`.
   ///
@@ -46,6 +56,7 @@ class _$ICloudUserObjectCWProxyImpl implements _$ICloudUserObjectCWProxy {
   ICloudUserObject call({
     Object? accountId = const $CopyWithPlaceholder(),
     Object? autoBackupEnabled = const $CopyWithPlaceholder(),
+    Object? identityTokenFingerprint = const $CopyWithPlaceholder(),
   }) {
     return ICloudUserObject(
       accountId: accountId == const $CopyWithPlaceholder() || accountId == null
@@ -56,6 +67,11 @@ class _$ICloudUserObjectCWProxyImpl implements _$ICloudUserObjectCWProxy {
           ? _value.autoBackupEnabled
           // ignore: cast_nullable_to_non_nullable
           : autoBackupEnabled as bool?,
+      identityTokenFingerprint:
+          identityTokenFingerprint == const $CopyWithPlaceholder()
+          ? _value.identityTokenFingerprint
+          // ignore: cast_nullable_to_non_nullable
+          : identityTokenFingerprint as String?,
     );
   }
 }
@@ -75,10 +91,12 @@ ICloudUserObject _$ICloudUserObjectFromJson(Map<String, dynamic> json) =>
     ICloudUserObject(
       accountId: json['account_id'] as String,
       autoBackupEnabled: json['auto_backup_enabled'] as bool?,
+      identityTokenFingerprint: json['identity_token_fingerprint'] as String?,
     );
 
 Map<String, dynamic> _$ICloudUserObjectToJson(ICloudUserObject instance) =>
     <String, dynamic>{
       'account_id': instance.accountId,
       'auto_backup_enabled': instance.autoBackupEnabled,
+      'identity_token_fingerprint': instance.identityTokenFingerprint,
     };
