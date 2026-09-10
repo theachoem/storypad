@@ -54,13 +54,15 @@ class _SearchContent extends StatelessWidget {
           ),
           IconButton(
             tooltip: tr("page.search_filter.title"),
-            icon: const Icon(SpIcons.tune),
+            icon: viewModel.hasHiddenTagFilters
+                ? Badge(backgroundColor: ColorScheme.of(context).primary, child: const Icon(SpIcons.tune))
+                : const Icon(SpIcons.tune),
             onPressed: () => viewModel.goToFilterPage(context),
           ),
           if (CupertinoSheetRoute.hasParentSheet(context))
             CloseButton(onPressed: () => CupertinoSheetRoute.popSheet(context)),
         ],
-        bottom: visibleTags.isNotEmpty == true
+        bottom: visibleTags.isNotEmpty == true && viewModel.showTagFilterBar
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(34.0 + 12.0),
                 child: Column(

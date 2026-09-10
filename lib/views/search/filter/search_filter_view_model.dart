@@ -111,27 +111,10 @@ class SearchFilterViewModel extends ChangeNotifier with DisposeAwareMixin {
   bool tagSelected(TagDbModel tag) => searchFilter.tagIds.contains(tag.id);
 
   void toggleTag(TagDbModel tag) {
-    final category = tagsByCategory?.keys.firstWhere((c) => c?.id == tag.categoryId, orElse: () => null);
+    // Selected tags are OR-ed together (a story matches if it has ANY of them), so
+    // there's no "impossible combination" risk — every category can multi-select freely.
     Set<int> newTagIds = {...searchFilter.tagIds};
-
-    if (category?.multiSelect == true) {
-      // Multi-select category (e.g. People): just toggle this tag on/off.
-      if (!newTagIds.remove(tag.id)) newTagIds.add(tag.id);
-    } else {
-      // Single-select per category: remove any other selected tag in the same category first.
-      final categoryTags =
-          tagsByCategory?.entries
-              .where((e) => e.key?.id == tag.categoryId)
-              .expand((e) => e.value)
-              .map((t) => t.id)
-              .toSet() ??
-          {};
-
-      newTagIds.removeAll(categoryTags);
-
-      // Toggle: if tag was already selected it was removed above → do not re-add.
-      if (!searchFilter.tagIds.contains(tag.id)) newTagIds.add(tag.id);
-    }
+    if (!newTagIds.remove(tag.id)) newTagIds.add(tag.id);
 
     searchFilter = searchFilter.copyWith(tagIds: newTagIds);
     notifyListeners();
