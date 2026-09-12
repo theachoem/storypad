@@ -24,6 +24,7 @@ import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/providers/backup_provider.dart';
+import 'package:storypad/core/services/export/export_stories_to_csv_service.dart';
 import 'package:storypad/core/services/export/export_stories_to_markdown_service.dart';
 import 'package:storypad/core/services/export/export_stories_to_text_service.dart';
 
@@ -33,6 +34,7 @@ import 'import_media_overview/import_media_overview_view.dart';
 enum AppExportOption {
   storyPadJson,
   text,
+  csv,
   markdown,
   pdf,
 }
@@ -134,6 +136,9 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         break;
       case AppExportOption.text:
         await exportText(context);
+        break;
+      case AppExportOption.csv:
+        await exportCsv(context);
         break;
       case AppExportOption.markdown:
         await exportMarkdown(context);
@@ -279,6 +284,64 @@ class ImportExportViewModel extends ChangeNotifier with DisposeAwareMixin {
         fileName: basename(result.path),
         type: FileType.custom,
         allowedExtensions: ['txt'],
+        bytes: await result.readAsBytes(),
+      );
+    }
+
+    // Cleanup
+    await result.delete();
+  }
+
+  Future<void> exportCsv(BuildContext context) async {
+    if (!context.read<InAppPurchaseProvider>().isProUser) return;
+
+    AnalyticsService.instance.logExportOfflineBackup();
+
+    File? result = await MessengerService.of(context).showLoading(
+      debugSource: '$runtimeType#exportCsv',
+      future: () async {
+        final stories = await StoryDbModel.db
+            .where(filters: filtered ? exportFilter.toDatabaseFilter() : null)
+            .then((context) => context?.items);
+
+        if (!context.mounted || stories == null || stories.isEmpty) return null;
+
+        final String exportFileName = "$kAppName-${kDeviceInfo.model}-csv-${DateTime.now().toIso8601String()}.csv";
+        final csvFile = File("${SupportDirectoryPath.backups.directoryPath}/$exportFileName");
+
+        // Export stories to csv
+        Map<int, TagDbModel?> tags = {};
+        await ExportStoriesToCsvService.call(
+          stories: stories,
+          outputFile: csvFile,
+          tagNameGetter: (tagId) async {
+            tags[tagId] ??= await TagDbModel.db.find(tagId);
+            return tags[tagId]?.title;
+          },
+        );
+
+        return csvFile;
+      },
+    );
+
+    if (!context.mounted) return;
+    if (result == null) return;
+
+    // Share/save the csv file
+    if (Platform.isIOS || Platform.isMacOS) {
+      RenderBox? box = context.findRenderObject() as RenderBox?;
+      await SharePlus.instance.share(
+        ShareParams(
+          title: basename(result.path),
+          sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+          files: [XFile(result.path)],
+        ),
+      );
+    } else if (Platform.isAndroid) {
+      await FilePicker.saveFile(
+        fileName: basename(result.path),
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
         bytes: await result.readAsBytes(),
       );
     }

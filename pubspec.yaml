@@ -16,6 +16,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   copy_with_extension: ^17.0.0
   crypto: ^3.0.7
+  csv: 8.0.0
   cupertino_icons: 1.0.9
   dart_quill_delta: 10.8.3
   device_info_plus: ^13.2.0
@@ -96,7 +97,6 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.15.0
   copy_with_extension_gen: ^17.0.0
-  csv: 8.0.0
   flutter_gen_runner: ^5.14.1
   flutter_launcher_icons: 0.14.4
   flutter_lints: 6.0.0
