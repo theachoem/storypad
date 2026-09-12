@@ -651,10 +651,13 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     if (tag != null) conditions = conditions.and(StoryObjectBox_.tags.containsElement(tag.toString()));
 
     if (tags != null && tags.isNotEmpty) {
-      // AND logic: story must have ALL specified tags.
-      for (final t in tags) {
-        conditions = conditions.and(StoryObjectBox_.tags.containsElement(t.toString()));
+      // OR logic: story must have ANY of the specified tags (this group is then AND-ed
+      // with the rest of the filters below).
+      Condition<StoryObjectBox> tagsCondition = StoryObjectBox_.tags.containsElement(tags.first.toString());
+      for (final t in tags.skip(1)) {
+        tagsCondition = tagsCondition.or(StoryObjectBox_.tags.containsElement(t.toString()));
       }
+      conditions = conditions.and(tagsCondition);
     }
 
     if (galleryTemplateId != null) {

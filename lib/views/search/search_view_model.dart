@@ -100,6 +100,24 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
     SearchFilterStorage().writeObject(searchFilter!);
   }
 
+  // The quick-filter bar only ever represents a single active tag (tapping a chip
+  // replaces the selection), so once the filter page applies more than one tag — or a
+  // category tag (People, Feeling, Weather, Activity) that has no chip here at all — the
+  // bar can no longer represent the selection and is hidden; surface a badge instead of
+  // leaving the filter silently invisible.
+  bool get hasHiddenTagFilters {
+    if (searchFilter == null) return false;
+    if (searchFilter!.tagIds.length > 1) return true;
+
+    final visibleTagIds = tags?.map((tag) => tag.id).toSet() ?? {};
+    return searchFilter!.tagIds.any((id) => !visibleTagIds.contains(id));
+  }
+
+  // Bar shows a single selected chip at most; with 2+ tags applied (from the filter
+  // page) no single chip can represent the selection, so hide it instead of showing a
+  // misleading "no tag selected" bar.
+  bool get showTagFilterBar => (searchFilter?.tagIds.length ?? 0) <= 1;
+
   bool tagSelected(TagDbModel tag) =>
       searchFilter?.tagIds.contains(tag.id) == true || (tag.id == 0 && searchFilter?.tagIds.isEmpty == true);
 
