@@ -109,6 +109,19 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
         onOpen: (BuildContext context) => StatsRoute(initialRange: StatsRange.year(DateTime.now())).push(context),
       ),
       PaywallFeatureObject(
+        type: PaywallFeature.multi_cloud_sync,
+        title: tr('paywall_features.multi_cloud_sync.title'),
+        subtitle: tr('paywall_features.multi_cloud_sync.subtitle'),
+        iconData: SpIcons.nextcloud,
+        weekdayColor: 6,
+        demoImagePaths: [
+          '/feature_demos/multi_cloud_sync/multi_cloud_sync_1__1080x2400.jpg',
+          '/feature_demos/multi_cloud_sync/multi_cloud_sync_2__1080x2400.jpg',
+          '/feature_demos/multi_cloud_sync/multi_cloud_sync_3__1080x2400.jpg',
+        ],
+        onOpen: (BuildContext context) => const DataBackupRoute().push(context),
+      ),
+      PaywallFeatureObject(
         type: PaywallFeature.markdown_export,
         title: tr('paywall_features.markdown_export.title'),
         subtitle: tr('paywall_features.markdown_export.subtitle'),
@@ -122,15 +135,6 @@ class PaywallViewModel extends ChangeNotifier with DisposeAwareMixin {
           '/feature_demos/markdown_export/markdown_export_5__2070x2400.jpg',
         ],
         onOpen: (BuildContext context) => const ImportExportRoute(initialExportOption: .markdown).push(context),
-      ),
-      PaywallFeatureObject(
-        type: PaywallFeature.multi_cloud_sync,
-        title: tr('paywall_features.multi_cloud_sync.title'),
-        subtitle: tr('paywall_features.multi_cloud_sync.subtitle'),
-        iconData: SpIcons.nextcloud,
-        weekdayColor: 6,
-        demoImagePaths: [],
-        onOpen: (BuildContext context) => const DataBackupRoute().push(context),
       ),
     ];
 

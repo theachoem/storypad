@@ -49,6 +49,12 @@ const Map<String, String> kStorageHashMap = {
       "/feature_demos/markdown_export/markdown_export_4__3060x2400-1c117701d163cdc5c64e8c2df325c56c.jpg",
   "/feature_demos/markdown_export/markdown_export_5__2070x2400.jpg":
       "/feature_demos/markdown_export/markdown_export_5__2070x2400-7f115e535d61987e2d508562234bb6d2.jpg",
+  "/feature_demos/multi_cloud_sync/multi_cloud_sync_1__1080x2400.jpg":
+      "/feature_demos/multi_cloud_sync/multi_cloud_sync_1__1080x2400-a1ef92951410e90b3d32da64f7e63359.jpg",
+  "/feature_demos/multi_cloud_sync/multi_cloud_sync_2__1080x2400.jpg":
+      "/feature_demos/multi_cloud_sync/multi_cloud_sync_2__1080x2400-677f37aff14a2fc9d4e35678cec1aaff.jpg",
+  "/feature_demos/multi_cloud_sync/multi_cloud_sync_3__1080x2400.jpg":
+      "/feature_demos/multi_cloud_sync/multi_cloud_sync_3__1080x2400-2c03d9539ace754639a2f76fc57ba1ff.jpg",
   "/feature_demos/period_calendar/period_calendar_1__1080x2400.jpg":
       "/feature_demos/period_calendar/period_calendar_1__1080x2400-d8a71e56b7d98c5a5d2aad473309757f.jpg",
   "/feature_demos/period_calendar/period_calendar_2__1080x2400.jpg":
