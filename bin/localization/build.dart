@@ -1,64 +1,42 @@
 // ignore_for_file: avoid_print, depend_on_referenced_packages
 
-// This script fetches localization data and generates translation files for your app.
+// This script regenerates locale-derived config from the translation JSON
+// files already checked into `translations/` (the source of truth in git).
 // To run, use:
 // ```
 // dart bin/localization/build.dart
 // ```
 // It performs the following tasks:
-// 1. Fetches CSV data from Google Sheets (or uses a local data.csv).
-// 2. Creates JSON translation files for each locale (e.g., en.json, km.json).
-// 3. Updates the Info.plist file for iOS with the supported locales.
+// 1. Reads `_meta.locale` / `_meta.language_name` / `_meta.native_name` from each translations/<locale>.json.
+// 2. Updates the Info.plist file for iOS with the supported locales.
+// 3. Updates android/app/src/main/res/xml/locales_config.xml with the supported locales.
 // 4. Adds locale constants to lib/core/constants/locale_constants.dart for app to use.
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:csv/csv.dart' show csv;
 import 'package:xml/xml.dart';
 
-const String editUrl =
-    "https://docs.google.com/spreadsheets/d/1XcohOqNzrkMJnAmAuJssa0Rc7wftjfN2rrxb4GgcE9c/edit?usp=sharing";
-
-const String publicCsvUrl =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTlTQdinMVbZEL6EQzBs2zNtfldSnCtXA9YhegOe4CCoOA5FxXYmEp_t4joa_mIVgPVI5RaY_YNCGxa/pub?output=csv";
-
 void main() async {
-  final csvString = await _fetchCsvRaw();
-  final csvData = csv.decode(csvString);
-  final transposedCsvData = _transposeCsv(csvData);
-
-  if (await Directory('translations').exists()) {
-    await Directory('translations').delete(recursive: true);
-    await Directory('translations').create();
-  }
+  final translationFiles = Directory('translations')
+      .listSync()
+      .whereType<File>()
+      .where((file) => file.path.endsWith('.json'))
+      .toList();
 
   List<String> locales = [];
   Map<String, String> languageNames = {};
   Map<String, String> nativeLanguageNames = {};
 
-  for (var i = 1; i < transposedCsvData.length; i++) {
-    final locale = transposedCsvData[i][0];
-    final languageName = transposedCsvData[i][1];
-    final nativeLanguageName = transposedCsvData[i][2];
-    final file = File("translations/$locale.json");
+  for (final file in translationFiles) {
+    final Map<String, dynamic> json = jsonDecode(await file.readAsString());
 
+    final locale = json['_meta.locale'] as String;
     locales.add(locale);
-    languageNames[locale] = languageName;
-    nativeLanguageNames[locale] = nativeLanguageName;
-
-    Map<String, String> map = {};
-
-    for (var j = 0; j < transposedCsvData[i].length; j++) {
-      final key = transposedCsvData[0][j];
-      final value = transposedCsvData[i][j];
-      map[key] = value;
-    }
-
-    await file.writeAsString(
-      "${const JsonEncoder.withIndent('  ').convert(map)}\n",
-    );
+    languageNames[locale] = json['_meta.language_name'] as String;
+    nativeLanguageNames[locale] = json['_meta.native_name'] as String;
   }
+
+  locales.sort((a, b) => a == 'en' ? -1 : (b == 'en' ? 1 : a.compareTo(b)));
 
   await setLocalesConfigXml(locales);
   await setBundleLocalizationToInfoPlist(locales);
@@ -142,34 +120,4 @@ const kNativeLanguageNames = ${const JsonEncoder.withIndent('  ').convert(native
           .replaceAll("\"\n}", "\",\n}");
 
   file.writeAsString(contents);
-}
-
-// Delete data.csv to refresh data from Google Drive.
-Future<String> _fetchCsvRaw() async {
-  final file = File('bin/localization/data.csv');
-
-  if (await file.exists()) {
-    return file.readAsString();
-  }
-
-  final response = await http.get(Uri.parse("$publicCsvUrl&t=${DateTime.now().millisecondsSinceEpoch}"));
-  if (response.statusCode != 200) throw response.statusCode;
-
-  final decodedBody = utf8.decode(response.bodyBytes);
-  await file.writeAsString(decodedBody);
-
-  return decodedBody;
-}
-
-List<List<dynamic>> _transposeCsv(List<List<dynamic>> rows) {
-  List<List<dynamic>> transposed = [];
-
-  for (int col = 0; col < rows[0].length; col++) {
-    List<dynamic> newRow = [];
-    for (int row = 0; row < rows.length; row++) {
-      newRow.add(rows[row][col]);
-    }
-    transposed.add(newRow);
-  }
-  return transposed;
 }

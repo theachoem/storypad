@@ -99,10 +99,13 @@ class _PeriodCalendarContent extends StatelessWidget {
 
   /// Compact entry point to the built-in period reminder — full editing
   /// (time, enable/disable) happens in [SpEditReminderSheet], same as the
-  /// reminders page. Scoped to `periodReminder` via `context.select` so this
-  /// tile only rebuilds when that specific reminder changes.
+  /// reminders page. DevicePreferencesProvider doesn't notifyListeners on
+  /// reminder writes, so this reads the current value directly and relies on
+  /// [PeriodCalendarViewModel] (which subscribes via
+  /// addListenerForReminderChanges) to trigger the rebuild instead of
+  /// `context.select`.
   Widget buildReminderTile(BuildContext context) {
-    final reminder = context.select((DevicePreferencesProvider provider) => provider.periodReminder);
+    final reminder = context.read<DevicePreferencesProvider>().periodReminder;
     final enabled = reminder?.enabled ?? false;
 
     void openSheet() =>

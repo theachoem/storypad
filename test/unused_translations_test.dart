@@ -3,12 +3,20 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_test/flutter_test.dart';
+
 void main() async {
+  test('translation keys are used, exist, and match across all locales', () async {
+    await _checkUnusedAndMissingKeys();
+    await _checkLocalesMatchEnKeys();
+  });
+}
+
+Future<void> _checkUnusedAndMissingKeys() async {
   print('\n🔍 Scanning for unused translation keys...\n');
 
   // Keys that are intentionally unused or reserved for future use
   const exceptionalUnusedKeys = {
-    '_formula',
     'button.maybe_later',
     'button.less',
     'button.more',
@@ -17,6 +25,7 @@ void main() async {
     'dialog.lookings_back.subtitle.other',
     'page.cloud_optimize.step.fetch.done.one',
     'page.cloud_optimize.step.fetch.done.other',
+    'page.backup_services.title',
   };
 
   // Load en.json
@@ -78,6 +87,12 @@ void main() async {
   }
   print('----------------------------\n');
 
+  expect(
+    unusedKeys,
+    isEmpty,
+    reason: 'Found unused translation keys in en.json: $unusedKeys',
+  );
+
   // ============================================================================
   // REVERSE TEST: Find keys used in code but not in en.json
   // ============================================================================
@@ -120,6 +135,69 @@ void main() async {
     print('\n');
   }
   print('----------------------------\n');
+
+  expect(
+    missingKeys,
+    isEmpty,
+    reason: 'Found keys used in code but missing from en.json: $missingKeys',
+  );
+}
+
+/// Ensure every translations/`<locale>`.json has exactly the same keys as en.json.
+Future<void> _checkLocalesMatchEnKeys() async {
+  print('\n🌐 Checking that all locale files match en.json keys...\n');
+
+  final translationsDir = Directory('translations');
+  final enJsonFile = File('translations/en.json');
+  final Map<String, dynamic> enJson = jsonDecode(await enJsonFile.readAsString());
+  final Set<String> enKeys = enJson.keys.toSet();
+
+  final localeFiles =
+      translationsDir
+          .listSync()
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.json') && !file.path.endsWith('en.json'))
+          .toList()
+        ..sort((a, b) => a.path.compareTo(b.path));
+
+  final mismatches = <String>[];
+
+  for (final file in localeFiles) {
+    final Map<String, dynamic> localeJson = jsonDecode(await file.readAsString());
+    final Set<String> localeKeys = localeJson.keys.toSet();
+
+    final missingInLocale = enKeys.difference(localeKeys);
+    final extraInLocale = localeKeys.difference(enKeys);
+
+    if (missingInLocale.isNotEmpty || extraInLocale.isNotEmpty) {
+      final buffer = StringBuffer(file.path);
+      if (missingInLocale.isNotEmpty) {
+        buffer.write('\n    missing: ${missingInLocale.toList()..sort()}');
+      }
+      if (extraInLocale.isNotEmpty) {
+        buffer.write('\n    extra: ${extraInLocale.toList()..sort()}');
+      }
+      mismatches.add(buffer.toString());
+    }
+  }
+
+  print('----------------------------');
+  if (mismatches.isEmpty) {
+    print('✅ All locale files match en.json keys!\n');
+  } else {
+    print('❌ Found ${mismatches.length} locale file(s) with mismatched keys:\n');
+    for (final mismatch in mismatches) {
+      print('  • $mismatch');
+    }
+    print('\n');
+  }
+  print('----------------------------\n');
+
+  expect(
+    mismatches,
+    isEmpty,
+    reason: 'Found locale files with keys that do not match en.json:\n${mismatches.join('\n')}',
+  );
 }
 
 /// Get all .dart files recursively
