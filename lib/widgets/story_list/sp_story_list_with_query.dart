@@ -17,11 +17,19 @@ class SpStoryListWithQuery extends StatefulWidget {
     this.viewOnly = false,
     this.filter,
     this.disableMultiEdit = false,
+    this.watch,
   });
 
   final SearchFilterObject? filter;
   final bool viewOnly;
   final bool disableMultiEdit;
+
+  /// Optional [Listenable] (e.g. a screen's view model) that, when it
+  /// notifies, triggers a silent [SpStoryListWithQueryState.load] — without
+  /// remounting the widget or showing the loading spinner. Lets a screen
+  /// force a refresh (e.g. after a bulk action) without the full-list
+  /// flash a `key` change would cause.
+  final Listenable? watch;
 
   String get uniqueness => jsonEncode(filter?.toDatabaseFilter()) + viewOnly.toString();
 
@@ -85,23 +93,34 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
       stories = null;
       load(debugSource: '$runtimeType#didUpdateWidget');
     }
+
+    if (widget.watch != oldWidget.watch) {
+      oldWidget.watch?.removeListener(_watchListener);
+      widget.watch?.addListener(_watchListener);
+    }
   }
 
   @override
   void initState() {
     load(debugSource: '$runtimeType#initState');
     BackupProvider.repoInstance.restoreService.addListener(_restoreServiceListener);
+    widget.watch?.addListener(_watchListener);
     super.initState();
   }
 
   @override
   void dispose() {
     BackupProvider.repoInstance.restoreService.removeListener(_restoreServiceListener);
+    widget.watch?.removeListener(_watchListener);
     super.dispose();
   }
 
   Future<void> _restoreServiceListener() async {
     load(debugSource: '$runtimeType#_restoreServiceListener');
+  }
+
+  Future<void> _watchListener() async {
+    load(debugSource: '$runtimeType#watch');
   }
 
   @override
@@ -153,15 +172,21 @@ class SpStoryListWithQueryState extends State<SpStoryListWithQuery> {
       viewOnly: widget.viewOnly,
       onDeleted: () => load(debugSource: '$runtimeType#onDeleted'),
       onChanged: (updatedStory) {
-        if (widget.filter?.day != null && updatedStory.day != widget.filter!.day) {
-          // If filtering by day and the updated story is no longer on that day,
-          // remove it from the list.
+        final filter = widget.filter;
+        final dayMismatch = filter?.day != null && updatedStory.day != filter!.day;
+        final typeMismatch = filter?.types.isNotEmpty == true && !filter!.types.contains(updatedStory.type);
+        final starredMismatch = filter?.starred != null && updatedStory.starred != filter!.starred;
+        final pinnedMismatch = filter?.pinned != null && updatedStory.pinned != filter!.pinned;
+
+        if (dayMismatch || typeMismatch || starredMismatch || pinnedMismatch) {
+          // The updated story no longer matches this list's filter (e.g. it
+          // was archived/put back/un-starred) — remove it instead of leaving
+          // a stale entry behind until the next manual refresh.
           stories = stories?.removeElement(updatedStory);
-          setState(() {});
         } else {
           stories = stories?.replaceElement(updatedStory);
-          setState(() {});
         }
+        setState(() {});
       },
     );
   }

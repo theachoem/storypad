@@ -551,7 +551,10 @@ class HomeViewModel extends ChangeNotifier with DisposeAwareMixin {
   }
 
   void onAStoryReloaded(StoryDbModel updatedStory) {
-    if (updatedStory.type != PathType.docs) {
+    if (updatedStory.type != PathType.docs || updatedStory.year != year) {
+      // Either archived/binned, or moved back into a year Home isn't
+      // currently showing — in both cases it doesn't belong in the
+      // current view, so just drop it if present rather than inserting it.
       setStories(stories?.removeElement(updatedStory), pinnedStories?.removeElement(updatedStory));
       AppLogger.d('🚧 Removed ${updatedStory.id}:${updatedStory.type.name} by $runtimeType#onAStoryReloaded');
     } else {

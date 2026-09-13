@@ -75,9 +75,10 @@ class MoodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   late int month = params.monthYearNotifier.value.month;
   late int year = params.monthYearNotifier.value.year;
 
-  int editedKey = 0;
+  /// [SpStoryList.withQuery] is passed this view model as `watch`, so calling
+  /// this silently reloads the visible story list — without remounting it
+  /// (no loading-spinner flash).
   void refreshList() {
-    editedKey++;
     notifyListeners();
   }
 

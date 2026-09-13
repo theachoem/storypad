@@ -63,8 +63,9 @@ class _ShowTagContent extends StatelessWidget {
     return TabBarView(
       children: years.map((year) {
         return SpStoryList.withQuery(
-          key: ValueKey('${viewModel.editedKey}_$year'),
+          key: ValueKey(year),
           viewOnly: viewModel.params.storyViewOnly,
+          watch: viewModel,
           filter: viewModel.filter.copyWith(years: {year}),
         );
       }).toList(),
@@ -100,12 +101,18 @@ class _ShowTagContent extends StatelessWidget {
       buttons: [
         OutlinedButton(
           child: Text("${tr("button.archive")} (${state.selectedStories.length})"),
-          onPressed: () => state.archiveAll(context),
+          onPressed: () async {
+            await state.archiveAll(context);
+            viewModel.refreshList();
+          },
         ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: ColorScheme.of(context).error),
           child: Text("${tr("button.move_to_bin")} (${state.selectedStories.length})"),
-          onPressed: () => state.moveToBinAll(context),
+          onPressed: () async {
+            await state.moveToBinAll(context);
+            viewModel.refreshList();
+          },
         ),
       ],
     );

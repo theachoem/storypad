@@ -37,12 +37,14 @@ class SpStoryList extends StatelessWidget {
     SearchFilterObject? filter,
     bool viewOnly = false,
     bool disableMultiEdit = false,
+    Listenable? watch,
   }) {
     return SpStoryListWithQuery(
       key: key,
       filter: filter,
       viewOnly: viewOnly,
       disableMultiEdit: disableMultiEdit,
+      watch: watch,
     );
   }
 

@@ -49,8 +49,9 @@ class _ArchivesContent extends StatelessWidget {
       return TabBarView(
         children: years.map((year) {
           return SpStoryList.withQuery(
-            key: ValueKey('${viewModel.editedKey}_$year'),
+            key: ValueKey(year),
             viewOnly: true,
+            watch: viewModel,
             filter: SearchFilterObject(
               years: {year},
               types: {viewModel.type},
