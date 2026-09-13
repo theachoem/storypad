@@ -139,10 +139,19 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   /// doesn't flash the banner for no reason.
   bool get isSyncingDeepStep => _syncing && _reachedDeepSyncStep;
 
+  // Uses "remote not behind local" rather than strict equality: after the
+  // yearly/global backup table split, a year's own remote file can carry a
+  // filename timestamp inflated by tables that no longer bucket into it
+  // (e.g. a tag edit from before the split), which would never again equal
+  // that year's locally-recomputed (partitioned-only) timestamp even though
+  // nothing is actually pending for it — matches the same "anything to
+  // upload" criterion BackupUploaderService._start uses to skip a year.
   bool get allYearSynced =>
-      _lastDbUpdatedAtByYear?.entries.every(
-        (entry) => entry.value != null && entry.value == _lastSyncedAtByYear?[entry.key],
-      ) ==
+      _lastDbUpdatedAtByYear?.entries.every((entry) {
+        final local = entry.value;
+        final remote = _lastSyncedAtByYear?[entry.key];
+        return local != null && remote != null && !local.isAfter(remote);
+      }) ==
       true;
 
   /// Whether the last connectivity check found internet at all — the one
@@ -482,6 +491,13 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     var attemptedSync = false;
     var allSyncsSucceeded = true;
 
+    // Tracks whether any service actually imported remote content this run —
+    // used to fire restoreService.notify() once for the whole batch below
+    // instead of once per service (each service's own Step 3 already holds
+    // its listeners until it's done; this holds across services too, so a
+    // sync across N providers triggers at most one home reload instead of N).
+    var didImportAny = false;
+
     // Process each service individually
     for (final service in services) {
       if (!service.isSignedIn) {
@@ -496,7 +512,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
 
       kErrorReportingService.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: started');
 
-      final result = await repository.sync(service, uploadAssets: uploadAssets);
+      final result = await repository.sync(service, uploadAssets: uploadAssets, notifyImportCallbacks: false);
 
       if (!result.isSuccess) {
         allSyncsSucceeded = false;
@@ -527,6 +543,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       }
 
       kErrorReportingService.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: succeeded');
+
+      if (result.data?.didImport == true) didImportAny = true;
 
       // Update local DB timestamps after successful sync (in case import happened)
       _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
@@ -567,6 +585,8 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
         }
       }
     }
+
+    if (didImportAny) await repository.restoreService.notify();
 
     notifyListeners();
     return attemptedSync && allSyncsSucceeded;
