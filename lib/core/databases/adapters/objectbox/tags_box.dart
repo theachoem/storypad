@@ -13,6 +13,9 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
   String get tableName => "tags";
 
   @override
+  bool get isYearPartitioned => false;
+
+  @override
   QueryIntegerProperty<TagObjectBox> get idProperty => TagObjectBox_.id;
 
   @override
@@ -62,7 +65,6 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
-    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
     int? categoryId = filters?["category_id"];
 
@@ -73,15 +75,6 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
       conditions = conditions.and(TagObjectBox_.categoryId.equals(categoryId));
     }
 
-    if (createdYear != null) {
-      conditions = conditions.and(
-        TagObjectBox_.createdAt.betweenDate(
-          DateTime(createdYear, 1, 1),
-          DateTime(createdYear, 12, 31, 23, 59, 59),
-        ),
-      );
-    }
-
     QueryBuilder<TagObjectBox> queryBuilder = box.query(conditions);
     queryBuilder.order(TagObjectBox_.index, flags: order ?? 0);
 
@@ -89,18 +82,12 @@ class TagsBox extends BaseBox<TagObjectBox, TagDbModel> {
     // tied rows is otherwise undefined. Break the tie on createdAt so every device lists
     // them the same way instead of inventing a different order each read.
     //
-    // Example: a tag index is a single sequence, but backups are split into one file per
-    // createdAt year. Reordering to [Work(2021), Home(2026)] writes index 0 to the 2021
-    // file and index 1 to the 2026 file. If only the 2026 file reaches the other device,
-    // it merges Home=1 onto a Work that still has its old index 1:
-    //
-    //   id=Work  index=1  createdAt=2021-03-04
-    //   id=Home  index=1  createdAt=2026-01-09
-    //
-    // Ordering by index alone leaves those two rows in whatever order the query happens
-    // to return, and TagsProvider._reindex then writes that arbitrary order back as the
-    // real one. With createdAt as a tiebreaker the result is at least stable and
-    // identical on every device, so a later reorder sticks instead of fighting the reads.
+    // This used to matter more acutely when tags were split across per-createdAt.year
+    // backup files (a partial sync could merge a reindex from one year's file onto a tag
+    // still holding its old index from another year's file). Tags now live entirely in
+    // the single non-yearly global backup file (see BaseDbAdapter.isYearPartitioned), so
+    // that specific scenario no longer applies, but the tiebreaker stays as cheap
+    // insurance against any other partial-merge ordering drift.
     queryBuilder.order(TagObjectBox_.createdAt, flags: order ?? 0);
 
     return queryBuilder;

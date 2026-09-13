@@ -40,8 +40,19 @@ class BackupDatabasesToBackupObjectService {
   }) async {
     Map<String, CollectionDbModel<BaseDbModel>> tables = {};
 
+    bool isGlobalBucket = year == BackupFileObject.kGlobalBackupYear;
+    bool isYearlyBucket = year != null && !isGlobalBucket;
+
     for (BaseDbAdapter db in databases) {
-      Map<String, dynamic>? filters = year != null ? {'created_year': year} : null;
+      // year == null means "full export/legacy backup" — include every table
+      // unfiltered, same as before. Otherwise route each table to whichever single
+      // bucket it belongs to: non-year-partitioned tables (tags, templates, ...) only
+      // ever go in the global bucket, in full; year-partitioned tables only ever go
+      // in their real year's bucket, filtered by createdAt.year.
+      if (isGlobalBucket && db.isYearPartitioned) continue;
+      if (isYearlyBucket && !db.isYearPartitioned) continue;
+
+      Map<String, dynamic>? filters = isYearlyBucket ? {'created_year': year} : null;
 
       if (db.tableName == StoryDbModel.db.tableName && storyFilter != null) {
         filters ??= storyFilter.toDatabaseFilter();

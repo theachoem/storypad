@@ -13,6 +13,9 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
   String get tableName => "relax_sound_mixes";
 
   @override
+  bool get isYearPartitioned => false;
+
+  @override
   QueryIntegerProperty<RelaxSoundMixBox> get idProperty => RelaxSoundMixBox_.id;
 
   @override
@@ -26,18 +29,8 @@ class RelaxSoundMixesBox extends BaseBox<RelaxSoundMixBox, RelaxSoundMixModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
-    int? createdYear = filters?["created_year"];
-
     Condition<RelaxSoundMixBox> conditions = RelaxSoundMixBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(RelaxSoundMixBox_.permanentlyDeletedAt.isNull());
-    if (createdYear != null) {
-      conditions = conditions.and(
-        RelaxSoundMixBox_.createdAt.betweenDate(
-          DateTime(createdYear, 1, 1),
-          DateTime(createdYear, 12, 31, 23, 59, 59),
-        ),
-      );
-    }
 
     QueryBuilder<RelaxSoundMixBox> queryBuilder = box.query(conditions);
     queryBuilder.order(RelaxSoundMixBox_.index);

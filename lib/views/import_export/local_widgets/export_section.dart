@@ -43,6 +43,39 @@ class _ExportSectionState extends State<_ExportSection> {
             value: AppExportOption.text,
           ),
           Consumer<InAppPurchaseProvider>(
+            child: const Icon(SpIcons.table),
+            builder: (context, provider, child) {
+              return GestureDetector(
+                onTap: provider.isProUser
+                    ? null
+                    : () => const PaywallRoute(initialFocus: .markdown_export).push(context),
+                child: RadioListTile(
+                  enabled: provider.isProUser,
+                  secondary: Builder(
+                    builder: (context) {
+                      if (provider.isProUser) return const Icon(SpIcons.table);
+                      return const Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(SpIcons.table),
+                          Positioned(
+                            top: 0,
+                            right: -8,
+                            child: Icon(SpIcons.lock, size: 12.0),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  title: Text(tr('list_tile.export_csv.title')),
+                  subtitle: Text(tr('list_tile.export_csv.subtitle')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                  value: AppExportOption.csv,
+                ),
+              );
+            },
+          ),
+          Consumer<InAppPurchaseProvider>(
             child: const Icon(SpIcons.markdown),
             builder: (context, provider, child) {
               return GestureDetector(

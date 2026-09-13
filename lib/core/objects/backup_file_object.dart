@@ -5,6 +5,14 @@ class BackupFileObject {
   static const String prefix = "Backup";
   static const String splitBy = "__"; // Use __ for Windows compatibility (old :: still supported)
 
+  /// Sentinel `year` for the v3 file holding tables with no calendar semantics
+  /// (tags, tag categories, templates, preferences, relax sound mixes) — rides
+  /// the same year-file mechanism as real years (see [year]) so it needs no
+  /// filename-version bump and is discovered/merged by existing code paths
+  /// unchanged. Distinct from the `-1` sentinel used for legacy (pre-v3)
+  /// monolithic backups (see `GoogleDriveCloudService.fetchYearlyBackups`).
+  static const int kGlobalBackupYear = -2;
+
   final DateTime createdAt;
   final String version;
   final DeviceInfoObject device;

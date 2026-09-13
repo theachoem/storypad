@@ -14,6 +14,9 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
   String get tableName => "templates";
 
   @override
+  bool get isYearPartitioned => false;
+
+  @override
   QueryIntegerProperty<TemplateObjectBox> get idProperty => TemplateObjectBox_.id;
 
   @override
@@ -27,7 +30,6 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
-    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
     bool? archived = filters?["archived"] == true;
     String? galleryTemplateId = filters?["gallery_template_id"];
@@ -43,15 +45,6 @@ class TemplatesBox extends BaseBox<TemplateObjectBox, TemplateDbModel> {
 
     if (galleryTemplateId != null) {
       conditions = conditions.and(TemplateObjectBox_.galleryTemplateId.equals(galleryTemplateId));
-    }
-
-    if (createdYear != null) {
-      conditions = conditions.and(
-        TemplateObjectBox_.createdAt.betweenDate(
-          DateTime(createdYear, 1, 1),
-          DateTime(createdYear, 12, 31, 23, 59, 59),
-        ),
-      );
     }
 
     QueryBuilder<TemplateObjectBox> queryBuilder = box.query(conditions);

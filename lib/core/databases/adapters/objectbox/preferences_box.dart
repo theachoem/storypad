@@ -54,6 +54,9 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
   String get tableName => "preferences";
 
   @override
+  bool get isYearPartitioned => false;
+
+  @override
   QueryIntegerProperty<PreferenceObjectBox> get idProperty => PreferenceObjectBox_.id;
 
   @override
@@ -67,18 +70,8 @@ class PreferencesBox extends BaseBox<PreferenceObjectBox, PreferenceDbModel> {
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
-    int? createdYear = filters?["created_year"];
-
     Condition<PreferenceObjectBox> conditions = PreferenceObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(PreferenceObjectBox_.permanentlyDeletedAt.isNull());
-    if (createdYear != null) {
-      conditions = conditions.and(
-        PreferenceObjectBox_.createdAt.betweenDate(
-          DateTime(createdYear, 1, 1),
-          DateTime(createdYear, 12, 31, 23, 59, 59),
-        ),
-      );
-    }
 
     return box.query(conditions);
   }

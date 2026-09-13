@@ -3,6 +3,7 @@ import 'package:storypad/core/databases/adapters/base_db_adapter.dart';
 import 'package:storypad/core/databases/adapters/objectbox/entities.dart';
 import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
+import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/objectbox.g.dart';
@@ -47,6 +48,17 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     // conditions = conditions.and(permanentlyDeletedAtProperty.isNull());
 
     final objects = await box.query(conditions).build().findAsync();
+
+    if (!isYearPartitioned) {
+      DateTime? lastUpdated;
+      for (var obj in objects) {
+        if (lastUpdated == null || obj.updatedAt.isAfter(lastUpdated)) {
+          lastUpdated = obj.updatedAt;
+        }
+      }
+
+      return lastUpdated == null ? {} : {BackupFileObject.kGlobalBackupYear: lastUpdated};
+    }
 
     Map<int, DateTime?> lastUpdatedByYear = {};
     for (var obj in objects) {

@@ -153,7 +153,11 @@ class _ShowBackupServiceContent extends StatelessWidget {
             builder: (callback) {
               return ListTile(
                 leading: const Icon(SpIcons.folderOpen),
-                title: Text(entry.key.toString()),
+                title: Text(
+                  entry.key == BackupFileObject.kGlobalBackupYear
+                      ? tr("list_tile.backup.global_bucket_title")
+                      : entry.key.toString(),
+                ),
 
                 trailing: Column(
                   mainAxisSize: MainAxisSize.min,
