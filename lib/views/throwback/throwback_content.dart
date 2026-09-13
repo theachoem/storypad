@@ -16,8 +16,8 @@ class _ThrowbackContent extends StatelessWidget {
         onPressed: () => viewModel.goToNewPage(context),
       ),
       body: SpStoryList.withQuery(
-        key: ValueKey(viewModel.editedKey),
         disableMultiEdit: true,
+        watch: viewModel,
         filter: viewModel.filter,
       ),
     );

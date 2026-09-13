@@ -16,7 +16,6 @@ class ArchivesViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
-  int editedKey = 0;
   late PathType type = params.pathType;
 
   List<int>? years;
@@ -34,10 +33,10 @@ class ArchivesViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  void refreshList() {
-    editedKey++;
-    load();
-  }
+  /// Refreshes the year tabs and, via [ArchivesViewModel] being passed as
+  /// `watch` to each tab's [SpStoryListWithQuery], silently reloads each
+  /// tab's story list too — without remounting it (no loading-spinner flash).
+  Future<void> refreshList() => load();
 
   Future<void> onPopInvokedWithResult(bool didPop, dynamic result, BuildContext context) async {
     if (didPop) return;

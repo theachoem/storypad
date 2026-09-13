@@ -16,10 +16,10 @@ class ThrowbackViewModel extends ChangeNotifier with DisposeAwareMixin {
   late final int month = params.month;
   late final int day = params.day;
 
-  int editedKey = 0;
-
+  /// [SpStoryList.withQuery] is passed this view model as `watch`, so calling
+  /// this silently reloads the visible story list — without remounting it
+  /// (no loading-spinner flash).
   void refreshList() {
-    editedKey++;
     notifyListeners();
   }
 
@@ -41,8 +41,7 @@ class ThrowbackViewModel extends ChangeNotifier with DisposeAwareMixin {
       initialDay: day,
     ).push(context);
 
-    editedKey += 1;
-    notifyListeners();
+    refreshList();
 
     Future.delayed(const Duration(seconds: 1)).then((_) {
       HomeView.reload(debugSource: '$runtimeType#goToNewPage');

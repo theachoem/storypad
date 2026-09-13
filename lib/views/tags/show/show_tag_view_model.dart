@@ -27,7 +27,6 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   late TagDbModel _tag;
   TagDbModel get tag => _tag;
 
-  int editedKey = 0;
   List<int>? years;
 
   late final initialTune = SearchFilterObject(years: {}, types: {}, tagIds: {tag.id}, assetId: null);
@@ -40,10 +39,10 @@ class ShowTagViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  void refreshList() {
-    editedKey++;
-    load();
-  }
+  /// See [ArchivesViewModel.refreshList] — refreshes the year tabs and,
+  /// since [ShowTagViewModel] is passed as `watch` to each tab's
+  /// [SpStoryListWithQuery], silently reloads each tab's story list too.
+  Future<void> refreshList() => load();
 
   late SearchFilterObject filter = SearchFilterObject(
     years: {},

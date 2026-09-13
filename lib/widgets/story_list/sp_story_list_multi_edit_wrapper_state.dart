@@ -60,9 +60,9 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.putBack();
+            final updatedStory = await record?.putBack();
+            if (updatedStory != null) HomeView.applyStoryReloaded(updatedStory);
           }
-          await HomeView.reload(debugSource: '$runtimeType#putBackAll');
         },
       );
 
@@ -89,9 +89,9 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.moveToBin();
+            final updatedStory = await record?.moveToBin();
+            if (updatedStory != null) HomeView.applyStoryReloaded(updatedStory);
           }
-          await HomeView.reload(debugSource: '$runtimeType#moveToBinAll');
         },
       );
 
@@ -147,10 +147,9 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
           for (int i = 0; i < selectedStories.length; i++) {
             int id = selectedStories.elementAt(i);
             final record = await StoryDbModel.db.find(id);
-            await record?.archive();
+            final updatedStory = await record?.archive();
+            if (updatedStory != null) HomeView.applyStoryReloaded(updatedStory);
           }
-
-          await HomeView.reload(debugSource: '$runtimeType#archiveAll');
         },
       );
 
@@ -181,7 +180,6 @@ class SpStoryListMultiEditWrapperState extends ChangeNotifier {
             int id = state.selectedStories.elementAt(i);
             await StoryDbModel.db.delete(id);
           }
-          await HomeView.reload(debugSource: '$runtimeType#putBackAll');
         },
       );
 

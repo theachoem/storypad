@@ -105,7 +105,7 @@ class StoryTileActions {
         await SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#undoMoveToBin');
       }
 
-      return reloadHome('$runtimeType#undoMoveToBin');
+      HomeView.applyStoryReloaded(updatedStory);
     }
 
     if (context.mounted) {
@@ -150,7 +150,7 @@ class StoryTileActions {
                 story: updatedStory,
               );
 
-              return reloadHome('$runtimeType#archive');
+              HomeView.applyStoryReloaded(updatedStory);
             },
           );
         },
@@ -165,7 +165,7 @@ class StoryTileActions {
     StoryDbModel? updatedStory = await originalStory.putBack();
     if (updatedStory == null) return false;
 
-    await reloadHome('$runtimeType#putBack');
+    HomeView.applyStoryReloaded(updatedStory);
 
     AnalyticsService.instance.logPutStoryBack(
       story: updatedStory,
@@ -182,8 +182,9 @@ class StoryTileActions {
 
         if (storyListReloaderContext != null && storyListReloaderContext!.mounted) {
           await SpStoryListWithQuery.of(storyListReloaderContext!)?.load(debugSource: '$runtimeType#undoPutBack');
-          await reloadHome('$runtimeType#undoPutBack');
         }
+
+        HomeView.applyStoryReloaded(updatedStory);
       }
 
       MessengerService.of(storyListReloaderContext!).showSnackBar(

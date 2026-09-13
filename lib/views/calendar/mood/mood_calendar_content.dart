@@ -129,8 +129,9 @@ class _CalendarStoriesContent extends StatelessWidget {
         // Index 0 shows all stories for the month
         if (index == 0) {
           return SpStoryList.withQuery(
-            key: ValueKey(jsonEncode(viewModel.searchFilter.toDatabaseFilter()) + viewModel.editedKey.toString()),
+            key: ValueKey(jsonEncode(viewModel.searchFilter.toDatabaseFilter())),
             disableMultiEdit: true,
+            watch: viewModel,
             filter: viewModel.searchFilter,
           );
         }
@@ -147,8 +148,9 @@ class _CalendarStoriesContent extends StatelessWidget {
         );
 
         return SpStoryList.withQuery(
-          key: ValueKey(jsonEncode(filter.toDatabaseFilter()) + viewModel.editedKey.toString()),
+          key: ValueKey(jsonEncode(filter.toDatabaseFilter())),
           disableMultiEdit: true,
+          watch: viewModel,
           filter: SearchFilterObject(
             years: {viewModel.year},
             month: viewModel.month,

@@ -38,7 +38,8 @@ class MessengerService {
     Color? background = success ? null : Theme.of(context).colorScheme.error;
     double? width = MediaQuery.of(context).size.width > 1000 ? 400.0 : null;
 
-    scaffoldFeatureController = state?.showSnackBar(
+    final messengerState = state;
+    scaffoldFeatureController = messengerState?.showSnackBar(
       SnackBar(
         duration: duration,
         width: width,
@@ -58,10 +59,16 @@ class MessengerService {
       ),
     );
 
-    // When we our own custom ScaffoldMessager on end drawer instead of using Scaffold. SnackBar is not auto closed.
-    // Manually close in this case.
+    // When we use our own custom ScaffoldMessenger on the end drawer instead of a
+    // Scaffold's, the SnackBar is not auto closed. Manually close in this case.
+    //
+    // Check the ScaffoldMessengerState's own `mounted` flag rather than the calling
+    // `context`'s — the story/screen that triggered this snackbar (e.g. an archived
+    // tile) can be removed from the tree well before `duration` elapses, which would
+    // skip this cleanup and leave the SnackBar stuck forever even though the
+    // ScaffoldMessenger showing it is still very much alive.
     Future.delayed(duration + const Duration(milliseconds: 100)).then((_) {
-      if (context.mounted) clearSnackBars();
+      if (messengerState?.mounted == true) messengerState!.clearSnackBars();
     });
 
     return scaffoldFeatureController;

@@ -80,6 +80,21 @@ class HomeView extends StatelessWidget {
     return _homeContext?.read<HomeViewModel>().reload(debugSource: debugSource);
   }
 
+  /// Applies a single story change locally, without a full DB refetch.
+  ///
+  /// Unlike the per-tile [SpStoryListenerBuilder] callbacks, this doesn't
+  /// require the story's tile to currently be mounted in Home — so it's
+  /// safe to call for stories acted on from another screen (e.g. bulk
+  /// archive/bin/put-back from Archives) that may not be built yet.
+  static void applyStoryReloaded(StoryDbModel story) {
+    _homeContext?.read<HomeViewModel>().onAStoryReloaded(story);
+  }
+
+  /// See [applyStoryReloaded]; for permanent deletions.
+  static void applyStoryDeleted(StoryDbModel story) {
+    _homeContext?.read<HomeViewModel>().onAStoryDeleted(story);
+  }
+
   static void scrollToTop() {
     _homeContext!.read<HomeViewModel>().scrollInfo.scrollToTop();
   }
