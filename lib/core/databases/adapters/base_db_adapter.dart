@@ -9,6 +9,14 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
 
   String get tableName;
 
+  /// Whether this table's rows have real calendar semantics worth
+  /// partitioning backups by (e.g. diary entries). Tables with no inherent
+  /// date (tags, templates, preferences, ...) should override this to
+  /// `false` so they're bucketed into the single non-yearly global backup
+  /// file instead of being scattered across per-`createdAt.year` files —
+  /// see `BackupFileObject.kGlobalBackupYear`.
+  bool get isYearPartitioned => true;
+
   /// Returns a map where each key is a year (as an integer) and the value is the
   /// last updated timestamp (`DateTime?`) for records in that year.
   ///
@@ -19,6 +27,10 @@ abstract class BaseDbAdapter<T extends BaseDbModel> {
   /// This method is used in the backup flow to determine which records have been
   /// updated in each year, and to help identify which records need to be backed up
   /// or synchronized based on their last update time.
+  ///
+  /// For a table where [isYearPartitioned] is `false`, implementations return a
+  /// single entry keyed by `BackupFileObject.kGlobalBackupYear` covering every
+  /// row, regardless of that row's actual `createdAt`.
   Future<Map<int, DateTime?>> getLastUpdatedAtByYear({bool? fromThisDeviceOnly});
   Future<T?> find(int id, {bool returnDeleted = false});
 

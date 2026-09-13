@@ -12,6 +12,9 @@ class TagCategoriesBox extends BaseBox<TagCategoryObjectBox, TagCategoryDbModel>
   String get tableName => "tag_categories";
 
   @override
+  bool get isYearPartitioned => false;
+
+  @override
   QueryIntegerProperty<TagCategoryObjectBox> get idProperty => TagCategoryObjectBox_.id;
 
   @override
@@ -79,19 +82,10 @@ class TagCategoriesBox extends BaseBox<TagCategoryObjectBox, TagCategoryDbModel>
     Map<String, dynamic>? filters,
     bool returnDeleted = false,
   }) {
-    int? createdYear = filters?["created_year"];
     int? order = filters?["order"];
 
     Condition<TagCategoryObjectBox> conditions = TagCategoryObjectBox_.id.notNull();
     if (!returnDeleted) conditions = conditions.and(TagCategoryObjectBox_.permanentlyDeletedAt.isNull());
-    if (createdYear != null) {
-      conditions = conditions.and(
-        TagCategoryObjectBox_.createdAt.betweenDate(
-          DateTime(createdYear, 1, 1),
-          DateTime(createdYear, 12, 31, 23, 59, 59),
-        ),
-      );
-    }
 
     QueryBuilder<TagCategoryObjectBox> queryBuilder = box.query(conditions);
 
