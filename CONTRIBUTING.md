@@ -6,7 +6,7 @@
 - **Suggest Features:** Create an issue with your idea
 - **Improve Docs:** Fix typos or unclear parts
 - **Code:** Pick an issue or suggest improvements
-- **Localization:** Help with translations ([Guide](https://storypad.me/contributions/localization/))
+- **Localization:** Translations are AI-assisted and maintained in `app/translations/`; if you spot a mistranslation, [open an issue](https://github.com/theachoem/storypad/issues) or send a PR fixing that key
 
 ## Quick Start
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/databases/models/event_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
@@ -7,6 +8,7 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/search_filter_object.dart';
 import 'package:storypad/core/types/path_type.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/calendar/period/period_calendar_view.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -14,13 +16,19 @@ import 'package:storypad/widgets/calendar/sp_calendar.dart';
 
 class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   final PeriodCalendarView params;
+  final DevicePreferencesProvider _devicePreferencesProvider;
 
   PeriodCalendarViewModel({
     required this.params,
     required BuildContext context,
-  }) {
+  }) : _devicePreferencesProvider = context.read<DevicePreferencesProvider>() {
     load();
     params.monthYearNotifier.addListener(_onParentMonthYearChanged);
+    // DevicePreferencesProvider intentionally skips notifyListeners on reminder
+    // writes (see its _writeReminders comment) to avoid rebuilding the whole
+    // app, so the period reminder tile must subscribe here instead — same
+    // pattern as RemindersViewModel.
+    _devicePreferencesProvider.addListenerForReminderChanges(notifyListeners);
   }
 
   final SpCalendarController calendarController = SpCalendarController();
@@ -177,6 +185,7 @@ class PeriodCalendarViewModel extends ChangeNotifier with DisposeAwareMixin, Deb
   @override
   void dispose() {
     params.monthYearNotifier.removeListener(_onParentMonthYearChanged);
+    _devicePreferencesProvider.removeListenerForReminderChanges(notifyListeners);
     super.dispose();
   }
 }

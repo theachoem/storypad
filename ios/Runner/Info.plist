@@ -30,12 +30,12 @@
             <string>ko-KR</string>
             <string>pl-PL</string>
             <string>pt-BR</string>
+            <string>ru-RU</string>
+            <string>th-TH</string>
+            <string>tr</string>
+            <string>uk-UA</string>
             <string>vi-VN</string>
             <string>zh-CN</string>
-            <string>ru-RU</string>
-            <string>uk-UA</string>
-            <string>tr</string>
-            <string>th-TH</string>
         </array>
         <key>CFBundleName</key>
         <string>${APP_NAME}</string>
