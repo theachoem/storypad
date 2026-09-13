@@ -44,9 +44,17 @@ class SyncResponse {
   final Map<int, CloudFileObject>? uploadedYearlyFiles;
   final Map<int, DateTime?>? lastSyncedAtByYear;
 
+  /// Whether Step 3 actually ran an import for this service — i.e. there was
+  /// remote content to merge in, regardless of whether any record ended up
+  /// changing. Lets a multi-service sync run know whether it owes the home
+  /// UI a reload once the whole batch is done (see
+  /// BackupProvider._syncBackupAcrossDevices).
+  final bool didImport;
+
   SyncResponse({
     this.uploadedYearlyFiles,
     this.lastSyncedAtByYear,
+    this.didImport = false,
   });
 }
 
@@ -249,6 +257,11 @@ class BackupRepository {
   Future<BackupResult<SyncResponse>> sync(
     BackupCloudService service, {
     required bool uploadAssets,
+    // False when called from a multi-service batch — see
+    // BackupProvider._syncBackupAcrossDevices, which then owns firing
+    // restoreService.notify() once for the whole batch instead of once per
+    // service.
+    bool notifyImportCallbacks = true,
   }) async {
     AppLogger.d('🔄 Starting sync for service: ${service.serviceType.displayName}');
 
@@ -278,18 +291,22 @@ class BackupRepository {
     final backupContentsByYear = step2Result.data?.backupContentsByYear;
 
     // Step 3: Import yearly backups if needed
+    bool didImport = false;
     if (lastSyncedAtByYear != null && lastSyncedAtByYear.isNotEmpty) {
       final step3Result = await startStep3(
         backupContentsByYear,
         lastSyncedAtByYear,
         lastDbUpdatedAtByYear,
         service,
+        notifyCallbacks: notifyImportCallbacks,
       );
 
       if (!step3Result.isSuccess) {
         AppLogger.warning('Step 3 failed for ${service.serviceType.displayName}: ${step3Result.error!.message}');
         return BackupResult.failure(step3Result.error!);
       }
+
+      didImport = true;
 
       // Re-fetch local timestamps after import (Step 3 may have updated DB with remote data)
       lastDbUpdatedAtByYear = await getLastDbUpdatedAtByYear();
@@ -318,6 +335,7 @@ class BackupRepository {
       SyncResponse(
         uploadedYearlyFiles: step4Result.data?.uploadedYearlyFiles,
         lastSyncedAtByYear: lastSyncedAtByYear,
+        didImport: didImport,
       ),
     );
   }
@@ -389,8 +407,9 @@ class BackupRepository {
     Map<int, BackupObject>? backupContentsByYear,
     Map<int, DateTime?>? lastSyncedAtByYear,
     Map<int, DateTime?>? lastDbUpdatedAtByYear,
-    BackupCloudService service,
-  ) async {
+    BackupCloudService service, {
+    bool notifyCallbacks = true,
+  }) async {
     try {
       final result = await _step3LatestBackupImporter.start(
         restoreService,
@@ -399,6 +418,7 @@ class BackupRepository {
         backupContentsByYear,
         lastSyncedAtByYear,
         lastDbUpdatedAtByYear,
+        notifyCallbacks: notifyCallbacks,
       );
       return BackupResult.success(result);
     } catch (e) {

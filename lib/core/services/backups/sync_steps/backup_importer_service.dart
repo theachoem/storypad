@@ -17,8 +17,14 @@ class BackupImporterService {
     BackupImportHistoryStorage importHistoryStorage,
     Map<int, BackupObject>? backupContentsByYear,
     Map<int, DateTime?>? lastSyncedAtByYear,
-    Map<int, DateTime?>? lastDbUpdatedAtByYear,
-  ) async {
+    Map<int, DateTime?>? lastDbUpdatedAtByYear, {
+    // False when syncing multiple services in a batch (see
+    // BackupProvider._syncBackupAcrossDevices) — the caller holds off calling
+    // restoreService.notify() itself until every service in the batch has
+    // run, so a home reload fires once per sync run instead of once per
+    // service.
+    bool notifyCallbacks = true,
+  }) async {
     AppLogger.d('🚧 $runtimeType#start ...');
 
     if (backupContentsByYear == null || backupContentsByYear.isEmpty) {
@@ -54,7 +60,7 @@ class BackupImporterService {
       totalChangesCount += changesCount;
     }
 
-    await restoreService.notify();
+    if (notifyCallbacks) await restoreService.notify();
 
     _messenger.report(
       serviceType: cloudService.serviceType,

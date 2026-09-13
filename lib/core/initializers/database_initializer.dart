@@ -8,6 +8,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/databases/models/template_db_model.dart';
+import 'package:storypad/core/initializers/backup_global_bucket_migration_initializer.dart';
 import 'package:storypad/core/services/assets/asset_orphaned_fixer_service.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/storages/computed_initial_tags_for_assets_storage.dart';
@@ -34,6 +35,7 @@ class DatabaseInitializer {
     await computeStoryTagsForAsset();
     await migrateEmbedAssetsToUseRelativeFilePaths();
     await AssetOrphanedFixerService().call();
+    await BackupGlobalBucketMigrationInitializer.call();
   }
 
   // The 'tags' column was newly added to the asset table, so existing data may be missing tags.
