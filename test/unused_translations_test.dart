@@ -17,7 +17,6 @@ Future<void> _checkUnusedAndMissingKeys() async {
 
   // Keys that are intentionally unused or reserved for future use
   const exceptionalUnusedKeys = {
-    '_formula',
     'button.maybe_later',
     'button.less',
     'button.more',
