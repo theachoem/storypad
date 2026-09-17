@@ -1,0 +1,38 @@
+name: storypad_editor
+description: >-
+  A Quill-Delta-compatible rich text editor built on super_editor, developed
+  for StoryPad.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.12.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Pinned to a specific commit, not a version tag -- super_editor hasn't cut
+  # a stable release yet (0.3.0-dev.52). The vendored clone at
+  # super_editor_experiment/super_editor/ is this exact commit, used for
+  # source-diving; keep the two in sync when bumping.
+  super_editor:
+    git:
+      url: https://github.com/Flutter-Bounty-Hunters/super_editor.git
+      ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
+      path: super_editor
+
+  # super_editor constrains this to ^9.4.1 (<10.0.0). Widened here, not
+  # narrowed to match, so a future consumer needing 10.x (e.g. StoryPad's
+  # app, which pins 10.8.3) isn't blocked by this package alone -- actually
+  # landing on a 10.x resolution still requires super_editor's own
+  # constraint to widen, or a dependency_override at the consumer.
+  dart_quill_delta: ">=9.4.1 <11.0.0"
+
+  follow_the_leader: ^0.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
