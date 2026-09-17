@@ -39,7 +39,7 @@ class BackupLatestCheckerService {
     AppLogger.d('🚧 $runtimeType#start ...');
 
     try {
-      return _start(
+      return await _start(
         cloudService,
         importHistoryStorage,
         lastDbUpdatedAtByYear,

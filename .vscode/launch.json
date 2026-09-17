@@ -35,19 +35,6 @@
       ]
     },
     {
-      "name": "Spooky",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "profile",
-      "program": "lib/main_spooky.dart",
-      "preLaunchTask": "sync-private-keys",
-      "args": [
-        "--flavor",
-        "spooky",
-        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/spooky.json"
-      ]
-    },
-    {
       "name": "Community (iOS)",
       "request": "launch",
       "type": "dart",
@@ -73,20 +60,6 @@
         "storypad",
         "--dart-define=CUPERTINO=yes",
         "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/storypad.json"
-      ]
-    },
-    {
-      "name": "Spooky (iOS)",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "profile",
-      "program": "lib/main_spooky.dart",
-      "preLaunchTask": "sync-private-keys",
-      "args": [
-        "--flavor",
-        "spooky",
-        "--dart-define=CUPERTINO=yes",
-        "--dart-define-from-file=bin/.tmp/private_keys/dart_defines/spooky.json"
       ]
     },
     {

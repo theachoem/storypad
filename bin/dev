@@ -5,20 +5,17 @@
 # Commands:
 # bin/dev --community
 # bin/dev --storypad
-# bin/dev --spooky
 #
 # bin/dev --community-ios
 # bin/dev --storypad-ios
-# bin/dev --spooky-ios
 #
 # bin/dev --community-macos
 # bin/dev --storypad-macos
-# bin/dev --spooky-macos
 #
 # Works without the private_keys/ submodule checked out (e.g. external contributors
 # who only cloned this repo) - see sync_private_keys / get_debug_keystore_path in
 # bin/helpers. `community` is the only flavor with public Firebase config, so it's the
-# only one that fully runs this way; storypad/spooky still need private_keys/.
+# only one that fully runs this way; storypad still needs private_keys/.
 
 source "$(dirname "$0")/helpers"
 
@@ -44,9 +41,6 @@ case "$INPUT" in
 --storypad)
   CMD="flutter run $BASE_ARG"
   ;;
---spooky)
-  CMD="flutter run $BASE_ARG"
-  ;;
 --community | "")
   CMD="flutter run $BASE_ARG"
   ;;
@@ -56,9 +50,6 @@ case "$INPUT" in
 --storypad-macos)
   CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes -d macos"
   ;;
---spooky-ios)
-  CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes"
-  ;;
 --community-ios | "")
   CMD="flutter run $BASE_ARG --dart-define=CUPERTINO=yes"
   ;;
@@ -67,7 +58,7 @@ case "$INPUT" in
   ;;
 *)
   echo "Invalid option: $FLAVOR"
-  echo "Usage: bin/dev [--storypad | --spooky | --community]"
+  echo "Usage: bin/dev [--storypad | --community]"
   exit 1
   ;;
 esac

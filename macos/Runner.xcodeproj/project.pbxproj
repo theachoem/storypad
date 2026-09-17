@@ -81,30 +81,22 @@
 		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
 		33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Flutter-Generated.xcconfig"; path = "ephemeral/Flutter-Generated.xcconfig"; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
-		387FFED6859D865F061196A1 /* Pods-RunnerTests.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-spooky.xcconfig"; sourceTree = "<group>"; };
-		42FB6C2612FEF7389AB15953 /* Pods-Runner.debug-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-spooky.xcconfig"; sourceTree = "<group>"; };
 		4624778AFD367CC6BE8A4446 /* Pods-RunnerTests.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-community.xcconfig"; sourceTree = "<group>"; };
 		4E141ECC5FCF72640A3D1092 /* Pods-RunnerTests.profile-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-community.xcconfig"; sourceTree = "<group>"; };
-		617EF3007015471C9EC2FCE5 /* Release-spooky.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-spooky.entitlements"; sourceTree = "<group>"; };
 		62DAA0692F41ADD300CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
 		62DAA06A2F41ADD300CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
 		64201C1DF9F048729E71111A /* Release-community.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-community.entitlements"; sourceTree = "<group>"; };
 		6C07ADFFC5B7B643D221A23D /* Pods-Runner.release-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-community.xcconfig"; sourceTree = "<group>"; };
-		74116ACA916E441FC8D9A848 /* Pods-Runner.release-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-spooky.xcconfig"; sourceTree = "<group>"; };
-		75BB8522CFB6652374A95031 /* Pods-Runner.profile-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-spooky.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-spooky.xcconfig"; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		7DC73084E8E04810AD81F213 /* Release-storypad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-storypad.entitlements"; sourceTree = "<group>"; };
 		871734F7C2C1C756850EBDE3 /* Pods-Runner.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-community.xcconfig"; sourceTree = "<group>"; };
-		8CB810C2EFA54D399FEAE30A /* DebugProfile-spooky.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DebugProfile-spooky.entitlements"; sourceTree = "<group>"; };
 		8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudBackupService.swift; sourceTree = "<group>"; };
 		9244CEC2FF884D160FCFF6EC /* Pods-RunnerTests.release-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-storypad.xcconfig"; sourceTree = "<group>"; };
 		957DBB949DD25F4F4A34640F /* Pods-RunnerTests.debug-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-storypad.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		98C0E7AF75CD685C04DD3AC1 /* Pods-Runner.profile-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-storypad.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-storypad.xcconfig"; sourceTree = "<group>"; };
-		9EE0B50862E45422BCFFEA73 /* Pods-RunnerTests.profile-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-spooky.xcconfig"; sourceTree = "<group>"; };
 		A3C7576DA2E84F8A8AE10F6E /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AACC57F14C08B0D37CECEA57 /* Pods-RunnerTests.release-spooky.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-spooky.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-spooky.xcconfig"; sourceTree = "<group>"; };
 		C1AB7A1034ABA8601F241D03 /* Pods-RunnerTests.release-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-community.xcconfig"; sourceTree = "<group>"; };
 		CAF0B61115129202CB05B96F /* Pods-Runner.release-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-storypad.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-storypad.xcconfig"; sourceTree = "<group>"; };
 		DEE8AD14F5A94628B974908E /* DebugProfile-storypad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DebugProfile-storypad.entitlements"; sourceTree = "<group>"; };
@@ -206,10 +198,8 @@
 				66AF0A7B8F74450F89C84311 /* services */,
 				DEE8AD14F5A94628B974908E /* DebugProfile-storypad.entitlements */,
 				FDACDA51D8BA49A2837F76A3 /* DebugProfile-community.entitlements */,
-				8CB810C2EFA54D399FEAE30A /* DebugProfile-spooky.entitlements */,
 				7DC73084E8E04810AD81F213 /* Release-storypad.entitlements */,
 				64201C1DF9F048729E71111A /* Release-community.entitlements */,
-				617EF3007015471C9EC2FCE5 /* Release-spooky.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
 				62DAA06B2F41ADD300CC9E4F /* logos */,
@@ -238,22 +228,16 @@
 		B25753D53A6FABA0E1A4031F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				42FB6C2612FEF7389AB15953 /* Pods-Runner.debug-spooky.xcconfig */,
 				EAF7CCCF311FBAE5D0781568 /* Pods-Runner.debug-storypad.xcconfig */,
 				871734F7C2C1C756850EBDE3 /* Pods-Runner.debug-community.xcconfig */,
-				74116ACA916E441FC8D9A848 /* Pods-Runner.release-spooky.xcconfig */,
 				CAF0B61115129202CB05B96F /* Pods-Runner.release-storypad.xcconfig */,
 				6C07ADFFC5B7B643D221A23D /* Pods-Runner.release-community.xcconfig */,
-				75BB8522CFB6652374A95031 /* Pods-Runner.profile-spooky.xcconfig */,
 				98C0E7AF75CD685C04DD3AC1 /* Pods-Runner.profile-storypad.xcconfig */,
 				F71BD256CBA9F59B0B38DFCF /* Pods-Runner.profile-community.xcconfig */,
-				387FFED6859D865F061196A1 /* Pods-RunnerTests.debug-spooky.xcconfig */,
 				957DBB949DD25F4F4A34640F /* Pods-RunnerTests.debug-storypad.xcconfig */,
 				4624778AFD367CC6BE8A4446 /* Pods-RunnerTests.debug-community.xcconfig */,
-				AACC57F14C08B0D37CECEA57 /* Pods-RunnerTests.release-spooky.xcconfig */,
 				9244CEC2FF884D160FCFF6EC /* Pods-RunnerTests.release-storypad.xcconfig */,
 				C1AB7A1034ABA8601F241D03 /* Pods-RunnerTests.release-community.xcconfig */,
-				9EE0B50862E45422BCFFEA73 /* Pods-RunnerTests.profile-spooky.xcconfig */,
 				F6D218DE375F62AB8F833648 /* Pods-RunnerTests.profile-storypad.xcconfig */,
 				4E141ECC5FCF72640A3D1092 /* Pods-RunnerTests.profile-community.xcconfig */,
 			);
@@ -302,8 +286,8 @@
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* ShellScript */,
 				CF85894B5F7A912FB699DFD4 /* [CP] Embed Pods Frameworks */,
-				F07390B4D78EC9BE2F27E66F /* FlutterFire: "flutterfire bundle-service-file" */,
-				F1F8B5B28CF0063A6F5B1B6C /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
+				5A73655366DF73F0045E0030 /* FlutterFire: "flutterfire bundle-service-file" */,
+				5819F1BA795872A5AA2E0984 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 			);
 			buildRules = (
 			);
@@ -432,6 +416,42 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
 		};
+		5819F1BA795872A5AA2E0984 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "FlutterFire: \"flutterfire upload-crashlytics-symbols\"";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:${PUB_CACHE}/bin:$HOME/.pub-cache/bin\"\n\nif [ -n \"$PODS_ROOT\" ] && [ -f \"$PODS_ROOT/FirebaseCrashlytics/run\" ]; then\n  # CocoaPods installation.\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"$PODS_ROOT/FirebaseCrashlytics/run\"\nelif [ -n \"$BUILD_DIR\" ] && [ -f \"$BUILD_DIR/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" ]; then\n  # Swift Package Manager installation. Flutter resolves Swift Package Manager\n  # checkouts into \"$BUILD_DIR/SourcePackages\" (i.e. \"<project>/[ios|macos]/build/SourcePackages\"),\n  # rather than the Xcode DerivedData directory used for a plain Xcode project.\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"$BUILD_DIR/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nelif [ -n \"$BUILD_DIR\" ] && [ -f \"${BUILD_DIR%/Build/Products}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" ]; then\n  # Swift Package Manager installation where the Flutter-managed derivedDataPath puts checkouts\n  # next to \"$BUILD_DIR\" (i.e. at \"<project>/[ios|macos]/build/SourcePackages\"), not inside it.\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"${BUILD_DIR%/Build/Products}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nelse\n  # Fall back to the Xcode DerivedData directory in case Swift Package Manager\n  # checkouts are not resolved relative to \"$BUILD_DIR\" (older/alternative setups).\n  # Cannot use \"BUILD_DIR%/Build/*\" as per Firebase documentation, it points to \"flutter-project/build/ios/*\" path which doesn't have run script\n  DERIVED_DATA_PATH=$(echo \"$BUILD_ROOT\" | sed -E 's|(.*DerivedData/[^/]+).*|\\1|')\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"${DERIVED_DATA_PATH}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n\n  if [ ! -f \"$PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT\" ]; then\n    # Last resort: search both known Swift Package Manager checkout roots in case\n    # the exact expected layout above does not match this Xcode/Flutter version.\n    FOUND_UPLOAD_SCRIPT=$(find \"$BUILD_DIR\" \"${DERIVED_DATA_PATH}\" -type f -path '*firebase-ios-sdk/Crashlytics/run' -print -quit 2>/dev/null)\n    if [ -n \"$FOUND_UPLOAD_SCRIPT\" ]; then\n      PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"$FOUND_UPLOAD_SCRIPT\"\n    fi\n  fi\nfi\n\n# Command to upload symbols script used to upload symbols to Firebase server\nflutterfire upload-crashlytics-symbols --upload-symbols-script-path=\"$PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT\" --platform=macos --apple-project-path=\"${SRCROOT}\" --env-platform-name=\"${PLATFORM_NAME}\" --env-configuration=\"${CONFIGURATION}\" --env-project-dir=\"${PROJECT_DIR}\" --env-built-products-dir=\"${BUILT_PRODUCTS_DIR}\" --env-dwarf-dsym-folder-path=\"${DWARF_DSYM_FOLDER_PATH}\" --env-dwarf-dsym-file-name=\"${DWARF_DSYM_FILE_NAME}\" --env-infoplist-path=\"${INFOPLIST_PATH}\" --build-configuration=${CONFIGURATION}\n";
+		};
+		5A73655366DF73F0045E0030 /* FlutterFire: "flutterfire bundle-service-file" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "FlutterFire: \"flutterfire bundle-service-file\"";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:${PUB_CACHE}/bin:$HOME/.pub-cache/bin\"\n# Define the Resources directory path\nRESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources\"\n\n# Create the Resources directory if it does not exist\n mkdir -p \"$RESOURCES_DIR\"\n\n flutterfire bundle-service-file --plist-destination=\"$RESOURCES_DIR\" --build-configuration=${CONFIGURATION} --platform=macos --apple-project-path=\"${SRCROOT}\"\n";
+		};
 		CF85894B5F7A912FB699DFD4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -493,42 +513,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F07390B4D78EC9BE2F27E66F /* FlutterFire: "flutterfire bundle-service-file" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "FlutterFire: \"flutterfire bundle-service-file\"";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\"\n# Define the Resources directory path\nRESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources\"\n\n# Create the Resources directory if it does not exist\n mkdir -p \"$RESOURCES_DIR\"\n\n flutterfire bundle-service-file --plist-destination=\"$RESOURCES_DIR\" --build-configuration=${CONFIGURATION} --platform=macos --apple-project-path=\"${SRCROOT}\"\n";
-		};
-		F1F8B5B28CF0063A6F5B1B6C /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "FlutterFire: \"flutterfire upload-crashlytics-symbols\"";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\"\n\nif [ -z \"$PODS_ROOT\" ]; then\n  # Cannot use \"BUILD_DIR%/Build/*\" as per Firebase documentation, it points to \"flutter-project/build/ios/*\" path which doesn't have run script\n  DERIVED_DATA_PATH=$(echo \"$BUILD_ROOT\" | sed -E 's|(.*DerivedData/[^/]+).*|\\1|')\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"${DERIVED_DATA_PATH}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nelse\n  PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT=\"$PODS_ROOT/FirebaseCrashlytics/run\"\nfi\n\n# Command to upload symbols script used to upload symbols to Firebase server\nflutterfire upload-crashlytics-symbols --upload-symbols-script-path=\"$PATH_TO_CRASHLYTICS_UPLOAD_SCRIPT\" --platform=macos --apple-project-path=\"${SRCROOT}\" --env-platform-name=\"${PLATFORM_NAME}\" --env-configuration=\"${CONFIGURATION}\" --env-project-dir=\"${PROJECT_DIR}\" --env-built-products-dir=\"${BUILT_PRODUCTS_DIR}\" --env-dwarf-dsym-folder-path=\"${DWARF_DSYM_FOLDER_PATH}\" --env-dwarf-dsym-file-name=\"${DWARF_DSYM_FILE_NAME}\" --env-infoplist-path=\"${INFOPLIST_PATH}\" --build-configuration=${CONFIGURATION}\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -579,311 +563,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		331C80DB294CF71000263BE5 /* Debug-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 387FFED6859D865F061196A1 /* Pods-RunnerTests.debug-spooky.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				EXPANDED_CODE_SIGN_IDENTITY = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
-			};
-			name = "Debug-spooky";
-		};
-		331C80DC294CF71000263BE5 /* Release-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AACC57F14C08B0D37CECEA57 /* Pods-RunnerTests.release-spooky.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				EXPANDED_CODE_SIGN_IDENTITY = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
-			};
-			name = "Release-spooky";
-		};
-		331C80DD294CF71000263BE5 /* Profile-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9EE0B50862E45422BCFFEA73 /* Pods-RunnerTests.profile-spooky.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				EXPANDED_CODE_SIGN_IDENTITY = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
-			};
-			name = "Profile-spooky";
-		};
-		338D0CE9231458BD00FA5F75 /* Profile-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-			};
-			name = "Profile-spooky";
-		};
-		338D0CEA231458BD00FA5F75 /* Profile-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-spooky.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = XF9U464CCP;
-				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 5.0;
-			};
-			name = "Profile-spooky";
-		};
-		338D0CEB231458BD00FA5F75 /* Profile-spooky */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "Profile-spooky";
-		};
-		33CC10F92044A3C60003C045 /* Debug-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = "Debug-spooky";
-		};
-		33CC10FA2044A3C60003C045 /* Release-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-			};
-			name = "Release-spooky";
-		};
-		33CC10FC2044A3C60003C045 /* Debug-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-spooky.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = XF9U464CCP;
-				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-			};
-			name = "Debug-spooky";
-		};
-		33CC10FD2044A3C60003C045 /* Release-spooky */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = storypad_logo_1_0;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "Runner/Release-spooky.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = XF9U464CCP;
-				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 5.0;
-			};
-			name = "Release-spooky";
-		};
-		33CC111C2044C6BA0003C045 /* Debug-spooky */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "Debug-spooky";
-		};
-		33CC111D2044C6BA0003C045 /* Release-spooky */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "Release-spooky";
-		};
 		6203048A2DF4B1D10042D90D /* Debug-storypad */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
@@ -931,7 +610,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -957,7 +636,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -979,7 +658,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1041,7 +720,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -1058,7 +737,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-community.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
@@ -1067,8 +746,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky.community;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1086,7 +765,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1142,7 +821,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1158,8 +837,8 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/Release-storypad.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -1167,9 +846,9 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "StoryPad MacOS";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-storypad";
@@ -1188,7 +867,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1244,7 +923,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1260,7 +939,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/Release-community.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
@@ -1269,8 +948,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky.community;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1287,7 +966,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1343,7 +1022,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1368,7 +1047,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1389,7 +1068,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1445,7 +1124,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1461,7 +1140,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-community.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
@@ -1470,8 +1149,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.spooky.community;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1488,7 +1167,7 @@
 				EXPANDED_CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory.community.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/storypad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/storypad";
@@ -1509,66 +1188,54 @@
 		331C80DE294CF71000263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				331C80DB294CF71000263BE5 /* Debug-spooky */,
 				6203048C2DF4B1D10042D90D /* Debug-storypad */,
 				620304902DF4B1E90042D90D /* Debug-community */,
-				331C80DC294CF71000263BE5 /* Release-spooky */,
 				620304942DF4B1F90042D90D /* Release-storypad */,
 				620304982DF4B2040042D90D /* Release-community */,
-				331C80DD294CF71000263BE5 /* Profile-spooky */,
 				6203049C2DF4B2150042D90D /* Profile-storypad */,
 				620304A02DF4B2230042D90D /* Profile-community */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-spooky";
+			defaultConfigurationName = "Release-storypad";
 		};
 		33CC10E82044A3C60003C045 /* Build configuration list for PBXProject "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				33CC10F92044A3C60003C045 /* Debug-spooky */,
 				6203048A2DF4B1D10042D90D /* Debug-storypad */,
 				6203048E2DF4B1E90042D90D /* Debug-community */,
-				33CC10FA2044A3C60003C045 /* Release-spooky */,
 				620304922DF4B1F90042D90D /* Release-storypad */,
 				620304962DF4B2040042D90D /* Release-community */,
-				338D0CE9231458BD00FA5F75 /* Profile-spooky */,
 				6203049A2DF4B2150042D90D /* Profile-storypad */,
 				6203049E2DF4B2230042D90D /* Profile-community */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-spooky";
+			defaultConfigurationName = "Release-storypad";
 		};
 		33CC10FB2044A3C60003C045 /* Build configuration list for PBXNativeTarget "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				33CC10FC2044A3C60003C045 /* Debug-spooky */,
 				6203048B2DF4B1D10042D90D /* Debug-storypad */,
 				6203048F2DF4B1E90042D90D /* Debug-community */,
-				33CC10FD2044A3C60003C045 /* Release-spooky */,
 				620304932DF4B1F90042D90D /* Release-storypad */,
 				620304972DF4B2040042D90D /* Release-community */,
-				338D0CEA231458BD00FA5F75 /* Profile-spooky */,
 				6203049B2DF4B2150042D90D /* Profile-storypad */,
 				6203049F2DF4B2230042D90D /* Profile-community */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-spooky";
+			defaultConfigurationName = "Release-storypad";
 		};
 		33CC111B2044C6BA0003C045 /* Build configuration list for PBXAggregateTarget "Flutter Assemble" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				33CC111C2044C6BA0003C045 /* Debug-spooky */,
 				6203048D2DF4B1D10042D90D /* Debug-storypad */,
 				620304912DF4B1E90042D90D /* Debug-community */,
-				33CC111D2044C6BA0003C045 /* Release-spooky */,
 				620304952DF4B1F90042D90D /* Release-storypad */,
 				620304992DF4B2040042D90D /* Release-community */,
-				338D0CEB231458BD00FA5F75 /* Profile-spooky */,
 				6203049D2DF4B2150042D90D /* Profile-storypad */,
 				620304A12DF4B2230042D90D /* Profile-community */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-spooky";
+			defaultConfigurationName = "Release-storypad";
 		};
 /* End XCConfigurationList section */
 

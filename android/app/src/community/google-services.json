@@ -1,51 +1,26 @@
 {
   "project_info": {
-    "project_number": "892248434003",
-    "project_id": "juniorise-spooky-community",
-    "storage_bucket": "juniorise-spooky-community.firebasestorage.app"
+    "project_number": "200040656841",
+    "project_id": "write-story-308919",
+    "storage_bucket": "write-story-308919.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:892248434003:android:5e6ee709875438aa63eda6",
+        "mobilesdk_app_id": "1:200040656841:android:818105d452a7119c8e8218",
         "android_client_info": {
-          "package_name": "com.juniorise.spooky.community"
+          "package_name": "com.tc.writestory.community"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.juniorise.spooky.community",
-            "certificate_hash": "04a27735cbbc9e8bf1ccf2b734fe834ad54d4840"
-          }
-        },
-        {
-          "client_id": "892248434003-7p06aqe80m3s6b6b1iui6llda2m9qcbl.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBn4IK7ySHqwlpYqWjg9BPvHdXuB4HJcy4"
+          "current_key": "AIzaSyCDtdw-fHe9O21qZboGObwixGwVUaKtEuI"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "892248434003-60388oarratalns41v2059obt27kk6kt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "892248434003-34uc2e5inp4l3fmcvd0bh12ao1sq4pv2.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.juniorise.spooky"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

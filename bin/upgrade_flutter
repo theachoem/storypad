@@ -28,5 +28,4 @@ run_command "(cd ios && pod install --repo-update)"
 run_command "(cd macos && pod install --repo-update)"
 
 run_command "bin/flutterfire --community"
-run_command "bin/flutterfire --spooky"
 run_command "bin/flutterfire --storypad"

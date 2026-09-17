@@ -42,9 +42,8 @@ final bool kSupportCamera = Platform.isAndroid || Platform.isIOS;
 final bool kSupportQuickActions = Platform.isAndroid || Platform.isIOS;
 final bool kSupportVideoCompression = Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 
-final bool kSpooky = kPackageInfo.packageName == 'com.juniorise.spooky';
 final bool kStoryPad = kPackageInfo.packageName == 'com.tc.writestory';
-final bool kCommunity = kPackageInfo.packageName == 'com.juniorise.spooky.community';
+final bool kCommunity = kPackageInfo.packageName == 'com.tc.writestory.community';
 
 late final Directory kSupportDirectory;
 late final Directory kApplicationDirectory;

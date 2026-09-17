@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
 
 SPEC CHECKSUMS:
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   ObjectBox: 2aae8ad350012cb53c6e7848064307cf68617f73
   objectbox_flutter_libs: 42b57158b8c4869b731487f220e07d6edc6616e0
 
