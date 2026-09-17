@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Make sure python > 3.8 is install.
+#
+# pip3 install codemagic-cli-tools
+# pip3 show codemagic-cli-tools
+# asdf reshim python
+# which xcode-project
+#
+# reference:
+# https://docs.codemagic.io/knowledge-codemagic/codemagic-cli-tools/
+
+# Usage:
+#   bin/build_release_macos --storypad
+#   bin/build_release_macos --community
+
+source "$(dirname "$0")/helpers"
+sync_private_keys
+
+function build_pkg() {
+  FLAVOR=$1
+  PROVISIONING_EXPORT_PATH=$(get_provision_export_path $FLAVOR "macos")
+
+  ARCHIVE_PATH="build/macos/archive/$FLAVOR.xcarchive"
+  EXPORT_PATH="build/macos/export/$FLAVOR"
+
+  run_command "rm -rf $ARCHIVE_PATH" # clean previous archive
+  run_command "rm -rf $EXPORT_PATH" # clean previous export
+  run_command "rm -rf macos/Flutter/ephemeral/Flutter-Generated.xcconfig" # remove existing generated xcconfig
+  run_command "rm -rf macos/Flutter/ephemeral/GeneratedDartDefines.xcconfig" # remove existing generated dart-defines
+  run_command "flutter pub get" # pod install required pub get first.
+
+  # no actual build, it only generates Flutter-Generated.xcconfig, Flutter/ephemeral/flutter_export_environment.sh etc.
+  run_command "flutter build macos --release
+    --config-only
+    --flavor=$FLAVOR
+    --dart-define=CUPERTINO=yes
+    --dart-define-from-file=bin/.tmp/private_keys/dart_defines/$FLAVOR.json"
+
+  # generates Flutter/ephemeral/GeneratedDartDefines.xcconfig
+  run_command "(cd macos && source Flutter/ephemeral/flutter_export_environment.sh && ./scripts/extract_dart_defines.sh)"
+
+  # builds & signs the .app into an .xcarchive
+  run_command "xcodebuild archive
+    -workspace macos/Runner.xcworkspace
+    -scheme $FLAVOR
+    -configuration Release-$FLAVOR
+    -archivePath $ARCHIVE_PATH"
+
+  # exports the archive as a Mac App Store .pkg installer
+  run_command "xcodebuild -exportArchive
+    -archivePath $ARCHIVE_PATH
+    -exportOptionsPlist $PROVISIONING_EXPORT_PATH
+    -exportPath $EXPORT_PATH"
+}
+
+# sync_private_keys mirrors AuthKey_<apikey>.p8 into ~/.appstoreconnect/private_keys/,
+# which is where the xcrun CLI actually looks for it.
+function upload_pkg_to_app_store() {
+  FLAVOR=$1
+
+  API_ISSUER_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ISSUER_ID')
+  API_KEY_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ID')
+  PKG_FILE=(build/macos/export/$FLAVOR/*.pkg)
+
+  echo "🔑 Issuer ID: $API_ISSUER_ID"
+  echo "🔑 API Key ID: $API_KEY_ID"
+  echo "🔑 PKG File: $PKG_FILE"
+  echo ""
+
+  run_command "xcrun altool --upload-app
+    --type macos
+    --file '$PKG_FILE'
+    --apiKey $API_KEY_ID
+    --apiIssuer $API_ISSUER_ID"
+}
+
+function main(){
+  FLAVOR=${1#--} # eg. --storypad -> storypad
+
+  echo "Building macOS app for $FLAVOR flavor..."
+  echo ""
+
+  setup_signing_certificates
+  copy_provisioning_profile_to_xcode_home $FLAVOR "macos"
+  install_provisioning_profile $FLAVOR "macos" "macos/Runner.xcodeproj"
+  build_pkg $FLAVOR
+  upload_pkg_to_app_store $FLAVOR
+}
+
+validate_flavor_inputs $@
+main $@

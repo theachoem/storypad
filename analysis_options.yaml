@@ -35,3 +35,7 @@ analyzer:
   exclude:
     - packages/flutter-quill/**
     - build/**
+    - android/**
+    - ios/**
+    - macos/**
+    - linux/**

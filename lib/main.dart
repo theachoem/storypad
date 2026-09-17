@@ -42,7 +42,7 @@ Future<void> _initializeApp({
 }) async {
   // firebase initialize (never blocks startup beyond its own timeout)
   await FirebaseInitializer.call(options: firebaseOptions);
-  if (!Platform.isLinux) CrashlyticsInitializer.call();
+  CrashlyticsInitializer.call();
   RemoteConfigInitializer.call();
 
   // core

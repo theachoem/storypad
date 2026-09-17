@@ -98,17 +98,6 @@ android {
 
     flavorDimensions.add("app")
     productFlavors {
-        create("spooky") {
-            dimension = "app"
-            applicationId = "com.juniorise.spooky"
-            namespace = "com.juniorise.spooky"
-            manifestPlaceholders["appLogo"] = "ic_launcher"
-            // Dropbox OAuth2 redirect scheme — must match DropboxOAuthService's
-            // per-flavor scheme constant and the redirect URI registered in the
-            // Dropbox app console.
-            manifestPlaceholders["dropboxCallbackScheme"] = "spooky"
-        }
-
         create("storypad") {
             dimension = "app"
             applicationId = "com.tc.writestory"
@@ -119,10 +108,10 @@ android {
 
         create("community") {
             dimension = "app"
-            applicationId = "com.juniorise.spooky.community"
-            namespace = "com.juniorise.spooky.community"
+            applicationId = "com.tc.writestory.community"
+            namespace = "com.tc.writestory.community"
             manifestPlaceholders["appLogo"] = "ic_launcher"
-            manifestPlaceholders["dropboxCallbackScheme"] = "spookycommunity"
+            manifestPlaceholders["dropboxCallbackScheme"] = "storypadcommunity"
         }
     }
 

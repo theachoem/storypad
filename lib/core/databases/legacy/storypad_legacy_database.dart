@@ -12,6 +12,8 @@ import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad/core/types/path_type.dart';
+
+// ignore: depend_on_referenced_packages
 import 'package:sqflite/sqflite.dart' as sqlite;
 
 // ignore: implementation_imports
@@ -36,7 +38,7 @@ class StorypadLegacyDatabase {
     if (databasePath == null) return null;
 
     try {
-      return sqlite.openDatabase(databasePath, onOpen: (_) {}, version: 3);
+      return await sqlite.openDatabase(databasePath, onOpen: (_) {}, version: 3);
     } catch (e) {
       debugPrint("🐛 Open database dailed: $e");
     }

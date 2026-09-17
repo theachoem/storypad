@@ -691,7 +691,7 @@ class GoogleDriveCloudService extends BackupCloudService {
           AppLogger.d('Reauthentication succeeded.');
 
           try {
-            return operation();
+            return await operation();
           } catch (e) {
             final exp.BackupException exception = _buildException(e, methodName);
             throw exception;

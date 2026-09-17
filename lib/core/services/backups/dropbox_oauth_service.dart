@@ -58,8 +58,7 @@ class DropboxOAuthService {
   /// opened it, not to a system-wide URL-scheme registration.
   String get _callbackUrlScheme {
     if (kStoryPad) return 'storypad';
-    if (kCommunity) return 'spookycommunity';
-    if (kSpooky) return 'spooky';
+    if (kCommunity) return 'storypadcommunity';
     throw StateError('Unknown flavor — no Dropbox OAuth callback scheme registered for this package');
   }
 

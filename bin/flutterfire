@@ -6,7 +6,6 @@
 #
 # Commands:
 # bin/flutterfire --community
-# bin/flutterfire --spooky
 # bin/flutterfire --storypad
 
 function exit_if_file_not_exist() {
@@ -40,9 +39,8 @@ function configure() {
   FLAVOR=$1
   PRODUCT=$2
   PACKAGE_NAME=$3
-  WEB_APPLICATION_ID=$4
-  ACCOUNT=$5
-  PLATFORMS=${PLATFORMS:-'android,ios,macos'}
+  ACCOUNT=$4
+  PLATFORMS=${PLATFORMS:-'android,ios,macos,linux'}
 
   save_dart_main_file $FLAVOR
   ensure_generated_dart_define_exist
@@ -52,7 +50,6 @@ function configure() {
     --ios-bundle-id=$PACKAGE_NAME
     --android-package-name=$PACKAGE_NAME
     --macos-bundle-id=$PACKAGE_NAME
-    --web-app-id=$WEB_APPLICATION_ID
     --platforms=$PLATFORMS
     --ios-out="ios/Firebase/$FLAVOR/GoogleService-Info.plist"
     --android-out=android/app/src/$FLAVOR/google-services.json
@@ -69,7 +66,6 @@ function configure() {
     --ios-bundle-id=$PACKAGE_NAME
     --android-package-name=$PACKAGE_NAME
     --macos-bundle-id=$PACKAGE_NAME
-    --web-app-id=$WEB_APPLICATION_ID
     --platforms=$PLATFORMS
     --ios-out="ios/Firebase/$FLAVOR/GoogleService-Info.plist"
     --android-out=android/app/src/$FLAVOR/google-services.json
@@ -81,14 +77,11 @@ function configure() {
     --token=$FIREBASE_CLI_TOKEN
     --yes"
 
-  # IOS won't run without build-config=Debug
-  # https://github.com/theachoem/storypad/issues/243
   run_command "flutterfire configure
     --project=$PRODUCT
     --ios-bundle-id=$PACKAGE_NAME
     --android-package-name=$PACKAGE_NAME
     --macos-bundle-id=$PACKAGE_NAME
-    --web-app-id=$WEB_APPLICATION_ID
     --platforms=$PLATFORMS
     --ios-out="ios/Firebase/$FLAVOR/GoogleService-Info.plist"
     --android-out=android/app/src/$FLAVOR/google-services.json
@@ -107,17 +100,12 @@ function main() {
   case $1 in
 
   --community)
-    configure 'community' 'juniorise-spooky-community' 'com.juniorise.spooky.community' '1:892248434003:web:88cf8dd20a7c2ddc63eda6' $2
+    configure 'community' 'write-story-308919' 'com.tc.writestory.community' $2
     exit 0
     ;;
 
   --storypad)
-    configure 'storypad' 'tc-write-story' 'com.tc.writestory' '1:315543702519:web:3c1c02aab9ff9aa974fcf2' $2
-    exit 0
-    ;;
-
-  --spooky)
-    configure 'spooky' 'juniorise-spooky' 'com.juniorise.spooky' '1:845318918007:web:09bcc6c7d64dd809349b72' $2
+    configure 'storypad' 'tc-write-story' 'com.tc.writestory' $2
     exit 0
     ;;
 

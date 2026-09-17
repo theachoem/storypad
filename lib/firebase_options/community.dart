@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -47,33 +44,36 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBn4IK7ySHqwlpYqWjg9BPvHdXuB4HJcy4',
-    appId: '1:892248434003:android:5e6ee709875438aa63eda6',
-    messagingSenderId: '892248434003',
-    projectId: 'juniorise-spooky-community',
-    storageBucket: 'juniorise-spooky-community.firebasestorage.app',
+    apiKey: 'AIzaSyCDtdw-fHe9O21qZboGObwixGwVUaKtEuI',
+    appId: '1:200040656841:android:818105d452a7119c8e8218',
+    messagingSenderId: '200040656841',
+    projectId: 'write-story-308919',
+    storageBucket: 'write-story-308919.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAU8Q8SrWFufbf5uC7TPDVC9aDw4_aqvRw',
-    appId: '1:892248434003:ios:83be1e9203a1be7e63eda6',
-    messagingSenderId: '892248434003',
-    projectId: 'juniorise-spooky-community',
-    storageBucket: 'juniorise-spooky-community.firebasestorage.app',
-    androidClientId: '892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com',
-    iosClientId: '892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com',
-    iosBundleId: 'com.juniorise.spooky.community',
+    apiKey: 'AIzaSyAShE05uKEZEUM5Kk13jkJbbb4D_8R6-wA',
+    appId: '1:200040656841:ios:ca1781a9ba2a6f1b8e8218',
+    messagingSenderId: '200040656841',
+    projectId: 'write-story-308919',
+    storageBucket: 'write-story-308919.firebasestorage.app',
+    iosBundleId: 'com.tc.writestory.community',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAU8Q8SrWFufbf5uC7TPDVC9aDw4_aqvRw',
-    appId: '1:892248434003:ios:83be1e9203a1be7e63eda6',
-    messagingSenderId: '892248434003',
-    projectId: 'juniorise-spooky-community',
-    storageBucket: 'juniorise-spooky-community.firebasestorage.app',
-    androidClientId: '892248434003-uts1shngipmc01farbghi5dpmnm9idti.apps.googleusercontent.com',
-    iosClientId: '892248434003-q94kghlq2mrmcfucabke2cpmgf77j1p5.apps.googleusercontent.com',
-    iosBundleId: 'com.juniorise.spooky.community',
+    apiKey: 'AIzaSyAShE05uKEZEUM5Kk13jkJbbb4D_8R6-wA',
+    appId: '1:200040656841:ios:ca1781a9ba2a6f1b8e8218',
+    messagingSenderId: '200040656841',
+    projectId: 'write-story-308919',
+    storageBucket: 'write-story-308919.firebasestorage.app',
+    iosBundleId: 'com.tc.writestory.community',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD9ZVGvpfpM8MYKXRZTgP4ma2Gr2Hb8jZE',
+    appId: '1:200040656841:web:dc7e0bbbf6c93b838e8218',
+    messagingSenderId: '200040656841',
+    projectId: 'write-story-308919',
+    authDomain: 'write-story-308919.firebaseapp.com',
+    storageBucket: 'write-story-308919.firebasestorage.app',
+    measurementId: 'G-PP2C5GYNGD',
   );
 
 }

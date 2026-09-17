@@ -8,7 +8,7 @@
 PRODUCT_NAME = storypad
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.juniorise.storypad
+PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.juniorise. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 com.tc.writestory. All rights reserved.

@@ -13,7 +13,6 @@
 # Usage:
 #   bin/build_release_android --storypad
 #   bin/build_release_android --community
-#   bin/build_release_android --spooky
 
 source "$(dirname "$0")/helpers"
 sync_private_keys
@@ -69,10 +68,8 @@ function upload_apk_to_firebase() {
 
   if [ "$FLAVOR" == "storypad" ]; then
     APP_ID="1:315543702519:android:4e9cf4c1923c1dab74fcf2"
-  elif [ "$FLAVOR" == "spooky" ]; then
-    APP_ID="1:845318918007:android:8d9f8265b46011fd349b72"
   elif [ "$FLAVOR" == "community" ]; then
-    APP_ID="1:892248434003:android:5e6ee709875438aa63eda6"
+    APP_ID="1:200040656841:android:818105d452a7119c8e8218"
   fi
 
   run_command "firebase appdistribution:distribute $APK_PATH
