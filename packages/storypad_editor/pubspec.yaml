@@ -1,7 +1,7 @@
 name: storypad_editor
 description: >-
-  A Quill-Delta-compatible rich text editor built on super_editor, developed
-  for StoryPad.
+  A controller-centric rich text editor built on super_editor, developed for
+  StoryPad: Markdown in/out, Quill Delta import, and app-supplied embeds.
 publish_to: "none"
 version: 0.1.0
 
@@ -11,6 +11,11 @@ environment:
 
 dependencies:
   flutter:
+    sdk: flutter
+
+  # Regular (not dev) dependency: lib/testing.dart ships a conformance kit
+  # (embed round-trip expectations, pumpStoryEditor) for consumers' own tests.
+  flutter_test:
     sdk: flutter
 
   # Pinned to a specific commit, not a version tag -- super_editor hasn't cut
@@ -23,6 +28,9 @@ dependencies:
       ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
       path: super_editor
 
+  # Quill Delta is import-only (Delta -> Markdown), but the parsing formats
+  # still speak dart_quill_delta's Operation type.
+  #
   # super_editor constrains this to ^9.4.1 (<10.0.0). Widened here, not
   # narrowed to match, so a future consumer needing 10.x (e.g. StoryPad's
   # app, which pins 10.8.3) isn't blocked by this package alone -- actually
@@ -32,7 +40,12 @@ dependencies:
 
   follow_the_leader: ^0.5.3
 
+  # Markdown is the only format this package writes. package:html parses the
+  # block-level embed tags (<img>, <sp-album>, ...) that package:markdown would
+  # otherwise swallow as opaque text.
+  markdown: ^7.3.1
+  html: ^0.15.5
+  meta: ^1.16.0
+
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_lints: ^6.0.0
