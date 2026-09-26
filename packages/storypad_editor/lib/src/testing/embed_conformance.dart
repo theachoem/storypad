@@ -20,12 +20,15 @@ import 'document_equivalence.dart';
 /// - the embed is written as one Markdown line, reads back as an equal value (a new instance, so this also catches a
 ///   value type without `==`), and re-writes identically (a fixed point);
 /// - it survives between other blocks, with its line separated from theirs;
-/// - its plain text is consistent.
+/// - its plain text is consistent;
+/// - if [fromQuillOp] is given (a Quill embed op, e.g. `{'insert': {'media': 'a.jpg'}}`), that op imports as
+///   [value], and converts to the same Markdown.
 ///
 /// [otherEmbeds] are registered alongside [embed], to check tags and keys don't collide with the app's other embeds.
 void expectEmbedRoundTrip<T extends Object>(
   StoryEmbedCodec<T> embed,
   T value, {
+  Map<String, Object?>? fromQuillOp,
   List<StoryEmbedCodec> otherEmbeds = const [],
 }) {
   final codec = embed is UnknownEmbedCodec
@@ -55,6 +58,28 @@ void expectEmbedRoundTrip<T extends Object>(
   expect(decodedValue.hashCode, value.hashCode, reason: 'equal values must have equal hash codes');
   expect(codec.encode(decoded), markdown, reason: 'writing the read-back value must give identical Markdown');
   expect((decodedNode).plainText, embed.toPlainText(value));
+
+  if (fromQuillOp != null) {
+    final ops = [
+      fromQuillOp,
+      {'insert': '\n'},
+    ];
+    final imported = codec.decodeQuill(ops);
+    expect(imported, hasLength(1), reason: '$fromQuillOp must import as one node, got: ${imported.map(describeNode)}');
+    expect(
+      imported.single,
+      isA<StoryEmbedNode>().having((node) => node.type, 'type', embed.type),
+      reason:
+          '$fromQuillOp imported as ${describeNode(imported.single)}, not a "${embed.type}" embed. Is its key in '
+          'quillKeys (${embed.quillKeys}), and does fromQuill accept it?',
+    );
+    expect(
+      embed.valueOf(imported.single as StoryEmbedNode),
+      value,
+      reason: '$fromQuillOp imported as a different value',
+    );
+    expect(codec.quillToMarkdown(ops), markdown);
+  }
 
   final surrounded = [
     ParagraphNode(id: Editor.createNodeId(), text: AttributedText('before')),

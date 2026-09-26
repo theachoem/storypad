@@ -46,7 +46,26 @@ class _UnclaimedTagEmbed extends StoryEmbedCodec<String> {
 
 void main() {
   group('passes for well-behaved embeds', () {
-    test('string value', () => expectEmbedRoundTrip(const StickerEmbedCodec(), 'cat'));
+    test('string value', () {
+      expectEmbedRoundTrip(
+        const StickerEmbedCodec(),
+        'cat',
+        fromQuillOp: {
+          'insert': {'sticker': 'cat'},
+        },
+      );
+    });
+
+    test('Quill import with typed attributes, through a legacy key', () {
+      expectEmbedRoundTrip(
+        const GalleryEmbedCodec(),
+        const GalleryValue(['a.jpg', 'b.jpg'], alignment: GalleryAlignment.left, size: GallerySize.max),
+        fromQuillOp: {
+          'insert': {'photo': 'a.jpg|b.jpg'},
+          'attributes': {'x-align': 'left', 'x-size': 'max'},
+        },
+      );
+    });
 
     test('values with attributes, alongside other embeds', () {
       for (final value in [
@@ -71,6 +90,19 @@ void main() {
   group('fails for broken embeds', () {
     test('a value type without ==', () {
       expect(() => expectEmbedRoundTrip(const _NoEqualityEmbed(), _NoEquality('a')), throwsA(isA<TestFailure>()));
+    });
+
+    test('a Quill op that imports as a different value', () {
+      expect(
+        () => expectEmbedRoundTrip(
+          const StickerEmbedCodec(),
+          'cat',
+          fromQuillOp: {
+            'insert': {'sticker': 'dog'},
+          },
+        ),
+        throwsA(isA<TestFailure>()),
+      );
     });
 
     test('a tag missing from htmlTags', () {

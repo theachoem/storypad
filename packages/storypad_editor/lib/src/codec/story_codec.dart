@@ -6,6 +6,7 @@ import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import '../markdown/markdown_reader.dart';
 import '../markdown/markdown_writer.dart';
+import '../quill/quill_importer.dart';
 
 /// Converts documents to and from Markdown (the only format this package writes), with a given set of embeds.
 /// Headless: no editor or widgets involved, so it's usable anywhere (services, tests, isolates).
@@ -24,11 +25,15 @@ final class StoryCodec {
   StoryCodec({List<StoryEmbedCodec> embeds = const [], UnknownEmbedCodec unknown = const UnknownEmbedCodec()})
     : this.fromRegistry(StoryEmbedRegistry(embeds, unknown: unknown));
 
-  StoryCodec.fromRegistry(this.registry) : _reader = MarkdownReader(registry), _writer = MarkdownWriter(registry);
+  StoryCodec.fromRegistry(this.registry)
+    : _reader = MarkdownReader(registry),
+      _writer = MarkdownWriter(registry),
+      _quill = QuillImporter(registry);
 
   final StoryEmbedRegistry registry;
   final MarkdownReader _reader;
   final MarkdownWriter _writer;
+  final QuillImporter _quill;
 
   /// Reads [markdown] into a new document (at least one node). The caller owns and disposes it.
   MutableDocument decode(String markdown) => MutableDocument(nodes: decodeNodes(markdown));
@@ -38,6 +43,15 @@ final class StoryCodec {
 
   /// Writes [nodes] (e.g. a [Document]) as canonical Markdown.
   String encode(Iterable<DocumentNode> nodes) => _writer.write(nodes);
+
+  /// Converts Quill Delta ops (a stored story's JSON `ops` list) to canonical Markdown. Embeds convert through the
+  /// embeds' `fromQuill`; anything unclaimed or rejected is preserved by the unknown embed. Never throws on malformed
+  /// ops (they're skipped).
+  String quillToMarkdown(List<Object?> ops) => encode(decodeQuill(ops));
+
+  /// Imports Quill Delta ops as document nodes, exactly as [quillToMarkdown] sees them. Formatting Markdown can't
+  /// store (e.g. font size) is dropped when the nodes are encoded.
+  List<DocumentNode> decodeQuill(List<Object?> ops) => _quill.import(ops);
 
   /// The canonical form of [markdown]: what it reads as, written back.
   String canonicalize(String markdown) => encode(decodeNodes(markdown));
