@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/widgets.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 /// Test-only embeds exercising the embed contract the way an app's embeds would, without depending on the example
@@ -7,7 +8,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 /// The simplest embed: a String value, one Quill key, one custom tag.
 ///
 /// Quill: `{"sticker": "cat"}`. Markdown: `<sp-sticker name="cat"></sp-sticker>`.
-class StickerEmbedCodec extends StoryEmbedCodec<String> {
+class StickerEmbedCodec extends StoryEmbed<String> {
   const StickerEmbedCodec();
 
   @override
@@ -36,6 +37,15 @@ class StickerEmbedCodec extends StoryEmbedCodec<String> {
 
   @override
   String toPlainText(String value) => ':$value:';
+
+  @override
+  Widget build(BuildContext context, StoryEmbedContext<String> embed) {
+    return GestureDetector(
+      key: ValueKey('sticker-${embed.nodeId}'),
+      onTap: embed.readOnly ? null : () => embed.update((current) => '$current!'),
+      child: Text('sticker ${embed.value}${embed.isSelected ? ' (selected)' : ''}'),
+    );
+  }
 }
 
 enum GalleryAlignment { none, left, center, right }
@@ -84,7 +94,7 @@ class GalleryValue {
 /// - Quill: `{"gallery": "a.jpg|b.jpg"}` or the legacy `{"photo": "a.jpg"}`, with `x-align`/`x-size` attributes.
 /// - Markdown: a single path is `<img src>` (so a bare `![](a.jpg)` also reads back); 2+ paths are
 ///   `<sp-gallery><img src="a.jpg"><img src="b.jpg"></sp-gallery>`.
-class GalleryEmbedCodec extends StoryEmbedCodec<GalleryValue> {
+class GalleryEmbedCodec extends StoryEmbed<GalleryValue> {
   const GalleryEmbedCodec();
 
   @override
@@ -132,6 +142,13 @@ class GalleryEmbedCodec extends StoryEmbedCodec<GalleryValue> {
 
   @override
   String toPlainText(GalleryValue value) => value.paths.join(' ');
+
+  @override
+  Widget build(BuildContext context, StoryEmbedContext<GalleryValue> embed) {
+    return Text('gallery ${embed.value.paths.join(',')}', key: ValueKey('gallery-${embed.nodeId}'));
+  }
 }
+
+const testEmbeds = <StoryEmbed>[StickerEmbedCodec(), GalleryEmbedCodec()];
 
 const testEmbedCodecs = <StoryEmbedCodec>[StickerEmbedCodec(), GalleryEmbedCodec()];

@@ -6,7 +6,10 @@
 library;
 
 export 'src/codec/story_codec.dart';
+export 'src/controller/story_editor_actions.dart';
+export 'src/controller/story_editor_controller.dart';
 export 'src/embed/quill_embed_op.dart';
+export 'src/embed/story_embed.dart';
 export 'src/embed/story_embed_attribute.dart';
 export 'src/embed/story_embed_codec.dart';
 export 'src/embed/story_embed_node.dart';
