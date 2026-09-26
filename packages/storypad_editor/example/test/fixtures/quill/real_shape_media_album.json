@@ -1,0 +1,7 @@
+[
+  {
+    "insert": { "media": "images/aa11bb22cc33dd44.jpg|images/ee55ff6600112233.jpg|videos/4455667788990011.mp4" },
+    "attributes": { "custom-embed-size": "max" }
+  },
+  { "insert": "A placeholder caption for the album above.\n" }
+]

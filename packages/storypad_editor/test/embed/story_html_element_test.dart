@@ -36,6 +36,13 @@ void main() {
       expect(html, isNot(contains('\n')));
     });
 
+    test('empty attribute values are written bare, and read back empty', () {
+      final element = StoryHtmlElement('video', attributes: {'controls': '', 'src': 'a.mp4'});
+
+      expect(element.render(), '<video controls src="a.mp4"></video>');
+      expect(StoryHtmlElement.tryParse(element.render()), element);
+    });
+
     test('raw elements render verbatim', () {
       expect(StoryHtmlElement.raw('<sp-future x="1">').render(), '<sp-future x="1">');
     });

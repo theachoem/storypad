@@ -123,13 +123,14 @@ final class StoryHtmlElement {
   /// Reads a typed attribute, falling back to [StoryEmbedAttribute.fallback] when it's absent or unrecognized.
   A attribute<A extends Object>(StoryEmbedAttribute<A> attribute) => attribute.readHtml(this);
 
-  /// Renders this element as a single line of escaped HTML.
+  /// Renders this element as a single line of escaped HTML. Attributes with an empty value are written bare.
   String render() {
     if (rawHtml != null) return rawHtml!;
 
     final buffer = StringBuffer('<$tag');
     for (final MapEntry(:key, :value) in attributes.entries) {
-      buffer.write(' $key="${escapeAttribute(value)}"');
+      // An empty value is written as a bare attribute (e.g. `controls`), which HTML reads back as empty.
+      buffer.write(value.isEmpty ? ' $key' : ' $key="${escapeAttribute(value)}"');
     }
     buffer.write('>');
 
