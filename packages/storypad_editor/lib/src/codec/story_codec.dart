@@ -1,6 +1,7 @@
 import 'package:super_editor/super_editor.dart';
 
 import '../embed/story_embed_codec.dart';
+import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import '../markdown/markdown_reader.dart';
@@ -40,4 +41,22 @@ final class StoryCodec {
 
   /// The canonical form of [markdown]: what it reads as, written back.
   String canonicalize(String markdown) => encode(decodeNodes(markdown));
+
+  /// [markdown] as plain text (for search and word counts): one line per block, formatting removed, embeds as their
+  /// `toPlainText`.
+  String toPlainText(String markdown) => plainTextOf(decodeNodes(markdown));
+
+  /// [nodes] as plain text: one line per block, formatting removed, embeds as their `toPlainText`.
+  static String plainTextOf(Iterable<DocumentNode> nodes) {
+    return nodes
+        .map(
+          (node) => switch (node) {
+            TextNode() => node.text.toPlainText(includePlaceholders: false),
+            StoryEmbedNode() => node.plainText,
+            ImageNode() => node.altText,
+            _ => '',
+          },
+        )
+        .join('\n');
+  }
 }

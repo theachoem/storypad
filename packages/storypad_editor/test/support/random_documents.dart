@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/painting.dart' show Color;
+import 'package:storypad_editor/storypad_editor.dart';
 import 'package:super_editor/super_editor.dart';
+
+import 'test_embeds.dart';
 
 /// Seeded generators for randomized round-trip tests. Deliberately include characters that are Markdown or HTML
 /// syntax, so escaping is exercised.
@@ -95,6 +98,41 @@ DocumentNode randomTextNode(Random random) {
         text: randomText(random),
         indent: random.nextInt(3) == 0 ? random.nextInt(4) : 0,
         metadata: {NodeMetadata.blockType: blockType, TextNodeMetadata.textAlign: ?align},
+      );
+  }
+}
+
+/// A random document mixing text blocks and the test embeds (plus unknown values).
+List<DocumentNode> randomDocumentWithEmbeds(Random random, {int maxNodes = 10}) {
+  return [
+    for (var i = 1 + random.nextInt(maxNodes); i > 0; i--)
+      random.nextInt(3) == 0 ? randomEmbedNode(random) : randomTextNode(random),
+  ];
+}
+
+StoryEmbedNode randomEmbedNode(Random random) {
+  switch (random.nextInt(3)) {
+    case 0:
+      final name = randomString(random, lineBreaks: false);
+      return const StickerEmbedCodec().createNode(name.isEmpty ? 'x' : name);
+    case 1:
+      final paths = [
+        for (var i = 1 + random.nextInt(3); i > 0; i--)
+          'images/${randomString(random, maxLength: 6, lineBreaks: false)}.jpg',
+      ];
+      return const GalleryEmbedCodec().createNode(
+        GalleryValue(
+          paths,
+          alignment: GalleryAlignment.values[random.nextInt(GalleryAlignment.values.length)],
+          size: GallerySize.values[random.nextInt(GallerySize.values.length)],
+        ),
+      );
+    default:
+      return const UnknownEmbedCodec().createNode(
+        UnknownQuillEmbed({
+          'insert': {randomString(random, lineBreaks: false): randomString(random)},
+          'attributes': {'x': random.nextInt(9)},
+        }),
       );
   }
 }

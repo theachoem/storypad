@@ -4,8 +4,10 @@ import 'package:super_editor/super_editor.dart';
 
 import '../embed/story_embed_registry.dart';
 import '../embed/story_html_element.dart';
+import '../embed/unknown_embed.dart';
 import 'inline_markdown_reader.dart';
 import 'markdown_format.dart';
+import 'markdown_writer.dart' show readMarkdownImage;
 
 /// Reads Markdown into document nodes.
 ///
@@ -18,6 +20,11 @@ import 'markdown_format.dart';
 /// handling loses information this storage format can't afford to lose (task indent, nested tasks, blank-line and
 /// hard-break ambiguity). Inline content still goes through `package:markdown`'s CommonMark inline parser (see
 /// [InlineMarkdownReader]).
+///
+/// Embeds: a line holding exactly one HTML element whose tag an embed claims is read through that embed's `fromHtml`;
+/// a bare `![alt](src)` line through the embed claiming `img` (or a stock `ImageNode` if none does). A line an embed
+/// rejects, and any `<sp-…>` line no embed claims (e.g. from a newer app version), is kept verbatim by the unknown
+/// embed -- never dropped.
 ///
 /// Never throws on malformed input; anything unrecognized becomes paragraph text.
 class MarkdownReader {
@@ -65,6 +72,8 @@ class MarkdownReader {
     return _fencedCode(lines, start) ??
         (line.trim() == emptyParagraphMarker ? MarkdownBlock([_emptyParagraph()], start + 1) : null) ??
         _wrapper(lines, start) ??
+        _embed(lines, start) ??
+        _image(lines, start) ??
         (_thematicBreak.hasMatch(line)
             ? MarkdownBlock([HorizontalRuleNode(id: Editor.createNodeId())], start + 1)
             : null) ??
@@ -137,6 +146,47 @@ class MarkdownReader {
     ];
     return MarkdownBlock(nodes, end + 1);
   }
+
+  static final _htmlLine = RegExp(r'^ {0,3}<([a-zA-Z][a-zA-Z0-9-]*)');
+
+  MarkdownBlock? _embed(List<String> lines, int start) {
+    final match = _htmlLine.firstMatch(lines[start]);
+    if (match == null) return null;
+
+    final tag = match[1]!.toLowerCase();
+    final embed = registry.byHtmlTag(tag);
+    if (embed == null && !tag.startsWith('sp-')) return null;
+
+    final line = lines[start].trim();
+    final element = StoryHtmlElement.tryParseSingle(line);
+    if (embed != null && element == null) return null; // e.g. "<img …> caption": text, not an embed line.
+
+    final node = (element != null && element.tag == tag ? embed?.nodeFromHtml(element) : null) ?? _unknownLine(line);
+    return MarkdownBlock([node], start + 1);
+  }
+
+  MarkdownBlock? _image(List<String> lines, int start) {
+    final line = lines[start];
+    if (!line.trimLeft().startsWith('![')) return null;
+
+    final image = readMarkdownImage(line);
+    if (image == null) return null;
+
+    final embed = registry.byHtmlTag('img');
+    final DocumentNode node;
+    if (embed == null) {
+      node = ImageNode(id: Editor.createNodeId(), imageUrl: image.src, altText: image.alt);
+    } else {
+      final element = StoryHtmlElement(
+        'img',
+        attributes: {'src': image.src, if (image.alt.isNotEmpty) 'alt': image.alt},
+      );
+      node = embed.nodeFromHtml(element) ?? _unknownLine(line.trim());
+    }
+    return MarkdownBlock([node], start + 1);
+  }
+
+  DocumentNode _unknownLine(String line) => registry.unknown.createNode(UnknownHtmlEmbed(line));
 
   MarkdownBlock? _heading(List<String> lines, int start) {
     final match = _headingLine.firstMatch(lines[start]);

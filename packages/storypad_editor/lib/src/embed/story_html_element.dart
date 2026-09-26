@@ -68,6 +68,18 @@ final class StoryHtmlElement {
     return element == null ? null : StoryHtmlElement.fromDom(element);
   }
 
+  /// Parses [html] only if it is exactly one element (surrounding whitespace allowed), e.g. a whole Markdown line
+  /// holding one embed. Returns `null` for anything else, including an element followed by text.
+  static StoryHtmlElement? tryParseSingle(String html) {
+    final nodes = html_parser
+        .parseFragment(html)
+        .nodes
+        .where((node) => node is! dom.Text || node.text.trim().isNotEmpty);
+    if (nodes.length != 1) return null;
+    final node = nodes.single;
+    return node is dom.Element ? StoryHtmlElement.fromDom(node) : null;
+  }
+
   static final _tagPattern = RegExp(r'^[a-z][a-z0-9-]*$');
   static final _attributeNamePattern = RegExp(r'^[a-zA-Z_:][-a-zA-Z0-9_:.]*$');
 

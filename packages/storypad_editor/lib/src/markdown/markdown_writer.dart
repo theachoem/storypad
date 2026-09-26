@@ -1,5 +1,7 @@
+import 'package:markdown/markdown.dart' as md;
 import 'package:super_editor/super_editor.dart';
 
+import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import 'inline_markdown_writer.dart';
 import 'markdown_format.dart';
@@ -16,6 +18,8 @@ import 'markdown_format.dart';
 /// - A paragraph's (or heading's/quote's) non-left alignment and indent live on a wrapping
 ///   `<div style="text-align:…" data-indent="…">`, with blank lines inside so the content is still Markdown.
 /// - Text that would read as block syntax at the start of a line (`#`, `-`, `+`, `1.`, …) is escaped.
+/// - An embed is one line of HTML from its codec's `toHtml` -- except an `<img>` with only `src`/`alt`, which is
+///   written as Markdown's own `![alt](src)` when that reads back identically.
 class MarkdownWriter {
   MarkdownWriter(this.registry);
 
@@ -45,6 +49,10 @@ class MarkdownWriter {
   /// The Markdown for one block, or `null` for a node type the format can't represent.
   String? writeNode(DocumentNode node) {
     return switch (node) {
+      StoryEmbedNode() => _embed(node),
+      ImageNode() =>
+        _markdownImage(node.imageUrl, node.altText) ??
+            '![${escapeText(node.altText)}](${linkDestination(node.imageUrl)})',
       ParagraphNode() => _paragraph(node),
       ListItemNode() => _listItem(node),
       TaskNode() => _task(node),
@@ -77,6 +85,35 @@ class MarkdownWriter {
 
     final attributes = [if (align != null) 'style="text-align:$align"', if (indent > 0) 'data-indent="$indent"'];
     return '<div ${attributes.join(' ')}>\n\n$content\n\n</div>';
+  }
+
+  String _embed(StoryEmbedNode node) {
+    final embed = registry.forNode(node);
+    if (embed == null) {
+      throw StateError(
+        'No embed registered for "${node.type}" (node ${node.id}). Encode with the same embeds the document was '
+        'created with.',
+      );
+    }
+
+    final element = embed.toHtmlOf(node);
+    if (!element.isRaw && element.tag == 'img' && element.children.isEmpty) {
+      final keys = element.attributes.keys.toSet();
+      final src = element['src'];
+      if (src != null && keys.difference({'src', 'alt'}).isEmpty) {
+        final image = _markdownImage(src, element['alt'] ?? '');
+        if (image != null) return image;
+      }
+    }
+    return element.render();
+  }
+
+  /// `![alt](src)`, if it reads back as exactly [src] and [alt] (Markdown normalizes some destinations, e.g. by
+  /// percent-encoding spaces, and parses the alt text as inline Markdown); otherwise `null`.
+  static String? _markdownImage(String src, String alt) {
+    final markdown = '![${escapeText(alt)}](${linkDestination(src)})';
+    final parsed = readMarkdownImage(markdown);
+    return parsed != null && parsed.src == src && parsed.alt == alt ? markdown : null;
   }
 
   String _listItem(ListItemNode node) {
@@ -128,3 +165,13 @@ String escapeLineStart(String markdown) {
 }
 
 final _lineStartSyntax = RegExp(r'^([ \t]*)(?:(\d{1,9}[.)])|[#+=-])');
+
+/// Reads a line consisting of exactly one Markdown image, `![alt](src)`, or returns `null`.
+({String src, String alt})? readMarkdownImage(String line) {
+  final nodes = md.InlineParser(line.trim(), md.Document(encodeHtml: false)).parse();
+  if (nodes.length != 1) return null;
+
+  final node = nodes.single;
+  if (node is! md.Element || node.tag != 'img') return null;
+  return (src: node.attributes['src'] ?? '', alt: node.attributes['alt'] ?? '');
+}

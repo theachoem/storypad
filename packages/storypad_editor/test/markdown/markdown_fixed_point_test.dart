@@ -5,6 +5,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/testing.dart';
 
 import '../support/random_documents.dart';
+import '../support/test_embeds.dart';
 
 /// The storage-format guarantees, which the app's dirty tracking depends on:
 ///
@@ -24,6 +25,22 @@ void main() {
 
         expect(decoded, isEquivalentDocument(document), reason: 'markdown:\n$markdown');
         expect(codec.encode(decoded), markdown, reason: 'fixed point');
+      });
+    }
+  });
+
+  group('random documents with embeds', () {
+    final embedCodec = StoryCodec(embeds: testEmbedCodecs);
+
+    for (var seed = 0; seed < 1000; seed++) {
+      test('seed $seed', () {
+        final document = randomDocumentWithEmbeds(Random(seed));
+
+        final markdown = embedCodec.encode(document);
+        final decoded = embedCodec.decodeNodes(markdown);
+
+        expect(decoded, isEquivalentDocument(document), reason: 'markdown:\n$markdown');
+        expect(embedCodec.encode(decoded), markdown, reason: 'fixed point');
       });
     }
   });

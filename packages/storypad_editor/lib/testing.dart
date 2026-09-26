@@ -3,3 +3,4 @@
 library;
 
 export 'src/testing/document_equivalence.dart';
+export 'src/testing/embed_conformance.dart';
