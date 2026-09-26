@@ -43,7 +43,9 @@ class StickerEmbedCodec extends StoryEmbed<String> {
     return GestureDetector(
       key: ValueKey('sticker-${embed.nodeId}'),
       onTap: embed.readOnly ? null : () => embed.update((current) => '$current!'),
-      child: Text('sticker ${embed.value}${embed.isSelected ? ' (selected)' : ''}'),
+      child: Text(
+        'sticker ${embed.value}${embed.isSelected ? ' (selected)' : ''}${embed.readOnly ? ' (read-only)' : ''}',
+      ),
     );
   }
 }

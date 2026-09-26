@@ -1,0 +1,299 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:follow_the_leader/follow_the_leader.dart';
+import 'package:super_editor/super_editor.dart';
+
+import '../controller/story_editor_controller.dart';
+import 'android_toolbar.dart';
+import 'compact_builders.dart';
+import 'desktop_context_menu.dart';
+import 'free_task_indent.dart';
+import 'mobile_reorderable_document_overlay.dart';
+import 'reorderable_document_overlay.dart';
+import 'story_embed_component.dart';
+
+/// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
+/// selection and platform chrome. Format-agnostic -- see `MarkdownEditor` for Markdown change notifications.
+///
+/// Brings no formatting toolbar of its own: build one from the controller (`controller.actions` for commands,
+/// `controller.isToolbarActive` for show-on-focus, `controller.tapRegionGroupId` and `controller.holdSelection` so
+/// using it doesn't dismiss the editor's selection).
+///
+/// Platform behavior:
+/// - Desktop/web: drag handles to reorder blocks, and a right-click menu ([desktopContextMenu]).
+/// - iOS: the OS-native context menu on a selection (Flutter-painted before iOS 16).
+/// - Android: a floating toolbar with the OS "Process Text" actions (Translate, …).
+/// - Touch: long-press a block to reorder it while the editor isn't focused; tap outside to unfocus.
+class RawEditor extends StatefulWidget {
+  const RawEditor({
+    super.key,
+    required this.controller,
+    this.baseTextStyle,
+    this.padding,
+    this.styleRules = const [],
+    this.scrollController,
+    this.autofocus = false,
+    this.inputRole,
+    this.shrinkWrap = false,
+    this.desktopContextMenu = showDefaultDesktopContextMenu,
+  });
+
+  final StoryEditorController controller;
+
+  /// Merged into every block's text style -- e.g. a font. Per-block styling (heading sizes, …) is kept.
+  final TextStyle? baseTextStyle;
+
+  /// The document's padding. Defaults to 16 all round (18 on the left on desktop, room for the drag handle).
+  final EdgeInsets? padding;
+
+  /// Extra stylesheet rules, applied after the editor's own -- e.g. `StyleRule(BlockSelector('media'), …)` to style
+  /// an embed type, or a blockquote border.
+  final List<StyleRule> styleRules;
+
+  final ScrollController? scrollController;
+
+  final bool autofocus;
+
+  /// Give each editor a distinct value when several are on screen at once (their IME connections are told apart by
+  /// it).
+  final String? inputRole;
+
+  /// Sizes to the content and emits itself as a sliver, for placing several editors in one `CustomScrollView`. Drops
+  /// the reorder and right-click chrome (which needs a box around the editor).
+  final bool shrinkWrap;
+
+  /// Shows the desktop right-click menu. Defaults to a Flutter-painted menu; pass a native one (see the example's
+  /// macOS menu), or `null` for none.
+  final DesktopContextMenuHandler? desktopContextMenu;
+
+  @override
+  State<RawEditor> createState() => _RawEditorState();
+}
+
+/// The document's left inset on desktop/web: just wide enough for [ReorderableDocumentOverlay]'s drag handle.
+const _reorderGutterWidth = 18.0;
+
+class _RawEditorState extends State<RawEditor> {
+  final _documentLayoutKey = GlobalKey();
+  late CommonEditorOperations _editorOps;
+  late final SuperEditorIosControlsController _iosControlsController;
+  late final SuperEditorAndroidControlsController _androidControlsController;
+
+  /// Android "Process Text" actions, queried once up front (like `EditableText` does), well before any toolbar needs
+  /// them.
+  List<ProcessTextAction> _androidProcessTextActions = const [];
+
+  StoryEditorController get _controller => widget.controller;
+
+  bool get _isDesktopOrWeb =>
+      kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.macOS ||
+      defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux;
+
+  DocumentLayout _layout() => _documentLayoutKey.currentState! as DocumentLayout;
+
+  @override
+  void initState() {
+    super.initState();
+    _iosControlsController = SuperEditorIosControlsController(toolbarBuilder: _buildIosToolbar);
+    _androidControlsController = SuperEditorAndroidControlsController(toolbarBuilder: _buildAndroidToolbar);
+    _attach(_controller);
+    _initAndroidProcessTextActions();
+  }
+
+  @override
+  void didUpdateWidget(RawEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.controller, _controller)) {
+      _detach(oldWidget.controller);
+      _attach(_controller);
+    }
+  }
+
+  @override
+  void dispose() {
+    _detach(_controller);
+    _iosControlsController.dispose();
+    _androidControlsController.dispose();
+    super.dispose();
+  }
+
+  void _attach(StoryEditorController controller) {
+    controller.attachEditor(this);
+    _editorOps = CommonEditorOperations(
+      document: controller.document,
+      editor: controller.editor,
+      composer: controller.composer,
+      documentLayoutResolver: _layout,
+    );
+    // Focus decides whether the mobile reorder regions are active; a selection hold suspends mobile's
+    // clear-selection-on-blur policy.
+    controller.focusNode.addListener(_rebuild);
+    controller.isSelectionHeld.addListener(_rebuild);
+  }
+
+  void _detach(StoryEditorController controller) {
+    controller.focusNode.removeListener(_rebuild);
+    controller.isSelectionHeld.removeListener(_rebuild);
+    controller.detachEditor(this);
+  }
+
+  void _rebuild() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _initAndroidProcessTextActions() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    final actions = await DefaultProcessTextService().queryTextActions();
+    if (mounted) setState(() => _androidProcessTextActions = actions);
+  }
+
+  // These toolbar builders must never early-return based on the selection: super_editor calls them once and caches
+  // the result, so each returned widget reacts to selection changes itself.
+
+  Widget _buildIosToolbar(BuildContext context, Key mobileToolbarKey, LeaderLink focalPoint) {
+    return iOSSystemPopoverEditorToolbarWithFallbackBuilder(
+      context,
+      mobileToolbarKey,
+      focalPoint,
+      _editorOps,
+      SuperEditorIosControlsScope.rootOf(context),
+    );
+  }
+
+  Widget _buildAndroidToolbar(BuildContext context, Key mobileToolbarKey, LeaderLink focalPoint) {
+    return AndroidTextEditingFloatingToolbarWithProcessText(
+      floatingToolbarKey: mobileToolbarKey,
+      focalPoint: focalPoint,
+      document: _controller.document,
+      editorOps: _editorOps,
+      editorControlsController: SuperEditorAndroidControlsScope.rootOf(context),
+      selectionNotifier: _controller.composer.selectionNotifier,
+      processTextActions: _androidProcessTextActions,
+    );
+  }
+
+  Stylesheet _stylesheet() {
+    return defaultStylesheet.copyWith(
+      documentPadding: widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _reorderGutterWidth : 16, 16, 16, 16),
+      addRulesAfter: [
+        // Every block flush against its neighbors (the default stylesheet's per-type block padding reads as
+        // inconsistent spacing), with the base text style merged in.
+        StyleRule(
+          BlockSelector.all,
+          (document, node) => {
+            Styles.padding: const CascadingPadding.all(0),
+            if (widget.baseTextStyle != null) Styles.textStyle: widget.baseTextStyle!,
+          },
+        ),
+        StyleRule(
+          const BlockSelector('code'),
+          (document, node) => {Styles.textStyle: const TextStyle(fontFamily: 'monospace')},
+        ),
+        ...widget.styleRules,
+      ],
+      inlineTextStyler: (attributions, existingStyle) {
+        var style = defaultInlineTextStyler(attributions, existingStyle);
+        if (attributions.contains(codeAttribution)) {
+          style = style.copyWith(fontFamily: 'monospace', backgroundColor: const Color(0x1F000000));
+        }
+        // The default marks super/subscript with OpenType features most fonts lack, so it's invisible; shrink it.
+        if (attributions.any((attribution) => attribution is ScriptAttribution)) {
+          style = style.copyWith(fontSize: (style.fontSize ?? 18) * 0.7);
+        }
+        return style;
+      },
+    );
+  }
+
+  Widget _buildSuperEditor() {
+    final isDesktopOrWeb = _isDesktopOrWeb;
+    final keepSelection = isDesktopOrWeb || _controller.isSelectionHeld.value;
+
+    return SuperEditor(
+      editor: _controller.editor,
+      focusNode: _controller.focusNode,
+      autofocus: widget.autofocus,
+      scrollController: widget.scrollController,
+      tapRegionGroupId: _controller.tapRegionGroupId,
+      documentLayoutKey: _documentLayoutKey,
+      inputRole: widget.inputRole,
+      shrinkWrap: widget.shrinkWrap,
+      componentBuilders: [
+        const NoPaddingBlockquoteComponentBuilder(),
+        const CompactParagraphComponentBuilder(),
+        const CompactListItemComponentBuilder(),
+        StoryEmbedComponentBuilder(_controller),
+        const ImageComponentBuilder(),
+        const HorizontalRuleComponentBuilder(),
+        CompactTaskComponentBuilder(_controller.editor),
+      ],
+      // The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
+      keyboardActions: [
+        for (final action in defaultImeKeyboardActions)
+          if (action == tabToIndentTask)
+            tabToIndentTaskFreely
+          else if (action == shiftTabToUnIndentTask)
+            shiftTabToUnIndentTaskFreely
+          else
+            action,
+      ],
+      // Mobile drops the selection when the editor loses focus (so tap-outside unfocuses and enables reordering),
+      // except while a toolbar holds it (its popup took focus, and its action still needs the selection). Desktop
+      // always keeps it: its toolbar popups take focus too.
+      selectionPolicies: SuperEditorSelectionPolicies(
+        clearSelectionWhenEditorLosesFocus: !keepSelection,
+        clearSelectionWhenImeConnectionCloses: !keepSelection,
+      ),
+      stylesheet: _stylesheet(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final editor = SuperEditorIosControlsScope(
+      controller: _iosControlsController,
+      child: SuperEditorAndroidControlsScope(controller: _androidControlsController, child: _buildSuperEditor()),
+    );
+
+    // Reorder and right-click chrome need a box around the editor, which a shrink-wrapped (sliver) editor can't have.
+    if (widget.shrinkWrap) return editor;
+
+    if (_isDesktopOrWeb) {
+      final reorderable = ReorderableDocumentOverlay(
+        document: _controller.document,
+        editor: _controller.editor,
+        documentLayoutResolver: _layout,
+        child: editor,
+      );
+      final showMenu = widget.desktopContextMenu;
+      if (showMenu == null) return reorderable;
+      return DesktopContextMenuRegion(
+        document: _controller.document,
+        composer: _controller.composer,
+        editorOps: _editorOps,
+        documentLayoutResolver: _layout,
+        showMenu: showMenu,
+        child: reorderable,
+      );
+    }
+
+    // Touch: long-press to reorder only while unfocused (a tap must keep meaning "place the caret" while editing),
+    // and tapping outside the editor (or its toolbar, which shares the tap region group) unfocuses it.
+    return TapRegion(
+      groupId: _controller.tapRegionGroupId,
+      onTapOutside: (_) => _controller.focusNode.unfocus(),
+      child: MobileReorderableDocumentOverlay(
+        document: _controller.document,
+        editor: _controller.editor,
+        editorOps: _editorOps,
+        focusNode: _controller.focusNode,
+        documentLayoutResolver: _layout,
+        enabled: !_controller.focusNode.hasFocus,
+        child: editor,
+      ),
+    );
+  }
+}

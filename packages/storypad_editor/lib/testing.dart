@@ -4,3 +4,4 @@ library;
 
 export 'src/testing/document_equivalence.dart';
 export 'src/testing/embed_conformance.dart';
+export 'src/testing/pump_story_editor.dart';

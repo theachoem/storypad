@@ -1,0 +1,320 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:super_editor/super_editor.dart';
+
+import 'drag_snapshot_preview.dart';
+
+/// Wraps [child] (the rendered document, e.g. a [SuperEditor]) with
+/// Notion-style drag handles: hovering the mouse over a block reveals a small
+/// grip icon floating in the left gutter, and dragging it reorders that block
+/// anywhere else in the document.
+///
+/// The handle is a floating overlay, not a layout change — it's absolutely
+/// positioned over a gutter that's always reserved (see the extra left
+/// `documentPadding` [RawEditor] adds), so hovering never resizes or reflows
+/// the text underneath it.
+///
+/// Desktop/web only: [RawEditor] only mounts this where it also mounts its
+/// other mouse-only chrome (the right-click menu) — showing/hiding the handle
+/// relies on hover, which touch platforms don't have.
+class ReorderableDocumentOverlay extends StatefulWidget {
+  const ReorderableDocumentOverlay({
+    super.key,
+    required this.document,
+    required this.editor,
+    required this.documentLayoutResolver,
+    required this.child,
+  });
+
+  final Document document;
+  final Editor editor;
+  final DocumentLayout Function() documentLayoutResolver;
+  final Widget child;
+
+  @override
+  State<ReorderableDocumentOverlay> createState() => _ReorderableDocumentOverlayState();
+}
+
+class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay> with DragSnapshotPreviewMixin {
+  static const _handleIconSize = 14.0;
+  static const _handleGap = 4.0;
+
+  final _stackKey = GlobalKey();
+
+  /// The node currently under the mouse, while nothing is being dragged.
+  String? _hoveredNodeId;
+
+  /// The node being dragged, or `null` when no drag is in progress.
+  String? _draggingNodeId;
+
+  /// The dragged node's own rect, captured once when the drag starts —
+  /// alongside [captureDragSnapshot], gives [buildSnapshotPreview] both the
+  /// pixels and the source region to crop them from.
+  Rect? _draggedNodeSourceRect;
+
+  /// Offset from the drag's down position to [_draggedNodeSourceRect]'s
+  /// top-left, captured once at drag start — lets the floating preview (see
+  /// [_buildDragPreview]) track the pointer while keeping the same relative
+  /// grab point throughout the drag, the same way a real dragged object
+  /// would, instead of snapping its whole rect under the pointer.
+  Offset? _grabOffset;
+
+  /// The pointer's current position, in this overlay's own local coordinate
+  /// space — updated on every pan update so the preview can follow it
+  /// freely in both x and y (Notion-style), independently of
+  /// [_dropIndex]/[_dragRects], which still only track vertical slot
+  /// snapping for the drop *line* and the eventual `MoveNodeRequest` target.
+  Offset? _pointerPosition;
+
+  /// A snapshot of every *other* node's on-screen rect, taken once when the
+  /// drag starts. Rects don't change mid-drag (nothing moves until the drag
+  /// completes), so this avoids re-querying the document layout on every
+  /// `onPanUpdate`.
+  List<MapEntry<String, Rect>> _dragRects = const [];
+
+  /// Index into [_dragRects] where the dragged node would land if dropped
+  /// right now — i.e. the index [MoveNodeRequest.newIndex] would use, since
+  /// [_dragRects] already excludes the dragged node the same way the
+  /// document does internally when it's removed-then-reinserted.
+  int? _dropIndex;
+
+  RenderBox? get _stackBox => _stackKey.currentContext?.findRenderObject() as RenderBox?;
+
+  Rect? _rectForNode(String nodeId) {
+    final component = widget.documentLayoutResolver().getComponentByNodeId(nodeId);
+    final stackBox = _stackBox;
+    if (component == null || stackBox == null || !stackBox.attached) {
+      return null;
+    }
+
+    final renderBox = (component as State).context.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.attached) {
+      return null;
+    }
+
+    // `ancestor: stackBox` makes this return the offset in the stack's own
+    // local coordinate space directly, matching what `Positioned` expects.
+    final topLeft = renderBox.localToGlobal(Offset.zero, ancestor: stackBox);
+    return topLeft & renderBox.size;
+  }
+
+  void _handleHover(PointerHoverEvent event) {
+    final stackBox = _stackBox;
+    if (stackBox == null) {
+      return;
+    }
+    final localY = stackBox.globalToLocal(event.position).dy;
+
+    String? foundId;
+    for (final node in widget.document) {
+      final rect = _rectForNode(node.id);
+      if (rect != null && localY >= rect.top && localY < rect.bottom) {
+        foundId = node.id;
+        break;
+      }
+    }
+
+    if (foundId != _hoveredNodeId) {
+      setState(() => _hoveredNodeId = foundId);
+    }
+  }
+
+  void _handleExit(PointerExitEvent event) {
+    if (_draggingNodeId == null && _hoveredNodeId != null) {
+      setState(() => _hoveredNodeId = null);
+    }
+  }
+
+  void _startDrag(String nodeId, DragStartDetails details) {
+    final rects = <MapEntry<String, Rect>>[];
+    var originalIndex = 0;
+    for (final node in widget.document) {
+      if (node.id == nodeId) {
+        continue;
+      }
+      final rect = _rectForNode(node.id);
+      if (rect != null) {
+        rects.add(MapEntry(node.id, rect));
+        if (widget.document.getNodeIndexById(node.id) < widget.document.getNodeIndexById(nodeId)) {
+          originalIndex++;
+        }
+      }
+    }
+
+    final sourceRect = _rectForNode(nodeId);
+    final stackBox = _stackBox;
+    final downPosition = stackBox?.globalToLocal(details.globalPosition);
+
+    setState(() {
+      _draggingNodeId = nodeId;
+      _draggedNodeSourceRect = sourceRect;
+      _grabOffset = sourceRect == null || downPosition == null ? null : downPosition - sourceRect.topLeft;
+      _pointerPosition = downPosition;
+      _dragRects = rects;
+      _dropIndex = originalIndex;
+    });
+    // Fire-and-forget: captures asynchronously, then setState's itself once
+    // the image is ready (a frame or two later) — the plain drop-indicator
+    // line is already showing by then, so the preview just fades in on top
+    // of it slightly after the drag visibly starts, rather than blocking it.
+    captureDragSnapshot();
+  }
+
+  int _computeDropIndex(double pointerY) {
+    for (int i = 0; i < _dragRects.length; i++) {
+      final rect = _dragRects[i].value;
+      if (pointerY < rect.top + rect.height / 2) {
+        return i;
+      }
+    }
+    return _dragRects.length;
+  }
+
+  /// The rect of whichever node sits at [index] once the drag completes, or
+  /// the last node's rect if [index] is past the end — used to both
+  /// position the drop indicator's line and match its horizontal span to
+  /// the actual text column (which may be centered/constrained rather than
+  /// flush with this overlay's own bounds).
+  Rect? _rectNearDropIndex(int index) {
+    if (_dragRects.isEmpty) {
+      return null;
+    }
+    return _dragRects[index >= _dragRects.length ? _dragRects.length - 1 : index].value;
+  }
+
+  void _updateDrag(DragUpdateDetails details) {
+    final stackBox = _stackBox;
+    if (stackBox == null) {
+      return;
+    }
+    final localPosition = stackBox.globalToLocal(details.globalPosition);
+    setState(() {
+      _pointerPosition = localPosition;
+      _dropIndex = _computeDropIndex(localPosition.dy);
+    });
+  }
+
+  void _endDrag(DragEndDetails details) {
+    final nodeId = _draggingNodeId;
+    final targetIndex = _dropIndex;
+    disposeDragSnapshot();
+    setState(() {
+      _draggingNodeId = null;
+      _draggedNodeSourceRect = null;
+      _grabOffset = null;
+      _pointerPosition = null;
+      _dragRects = const [];
+      _dropIndex = null;
+    });
+
+    if (nodeId == null || targetIndex == null) {
+      return;
+    }
+    widget.editor.execute([MoveNodeRequest(nodeId: nodeId, newIndex: targetIndex)]);
+  }
+
+  void _cancelDrag() {
+    disposeDragSnapshot();
+    setState(() {
+      _draggingNodeId = null;
+      _draggedNodeSourceRect = null;
+      _grabOffset = null;
+      _pointerPosition = null;
+      _dragRects = const [];
+      _dropIndex = null;
+    });
+  }
+
+  Widget _buildHandle(String nodeId, {required bool isActive}) {
+    final rect = _rectForNode(nodeId);
+    if (rect == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned(
+      // Anchored to the block's own rendered left edge, not a fixed offset —
+      // a fixed offset drifts away from the text on wide windows, where
+      // SuperEditor centers/constrains the document column well to the
+      // right of its own outer bounds.
+      left: rect.left - _handleGap - _handleIconSize,
+      top: rect.top,
+      height: rect.height,
+      width: _handleIconSize,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.grab,
+        child: GestureDetector(
+          onPanStart: (details) => _startDrag(nodeId, details),
+          onPanUpdate: _updateDrag,
+          onPanEnd: _endDrag,
+          onPanCancel: _cancelDrag,
+          child: Center(
+            child: Icon(
+              Icons.drag_indicator,
+              size: _handleIconSize,
+              color: isActive ? Theme.of(context).colorScheme.primary : Colors.black38,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropIndicator() {
+    final dropIndex = _dropIndex;
+    final rect = dropIndex == null ? null : _rectNearDropIndex(dropIndex);
+    if (rect == null || dropIndex == null) {
+      return const SizedBox.shrink();
+    }
+    final y = dropIndex >= _dragRects.length ? rect.bottom : rect.top;
+
+    return Positioned(
+      left: rect.left,
+      width: rect.width,
+      top: y - 1,
+      child: IgnorePointer(child: Container(height: 2, color: Theme.of(context).colorScheme.primary)),
+    );
+  }
+
+  /// The semi-transparent, real preview of the dragged block — a
+  /// Notion-style floating ghost that tracks the pointer freely in both x
+  /// and y (via [_pointerPosition]/[_grabOffset]), on top of (not instead
+  /// of) [_buildDropIndicator]'s plain line, which still only snaps
+  /// vertically between slots. The two are deliberately decoupled: this
+  /// preview is cosmetic — it doesn't affect where the block actually drops
+  /// (still purely [_dropIndex], driven only by vertical position) — while
+  /// the line is what actually communicates that.
+  Widget _buildDragPreview() {
+    final sourceRect = _draggedNodeSourceRect;
+    final pointerPosition = _pointerPosition;
+    final grabOffset = _grabOffset;
+    if (sourceRect == null || pointerPosition == null || grabOffset == null || !hasDragSnapshot) {
+      return const SizedBox.shrink();
+    }
+
+    final topLeft = pointerPosition - grabOffset;
+    return buildSnapshotPreview(
+      sourceRect: sourceRect,
+      targetRect: Rect.fromLTWH(topLeft.dx, topLeft.dy, sourceRect.width, sourceRect.height),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onHover: _handleHover,
+      onExit: _handleExit,
+      child: Stack(
+        key: _stackKey,
+        children: [
+          wrapWithSnapshotBoundary(widget.child),
+          if (_draggingNodeId != null)
+            _buildHandle(_draggingNodeId!, isActive: true)
+          else if (_hoveredNodeId != null)
+            _buildHandle(_hoveredNodeId!, isActive: false),
+          if (_draggingNodeId != null) _buildDropIndicator(),
+          if (_draggingNodeId != null) _buildDragPreview(),
+        ],
+      ),
+    );
+  }
+}

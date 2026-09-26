@@ -16,3 +16,7 @@ export 'src/embed/story_embed_node.dart';
 export 'src/embed/story_embed_registry.dart';
 export 'src/embed/story_html_element.dart';
 export 'src/embed/unknown_embed.dart';
+export 'src/widgets/desktop_context_menu.dart'
+    show DesktopContextMenuAction, DesktopContextMenuHandler, DesktopContextMenuRequest, showDefaultDesktopContextMenu;
+export 'src/widgets/raw_editor.dart';
+export 'src/widgets/story_embed_component.dart' show defaultUnknownEmbedBuilder;
