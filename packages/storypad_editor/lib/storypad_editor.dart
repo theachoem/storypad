@@ -5,6 +5,7 @@
 /// only what's exported here is API.
 library;
 
+export 'src/codec/story_codec.dart';
 export 'src/embed/quill_embed_op.dart';
 export 'src/embed/story_embed_attribute.dart';
 export 'src/embed/story_embed_codec.dart';

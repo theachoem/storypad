@@ -1,5 +1,5 @@
-/// Test helpers for consumers of storypad_editor: embed round-trip
-/// expectations and an editor pump helper. Import from tests only.
-///
-/// Currently empty -- filled in as the embed contract and editor widgets land.
+/// Test helpers for consumers of storypad_editor: document equivalence, embed round-trip expectations, and an editor
+/// pump helper. Import from tests only (this library depends on `flutter_test`).
 library;
+
+export 'src/testing/document_equivalence.dart';
