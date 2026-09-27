@@ -6,6 +6,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 import '../demo_content.dart';
 import '../embeds/demo_embeds.dart';
+import '../native_context_menu.dart';
 import '../toolbar/editor_toolbar.dart';
 
 /// A [MarkdownEditor] with its Markdown shown live beside it, plus import/export: paste Markdown, convert a story's
@@ -81,6 +82,7 @@ class _MarkdownEditorPageState extends State<MarkdownEditorPage> {
       controller: editorController,
       editor: MarkdownEditor(
         controller: editorController,
+        desktopContextMenu: showDesktopContextMenu,
         onChanged: (markdown) {
           // A change flushed from a replaced (or disposed) editor arrives after it's gone: ignore it.
           if (mounted && identical(editorController, _controller)) setState(() => _markdown = markdown);

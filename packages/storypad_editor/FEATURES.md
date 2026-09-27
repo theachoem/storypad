@@ -1,0 +1,84 @@
+# Features, format and gotchas
+
+Pointer-style: see the named files for how each works. Update when behavior changes.
+
+## Architecture
+
+- **Embed contract** (`lib/src/embed/`): `StoryEmbedCodec<T>` (Quill import, Markdown HTML, plain text — headless) and
+  `StoryEmbed<T>` (+ `build`). One package-owned, non-generic `StoryEmbedNode(type, value)`: super_editor compares
+  nodes and view models by `runtimeType`, so a generic node would silently compare unequal across copies.
+  `StoryEmbedRegistry` validates types, Quill keys and tags up front (duplicates, reserved names).
+- **Codec** (`lib/src/codec/story_codec.dart`): `decode`/`encode`/`quillToMarkdown`/`toPlainText`, no widgets.
+- **Controller** (`lib/src/controller/`): owns document, composer and an `Editor` it builds itself (see Gotchas),
+  `StoryEditorActions` (headless commands), embed ops, selection holds, dirty tracking, read-only.
+- **Widgets** (`lib/src/widgets/`): `RawEditor`, `MarkdownEditor`, and one `StoryEmbedComponentBuilder` for every
+  embed. No toolbar: `example/lib/toolbar/` is the reference.
+
+## Storage format (Markdown)
+
+Written by `markdown/markdown_writer.dart`, read by `markdown/markdown_reader.dart` (a small line-based block parser;
+inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, checked by randomized tests:
+`decode(encode(doc))` ≡ `doc` and `encode(decode(encode(doc))) == encode(doc)`.
+
+- Every block is one line, except fenced code (fence longer than any backtick run inside) and the wrapper below.
+  Blocks are separated by a blank line; consecutive list items/tasks by one newline.
+- Hard line break inside text: `<br>`. Empty paragraph: `&nbsp;`. Trailing empty paragraphs are dropped.
+- Lists/tasks: `-`, `1.`, `- [ ]`/`- [x]`, 4 spaces per level (reads 2/3-space nesting too). Indent max 6.
+- Non-left alignment and paragraph indent: `<div style="text-align:…" data-indent="…">` + blank lines + the block +
+  blank lines + `</div>` (paragraphs, headings, quotes; not lists or code).
+- Inline: `**`, `*`, `~~`, `` ` ``, `[](…)`, plus `<u>`, `<span style="color:#rrggbbaa">`,
+  `<mark style="background-color:#rrggbbaa">`, `<sup>`, `<sub>`. When CommonMark's emphasis rules would misread a
+  delimiter (e.g. `**(a)**b`), the line falls back to `<strong>`/`<em>`/`<del>`: every written line is parsed back
+  and compared (`inline_markdown_writer.dart`).
+- Escaping: Markdown punctuation with `\`, `<` `>` `&` and backticks as references; block syntax at line start
+  (`#`, `-`, `+`, `1.`, `=`). Link destinations are written normalized (Markdown percent-encodes spaces).
+- Embeds: one line of HTML from `toHtml`; an `<img>` with only `src`/`alt` is written `![alt](src)` when that reads
+  back identically, and a bare `![]()` reads through the embed claiming `img`.
+- Unknown: a Quill op no embed claims → `<sp-unknown data-op="base64(json(op))">` (attributes included); a Markdown
+  line an embed rejects, or any unregistered `<sp-*>` line (a newer app's embed) → kept verbatim.
+
+## Quill import (`quill/quill_importer.dart`)
+
+- Embeds only through the registry (no stock image/video/audio/file formats); unclaimed or rejected → unknown.
+- One combined block format (header, list/task, quote, code, indent, align): super_editor applies only the first
+  matching block format per line, so stock formats drop combinations.
+- Tolerant inline formats: stock color/link/script formats throw on a bad value and abort the whole import.
+- Ops are sanitized (non-inserts skipped) and split per `\n` (Quill compacts same-attribute lines into one op).
+- Removed after import: the empty paragraph super_editor inserts after every embed, and the one Quill's final `\n`
+  opens.
+- Dropped by design: font, size, direction; alignment on list/task lines (lists have no alignment in Markdown).
+
+## Gotchas
+
+- **One controller per story.** super_editor's undo replays history from a snapshot taken at construction, and history
+  can't be cleared, so content is never replaced in place.
+- **Editor reactions**: the controller leaves out `UpdateSubTaskIndentAfterTaskDeletionReaction` (re-clamps free task
+  indent on any task delete) and `ImageUrlConversionReaction` (pasted URL → stock `ImageNode`).
+- **Embed updates** use `UpdateStoryEmbedRequest` (a node change), not `ReplaceNodeRequest` (remove + insert, which
+  triggers deletion reactions). `StoryEmbedContext.update` transforms the *live* value (fast double taps).
+- **Revision/caching** listens to the document's change log, not editor listeners: undo/redo don't report edits to
+  editor listeners.
+- **Selection hold**: take it synchronously before opening a popup/dialog (opening moves focus). Mobile clears the
+  selection on focus loss otherwise; `isToolbarActive` keeps a toolbar mounted meanwhile.
+- **Embed host** paints its own selection overlay: super_editor's `SelectableBox` wraps its child in `IgnorePointer`.
+- **Mobile reorder overlay** (`mobile_reorderable_document_overlay.dart`): while unfocused, opaque regions cover text
+  blocks (they must win taps), so they forward vertical drags to the document's `ScrollPosition.drag` (otherwise it
+  couldn't scroll), and re-measure after each scroll (post-frame: the overlay builds before the scrolled content is
+  laid out). Embed regions are translucent so embed buttons get the first tap. `_safeSetState` guards gesture
+  callbacks fired mid-rebuild.
+- **`MarkdownEditor`** flushes a pending change on dispose/controller swap in a microtask (the tree is locked then).
+- **package:markdown quirks** handled in the inline writer: no entity decoding right after a backtick (separator
+  `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.
+- **Android toolbar** is super_editor's internal `AndroidPopoverToolbar`, vendored in `widgets/vendor/` (the
+  `implementation_imports` lint is on).
+- **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example
+  wires a native macOS `NSMenu` (with the Services submenu) in `example/macos/Runner/MainFlutterWindow.swift`.
+
+## Known limitations
+
+- Cutting and pasting an embed inside the editor loses it (paste is plain text).
+- Undo slows down over a long session (full history replay).
+- Hand-written Markdown: setext headings, lazy continuation, tables and HTML blocks read as paragraph text.
+- A whitespace-only paragraph is stored with character references (`&#32;`); leading spaces in a line are kept, but
+  other Markdown renderers may show 4+ as code.
+- Embed buttons inside the document may wait for super_editor's double-tap timeout before a tap wins.

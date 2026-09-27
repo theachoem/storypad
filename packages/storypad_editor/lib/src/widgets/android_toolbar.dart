@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:follow_the_leader/follow_the_leader.dart';
 import 'package:super_editor/super_editor.dart';
-// ignore: implementation_imports
-import 'package:super_editor/src/infrastructure/flutter/android_toolbar.dart';
+
+import 'vendor/android_popover_toolbar.dart';
 
 // =============================================================================
 // Android: floating toolbar augmented with native "Process Text" actions.
@@ -36,11 +36,9 @@ const _maxToolbarWidth = 280.0;
 /// interaction can happen) gives the query plenty of time to resolve before it's ever
 /// needed, with no `FutureBuilder`/loading-state dance required in the toolbar itself.
 ///
-/// This deep-imports `AndroidPopoverToolbar`/`AndroidPopoverToolbarContainer`, an
-/// internal (non-exported) SuperEditor widget, so this renders with the exact same
-/// pill/overflow chrome as SuperEditor's own Android toolbar. Because that's not part
-/// of super_editor's public API, it could change (or move) on a future super_editor
-/// upgrade without a deprecation notice.
+/// Uses a vendored copy of `AndroidPopoverToolbar`/`AndroidPopoverToolbarContainer`
+/// (see `vendor/android_popover_toolbar.dart`), an internal SuperEditor widget, so this
+/// renders with the exact same pill/overflow chrome as SuperEditor's own Android toolbar.
 class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
   const AndroidTextEditingFloatingToolbarWithProcessText({
     super.key,

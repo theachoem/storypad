@@ -3,6 +3,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 import '../demo_content.dart';
 import '../embeds/demo_embeds.dart';
+import '../native_context_menu.dart';
 import '../toolbar/editor_toolbar.dart';
 
 /// The bare editing surface: a [RawEditor] over a controller holding the demo story, plus app-bar actions that go
@@ -76,7 +77,7 @@ class _RawEditorPageState extends State<RawEditorPage> {
       body: SafeArea(
         child: EditorWithToolbar(
           controller: _controller,
-          editor: RawEditor(controller: _controller),
+          editor: RawEditor(controller: _controller, desktopContextMenu: showDesktopContextMenu),
         ),
       ),
     );
