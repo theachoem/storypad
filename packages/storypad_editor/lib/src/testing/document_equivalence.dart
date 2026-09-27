@@ -7,7 +7,7 @@ import '../markdown/markdown_format.dart';
 
 /// Whether two nodes hold the same content as far as the Markdown format can tell: same kind of block, block type,
 /// alignment, indent, completion, and text (compared per character, ignoring formatting on line breaks and
-/// unsupported attributions). Ids and incidental metadata are ignored.
+/// unsupported attributions; code with line endings normalized). Ids and incidental metadata are ignored.
 bool nodesEquivalent(DocumentNode a, DocumentNode b) {
   if (a.runtimeType != b.runtimeType) return false;
 
@@ -26,10 +26,13 @@ bool nodesEquivalent(DocumentNode a, DocumentNode b) {
 bool _paragraphsEquivalent(ParagraphNode a, ParagraphNode b) {
   final blockType = _blockType(a);
   if (blockType != _blockType(b)) return false;
-  if (blockType == codeAttribution) return a.text.toPlainText() == b.text.toPlainText();
+  // Code is compared verbatim, except line endings, which the format normalizes to \n.
+  if (blockType == codeAttribution) return _lineEndings(a.text.toPlainText()) == _lineEndings(b.text.toPlainText());
 
   return _align(a) == _align(b) && a.indent == b.indent && inlineTextEquals(a.text, b.text);
 }
+
+String _lineEndings(String text) => text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
 
 Attribution _blockType(DocumentNode node) => node.getMetadataValue(NodeMetadata.blockType) ?? paragraphAttribution;
 

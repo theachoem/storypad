@@ -80,7 +80,9 @@ class QuillImporter {
       if (insert is Map) {
         result.add({'insert': Map<String, Object?>.from(insert), 'attributes': ?cleanAttributes});
       } else if (insert is String && insert.isNotEmpty) {
-        for (final match in RegExp(r'\n|[^\n]+').allMatches(insert)) {
+        // Normalize line endings: a \r would otherwise stay inside a line.
+        final text = insert.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+        for (final match in RegExp(r'\n|[^\n]+').allMatches(text)) {
           result.add({'insert': match[0]!, 'attributes': ?cleanAttributes});
         }
       }

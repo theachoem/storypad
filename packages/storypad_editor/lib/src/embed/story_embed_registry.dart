@@ -64,6 +64,7 @@ final class StoryEmbedRegistry {
     'sup',
     'u',
     'ul',
+    'wbr',
     'sp-embed',
   };
 

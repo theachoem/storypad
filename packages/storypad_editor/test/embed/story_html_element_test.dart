@@ -85,6 +85,17 @@ void main() {
       expect(() => StoryHtmlElement('img', attributes: {'bad name': 'x'}), throwsArgumentError);
     });
 
+    test('rejects what would not read back: uppercase attribute names, content in void elements', () {
+      expect(() => StoryHtmlElement('img', attributes: {'dataSize': 'x'}), throwsArgumentError);
+      expect(() => StoryHtmlElement('img', text: 'x'), throwsArgumentError);
+      expect(() => StoryHtmlElement('img', children: [StoryHtmlElement('b')]), throwsArgumentError);
+    });
+
+    test('markup that is not a representable element parses as null, not a throw', () {
+      expect(StoryHtmlElement.tryParse('<http://x.y>'), isNull);
+      expect(StoryHtmlElement.tryParseSingle('<http://x.y>'), isNull);
+    });
+
     test('rejects text and children together', () {
       expect(() => StoryHtmlElement('p', text: 'x', children: [StoryHtmlElement('img')]), throwsArgumentError);
     });

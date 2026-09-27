@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:super_editor/super_editor.dart';
 
 import 'quill_embed_op.dart';
@@ -69,12 +70,22 @@ abstract class StoryEmbedCodec<T extends Object> {
   /// Creates a document node holding [value]. Use this rather than constructing [StoryEmbedNode] directly, so the
   /// node's plain text stays in sync with its value.
   StoryEmbedNode createNode(T value, {String? id}) {
-    return StoryEmbedNode(id: id ?? Editor.createNodeId(), type: type, value: value, plainText: toPlainText(value));
+    return StoryEmbedNode(id: id ?? Editor.createNodeId(), type: type, value: value, plainText: _plainTextOf(value));
   }
 
   /// A copy of [node] holding [value] instead.
   StoryEmbedNode replaceValue(StoryEmbedNode node, T value) {
-    return node.copyWithValue(value, plainText: toPlainText(value));
+    return node.copyWithValue(value, plainText: _plainTextOf(value));
+  }
+
+  /// [toPlainText], or nothing if the embed throws: plain text is derived, so it must never block a document.
+  String _plainTextOf(T value) {
+    try {
+      return toPlainText(value);
+    } catch (error, stackTrace) {
+      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace, library: 'storypad_editor'));
+      return '';
+    }
   }
 
   /// Whether [node] is one of this embed's nodes.
@@ -91,16 +102,34 @@ abstract class StoryEmbedCodec<T extends Object> {
   /// [toHtml] for a node of this embed.
   StoryHtmlElement toHtmlOf(StoryEmbedNode node) => toHtml(valueOf(node));
 
-  /// [fromQuill], wrapped into a node.
-  StoryEmbedNode? nodeFromQuill(QuillEmbedOp op, {String? id}) {
+  /// [fromQuill], wrapped into a node. An exception from the embed counts as a rejection (`null`), so the content goes
+  /// to the unknown embed instead of aborting the whole import.
+  StoryEmbedNode? nodeFromQuill(QuillEmbedOp op, {String? id}) => _guarded('fromQuill', op, () {
     final value = fromQuill(op);
     return value == null ? null : createNode(value, id: id);
-  }
+  });
 
-  /// [fromHtml], wrapped into a node.
-  StoryEmbedNode? nodeFromHtml(StoryHtmlElement element, {String? id}) {
+  /// [fromHtml], wrapped into a node. An exception from the embed counts as a rejection (`null`), so the line goes to
+  /// the unknown embed instead of aborting the whole decode.
+  StoryEmbedNode? nodeFromHtml(StoryHtmlElement element, {String? id}) => _guarded('fromHtml', element, () {
     final value = fromHtml(element);
     return value == null ? null : createNode(value, id: id);
+  });
+
+  StoryEmbedNode? _guarded(String method, Object input, StoryEmbedNode? Function() read) {
+    try {
+      return read();
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'storypad_editor',
+          context: ErrorDescription('while reading a "$type" embed ($method: $input); kept as unknown content instead'),
+        ),
+      );
+      return null;
+    }
   }
 
   @override

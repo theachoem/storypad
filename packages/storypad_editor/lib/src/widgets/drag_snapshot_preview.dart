@@ -29,6 +29,7 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
 
   ui.Image? _snapshotImage;
   double? _snapshotPixelRatio;
+  int _captureGeneration = 0;
 
   bool get hasDragSnapshot => _snapshotImage != null;
 
@@ -45,9 +46,11 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
       return;
     }
 
+    final generation = ++_captureGeneration;
     final pixelRatio = MediaQuery.of(context).devicePixelRatio;
     final image = await boundary.toImage(pixelRatio: pixelRatio);
-    if (!mounted) {
+    // The drag may have ended (or another started) while capturing: a late image would be stale.
+    if (!mounted || generation != _captureGeneration) {
       image.dispose();
       return;
     }
@@ -60,6 +63,7 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
   }
 
   void disposeDragSnapshot() {
+    _captureGeneration++; // Invalidates a capture still in flight.
     if (_snapshotImage == null) {
       return;
     }

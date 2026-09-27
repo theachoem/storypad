@@ -79,6 +79,17 @@ class RawEditor extends StatefulWidget {
 /// The document's left inset on desktop/web: just wide enough for [ReorderableDocumentOverlay]'s drag handle.
 const _reorderGutterWidth = 18.0;
 
+/// The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
+final _keyboardActions = List<SuperEditorKeyboardAction>.unmodifiable([
+  for (final action in defaultImeKeyboardActions)
+    if (action == tabToIndentTask)
+      tabToIndentTaskFreely
+    else if (action == shiftTabToUnIndentTask)
+      shiftTabToUnIndentTaskFreely
+    else
+      action,
+]);
+
 class _RawEditorState extends State<RawEditor> {
   final _documentLayoutKey = GlobalKey();
   late CommonEditorOperations _editorOps;
@@ -118,6 +129,12 @@ class _RawEditorState extends State<RawEditor> {
     if (!identical(oldWidget.controller, _controller)) {
       _detach(oldWidget.controller);
       _attach(_controller);
+      _componentBuildersCache = null;
+    }
+    if (oldWidget.baseTextStyle != widget.baseTextStyle ||
+        oldWidget.padding != widget.padding ||
+        !identical(oldWidget.styleRules, widget.styleRules)) {
+      _stylesheetCache = null;
     }
   }
 
@@ -200,7 +217,15 @@ class _RawEditorState extends State<RawEditor> {
     );
   }
 
-  Stylesheet _stylesheet() {
+  // Cached: super_editor rebuilds its whole layout presenter whenever the stylesheet or component builders it's given
+  // aren't the same objects (neither has value equality), so a fresh one per build would restyle every block on every
+  // focus change or parent rebuild.
+  Stylesheet? _stylesheetCache;
+  List<ComponentBuilder>? _componentBuildersCache;
+
+  Stylesheet _stylesheet() => _stylesheetCache ??= _createStylesheet();
+
+  Stylesheet _createStylesheet() {
     return defaultStylesheet.copyWith(
       documentPadding: widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _reorderGutterWidth : 16, 16, 16, 16),
       addRulesAfter: [
@@ -233,7 +258,9 @@ class _RawEditorState extends State<RawEditor> {
     );
   }
 
-  List<ComponentBuilder> _componentBuilders() => [
+  List<ComponentBuilder> _componentBuilders() => _componentBuildersCache ??= _createComponentBuilders();
+
+  List<ComponentBuilder> _createComponentBuilders() => [
     const NoPaddingBlockquoteComponentBuilder(),
     const CompactParagraphComponentBuilder(),
     const CompactListItemComponentBuilder(),
@@ -271,16 +298,7 @@ class _RawEditorState extends State<RawEditor> {
       inputRole: widget.inputRole,
       shrinkWrap: widget.shrinkWrap,
       componentBuilders: _componentBuilders(),
-      // The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
-      keyboardActions: [
-        for (final action in defaultImeKeyboardActions)
-          if (action == tabToIndentTask)
-            tabToIndentTaskFreely
-          else if (action == shiftTabToUnIndentTask)
-            shiftTabToUnIndentTaskFreely
-          else
-            action,
-      ],
+      keyboardActions: _keyboardActions,
       // Mobile drops the selection when the editor loses focus (so tap-outside unfocuses and enables reordering),
       // except while a toolbar holds it (its popup took focus, and its action still needs the selection). Desktop
       // always keeps it: its toolbar popups take focus too.

@@ -41,6 +41,13 @@ void main() {
 
     selectNode(controller, 0);
     controller.actions.toggleBold();
+    await tester.pump();
+    controller.actions.undo();
+    await tester.pump();
+    expect(reported, ['**Hello**', 'Hello']);
+
+    // Edits made together (in one synchronous block) are reported as their net change: here, none.
+    controller.actions.redo();
     controller.actions.undo();
     await tester.pump();
     expect(reported, ['**Hello**', 'Hello']);
@@ -53,6 +60,23 @@ void main() {
       tester,
       controller,
       editor: MarkdownEditor(controller: controller, onChanged: reported.add),
+    );
+
+    selectNode(controller, 0);
+    controller.actions.toggleBold();
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+
+    expect(reported, ['**Hello**']);
+  });
+
+  testWidgets('with no debounce, a change made right before disposal is still reported', (tester) async {
+    final controller = controllerFor('Hello');
+    final reported = <String>[];
+    await pumpStoryEditor(
+      tester,
+      controller,
+      editor: MarkdownEditor(controller: controller, onChanged: reported.add, debounce: Duration.zero),
     );
 
     selectNode(controller, 0);

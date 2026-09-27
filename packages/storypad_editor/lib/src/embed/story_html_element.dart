@@ -29,11 +29,15 @@ final class StoryHtmlElement {
     }
     for (final name in attributes.keys) {
       if (!_attributeNamePattern.hasMatch(name)) {
-        throw ArgumentError.value(name, 'attributes', 'invalid HTML attribute name');
+        // Lowercase only: HTML parsing lowercases attribute names, so any other name wouldn't read back.
+        throw ArgumentError.value(name, 'attributes', 'must be a lowercase HTML attribute name');
       }
     }
     if (text != null && children.isNotEmpty) {
       throw ArgumentError('An element has either children or text, not both.');
+    }
+    if (voidTags.contains(tag) && (text != null || children.isNotEmpty)) {
+      throw ArgumentError('<$tag> is a void element: it can have no text or children.');
     }
   }
 
@@ -62,10 +66,20 @@ final class StoryHtmlElement {
     );
   }
 
-  /// Parses the first element in [html], or returns `null` if there is none.
+  /// Parses the first element in [html], or returns `null` if there is none (or it isn't representable).
   static StoryHtmlElement? tryParse(String html) {
     final element = html_parser.parseFragment(html).nodes.whereType<dom.Element>().firstOrNull;
-    return element == null ? null : StoryHtmlElement.fromDom(element);
+    return element == null ? null : _tryFromDom(element);
+  }
+
+  /// [StoryHtmlElement.fromDom], or `null` for markup this model can't represent (e.g. `<http://x>` parses as an
+  /// element named `http:`).
+  static StoryHtmlElement? _tryFromDom(dom.Element element) {
+    try {
+      return StoryHtmlElement.fromDom(element);
+    } on ArgumentError {
+      return null;
+    }
   }
 
   /// Parses [html] only if it is exactly one element (surrounding whitespace allowed), e.g. a whole Markdown line
@@ -77,11 +91,11 @@ final class StoryHtmlElement {
         .where((node) => node is! dom.Text || node.text.trim().isNotEmpty);
     if (nodes.length != 1) return null;
     final node = nodes.single;
-    return node is dom.Element ? StoryHtmlElement.fromDom(node) : null;
+    return node is dom.Element ? _tryFromDom(node) : null;
   }
 
   static final _tagPattern = RegExp(r'^[a-z][a-z0-9-]*$');
-  static final _attributeNamePattern = RegExp(r'^[a-zA-Z_:][-a-zA-Z0-9_:.]*$');
+  static final _attributeNamePattern = RegExp(r'^[a-z_:][-a-z0-9_:.]*$');
 
   /// Elements that have no closing tag.
   static const voidTags = {

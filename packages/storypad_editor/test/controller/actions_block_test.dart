@@ -1,4 +1,4 @@
-import 'package:flutter/painting.dart' show TextAlign;
+import 'package:flutter/painting.dart' show Color, TextAlign;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/controller_helpers.dart';
@@ -90,5 +90,22 @@ void main() {
 
     controller.actions.redo();
     expect(controller.toMarkdown(), '**Hello**');
+  });
+
+  test('a code block holds plain text only: converting strips formatting, and formatting/indent do not apply', () {
+    final controller = controllerFor('<div data-indent="1">\n\n**Hello** code\n\n</div>');
+    placeCaret(controller, 0, 0);
+
+    controller.actions.toggleCodeBlock();
+    expect(controller.toMarkdown(), '```\nHello code\n```');
+    expect((nodeAt(controller, 0) as dynamic).text.getAllAttributionsAt(0), isEmpty);
+
+    selectNode(controller, 0);
+    controller.actions.toggleBold();
+    controller.actions.setTextColor(const Color(0xFFFF0000));
+    expect(controller.actions.canIndent, isFalse);
+    controller.actions.indent();
+    expect(controller.actions.canUndo, isTrue);
+    expect((nodeAt(controller, 0) as dynamic).text.getAllAttributionsAt(0), isEmpty, reason: 'shown == saved');
   });
 }

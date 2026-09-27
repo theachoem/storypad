@@ -1,5 +1,7 @@
 import 'dart:ui' show Color;
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import 'package:super_editor/super_editor.dart';
 
 import 'inline_markdown_reader.dart';
@@ -30,7 +32,14 @@ class InlineMarkdownWriter {
     final preferred = _render(runs, useDelimiters: true, escapeHash: escapeHash);
     if (_roundTrips(preferred, text, plainText)) return preferred;
 
-    return _render(runs, useDelimiters: false, escapeHash: escapeHash);
+    final fallback = _render(runs, useDelimiters: false, escapeHash: escapeHash);
+    assert(() {
+      if (!_roundTrips(fallback, text, plainText)) {
+        debugPrint('storypad_editor: inline Markdown does not round-trip, please report: $fallback');
+      }
+      return true;
+    }());
+    return fallback;
   }
 
   /// Whether [markdown] parses back to text equal to [original] (after canonicalization).
@@ -94,7 +103,14 @@ class InlineMarkdownWriter {
 
       final text = run.buffer.toString();
       if (wanted.contains(codeAttribution)) {
-        out.write(_codeSpan(text), isCodeSpan: true);
+        // Inside an HTML tag, a backtick span could contain that tag's closing tag (`<u>`a</u>b`</u>`), which the
+        // tag syntax would match first; and a backtick span can't hold line separators. Use an escaped <code> then.
+        final insideHtmlTag = stack.any((tag) => tag.open.startsWith('<'));
+        if (insideHtmlTag || _lineSeparators.hasMatch(text)) {
+          out.write('<code>${escapeText(text)}</code>');
+        } else {
+          out.write(_codeSpan(text), isCodeSpan: true);
+        }
       } else {
         out.write(escapeText(text, escapeHash: escapeHash, afterCodeSpan: out.endsWithCodeSpan));
       }
@@ -103,6 +119,8 @@ class InlineMarkdownWriter {
 
     return out.toString();
   }
+
+  static final _lineSeparators = RegExp('[\r\u2028\u2029]');
 
   /// Attributions in nesting order, outermost first: link, then the styles, with code last (innermost).
   static List<Attribution> _ordered(Iterable<Attribution> attributions) =>
@@ -209,9 +227,6 @@ Attribution _canonical(Attribution attribution) =>
 /// separated from the span by a `<wbr>` (an invisible line-break opportunity), which reads back as nothing.
 String escapeText(String text, {bool escapeHash = false, bool afterCodeSpan = false}) {
   final buffer = StringBuffer();
-  if (afterCodeSpan && text.isNotEmpty && const {'<', '>', '&', '`'}.contains(text[0])) {
-    buffer.write('<wbr>');
-  }
   for (final rune in text.runes) {
     final character = String.fromCharCode(rune);
     switch (character) {
@@ -228,11 +243,19 @@ String escapeText(String text, {bool escapeHash = false, bool afterCodeSpan = fa
         buffer.write('&gt;');
       case '&':
         buffer.write('&amp;');
+      // Line separators would split the line (\r) or stop regexes that assume one line (U+2028/U+2029).
+      case '\r':
+        buffer.write('&#13;');
+      case '\u2028':
+        buffer.write('&#8232;');
+      case '\u2029':
+        buffer.write('&#8233;');
       default:
         buffer.write(character);
     }
   }
-  return buffer.toString();
+  final escaped = buffer.toString();
+  return afterCodeSpan && escaped.startsWith('&') ? '<wbr>$escaped' : escaped;
 }
 
 /// A Markdown link destination for [url]: bare when it needs no escaping, otherwise in the `<…>` form.

@@ -134,4 +134,36 @@ void main() {
 
     expect(tester.takeException(), isAssertionError);
   });
+
+  testWidgets('parent rebuilds and focus changes reuse the stylesheet and builders (no presenter rebuild)', (
+    tester,
+  ) async {
+    final controller = controllerFor('Hello');
+    late StateSetter rebuildParent;
+    await pumpStoryEditor(
+      tester,
+      controller,
+      editor: StatefulBuilder(
+        builder: (context, setState) {
+          rebuildParent = setState;
+          return RawEditor(controller: controller);
+        },
+      ),
+    );
+    SuperEditor superEditor() => tester.widget<SuperEditor>(find.byType(SuperEditor));
+    final stylesheet = superEditor().stylesheet;
+    final builders = superEditor().componentBuilders;
+
+    rebuildParent(() {});
+    await tester.pump();
+    controller.focusNode.requestFocus();
+    await tester.pumpAndSettle();
+
+    expect(identical(superEditor().stylesheet, stylesheet), isTrue);
+    expect(
+      superEditor().componentBuilders.take(builders.length - 1).toList(),
+      orderedEquals(builders.take(builders.length - 1)),
+      reason: 'same builder objects (SuperEditor appends its own unknown builder)',
+    );
+  });
 }

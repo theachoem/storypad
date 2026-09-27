@@ -282,9 +282,25 @@ class StoryEditorController extends ChangeNotifier {
     return node.id;
   }
 
+  /// The caret (or last selection) extent, clamped to the node's current content: the last selection may predate
+  /// edits made while there was no selection.
   DocumentPosition? _insertionPosition() {
     for (final selection in [_composer.selection, _lastSelection]) {
-      if (selection != null && _document.getNodeById(selection.extent.nodeId) != null) return selection.extent;
+      if (selection == null) continue;
+      final node = _document.getNodeById(selection.extent.nodeId);
+      if (node == null) continue;
+
+      final position = selection.extent.nodePosition;
+      if (node is TextNode && position is TextNodePosition) {
+        final offset = position.offset.clamp(0, node.text.length);
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: TextNodePosition(offset: offset),
+        );
+      }
+      return node.containsPosition(position)
+          ? selection.extent
+          : DocumentPosition(nodeId: node.id, nodePosition: node.endPosition);
     }
     return null;
   }

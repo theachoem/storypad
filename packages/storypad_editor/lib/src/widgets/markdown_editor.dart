@@ -41,7 +41,7 @@ class MarkdownEditor extends StatefulWidget {
   /// Called with the document's canonical Markdown after it changes. See the class doc for when.
   final ValueChanged<String>? onChanged;
 
-  /// How long edits must pause before [onChanged] fires. [Duration.zero] reports every change immediately.
+  /// How long edits must pause before [onChanged] fires. [Duration.zero] reports every change right after it's made.
   final Duration debounce;
 
   /// See [RawEditor.baseTextStyle].
@@ -74,6 +74,7 @@ class MarkdownEditor extends StatefulWidget {
 
 class _MarkdownEditorState extends State<MarkdownEditor> {
   Timer? _debounce;
+  bool _reportScheduled = false;
   late String _reported;
 
   @override
@@ -106,7 +107,15 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 
   void _onDocumentChanged() {
     if (widget.debounce == Duration.zero) {
-      _report();
+      // Right after the current edit completes (a change reported mid-edit could re-enter the editor); edits made in
+      // one synchronous block are reported once.
+      if (_reportScheduled) return;
+      _reportScheduled = true;
+      scheduleMicrotask(() {
+        if (!_reportScheduled || !mounted) return; // Already flushed.
+        _reportScheduled = false;
+        _report();
+      });
       return;
     }
     _debounce?.cancel();
@@ -115,9 +124,10 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 
   /// Reports [editor]'s pending change, if there is one, in a microtask (the tree is locked during dispose/update).
   void _flush(MarkdownEditor editor) {
-    if (!(_debounce?.isActive ?? false)) return;
-    _debounce!.cancel();
+    if (!(_debounce?.isActive ?? false) && !_reportScheduled) return;
+    _debounce?.cancel();
     _debounce = null;
+    _reportScheduled = false;
 
     final markdown = editor.controller.toMarkdown();
     if (markdown == _reported) return;

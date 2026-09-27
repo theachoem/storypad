@@ -31,11 +31,19 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
   delimiter (e.g. `**(a)**b`), the line falls back to `<strong>`/`<em>`/`<del>`: every written line is parsed back
   and compared (`inline_markdown_writer.dart`).
 - Escaping: Markdown punctuation with `\`, `<` `>` `&` and backticks as references; block syntax at line start
-  (`#`, `-`, `+`, `1.`, `=`). Link destinations are written normalized (Markdown percent-encodes spaces).
+  (`#`, `-`, `+`, `1.`, `=`); trailing spaces/tabs as references (tools trim them); `\r`, U+2028, U+2029 as
+  references (they'd split or end a line). Link and stock-image destinations are written normalized (Markdown
+  percent-encodes spaces). A code span inside an HTML-tag format is `<code>` with escaped content (a backtick span
+  could contain the tag's closing tag). CRLF input reads as LF; code blocks normalize line endings.
 - Embeds: one line of HTML from `toHtml`; an `<img>` with only `src`/`alt` is written `![alt](src)` when that reads
   back identically, and a bare `![]()` reads through the embed claiming `img`.
-- Unknown: a Quill op no embed claims → `<sp-unknown data-op="base64(json(op))">` (attributes included); a Markdown
-  line an embed rejects, or any unregistered `<sp-*>` line (a newer app's embed) → kept verbatim.
+- Unknown: a Quill op no embed claims → `<sp-unknown data-op="base64(json(op))">` (attributes included), read by
+  whichever embed imports its key once one is registered. A Markdown line that is exactly one element no embed
+  claims (a newer app's embed, `<video>` in an app without a media embed, …), a line an embed rejects, or any `<sp-*>`
+  line → kept verbatim. Only formatting tags (`<p>`, `<u>`, `<br>`, …) read as text.
+- Reading never throws: an embed whose `fromQuill`/`fromHtml` throws is treated as rejecting (reported via
+  `FlutterError.reportError`), and conflicting nested markup (a link in a link, `<sub>` in `<sup>`) keeps the inner
+  value.
 
 ## Quill import (`quill/quill_importer.dart`)
 
@@ -66,7 +74,12 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
   couldn't scroll), and re-measure after each scroll (post-frame: the overlay builds before the scrolled content is
   laid out). Embed regions are translucent so embed buttons get the first tap. `_safeSetState` guards gesture
   callbacks fired mid-rebuild.
-- **`MarkdownEditor`** flushes a pending change on dispose/controller swap in a microtask (the tree is locked then).
+- **`MarkdownEditor`** flushes a pending change on dispose/controller swap in a microtask (the tree is locked then);
+  with `Duration.zero` it reports in a microtask too (edits in one synchronous block are reported once, and a
+  callback that edits can't re-enter the editor mid-transaction).
+- **`RawEditor`** caches its stylesheet and component builders: super_editor rebuilds its whole layout presenter
+  whenever they aren't the same objects.
+- **Code blocks** hold plain, unindented text: converting strips formatting, and inline/indent actions skip code.
 - **package:markdown quirks** handled in the inline writer: no entity decoding right after a backtick (separator
   `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.
 - **Android toolbar** is super_editor's internal `AndroidPopoverToolbar`, vendored in `widgets/vendor/` (the

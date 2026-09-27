@@ -9,7 +9,7 @@ import 'package:super_editor/super_editor.dart';
 /// Randomized round-trip: any text with any combination of supported attributions must read back exactly, and
 /// writing is a fixed point. Seeded, so failures reproduce.
 void main() {
-  const alphabet = 'ab c(). ,!?-_*~`#[]<>&\\\'"|:1\n\t';
+  const alphabet = 'ab c(). ,!?-_*~`#[]<>&\\\'"|:1\n\t/u\r\u2028\u2029é';
   final attributions = <Attribution>[
     boldAttribution,
     italicsAttribution,
@@ -21,6 +21,8 @@ void main() {
     const ColorAttribution(Color(0xFF336699)),
     const BackgroundColorAttribution(Color(0x80FFCC00)),
     const ScriptAttribution.superscript(),
+    const ScriptAttribution.subscript(),
+    const LinkAttribution('/relative/(path)'),
   ];
 
   AttributedText randomText(Random random) {

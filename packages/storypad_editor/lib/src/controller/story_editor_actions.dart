@@ -55,6 +55,15 @@ class StoryEditorActions {
 
   static int? _offset(NodePosition position) => position is TextNodePosition ? position.offset : null;
 
+  static bool _isCode(TextNode node) =>
+      node is ParagraphNode && node.getMetadataValue(NodeMetadata.blockType) == codeAttribution;
+
+  /// Code blocks store plain text only, so inline formatting there would show but not be saved.
+  bool get _onlyCode {
+    final nodes = selectedTextNodes;
+    return nodes.isNotEmpty && nodes.every(_isCode);
+  }
+
   // ── Inline formatting ──────────────────────────────────────────────────────
 
   bool get isBold => hasAttribution(boldAttribution);
@@ -92,7 +101,7 @@ class StoryEditorActions {
   /// Toggles [attribution] on the selection -- or, for a caret, on the text typed next.
   void toggleAttribution(Attribution attribution) {
     final selection = _selection;
-    if (selection == null) return;
+    if (selection == null || _onlyCode) return;
 
     if (selection.isCollapsed) {
       _composer.preferences.toggleStyles({attribution});
@@ -107,7 +116,7 @@ class StoryEditorActions {
   /// same edit, so it's one undo step.
   void _toggleScript(ScriptAttribution script) {
     final selection = _selection;
-    if (selection == null) return;
+    if (selection == null || _onlyCode) return;
     final other = script.type == ScriptAttribution.typeSuper
         ? const ScriptAttribution.subscript()
         : const ScriptAttribution.superscript();
@@ -169,7 +178,7 @@ class StoryEditorActions {
   /// first.
   void _setValued<A extends Attribution>(A? attribution) {
     final selection = _selection;
-    if (selection == null) return;
+    if (selection == null || (attribution != null && _onlyCode)) return;
 
     if (selection.isCollapsed) {
       _composer.preferences.removeStyles(_composer.preferences.currentAttributions.whereType<A>().toSet());
@@ -239,6 +248,18 @@ class StoryEditorActions {
   void _setBlockType(Attribution blockType) {
     final nodes = selectedTextNodes;
     if (nodes.isEmpty) return;
+    if (blockType == codeAttribution) {
+      // Code is plain, unindented text in storage; drop formatting and indent now so the editor shows what's saved.
+      _replaceAll(
+        nodes,
+        (node) => ParagraphNode(
+          id: node.id,
+          text: AttributedText(node.text.toPlainText()),
+          metadata: const {NodeMetadata.blockType: codeAttribution},
+        ),
+      );
+      return;
+    }
     _editor.execute([
       for (final node in nodes)
         if (node is ParagraphNode)
@@ -311,18 +332,18 @@ class StoryEditorActions {
     _ => 0,
   };
 
-  /// Whether any selected block can be indented further (up to 6 levels).
-  bool get canIndent => selectedTextNodes.any((node) => _indentOf(node) < maxIndent);
+  /// Whether any selected block can be indented further (up to 6 levels). Code blocks have no indent.
+  bool get canIndent => selectedTextNodes.any((node) => !_isCode(node) && _indentOf(node) < maxIndent);
 
   /// Whether any selected block is indented.
-  bool get canOutdent => selectedTextNodes.any((node) => _indentOf(node) > 0);
+  bool get canOutdent => selectedTextNodes.any((node) => !_isCode(node) && _indentOf(node) > 0);
 
   /// Indents every selected block one level. Tasks indent freely, even without a parent task above (super_editor's
   /// own task indent refuses that).
   void indent() {
     final requests = <EditRequest>[
       for (final node in selectedTextNodes)
-        if (_indentOf(node) < maxIndent)
+        if (!_isCode(node) && _indentOf(node) < maxIndent)
           switch (node) {
             ListItemNode() => IndentListItemRequest(nodeId: node.id),
             TaskNode() => SetTaskIndentRequest(node.id, node.indent + 1),
@@ -336,7 +357,7 @@ class StoryEditorActions {
   void outdent() {
     final requests = <EditRequest>[
       for (final node in selectedTextNodes)
-        if (_indentOf(node) > 0)
+        if (!_isCode(node) && _indentOf(node) > 0)
           switch (node) {
             ListItemNode() => UnIndentListItemRequest(nodeId: node.id),
             TaskNode() => SetTaskIndentRequest(node.id, node.indent - 1),

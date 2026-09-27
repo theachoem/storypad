@@ -51,8 +51,7 @@ class MarkdownWriter {
     return switch (node) {
       StoryEmbedNode() => _embed(node),
       ImageNode() =>
-        _markdownImage(node.imageUrl, node.altText) ??
-            '![${escapeText(node.altText)}](${linkDestination(node.imageUrl)})',
+        _markdownImage(node.imageUrl, node.altText) ?? _canonicalMarkdownImage(node.imageUrl, node.altText),
       ParagraphNode() => _paragraph(node),
       ListItemNode() => _listItem(node),
       TaskNode() => _task(node),
@@ -64,12 +63,15 @@ class MarkdownWriter {
 
   String _paragraph(ParagraphNode node) {
     final Attribution? blockType = node.getMetadataValue(NodeMetadata.blockType);
-    if (blockType == codeAttribution) return _codeBlock(node.text.toPlainText());
+    // Line endings in code are normalized: a lone \r would read back as a line break anyway.
+    if (blockType == codeAttribution) {
+      return _codeBlock(node.text.toPlainText().replaceAll('\r\n', '\n').replaceAll('\r', '\n'));
+    }
 
     final level = headerLevel(blockType);
     final String content;
     if (level != null) {
-      final text = _inline.write(node.text, escapeHash: true);
+      final text = protectTrailingWhitespace(_inline.write(node.text, escapeHash: true));
       content = text.isEmpty ? '#' * level : '${'#' * level} $text';
     } else if (blockType == blockquoteAttribution) {
       final text = _escapedLine(node.text);
@@ -106,6 +108,13 @@ class MarkdownWriter {
       }
     }
     return element.render();
+  }
+
+  /// `![alt](src)` with [src] as Markdown normalizes it (e.g. spaces percent-encoded), so writing it again is a fixed
+  /// point.
+  static String _canonicalMarkdownImage(String src, String alt) {
+    final canonical = readMarkdownImage('![](${linkDestination(src)})')?.src ?? src;
+    return '![${escapeText(alt)}](${linkDestination(canonical)})';
   }
 
   /// `![alt](src)`, if it reads back as exactly [src] and [alt] (Markdown normalizes some destinations, e.g. by
@@ -146,10 +155,12 @@ class MarkdownWriter {
 /// (list item, rule), `1.`/`1)` (ordered list item). The inline writer already escapes everything else that matters
 /// (`*`, `_`, `` ` ``, `~`, `[`, `<`, `>`).
 ///
-/// A whitespace-only line would read as blank, so its whitespace is written as character references.
+/// A whitespace-only line would read as blank, so its whitespace is written as character references (as is trailing
+/// whitespace, see [protectTrailingWhitespace]).
 String escapeLineStart(String markdown) {
   if (markdown.isEmpty) return markdown;
   if (markdown.trim().isEmpty) return markdown.codeUnits.map((unit) => '&#$unit;').join();
+  markdown = protectTrailingWhitespace(markdown);
 
   final match = _lineStartSyntax.firstMatch(markdown);
   if (match == null) return markdown;
@@ -163,6 +174,17 @@ String escapeLineStart(String markdown) {
   }
   return '$leading\\${markdown.substring(leading.length)}';
 }
+
+/// Writes trailing spaces/tabs as character references: they're content, but editors and tools routinely trim them.
+String protectTrailingWhitespace(String markdown) {
+  final match = _trailingWhitespace.firstMatch(markdown);
+  if (match == null || match.start == 0) return markdown;
+  // package:markdown doesn't decode a reference right after a backtick (a code span's end): separate them.
+  final separator = markdown[match.start - 1] == '`' ? '<wbr>' : '';
+  return markdown.substring(0, match.start) + separator + match[0]!.codeUnits.map((unit) => '&#$unit;').join();
+}
+
+final _trailingWhitespace = RegExp(r'[ \t]+$');
 
 final _lineStartSyntax = RegExp(r'^([ \t]*)(?:(\d{1,9}[.)])|[#+=-])');
 

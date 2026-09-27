@@ -9,7 +9,7 @@ import 'test_embeds.dart';
 /// Seeded generators for randomized round-trip tests. Deliberately include characters that are Markdown or HTML
 /// syntax, so escaping is exercised.
 
-const _alphabet = 'ab c(). ,!?-_*~`#[]<>&\\\'"|:1+=\t';
+const _alphabet = 'ab c(). ,!?-_*~`#[]<>&\\\'"|:1+=\t/u\r\u2028\u2029é';
 
 final _attributions = <Attribution>[
   boldAttribution,
@@ -22,6 +22,9 @@ final _attributions = <Attribution>[
   const ColorAttribution(Color(0xFF336699)),
   const BackgroundColorAttribution(Color(0x80FFCC00)),
   const ScriptAttribution.superscript(),
+  const ScriptAttribution.subscript(),
+  const LinkAttribution('mailto:a@b.c?subject=x y'),
+  const LinkAttribution('/relative/(path)'),
 ];
 
 String randomString(Random random, {int maxLength = 14, bool lineBreaks = true}) {

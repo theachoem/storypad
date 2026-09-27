@@ -63,6 +63,24 @@ void main() {
       expect(controller.toMarkdown(), startsWith('a\n\n<sp-sticker name="here"></sp-sticker>\n\n&nbsp;\n\nb'));
     });
 
+    test('a stale last selection (text shortened since) is clamped, not a crash', () {
+      final controller = controllerFor('Hello world');
+      placeCaret(controller, 0, 11);
+      controller.composer.clearSelection();
+      controller.editor.execute([
+        DeleteContentRequest(
+          documentRange: DocumentRange(
+            start: DocumentPosition(nodeId: nodeAt(controller, 0).id, nodePosition: const TextNodePosition(offset: 5)),
+            end: DocumentPosition(nodeId: nodeAt(controller, 0).id, nodePosition: const TextNodePosition(offset: 11)),
+          ),
+        ),
+      ]);
+      controller.composer.clearSelection();
+
+      controller.insertEmbed(_sticker, 'cat');
+      expect(controller.toMarkdown(), 'Hello\n\n<sp-sticker name="cat"></sp-sticker>');
+    });
+
     test('is undoable', () {
       final controller = controllerFor('Hello');
       placeCaret(controller, 0, 5);

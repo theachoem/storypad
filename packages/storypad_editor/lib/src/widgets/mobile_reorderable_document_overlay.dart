@@ -143,6 +143,16 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
   }
 
   @override
+  void didUpdateWidget(MobileReorderableDocumentOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.editor, widget.editor)) {
+      oldWidget.editor.removeListener(_editListener);
+      widget.editor.addListener(_editListener);
+      _scheduleFollowUpRebuild();
+    }
+  }
+
+  @override
   void dispose() {
     widget.editor.removeListener(_editListener);
     super.dispose();

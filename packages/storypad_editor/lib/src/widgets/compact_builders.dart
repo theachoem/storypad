@@ -290,6 +290,7 @@ class NoPaddingBlockquoteComponentBuilder implements ComponentBuilder {
       styleBuilder: componentViewModel.textStyleBuilder,
       indent: componentViewModel.indent,
       indentCalculator: componentViewModel.indentCalculator,
+      textAlign: componentViewModel.textAlignment,
       backgroundColor: componentViewModel.backgroundColor,
       borderRadius: componentViewModel.borderRadius,
       textSelection: componentViewModel.selection,
@@ -313,8 +314,10 @@ class _NoPaddingBlockquoteComponent extends StatelessWidget {
     required this.borderRadius,
     this.highlightWhenEmpty = false,
     this.underlines = const [],
+    this.textAlign = TextAlign.left,
   });
 
+  final TextAlign textAlign;
   final GlobalKey textKey;
   final AttributedText text;
   final AttributionStyleBuilder styleBuilder;
@@ -341,6 +344,7 @@ class _NoPaddingBlockquoteComponent extends StatelessWidget {
               child: TextComponent(
                 key: textKey,
                 text: text,
+                textAlign: textAlign,
                 textStyleBuilder: styleBuilder,
                 textSelection: textSelection,
                 selectionColor: selectionColor,

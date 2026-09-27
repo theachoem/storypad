@@ -15,9 +15,18 @@ import 'package:super_editor/super_editor.dart';
 class InlineMarkdownReader {
   const InlineMarkdownReader();
 
+  /// Never throws: if the Markdown can't be parsed into consistent formatting, the source text is kept as-is.
   AttributedText read(String markdown) {
     if (markdown.isEmpty) return AttributedText();
-    return parseInlineMarkdown(markdown, inlineMarkdownSyntaxes: _markdownSyntaxes, inlineHtmlSyntaxes: _htmlSyntaxes);
+    try {
+      return parseInlineMarkdown(
+        markdown,
+        inlineMarkdownSyntaxes: _markdownSyntaxes,
+        inlineHtmlSyntaxes: _htmlSyntaxes,
+      );
+    } catch (_) {
+      return AttributedText(markdown);
+    }
   }
 }
 
@@ -25,7 +34,8 @@ final _markdownSyntaxes = <md.InlineSyntax>[
   md.StrikethroughSyntax(),
   _BrTagSyntax(),
   _WbrTagSyntax(),
-  for (final tag in const ['u', 'span', 'mark', 'sup', 'sub', 'strong', 'em', 'del', 's']) HtmlTagInlineSyntax(tag),
+  for (final tag in const ['u', 'span', 'mark', 'sup', 'sub', 'strong', 'em', 'del', 's', 'code'])
+    HtmlTagInlineSyntax(tag),
 ];
 
 const _htmlSyntaxes = <InlineHtmlSyntax>[
@@ -46,7 +56,7 @@ const _htmlSyntaxes = <InlineHtmlSyntax>[
 /// them).
 class HtmlTagInlineSyntax extends md.InlineSyntax {
   HtmlTagInlineSyntax(this.tagName)
-    : super('<$tagName((?:\\s+[a-zA-Z-]+="[^"]*")*)\\s*>(.*?)</$tagName>', caseSensitive: false);
+    : super('<$tagName((?:\\s+[a-zA-Z-]+="[^"]*")*)\\s*>([\\s\\S]*?)</$tagName>', caseSensitive: false);
 
   final String tagName;
 
@@ -91,7 +101,14 @@ AttributedText? _brHtmlSyntax(md.Element element, AttributedText text) =>
 AttributedText? _wrap(AttributedText text, Attribution attribution) {
   // An empty element (e.g. `<u></u>`) has nothing to attribute.
   if (text.length == 0) return text;
-  return text..addAttribution(attribution, SpanRange(0, text.length - 1));
+  final range = SpanRange(0, text.length - 1);
+  // A conflicting inner value (a link inside a link, <sub> inside <sup>) wins; adding would throw.
+  final conflicts = text.getAttributionSpansInRange(
+    attributionFilter: (existing) => existing.id == attribution.id && !existing.canMergeWith(attribution),
+    range: range,
+  );
+  if (conflicts.isNotEmpty) return text;
+  return text..addAttribution(attribution, range);
 }
 
 AttributedText? _boldHtmlSyntax(md.Element element, AttributedText text) =>

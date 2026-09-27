@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:super_editor/super_editor.dart';
 
+import '../embed/quill_embed_op.dart';
+import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/story_html_element.dart';
 import '../embed/unknown_embed.dart';
@@ -37,7 +39,7 @@ class MarkdownReader {
   /// Reads [markdown]. Always returns at least one node (an empty paragraph for empty input), so an editor always has
   /// somewhere to put the caret.
   List<DocumentNode> read(String markdown) {
-    final nodes = readLines(const LineSplitter().convert(markdown));
+    final nodes = readLines(const LineSplitter().convert(markdown.replaceAll('\r\n', '\n').replaceAll('\r', '\n')));
     return nodes.isEmpty ? [ParagraphNode(id: Editor.createNodeId(), text: AttributedText())] : nodes;
   }
 
@@ -82,13 +84,13 @@ class MarkdownReader {
         _blockquote(lines, start);
   }
 
-  static final _fenceOpen = RegExp(r'^( {0,3})(`{3,}|~{3,})(.*)$');
+  static final _fenceOpen = RegExp(r'^( {0,3})(`{3,}|~{3,})(.*)$', dotAll: true);
   static final _thematicBreak = RegExp(r'^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$');
-  static final _headingLine = RegExp(r'^ {0,3}(#{1,6})(?:[ \t](.*))?$');
+  static final _headingLine = RegExp(r'^ {0,3}(#{1,6})(?:[ \t](.*))?$', dotAll: true);
   static final _closingHashes = RegExp(r'(?:^|[ \t]+)#+[ \t]*$');
-  static final _listLine = RegExp(r'^( *)([-*+]|\d{1,9}[.)])(?:[ \t](.*))?$');
-  static final _taskContent = RegExp(r'^\[([ xX])\](?:[ \t](.*))?$');
-  static final _quoteLine = RegExp(r'^ {0,3}>[ \t]?(.*)$');
+  static final _listLine = RegExp(r'^( *)([-*+]|\d{1,9}[.)])(?:[ \t](.*))?$', dotAll: true);
+  static final _taskContent = RegExp(r'^\[([ xX])\](?:[ \t](.*))?$', dotAll: true);
+  static final _quoteLine = RegExp(r'^ {0,3}>[ \t]?(.*)$', dotAll: true);
   static final _divOpen = RegExp(r'^<div(?:\s[^>]*)?>\s*$', caseSensitive: false);
 
   MarkdownBlock? _fencedCode(List<String> lines, int start) {
@@ -154,15 +156,17 @@ class MarkdownReader {
     if (match == null) return null;
 
     final tag = match[1]!.toLowerCase();
+    if (StoryEmbedRegistry.reservedTags.contains(tag)) return null;
     final embed = registry.byHtmlTag(tag);
-    if (embed == null && !tag.startsWith('sp-')) return null;
 
     final line = lines[start].trim();
     final element = StoryHtmlElement.tryParseSingle(line);
-    if (embed != null && element == null) return null; // e.g. "<img …> caption": text, not an embed line.
+    // "<img …> caption" is text, not an embed line -- except that an unclaimed <sp-…> line is always kept.
+    if (element == null && (embed != null || !tag.startsWith('sp-'))) return null;
 
+    // An element no embed claims (e.g. a newer app's embed, or one this app doesn't register) is kept verbatim.
     final node = (element != null && element.tag == tag ? embed?.nodeFromHtml(element) : null) ?? _unknownLine(line);
-    return MarkdownBlock([node], start + 1);
+    return MarkdownBlock([_upgradeUnknown(node)], start + 1);
   }
 
   MarkdownBlock? _image(List<String> lines, int start) {
@@ -187,6 +191,26 @@ class MarkdownReader {
   }
 
   DocumentNode _unknownLine(String line) => registry.unknown.createNode(UnknownHtmlEmbed(line));
+
+  /// A Quill op the unknown embed kept (e.g. saved by an app version without that embed) goes to the embed importing
+  /// its key, if one is registered now.
+  DocumentNode _upgradeUnknown(DocumentNode node) {
+    if (node is! StoryEmbedNode || node.type != registry.unknown.type) return node;
+    final value = node.value;
+    if (value is! UnknownQuillEmbed) return node;
+    final insert = value.op['insert'];
+    final key = value.key;
+    final embed = key == null ? null : registry.byQuillKey(key);
+    if (embed == null || insert is! Map) return node;
+
+    final attributes = value.op['attributes'];
+    final op = QuillEmbedOp(
+      key: key!,
+      insert: Map<String, Object?>.from(insert),
+      attributes: attributes is Map ? Map<String, Object?>.from(attributes) : const {},
+    );
+    return embed.nodeFromQuill(op, id: node.id) ?? node;
+  }
 
   MarkdownBlock? _heading(List<String> lines, int start) {
     final match = _headingLine.firstMatch(lines[start]);
