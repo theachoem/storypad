@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show Drag;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_editor/super_editor.dart';
@@ -18,7 +19,10 @@ import 'drag_snapshot_preview.dart';
 /// a plain tap on a block also has to be re-implemented here (in
 /// [_handleTap]) exactly as SuperEditor's own tap-to-focus would have done,
 /// since that region physically sits in front of SuperEditor's own gesture
-/// detection and would otherwise swallow the tap.
+/// detection and would otherwise swallow the tap. For the same reason a
+/// vertical drag on a region is forwarded to the document's scroll position
+/// (see [_startScroll]) -- otherwise the document couldn't be scrolled at all
+/// while unfocused -- and the regions are re-measured whenever it scrolls.
 ///
 /// Embeds are the exception: their region is translucent and doesn't handle
 /// taps, so an embed's own buttons (play, open, resize, …) work on the first
@@ -102,8 +106,13 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
   /// reorder mark the wrong block as held, even after `pumpAndSettle`.
   late final FunctionalEditListener _editListener;
 
+  bool _followUpScheduled = false;
+
   void _scheduleFollowUpRebuild() {
+    if (_followUpScheduled) return;
+    _followUpScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _followUpScheduled = false;
       if (mounted) {
         setState(() {});
       }
@@ -234,6 +243,22 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
     return renderBox.localToGlobal(Offset.zero, ancestor: stackBox) & renderBox.size;
   }
 
+  /// The in-progress scroll started by a drag on a region.
+  Drag? _scrollDrag;
+
+  /// Scrolls the document the way its own `Scrollable` would (same drag object, so flings and overscroll behave
+  /// natively). The regions cover the document, so the scrollable can't see the drag itself.
+  void _startScroll(DragStartDetails details) {
+    ScrollPosition? position;
+    try {
+      final layoutContext = (widget.documentLayoutResolver() as State).context;
+      position = Scrollable.maybeOf(layoutContext)?.position;
+    } catch (_) {
+      position = null;
+    }
+    _scrollDrag = position?.drag(details, () => _scrollDrag = null);
+  }
+
   void _handleTap(String nodeId, TapUpDetails details) {
     final docLayout = widget.documentLayoutResolver();
     final docOffset = docLayout.getDocumentOffsetFromAncestorOffset(details.globalPosition);
@@ -346,7 +371,8 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
       return const SizedBox.shrink();
     }
 
-    // An embed's region only claims long-press (reorder): taps fall through to the embed's own widgets.
+    // An embed's region is translucent and only claims long-press (reorder) and drags (scroll): taps fall through
+    // to the embed's own widgets.
     final isEmbed = widget.document.getNodeById(nodeId) is StoryEmbedNode;
 
     return Positioned.fromRect(
@@ -365,6 +391,16 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
       child: GestureDetector(
         behavior: isEmbed ? HitTestBehavior.translucent : HitTestBehavior.opaque,
         onTapUp: isEmbed ? null : (details) => _handleTap(nodeId, details),
+        onVerticalDragStart: _startScroll,
+        onVerticalDragUpdate: (details) => _scrollDrag?.update(details),
+        onVerticalDragEnd: (details) {
+          _scrollDrag?.end(details);
+          _scrollDrag = null;
+        },
+        onVerticalDragCancel: () {
+          _scrollDrag?.cancel();
+          _scrollDrag = null;
+        },
         onLongPressStart: (details) => _startDrag(nodeId, details),
         onLongPressMoveUpdate: _updateDrag,
         onLongPressEnd: _endDrag,
@@ -453,7 +489,16 @@ class _MobileReorderableDocumentOverlayState extends State<MobileReorderableDocu
     return Stack(
       key: _stackKey,
       children: [
-        wrapWithSnapshotBoundary(widget.child),
+        // Regions are positioned from the layout, so re-measure them whenever the document scrolls.
+        NotificationListener<ScrollNotification>(
+          onNotification: (_) {
+            // After the frame: this overlay builds before the scrolled content is laid out, so measuring now would
+            // read last frame's positions.
+            if (widget.enabled) _scheduleFollowUpRebuild();
+            return false;
+          },
+          child: wrapWithSnapshotBoundary(widget.child),
+        ),
         if (widget.enabled)
           for (final node in widget.document) _buildNodeGestureRegion(node.id),
         if (_draggingNodeId != null) _buildHeldHighlight(),

@@ -20,6 +20,11 @@ import 'story_embed_component.dart';
 /// `controller.isToolbarActive` for show-on-focus, `controller.tapRegionGroupId` and `controller.holdSelection` so
 /// using it doesn't dismiss the editor's selection).
 ///
+/// When the controller is read-only, the document is shown in super_editor's `SuperReader` instead: selectable and
+/// copyable, no typing, no reordering -- but task checkboxes still toggle (an edit, reported like any other), and
+/// embeds render as usual, told `readOnly` so they can hide their editing controls. The scroll position is kept
+/// across the switch.
+///
 /// Platform behavior:
 /// - Desktop/web: drag handles to reorder blocks, and a right-click menu ([desktopContextMenu]).
 /// - iOS: the OS-native context menu on a selection (Flutter-painted before iOS 16).
@@ -80,6 +85,10 @@ class _RawEditorState extends State<RawEditor> {
   late final SuperEditorIosControlsController _iosControlsController;
   late final SuperEditorAndroidControlsController _androidControlsController;
 
+  /// The scroll controller both the editor and the reader use, so the offset can be carried across a read-only switch.
+  ScrollController? _ownScrollController;
+  ScrollController get _scrollController => widget.scrollController ?? (_ownScrollController ??= ScrollController());
+
   /// Android "Process Text" actions, queried once up front (like `EditableText` does), well before any toolbar needs
   /// them.
   List<ProcessTextAction> _androidProcessTextActions = const [];
@@ -117,6 +126,7 @@ class _RawEditorState extends State<RawEditor> {
     _detach(_controller);
     _iosControlsController.dispose();
     _androidControlsController.dispose();
+    _ownScrollController?.dispose();
     super.dispose();
   }
 
@@ -132,12 +142,27 @@ class _RawEditorState extends State<RawEditor> {
     // clear-selection-on-blur policy.
     controller.focusNode.addListener(_rebuild);
     controller.isSelectionHeld.addListener(_rebuild);
+    controller.readOnlyListenable.addListener(_onReadOnlyChanged);
   }
 
   void _detach(StoryEditorController controller) {
     controller.focusNode.removeListener(_rebuild);
     controller.isSelectionHeld.removeListener(_rebuild);
+    controller.readOnlyListenable.removeListener(_onReadOnlyChanged);
     controller.detachEditor(this);
+  }
+
+  /// Swaps editor/reader, restoring the scroll offset once the new scrollable is laid out.
+  void _onReadOnlyChanged() {
+    final scrollController = _scrollController;
+    final offset = !widget.shrinkWrap && scrollController.hasClients ? scrollController.offset : null;
+    _rebuild();
+    if (offset == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !scrollController.hasClients) return;
+      final position = scrollController.position;
+      scrollController.jumpTo(offset.clamp(position.minScrollExtent, position.maxScrollExtent));
+    });
   }
 
   void _rebuild() {
@@ -208,6 +233,30 @@ class _RawEditorState extends State<RawEditor> {
     );
   }
 
+  List<ComponentBuilder> _componentBuilders() => [
+    const NoPaddingBlockquoteComponentBuilder(),
+    const CompactParagraphComponentBuilder(),
+    const CompactListItemComponentBuilder(),
+    StoryEmbedComponentBuilder(_controller),
+    const ImageComponentBuilder(),
+    const HorizontalRuleComponentBuilder(),
+    // Wired to the editor even when read-only: checkboxes stay live.
+    CompactTaskComponentBuilder(_controller.editor),
+  ];
+
+  Widget _buildSuperReader() {
+    return SuperReader(
+      editor: _controller.editor,
+      focusNode: _controller.focusNode,
+      tapRegionGroupId: _controller.tapRegionGroupId,
+      documentLayoutKey: _documentLayoutKey,
+      scrollController: widget.shrinkWrap ? widget.scrollController : _scrollController,
+      shrinkWrap: widget.shrinkWrap,
+      componentBuilders: _componentBuilders(),
+      stylesheet: _stylesheet(),
+    );
+  }
+
   Widget _buildSuperEditor() {
     final isDesktopOrWeb = _isDesktopOrWeb;
     final keepSelection = isDesktopOrWeb || _controller.isSelectionHeld.value;
@@ -216,20 +265,12 @@ class _RawEditorState extends State<RawEditor> {
       editor: _controller.editor,
       focusNode: _controller.focusNode,
       autofocus: widget.autofocus,
-      scrollController: widget.scrollController,
+      scrollController: widget.shrinkWrap ? widget.scrollController : _scrollController,
       tapRegionGroupId: _controller.tapRegionGroupId,
       documentLayoutKey: _documentLayoutKey,
       inputRole: widget.inputRole,
       shrinkWrap: widget.shrinkWrap,
-      componentBuilders: [
-        const NoPaddingBlockquoteComponentBuilder(),
-        const CompactParagraphComponentBuilder(),
-        const CompactListItemComponentBuilder(),
-        StoryEmbedComponentBuilder(_controller),
-        const ImageComponentBuilder(),
-        const HorizontalRuleComponentBuilder(),
-        CompactTaskComponentBuilder(_controller.editor),
-      ],
+      componentBuilders: _componentBuilders(),
       // The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
       keyboardActions: [
         for (final action in defaultImeKeyboardActions)
@@ -253,6 +294,8 @@ class _RawEditorState extends State<RawEditor> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.readOnly) return _buildReadOnly();
+
     final editor = SuperEditorIosControlsScope(
       controller: _iosControlsController,
       child: SuperEditorAndroidControlsScope(controller: _androidControlsController, child: _buildSuperEditor()),
@@ -294,6 +337,22 @@ class _RawEditorState extends State<RawEditor> {
         enabled: !_controller.focusNode.hasFocus,
         child: editor,
       ),
+    );
+  }
+
+  /// No reordering or tap-outside handling; the desktop menu offers only Copy and Select All.
+  Widget _buildReadOnly() {
+    final reader = _buildSuperReader();
+    final showMenu = widget.desktopContextMenu;
+    if (widget.shrinkWrap || !_isDesktopOrWeb || showMenu == null) return reader;
+    return DesktopContextMenuRegion(
+      document: _controller.document,
+      composer: _controller.composer,
+      editorOps: _editorOps,
+      documentLayoutResolver: _layout,
+      showMenu: showMenu,
+      readOnly: true,
+      child: reader,
     );
   }
 }

@@ -23,7 +23,19 @@ class EditorWithToolbar extends StatelessWidget {
     final desktop = _isDesktop;
     return Column(
       children: [
-        if (desktop) ...[DesktopEditorToolbar(controller: controller), const Divider(height: 1)],
+        // No editing toolbar while read-only (the mobile one follows controller.isToolbarActive, which covers it).
+        if (desktop)
+          ValueListenableBuilder<bool>(
+            valueListenable: controller.readOnlyListenable,
+            builder: (context, readOnly, _) => readOnly
+                ? const SizedBox.shrink()
+                : Column(
+                    children: [
+                      DesktopEditorToolbar(controller: controller),
+                      const Divider(height: 1),
+                    ],
+                  ),
+          ),
         Expanded(child: editor),
         if (!desktop) MobileEditorToolbar(controller: controller),
       ],

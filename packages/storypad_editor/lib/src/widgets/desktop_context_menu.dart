@@ -13,6 +13,7 @@ final class DesktopContextMenuRequest {
     required this.globalPosition,
     required this.hasSelection,
     required this.selectedText,
+    this.readOnly = false,
   });
 
   final BuildContext context;
@@ -25,6 +26,9 @@ final class DesktopContextMenuRequest {
 
   /// The selected text as plain text (empty without a selection) -- e.g. for a native menu's Services submenu.
   final String selectedText;
+
+  /// Whether the editor is read-only, so Cut and Paste don't apply.
+  final bool readOnly;
 }
 
 /// Shows a desktop context menu and returns the chosen action, or `null` if dismissed. Pass one to
@@ -45,9 +49,13 @@ Future<DesktopContextMenuAction?> showDefaultDesktopContextMenu(DesktopContextMe
       overlay.size.height - position.dy,
     ),
     items: [
-      PopupMenuItem(value: DesktopContextMenuAction.cut, enabled: request.hasSelection, child: const Text('Cut')),
+      PopupMenuItem(
+        value: DesktopContextMenuAction.cut,
+        enabled: request.hasSelection && !request.readOnly,
+        child: const Text('Cut'),
+      ),
       PopupMenuItem(value: DesktopContextMenuAction.copy, enabled: request.hasSelection, child: const Text('Copy')),
-      const PopupMenuItem(value: DesktopContextMenuAction.paste, child: Text('Paste')),
+      PopupMenuItem(value: DesktopContextMenuAction.paste, enabled: !request.readOnly, child: const Text('Paste')),
       const PopupMenuDivider(),
       const PopupMenuItem(value: DesktopContextMenuAction.selectAll, child: Text('Select All')),
     ],
@@ -65,7 +73,11 @@ class DesktopContextMenuRegion extends StatelessWidget {
     required this.documentLayoutResolver,
     required this.showMenu,
     required this.child,
+    this.readOnly = false,
   });
+
+  /// In read-only mode, Cut and Paste are ignored (and the default menu disables them).
+  final bool readOnly;
 
   final Document document;
   final DocumentComposer composer;
@@ -94,19 +106,20 @@ class DesktopContextMenuRegion extends StatelessWidget {
         globalPosition: details.globalPosition,
         hasSelection: hasSelection,
         selectedText: hasSelection ? plainTextInSelection(document: document, selection: current) : '',
+        readOnly: readOnly,
       ),
     );
 
     switch (action) {
-      case DesktopContextMenuAction.cut:
+      case DesktopContextMenuAction.cut when !readOnly:
         editorOps.cut();
       case DesktopContextMenuAction.copy:
         editorOps.copy();
-      case DesktopContextMenuAction.paste:
+      case DesktopContextMenuAction.paste when !readOnly:
         editorOps.paste();
       case DesktopContextMenuAction.selectAll:
         editorOps.selectAll();
-      case null:
+      default:
         break;
     }
   }

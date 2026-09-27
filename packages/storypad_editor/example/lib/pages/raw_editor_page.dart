@@ -62,6 +62,14 @@ class _RawEditorPageState extends State<RawEditorPage> {
               for (final item in _Insertable.values) PopupMenuItem(value: item, child: Text(item.label)),
             ],
           ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _controller.readOnlyListenable,
+            builder: (context, readOnly, _) => IconButton(
+              tooltip: readOnly ? 'Edit' : 'Read only',
+              icon: Icon(readOnly ? Icons.edit_outlined : Icons.visibility_outlined),
+              onPressed: () => _controller.readOnly = !readOnly,
+            ),
+          ),
           IconButton(tooltip: 'Show Markdown', icon: const Icon(Icons.code), onPressed: _showMarkdown),
         ],
       ),

@@ -35,4 +35,17 @@ void main() {
     await expectLater(controller.keepSelectionWhile<void>(() async => throw StateError('x')), throwsStateError);
     expect(controller.isSelectionHeld.value, isFalse);
   });
+
+  test('the toolbar is never active while read-only', () {
+    final controller = controllerFor('');
+    final hold = controller.holdSelection();
+    expect(controller.isToolbarActive.value, isTrue);
+
+    controller.readOnly = true;
+    expect(controller.isToolbarActive.value, isFalse);
+
+    controller.readOnly = false;
+    expect(controller.isToolbarActive.value, isTrue);
+    hold.release();
+  });
 }

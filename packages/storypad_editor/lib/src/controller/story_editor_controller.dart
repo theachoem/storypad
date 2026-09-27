@@ -66,6 +66,7 @@ class StoryEditorController extends ChangeNotifier {
     _composer.preferences.addListener(notifyListeners);
     focusNode.addListener(_updateToolbarActive);
     _readOnly.addListener(notifyListeners);
+    _readOnly.addListener(_updateToolbarActive);
 
     _savedMarkdown = toMarkdown();
   }
@@ -148,8 +149,8 @@ class StoryEditorController extends ChangeNotifier {
   /// selection when it loses focus; while held, it keeps it.
   ValueListenable<bool> get isSelectionHeld => _selectionHeld;
 
-  /// Whether an editing toolbar should be showing: the editor has focus, or the selection is held (a toolbar popup is
-  /// open). Drives show-on-focus mobile toolbars.
+  /// Whether an editing toolbar should be showing: the editor isn't read-only, and has focus or its selection is held
+  /// (a toolbar popup is open). Drives show-on-focus mobile toolbars.
   ValueListenable<bool> get isToolbarActive => _toolbarActive;
 
   /// Keeps the selection while focus is elsewhere -- e.g. while a toolbar's link dialog or color menu is open --
@@ -178,15 +179,16 @@ class StoryEditorController extends ChangeNotifier {
 
   void _updateToolbarActive() {
     _selectionHeld.value = _holds > 0;
-    _toolbarActive.value = focusNode.hasFocus || _holds > 0;
+    _toolbarActive.value = !_readOnly.value && (focusNode.hasFocus || _holds > 0);
   }
 
   // ── Read-only ──────────────────────────────────────────────────────────────
 
   final ValueNotifier<bool> _readOnly;
 
-  /// Whether the editor is read-only: no typing, no editing controls on embeds. Checkboxes still toggle (that's an
-  /// edit the app persists, like in StoryPad's read view).
+  /// Whether the editor is read-only: no typing, no editing controls on embeds, no editing toolbar
+  /// ([isToolbarActive] is false). Checkboxes still toggle (that's an edit the app persists, like in StoryPad's read
+  /// view). Only affects the UI: the controller's own API still edits.
   bool get readOnly => _readOnly.value;
   set readOnly(bool value) => _readOnly.value = value;
 
