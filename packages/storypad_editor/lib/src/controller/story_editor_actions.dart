@@ -103,13 +103,25 @@ class StoryEditorActions {
     }
   }
 
-  /// Superscript and subscript are mutually exclusive (they conflict), so the other one is cleared first.
+  /// Superscript and subscript are mutually exclusive (they conflict), so the other one is cleared first -- in the
+  /// same edit, so it's one undo step.
   void _toggleScript(ScriptAttribution script) {
+    final selection = _selection;
+    if (selection == null) return;
     final other = script.type == ScriptAttribution.typeSuper
         ? const ScriptAttribution.subscript()
         : const ScriptAttribution.superscript();
-    _removeAttributions({other});
-    toggleAttribution(script);
+
+    if (selection.isCollapsed) {
+      _composer.preferences.removeStyles({other});
+      _composer.preferences.toggleStyles({script});
+      return;
+    }
+    final present = _attributionsInSelection((a) => a == other);
+    _editor.execute([
+      if (present.isNotEmpty) RemoveTextAttributionsRequest(documentRange: selection, attributions: present),
+      ToggleTextAttributionsRequest(documentRange: selection, attributions: {script}),
+    ]);
   }
 
   /// The text color throughout the selection, or `null` if none or mixed.
@@ -165,22 +177,13 @@ class StoryEditorActions {
       return;
     }
 
-    _removeAttributions(_attributionsInSelection((a) => a is A));
-    if (attribution != null) {
-      _editor.execute([
-        AddTextAttributionsRequest(documentRange: selection, attributions: {attribution}),
-      ]);
-    }
-  }
-
-  void _removeAttributions(Set<Attribution> attributions) {
-    final selection = _selection;
-    if (selection == null || attributions.isEmpty) return;
-    if (selection.isCollapsed) {
-      _composer.preferences.removeStyles(attributions);
-    } else {
-      _editor.execute([RemoveTextAttributionsRequest(documentRange: selection, attributions: attributions)]);
-    }
+    // One edit (one undo step): remove the old value, add the new one.
+    final existing = _attributionsInSelection((a) => a is A);
+    final requests = <EditRequest>[
+      if (existing.isNotEmpty) RemoveTextAttributionsRequest(documentRange: selection, attributions: existing),
+      if (attribution != null) AddTextAttributionsRequest(documentRange: selection, attributions: {attribution}),
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
   }
 
   Set<Attribution> _attributionsInSelection(bool Function(Attribution) filter) => {

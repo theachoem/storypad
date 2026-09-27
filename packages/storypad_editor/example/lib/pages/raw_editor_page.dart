@@ -3,6 +3,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 import '../demo_content.dart';
 import '../embeds/demo_embeds.dart';
+import '../toolbar/editor_toolbar.dart';
 
 /// The bare editing surface: a [RawEditor] over a controller holding the demo story, plus app-bar actions that go
 /// through the controller (insert embeds, read the Markdown back).
@@ -64,7 +65,12 @@ class _RawEditorPageState extends State<RawEditorPage> {
           IconButton(tooltip: 'Show Markdown', icon: const Icon(Icons.code), onPressed: _showMarkdown),
         ],
       ),
-      body: SafeArea(child: RawEditor(controller: _controller)),
+      body: SafeArea(
+        child: EditorWithToolbar(
+          controller: _controller,
+          editor: RawEditor(controller: _controller),
+        ),
+      ),
     );
   }
 }

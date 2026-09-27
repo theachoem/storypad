@@ -55,6 +55,22 @@ void main() {
     expect(controller.actions.isSubscript, isTrue);
     expect(controller.actions.isSuperscript, isFalse);
     expect(controller.toMarkdown(), 'x<sub>2</sub>');
+
+    // Each toggle is one undo step.
+    controller.actions.undo();
+    expect(controller.toMarkdown(), 'x<sup>2</sup>');
+    controller.actions.undo();
+    expect(controller.toMarkdown(), 'x2');
+  });
+
+  test('replacing a color is one undo step', () {
+    final controller = controllerFor('Hello');
+    selectNode(controller, 0);
+
+    controller.actions.setTextColor(const Color(0xFFFF0000));
+    controller.actions.setTextColor(const Color(0xFF0000FF));
+    controller.actions.undo();
+    expect(controller.toMarkdown(), '<span style="color:#ff0000ff">Hello</span>');
   });
 
   test('colors replace the previous color; null removes', () {

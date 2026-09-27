@@ -6,6 +6,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 import '../demo_content.dart';
 import '../embeds/demo_embeds.dart';
+import '../toolbar/editor_toolbar.dart';
 
 /// A [MarkdownEditor] with its Markdown shown live beside it, plus import/export: paste Markdown, convert a story's
 /// Quill Delta JSON (the migration path), or copy the current Markdown.
@@ -75,13 +76,16 @@ class _MarkdownEditorPageState extends State<MarkdownEditorPage> {
   @override
   Widget build(BuildContext context) {
     final editorController = _controller;
-    final editor = MarkdownEditor(
+    final editor = EditorWithToolbar(
       key: ObjectKey(editorController),
       controller: editorController,
-      onChanged: (markdown) {
-        // A change flushed from a replaced (or disposed) editor arrives after it's gone: ignore it.
-        if (mounted && identical(editorController, _controller)) setState(() => _markdown = markdown);
-      },
+      editor: MarkdownEditor(
+        controller: editorController,
+        onChanged: (markdown) {
+          // A change flushed from a replaced (or disposed) editor arrives after it's gone: ignore it.
+          if (mounted && identical(editorController, _controller)) setState(() => _markdown = markdown);
+        },
+      ),
     );
     final pane = _MarkdownPane(markdown: _markdown);
 
