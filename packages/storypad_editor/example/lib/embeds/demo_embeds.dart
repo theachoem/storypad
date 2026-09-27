@@ -10,4 +10,4 @@ export 'embed_attributes.dart';
 export 'media_embed.dart';
 
 /// Every embed the example app registers, as StoryPad's app would.
-const demoEmbeds = <StoryEmbedCodec>[MediaEmbed(), AudioEmbed(), DateEmbed()];
+const demoEmbeds = <StoryEmbed>[MediaEmbed(), AudioEmbed(), DateEmbed()];

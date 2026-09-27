@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'pages/home_page.dart';
+
 void main() {
   runApp(const ExampleApp());
 }
 
-/// Manual-test app for storypad_editor. Pages are added phase by phase, as
-/// the package gains the pieces they exercise.
+/// Manual-test app for storypad_editor, and the reference consumer: embeds and toolbars are defined app-side here,
+/// exactly as StoryPad's app will define them.
 class ExampleApp extends StatelessWidget {
   const ExampleApp({super.key});
 
@@ -14,7 +16,7 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       title: 'storypad_editor example',
       theme: ThemeData(colorSchemeSeed: Colors.indigo),
-      home: const Scaffold(body: Center(child: Text('storypad_editor example'))),
+      home: const HomePage(),
     );
   }
 }
