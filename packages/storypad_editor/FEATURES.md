@@ -87,6 +87,9 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 - **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example
   wires a native macOS `NSMenu` (with the Services submenu) in `example/macos/Runner/MainFlutterWindow.swift`.
 
+- **Android build**: `super_keyboard` (via super_editor) pins compileSdk 34; consuming apps must raise plugin modules to
+  36 (see `example/android/build.gradle.kts` and the README) or AGP's `checkAarMetadata` fails.
+
 ## Known limitations
 
 - Cutting and pasting an embed inside the editor loses it (paste is plain text).

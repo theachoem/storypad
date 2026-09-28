@@ -22,6 +22,12 @@ dependencies:
       ref: <commit>
 ```
 
+**Android:** super_editor's `super_keyboard` plugin pins compileSdk 34, which newer transitive plugins reject
+(`checkAarMetadata`: "requires … compileSdk of at least 36"). Until it's updated upstream, raise plugin modules'
+compileSdk in the app's `android/build.gradle.kts`, before its `evaluationDependsOn(":app")` block — copy the
+`subprojects { afterEvaluate { … } }` block from `example/android/build.gradle.kts`. (Its Kotlin Gradle Plugin warning
+is harmless for now.)
+
 ### 1. Define embeds
 
 ```dart
