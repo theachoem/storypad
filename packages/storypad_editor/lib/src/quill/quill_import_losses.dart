@@ -23,7 +23,7 @@ enum QuillImportLossKind {
   /// other one wins.
   conflictingBlockFormat,
 
-  /// Alignment on a list, task or code line.
+  /// Alignment on a code line.
   alignmentDropped,
 
   /// Indent on a code line.
@@ -31,9 +31,6 @@ enum QuillImportLossKind {
 
   /// Inline formatting inside a code block (code blocks hold plain text).
   formattingInCode,
-
-  /// A quote or code line merged into the line above, whose alignment or indent it doesn't share.
-  mergedLineFormat,
 
   /// Block formatting on a line holding an embed: the embed becomes its own block, without it.
   embedLineFormat,
@@ -97,10 +94,9 @@ class QuillImportLossFinder {
 
     var line = 0;
     var segments = <Map<String, Object?>>[];
-    _Line? previous;
     for (final op in QuillImporter.sanitize(ops)) {
       if (op['insert'] == '\n') {
-        previous = _checkMerge(previous, _checkLine(line, segments, _attributes(op), losses), losses);
+        _checkLine(line, segments, _attributes(op), losses);
         segments = [];
         line++;
       } else {
@@ -124,7 +120,7 @@ class QuillImportLossFinder {
     return attributes is Map ? Map<String, Object?>.from(attributes) : const {};
   }
 
-  _Line _checkLine(
+  void _checkLine(
     int line,
     List<Map<String, Object?>> segments,
     Map<String, Object?> block,
@@ -174,7 +170,7 @@ class QuillImportLossFinder {
     final align = alignValue is String && _aligns.contains(alignValue) && alignValue != 'left' ? alignValue : null;
     if (alignValue != null && !(alignValue is String && _aligns.contains(alignValue))) {
       loss(QuillImportLossKind.invalidAttributeValue, 'align', alignValue);
-    } else if (align != null && (kind == _Kind.list || kind == _Kind.code)) {
+    } else if (align != null && kind == _Kind.code) {
       loss(QuillImportLossKind.alignmentDropped, 'align', alignValue);
     }
 
@@ -215,8 +211,6 @@ class QuillImportLossFinder {
     if (hasEmbed && hasBlockFormat) {
       losses.add(QuillImportLoss(QuillImportLossKind.embedLineFormat, line: line, value: block));
     }
-
-    return _Line(line, kind, align, indent != null && kind != _Kind.code ? indent.clamp(0, maxIndent) : 0, hasEmbed);
   }
 
   /// Reports a dropped inline attribute through [report] and returns false, or returns true if it's kept.
@@ -238,29 +232,6 @@ class QuillImportLossFinder {
     return valid;
   }
 
-  /// super_editor merges consecutive quote lines (and code lines, which have no alignment or indent) into one block,
-  /// which keeps its first line's alignment and indent. Returns the line [current] merged into, or [current].
-  static _Line _checkMerge(_Line? previous, _Line current, List<QuillImportLoss> losses) {
-    final merges =
-        previous != null &&
-        !previous.hasEmbed &&
-        !current.hasEmbed &&
-        previous.kind == _Kind.quote &&
-        current.kind == _Kind.quote;
-    if (!merges) return current;
-
-    if (previous.align != current.align || previous.indent != current.indent) {
-      losses.add(
-        QuillImportLoss(
-          QuillImportLossKind.mergedLineFormat,
-          line: current.line,
-          value: {'align': current.align, 'indent': current.indent},
-        ),
-      );
-    }
-    return previous;
-  }
-
   static bool _isSet(Object? value) => value != null && value != false;
 
   static int? _intValue(Object? value) => switch (value) {
@@ -273,13 +244,3 @@ class QuillImportLossFinder {
 }
 
 enum _Kind { paragraph, quote, list, code }
-
-class _Line {
-  const _Line(this.line, this.kind, this.align, this.indent, this.hasEmbed);
-
-  final int line;
-  final _Kind kind;
-  final String? align;
-  final int indent;
-  final bool hasEmbed;
-}

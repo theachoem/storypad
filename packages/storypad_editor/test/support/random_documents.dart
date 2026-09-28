@@ -78,9 +78,16 @@ DocumentNode randomTextNode(Random random) {
         itemType: random.nextBool() ? ListItemType.ordered : ListItemType.unordered,
         text: randomText(random),
         indent: random.nextInt(4),
+        metadata: _randomAlign(random),
       );
     case 1:
-      return TaskNode(id: id(), text: randomText(random), isComplete: random.nextBool(), indent: random.nextInt(4));
+      return TaskNode(
+        id: id(),
+        text: randomText(random),
+        isComplete: random.nextBool(),
+        indent: random.nextInt(4),
+        metadata: _randomAlign(random),
+      );
     case 2:
       return HorizontalRuleNode(id: id());
     case 3:
@@ -103,6 +110,12 @@ DocumentNode randomTextNode(Random random) {
         metadata: {NodeMetadata.blockType: blockType, TextNodeMetadata.textAlign: ?align},
       );
   }
+}
+
+/// Alignment metadata for a list item or task: usually none.
+Map<String, Object?> _randomAlign(Random random) {
+  final align = random.nextInt(3) == 0 ? _aligns[random.nextInt(_aligns.length)] : null;
+  return {TextNodeMetadata.textAlign: ?align};
 }
 
 /// A random document mixing text blocks and the test embeds (plus unknown values).

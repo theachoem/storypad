@@ -9,6 +9,7 @@ import '../embed/story_embed_codec.dart';
 import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
+import 'change_text_alignment_request.dart';
 import 'story_editor_actions.dart';
 import 'update_story_embed_request.dart';
 
@@ -49,7 +50,7 @@ class StoryEditorController extends ChangeNotifier {
     _composer = MutableDocumentComposer();
     _editor = Editor(
       editables: {Editor.documentKey: _document, Editor.composerKey: _composer},
-      requestHandlers: [updateStoryEmbedHandler, ...defaultRequestHandlers],
+      requestHandlers: [updateStoryEmbedHandler, changeTextAlignmentHandler, ...defaultRequestHandlers],
       reactionPipeline: [
         for (final reaction in defaultEditorReactions)
           // Re-clamps free task indent whenever any task is deleted.

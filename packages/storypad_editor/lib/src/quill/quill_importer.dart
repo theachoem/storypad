@@ -3,6 +3,7 @@ import 'dart:ui' show Color, TextAlign;
 import 'package:dart_quill_delta/dart_quill_delta.dart';
 import 'package:super_editor/super_editor.dart';
 
+import '../controller/change_text_alignment_request.dart';
 import '../embed/quill_embed_op.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
@@ -39,7 +40,7 @@ class QuillImporter {
     final composer = MutableDocumentComposer();
     final editor = Editor(
       editables: {Editor.documentKey: document, Editor.composerKey: composer},
-      requestHandlers: List.from(defaultRequestHandlers),
+      requestHandlers: [changeTextAlignmentHandler, ...defaultRequestHandlers],
       reactionPipeline: [],
     );
 
@@ -49,6 +50,8 @@ class QuillImporter {
         sanitize(ops),
         customEditor: editor,
         blockFormats: const [QuillBlockFormat()],
+        // Quotes are merged afterwards, only where lines share their format (see _mergeQuotes).
+        blockMergeRules: const [MergeBlock(codeAttribution)],
         inlineFormats: _inlineFormats,
         embedBlockFormats: [_EmbedFormat(registry, _markdown, spuriousParagraphs)],
       );
@@ -61,13 +64,37 @@ class QuillImporter {
       ];
       // Quill's mandatory final "\n" terminates the last line; the empty paragraph it opens isn't content.
       if (nodes.length > 1 && isEmptyParagraph(nodes.last)) nodes.removeLast();
-      return nodes;
+      return _mergeQuotes(nodes);
     } finally {
       editor.dispose();
       composer.dispose();
       document.dispose();
     }
   }
+
+  /// Consecutive quote lines are one quote in Quill: merges them into one block (joined by line breaks), as
+  /// super_editor's parser would -- but only lines sharing their alignment and indent, so none is lost.
+  static List<DocumentNode> _mergeQuotes(List<DocumentNode> nodes) {
+    final merged = <DocumentNode>[];
+    for (final node in nodes) {
+      final previous = merged.lastOrNull;
+      if (_isQuote(node) &&
+          previous != null &&
+          _isQuote(previous) &&
+          textAlignOf(node) == textAlignOf(previous) &&
+          (node as ParagraphNode).indent == (previous as ParagraphNode).indent) {
+        merged[merged.length - 1] = previous.copyParagraphWith(
+          text: previous.text.copyAndAppend(AttributedText('\n')).copyAndAppend(node.text),
+        );
+      } else {
+        merged.add(node);
+      }
+    }
+    return merged;
+  }
+
+  static bool _isQuote(DocumentNode node) =>
+      node is ParagraphNode && node.getMetadataValue(NodeMetadata.blockType) == blockquoteAttribution;
 
   /// Keeps well-formed insert ops only, and splits text inserts so that every `\n` is its own op. Quill compacts
   /// consecutive lines with the same block attributes into one op (e.g. two empty list items become
@@ -165,16 +192,14 @@ class QuillBlockFormat implements BlockDeltaFormat {
       }
     }
 
-    // Alignment only exists on paragraphs (super_editor's alignment command assumes a ParagraphNode).
+    // Any line but code can be aligned.
     final align = switch (attributes['align']) {
       'center' => TextAlign.center,
       'right' => TextAlign.right,
       'justify' => TextAlign.justify,
       _ => null,
     };
-    if (align != null && kind == _Kind.paragraph) {
-      requests.add(ChangeParagraphAlignmentRequest(nodeId: nodeId, alignment: align));
-    }
+    if (align != null && kind != _Kind.code) requests.add(ChangeTextAlignmentRequest(nodeId, align));
 
     return requests;
   }

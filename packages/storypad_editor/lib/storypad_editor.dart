@@ -6,6 +6,7 @@
 library;
 
 export 'src/codec/story_codec.dart';
+export 'src/controller/change_text_alignment_request.dart' show ChangeTextAlignmentRequest;
 export 'src/controller/story_editor_actions.dart';
 export 'src/controller/story_editor_controller.dart';
 export 'src/embed/quill_embed_op.dart';
@@ -20,6 +21,7 @@ export 'src/quill/quill_exporter.dart' show quillColor;
 export 'src/quill/quill_import_losses.dart' show QuillImportLoss, QuillImportLossKind;
 export 'src/widgets/desktop_context_menu.dart'
     show DesktopContextMenuAction, DesktopContextMenuHandler, DesktopContextMenuRequest, showDefaultDesktopContextMenu;
+export 'src/widgets/link_tap_handler.dart' show LinkTapCallback;
 export 'src/widgets/markdown_editor.dart';
 export 'src/widgets/raw_editor.dart';
 export 'src/widgets/story_embed_component.dart' show defaultUnknownEmbedBuilder;

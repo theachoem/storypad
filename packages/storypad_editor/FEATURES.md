@@ -26,7 +26,8 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 - Hard line break inside text: `<br>`. Empty paragraph: `&nbsp;`. Trailing empty paragraphs are dropped.
 - Lists/tasks: `-`, `1.`, `- [ ]`/`- [x]`, 4 spaces per level (reads 2/3-space nesting too). Indent max 6.
 - Non-left alignment and paragraph indent: `<div style="text-align:…" data-indent="…">` + blank lines + the block +
-  blank lines + `</div>` (paragraphs, headings, quotes; not lists or code).
+  blank lines + `</div>` (paragraphs, headings, quotes). A run of consecutive list items/tasks sharing an alignment
+  is one wrapper around the whole run (their indent is their nesting). Code has neither.
 - Inline: `**`, `*`, `~~`, `` ` ``, `[](…)`, plus `<u>`, `<span style="color:#rrggbbaa">`,
   `<mark style="background-color:#rrggbbaa">`, `<sup>`, `<sub>`. When CommonMark's emphasis rules would misread a
   delimiter (e.g. `**(a)**b`), the line falls back to `<strong>`/`<em>`/`<del>`: every written line is parsed back
@@ -55,7 +56,12 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 - Ops are sanitized (non-inserts skipped) and split per `\n` (Quill compacts same-attribute lines into one op).
 - Removed after import: the empty paragraph super_editor inserts after every embed, and the one Quill's final `\n`
   opens.
-- Dropped by design: font, size, direction; alignment on list/task lines (lists have no alignment in Markdown).
+- Consecutive quote lines merge into one quote (line breaks inside) only when they share alignment and indent;
+  super_editor's own merge rule would keep only the first line's format.
+- Alignment on any line but code, through `ChangeTextAlignmentRequest` (super_editor's alignment request only takes
+  paragraphs); list items and tasks render it via the compact builders (stock ones ignore `textAlign`).
+- Dropped by design (never produced by StoryPad's toolbar; none in a real backup audit): font, size, direction,
+  a header on a list line, a code block's language, alignment/indent/formatting inside code.
 - `quillImportLosses` (`quill/quill_import_losses.dart`) reports every drop above by applying the importer's rules; a
   property test ("no losses ⇒ the Quill round trip is equivalent") keeps the two in step.
 
@@ -70,7 +76,7 @@ For stories still stored as Quill: the mirror of the importer, in the shapes Sto
   Quill form (an embed without `toQuill`, a preserved Markdown line, a stock image) ↔ `{"sp-markdown": "<line>"}`,
   read back exactly. Both keys are reserved.
 - Quill can't express a line break inside a list item or paragraph (they split into several), or a boundary between
-  consecutive quotes (they merge). Everything else round-trips; `isEquivalentQuill` (testing) compares two Deltas by
+  consecutive quotes sharing their format (they merge). Everything else round-trips; `isEquivalentQuill` (testing) compares two Deltas by
   meaning.
 
 ## Gotchas
@@ -101,6 +107,8 @@ For stories still stored as Quill: the mirror of the importer, in the shapes Sto
   `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.
 - **Android toolbar** is super_editor's internal `AndroidPopoverToolbar`, vendored in `widgets/vendor/` (the
   `implementation_imports` lint is on).
+- **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
+  Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
 - **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example
   wires a native macOS `NSMenu` (with the Services submenu) in `example/macos/Runner/MainFlutterWindow.swift`.
 

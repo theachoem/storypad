@@ -16,7 +16,8 @@ import 'markdown_format.dart';
 /// - An empty paragraph is a `&nbsp;` line. Trailing empty paragraphs are dropped.
 /// - Nested list items and tasks are indented 4 spaces per level (correct nesting under both `-` and `1.` markers).
 /// - A paragraph's (or heading's/quote's) non-left alignment and indent live on a wrapping
-///   `<div style="text-align:…" data-indent="…">`, with blank lines inside so the content is still Markdown.
+///   `<div style="text-align:…" data-indent="…">`, with blank lines inside so the content is still Markdown. A run of
+///   consecutive list items/tasks sharing an alignment is wrapped as a whole (their indent is their nesting).
 /// - Text that would read as block syntax at the start of a line (`#`, `-`, `+`, `1.`, …) is escaped.
 /// - An embed is one line of HTML from its codec's `toHtml` -- except an `<img>` with only `src`/`alt`, which is
 ///   written as Markdown's own `![alt](src)` when that reads back identically.
@@ -35,15 +36,42 @@ class MarkdownWriter {
 
     final buffer = StringBuffer();
     DocumentNode? previous;
-    for (final node in blocks) {
+    var previousWrapped = false;
+    for (var i = 0; i < blocks.length; i++) {
+      final node = blocks[i];
+
+      // A run of list items/tasks sharing a (non-left) alignment is one wrapper.
+      final align = isListLike(node) ? _alignment(node) : null;
+      if (align != null) {
+        final items = <String>[];
+        for (; i < blocks.length && isListLike(blocks[i]) && _alignment(blocks[i]) == align; i++) {
+          items.add(writeNode(blocks[i])!);
+        }
+        i--;
+        if (previous != null) buffer.write('\n\n');
+        buffer.write('<div style="text-align:$align">\n\n${items.join('\n')}\n\n</div>');
+        previous = blocks[i];
+        previousWrapped = true;
+        continue;
+      }
+
       final markdown = writeNode(node);
       if (markdown == null) continue;
 
-      if (previous != null) buffer.write(isListLike(previous) && isListLike(node) ? '\n' : '\n\n');
+      if (previous != null) {
+        buffer.write(!previousWrapped && isListLike(previous) && isListLike(node) ? '\n' : '\n\n');
+      }
       buffer.write(markdown);
       previous = node;
+      previousWrapped = false;
     }
     return buffer.toString();
+  }
+
+  /// [node]'s alignment, or `null` for left (the default).
+  static String? _alignment(DocumentNode node) {
+    final String? textAlign = node.getMetadataValue(TextNodeMetadata.textAlign);
+    return textAlign == null || textAlign == 'left' ? null : textAlign;
   }
 
   /// The Markdown for one block, or `null` for a node type the format can't represent.
@@ -80,8 +108,7 @@ class MarkdownWriter {
       content = node.text.toPlainText().isEmpty ? emptyParagraphMarker : _escapedLine(node.text);
     }
 
-    final String? textAlign = node.getMetadataValue(TextNodeMetadata.textAlign);
-    final align = textAlign == null || textAlign == 'left' ? null : textAlign;
+    final align = _alignment(node);
     final indent = node.indent.clamp(0, maxIndent);
     if (align == null && indent == 0) return content;
 

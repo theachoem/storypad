@@ -69,7 +69,7 @@ Values need `==`/`hashCode`. Attributes that exist in both formats are declared 
 final controller = StoryEditorController(embeds: const [MediaEmbed(), AudioEmbed()], markdown: story.body);
 // or StoryEditorController.fromQuill(story.deltaOps, embeds: ...)
 
-MarkdownEditor(controller: controller, onChanged: (markdown) => story.save(body: markdown));
+MarkdownEditor(controller: controller, onChanged: (markdown) => story.save(body: markdown), onTapLink: openLink);
 // or RawEditor(controller: controller), and read controller.toMarkdown() yourself
 
 controller.actions.toggleBold();

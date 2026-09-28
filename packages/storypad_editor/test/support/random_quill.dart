@@ -34,11 +34,13 @@ const _block = <Map<String, Object?>>[
   {'list': 'unchecked'},
   {'align': 'justify', 'indent': 3},
   {'align': 'left', 'indent': 0},
+  {'blockquote': true, 'indent': 1},
+  {'list': 'unchecked', 'align': 'right'},
+  {'list': 'bullet', 'align': 'center', 'indent': 1},
 ];
 
 const _lossyBlock = <Map<String, Object?>>[
-  {'blockquote': true, 'indent': 1},
-  {'list': 'unchecked', 'align': 'right'},
+  {'code-block': true, 'align': 'center'},
   {'direction': 'rtl'},
   {'code-block': 'dart'},
 ];
@@ -85,8 +87,8 @@ List<Object?> randomQuillOps(Random random, {bool lossless = false}) {
 /// between consecutive quote lines or code lines:
 ///
 /// - text nodes are split at their line breaks (`\r` counts as one), each part keeping the node's format;
-/// - then consecutive quotes merge into the first (keeping its alignment and indent), joined by `\n`, and so do
-///   consecutive code blocks.
+/// - then consecutive quotes sharing their alignment and indent merge, joined by `\n`, and so do consecutive code
+///   blocks.
 List<DocumentNode> quillNormalized(List<DocumentNode> nodes) {
   final split = <DocumentNode>[];
   for (final node in nodes) {
@@ -112,7 +114,10 @@ List<DocumentNode> quillNormalized(List<DocumentNode> nodes) {
   for (final node in split) {
     final previous = merged.lastOrNull;
     final kind = _mergeKind(node);
-    if (kind != null && previous is ParagraphNode && _mergeKind(previous) == kind) {
+    if (kind != null &&
+        previous is ParagraphNode &&
+        _mergeKind(previous) == kind &&
+        (kind == codeAttribution || _sameFormat(previous, node as ParagraphNode))) {
       final text = previous.text.copyAndAppend(AttributedText('\n')).copyAndAppend((node as ParagraphNode).text);
       merged[merged.length - 1] = previous.copyParagraphWith(text: text);
     } else {
@@ -120,6 +125,11 @@ List<DocumentNode> quillNormalized(List<DocumentNode> nodes) {
     }
   }
   return merged;
+}
+
+bool _sameFormat(ParagraphNode a, ParagraphNode b) {
+  String align(DocumentNode node) => node.getMetadataValue(TextNodeMetadata.textAlign) ?? 'left';
+  return align(a) == align(b) && a.indent == b.indent;
 }
 
 Attribution? _mergeKind(DocumentNode node) {

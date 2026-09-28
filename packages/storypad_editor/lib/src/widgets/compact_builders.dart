@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:super_editor/super_editor.dart';
 
+import '../controller/change_text_alignment_request.dart';
+
 /// The width reserved for a bullet, numeral, or checkbox before the text of
 /// a list item/task starts, per indent level — shared across all three so
 /// switching (or mixing) list types keeps the text flush at the same x.
@@ -39,9 +41,14 @@ class CompactListItemComponentBuilder implements ComponentBuilder {
 
   static double _indentCalculator(TextStyle textStyle, int indent) => markerColumnWidth + _indentStepWidth * indent;
 
+  /// Stock list items ignore the node's `textAlign`; a Quill story can align any line.
   @override
-  SingleColumnLayoutComponentViewModel? createViewModel(Document document, DocumentNode node) =>
-      _delegate.createViewModel(document, node);
+  SingleColumnLayoutComponentViewModel? createViewModel(Document document, DocumentNode node) {
+    final viewModel = _delegate.createViewModel(document, node);
+    final align = textAlignOf(node);
+    if (viewModel is ListItemComponentViewModel && align != null) viewModel.textAlignment = align;
+    return viewModel;
+  }
 
   @override
   Widget? createComponent(
@@ -114,9 +121,14 @@ class CompactTaskComponentBuilder implements ComponentBuilder {
   final Editor _editor;
   late final TaskComponentBuilder _delegate = TaskComponentBuilder(_editor);
 
+  /// Stock tasks ignore the node's `textAlign`; a Quill story can align any line.
   @override
-  TaskComponentViewModel? createViewModel(Document document, DocumentNode node) =>
-      _delegate.createViewModel(document, node);
+  TaskComponentViewModel? createViewModel(Document document, DocumentNode node) {
+    final viewModel = _delegate.createViewModel(document, node);
+    final align = textAlignOf(node);
+    if (viewModel != null && align != null) viewModel.textAlignment = align;
+    return viewModel;
+  }
 
   @override
   Widget? createComponent(

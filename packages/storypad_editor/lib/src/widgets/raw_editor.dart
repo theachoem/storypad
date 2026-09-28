@@ -9,6 +9,7 @@ import 'android_toolbar.dart';
 import 'compact_builders.dart';
 import 'desktop_context_menu.dart';
 import 'free_task_indent.dart';
+import 'link_tap_handler.dart';
 import 'mobile_reorderable_document_overlay.dart';
 import 'reorderable_document_overlay.dart';
 import 'story_embed_component.dart';
@@ -30,6 +31,8 @@ import 'story_embed_component.dart';
 /// - iOS: the OS-native context menu on a selection (Flutter-painted before iOS 16).
 /// - Android: a floating toolbar with the OS "Process Text" actions (Translate, …).
 /// - Touch: long-press a block to reorder it while the editor isn't focused; tap outside to unfocus.
+///
+/// Links open through [onTapLink]: on tap when read-only, on Cmd/Ctrl-click while editing.
 class RawEditor extends StatefulWidget {
   const RawEditor({
     super.key,
@@ -42,6 +45,7 @@ class RawEditor extends StatefulWidget {
     this.inputRole,
     this.shrinkWrap = false,
     this.desktopContextMenu = showDefaultDesktopContextMenu,
+    this.onTapLink,
   });
 
   final StoryEditorController controller;
@@ -71,6 +75,10 @@ class RawEditor extends StatefulWidget {
   /// Shows the desktop right-click menu. Defaults to a Flutter-painted menu; pass a native one (see the example's
   /// macOS menu), or `null` for none.
   final DesktopContextMenuHandler? desktopContextMenu;
+
+  /// Called when a link is tapped -- in read-only mode, or with Cmd/Ctrl held while editing (a plain tap places the
+  /// caret). `null` opens the link with the platform's URL launcher.
+  final LinkTapCallback? onTapLink;
 
   @override
   State<RawEditor> createState() => _RawEditorState();
@@ -284,8 +292,17 @@ class _RawEditorState extends State<RawEditor> {
     CompactTaskComponentBuilder(_controller.editor),
   ];
 
+  // Created once: super_editor re-creates its tap handlers whenever it's given a new list.
+  late final _editorTapHandlers = <SuperEditorContentTapDelegateFactory>[
+    (context) => StoryLinkTapHandler(context.document, () => widget.onTapLink, composer: context.composer),
+  ];
+
+  ContentTapDelegate _readerTapHandler(SuperReaderContext context) =>
+      StoryLinkTapHandler(context.document, () => widget.onTapLink);
+
   Widget _buildSuperReader() {
     return SuperReader(
+      contentTapDelegateFactory: _readerTapHandler,
       editor: _controller.editor,
       focusNode: _controller.focusNode,
       tapRegionGroupId: _controller.tapRegionGroupId,
@@ -303,6 +320,7 @@ class _RawEditorState extends State<RawEditor> {
 
     return SuperEditor(
       editor: _controller.editor,
+      contentTapDelegateFactories: _editorTapHandlers,
       focusNode: _controller.focusNode,
       autofocus: widget.autofocus,
       scrollController: widget.shrinkWrap ? widget.scrollController : _scrollController,

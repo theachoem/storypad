@@ -122,7 +122,8 @@ class MarkdownReader {
   }
 
   /// An alignment/indent `<div>` wrapper. Its content is read recursively, and the wrapper's alignment and indent are
-  /// applied to the (non-code) paragraphs, headings and quotes inside. Without a closing `</div>` line it isn't a
+  /// applied to the (non-code) paragraphs, headings and quotes inside; its alignment also to list items and tasks
+  /// (whose indent is their nesting). Without a closing `</div>` line it isn't a
   /// wrapper, and the line is read as paragraph text instead of swallowing the rest of the document.
   MarkdownBlock? _wrapper(List<String> lines, int start) {
     if (!_divOpen.hasMatch(lines[start])) return null;
@@ -143,6 +144,8 @@ class MarkdownReader {
             indent: indent,
             metadata: {...node.metadata, if (align != null && align != 'left') TextNodeMetadata.textAlign: align},
           )
+        else if (isListLike(node) && align != null && align != 'left')
+          node.copyWithAddedMetadata({TextNodeMetadata.textAlign: align})
         else
           node,
     ];

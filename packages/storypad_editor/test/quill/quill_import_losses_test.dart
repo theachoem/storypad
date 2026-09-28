@@ -37,6 +37,15 @@ void main() {
         ...line('c', {'list': 'checked', 'indent': 6}),
       ],
       'a quote with alignment': line('q', {'blockquote': true, 'align': 'right', 'indent': 1}),
+      'aligned list items and tasks': [
+        ...line('a', {'list': 'bullet', 'align': 'center'}),
+        ...line('b', {'list': 'checked', 'align': 'right', 'indent': 2}),
+      ],
+      'consecutive quote lines with different formats': [
+        ...line('q1', {'blockquote': true}),
+        ...line('q2', {'blockquote': true, 'align': 'center'}),
+        ...line('q3', {'blockquote': true, 'indent': 1}),
+      ],
       'consecutive quote lines sharing their format': [
         ...line('q1', {'blockquote': true, 'align': 'center'}),
         ...line('q2', {'blockquote': true, 'align': 'center'}),
@@ -128,8 +137,7 @@ void main() {
     expect(kinds(line('a', {'header': 1, 'blockquote': true})), [QuillImportLossKind.conflictingBlockFormat]);
   });
 
-  test('alignment on lists, tasks and code; indent on code', () {
-    expect(kinds(line('a', {'list': 'checked', 'align': 'center'})), [QuillImportLossKind.alignmentDropped]);
+  test('alignment and indent on code', () {
     expect(kinds(line('a', {'code-block': true, 'align': 'right', 'indent': 1})), [
       QuillImportLossKind.alignmentDropped,
       QuillImportLossKind.indentDropped,
@@ -139,20 +147,6 @@ void main() {
   test('formatting inside code', () {
     expect(codec.quillImportLosses(line('a', {'code-block': true}, {'bold': true})), [
       const QuillImportLoss(QuillImportLossKind.formattingInCode, line: 0, key: 'bold', value: true),
-    ]);
-  });
-
-  test('quote lines merging into a line with different alignment or indent', () {
-    final losses = codec.quillImportLosses([
-      ...line('q1', {'blockquote': true}),
-      ...line('q2', {'blockquote': true, 'align': 'center'}),
-      ...line('q3', {'blockquote': true, 'align': 'center'}),
-      ...line('gap'),
-      ...line('q4', {'blockquote': true, 'indent': 1}),
-    ]);
-    expect(losses, [
-      const QuillImportLoss(QuillImportLossKind.mergedLineFormat, line: 1, value: {'align': 'center', 'indent': 0}),
-      const QuillImportLoss(QuillImportLossKind.mergedLineFormat, line: 2, value: {'align': 'center', 'indent': 0}),
     ]);
   });
 

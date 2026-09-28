@@ -28,8 +28,8 @@ dependencies:
       ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
       path: super_editor
 
-  # Quill Delta is import-only (Delta -> Markdown), but the parsing formats
-  # still speak dart_quill_delta's Operation type.
+  # Quill Delta is read (import) and written (export, while stories are still
+  # stored as Quill) through dart_quill_delta's Delta/Operation types.
   #
   # super_editor constrains this to ^9.4.1 (<10.0.0). Widened here, not
   # narrowed to match, so a future consumer needing 10.x (e.g. StoryPad's
@@ -37,6 +37,10 @@ dependencies:
   # landing on a 10.x resolution still requires super_editor's own
   # constraint to widen, or a dependency_override at the consumer.
   dart_quill_delta: ">=9.4.1 <11.0.0"
+
+  # Opens tapped links when the app doesn't handle them (RawEditor.onTapLink);
+  # super_editor's own launcher isn't public. Same constraint as super_editor's.
+  url_launcher: ^6.3.1
 
   follow_the_leader: ^0.5.3
 

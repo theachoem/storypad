@@ -5,6 +5,7 @@ import 'package:super_editor/super_editor.dart';
 
 import '../controller/story_editor_controller.dart';
 import 'desktop_context_menu.dart';
+import 'link_tap_handler.dart';
 import 'raw_editor.dart';
 
 /// A [RawEditor] that reports the document as Markdown whenever it changes -- the format StoryPad stores.
@@ -34,6 +35,7 @@ class MarkdownEditor extends StatefulWidget {
     this.inputRole,
     this.shrinkWrap = false,
     this.desktopContextMenu = showDefaultDesktopContextMenu,
+    this.onTapLink,
   });
 
   final StoryEditorController controller;
@@ -67,6 +69,9 @@ class MarkdownEditor extends StatefulWidget {
 
   /// See [RawEditor.desktopContextMenu].
   final DesktopContextMenuHandler? desktopContextMenu;
+
+  /// See [RawEditor.onTapLink].
+  final LinkTapCallback? onTapLink;
 
   @override
   State<MarkdownEditor> createState() => _MarkdownEditorState();
@@ -156,6 +161,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       inputRole: widget.inputRole,
       shrinkWrap: widget.shrinkWrap,
       desktopContextMenu: widget.desktopContextMenu,
+      onTapLink: widget.onTapLink,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:ui' show Color, TextAlign;
 import 'package:super_editor/super_editor.dart';
 
 import '../markdown/markdown_format.dart';
+import 'change_text_alignment_request.dart';
 import 'story_editor_controller.dart';
 
 /// Formatting and block commands on the current selection, plus the state a toolbar shows for them. Headless: no
@@ -377,13 +378,11 @@ class StoryEditorActions {
     };
   }
 
-  /// Aligns every selected paragraph, heading and quote. List items, tasks and code blocks have no alignment.
+  /// Aligns every selected paragraph, heading, quote, list item and task. Code blocks have no alignment.
   void setAlignment(TextAlign alignment) {
-    final nodes = selectedTextNodes.whereType<ParagraphNode>().where(
-      (node) => node.getMetadataValue(NodeMetadata.blockType) != codeAttribution,
-    );
+    final nodes = selectedTextNodes.where((node) => !_isCode(node));
     if (nodes.isEmpty) return;
-    _editor.execute([for (final node in nodes) ChangeParagraphAlignmentRequest(nodeId: node.id, alignment: alignment)]);
+    _editor.execute([for (final node in nodes) ChangeTextAlignmentRequest(node.id, alignment)]);
   }
 
   /// Inserts a horizontal rule at the caret (splitting the paragraph if needed).

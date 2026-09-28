@@ -114,6 +114,31 @@ void main() {
       expect(_write([_paragraph('Hello', indent: 2)]), '<div data-indent="2">\n\nHello\n\n</div>');
     });
 
+    test('a run of list items and tasks sharing an alignment is one wrapper', () {
+      Map<String, Object?> align(String value) => {TextNodeMetadata.textAlign: value};
+      final markdown = _write([
+        ListItemNode.unordered(id: 'a', text: AttributedText('a'), metadata: align('center')),
+        ListItemNode.unordered(id: 'b', text: AttributedText('b'), indent: 1, metadata: align('center')),
+        TaskNode(id: 'c', text: AttributedText('c'), isComplete: true, metadata: align('center')),
+        ListItemNode.ordered(id: 'd', text: AttributedText('d'), metadata: align('right')),
+        ListItemNode.ordered(id: 'e', text: AttributedText('e'), metadata: align('left')),
+        ListItemNode.ordered(id: 'f', text: AttributedText('f')),
+      ]);
+      expect(
+        markdown,
+        '<div style="text-align:center">\n\n- a\n    - b\n- [x] c\n\n</div>\n\n'
+        '<div style="text-align:right">\n\n1. d\n\n</div>\n\n'
+        '1. e\n1. f',
+      );
+      expect(_codec.canonicalize(markdown), markdown);
+      final nodes = _codec.decodeNodes(markdown);
+      expect(
+        [for (final node in nodes) node.getMetadataValue(TextNodeMetadata.textAlign)],
+        ['center', 'center', 'center', 'right', null, null],
+      );
+      expect((nodes[1] as ListItemNode).indent, 1);
+    });
+
     test('alignment and indent together, on a quote', () {
       expect(
         _write([_paragraph('Q', blockType: blockquoteAttribution, align: 'right', indent: 1)]),

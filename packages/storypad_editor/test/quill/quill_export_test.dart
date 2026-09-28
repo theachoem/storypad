@@ -182,6 +182,46 @@ void main() {
     ]);
   });
 
+  test('aligned list items and tasks', () {
+    final ops = quill('<div style="text-align:center">\n\n- a\n- [x] b\n\n</div>');
+    expect(ops, [
+      {'insert': 'a'},
+      {
+        'insert': '\n',
+        'attributes': {'list': 'bullet', 'align': 'center'},
+      },
+      {'insert': 'b'},
+      {
+        'insert': '\n',
+        'attributes': {'list': 'checked', 'align': 'center'},
+      },
+    ]);
+    expect(codec.quillImportLosses(ops), isEmpty);
+    expect(codec.quillToMarkdown(ops), '<div style="text-align:center">\n\n- a\n- [x] b\n\n</div>');
+  });
+
+  test('consecutive quote lines merge only when they share their format', () {
+    final ops = [
+      {'insert': 'a'},
+      {
+        'insert': '\n',
+        'attributes': {'blockquote': true},
+      },
+      {'insert': 'b'},
+      {
+        'insert': '\n',
+        'attributes': {'blockquote': true},
+      },
+      {'insert': 'c'},
+      {
+        'insert': '\n',
+        'attributes': {'blockquote': true, 'align': 'center'},
+      },
+    ];
+    expect(codec.quillToMarkdown(ops), '> a<br>b\n\n<div style="text-align:center">\n\n> c\n\n</div>');
+    expect(codec.markdownToQuill(codec.quillToMarkdown(ops)), isEquivalentQuill(ops, codec));
+  });
+
   test('empty list items and tasks keep their line', () {
     expect(quill('- \n- [ ] '), [
       {

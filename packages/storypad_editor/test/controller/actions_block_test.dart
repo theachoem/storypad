@@ -54,18 +54,22 @@ void main() {
     expect(controller.toMarkdown(), '    - nested');
   });
 
-  test('alignment applies to paragraphs, headings and quotes; lists are skipped, not crashed', () {
-    final controller = controllerFor('# h\n\np\n\n- item');
-    selectText(controller, 0, 0, 2, 4);
+  test('alignment applies to paragraphs, headings, quotes, list items and tasks; code is skipped', () {
+    final controller = controllerFor('# h\n\np\n\n- item\n- [ ] task\n\n```\ncode\n```');
+    selectText(controller, 0, 0, 4, 4);
 
     controller.actions.setAlignment(TextAlign.center);
 
     expect(
       controller.toMarkdown(),
-      '<div style="text-align:center">\n\n# h\n\n</div>\n\n<div style="text-align:center">\n\np\n\n</div>\n\n- item',
+      '<div style="text-align:center">\n\n# h\n\n</div>\n\n<div style="text-align:center">\n\np\n\n</div>\n\n'
+      '<div style="text-align:center">\n\n- item\n- [ ] task\n\n</div>\n\n```\ncode\n```',
     );
-    placeCaret(controller, 1, 0);
+    placeCaret(controller, 3, 0);
     expect(controller.actions.alignment, TextAlign.center);
+
+    controller.actions.undo();
+    expect(controller.toMarkdown(), '# h\n\np\n\n- item\n- [ ] task\n\n```\ncode\n```');
   });
 
   test('horizontal rule at the caret', () {

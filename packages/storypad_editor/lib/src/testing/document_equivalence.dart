@@ -7,15 +7,19 @@ import '../markdown/markdown_format.dart';
 
 /// Whether two nodes hold the same content as far as the Markdown format can tell: same kind of block, block type,
 /// alignment, indent, completion, and text (compared per character, ignoring formatting on line breaks and
-/// unsupported attributions; code with line endings normalized). Ids and incidental metadata are ignored.
+/// unsupported attributions; code with line endings normalized). List items and tasks compare alignment too. Ids and incidental metadata are ignored.
 bool nodesEquivalent(DocumentNode a, DocumentNode b) {
   if (a.runtimeType != b.runtimeType) return false;
 
   return switch ((a, b)) {
     (ParagraphNode a, ParagraphNode b) => _paragraphsEquivalent(a, b),
-    (ListItemNode a, ListItemNode b) => a.type == b.type && a.indent == b.indent && inlineTextEquals(a.text, b.text),
+    (ListItemNode a, ListItemNode b) =>
+      a.type == b.type && a.indent == b.indent && _align(a) == _align(b) && inlineTextEquals(a.text, b.text),
     (TaskNode a, TaskNode b) =>
-      a.isComplete == b.isComplete && a.indent == b.indent && inlineTextEquals(a.text, b.text),
+      a.isComplete == b.isComplete &&
+          a.indent == b.indent &&
+          _align(a) == _align(b) &&
+          inlineTextEquals(a.text, b.text),
     (StoryEmbedNode a, StoryEmbedNode b) => a.hasEquivalentContent(b),
     (ImageNode a, ImageNode b) => a.imageUrl == b.imageUrl && a.altText == b.altText,
     (HorizontalRuleNode _, HorizontalRuleNode _) => true,
@@ -54,9 +58,10 @@ String describeNode(DocumentNode node) {
     case ParagraphNode():
       detail = '${_blockType(node).id} align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
     case ListItemNode():
-      detail = '${node.type.name} indent=${node.indent} "${node.text.toPlainText()}"';
+      detail = '${node.type.name} align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
     case TaskNode():
-      detail = '[${node.isComplete ? 'x' : ' '}] indent=${node.indent} "${node.text.toPlainText()}"';
+      detail =
+          '[${node.isComplete ? 'x' : ' '}] align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
     case StoryEmbedNode():
       detail = '${node.type}: ${node.value}';
     default:
