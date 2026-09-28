@@ -12,6 +12,7 @@ import 'free_task_indent.dart';
 import 'link_tap_handler.dart';
 import 'mobile_reorderable_document_overlay.dart';
 import 'reorderable_document_overlay.dart';
+import 'sliver_box.dart';
 import 'story_embed_component.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
@@ -33,6 +34,9 @@ import 'story_embed_component.dart';
 /// - Touch: long-press a block to reorder it while the editor isn't focused; tap outside to unfocus.
 ///
 /// Links open through [onTapLink]: on tap when read-only, on Cmd/Ctrl-click while editing.
+///
+/// [layout] decides how it sizes and scrolls: filling its box and scrolling itself (the default), as a box sized to
+/// its content inside another scroll view, or as a sliver.
 class RawEditor extends StatefulWidget {
   const RawEditor({
     super.key,
@@ -43,9 +47,14 @@ class RawEditor extends StatefulWidget {
     this.scrollController,
     this.autofocus = false,
     this.inputRole,
-    this.shrinkWrap = false,
+    this.layout = StoryEditorLayout.scrolling,
     this.desktopContextMenu = showDefaultDesktopContextMenu,
     this.onTapLink,
+    this.caretColor,
+    this.selectionColor,
+    this.placeholder,
+    this.placeholderStyle,
+    this.checkboxesEnabled = true,
   });
 
   final StoryEditorController controller;
@@ -68,9 +77,8 @@ class RawEditor extends StatefulWidget {
   /// it).
   final String? inputRole;
 
-  /// Sizes to the content and emits itself as a sliver, for placing several editors in one `CustomScrollView`. Drops
-  /// the reorder and right-click chrome (which needs a box around the editor).
-  final bool shrinkWrap;
+  /// How the editor sizes and scrolls. See [StoryEditorLayout].
+  final StoryEditorLayout layout;
 
   /// Shows the desktop right-click menu. Defaults to a Flutter-painted menu; pass a native one (see the example's
   /// macOS menu), or `null` for none.
@@ -80,8 +88,41 @@ class RawEditor extends StatefulWidget {
   /// caret). `null` opens the link with the platform's URL launcher.
   final LinkTapCallback? onTapLink;
 
+  /// The desktop caret. Defaults to the theme's cursor color (`TextSelectionTheme`), else its primary color. Mobile
+  /// carets and handles follow the theme's primary color.
+  final Color? caretColor;
+
+  /// The selection highlight. Defaults to the theme's selection color (`TextSelectionTheme`), else its primary color
+  /// at 40% opacity.
+  final Color? selectionColor;
+
+  /// Shown while the document is a single empty paragraph.
+  final String? placeholder;
+
+  /// The [placeholder]'s style. Defaults to [baseTextStyle] in the theme's hint color.
+  final TextStyle? placeholderStyle;
+
+  /// Whether task checkboxes toggle -- also while read-only, where it's the only edit (reported like any other).
+  /// Turn off for a view whose changes wouldn't be kept.
+  final bool checkboxesEnabled;
+
   @override
   State<RawEditor> createState() => _RawEditorState();
+}
+
+/// How a [RawEditor] sizes and scrolls.
+enum StoryEditorLayout {
+  /// Fills its box and scrolls itself.
+  scrolling,
+
+  /// A box sized to its content, placed inside another scroll view -- e.g. in a `Column` in a
+  /// `SingleChildScrollView`, below a title field. That scroll view scrolls the editor: dragging over the text scrolls
+  /// it, and it follows the caret. (Without any scroll view around it, the editor still sizes to its content.)
+  box,
+
+  /// A sliver sized to its content, for placing several editors in one `CustomScrollView`. Has no reorder, right-click
+  /// or tap-outside chrome (they need a box around the editor).
+  sliver,
 }
 
 /// The document's left inset on desktop/web: just wide enough for [ReorderableDocumentOverlay]'s drag handle.
@@ -139,6 +180,12 @@ class _RawEditorState extends State<RawEditor> {
       _attach(_controller);
       _componentBuildersCache = null;
     }
+    if (oldWidget.placeholder != widget.placeholder ||
+        oldWidget.placeholderStyle != widget.placeholderStyle ||
+        oldWidget.baseTextStyle != widget.baseTextStyle ||
+        oldWidget.checkboxesEnabled != widget.checkboxesEnabled) {
+      _componentBuildersCache = null;
+    }
     if (oldWidget.baseTextStyle != widget.baseTextStyle ||
         oldWidget.padding != widget.padding ||
         !identical(oldWidget.styleRules, widget.styleRules)) {
@@ -193,7 +240,10 @@ class _RawEditorState extends State<RawEditor> {
   /// Swaps editor/reader, restoring the scroll offset once the new scrollable is laid out.
   void _onReadOnlyChanged() {
     final scrollController = _scrollController;
-    final offset = !widget.shrinkWrap && scrollController.hasClients ? scrollController.offset : null;
+    // Only an editor scrolling itself owns its offset; box and sliver editors live in someone else's scroll view.
+    final offset = widget.layout == StoryEditorLayout.scrolling && scrollController.hasClients
+        ? scrollController.offset
+        : null;
     _rebuild();
     if (offset == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -282,15 +332,21 @@ class _RawEditorState extends State<RawEditor> {
   List<ComponentBuilder> _componentBuilders() => _componentBuildersCache ??= _createComponentBuilders();
 
   List<ComponentBuilder> _createComponentBuilders() => [
+    if (widget.placeholder case final placeholder?) HintComponentBuilder(placeholder, _placeholderStyle),
     const NoPaddingBlockquoteComponentBuilder(),
     const CompactParagraphComponentBuilder(),
     const CompactListItemComponentBuilder(),
     StoryEmbedComponentBuilder(_controller),
     const ImageComponentBuilder(),
     const HorizontalRuleComponentBuilder(),
-    // Wired to the editor even when read-only: checkboxes stay live.
-    CompactTaskComponentBuilder(_controller.editor),
+    // Wired to the editor even when read-only: checkboxes stay live (unless turned off).
+    CompactTaskComponentBuilder(_controller.editor, enabled: widget.checkboxesEnabled),
   ];
+
+  TextStyle _placeholderStyle(BuildContext context) {
+    return widget.placeholderStyle ??
+        (widget.baseTextStyle ?? const TextStyle()).copyWith(color: Theme.of(context).hintColor);
+  }
 
   // Created once: super_editor re-creates its tap handlers whenever it's given a new list.
   late final _editorTapHandlers = <SuperEditorContentTapDelegateFactory>[
@@ -300,21 +356,58 @@ class _RawEditorState extends State<RawEditor> {
   ContentTapDelegate _readerTapHandler(SuperReaderContext context) =>
       StoryLinkTapHandler(context.document, () => widget.onTapLink);
 
-  Widget _buildSuperReader() {
+  Color _caretColor(BuildContext context) =>
+      widget.caretColor ?? TextSelectionTheme.of(context).cursorColor ?? ColorScheme.of(context).primary;
+
+  SelectionStyles _selectionStyle(BuildContext context) {
+    final color =
+        widget.selectionColor ??
+        TextSelectionTheme.of(context).selectionColor ??
+        ColorScheme.of(context).primary.withValues(alpha: 0.4);
+    if (_selectionStyleCache?.selectionColor != color) _selectionStyleCache = SelectionStyles(selectionColor: color);
+    return _selectionStyleCache!;
+  }
+
+  SelectionStyles? _selectionStyleCache;
+
+  /// super_editor's default overlays, with the desktop caret in [_caretColor]. Cached per color: super_editor rebuilds
+  /// its layers whenever it's given a new list.
+  List<SuperEditorLayerBuilder> _overlayBuilders(BuildContext context) {
+    final color = _caretColor(context);
+    if (_overlayBuildersColor != color) {
+      _overlayBuildersColor = color;
+      _overlayBuildersCache = [
+        const SuperEditorIosToolbarFocalPointDocumentLayerBuilder(),
+        const SuperEditorIosHandlesDocumentLayerBuilder(),
+        const SuperEditorAndroidToolbarFocalPointDocumentLayerBuilder(),
+        const SuperEditorAndroidHandlesDocumentLayerBuilder(),
+        DefaultCaretOverlayBuilder(caretStyle: CaretStyle(width: 2, color: color)),
+      ];
+    }
+    return _overlayBuildersCache!;
+  }
+
+  Color? _overlayBuildersColor;
+  List<SuperEditorLayerBuilder>? _overlayBuildersCache;
+
+  bool get _ownsScrolling => widget.layout == StoryEditorLayout.scrolling;
+
+  Widget _buildSuperReader(BuildContext context) {
     return SuperReader(
       contentTapDelegateFactory: _readerTapHandler,
       editor: _controller.editor,
       focusNode: _controller.focusNode,
       tapRegionGroupId: _controller.tapRegionGroupId,
       documentLayoutKey: _documentLayoutKey,
-      scrollController: widget.shrinkWrap ? widget.scrollController : _scrollController,
-      shrinkWrap: widget.shrinkWrap,
+      scrollController: _ownsScrolling ? _scrollController : widget.scrollController,
+      shrinkWrap: !_ownsScrolling,
       componentBuilders: _componentBuilders(),
       stylesheet: _stylesheet(),
+      selectionStyle: _selectionStyle(context),
     );
   }
 
-  Widget _buildSuperEditor() {
+  Widget _buildSuperEditor(BuildContext context) {
     final isDesktopOrWeb = _isDesktopOrWeb;
     final keepSelection = isDesktopOrWeb || _controller.isSelectionHeld.value;
 
@@ -323,11 +416,11 @@ class _RawEditorState extends State<RawEditor> {
       contentTapDelegateFactories: _editorTapHandlers,
       focusNode: _controller.focusNode,
       autofocus: widget.autofocus,
-      scrollController: widget.shrinkWrap ? widget.scrollController : _scrollController,
+      scrollController: _ownsScrolling ? _scrollController : widget.scrollController,
       tapRegionGroupId: _controller.tapRegionGroupId,
       documentLayoutKey: _documentLayoutKey,
       inputRole: widget.inputRole,
-      shrinkWrap: widget.shrinkWrap,
+      shrinkWrap: !_ownsScrolling,
       componentBuilders: _componentBuilders(),
       keyboardActions: _keyboardActions,
       // Mobile drops the selection when the editor loses focus (so tap-outside unfocuses and enables reordering),
@@ -337,28 +430,41 @@ class _RawEditorState extends State<RawEditor> {
         clearSelectionWhenEditorLosesFocus: !keepSelection,
         clearSelectionWhenImeConnectionCloses: !keepSelection,
       ),
+      selectionStyle: _selectionStyle(context),
+      documentOverlayBuilders: _overlayBuilders(context),
       stylesheet: _stylesheet(),
     );
   }
 
+  /// [document] as laid out for [RawEditor.layout].
+  ///
+  /// Inside a scroll view, super_editor lays its document out as a sliver of that scroll view (it scrolls it, and
+  /// follows the caret with it). The box layout hosts that sliver in a [SliverBox], sized to it. Without a scroll view
+  /// around it, super_editor builds a shrink-wrapped box itself.
+  Widget _laidOut(BuildContext context, Widget document) {
+    if (widget.layout != StoryEditorLayout.box || Scrollable.maybeOf(context) == null) return document;
+    return SliverBox(sliver: document);
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_controller.readOnly) return _buildReadOnly();
+    if (_controller.readOnly) return _buildReadOnly(context);
 
     final editor = SuperEditorIosControlsScope(
       controller: _iosControlsController,
-      child: SuperEditorAndroidControlsScope(controller: _androidControlsController, child: _buildSuperEditor()),
+      child: SuperEditorAndroidControlsScope(controller: _androidControlsController, child: _buildSuperEditor(context)),
     );
 
-    // Reorder and right-click chrome need a box around the editor, which a shrink-wrapped (sliver) editor can't have.
-    if (widget.shrinkWrap) return editor;
+    // Reorder, right-click and tap-outside chrome need a box around the editor, which a sliver can't have.
+    if (widget.layout == StoryEditorLayout.sliver) return editor;
+    final laidOut = _laidOut(context, editor);
 
     if (_isDesktopOrWeb) {
       final reorderable = ReorderableDocumentOverlay(
         document: _controller.document,
         editor: _controller.editor,
         documentLayoutResolver: _layout,
-        child: editor,
+        child: laidOut,
       );
       final showMenu = widget.desktopContextMenu;
       if (showMenu == null) return reorderable;
@@ -384,16 +490,19 @@ class _RawEditorState extends State<RawEditor> {
         focusNode: _controller.focusNode,
         documentLayoutResolver: _layout,
         enabled: !_controller.focusNode.hasFocus,
-        child: editor,
+        child: laidOut,
       ),
     );
   }
 
   /// No reordering or tap-outside handling; the desktop menu offers only Copy and Select All.
-  Widget _buildReadOnly() {
-    final reader = _buildSuperReader();
+  Widget _buildReadOnly(BuildContext context) {
+    final reader = _buildSuperReader(context);
+    if (widget.layout == StoryEditorLayout.sliver) return reader;
+    final laidOut = _laidOut(context, reader);
+
     final showMenu = widget.desktopContextMenu;
-    if (widget.shrinkWrap || !_isDesktopOrWeb || showMenu == null) return reader;
+    if (!_isDesktopOrWeb || showMenu == null) return laidOut;
     return DesktopContextMenuRegion(
       document: _controller.document,
       composer: _controller.composer,
@@ -401,7 +510,7 @@ class _RawEditorState extends State<RawEditor> {
       documentLayoutResolver: _layout,
       showMenu: showMenu,
       readOnly: true,
-      child: reader,
+      child: laidOut,
     );
   }
 }

@@ -107,6 +107,15 @@ For stories still stored as Quill: the mirror of the importer, in the shapes Sto
   `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.
 - **Android toolbar** is super_editor's internal `AndroidPopoverToolbar`, vendored in `widgets/vendor/` (the
   `implementation_imports` lint is on).
+- **Box layout** (`widgets/sliver_box.dart`): inside a scroll view super_editor renders its document as a *sliver* of
+  that scroll view. `StoryEditorLayout.box` hosts the sliver in `SliverBox`, a plain render box laid out at the
+  sliver's full length -- deliberately *not* a viewport: super_editor's mobile caret-follow measures against the
+  nearest `RenderAbstractViewport`, so a `ShrinkWrappingViewport` host (which never scrolls) broke it, and nested
+  viewports also trip Flutter's scroll-semantics assertion.
+- **Caret/selection colors**: the desktop caret is a replaced `DefaultCaretOverlayBuilder` in the default overlay
+  list (cached per color; super_editor rebuilds layers on a new list). Mobile carets/handles already use the theme's
+  primary color.
+- **iOS caret follow** happens on edits, not on programmatic caret moves (any layout); Android follows both.
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
 - **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example

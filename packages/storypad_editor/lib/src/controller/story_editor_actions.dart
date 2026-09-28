@@ -1,4 +1,4 @@
-import 'dart:ui' show Color, TextAlign;
+import 'dart:ui' show Color, TextAffinity, TextAlign;
 
 import 'package:super_editor/super_editor.dart';
 
@@ -55,6 +55,82 @@ class StoryEditorActions {
   }
 
   static int? _offset(NodePosition position) => position is TextNodePosition ? position.offset : null;
+
+  /// Puts the caret at the end of the document -- e.g. when focusing an editor that has no selection yet.
+  void placeCaretAtEnd() =>
+      _placeCaret(DocumentPosition(nodeId: _document.last.id, nodePosition: _document.last.endPosition));
+
+  /// Whether [moveCaret] can move the caret that way (it's not already at that end of the document).
+  bool canMoveCaret({required bool forward}) {
+    final selection = _selection;
+    if (selection == null) return false;
+    if (!selection.isCollapsed) return true;
+    return _caretStep(selection.extent, forward: forward) != null;
+  }
+
+  /// Moves the caret one character toward the document's end ([forward]) or start, into the neighboring block at a
+  /// block's edge, like an arrow key. An expanded selection collapses to its end or start instead.
+  void moveCaret({required bool forward}) {
+    final selection = _selection;
+    if (selection == null) return;
+
+    if (!selection.isCollapsed) {
+      final range = selection.normalize(_document);
+      _placeCaret(forward ? range.end : range.start);
+      return;
+    }
+    final next = _caretStep(selection.extent, forward: forward);
+    if (next != null) _placeCaret(next);
+  }
+
+  /// The caret position one step from [position], or `null` at the document's edge.
+  DocumentPosition? _caretStep(DocumentPosition position, {required bool forward}) {
+    final node = _document.getNodeById(position.nodeId);
+    if (node == null) return null;
+
+    final nodePosition = position.nodePosition;
+    if (node is TextNode && nodePosition is TextNodePosition) {
+      final text = node.text.toPlainText();
+      final offset = nodePosition.offset.clamp(0, text.length);
+      if (forward && offset < text.length) {
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: TextNodePosition(offset: getCharacterEndBounds(text, offset)),
+        );
+      }
+      if (!forward && offset > 0) {
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: TextNodePosition(offset: getCharacterStartBounds(text, offset)),
+        );
+      }
+    } else if (nodePosition is UpstreamDownstreamNodePosition) {
+      // A block (embed, rule): its two edges are one step apart.
+      if (forward && nodePosition.affinity == TextAffinity.upstream) {
+        return DocumentPosition(nodeId: node.id, nodePosition: const UpstreamDownstreamNodePosition.downstream());
+      }
+      if (!forward && nodePosition.affinity == TextAffinity.downstream) {
+        return DocumentPosition(nodeId: node.id, nodePosition: const UpstreamDownstreamNodePosition.upstream());
+      }
+    }
+
+    final neighbor = forward ? _document.getNodeAfterById(node.id) : _document.getNodeBeforeById(node.id);
+    if (neighbor == null) return null;
+    return DocumentPosition(
+      nodeId: neighbor.id,
+      nodePosition: forward ? neighbor.beginningPosition : neighbor.endPosition,
+    );
+  }
+
+  void _placeCaret(DocumentPosition position) {
+    _editor.execute([
+      ChangeSelectionRequest(
+        DocumentSelection.collapsed(position: position),
+        SelectionChangeType.pushCaret,
+        SelectionReason.userInteraction,
+      ),
+    ]);
+  }
 
   static bool _isCode(TextNode node) =>
       node is ParagraphNode && node.getMetadataValue(NodeMetadata.blockType) == codeAttribution;

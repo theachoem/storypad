@@ -116,17 +116,22 @@ class CompactListItemComponentBuilder implements ComponentBuilder {
 /// 0 (the stock formula also evaluates to 0 there), which is why it only
 /// showed up as misaligned second-level-and-deeper tasks.
 class CompactTaskComponentBuilder implements ComponentBuilder {
-  CompactTaskComponentBuilder(this._editor);
+  CompactTaskComponentBuilder(this._editor, {this.enabled = true});
 
   final Editor _editor;
+
+  /// Whether the checkboxes toggle.
+  final bool enabled;
   late final TaskComponentBuilder _delegate = TaskComponentBuilder(_editor);
 
   /// Stock tasks ignore the node's `textAlign`; a Quill story can align any line.
   @override
   TaskComponentViewModel? createViewModel(Document document, DocumentNode node) {
     final viewModel = _delegate.createViewModel(document, node);
+    if (viewModel == null) return null;
     final align = textAlignOf(node);
-    if (viewModel != null && align != null) viewModel.textAlignment = align;
+    if (align != null) viewModel.textAlignment = align;
+    if (!enabled) viewModel.setComplete = null;
     return viewModel;
   }
 

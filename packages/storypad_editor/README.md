@@ -81,11 +81,20 @@ controller.dispose();             // after the editor widget is gone
 
 To open another story, create a new controller (key the editor with it); content is never swapped in place.
 
+Presentation, on either editor widget:
+
+- `layout`: `StoryEditorLayout.scrolling` (fills its box, scrolls itself), `.box` (sized to its content inside your
+  scroll view, e.g. below a title field; that scroll view scrolls it and follows the caret), or `.sliver` (several
+  editors in one `CustomScrollView`).
+- `baseTextStyle`, `styleRules`, `padding`; `caretColor`/`selectionColor` (default: the theme's `TextSelectionTheme`,
+  else its primary color); `placeholder`; `checkboxesEnabled: false` for a view that won't keep its changes.
+
 ### 3. Toolbars
 
 The package has no toolbar; build one from the controller (see `example/lib/toolbar/`):
 
-- `controller.actions` — every command, and the state a button shows (`isBold`, `headingLevel`, `canIndent`, …).
+- `controller.actions` — every command, and the state a button shows (`isBold`, `headingLevel`, `canIndent`, …),
+  including caret moves for arrow buttons (`moveCaret`, `canMoveCaret`, `placeCaretAtEnd`).
 - `ListenableBuilder(listenable: controller, …)` — rebuild on selection/document/style changes.
 - `controller.isToolbarActive` — show a touch toolbar while editing.
 - `TapRegion(groupId: controller.tapRegionGroupId, …)` — so tapping the toolbar doesn't unfocus the editor.

@@ -58,7 +58,12 @@ class _MultiEditorPageState extends State<MultiEditorPage> {
                     : null,
               ),
             ),
-            RawEditor(key: ObjectKey(page.$2), controller: page.$2, inputRole: 'page-${page.$1}', shrinkWrap: true),
+            RawEditor(
+              key: ObjectKey(page.$2),
+              controller: page.$2,
+              inputRole: 'page-${page.$1}',
+              layout: StoryEditorLayout.sliver,
+            ),
           ],
         ],
       ),

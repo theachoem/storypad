@@ -33,9 +33,14 @@ class MarkdownEditor extends StatefulWidget {
     this.scrollController,
     this.autofocus = false,
     this.inputRole,
-    this.shrinkWrap = false,
+    this.layout = StoryEditorLayout.scrolling,
     this.desktopContextMenu = showDefaultDesktopContextMenu,
     this.onTapLink,
+    this.caretColor,
+    this.selectionColor,
+    this.placeholder,
+    this.placeholderStyle,
+    this.checkboxesEnabled = true,
   });
 
   final StoryEditorController controller;
@@ -64,14 +69,29 @@ class MarkdownEditor extends StatefulWidget {
   /// See [RawEditor.inputRole].
   final String? inputRole;
 
-  /// See [RawEditor.shrinkWrap].
-  final bool shrinkWrap;
+  /// See [RawEditor.layout].
+  final StoryEditorLayout layout;
 
   /// See [RawEditor.desktopContextMenu].
   final DesktopContextMenuHandler? desktopContextMenu;
 
   /// See [RawEditor.onTapLink].
   final LinkTapCallback? onTapLink;
+
+  /// See [RawEditor.caretColor].
+  final Color? caretColor;
+
+  /// See [RawEditor.selectionColor].
+  final Color? selectionColor;
+
+  /// See [RawEditor.placeholder].
+  final String? placeholder;
+
+  /// See [RawEditor.placeholderStyle].
+  final TextStyle? placeholderStyle;
+
+  /// See [RawEditor.checkboxesEnabled].
+  final bool checkboxesEnabled;
 
   @override
   State<MarkdownEditor> createState() => _MarkdownEditorState();
@@ -159,9 +179,14 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       scrollController: widget.scrollController,
       autofocus: widget.autofocus,
       inputRole: widget.inputRole,
-      shrinkWrap: widget.shrinkWrap,
+      layout: widget.layout,
       desktopContextMenu: widget.desktopContextMenu,
       onTapLink: widget.onTapLink,
+      caretColor: widget.caretColor,
+      selectionColor: widget.selectionColor,
+      placeholder: widget.placeholder,
+      placeholderStyle: widget.placeholderStyle,
+      checkboxesEnabled: widget.checkboxesEnabled,
     );
   }
 }
