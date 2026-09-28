@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:super_editor/super_editor.dart';
 
 import '../controller/story_editor_controller.dart';
+import 'context_menu_action.dart';
 import 'desktop_context_menu.dart';
 import 'link_tap_handler.dart';
 import 'raw_editor.dart';
@@ -41,6 +42,7 @@ class MarkdownEditor extends StatefulWidget {
     this.placeholder,
     this.placeholderStyle,
     this.checkboxesEnabled = true,
+    this.contextMenuActions = const [],
   });
 
   final StoryEditorController controller;
@@ -92,6 +94,9 @@ class MarkdownEditor extends StatefulWidget {
 
   /// See [RawEditor.checkboxesEnabled].
   final bool checkboxesEnabled;
+
+  /// See [RawEditor.contextMenuActions].
+  final List<StoryContextMenuAction> contextMenuActions;
 
   @override
   State<MarkdownEditor> createState() => _MarkdownEditorState();
@@ -187,6 +192,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       placeholder: widget.placeholder,
       placeholderStyle: widget.placeholderStyle,
       checkboxesEnabled: widget.checkboxesEnabled,
+      contextMenuActions: widget.contextMenuActions,
     );
   }
 }

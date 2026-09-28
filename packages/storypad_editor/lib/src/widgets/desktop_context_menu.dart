@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:super_editor/super_editor.dart';
 
 import 'android_toolbar.dart' show plainTextInSelection;
+import 'context_menu_action.dart';
 
 /// An action from the desktop right-click menu.
 enum DesktopContextMenuAction { cut, copy, paste, selectAll }
@@ -14,6 +15,7 @@ final class DesktopContextMenuRequest {
     required this.hasSelection,
     required this.selectedText,
     this.readOnly = false,
+    this.extraActions = const [],
   });
 
   final BuildContext context;
@@ -29,6 +31,10 @@ final class DesktopContextMenuRequest {
 
   /// Whether the editor is read-only, so Cut and Paste don't apply.
   final bool readOnly;
+
+  /// The app's extra items for this state (`RawEditor.contextMenuActions`, already filtered). Show them after the
+  /// standard items; choosing one calls its `onPressed` (return `null` from the handler).
+  final List<StoryContextMenuAction> extraActions;
 }
 
 /// Shows a desktop context menu and returns the chosen action, or `null` if dismissed. Pass one to
@@ -58,6 +64,8 @@ Future<DesktopContextMenuAction?> showDefaultDesktopContextMenu(DesktopContextMe
       PopupMenuItem(value: DesktopContextMenuAction.paste, enabled: !request.readOnly, child: const Text('Paste')),
       const PopupMenuDivider(),
       const PopupMenuItem(value: DesktopContextMenuAction.selectAll, child: Text('Select All')),
+      if (request.extraActions.isNotEmpty) const PopupMenuDivider(),
+      for (final action in request.extraActions) PopupMenuItem(onTap: action.onPressed, child: Text(action.label)),
     ],
   );
 }
@@ -74,10 +82,14 @@ class DesktopContextMenuRegion extends StatelessWidget {
     required this.showMenu,
     required this.child,
     this.readOnly = false,
+    this.extraActions = const [],
   });
 
   /// In read-only mode, Cut and Paste are ignored (and the default menu disables them).
   final bool readOnly;
+
+  /// The app's extra items (`RawEditor.contextMenuActions`); only those shown in the current state are offered.
+  final List<StoryContextMenuAction> extraActions;
 
   final Document document;
   final DocumentComposer composer;
@@ -107,6 +119,10 @@ class DesktopContextMenuRegion extends StatelessWidget {
         hasSelection: hasSelection,
         selectedText: hasSelection ? plainTextInSelection(document: document, selection: current) : '',
         readOnly: readOnly,
+        extraActions: [
+          for (final action in extraActions)
+            if (action.isShown(readOnly: readOnly, hasSelection: hasSelection)) action,
+        ],
       ),
     );
 

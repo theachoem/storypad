@@ -87,7 +87,8 @@ Presentation, on either editor widget:
   scroll view, e.g. below a title field; that scroll view scrolls it and follows the caret), or `.sliver` (several
   editors in one `CustomScrollView`).
 - `baseTextStyle`, `styleRules`, `padding`; `caretColor`/`selectionColor` (default: the theme's `TextSelectionTheme`,
-  else its primary color); `placeholder`; `checkboxesEnabled: false` for a view that won't keep its changes.
+  else its primary color); `placeholder`; `checkboxesEnabled: false` for a view that won't keep its changes;
+  `contextMenuActions` — extra selection-menu items (e.g. Uppercase via `actions.transformSelectedText`).
 
 ### 3. Toolbars
 

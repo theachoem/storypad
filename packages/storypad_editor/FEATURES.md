@@ -116,6 +116,11 @@ For stories still stored as Quill: the mirror of the importer, in the shapes Sto
   list (cached per color; super_editor rebuilds layers on a new list). Mobile carets/handles already use the theme's
   primary color.
 - **iOS caret follow** happens on edits, not on programmatic caret moves (any layout); Android follows both.
+- **Context-menu extras** (`RawEditor.contextMenuActions`, `widgets/context_menu_action.dart`): on the Android
+  toolbar (after process-text, often in its overflow), the iOS system menu (`widgets/ios_system_context_menu.dart`,
+  iOS 16+: super_editor's own can't take custom items, so ours rebuilds the standard list via `showWithItems`), and
+  the desktop menu. Read-only: desktop only -- super_editor's reader has no Android toolbar, and iOS shows its system
+  menu for editable text only.
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
 - **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example

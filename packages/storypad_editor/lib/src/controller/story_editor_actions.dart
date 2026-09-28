@@ -5,6 +5,7 @@ import 'package:super_editor/super_editor.dart';
 import '../markdown/markdown_format.dart';
 import 'change_text_alignment_request.dart';
 import 'story_editor_controller.dart';
+import 'transform_text_request.dart';
 
 /// Formatting and block commands on the current selection, plus the state a toolbar shows for them. Headless: no
 /// widgets or layout involved, so every action is unit-testable, and any toolbar (the app's, or the example's) is just
@@ -55,6 +56,18 @@ class StoryEditorActions {
   }
 
   static int? _offset(NodePosition position) => position is TextNodePosition ? position.offset : null;
+
+  /// Replaces the selected text with `transform(text)` in each selected block, keeping its formatting -- e.g. to
+  /// upper or lower case. One undo step; the selection keeps covering the same text.
+  void transformSelectedText(String Function(String text) transform) {
+    final ranges = _selectedRanges;
+    if (ranges.isEmpty) return;
+    _editor.execute([
+      TransformTextRequest([
+        for (final range in ranges) (nodeId: range.node.id, start: range.start, end: range.end),
+      ], transform),
+    ]);
+  }
 
   /// Puts the caret at the end of the document -- e.g. when focusing an editor that has no selection yet.
   void placeCaretAtEnd() =>

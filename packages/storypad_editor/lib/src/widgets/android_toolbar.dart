@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:follow_the_leader/follow_the_leader.dart';
 import 'package:super_editor/super_editor.dart';
 
+import 'context_menu_action.dart';
 import 'vendor/android_popover_toolbar.dart';
 
 // =============================================================================
@@ -49,6 +50,7 @@ class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
     required this.editorControlsController,
     required this.selectionNotifier,
     required this.processTextActions,
+    this.extraActions = const [],
   });
 
   final Key? floatingToolbarKey;
@@ -58,6 +60,9 @@ class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
   final SuperEditorAndroidControlsController editorControlsController;
   final ValueListenable<DocumentSelection?> selectionNotifier;
   final List<ProcessTextAction> processTextActions;
+
+  /// The app's extra items (`RawEditor.contextMenuActions`), after the process-text ones.
+  final List<StoryContextMenuAction> extraActions;
 
   @override
   State<AndroidTextEditingFloatingToolbarWithProcessText> createState() =>
@@ -192,6 +197,15 @@ class _AndroidTextEditingFloatingToolbarWithProcessTextState
               _ButtonViewModel(onPressed: _selectAll, title: 'Select All'),
               for (final action in processTextActions)
                 _ButtonViewModel(onPressed: () => _runProcessTextAction(action), title: action.label),
+              for (final action in widget.extraActions)
+                if (action.isShown(readOnly: false, hasSelection: hasSelectedText))
+                  _ButtonViewModel(
+                    onPressed: () {
+                      widget.editorControlsController.hideToolbar();
+                      action.onPressed();
+                    },
+                    title: action.label,
+                  ),
             ];
 
             return LayoutBuilder(

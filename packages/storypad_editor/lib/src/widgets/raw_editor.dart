@@ -7,8 +7,10 @@ import 'package:super_editor/super_editor.dart';
 import '../controller/story_editor_controller.dart';
 import 'android_toolbar.dart';
 import 'compact_builders.dart';
+import 'context_menu_action.dart';
 import 'desktop_context_menu.dart';
 import 'free_task_indent.dart';
+import 'ios_system_context_menu.dart';
 import 'link_tap_handler.dart';
 import 'mobile_reorderable_document_overlay.dart';
 import 'reorderable_document_overlay.dart';
@@ -55,6 +57,7 @@ class RawEditor extends StatefulWidget {
     this.placeholder,
     this.placeholderStyle,
     this.checkboxesEnabled = true,
+    this.contextMenuActions = const [],
   });
 
   final StoryEditorController controller;
@@ -105,6 +108,10 @@ class RawEditor extends StatefulWidget {
   /// Whether task checkboxes toggle -- also while read-only, where it's the only edit (reported like any other).
   /// Turn off for a view whose changes wouldn't be kept.
   final bool checkboxesEnabled;
+
+  /// Extra items for the selection menus (Android toolbar, iOS system menu, desktop right-click menu), after the
+  /// platform's own. See [StoryContextMenuAction] for where each shows.
+  final List<StoryContextMenuAction> contextMenuActions;
 
   @override
   State<RawEditor> createState() => _RawEditorState();
@@ -267,6 +274,16 @@ class _RawEditorState extends State<RawEditor> {
   // the result, so each returned widget reacts to selection changes itself.
 
   Widget _buildIosToolbar(BuildContext context, Key mobileToolbarKey, LeaderLink focalPoint) {
+    // With extra items, the system menu comes from us (super_editor's can only show the standard ones).
+    if (widget.contextMenuActions.isNotEmpty &&
+        !kIsWeb &&
+        (MediaQuery.maybeSupportsShowingSystemContextMenu(context) ?? false)) {
+      return StoryIosSystemContextMenu(
+        leaderLink: focalPoint,
+        selection: _controller.composer.selectionNotifier,
+        extraActions: widget.contextMenuActions,
+      );
+    }
     return iOSSystemPopoverEditorToolbarWithFallbackBuilder(
       context,
       mobileToolbarKey,
@@ -285,6 +302,7 @@ class _RawEditorState extends State<RawEditor> {
       editorControlsController: SuperEditorAndroidControlsScope.rootOf(context),
       selectionNotifier: _controller.composer.selectionNotifier,
       processTextActions: _androidProcessTextActions,
+      extraActions: widget.contextMenuActions,
     );
   }
 
@@ -474,6 +492,7 @@ class _RawEditorState extends State<RawEditor> {
         editorOps: _editorOps,
         documentLayoutResolver: _layout,
         showMenu: showMenu,
+        extraActions: widget.contextMenuActions,
         child: reorderable,
       );
     }
@@ -510,6 +529,7 @@ class _RawEditorState extends State<RawEditor> {
       documentLayoutResolver: _layout,
       showMenu: showMenu,
       readOnly: true,
+      extraActions: widget.contextMenuActions,
       child: laidOut,
     );
   }

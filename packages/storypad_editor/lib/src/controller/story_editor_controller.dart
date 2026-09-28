@@ -11,6 +11,7 @@ import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import 'change_text_alignment_request.dart';
 import 'story_editor_actions.dart';
+import 'transform_text_request.dart';
 import 'update_story_embed_request.dart';
 
 /// The one object an editor needs: it holds the document and every embed, and does everything else -- serialization,
@@ -50,7 +51,12 @@ class StoryEditorController extends ChangeNotifier {
     _composer = MutableDocumentComposer();
     _editor = Editor(
       editables: {Editor.documentKey: _document, Editor.composerKey: _composer},
-      requestHandlers: [updateStoryEmbedHandler, changeTextAlignmentHandler, ...defaultRequestHandlers],
+      requestHandlers: [
+        updateStoryEmbedHandler,
+        changeTextAlignmentHandler,
+        transformTextHandler,
+        ...defaultRequestHandlers,
+      ],
       reactionPipeline: [
         for (final reaction in defaultEditorReactions)
           // Re-clamps free task indent whenever any task is deleted.
