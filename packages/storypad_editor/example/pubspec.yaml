@@ -16,6 +16,7 @@ dependencies:
     path: ../
 
 dev_dependencies:
+  collection: ^1.19.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

@@ -118,3 +118,15 @@ flutter test --concurrency=1          # package (the default concurrent runner c
 flutter analyze && (cd example && flutter analyze)
 dart format -l 120 lib test
 ```
+
+**Fidelity audit**: how real stories survive Quill → Markdown → Quill (what the bridge phase does on every save).
+Prints only counts, attribute keys and story ids, never story text; nothing leaves your machine:
+
+```sh
+cd example
+BACKUP=/path/to/backup-file-or-folder flutter test tool/fidelity_audit_test.dart   # a StoryPad backup (gzip or JSON)
+flutter test tool/fidelity_audit_test.dart                                        # the real-shape fixtures
+```
+
+It fails unless nothing is dropped. The report also lists embed ops written back differently with the same value
+(e.g. the legacy `image` key becoming `media`), unknown embed keys, and conversion time per page.
