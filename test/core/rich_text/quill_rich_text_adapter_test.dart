@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
-import 'package:storypad/core/rich_text/rich_text_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
 
@@ -438,33 +437,6 @@ void main() {
 
           expect(hasAudio, isTrue, reason: 'Failed for path: $path');
         }
-      });
-    });
-
-    group('global editorAdapter singleton', () {
-      test('is a QuillRichTextAdapter instance', () {
-        expect(editorAdapter, isA<QuillRichTextAdapter>());
-        expect(editorAdapter, isA<RichTextAdapter>());
-      });
-
-      test('provides all adapter methods', () {
-        expect(editorAdapter.localizationsDelegates, isNotEmpty);
-        expect(() => editorAdapter.createEmptyController(readOnly: false), returnsNormally);
-        expect(() => editorAdapter.createEmptyDocument(), returnsNormally);
-      });
-
-      test('is accessible without instantiation', () {
-        final controller = editorAdapter.createController(
-          json: [
-            {'insert': 'Test'},
-            {'insert': '\n'},
-          ],
-          selection: const TextSelection.collapsed(offset: 0),
-          readOnly: false,
-        );
-
-        expect(controller, isNotNull);
-        expect(controller.getPlainText(), equals('Test\n'));
       });
     });
 

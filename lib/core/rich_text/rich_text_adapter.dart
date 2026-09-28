@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
+import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_adapter.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 
 /// Abstract interface for rich text editor adapter.
@@ -117,4 +117,7 @@ abstract class RichTextAdapter {
 /// // In bottom sheet:
 /// editorAdapter.insertMedia(controller: controller, mediaPath: path)
 /// ```
-final RichTextAdapter editorAdapter = QuillRichTextAdapter();
+///
+/// Stories are edited with storypad_editor (super_editor) and still stored as Quill Delta. To roll back to the Quill
+/// editor, use `QuillRichTextAdapter()` instead -- stored stories need no change either way.
+final RichTextAdapter editorAdapter = StoryPadEditorRichTextAdapter();

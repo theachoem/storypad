@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/rich_text/flutter_quill/quill_adapter.dart';
-import 'package:storypad/core/rich_text/rich_text_adapter.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
 
 void main() {
@@ -52,7 +51,7 @@ void main() {
       test('handles empty JSON array through adapter', () {
         // Note: QuillRichTextDocument.fromJson doesn't handle empty arrays,
         // but the adapter (createDocument) does.
-        final document = editorAdapter.createDocument(json: []);
+        final document = QuillRichTextAdapter().createDocument(json: []);
 
         // Empty document should have a newline
         expect(document.toPlainText(), equals('\n'));
