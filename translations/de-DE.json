@@ -41,6 +41,8 @@
   "button.editor.italic": "Kursiv",
   "button.editor.link": "Link",
   "button.editor.lowercase": "Kleinbuchstaben",
+  "button.editor.move_down": "Nach unten",
+  "button.editor.move_up": "Nach oben",
   "button.editor.numbered_list": "Nummerierte Liste",
   "button.editor.outdent": "Einzug verkleinern",
   "button.editor.quote": "Zitat",

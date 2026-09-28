@@ -41,6 +41,8 @@
   "button.editor.italic": "Nghiêng",
   "button.editor.link": "Liên kết",
   "button.editor.lowercase": "Chữ thường",
+  "button.editor.move_down": "Di chuyển xuống",
+  "button.editor.move_up": "Di chuyển lên",
   "button.editor.numbered_list": "Danh sách đánh số",
   "button.editor.outdent": "Giảm thụt lề",
   "button.editor.quote": "Trích dẫn",

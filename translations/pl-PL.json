@@ -41,6 +41,8 @@
   "button.editor.italic": "Kursywa",
   "button.editor.link": "Link",
   "button.editor.lowercase": "Małe litery",
+  "button.editor.move_down": "Przenieś w dół",
+  "button.editor.move_up": "Przenieś w górę",
   "button.editor.numbered_list": "Lista numerowana",
   "button.editor.outdent": "Zmniejsz wcięcie",
   "button.editor.quote": "Cytat",

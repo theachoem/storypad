@@ -41,6 +41,8 @@
   "button.editor.italic": "Cursiva",
   "button.editor.link": "Enlace",
   "button.editor.lowercase": "Minúsculas",
+  "button.editor.move_down": "Mover abajo",
+  "button.editor.move_up": "Mover arriba",
   "button.editor.numbered_list": "Lista numerada",
   "button.editor.outdent": "Reducir sangría",
   "button.editor.quote": "Cita",

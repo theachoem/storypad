@@ -41,6 +41,8 @@
   "button.editor.italic": "ตัวเอียง",
   "button.editor.link": "ลิงก์",
   "button.editor.lowercase": "ตัวพิมพ์เล็ก",
+  "button.editor.move_down": "ย้ายลง",
+  "button.editor.move_up": "ย้ายขึ้น",
   "button.editor.numbered_list": "รายการลำดับเลข",
   "button.editor.outdent": "ลดการเยื้อง",
   "button.editor.quote": "ข้อความอ้างอิง",

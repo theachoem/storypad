@@ -253,4 +253,25 @@ void main() {
       {'insert': 'Hello\n'},
     ]);
   });
+
+  testWidgets('with text selected, undo/redo become move up/down and move the selected lines', (tester) async {
+    final page = await pumpPage(
+      tester,
+      json: [
+        {'insert': 'one\ntwo\nthree\n'},
+      ],
+    );
+    expect(find.byIcon(SpIcons.undo), findsOneWidget);
+
+    // Select "two" (offsets: "one\n" is 4).
+    page.controller.selection = const TextSelection(baseOffset: 4, extentOffset: 7);
+    await tester.pump();
+    expect(find.byIcon(SpIcons.undo), findsNothing);
+
+    await tester.tap(find.byIcon(SpIcons.moveUp));
+    await tester.pumpAndSettle();
+    expect(page.controller.serialize(), [
+      {'insert': 'two\none\nthree\n'},
+    ]);
+  });
 }

@@ -158,6 +158,8 @@ class SpIcons {
   static const IconData indentIncrease = kIsCupertino ? CupertinoIcons.increase_indent : Icons.format_indent_increase;
   static const IconData indentDecrease = kIsCupertino ? CupertinoIcons.decrease_indent : Icons.format_indent_decrease;
   static const IconData link = kIsCupertino ? CupertinoIcons.link : Icons.link;
+  static const IconData moveUp = kIsCupertino ? CupertinoIcons.arrow_up : Icons.arrow_upward;
+  static const IconData moveDown = kIsCupertino ? CupertinoIcons.arrow_down : Icons.arrow_downward;
   static const IconData undo = kIsCupertino ? CupertinoIcons.arrow_uturn_left : Icons.undo;
   static const IconData redo = kIsCupertino ? CupertinoIcons.arrow_uturn_right : Icons.redo;
   static const IconData addOns = kIsCupertino ? CupertinoIcons.square_grid_2x2 : Icons.grid_view_rounded;

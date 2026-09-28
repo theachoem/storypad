@@ -41,6 +41,8 @@
   "button.editor.italic": "ទ្រេត",
   "button.editor.link": "តំណ",
   "button.editor.lowercase": "អក្សរតូច",
+  "button.editor.move_down": "ផ្លាស់ទីចុះក្រោម",
+  "button.editor.move_up": "ផ្លាស់ទីឡើងលើ",
   "button.editor.numbered_list": "បញ្ជីលេខ",
   "button.editor.outdent": "បន្ថយការចូលបន្ទាត់",
   "button.editor.quote": "សម្រង់",

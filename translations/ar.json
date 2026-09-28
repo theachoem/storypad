@@ -41,6 +41,8 @@
   "button.editor.italic": "مائل",
   "button.editor.link": "رابط",
   "button.editor.lowercase": "أحرف صغيرة",
+  "button.editor.move_down": "نقل لأسفل",
+  "button.editor.move_up": "نقل لأعلى",
   "button.editor.numbered_list": "قائمة مرقّمة",
   "button.editor.outdent": "تقليل المسافة البادئة",
   "button.editor.quote": "اقتباس",

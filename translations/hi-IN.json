@@ -41,6 +41,8 @@
   "button.editor.italic": "इटैलिक",
   "button.editor.link": "लिंक",
   "button.editor.lowercase": "छोटे अक्षर",
+  "button.editor.move_down": "नीचे ले जाएँ",
+  "button.editor.move_up": "ऊपर ले जाएँ",
   "button.editor.numbered_list": "क्रमांकित सूची",
   "button.editor.outdent": "इंडेंट घटाएँ",
   "button.editor.quote": "उद्धरण",

@@ -69,16 +69,31 @@ class StoryPadEditorToolbar extends StatelessWidget {
             onPressed: () => _editor.keepSelectionWhile(() => _addMedia(context)),
           ),
           _buildDivider(context),
-          IconButton(
-            tooltip: tr('button.undo'),
-            icon: const Icon(SpIcons.undo),
-            onPressed: actions.canUndo ? actions.undo : null,
-          ),
-          IconButton(
-            tooltip: tr('button.editor.redo'),
-            icon: const Icon(SpIcons.redo),
-            onPressed: actions.canRedo ? actions.redo : null,
-          ),
+          // With text selected, the undo/redo slots move the selected lines instead (same place, so the toolbar doesn't
+          // shift).
+          if (actions.hasSelection) ...[
+            IconButton(
+              tooltip: tr('button.editor.move_up'),
+              icon: const Icon(SpIcons.moveUp),
+              onPressed: actions.canMoveSelectedBlocks(up: true) ? () => actions.moveSelectedBlocks(up: true) : null,
+            ),
+            IconButton(
+              tooltip: tr('button.editor.move_down'),
+              icon: const Icon(SpIcons.moveDown),
+              onPressed: actions.canMoveSelectedBlocks(up: false) ? () => actions.moveSelectedBlocks(up: false) : null,
+            ),
+          ] else ...[
+            IconButton(
+              tooltip: tr('button.undo'),
+              icon: const Icon(SpIcons.undo),
+              onPressed: actions.canUndo ? actions.undo : null,
+            ),
+            IconButton(
+              tooltip: tr('button.editor.redo'),
+              icon: const Icon(SpIcons.redo),
+              onPressed: actions.canRedo ? actions.redo : null,
+            ),
+          ],
           _buildDivider(context),
           toggle(tr('button.editor.bold'), SpIcons.formatBold, actions.isBold, actions.toggleBold),
           toggle(tr('button.editor.italic'), SpIcons.formatItalic, actions.isItalic, actions.toggleItalic),

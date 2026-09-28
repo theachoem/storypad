@@ -41,6 +41,8 @@
   "button.editor.italic": "Italique",
   "button.editor.link": "Lien",
   "button.editor.lowercase": "Minuscules",
+  "button.editor.move_down": "Descendre",
+  "button.editor.move_up": "Monter",
   "button.editor.numbered_list": "Liste numérotée",
   "button.editor.outdent": "Diminuer le retrait",
   "button.editor.quote": "Citation",

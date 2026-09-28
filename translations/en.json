@@ -41,6 +41,8 @@
   "button.editor.italic": "Italic",
   "button.editor.link": "Link",
   "button.editor.lowercase": "Lowercase",
+  "button.editor.move_down": "Move down",
+  "button.editor.move_up": "Move up",
   "button.editor.numbered_list": "Numbered list",
   "button.editor.outdent": "Decrease indent",
   "button.editor.quote": "Quote",

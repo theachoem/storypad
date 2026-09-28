@@ -41,6 +41,8 @@
   "button.editor.italic": "Miring",
   "button.editor.link": "Tautan",
   "button.editor.lowercase": "Huruf kecil",
+  "button.editor.move_down": "Pindah ke bawah",
+  "button.editor.move_up": "Pindah ke atas",
   "button.editor.numbered_list": "Daftar bernomor",
   "button.editor.outdent": "Kurangi indentasi",
   "button.editor.quote": "Kutipan",

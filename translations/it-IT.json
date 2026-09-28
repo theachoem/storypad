@@ -41,6 +41,8 @@
   "button.editor.italic": "Corsivo",
   "button.editor.link": "Link",
   "button.editor.lowercase": "Minuscolo",
+  "button.editor.move_down": "Sposta giù",
+  "button.editor.move_up": "Sposta su",
   "button.editor.numbered_list": "Elenco numerato",
   "button.editor.outdent": "Riduci rientro",
   "button.editor.quote": "Citazione",

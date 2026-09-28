@@ -41,6 +41,8 @@
   "button.editor.italic": "Курсив",
   "button.editor.link": "Ссылка",
   "button.editor.lowercase": "Строчные",
+  "button.editor.move_down": "Переместить вниз",
+  "button.editor.move_up": "Переместить вверх",
   "button.editor.numbered_list": "Нумерованный список",
   "button.editor.outdent": "Уменьшить отступ",
   "button.editor.quote": "Цитата",

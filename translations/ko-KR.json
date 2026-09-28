@@ -41,6 +41,8 @@
   "button.editor.italic": "기울임꼴",
   "button.editor.link": "링크",
   "button.editor.lowercase": "소문자",
+  "button.editor.move_down": "아래로 이동",
+  "button.editor.move_up": "위로 이동",
   "button.editor.numbered_list": "번호 매기기 목록",
   "button.editor.outdent": "내어쓰기",
   "button.editor.quote": "인용",
