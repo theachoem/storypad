@@ -29,20 +29,23 @@ final class StoryEmbedAttribute<A extends Object> {
   /// An attribute with custom string conversion. [parse] returns `null` for an unrecognized value.
   const StoryEmbedAttribute({
     required this.htmlName,
-    required A? Function(String raw) this._parse,
-    required String Function(A value) this._format,
+    required A? Function(String raw) parse,
+    required String Function(A value) format,
     required this.fallback,
     this.quillKey,
-  }) : _values = null;
+  }) : _parse = parse,
+       _format = format,
+       _values = null;
 
   /// An attribute backed by a fixed set of values (typically an enum), each with its string form. The [fallback]
   /// doesn't need an entry in [values], since it's never written.
   const StoryEmbedAttribute.enumeration({
     required this.htmlName,
-    required Map<A, String> this._values,
+    required Map<A, String> values,
     required this.fallback,
     this.quillKey,
-  }) : _parse = null,
+  }) : _values = values,
+       _parse = null,
        _format = null;
 
   /// The Quill op attribute key, e.g. `custom-embed-alignment`. `null` if the attribute doesn't exist in Quill.

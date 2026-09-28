@@ -60,8 +60,8 @@ final class StoryEmbedContext<T extends Object> {
     required this.value,
     required this.isSelected,
     required this.controller,
-    required this._embed,
-  });
+    required StoryEmbedCodec<T> embed,
+  }) : _embed = embed;
 
   /// The embed's document node id.
   final String nodeId;
