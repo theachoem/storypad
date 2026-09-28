@@ -47,8 +47,9 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
   StoryEditorController get _editor => widget.controller.editor;
 
   StoryPadEditorStyle? _style;
-  ThemeData? _styleTheme;
-  TextStyle? _styleBase;
+  // What the style was built from. Not the ThemeData itself: story themes build a new one on every rebuild, and a new
+  // style makes the editor restyle every block.
+  (ColorScheme, TextStyle, TargetPlatform)? _styleKey;
 
   @override
   void initState() {
@@ -60,10 +61,12 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
   @override
   void didUpdateWidget(StoryPadEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.readOnly != widget.readOnly) _editor.readOnly = widget.readOnly;
-    if (oldWidget.focusNode != widget.focusNode) {
+    if (oldWidget.focusNode != widget.focusNode || oldWidget.controller != widget.controller) {
       _detachFocus(oldWidget.focusNode, oldWidget.controller.editor);
       _attachFocus(widget.focusNode);
+    }
+    if (oldWidget.readOnly != widget.readOnly || oldWidget.controller != widget.controller) {
+      _editor.readOnly = widget.readOnly;
     }
   }
 
@@ -120,11 +123,10 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
 
   StoryPadEditorStyle _styleFor(BuildContext context) {
     final theme = Theme.of(context);
-    final base = DefaultTextStyle.of(context).style;
-    if (_style == null || !identical(_styleTheme, theme) || _styleBase != base) {
+    final key = (theme.colorScheme, DefaultTextStyle.of(context).style, theme.platform);
+    if (_style == null || _styleKey != key) {
       _style = StoryPadEditorStyle(context);
-      _styleTheme = theme;
-      _styleBase = base;
+      _styleKey = key;
     }
     return _style!;
   }
