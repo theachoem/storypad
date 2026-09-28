@@ -126,11 +126,14 @@ void main() {
     });
   });
 
-  test('only one editor widget may use a controller at a time', () {
-    final controller = controllerFor('');
-    final a = Object();
-    controller.attachEditor(a);
-    expect(() => controller.attachEditor(Object()), throwsAssertionError);
-    controller.detachEditor(a);
+  test('editor attachment: re-attaching is harmless, and disposing while attached is caught', () {
+    final controller = StoryEditorController(embeds: testEmbeds);
+    final editor = Object();
+    controller.attachEditor(editor);
+    controller.attachEditor(editor);
+
+    expect(controller.dispose, throwsAssertionError);
+    controller.detachEditor(editor);
+    controller.dispose();
   });
 }

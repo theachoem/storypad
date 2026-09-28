@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:super_editor/super_editor.dart';
 
@@ -370,27 +371,43 @@ class StoryEditorController extends ChangeNotifier {
 
   // ── Editor attachment ──────────────────────────────────────────────────────
 
-  Object? _attachedEditor;
+  /// Editor widgets currently using this controller.
+  final _attachedEditors = <Object>{};
 
-  /// Called by the editor widget using this controller. Only one editor widget at a time may use a controller (they
-  /// would share its focus node).
+  /// Called by an editor widget using this controller. Only one editor widget at a time may use a controller (they
+  /// would share its focus node and document layout).
+  ///
+  /// Checked at the end of the frame, not here: an editor moved to a new parent (e.g. a responsive layout switching
+  /// from a `Row` to a `Column`) is rebuilt before the one it replaces is disposed, so two can be attached briefly.
   @internal
   void attachEditor(Object editor) {
-    assert(
-      _attachedEditor == null || identical(_attachedEditor, editor),
-      'This StoryEditorController is already used by another editor widget. Each editor needs its own controller.',
-    );
-    _attachedEditor = editor;
+    _attachedEditors.add(editor);
+    assert(() {
+      if (_attachedEditors.length > 1) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (_attachedEditors.length > 1) {
+            FlutterError.reportError(
+              FlutterErrorDetails(
+                library: 'storypad_editor',
+                exception: FlutterError(
+                  'This StoryEditorController is used by ${_attachedEditors.length} editor widgets at once. '
+                  'Each editor needs its own controller.',
+                ),
+              ),
+            );
+          }
+        });
+      }
+      return true;
+    }());
   }
 
   @internal
-  void detachEditor(Object editor) {
-    if (identical(_attachedEditor, editor)) _attachedEditor = null;
-  }
+  void detachEditor(Object editor) => _attachedEditors.remove(editor);
 
   @override
   void dispose() {
-    assert(_attachedEditor == null, 'Dispose the editor widget before its controller.');
+    assert(_attachedEditors.isEmpty, 'Dispose the editor widget before its controller.');
     _document.removeListener(_onDocumentChanged);
     _composer.selectionNotifier.removeListener(_onSelectionChanged);
     _composer.preferences.removeListener(notifyListeners);

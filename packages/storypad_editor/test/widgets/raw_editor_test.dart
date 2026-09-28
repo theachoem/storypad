@@ -119,8 +119,12 @@ void main() {
     expect(controller.selection.value!.isCollapsed, isFalse);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-  testWidgets('a controller can only be used by one editor at a time', (tester) async {
+  testWidgets('two editors sharing a controller are reported', (tester) async {
     final controller = controllerFor('a');
+    final reported = <FlutterErrorDetails>[];
+    final onError = FlutterError.onError;
+    FlutterError.onError = reported.add;
+
     await pumpStoryEditor(
       tester,
       controller,
@@ -131,8 +135,12 @@ void main() {
         ],
       ),
     );
+    FlutterError.onError = onError; // Restore before the test ends (the framework checks).
 
-    expect(tester.takeException(), isAssertionError);
+    expect(
+      reported.map((details) => '${details.exception}'),
+      contains(contains('Each editor needs its own controller')),
+    );
   });
 
   testWidgets('parent rebuilds and focus changes reuse the stylesheet and builders (no presenter rebuild)', (

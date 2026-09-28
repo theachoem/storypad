@@ -138,6 +138,19 @@ class _RawEditorState extends State<RawEditor> {
     }
   }
 
+  // Out of the tree (replaced, or being moved with a GlobalKey): not using the controller until reinserted.
+  @override
+  void deactivate() {
+    _controller.detachEditor(this);
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _controller.attachEditor(this);
+  }
+
   @override
   void dispose() {
     _detach(_controller);

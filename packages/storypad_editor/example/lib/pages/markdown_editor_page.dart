@@ -77,8 +77,10 @@ class _MarkdownEditorPageState extends State<MarkdownEditorPage> {
   @override
   Widget build(BuildContext context) {
     final editorController = _controller;
+    // A GlobalKey, so switching between the wide and narrow layouts moves the editor (keeping caret, scroll and
+    // focus) instead of rebuilding it; a new controller still gets a new editor.
     final editor = EditorWithToolbar(
-      key: ObjectKey(editorController),
+      key: GlobalObjectKey(editorController),
       controller: editorController,
       editor: MarkdownEditor(
         controller: editorController,
