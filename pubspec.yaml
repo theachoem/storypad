@@ -82,6 +82,9 @@ dependencies:
   record: 7.1.1
   share_plus: 13.3.0
   shared_preferences: 2.5.5
+  # The super_editor-based story editor.
+  storypad_editor:
+    path: packages/storypad_editor
   tar: 2.0.2
   video_player: 2.14.0
   visibility_detector: 0.4.0+2
@@ -102,6 +105,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   objectbox_generator: any
+
+dependency_overrides:
+  # super_editor (via storypad_editor) constrains dart_quill_delta to ^9.4.1, but flutter_quill needs 10.x. The Delta
+  # API super_editor uses is unchanged in 10.x. Drop once super_editor widens its constraint or flutter_quill is gone.
+  dart_quill_delta: 10.8.3
 
 flutter:
   uses-material-design: true
