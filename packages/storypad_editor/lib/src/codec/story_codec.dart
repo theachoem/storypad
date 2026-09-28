@@ -6,9 +6,12 @@ import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import '../markdown/markdown_reader.dart';
 import '../markdown/markdown_writer.dart';
+import '../quill/quill_exporter.dart';
+import '../quill/quill_import_losses.dart';
 import '../quill/quill_importer.dart';
 
-/// Converts documents to and from Markdown (the only format this package writes), with a given set of embeds.
+/// Converts documents to and from Markdown (the storage format), with a given set of embeds -- and from and to Quill
+/// Delta, for stories stored in Quill.
 /// Headless: no editor or widgets involved, so it's usable anywhere (services, tests, isolates).
 ///
 /// ```dart
@@ -28,12 +31,14 @@ final class StoryCodec {
   StoryCodec.fromRegistry(this.registry)
     : _reader = MarkdownReader(registry),
       _writer = MarkdownWriter(registry),
-      _quill = QuillImporter(registry);
+      _quill = QuillImporter(registry),
+      _quillWriter = QuillExporter(registry, MarkdownWriter(registry));
 
   final StoryEmbedRegistry registry;
   final MarkdownReader _reader;
   final MarkdownWriter _writer;
   final QuillImporter _quill;
+  final QuillExporter _quillWriter;
 
   /// Reads [markdown] into a new document (at least one node). The caller owns and disposes it.
   MutableDocument decode(String markdown) => MutableDocument(nodes: decodeNodes(markdown));
@@ -52,6 +57,19 @@ final class StoryCodec {
   /// Imports Quill Delta ops as document nodes, exactly as [quillToMarkdown] sees them. Formatting Markdown can't
   /// store (e.g. font size) is dropped when the nodes are encoded.
   List<DocumentNode> decodeQuill(List<Object?> ops) => _quill.import(ops);
+
+  /// The formatting in Quill ops that converting them ([quillToMarkdown], [decodeQuill]) would drop -- empty when the
+  /// conversion is lossless. Text and embeds are never dropped (unknown embeds are preserved); only formatting is.
+  List<QuillImportLoss> quillImportLosses(List<Object?> ops) => const QuillImportLossFinder().find(ops);
+
+  /// Writes [nodes] as Quill Delta ops (JSON-ready maps) in the shapes StoryPad's Quill editor writes: the reverse of
+  /// [decodeQuill], for storing a document edited here as Quill. Embeds are written through their `toQuill`.
+  /// `decodeQuill(encodeQuill(nodes))` is equivalent to [nodes].
+  List<Map<String, Object?>> encodeQuill(Iterable<DocumentNode> nodes) => _quillWriter.export(nodes);
+
+  /// Converts Markdown to Quill Delta ops: [encodeQuill] of what [markdown] reads as. With canonical Markdown,
+  /// `quillToMarkdown(markdownToQuill(markdown)) == markdown`.
+  List<Map<String, Object?>> markdownToQuill(String markdown) => encodeQuill(decodeNodes(markdown));
 
   /// The canonical form of [markdown]: what it reads as, written back.
   String canonicalize(String markdown) => encode(decodeNodes(markdown));

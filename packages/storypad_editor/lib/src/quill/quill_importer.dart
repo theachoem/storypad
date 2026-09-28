@@ -7,8 +7,10 @@ import '../embed/quill_embed_op.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import '../markdown/markdown_format.dart';
+import '../markdown/markdown_reader.dart';
+import 'quill_exporter.dart';
 
-/// Imports Quill Delta ops into document nodes. Import only: nothing in this package writes Quill.
+/// Imports Quill Delta ops into document nodes. `QuillExporter` is the reverse, for stories still stored as Quill.
 ///
 /// Built on super_editor's Quill parser, with this package's own formats:
 ///
@@ -22,12 +24,15 @@ import '../markdown/markdown_format.dart';
 ///   whole import; here a bad value just drops that one format.
 /// - **Cleanup.** The empty paragraph super_editor inserts after every embed (which then absorbs the embed line's
 ///   `\n`) is removed, so embeds don't gain blank lines.
+/// - **The exporter's own keys**: `{"divider": …}` is a horizontal rule, and `{"sp-markdown": line}` is one line of
+///   this package's Markdown (content with no Quill form), read back exactly.
 ///
 /// Never throws on malformed ops: ops that aren't well-formed inserts are skipped.
 class QuillImporter {
   QuillImporter(this.registry);
 
   final StoryEmbedRegistry registry;
+  late final _markdown = MarkdownReader(registry);
 
   List<DocumentNode> import(List<Object?> ops) {
     final document = MutableDocument.empty();
@@ -41,11 +46,11 @@ class QuillImporter {
     try {
       final spuriousParagraphs = <String>{};
       parseQuillDeltaOps(
-        _sanitize(ops),
+        sanitize(ops),
         customEditor: editor,
         blockFormats: const [QuillBlockFormat()],
         inlineFormats: _inlineFormats,
-        embedBlockFormats: [_EmbedFormat(registry, spuriousParagraphs)],
+        embedBlockFormats: [_EmbedFormat(registry, _markdown, spuriousParagraphs)],
       );
 
       // A spurious paragraph is removed whenever it's still empty -- even if the embed line's `\n` gave it
@@ -67,7 +72,7 @@ class QuillImporter {
   /// Keeps well-formed insert ops only, and splits text inserts so that every `\n` is its own op. Quill compacts
   /// consecutive lines with the same block attributes into one op (e.g. two empty list items become
   /// `{"insert": "\n\n", "attributes": {"list": "bullet"}}`), but super_editor applies block formats once per op.
-  static List<Map<String, Object?>> _sanitize(List<Object?> ops) {
+  static List<Map<String, Object?>> sanitize(List<Object?> ops) {
     final result = <Map<String, Object?>>[];
     for (final op in ops) {
       if (op is! Map) continue;
@@ -190,9 +195,10 @@ enum _Kind { paragraph, listItem, task, code }
 /// super_editor's `StandardEmbedBlockDeltaFormat`, but records the empty paragraph it inserts after the embed (to
 /// hold the caret for the next op) so the importer can remove it afterwards.
 class _EmbedFormat implements BlockDeltaFormat {
-  _EmbedFormat(this.registry, this.spuriousParagraphs);
+  _EmbedFormat(this.registry, this.markdown, this.spuriousParagraphs);
 
   final StoryEmbedRegistry registry;
+  final MarkdownReader markdown;
   final Set<String> spuriousParagraphs;
 
   @override
@@ -202,22 +208,12 @@ class _EmbedFormat implements BlockDeltaFormat {
 
     final insert = Map<String, Object?>.from(data);
     final attributes = Map<String, Object?>.from(operation.attributes ?? const {});
-    final nodeId = Editor.createNodeId();
-
-    DocumentNode? node;
-    for (final key in insert.keys) {
-      final embed = registry.byQuillKey(key);
-      if (embed == null) continue;
-      node = embed.nodeFromQuill(
-        QuillEmbedOp(key: key, insert: insert, attributes: attributes),
-        id: nodeId,
-      );
-      break;
-    }
-    node ??= registry.unknown.createNode(
-      UnknownQuillEmbed({'insert': insert, if (attributes.isNotEmpty) 'attributes': attributes}),
-      id: nodeId,
-    );
+    final node =
+        _exporterNode(insert) ??
+        _embedNode(insert, attributes) ??
+        registry.unknown.createNode(
+          UnknownQuillEmbed({'insert': insert, if (attributes.isNotEmpty) 'attributes': attributes}),
+        );
 
     final document = editor.context.document;
     final caretNodeId = editor.context.composer.selection!.extent.nodeId;
@@ -233,7 +229,7 @@ class _EmbedFormat implements BlockDeltaFormat {
       else
         InsertNodeAfterNodeRequest(existingNodeId: caretNodeId, newNode: node),
       InsertNodeAfterNodeRequest(
-        existingNodeId: nodeId,
+        existingNodeId: node.id,
         newNode: ParagraphNode(id: paragraphId, text: AttributedText()),
       ),
       ChangeSelectionRequest(
@@ -244,6 +240,30 @@ class _EmbedFormat implements BlockDeltaFormat {
         SelectionReason.contentChange,
       ),
     ];
+  }
+}
+
+extension on _EmbedFormat {
+  /// A node written under one of [QuillExporter]'s own keys, or `null`.
+  DocumentNode? _exporterNode(Map<String, Object?> insert) {
+    if (insert.containsKey(QuillExporter.dividerKey)) return HorizontalRuleNode(id: Editor.createNodeId());
+
+    final line = insert[QuillExporter.markdownKey];
+    if (line is! String) return null;
+    // Exactly one block, or it isn't what the exporter wrote: the unknown embed keeps the op instead.
+    final nodes = markdown.readLines([line]);
+    return nodes.length == 1 ? nodes.single : null;
+  }
+
+  /// The node from the first registered embed importing one of the op's keys, or `null` if none does (or it rejects
+  /// the op).
+  DocumentNode? _embedNode(Map<String, Object?> insert, Map<String, Object?> attributes) {
+    for (final key in insert.keys) {
+      final embed = registry.byQuillKey(key);
+      if (embed == null) continue;
+      return embed.nodeFromQuill(QuillEmbedOp(key: key, insert: insert, attributes: attributes));
+    }
+    return null;
   }
 }
 

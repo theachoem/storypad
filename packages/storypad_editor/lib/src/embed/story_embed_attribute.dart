@@ -19,6 +19,7 @@ import 'story_html_element.dart';
 /// op.attribute(alignment);       // EmbedAlignment.center, from {"custom-embed-alignment": "center"}
 /// element.attribute(alignment);  // EmbedAlignment.center, from data-align="center"
 /// alignment.toHtml(value);       // {'data-align': 'center'}, or {} for the fallback
+/// alignment.toQuill(value);      // {'custom-embed-alignment': 'center'}, or {} for the fallback
 /// ```
 ///
 /// Reading never throws: a missing or unrecognized value reads as [fallback]. Writing omits the fallback, so default
@@ -101,6 +102,13 @@ final class StoryEmbedAttribute<A extends Object> {
   /// The HTML attributes for [value]: empty for the [fallback], otherwise `{htmlName: format(value)}`. Spread it into
   /// a [StoryHtmlElement]'s attributes.
   Map<String, String> toHtml(A value) => value == fallback ? const {} : {htmlName: format(value)};
+
+  /// The Quill op attributes for [value]: empty for the [fallback] (or if the attribute has no [quillKey]), otherwise
+  /// `{quillKey: format(value)}`. Spread it into a [QuillEmbedOp]'s attributes.
+  Map<String, Object?> toQuill(A value) {
+    final key = quillKey;
+    return key == null || value == fallback ? const {} : {key: format(value)};
+  }
 
   @override
   String toString() => 'StoryEmbedAttribute<$A>($htmlName)';

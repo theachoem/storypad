@@ -96,6 +96,22 @@ final class UnknownEmbedCodec extends StoryEmbedCodec<UnknownEmbedValue> {
     }
   }
 
+  /// A preserved Quill op is written back verbatim, attributes included. A preserved Markdown line has no Quill form,
+  /// so it's written as Markdown (see [StoryEmbedCodec.toQuill]).
+  @override
+  QuillEmbedOp? toQuill(UnknownEmbedValue value) {
+    if (value is! UnknownQuillEmbed) return null;
+
+    final insert = value.op['insert'];
+    final attributes = value.op['attributes'];
+    if (insert is! Map || insert.isEmpty) return null;
+    return QuillEmbedOp(
+      key: '${insert.keys.first}',
+      insert: Map<String, Object?>.from(insert),
+      attributes: attributes is Map ? Map<String, Object?>.from(attributes) : const {},
+    );
+  }
+
   @override
   StoryHtmlElement toHtml(UnknownEmbedValue value) {
     return switch (value) {

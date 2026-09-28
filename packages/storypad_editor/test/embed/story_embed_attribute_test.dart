@@ -40,6 +40,12 @@ void main() {
       expect(galleryAlignment.toHtml(GalleryAlignment.center), {'data-align': 'center'});
     });
 
+    test('toQuill omits the fallback, and round-trips through Quill', () {
+      expect(galleryAlignment.toQuill(GalleryAlignment.none), isEmpty);
+      expect(galleryAlignment.toQuill(GalleryAlignment.center), {'x-align': 'center'});
+      expect(_op(galleryAlignment.toQuill(GalleryAlignment.right)).attribute(galleryAlignment), GalleryAlignment.right);
+    });
+
     test('format throws for a value without a string form', () {
       expect(() => galleryAlignment.format(GalleryAlignment.none), throwsArgumentError);
     });
@@ -75,6 +81,7 @@ void main() {
     );
 
     expect(_op({'data-size': 'max'}).attribute(htmlOnly), GallerySize.normal);
+    expect(htmlOnly.toQuill(GallerySize.max), isEmpty);
   });
 }
 

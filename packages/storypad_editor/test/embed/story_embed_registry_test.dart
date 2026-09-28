@@ -95,6 +95,17 @@ void main() {
       );
     });
 
+    test('reserved Quill keys', () {
+      for (final key in ['divider', 'sp-markdown']) {
+        expect(
+          () => StoryEmbedRegistry([
+            _Embed('a', quillKeys: {key}),
+          ]),
+          _throwsArgumentErrorContaining('reserved Quill key "$key"'),
+        );
+      }
+    });
+
     test('malformed type and tag names', () {
       expect(() => StoryEmbedRegistry([const _Embed('Media')]), _throwsArgumentErrorContaining('invalid type'));
       expect(

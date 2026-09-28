@@ -121,7 +121,8 @@ StoryEmbedNode randomEmbedNode(Random random) {
     case 1:
       final paths = [
         for (var i = 1 + random.nextInt(3); i > 0; i--)
-          'images/${randomString(random, maxLength: 6, lineBreaks: false)}.jpg',
+          // No "|": it separates paths in the Quill form (StoryPad's asset paths never contain one).
+          'images/${randomString(random, maxLength: 6, lineBreaks: false).replaceAll('|', '')}.jpg',
       ];
       return const GalleryEmbedCodec().createNode(
         GalleryValue(

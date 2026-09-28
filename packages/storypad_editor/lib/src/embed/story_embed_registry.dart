@@ -68,6 +68,10 @@ final class StoryEmbedRegistry {
     'sp-embed',
   };
 
+  /// Quill embed keys the codec reads itself: `divider` (a horizontal rule, flutter_quill's key) and `sp-markdown` (a
+  /// line of this package's Markdown, for content with no Quill form of its own).
+  static const reservedQuillKeys = {'divider', 'sp-markdown'};
+
   static final _namePattern = RegExp(r'^[a-z][a-z0-9-]*$');
 
   /// Every embed, the app's first (in registration order), [unknown] last.
@@ -100,6 +104,9 @@ final class StoryEmbedRegistry {
     _byType[type] = embed;
 
     for (final key in embed.quillKeys) {
+      if (reservedQuillKeys.contains(key)) {
+        throw ArgumentError('Embed $embed imports the reserved Quill key "$key".');
+      }
       final existing = _byQuillKey[key];
       if (existing != null) {
         throw ArgumentError('Embeds $existing and $embed both import the Quill key "$key".');

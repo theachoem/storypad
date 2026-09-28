@@ -71,6 +71,15 @@ class MediaEmbed extends StoryEmbed<MediaValue> {
     return MediaValue(paths, size: op.attribute(embedSize), alignment: op.attribute(embedAlignment));
   }
 
+  /// Always written under the current `media` key: a legacy `image` embed upgrades when its story is saved, as
+  /// StoryPad's Quill editor does when an album is edited.
+  @override
+  QuillEmbedOp toQuill(MediaValue value) => QuillEmbedOp.of(
+    'media',
+    value.paths.join('|'),
+    attributes: {...embedSize.toQuill(value.size), ...embedAlignment.toQuill(value.alignment)},
+  );
+
   @override
   MediaValue? fromHtml(StoryHtmlElement element) {
     final sources = element.tag == 'sp-album' ? element.children : [element];

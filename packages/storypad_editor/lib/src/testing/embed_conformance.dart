@@ -6,6 +6,7 @@ import '../embed/story_embed_codec.dart';
 import '../embed/story_embed_node.dart';
 import '../embed/unknown_embed.dart';
 import 'document_equivalence.dart';
+import 'quill_equivalence.dart';
 
 /// Checks that [embed] stores [value] losslessly, the way the editor will use it. Call it once per interesting value
 /// (defaults, every attribute, edge cases) from the app's own tests:
@@ -21,8 +22,10 @@ import 'document_equivalence.dart';
 ///   value type without `==`), and re-writes identically (a fixed point);
 /// - it survives between other blocks, with its line separated from theirs;
 /// - its plain text is consistent;
+/// - if the embed has a Quill form ([StoryEmbedCodec.quillKeys]), [StoryEmbedCodec.toQuill] writes [value] under one
+///   of its keys, and that op imports back as [value] (so a document edited here can be stored as Quill);
 /// - if [fromQuillOp] is given (a Quill embed op, e.g. `{'insert': {'media': 'a.jpg'}}`), that op imports as
-///   [value], and converts to the same Markdown.
+///   [value], converts to the same Markdown, and writing it back as Quill gives an equivalent op.
 ///
 /// [otherEmbeds] are registered alongside [embed], to check tags and keys don't collide with the app's other embeds.
 void expectEmbedRoundTrip<T extends Object>(
@@ -79,6 +82,30 @@ void expectEmbedRoundTrip<T extends Object>(
       reason: '$fromQuillOp imported as a different value',
     );
     expect(codec.quillToMarkdown(ops), markdown);
+    expect(codec.encodeQuill(imported), isEquivalentQuill(ops, codec), reason: 'writing $fromQuillOp back as Quill');
+  }
+
+  if (embed.quillKeys.isNotEmpty) {
+    final op = embed.toQuill(value);
+    expect(
+      op,
+      isNotNull,
+      reason: '${embed.type} imports Quill ${embed.quillKeys}, so toQuill must write $value back as a Quill op',
+    );
+    expect(embed.quillKeys, contains(op!.key), reason: 'toQuill must write one of the keys fromQuill reads');
+    final ops = [
+      op.toJson(),
+      {'insert': '\n'},
+    ];
+    final imported = codec.decodeQuill(ops);
+    expect(
+      imported.length == 1 && imported.single is StoryEmbedNode
+          ? embed.valueOf(imported.single as StoryEmbedNode)
+          : imported,
+      value,
+      reason: 'toQuill wrote ${op.toJson()}, which imports as a different value',
+    );
+    expect(codec.encodeQuill([node]), ops, reason: 'encodeQuill must write toQuill\'s op');
   }
 
   final surrounded = [

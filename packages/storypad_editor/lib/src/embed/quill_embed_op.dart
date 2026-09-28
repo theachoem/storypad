@@ -10,6 +10,9 @@ import 'story_embed_attribute.dart';
 final class QuillEmbedOp {
   const QuillEmbedOp({required this.key, required this.insert, this.attributes = const {}});
 
+  /// The usual shape: `{"insert": {key: value}, "attributes": attributes}`. Used by [StoryEmbedCodec.toQuill].
+  QuillEmbedOp.of(this.key, Object? value, {this.attributes = const {}}) : insert = {key: value};
+
   /// The insert key the embed was matched on (one of its [StoryEmbedCodec.quillKeys]).
   final String key;
 

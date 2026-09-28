@@ -24,6 +24,9 @@ class AudioEmbed extends StoryEmbed<String> {
   }
 
   @override
+  QuillEmbedOp toQuill(String value) => QuillEmbedOp.of('audio', value);
+
+  @override
   String? fromHtml(StoryHtmlElement element) {
     final src = element['src'];
     return src == null || src.isEmpty ? null : src;

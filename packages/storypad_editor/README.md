@@ -5,8 +5,9 @@ A controller-centric rich text editor for StoryPad, built on
 
 - **Markdown in, Markdown out.** Markdown is the only format written; formats CommonMark lacks use HTML5 tags. Writing
   is a fixed point, so an opened-and-saved story never changes by itself.
-- **Quill Delta import**, for migrating existing stories.
-- **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill import, Markdown form and
+- **Quill Delta import and export**, for stories stored as Quill: open them here, and write them back as Quill until
+  storage moves to Markdown.
+- **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill form, Markdown form and
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
 
 Not published to pub. `example/` is the manual-test app and reference consumer. See [FEATURES.md](FEATURES.md) for
@@ -42,6 +43,9 @@ class AudioEmbed extends StoryEmbed<String> {
   String? fromQuill(QuillEmbedOp op) => op.value is String ? op.value as String : null;
 
   @override
+  QuillEmbedOp toQuill(String path) => QuillEmbedOp.of('audio', path);   // the mirror of fromQuill
+
+  @override
   String? fromHtml(StoryHtmlElement element) => element['src'];
 
   @override
@@ -56,8 +60,8 @@ class AudioEmbed extends StoryEmbed<String> {
 ```
 
 Values need `==`/`hashCode`. Attributes that exist in both formats are declared once with `StoryEmbedAttribute`
-(e.g. Quill's `custom-embed-alignment` ↔ HTML `data-align`). Returning `null` from `fromQuill`/`fromHtml` never loses
-data: the built-in unknown embed keeps it verbatim.
+(e.g. Quill's `custom-embed-alignment` ↔ HTML `data-align`; `toQuill`/`toHtml` spread them in). Returning `null` from
+`fromQuill`/`fromHtml` never loses data: the built-in unknown embed keeps it verbatim.
 
 ### 2. Edit
 
@@ -94,12 +98,15 @@ The package has no toolbar; build one from the controller (see `example/lib/tool
 final codec = StoryCodec(embeds: const [MediaEmbed(), AudioEmbed()]);
 final markdown = codec.quillToMarkdown(ops);
 final text = codec.toPlainText(markdown);   // search, word counts
+
+final losses = codec.quillImportLosses(ops);   // formatting the conversion would drop (empty = lossless)
+final quill = codec.markdownToQuill(markdown); // back to Quill, in the shapes StoryPad's Quill editor writes
 ```
 
 ### Testing
 
-`package:storypad_editor/testing.dart`: `expectEmbedRoundTrip` (checks an embed stores a value losslessly, including
-from a Quill op), `isEquivalentDocument`, `pumpStoryEditor`.
+`package:storypad_editor/testing.dart`: `expectEmbedRoundTrip` (checks an embed stores a value losslessly, in Markdown
+and in Quill), `isEquivalentDocument`, `isEquivalentQuill` (two Deltas that mean the same story), `pumpStoryEditor`.
 
 `package:storypad_editor/super_editor.dart` re-exports the exact super_editor version this package pins.
 

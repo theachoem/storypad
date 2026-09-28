@@ -44,6 +44,37 @@ class _UnclaimedTagEmbed extends StoryEmbedCodec<String> {
   StoryHtmlElement toHtml(String value) => StoryHtmlElement('sp-other', attributes: {'v': value});
 }
 
+/// Imports Quill but can't write it back.
+class _NoToQuillEmbed extends StoryEmbedCodec<String> {
+  const _NoToQuillEmbed();
+
+  @override
+  String get type => 'one-way';
+
+  @override
+  Set<String> get quillKeys => const {'one-way'};
+
+  @override
+  Set<String> get htmlTags => const {'sp-one-way'};
+
+  @override
+  String? fromQuill(QuillEmbedOp op) => '${op.value}';
+
+  @override
+  String? fromHtml(StoryHtmlElement element) => element['v'];
+
+  @override
+  StoryHtmlElement toHtml(String value) => StoryHtmlElement('sp-one-way', attributes: {'v': value});
+}
+
+/// Writes Quill that doesn't import back as the same value.
+class _LossyToQuillEmbed extends _NoToQuillEmbed {
+  const _LossyToQuillEmbed();
+
+  @override
+  QuillEmbedOp toQuill(String value) => QuillEmbedOp.of('one-way', value.toUpperCase());
+}
+
 void main() {
   group('passes for well-behaved embeds', () {
     test('string value', () {
@@ -103,6 +134,14 @@ void main() {
         ),
         throwsA(isA<TestFailure>()),
       );
+    });
+
+    test('an embed importing Quill without toQuill', () {
+      expect(() => expectEmbedRoundTrip(const _NoToQuillEmbed(), 'a'), throwsA(isA<TestFailure>()));
+    });
+
+    test('a toQuill that imports back as a different value', () {
+      expect(() => expectEmbedRoundTrip(const _LossyToQuillEmbed(), 'a'), throwsA(isA<TestFailure>()));
     });
 
     test('a tag missing from htmlTags', () {

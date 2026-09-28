@@ -4,11 +4,12 @@ Pointer-style: see the named files for how each works. Update when behavior chan
 
 ## Architecture
 
-- **Embed contract** (`lib/src/embed/`): `StoryEmbedCodec<T>` (Quill import, Markdown HTML, plain text — headless) and
+- **Embed contract** (`lib/src/embed/`): `StoryEmbedCodec<T>` (Quill op both ways, Markdown HTML, plain text — headless) and
   `StoryEmbed<T>` (+ `build`). One package-owned, non-generic `StoryEmbedNode(type, value)`: super_editor compares
   nodes and view models by `runtimeType`, so a generic node would silently compare unequal across copies.
   `StoryEmbedRegistry` validates types, Quill keys and tags up front (duplicates, reserved names).
-- **Codec** (`lib/src/codec/story_codec.dart`): `decode`/`encode`/`quillToMarkdown`/`toPlainText`, no widgets.
+- **Codec** (`lib/src/codec/story_codec.dart`): `decode`/`encode`/`quillToMarkdown`/`markdownToQuill`/
+  `quillImportLosses`/`toPlainText`, no widgets.
 - **Controller** (`lib/src/controller/`): owns document, composer and an `Editor` it builds itself (see Gotchas),
   `StoryEditorActions` (headless commands), embed ops, selection holds, dirty tracking, read-only.
 - **Widgets** (`lib/src/widgets/`): `RawEditor`, `MarkdownEditor`, and one `StoryEmbedComponentBuilder` for every
@@ -55,6 +56,22 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 - Removed after import: the empty paragraph super_editor inserts after every embed, and the one Quill's final `\n`
   opens.
 - Dropped by design: font, size, direction; alignment on list/task lines (lists have no alignment in Markdown).
+- `quillImportLosses` (`quill/quill_import_losses.dart`) reports every drop above by applying the importer's rules; a
+  property test ("no losses ⇒ the Quill round trip is equivalent") keeps the two in step.
+
+## Quill export (`quill/quill_exporter.dart`)
+
+For stories still stored as Quill: the mirror of the importer, in the shapes StoryPad's Quill editor writes.
+
+- Blocks on each line's `\n`: `header`, `list` (+ `indent`), `blockquote: true`, `code-block: true`, `align`,
+  `indent`. A node holding line breaks (a multi-line quote/code block, a soft break) becomes one Quill line per line.
+- Inline: `bold`/`italic`/`underline`/`strike`/`code`/`script`/`link`, colors as lowercase `#aarrggbb`.
+- Embeds through `toQuill`; a preserved Quill op verbatim. Horizontal rule ↔ `{"divider": "hr"}`. Anything without a
+  Quill form (an embed without `toQuill`, a preserved Markdown line, a stock image) ↔ `{"sp-markdown": "<line>"}`,
+  read back exactly. Both keys are reserved.
+- Quill can't express a line break inside a list item or paragraph (they split into several), or a boundary between
+  consecutive quotes (they merge). Everything else round-trips; `isEquivalentQuill` (testing) compares two Deltas by
+  meaning.
 
 ## Gotchas
 

@@ -5,7 +5,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 /// StoryPad's legacy date embed (read-only; nothing inserts it anymore).
 ///
-/// - Quill: `{"date": "[{\"insert\":\"2024-01-01T00:00:00.000\\n\"}]"}` -- oddly, a JSON-encoded one-op mini Delta
+/// - Quill: `{"date": "[{\"insert\":\"2024-01-01T00:00:00.000\"}]"}` -- oddly, a JSON-encoded one-op mini Delta
 ///   whose insert is an ISO date. A malformed value is rejected, so the unknown embed preserves it as-is.
 /// - Markdown: the semantic `<time datetime="…">…</time>`.
 class DateEmbed extends StoryEmbed<DateTime> {
@@ -34,6 +34,14 @@ class DateEmbed extends StoryEmbed<DateTime> {
     }
     return null;
   }
+
+  @override
+  QuillEmbedOp toQuill(DateTime value) => QuillEmbedOp.of(
+    'date',
+    jsonEncode([
+      {'insert': value.toIso8601String()},
+    ]),
+  );
 
   @override
   DateTime? fromHtml(StoryHtmlElement element) => DateTime.tryParse(element['datetime'] ?? '');

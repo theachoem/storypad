@@ -27,6 +27,9 @@ class StickerEmbedCodec extends StoryEmbed<String> {
   }
 
   @override
+  QuillEmbedOp toQuill(String value) => QuillEmbedOp.of('sticker', value);
+
+  @override
   String? fromHtml(StoryHtmlElement element) {
     final name = element['name'];
     return name == null || name.isEmpty ? null : name;
@@ -116,6 +119,14 @@ class GalleryEmbedCodec extends StoryEmbed<GalleryValue> {
     if (paths.isEmpty) return null;
     return GalleryValue(paths, alignment: op.attribute(galleryAlignment), size: op.attribute(gallerySize));
   }
+
+  /// Always written under the current key (a legacy `photo` op upgrades when written back).
+  @override
+  QuillEmbedOp toQuill(GalleryValue value) => QuillEmbedOp.of(
+    'gallery',
+    value.paths.join('|'),
+    attributes: {...galleryAlignment.toQuill(value.alignment), ...gallerySize.toQuill(value.size)},
+  );
 
   @override
   GalleryValue? fromHtml(StoryHtmlElement element) {

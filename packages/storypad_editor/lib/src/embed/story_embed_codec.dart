@@ -5,7 +5,7 @@ import 'quill_embed_op.dart';
 import 'story_embed_node.dart';
 import 'story_html_element.dart';
 
-/// Everything the package needs to know about one kind of embed, except how it looks: its Quill import, its
+/// Everything the package needs to know about one kind of embed, except how it looks: its Quill form, its
 /// Markdown (HTML) form, and its plain text. Headless -- usable from converters, tests and isolates.
 ///
 /// `StoryEmbed` extends this with a `build` method for rendering; pass `StoryEmbed`s to the editor controller, and
@@ -25,6 +25,9 @@ import 'story_html_element.dart';
 ///
 ///   @override
 ///   DateTime? fromQuill(QuillEmbedOp op) => DateTime.tryParse('${op.value}');
+///
+///   @override
+///   QuillEmbedOp toQuill(DateTime value) => QuillEmbedOp.of('date', value.toIso8601String());
 ///
 ///   @override
 ///   DateTime? fromHtml(StoryHtmlElement element) => DateTime.tryParse(element['datetime'] ?? '');
@@ -53,6 +56,13 @@ abstract class StoryEmbedCodec<T extends Object> {
   /// Builds a value from a Quill op matched on one of [quillKeys], or returns `null` if the op is malformed -- the
   /// unknown embed then preserves it losslessly instead.
   T? fromQuill(QuillEmbedOp op) => null;
+
+  /// The Quill op for [value] -- the mirror of [fromQuill], used when a document is written back as Quill Delta
+  /// (`StoryCodec.encodeQuill`). `fromQuill(toQuill(value))` must equal [value]; `expectEmbedRoundTrip` checks it.
+  ///
+  /// `null` (the default) for an embed with no Quill form: it's then written as a line of its Markdown under the
+  /// package's `sp-markdown` key, which reads back losslessly but that a plain Quill editor shows as an unknown embed.
+  QuillEmbedOp? toQuill(T value) => null;
 
   /// Builds a value from a Markdown HTML line whose tag is one of [htmlTags], or returns `null` if it's malformed --
   /// the unknown embed then preserves the line verbatim instead.
@@ -101,6 +111,24 @@ abstract class StoryEmbedCodec<T extends Object> {
 
   /// [toHtml] for a node of this embed.
   StoryHtmlElement toHtmlOf(StoryEmbedNode node) => toHtml(valueOf(node));
+
+  /// [toQuill] for a node of this embed, or `null` if the embed has no Quill form or throws (reported, and the node is
+  /// then written as Markdown instead).
+  QuillEmbedOp? toQuillOf(StoryEmbedNode node) {
+    try {
+      return toQuill(valueOf(node));
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'storypad_editor',
+          context: ErrorDescription('while writing a "$type" embed to Quill (${node.value}); written as Markdown'),
+        ),
+      );
+      return null;
+    }
+  }
 
   /// [fromQuill], wrapped into a node. An exception from the embed counts as a rejection (`null`), so the content goes
   /// to the unknown embed instead of aborting the whole import.
