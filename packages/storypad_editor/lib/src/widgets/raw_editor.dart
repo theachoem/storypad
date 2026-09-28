@@ -12,7 +12,6 @@ import 'desktop_context_menu.dart';
 import 'free_task_indent.dart';
 import 'ios_system_context_menu.dart';
 import 'link_tap_handler.dart';
-import 'mobile_reorderable_document_overlay.dart';
 import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
 import 'story_embed_component.dart';
@@ -33,7 +32,8 @@ import 'story_embed_component.dart';
 /// - Desktop/web: drag handles to reorder blocks, and a right-click menu ([desktopContextMenu]).
 /// - iOS: the OS-native context menu on a selection (Flutter-painted before iOS 16).
 /// - Android: a floating toolbar with the OS "Process Text" actions (Translate, …).
-/// - Touch: long-press a block to reorder it while the editor isn't focused; tap outside to unfocus.
+/// - Touch: no reordering or tap-outside handling of its own: move blocks with `actions.moveSelectedBlocks` (e.g.
+///   toolbar buttons), and the keyboard's own key hides it.
 ///
 /// Links open through [onTapLink]: on tap when read-only, on Cmd/Ctrl-click while editing.
 ///
@@ -230,15 +230,12 @@ class _RawEditorState extends State<RawEditor> {
       composer: controller.composer,
       documentLayoutResolver: _layout,
     );
-    // Focus decides whether the mobile reorder regions are active; a selection hold suspends mobile's
-    // clear-selection-on-blur policy.
-    controller.focusNode.addListener(_rebuild);
+    // A selection hold suspends mobile's clear-selection-on-blur policy.
     controller.isSelectionHeld.addListener(_rebuild);
     controller.readOnlyListenable.addListener(_onReadOnlyChanged);
   }
 
   void _detach(StoryEditorController controller) {
-    controller.focusNode.removeListener(_rebuild);
     controller.isSelectionHeld.removeListener(_rebuild);
     controller.readOnlyListenable.removeListener(_onReadOnlyChanged);
     controller.detachEditor(this);
@@ -480,6 +477,7 @@ class _RawEditorState extends State<RawEditor> {
     if (_isDesktopOrWeb) {
       final reorderable = ReorderableDocumentOverlay(
         document: _controller.document,
+        composer: _controller.composer,
         editor: _controller.editor,
         documentLayoutResolver: _layout,
         child: laidOut,
@@ -497,21 +495,8 @@ class _RawEditorState extends State<RawEditor> {
       );
     }
 
-    // Touch: long-press to reorder only while unfocused (a tap must keep meaning "place the caret" while editing),
-    // and tapping outside the editor (or its toolbar, which shares the tap region group) unfocuses it.
-    return TapRegion(
-      groupId: _controller.tapRegionGroupId,
-      onTapOutside: (_) => _controller.focusNode.unfocus(),
-      child: MobileReorderableDocumentOverlay(
-        document: _controller.document,
-        editor: _controller.editor,
-        editorOps: _editorOps,
-        focusNode: _controller.focusNode,
-        documentLayoutResolver: _layout,
-        enabled: !_controller.focusNode.hasFocus,
-        child: laidOut,
-      ),
-    );
+    // Touch: the document alone -- a drag scrolls, a tap places the caret.
+    return laidOut;
   }
 
   /// No reordering or tap-outside handling; the desktop menu offers only Copy and Select All.

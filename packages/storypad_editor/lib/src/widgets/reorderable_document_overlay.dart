@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:super_editor/super_editor.dart';
 
+import '../controller/move_blocks_requests.dart';
 import 'drag_snapshot_preview.dart';
 
 /// Wraps [child] (the rendered document, e.g. a [SuperEditor]) with
@@ -14,6 +15,9 @@ import 'drag_snapshot_preview.dart';
 /// `documentPadding` [RawEditor] adds), so hovering never resizes or reflows
 /// the text underneath it.
 ///
+/// Dragging the handle of a block inside the selection moves every block the selection touches, together (select
+/// several lines, then drag any of them); any other block's handle moves just that block.
+///
 /// Desktop/web only: [RawEditor] only mounts this where it also mounts its
 /// other mouse-only chrome (the right-click menu) — showing/hiding the handle
 /// relies on hover, which touch platforms don't have.
@@ -21,12 +25,14 @@ class ReorderableDocumentOverlay extends StatefulWidget {
   const ReorderableDocumentOverlay({
     super.key,
     required this.document,
+    required this.composer,
     required this.editor,
     required this.documentLayoutResolver,
     required this.child,
   });
 
   final Document document;
+  final DocumentComposer composer;
   final Editor editor;
   final DocumentLayout Function() documentLayoutResolver;
   final Widget child;
@@ -44,10 +50,14 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
   /// The node currently under the mouse, while nothing is being dragged.
   String? _hoveredNodeId;
 
-  /// The node being dragged, or `null` when no drag is in progress.
+  /// The node whose handle is being dragged, or `null` when no drag is in progress.
   String? _draggingNodeId;
 
-  /// The dragged node's own rect, captured once when the drag starts —
+  /// Every node being dragged, in document order: [_draggingNodeId] alone, or every block the selection touches when
+  /// it's one of them.
+  List<String> _draggedNodeIds = const [];
+
+  /// The dragged nodes' rect, captured once when the drag starts —
   /// alongside [captureDragSnapshot], gives [buildSnapshotPreview] both the
   /// pixels and the source region to crop them from.
   Rect? _draggedNodeSourceRect;
@@ -63,7 +73,7 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
   /// space — updated on every pan update so the preview can follow it
   /// freely in both x and y (Notion-style), independently of
   /// [_dropIndex]/[_dragRects], which still only track vertical slot
-  /// snapping for the drop *line* and the eventual `MoveNodeRequest` target.
+  /// snapping for the drop *line* and the eventual move's target.
   Offset? _pointerPosition;
 
   /// A snapshot of every *other* node's on-screen rect, taken once when the
@@ -73,7 +83,7 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
   List<MapEntry<String, Rect>> _dragRects = const [];
 
   /// Index into [_dragRects] where the dragged node would land if dropped
-  /// right now — i.e. the index [MoveNodeRequest.newIndex] would use, since
+  /// right now — i.e. the index [moveBlocksRequests] takes, since
   /// [_dragRects] already excludes the dragged node the same way the
   /// document does internally when it's removed-then-reinserted.
   int? _dropIndex;
@@ -125,28 +135,43 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
     }
   }
 
+  /// What dragging [nodeId]'s handle moves: every block the selection touches if [nodeId] is one of them, else just it.
+  List<String> _draggedIdsFor(String nodeId) {
+    final selection = widget.composer.selection;
+    if (selection != null) {
+      final selected = [for (final node in widget.document.getNodesInside(selection.base, selection.extent)) node.id];
+      if (selected.contains(nodeId)) return selected;
+    }
+    return [nodeId];
+  }
+
   void _startDrag(String nodeId, DragStartDetails details) {
+    final draggedIds = _draggedIdsFor(nodeId);
+    final dragged = draggedIds.toSet();
+    final firstIndex = widget.document.getNodeIndexById(draggedIds.first);
+
     final rects = <MapEntry<String, Rect>>[];
     var originalIndex = 0;
+    Rect? sourceRect;
     for (final node in widget.document) {
-      if (node.id == nodeId) {
+      final rect = _rectForNode(node.id);
+      if (rect == null) continue;
+      if (dragged.contains(node.id)) {
+        sourceRect = sourceRect == null ? rect : sourceRect.expandToInclude(rect);
         continue;
       }
-      final rect = _rectForNode(node.id);
-      if (rect != null) {
-        rects.add(MapEntry(node.id, rect));
-        if (widget.document.getNodeIndexById(node.id) < widget.document.getNodeIndexById(nodeId)) {
-          originalIndex++;
-        }
+      rects.add(MapEntry(node.id, rect));
+      if (widget.document.getNodeIndexById(node.id) < firstIndex) {
+        originalIndex++;
       }
     }
 
-    final sourceRect = _rectForNode(nodeId);
     final stackBox = _stackBox;
     final downPosition = stackBox?.globalToLocal(details.globalPosition);
 
     setState(() {
       _draggingNodeId = nodeId;
+      _draggedNodeIds = draggedIds;
       _draggedNodeSourceRect = sourceRect;
       _grabOffset = sourceRect == null || downPosition == null ? null : downPosition - sourceRect.topLeft;
       _pointerPosition = downPosition;
@@ -195,11 +220,12 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
   }
 
   void _endDrag(DragEndDetails details) {
-    final nodeId = _draggingNodeId;
+    final nodeIds = _draggedNodeIds;
     final targetIndex = _dropIndex;
     disposeDragSnapshot();
     setState(() {
       _draggingNodeId = null;
+      _draggedNodeIds = const [];
       _draggedNodeSourceRect = null;
       _grabOffset = null;
       _pointerPosition = null;
@@ -207,16 +233,18 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
       _dropIndex = null;
     });
 
-    if (nodeId == null || targetIndex == null) {
+    if (nodeIds.isEmpty || targetIndex == null) {
       return;
     }
-    widget.editor.execute([MoveNodeRequest(nodeId: nodeId, newIndex: targetIndex)]);
+    final requests = moveBlocksRequests(widget.document, nodeIds, targetIndex);
+    if (requests.isNotEmpty) widget.editor.execute(requests);
   }
 
   void _cancelDrag() {
     disposeDragSnapshot();
     setState(() {
       _draggingNodeId = null;
+      _draggedNodeIds = const [];
       _draggedNodeSourceRect = null;
       _grabOffset = null;
       _pointerPosition = null;

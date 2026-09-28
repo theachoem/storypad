@@ -7,9 +7,8 @@ import 'package:flutter/rendering.dart';
 /// wrapped around the whole document) and re-paints just that block's
 /// cropped region at the current drop slot, semi-transparent — a
 /// Notion-style "here's exactly what's about to land here" preview, on top
-/// of (not instead of) the plain drop-indicator line both
-/// [ReorderableDocumentOverlay] (desktop) and
-/// [MobileReorderableDocumentOverlay] (mobile) already draw.
+/// of (not instead of) the plain drop-indicator line
+/// [ReorderableDocumentOverlay] already draws.
 ///
 /// A real snapshot, rather than re-invoking a component builder to build a
 /// second copy of the block, is what actually reproduces the block's exact

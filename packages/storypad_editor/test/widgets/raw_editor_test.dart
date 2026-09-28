@@ -22,19 +22,19 @@ Future<void> _pumpWithOutside(WidgetTester tester, StoryEditorController control
 }
 
 void main() {
-  testWidgets('on touch, tapping outside the editor unfocuses it and clears the selection', (tester) async {
+  testWidgets('on touch, tapping outside the editor leaves it focused (the keyboard hides it)', (tester) async {
     final controller = controllerFor('Hello world');
     await _pumpWithOutside(tester, controller);
 
     await tester.tap(find.byType(TextComponent), warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(controller.selection.value, isNotNull);
-    expect(controller.isToolbarActive.value, isTrue);
 
     await tester.tap(find.text('Outside area'));
     await tester.pumpAndSettle();
-    expect(controller.selection.value, isNull);
-    expect(controller.isToolbarActive.value, isFalse);
+    expect(controller.focusNode.hasFocus, isTrue);
+    expect(controller.selection.value, isNotNull);
+    expect(controller.isToolbarActive.value, isTrue);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   testWidgets('tapping a toolbar in the controller\'s tap region group does not unfocus the editor', (tester) async {

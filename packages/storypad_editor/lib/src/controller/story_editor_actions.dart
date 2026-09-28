@@ -4,6 +4,7 @@ import 'package:super_editor/super_editor.dart';
 
 import '../markdown/markdown_format.dart';
 import 'change_text_alignment_request.dart';
+import 'move_blocks_requests.dart';
 import 'story_editor_controller.dart';
 import 'transform_text_request.dart';
 
@@ -67,6 +68,31 @@ class StoryEditorActions {
         for (final range in ranges) (nodeId: range.node.id, start: range.start, end: range.end),
       ], transform),
     ]);
+  }
+
+  /// Every block the selection touches (text or not), in document order.
+  List<String> get selectedBlockIds {
+    final selection = _selection;
+    if (selection == null) return const [];
+    return [for (final node in _document.getNodesInside(selection.base, selection.extent)) node.id];
+  }
+
+  /// Whether [moveSelectedBlocks] can move the selected blocks that way (they're not already first/last).
+  bool canMoveSelectedBlocks({required bool up}) {
+    final ids = selectedBlockIds;
+    if (ids.isEmpty) return false;
+    return up
+        ? _document.getNodeIndexById(ids.first) > 0
+        : _document.getNodeIndexById(ids.last) < _document.nodeCount - 1;
+  }
+
+  /// Moves every block the selection touches one block up or down, together, as one undo step. The selection moves
+  /// with them.
+  void moveSelectedBlocks({required bool up}) {
+    if (!canMoveSelectedBlocks(up: up)) return;
+    final ids = selectedBlockIds;
+    final first = _document.getNodeIndexById(ids.first);
+    _editor.execute(moveBlocksRequests(_document, ids, up ? first - 1 : first + 1));
   }
 
   /// Puts the caret at the end of the document -- e.g. when focusing an editor that has no selection yet.

@@ -26,6 +26,7 @@ void main() {
         home: Scaffold(
           body: ReorderableDocumentOverlay(
             document: document,
+            composer: composer,
             editor: editor,
             documentLayoutResolver: () => documentLayoutKey.currentState as DocumentLayout,
             child: SuperEditor(editor: editor, documentLayoutKey: documentLayoutKey),
@@ -95,6 +96,7 @@ void main() {
         home: Scaffold(
           body: ReorderableDocumentOverlay(
             document: document,
+            composer: composer,
             editor: editor,
             documentLayoutResolver: () => documentLayoutKey.currentState as DocumentLayout,
             child: SuperEditor(editor: editor, documentLayoutKey: documentLayoutKey),
@@ -186,6 +188,7 @@ void main() {
         home: Scaffold(
           body: ReorderableDocumentOverlay(
             document: document,
+            composer: composer,
             editor: editor,
             documentLayoutResolver: () => documentLayoutKey.currentState as DocumentLayout,
             child: Center(
@@ -225,5 +228,75 @@ void main() {
     // The handle should also be vertically centered on the text's own line,
     // not pinned to the top of the block.
     expect((handleRect.center.dy - textRect.center.dy).abs(), lessThan(2));
+  });
+
+  testWidgets('Dragging the handle of a selected block moves every selected block together', (tester) async {
+    tester.view.physicalSize = const Size(800, 600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final document = MutableDocument(
+      nodes: [
+        for (final id in ['p1', 'p2', 'p3', 'p4']) ParagraphNode(id: id, text: AttributedText('Paragraph $id')),
+      ],
+    );
+    final composer = MutableDocumentComposer();
+    final editor = createDefaultDocumentEditor(document: document, composer: composer, isHistoryEnabled: true);
+    final documentLayoutKey = GlobalKey();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ReorderableDocumentOverlay(
+            document: document,
+            composer: composer,
+            editor: editor,
+            documentLayoutResolver: () => documentLayoutKey.currentState as DocumentLayout,
+            child: SuperEditor(editor: editor, documentLayoutKey: documentLayoutKey),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Select from inside p1 to inside p2.
+    composer.setSelectionWithReason(
+      const DocumentSelection(
+        base: DocumentPosition(nodeId: 'p1', nodePosition: TextNodePosition(offset: 2)),
+        extent: DocumentPosition(nodeId: 'p2', nodePosition: TextNodePosition(offset: 3)),
+      ),
+    );
+    await tester.pump();
+
+    Rect globalRectForNode(String nodeId) {
+      final layout = documentLayoutKey.currentState as DocumentLayout;
+      final component = layout.getComponentByNodeId(nodeId)!;
+      final box = (component as State).context.findRenderObject()! as RenderBox;
+      return box.localToGlobal(Offset.zero) & box.size;
+    }
+
+    final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    addTearDown(() => gesture.removePointer());
+    await gesture.addPointer(location: Offset.zero);
+    await tester.pump();
+
+    // Hover the second selected block, and drag its handle below p3.
+    await gesture.moveTo(globalRectForNode('p2').center);
+    await tester.pump();
+    final handleCenter = tester.getCenter(find.byIcon(Icons.drag_indicator));
+    await gesture.moveTo(handleCenter);
+    await tester.pump();
+    await gesture.down(handleCenter);
+    await tester.pump();
+    await gesture.moveTo(Offset(handleCenter.dx, globalRectForNode('p3').bottom + 4));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect([for (final node in document) node.id], ['p3', 'p1', 'p2', 'p4']);
+
+    // One undo step.
+    editor.undo();
+    expect([for (final node in document) node.id], ['p1', 'p2', 'p3', 'p4']);
   });
 }

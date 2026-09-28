@@ -92,11 +92,10 @@ For stories still stored as Quill: the mirror of the importer, in the shapes Sto
 - **Selection hold**: take it synchronously before opening a popup/dialog (opening moves focus). Mobile clears the
   selection on focus loss otherwise; `isToolbarActive` keeps a toolbar mounted meanwhile.
 - **Embed host** paints its own selection overlay: super_editor's `SelectableBox` wraps its child in `IgnorePointer`.
-- **Mobile reorder overlay** (`mobile_reorderable_document_overlay.dart`): while unfocused, opaque regions cover text
-  blocks (they must win taps), so they forward vertical drags to the document's `ScrollPosition.drag` (otherwise it
-  couldn't scroll), and re-measure after each scroll (post-frame: the overlay builds before the scrolled content is
-  laid out). Embed regions are translucent so embed buttons get the first tap. `_safeSetState` guards gesture
-  callbacks fired mid-rebuild.
+- **Reordering**: desktop drags a block by the handle shown on hover (`reorderable_document_overlay.dart`); dragging
+  the handle of a block inside the selection moves every selected block together (`moveBlocksRequests`, one undo
+  step). Touch has no drag or tap-outside chrome: apps move selected blocks with `actions.moveSelectedBlocks`
+  (e.g. toolbar buttons), and the keyboard's own key hides it.
 - **`MarkdownEditor`** flushes a pending change on dispose/controller swap in a microtask (the tree is locked then);
   with `Duration.zero` it reports in a microtask too (edits in one synchronous block are reported once, and a
   callback that edits can't re-enter the editor mid-transaction).

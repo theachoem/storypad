@@ -85,6 +85,16 @@ List<Widget> buildToolbarButtons(BuildContext context, StoryEditorController con
       ],
     ),
     IconButton(
+      tooltip: 'Move up',
+      icon: const Icon(Icons.arrow_upward),
+      onPressed: actions.canMoveSelectedBlocks(up: true) ? () => actions.moveSelectedBlocks(up: true) : null,
+    ),
+    IconButton(
+      tooltip: 'Move down',
+      icon: const Icon(Icons.arrow_downward),
+      onPressed: actions.canMoveSelectedBlocks(up: false) ? () => actions.moveSelectedBlocks(up: false) : null,
+    ),
+    IconButton(
       tooltip: 'Horizontal rule',
       icon: const Icon(Icons.horizontal_rule),
       onPressed: actions.insertHorizontalRule,
