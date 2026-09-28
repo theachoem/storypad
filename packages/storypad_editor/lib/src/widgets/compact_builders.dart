@@ -17,6 +17,10 @@ import '../controller/change_text_alignment_request.dart';
 /// [CompactTaskComponentBuilder] both build around instead.
 const markerColumnWidth = 24.0;
 
+/// The space between a task's checkbox and its text. Taken from inside [markerColumnWidth] (the checkbox moves left),
+/// so task text stays aligned with list item text.
+const checkboxTextGap = 6.0;
+
 /// The extra width added per indent level beyond the first, for both list
 /// items and tasks.
 ///
@@ -203,13 +207,16 @@ class _CompactTaskComponentState extends State<_CompactTaskComponent>
             height: lineHeight,
             child: Align(
               alignment: Alignment.centerRight,
-              child: Checkbox(
-                visualDensity: VisualDensity.compact,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                value: widget.viewModel.isComplete,
-                onChanged: widget.viewModel.setComplete != null
-                    ? (newValue) => widget.viewModel.setComplete!(newValue!)
-                    : null,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(end: checkboxTextGap),
+                child: Checkbox(
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  value: widget.viewModel.isComplete,
+                  onChanged: widget.viewModel.setComplete != null
+                      ? (newValue) => widget.viewModel.setComplete!(newValue!)
+                      : null,
+                ),
               ),
             ),
           ),

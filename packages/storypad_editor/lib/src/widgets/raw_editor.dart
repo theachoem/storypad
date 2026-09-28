@@ -6,6 +6,7 @@ import 'package:super_editor/super_editor.dart';
 
 import '../controller/story_editor_controller.dart';
 import 'android_toolbar.dart';
+import 'block_frame.dart';
 import 'compact_builders.dart';
 import 'context_menu_action.dart';
 import 'desktop_context_menu.dart';
@@ -58,6 +59,7 @@ class RawEditor extends StatefulWidget {
     this.placeholderStyle,
     this.checkboxesEnabled = true,
     this.contextMenuActions = const [],
+    this.blockStyles,
   });
 
   final StoryEditorController controller;
@@ -112,6 +114,11 @@ class RawEditor extends StatefulWidget {
   /// Extra items for the selection menus (Android toolbar, iOS system menu, desktop right-click menu), after the
   /// platform's own. See [StoryContextMenuAction] for where each shows.
   final List<StoryContextMenuAction> contextMenuActions;
+
+  /// Frames per block type (`blockquote`, `code`, an embed's type, …): a background/border and the padding between it
+  /// and the content. Defaults to a tinted quote with a left bar and a tinted code box, from the theme. Space *between*
+  /// blocks is `Styles.padding` in [styleRules] (4px by default).
+  final Map<String, StoryBlockStyle>? blockStyles;
 
   @override
   State<RawEditor> createState() => _RawEditorState();
@@ -315,12 +322,12 @@ class _RawEditorState extends State<RawEditor> {
     return defaultStylesheet.copyWith(
       documentPadding: widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _reorderGutterWidth : 16, 16, 16, 16),
       addRulesAfter: [
-        // Every block flush against its neighbors (the default stylesheet's per-type block padding reads as
-        // inconsistent spacing), with the base text style merged in.
+        // The same small gap around every block (the default stylesheet's per-type block padding reads as
+        // inconsistent spacing), with the base text style merged in. Frames and their inner padding: blockStyles.
         StyleRule(
           BlockSelector.all,
           (document, node) => {
-            Styles.padding: const CascadingPadding.all(0),
+            Styles.padding: const CascadingPadding.symmetric(vertical: 2),
             if (widget.baseTextStyle != null) Styles.textStyle: widget.baseTextStyle!,
           },
         ),
@@ -344,7 +351,38 @@ class _RawEditorState extends State<RawEditor> {
     );
   }
 
-  List<ComponentBuilder> _componentBuilders() => _componentBuildersCache ??= _createComponentBuilders();
+  Map<String, StoryBlockStyle>? _blockStylesCache;
+
+  List<ComponentBuilder> _componentBuilders(BuildContext context) {
+    final blockStyles = widget.blockStyles ?? _defaultBlockStyles(context);
+    if (!mapEquals(blockStyles, _blockStylesCache)) {
+      _blockStylesCache = blockStyles;
+      _componentBuildersCache = null;
+    }
+    return _componentBuildersCache ??= [
+      for (final builder in _createComponentBuilders())
+        blockStyles.isEmpty
+            ? builder
+            : FramedComponentBuilder(builder, document: _controller.document, styles: blockStyles),
+    ];
+  }
+
+  static Map<String, StoryBlockStyle> _defaultBlockStyles(BuildContext context) {
+    final onSurface = ColorScheme.of(context).onSurface;
+    return {
+      'blockquote': StoryBlockStyle(
+        decoration: BoxDecoration(
+          color: onSurface.withValues(alpha: 0.04),
+          border: Border(left: BorderSide(color: onSurface.withValues(alpha: 0.25), width: 3)),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      'code': StoryBlockStyle(
+        decoration: BoxDecoration(color: onSurface.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(6)),
+        padding: const EdgeInsets.all(12),
+      ),
+    };
+  }
 
   List<ComponentBuilder> _createComponentBuilders() => [
     if (widget.placeholder case final placeholder?) HintComponentBuilder(placeholder, _placeholderStyle),
@@ -416,7 +454,7 @@ class _RawEditorState extends State<RawEditor> {
       documentLayoutKey: _documentLayoutKey,
       scrollController: _ownsScrolling ? _scrollController : widget.scrollController,
       shrinkWrap: !_ownsScrolling,
-      componentBuilders: _componentBuilders(),
+      componentBuilders: _componentBuilders(context),
       stylesheet: _stylesheet(),
       selectionStyle: _selectionStyle(context),
     );
@@ -436,7 +474,7 @@ class _RawEditorState extends State<RawEditor> {
       documentLayoutKey: _documentLayoutKey,
       inputRole: widget.inputRole,
       shrinkWrap: !_ownsScrolling,
-      componentBuilders: _componentBuilders(),
+      componentBuilders: _componentBuilders(context),
       keyboardActions: _keyboardActions,
       // Mobile drops the selection when the editor loses focus (so tap-outside unfocuses and enables reordering),
       // except while a toolbar holds it (its popup took focus, and its action still needs the selection). Desktop

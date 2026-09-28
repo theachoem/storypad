@@ -19,6 +19,7 @@ export 'src/embed/story_html_element.dart';
 export 'src/embed/unknown_embed.dart';
 export 'src/quill/quill_exporter.dart' show quillColor;
 export 'src/quill/quill_import_losses.dart' show QuillImportLoss, QuillImportLossKind;
+export 'src/widgets/block_frame.dart' show StoryBlockStyle;
 export 'src/widgets/context_menu_action.dart';
 export 'src/widgets/desktop_context_menu.dart'
     show DesktopContextMenuAction, DesktopContextMenuHandler, DesktopContextMenuRequest, showDefaultDesktopContextMenu;

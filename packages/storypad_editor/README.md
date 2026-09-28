@@ -89,6 +89,8 @@ Presentation, on either editor widget:
 - `baseTextStyle`, `styleRules`, `padding`; `caretColor`/`selectionColor` (default: the theme's `TextSelectionTheme`,
   else its primary color); `placeholder`; `checkboxesEnabled: false` for a view that won't keep its changes;
   `contextMenuActions` — extra selection-menu items (e.g. Uppercase via `actions.transformSelectedText`).
+- Spacing: `Styles.padding` in `styleRules` is the gap between blocks (4px by default); `blockStyles` frames a
+  block type (`blockquote`, `code`, an embed type) with a decoration and the padding inside it.
 
 ### 3. Toolbars
 
