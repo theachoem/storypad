@@ -46,6 +46,7 @@ typedef DesktopContextMenuHandler = Future<DesktopContextMenuAction?> Function(D
 Future<DesktopContextMenuAction?> showDefaultDesktopContextMenu(DesktopContextMenuRequest request) {
   final overlay = Overlay.of(request.context).context.findRenderObject()! as RenderBox;
   final position = request.globalPosition;
+  final localizations = MaterialLocalizations.of(request.context);
   return showMenu<DesktopContextMenuAction>(
     context: request.context,
     position: RelativeRect.fromLTRB(
@@ -58,12 +59,20 @@ Future<DesktopContextMenuAction?> showDefaultDesktopContextMenu(DesktopContextMe
       PopupMenuItem(
         value: DesktopContextMenuAction.cut,
         enabled: request.hasSelection && !request.readOnly,
-        child: const Text('Cut'),
+        child: Text(localizations.cutButtonLabel),
       ),
-      PopupMenuItem(value: DesktopContextMenuAction.copy, enabled: request.hasSelection, child: const Text('Copy')),
-      PopupMenuItem(value: DesktopContextMenuAction.paste, enabled: !request.readOnly, child: const Text('Paste')),
+      PopupMenuItem(
+        value: DesktopContextMenuAction.copy,
+        enabled: request.hasSelection,
+        child: Text(localizations.copyButtonLabel),
+      ),
+      PopupMenuItem(
+        value: DesktopContextMenuAction.paste,
+        enabled: !request.readOnly,
+        child: Text(localizations.pasteButtonLabel),
+      ),
       const PopupMenuDivider(),
-      const PopupMenuItem(value: DesktopContextMenuAction.selectAll, child: Text('Select All')),
+      PopupMenuItem(value: DesktopContextMenuAction.selectAll, child: Text(localizations.selectAllButtonLabel)),
       if (request.extraActions.isNotEmpty) const PopupMenuDivider(),
       for (final action in request.extraActions) PopupMenuItem(onTap: action.onPressed, child: Text(action.label)),
     ],

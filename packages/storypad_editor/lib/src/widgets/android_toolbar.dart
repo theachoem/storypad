@@ -190,11 +190,13 @@ class _AndroidTextEditingFloatingToolbarWithProcessTextState
             final hasSelectedText = selection != null && !selection.isCollapsed;
             final processTextActions = hasSelectedText ? widget.processTextActions : const <ProcessTextAction>[];
 
+            // The app's language, like Flutter's own text selection toolbar.
+            final localizations = MaterialLocalizations.of(context);
             final buttons = <_ButtonViewModel>[
-              if (hasExpandedSelection) _ButtonViewModel(onPressed: _cut, title: 'Cut'),
-              if (hasExpandedSelection) _ButtonViewModel(onPressed: _copy, title: 'Copy'),
-              _ButtonViewModel(onPressed: _paste, title: 'Paste'),
-              _ButtonViewModel(onPressed: _selectAll, title: 'Select All'),
+              if (hasExpandedSelection) _ButtonViewModel(onPressed: _cut, title: localizations.cutButtonLabel),
+              if (hasExpandedSelection) _ButtonViewModel(onPressed: _copy, title: localizations.copyButtonLabel),
+              _ButtonViewModel(onPressed: _paste, title: localizations.pasteButtonLabel),
+              _ButtonViewModel(onPressed: _selectAll, title: localizations.selectAllButtonLabel),
               for (final action in processTextActions)
                 _ButtonViewModel(onPressed: () => _runProcessTextAction(action), title: action.label),
               for (final action in widget.extraActions)

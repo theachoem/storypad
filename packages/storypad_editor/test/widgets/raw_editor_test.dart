@@ -113,8 +113,8 @@ void main() {
     await tester.tap(find.byType(TextComponent), buttons: kSecondaryButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    expect(find.text('Select All'), findsOneWidget);
-    await tester.tap(find.text('Select All'));
+    expect(find.text('Select all'), findsOneWidget);
+    await tester.tap(find.text('Select all'));
     await tester.pumpAndSettle();
     expect(controller.selection.value!.isCollapsed, isFalse);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
