@@ -161,6 +161,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
           padding: const EdgeInsets.only(top: 4, left: 12.0, bottom: 20, right: 12.0),
           baseTextStyle: style.baseTextStyle,
           styleRules: style.styleRules,
+          blockStyles: style.blockStyles,
           placeholder: '...',
           placeholderStyle: style.placeholderStyle,
           checkboxesEnabled: widget.onChanged != null,

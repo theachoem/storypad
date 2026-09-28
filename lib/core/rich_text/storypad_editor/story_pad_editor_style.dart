@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/super_editor.dart';
 
 /// How story text looks in the editor: the story's theme (font, weight, colors, and text scale from its preferences),
@@ -8,6 +9,22 @@ class StoryPadEditorStyle {
     : _colorScheme = ColorScheme.of(context),
       _base = DefaultTextStyle.of(context).style,
       _isCupertino = Theme.of(context).platform == .iOS || Theme.of(context).platform == .macOS;
+
+  // ── Spacing: tune here ──────────────────────────────────────────────────────────────────────────────────────────
+
+  /// Space above and below each line of text (paragraph, list item, task): two lines sit `2 × lineGap` apart.
+  static const lineGap = 3.0;
+
+  /// Space above and below quotes, code blocks and embeds (photos, audio), setting them apart from the text around.
+  static const blockGap = 8.0;
+
+  /// Space inside a quote's frame, around its text.
+  static const quotePadding = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+
+  /// Space inside a code block's frame, around its text.
+  static const codePadding = EdgeInsets.all(12);
+
+  // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   final ColorScheme _colorScheme;
   final TextStyle _base;
@@ -32,7 +49,15 @@ class StoryPadEditorStyle {
     for (final selector in const ['paragraph', 'listItem', 'task', 'blockquote'])
       StyleRule(
         BlockSelector(selector),
-        (document, node) => {Styles.textStyle: const TextStyle(fontSize: 16, height: 1.15)},
+        (document, node) => {
+          Styles.textStyle: const TextStyle(fontSize: 16, height: 1.15),
+          Styles.padding: const CascadingPadding.symmetric(vertical: lineGap, horizontal: 0.0),
+        },
+      ),
+    for (final selector in const ['blockquote', 'code', 'media', 'audio', 'date'])
+      StyleRule(
+        BlockSelector(selector),
+        (document, node) => {Styles.padding: const CascadingPadding.symmetric(vertical: blockGap)},
       ),
     for (final (level, fontSize, height, letterSpacing, topPadding) in const [
       (1, 34.0, 1.083, -0.5, 16.0),
@@ -58,8 +83,6 @@ class StoryPadEditorStyle {
       const BlockSelector('blockquote'),
       (document, node) => {
         Styles.textStyle: TextStyle(color: _colorScheme.onSurface.withValues(alpha: 0.8)),
-        Styles.backgroundColor: _colorScheme.onSurface.withValues(alpha: 0.05),
-        Styles.borderRadius: BorderRadius.circular(4),
       },
     ),
     StyleRule(
@@ -69,4 +92,22 @@ class StoryPadEditorStyle {
       },
     ),
   ];
+
+  /// The frames around quotes and code blocks, with the space inside them.
+  late final Map<String, StoryBlockStyle> blockStyles = {
+    'blockquote': StoryBlockStyle(
+      decoration: BoxDecoration(
+        color: _colorScheme.onSurface.withValues(alpha: 0.04),
+        border: Border(left: BorderSide(color: _colorScheme.onSurface.withValues(alpha: 0.25), width: 3)),
+      ),
+      padding: quotePadding,
+    ),
+    'code': StoryBlockStyle(
+      decoration: BoxDecoration(
+        color: _colorScheme.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: codePadding,
+    ),
+  };
 }
