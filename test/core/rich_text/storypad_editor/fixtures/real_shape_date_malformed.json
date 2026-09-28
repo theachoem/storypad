@@ -1,0 +1,4 @@
+[
+  { "insert": { "date": "not valid json" } },
+  { "insert": "\n" }
+]
