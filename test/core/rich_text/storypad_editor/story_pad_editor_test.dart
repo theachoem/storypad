@@ -210,4 +210,47 @@ void main() {
       {'insert': 'HELLO\n'},
     ]);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('content changed before the page is built is reported once it is (a story started from a photo)', (
+    tester,
+  ) async {
+    final controller =
+        adapter.createController(json: const [], selection: const TextSelection.collapsed(offset: 0), readOnly: false)
+            as StoryPadEditorRichTextController;
+    final focusNode = FocusNode();
+    addTearDown(() {
+      focusNode.dispose();
+      controller.dispose();
+    });
+    // As EditStoryViewModel.init does for an initial asset (a photo; text here, since rendering a photo needs the app's
+    // providers), before the page is built.
+    controller.replaceText(0, 0, 'Hello', null);
+
+    final changes = <int>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => SingleChildScrollView(
+              child: adapter.buildEditor(
+                context: context,
+                controller: controller,
+                focusNode: focusNode,
+                scrollController: ScrollController(),
+                readOnly: false,
+                storyContent: StoryContentDbModel.create(),
+                onChanged: () => changes.add(changes.length),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(changes, hasLength(1));
+    expect(controller.serialize(), [
+      {'insert': 'Hello\n'},
+    ]);
+  });
 }

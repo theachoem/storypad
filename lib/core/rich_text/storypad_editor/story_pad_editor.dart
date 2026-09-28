@@ -56,6 +56,16 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
     super.initState();
     _editor.readOnly = widget.readOnly;
     _attachFocus(widget.focusNode);
+    _reportChangesMadeBeforeMount();
+  }
+
+  /// Content changed before the editor was built (e.g. a story started from a photo inserts it while the page is
+  /// being set up) is reported once mounted: the editor only reports changes made while it's there.
+  void _reportChangesMadeBeforeMount() {
+    if (!_editor.isDirty) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onChanged?.call();
+    });
   }
 
   @override
