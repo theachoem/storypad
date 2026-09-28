@@ -48,6 +48,16 @@ class RenderSliverBox extends RenderBox with RenderObjectWithChildMixin<RenderSl
       parentUsesSize: true,
     );
     size = constraints.constrain(Size(constraints.maxWidth, sliver.geometry!.scrollExtent));
+    _lastHeight = size.height;
+  }
+
+  double _lastHeight = 0;
+
+  /// A sliver can't be measured without laying it out, so this answers with the last laid-out height (0 before the
+  /// first layout) -- enough for an ancestor that merely asks (e.g. a dialog measuring its content).
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    return constraints.constrain(Size(constraints.maxWidth, _lastHeight));
   }
 
   @override
