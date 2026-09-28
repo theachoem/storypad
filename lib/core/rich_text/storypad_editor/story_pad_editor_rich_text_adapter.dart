@@ -35,6 +35,7 @@ class StoryPadEditorRichTextAdapter implements RichTextAdapter {
       storyContent: storyContent,
       layoutType: layoutType,
       onChanged: onChanged,
+      onGoToEdit: onGoToEdit,
     );
   }
 

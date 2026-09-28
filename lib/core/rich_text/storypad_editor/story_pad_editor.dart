@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
@@ -19,6 +20,7 @@ class StoryPadEditor extends StatefulWidget {
     required this.storyContent,
     required this.layoutType,
     required this.onChanged,
+    required this.onGoToEdit,
   });
 
   final StoryPadEditorRichTextController controller;
@@ -33,6 +35,9 @@ class StoryPadEditor extends StatefulWidget {
   /// Called after each change to the page's content. `null` for a view whose changes aren't kept, which also turns
   /// checkboxes off.
   final VoidCallback? onChanged;
+
+  /// Opens the story for editing, from a read-only page's context menu.
+  final VoidCallback? onGoToEdit;
 
   @override
   State<StoryPadEditor> createState() => _StoryPadEditorState();
@@ -92,6 +97,27 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
     if (_editor.selection.value == null && !widget.readOnly) _editor.actions.placeCaretAtEnd();
   }
 
+  List<StoryContextMenuAction> _buildContextMenuActions() {
+    return [
+      StoryContextMenuAction(
+        label: tr('button.editor.uppercase'),
+        onPressed: () => _editor.actions.transformSelectedText((text) => text.toUpperCase()),
+      ),
+      StoryContextMenuAction(
+        label: tr('button.editor.lowercase'),
+        onPressed: () => _editor.actions.transformSelectedText((text) => text.toLowerCase()),
+      ),
+      if (widget.onGoToEdit case final onGoToEdit?)
+        StoryContextMenuAction(
+          label: tr('button.edit'),
+          onPressed: onGoToEdit,
+          whenEditing: false,
+          whenReadOnly: true,
+          needsSelection: false,
+        ),
+    ];
+  }
+
   StoryPadEditorStyle _styleFor(BuildContext context) {
     final theme = Theme.of(context);
     final base = DefaultTextStyle.of(context).style;
@@ -127,6 +153,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
           placeholderStyle: style.placeholderStyle,
           checkboxesEnabled: widget.onChanged != null,
           onTapLink: (url) => UrlOpenerService.openForRichContent(context: context, url: url),
+          contextMenuActions: _buildContextMenuActions(),
         ),
       ),
     );

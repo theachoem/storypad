@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show kSecondaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -15,6 +16,7 @@ void main() {
     List<dynamic> json = const [],
     bool readOnly = false,
     bool keepsChanges = true,
+    VoidCallback? onGoToEdit,
   }) async {
     final controller =
         adapter.createController(
@@ -46,6 +48,7 @@ void main() {
                     readOnly: readOnly,
                     storyContent: StoryContentDbModel.create(),
                     onChanged: keepsChanges ? () => changes.add(changes.length) : null,
+                    onGoToEdit: onGoToEdit,
                   ),
                 ],
               ),
@@ -168,4 +171,43 @@ void main() {
       },
     ]);
   });
+
+  testWidgets('read-only, the right-click menu offers Edit; editing, Uppercase and Lowercase', (tester) async {
+    var edits = 0;
+    final page = await pumpPage(
+      tester,
+      json: [
+        {'insert': 'Hello\n'},
+      ],
+      readOnly: true,
+      onGoToEdit: () => edits++,
+    );
+
+    await tester.tapAt(tester.getTopLeft(find.byType(TextComponent)) + const Offset(8, 8), buttons: kSecondaryButton);
+    await tester.pumpAndSettle();
+    expect(find.text('Uppercase'), findsNothing);
+    await tester.tap(find.text('Edit'));
+    await tester.pumpAndSettle();
+    expect(edits, 1);
+    expect(page.controller.readOnly, isTrue);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('editing: Uppercase changes the selected text', (tester) async {
+    final page = await pumpPage(
+      tester,
+      json: [
+        {'insert': 'Hello\n'},
+      ],
+    );
+    page.controller.selection = const TextSelection(baseOffset: 0, extentOffset: 5);
+    await tester.pump();
+
+    await tester.tapAt(tester.getTopLeft(find.byType(TextComponent)) + const Offset(8, 8), buttons: kSecondaryButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Uppercase'));
+    await tester.pumpAndSettle();
+    expect(page.controller.serialize(), [
+      {'insert': 'HELLO\n'},
+    ]);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 }
