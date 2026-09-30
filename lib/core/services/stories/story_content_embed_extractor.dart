@@ -30,7 +30,7 @@ class StoryContentEmbedExtractor {
   ///
   /// Also reads the legacy `image` key: every embed saved before the
   /// image->media rename is still stored as `image` and stays that way until
-  /// it's next edited (see `_QuillMediaBlockEmbed`'s doc) — both keys mean
+  /// it's next edited (the media embed reads both) — both keys mean
   /// exactly the same thing, so every caller must see them as one list.
   ///
   /// Use [photos]/[videos] when you mean one kind specifically (counts,

@@ -151,7 +151,7 @@ class QuillDeltaToPlainTextService {
 
         // 'image' is the legacy embed key from before the image->media
         // rename -- stories saved before that still use it, and it means
-        // exactly the same thing (see _QuillMediaBlockEmbed's doc).
+        // exactly the same thing (the media embed reads both).
         if (embedType == 'media' || embedType == 'image' || embedType == 'audio') {
           if (includeMarkdownEmbeds) {
             final raw = insert[embedType].toString();
