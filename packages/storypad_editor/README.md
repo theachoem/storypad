@@ -5,8 +5,9 @@ A controller-centric rich text editor for StoryPad, built on
 
 - **Markdown in, Markdown out.** Markdown is the only format written; formats CommonMark lacks use HTML5 tags. Writing
   is a fixed point, so an opened-and-saved story never changes by itself.
-- **Quill Delta import and export**, for stories stored as Quill: open them here, and write them back as Quill until
-  storage moves to Markdown.
+- **Quill Delta import and export**, for stories stored as Quill before Markdown: convert them (`quillPageToMarkdown`,
+  a page title becoming its leading heading), check the conversion lost nothing (`checkQuillPage`), and read a
+  Markdown page back as Quill for Quill-based readers (`encodeQuill`).
 - **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill form, Markdown form and
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
 

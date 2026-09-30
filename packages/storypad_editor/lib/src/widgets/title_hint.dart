@@ -4,8 +4,9 @@ import 'package:super_editor/super_editor.dart';
 import '../markdown/markdown_format.dart';
 
 /// Shows [hint] in an empty heading that's the document's first block -- an empty page title (see
-/// `StoryCodec.pageTitleOf`), e.g. the one a new page starts with. Unlike super_editor's `HintComponentBuilder`, it
-/// shows whatever follows the heading, and the hint keeps the heading's own style, in [hintColor].
+/// `StoryCodec.pageTitleOf`, the same rule), e.g. the one a new page starts with. Unlike super_editor's
+/// `HintComponentBuilder`, it shows whatever follows the heading, and the hint keeps the heading's own style, in
+/// [hintColor].
 class TitleHintComponentBuilder implements ComponentBuilder {
   const TitleHintComponentBuilder(this.hint, this.hintColor);
 

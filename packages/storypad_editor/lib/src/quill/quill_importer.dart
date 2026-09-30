@@ -11,7 +11,7 @@ import '../markdown/markdown_format.dart';
 import '../markdown/markdown_reader.dart';
 import 'quill_exporter.dart';
 
-/// Imports Quill Delta ops into document nodes. `QuillExporter` is the reverse, for stories still stored as Quill.
+/// Imports Quill Delta ops into document nodes. `QuillExporter` is the reverse, for readers built on Quill.
 ///
 /// Built on super_editor's Quill parser, with this package's own formats:
 ///

@@ -18,8 +18,8 @@ void main() {
       }
     });
 
-    test('empty paragraphs before the heading are skipped', () {
-      expect(codec.pageTitle('&nbsp;\n\n&nbsp;\n\n### Trip\n\nbody'), 'Trip');
+    test('only the very first block: a heading after blank lines is content, as the editor sees it', () {
+      expect(codec.pageTitle('&nbsp;\n\n&nbsp;\n\n### Trip\n\nbody'), isNull);
     });
 
     test('no title when the first block is not a heading', () {
@@ -42,7 +42,8 @@ void main() {
         for (final node in StoryCodec.pageBodyOf(codec.decodeNodes(markdown))) (node as TextNode).text.toPlainText(),
       ];
 
-      expect(body('&nbsp;\n\n### Trip\n\nA\n\nB'), ['A', 'B']);
+      expect(body('### Trip\n\nA\n\nB'), ['A', 'B']);
+      expect(body('&nbsp;\n\n### Trip\n\nA'), ['', 'Trip', 'A'], reason: 'no title: everything is body');
       expect(body('###\n\nA'), ['A'], reason: 'an empty title is still the title slot');
       expect(body('A\n\n### B'), ['A', 'B'], reason: 'no title: everything is body');
     });

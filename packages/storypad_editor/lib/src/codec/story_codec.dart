@@ -80,16 +80,14 @@ final class StoryCodec {
   /// The canonical form of [markdown]: what it reads as, written back.
   String canonicalize(String markdown) => encode(decodeNodes(markdown));
 
-  /// The title of the page [markdown] holds: its first non-empty block, if that's a heading, as plain text (see
-  /// [pageTitleOf]).
+  /// The title of the page [markdown] holds: its first block, if that's a heading, as plain text (see [pageTitleOf]).
   String? pageTitle(String markdown) => pageTitleOf(decodeNodes(markdown));
 
-  /// A page's title: its first non-empty block, if that block is a heading (any level), as plain text -- formatting
-  /// dropped, trimmed, `null` when empty. A heading further down is content, not a title.
+  /// A page's title: its first block, if that block is a heading (any level), as plain text -- formatting dropped,
+  /// trimmed, `null` when empty. A heading further down (even after blank lines) is content, not a title.
   static String? pageTitleOf(Iterable<DocumentNode> nodes) => locatePageTitle(nodes.toList()).title;
 
-  /// A page's body: [nodes] after the title heading (and the empty paragraphs before it), or all of them when the
-  /// page has no title. An empty leading heading is an empty title, so it isn't part of the body either.
+  /// A page's body: [nodes] after the title heading, or all of them when the page has no title. An empty leading heading is an empty title, so it isn't part of the body either.
   static List<DocumentNode> pageBodyOf(Iterable<DocumentNode> nodes) {
     final list = nodes.toList();
     return list.sublist(locatePageTitle(list).bodyStart);

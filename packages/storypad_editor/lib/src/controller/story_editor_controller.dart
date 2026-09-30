@@ -79,8 +79,8 @@ class StoryEditorController extends ChangeNotifier {
     _savedMarkdown = toMarkdown();
   }
 
-  /// A controller for a story stored as Quill Delta [ops], converted to Markdown first -- so what's edited is exactly
-  /// what will be saved. See [StoryCodec.quillToMarkdown].
+  /// A controller for a page stored as Quill Delta [ops] (from before Markdown), converted to Markdown first -- so
+  /// what's edited is exactly what will be saved. See [StoryCodec.quillToMarkdown].
   factory StoryEditorController.fromQuill(
     List<Object?> ops, {
     required List<StoryEmbed> embeds,
