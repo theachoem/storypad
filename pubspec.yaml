@@ -66,7 +66,6 @@ dependencies:
   just_audio: 0.10.6
   latlong2: 0.9.1
   local_auth: 3.0.2
-  macos_window_utils: 1.9.1
   flutter_material_design_icons: 3.1.0+7447
   objectbox: 5.3.2
   objectbox_flutter_libs: any

@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:provider/provider.dart';
+import 'package:storypad/core/services/window_appearance_service.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/app_quick_action_object.dart';
@@ -460,11 +459,7 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     _setPlatformTheme();
   }
 
-  void _setPlatformTheme() {
-    if (Platform.isMacOS) {
-      WindowManipulator.overrideMacOSBrightness(dark: isDarkMode);
-    }
-  }
+  void _setPlatformTheme() => WindowAppearanceService.setDark(isDarkMode);
 
   @override
   void dispose() {
