@@ -202,11 +202,12 @@ String escapeLineStart(String markdown) {
 }
 
 /// Writes trailing spaces/tabs as character references: they're content, but editors and tools routinely trim them.
+/// A whitespace-only line is all trailing whitespace.
 String protectTrailingWhitespace(String markdown) {
   final match = _trailingWhitespace.firstMatch(markdown);
-  if (match == null || match.start == 0) return markdown;
+  if (match == null) return markdown;
   // package:markdown doesn't decode a reference right after a backtick (a code span's end): separate them.
-  final separator = markdown[match.start - 1] == '`' ? '<wbr>' : '';
+  final separator = match.start > 0 && markdown[match.start - 1] == '`' ? '<wbr>' : '';
   return markdown.substring(0, match.start) + separator + match[0]!.codeUnits.map((unit) => '&#$unit;').join();
 }
 

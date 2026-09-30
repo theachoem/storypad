@@ -59,6 +59,12 @@ void main() {
       expect(_write([_paragraph('Title', blockType: header6Attribution)]), '###### Title');
     });
 
+    test('a whitespace-only heading keeps its whitespace as character references', () {
+      final heading = _paragraph('  ', blockType: header3Attribution);
+      expect(_write([heading]), '### &#32;&#32;');
+      expect(StoryCodec().canonicalize('### &#32;&#32;'), '### &#32;&#32;');
+    });
+
     test('# is escaped so a trailing run is not a closing sequence', () {
       expect(_write([_paragraph('C# #', blockType: header2Attribution)]), r'## C\# \#');
     });
