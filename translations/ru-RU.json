@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Маркированный список",
   "button.editor.checklist": "Чек-лист",
   "button.editor.clear_format": "Очистить форматирование",
+  "button.editor.heading": "Заголовок {}",
   "button.editor.highlight_color": "Цвет выделения",
   "button.editor.indent": "Увеличить отступ",
   "button.editor.italic": "Курсив",

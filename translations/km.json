@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "បញ្ជីចំណុច",
   "button.editor.checklist": "បញ្ជីត្រួតពិនិត្យ",
   "button.editor.clear_format": "សម្អាតទម្រង់",
+  "button.editor.heading": "ចំណងជើង {}",
   "button.editor.highlight_color": "ពណ៌បន្លិច",
   "button.editor.indent": "បង្កើនការចូលបន្ទាត់",
   "button.editor.italic": "ទ្រេត",

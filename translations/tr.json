@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Madde işaretli liste",
   "button.editor.checklist": "Kontrol listesi",
   "button.editor.clear_format": "Biçimlendirmeyi temizle",
+  "button.editor.heading": "Başlık {}",
   "button.editor.highlight_color": "Vurgu rengi",
   "button.editor.indent": "Girintiyi artır",
   "button.editor.italic": "İtalik",

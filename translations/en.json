@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Bulleted list",
   "button.editor.checklist": "Checklist",
   "button.editor.clear_format": "Clear formatting",
+  "button.editor.heading": "Heading {}",
   "button.editor.highlight_color": "Highlight color",
   "button.editor.indent": "Increase indent",
   "button.editor.italic": "Italic",

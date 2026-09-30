@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Aufzählung",
   "button.editor.checklist": "Checkliste",
   "button.editor.clear_format": "Formatierung entfernen",
+  "button.editor.heading": "Überschrift {}",
   "button.editor.highlight_color": "Markierfarbe",
   "button.editor.indent": "Einzug vergrößern",
   "button.editor.italic": "Kursiv",

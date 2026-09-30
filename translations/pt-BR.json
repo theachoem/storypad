@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Lista com marcadores",
   "button.editor.checklist": "Lista de tarefas",
   "button.editor.clear_format": "Limpar formatação",
+  "button.editor.heading": "Título {}",
   "button.editor.highlight_color": "Cor de destaque",
   "button.editor.indent": "Aumentar recuo",
   "button.editor.italic": "Itálico",

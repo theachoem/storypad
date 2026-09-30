@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "글머리 기호 목록",
   "button.editor.checklist": "체크리스트",
   "button.editor.clear_format": "서식 지우기",
+  "button.editor.heading": "제목 {}",
   "button.editor.highlight_color": "형광펜 색",
   "button.editor.indent": "들여쓰기",
   "button.editor.italic": "기울임꼴",

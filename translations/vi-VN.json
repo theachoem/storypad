@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Danh sách dấu đầu dòng",
   "button.editor.checklist": "Danh sách kiểm tra",
   "button.editor.clear_format": "Xóa định dạng",
+  "button.editor.heading": "Tiêu đề {}",
   "button.editor.highlight_color": "Màu tô sáng",
   "button.editor.indent": "Tăng thụt lề",
   "button.editor.italic": "Nghiêng",

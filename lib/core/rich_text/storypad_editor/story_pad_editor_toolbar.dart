@@ -120,6 +120,15 @@ class StoryPadEditorToolbar extends StatelessWidget {
           ])
             toggle(tr(label), icon, actions.alignment == align, () => actions.setAlignment(align)),
           _buildDivider(context),
+          // A heading on the first line is the page's title.
+          for (final (level, icon) in [(1, SpIcons.heading1), (2, SpIcons.heading2), (3, SpIcons.heading3)])
+            toggle(
+              tr('button.editor.heading', args: ['$level']),
+              icon,
+              actions.headingLevel == level,
+              () => actions.setHeading(actions.headingLevel == level ? null : level),
+            ),
+          _buildDivider(context),
           toggle(
             tr('button.editor.numbered_list'),
             SpIcons.listNumbered,

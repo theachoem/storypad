@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "รายการแบบจุด",
   "button.editor.checklist": "รายการตรวจสอบ",
   "button.editor.clear_format": "ล้างรูปแบบ",
+  "button.editor.heading": "หัวข้อ {}",
   "button.editor.highlight_color": "สีไฮไลต์",
   "button.editor.indent": "เพิ่มการเยื้อง",
   "button.editor.italic": "ตัวเอียง",

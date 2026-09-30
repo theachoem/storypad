@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Liste à puces",
   "button.editor.checklist": "Liste de tâches",
   "button.editor.clear_format": "Effacer la mise en forme",
+  "button.editor.heading": "Titre {}",
   "button.editor.highlight_color": "Couleur de surlignage",
   "button.editor.indent": "Augmenter le retrait",
   "button.editor.italic": "Italique",

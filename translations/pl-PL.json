@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Lista punktowana",
   "button.editor.checklist": "Lista zadań",
   "button.editor.clear_format": "Wyczyść formatowanie",
+  "button.editor.heading": "Nagłówek {}",
   "button.editor.highlight_color": "Kolor wyróżnienia",
   "button.editor.indent": "Zwiększ wcięcie",
   "button.editor.italic": "Kursywa",

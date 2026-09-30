@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "项目符号列表",
   "button.editor.checklist": "待办清单",
   "button.editor.clear_format": "清除格式",
+  "button.editor.heading": "标题 {}",
   "button.editor.highlight_color": "高亮颜色",
   "button.editor.indent": "增加缩进",
   "button.editor.italic": "斜体",

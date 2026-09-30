@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "箇条書き",
   "button.editor.checklist": "チェックリスト",
   "button.editor.clear_format": "書式をクリア",
+  "button.editor.heading": "見出し {}",
   "button.editor.highlight_color": "マーカーの色",
   "button.editor.indent": "インデントを増やす",
   "button.editor.italic": "斜体",

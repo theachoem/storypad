@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "Elenco puntato",
   "button.editor.checklist": "Lista di controllo",
   "button.editor.clear_format": "Cancella formattazione",
+  "button.editor.heading": "Titolo {}",
   "button.editor.highlight_color": "Colore evidenziazione",
   "button.editor.indent": "Aumenta rientro",
   "button.editor.italic": "Corsivo",

@@ -36,6 +36,7 @@
   "button.editor.bulleted_list": "قائمة نقطية",
   "button.editor.checklist": "قائمة مهام",
   "button.editor.clear_format": "مسح التنسيق",
+  "button.editor.heading": "عنوان {}",
   "button.editor.highlight_color": "لون التمييز",
   "button.editor.indent": "زيادة المسافة البادئة",
   "button.editor.italic": "مائل",
