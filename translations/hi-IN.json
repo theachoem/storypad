@@ -506,6 +506,7 @@
   "page.video_compression.message": "गुणवत्ता बनाए रखते हुए जगह बचाएं। लंबे वीडियो बनाने में थोड़ा समय लग सकता है।",
   "page.video_compression.progress_args": "{SP_TOTAL} का वीडियो {SP_CURRENT}",
   "page.video_compression.title": "वीडियो को संपीड़ित करना",
+  "page.newer_version_notice": "StoryPad के नए वर्ज़न से बनाया गया। इस पेज को एडिट करने के लिए ऐप अपडेट करो।",
   "paywall_features.backgrounds.subtitle": "बैकग्राउंड का उपयोग करके अपनी कहानियों के लिए सही माहौल बनाएं।",
   "paywall_features.backgrounds.title": "पृष्ठभूमि",
   "paywall_features.customizations.subtitle": "कस्टम आइकन, लेआउट और ऐप-व्यापी फ़ॉन्ट।",

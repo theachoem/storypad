@@ -9,7 +9,6 @@ import 'package:storypad/core/objects/gallery_template_object.dart';
 import 'package:storypad/core/objects/reminder_object.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/core/services/gallery_template_service.dart';
-import 'package:storypad/core/services/markdown_to_quill_delta_service.dart';
 import 'package:storypad/core/services/notifications/reminder_notification_copy_service.dart';
 import 'package:storypad/core/types/reminder_type.dart';
 import 'package:storypad/providers/root_provider.dart';
@@ -128,11 +127,7 @@ class ReminderNavigationService {
 
         final richPages = [
           for (int i = 0; i < template.pages.length; i++)
-            StoryPageDbModel.legacy(
-              id: i,
-              title: template.pages[i].title,
-              body: MarkdownToQuillDeltaService.call(template.pages[i].content),
-            ),
+            StoryPageDbModel.create(id: i, title: template.pages[i].title, body: template.pages[i].content),
         ];
         final draftContent = StoryContentDbModel.create().copyWith(richPages: richPages);
         return template.copyWith(lazyDraftContent: draftContent);

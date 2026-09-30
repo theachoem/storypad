@@ -1,32 +1,7 @@
-/// Abstract interface for rich text document representation.
-///
-/// This abstraction decouples StoryPad from specific rich text formats
-/// and allows swapping implementations.
-///
-/// A document represents the complete rich text content including:
-/// - Text with formatting (bold, italic, colors, etc.)
-/// - Blocks (paragraphs, lists, blockquotes, code blocks)
-/// - Embeds (images, audio, custom content)
+/// A page body as the app reads it outside the editor's own API: its size and plain text.
 abstract class RichTextDocument {
-  /// Creates a document from serialized JSON format
-  ///
-  /// JSON structure depends on implementation (e.g., Quill Delta operations)
-  factory RichTextDocument.fromJson(List<dynamic> json) {
-    throw UnimplementedError('RichTextDocument.fromJson must be implemented by adapter');
-  }
-
-  /// Creates an empty document
-  factory RichTextDocument.empty() {
-    throw UnimplementedError('RichTextDocument.empty must be implemented by adapter');
-  }
-
-  /// Returns the length of the document in characters
+  /// The document's length in text offsets (each block's characters, 1 for an embed, plus one for its line break).
   int get length;
-
-  /// Serializes the document to JSON format for storage
-  ///
-  /// Returns format compatible with [fromJson()]
-  List<dynamic> toJson();
 
   /// Gets plain text representation (no formatting)
   String toPlainText();

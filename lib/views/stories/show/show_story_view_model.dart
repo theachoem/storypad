@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/initializers/database_initializer.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
@@ -28,6 +29,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
   }) async {
     story = initialStory ?? await StoryDbModel.db.find(params.id);
     story = await _migrateEmbedAssetsToRelativeFilePathIfExists(story);
+    story = await StoryConvertLegacyPagesService.call(story);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 
     StoryContentDbModel content = story!.generateDraftContent();

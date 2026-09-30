@@ -7,20 +7,20 @@ import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_te
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad_editor/super_editor.dart';
 
-/// A page body and its toolbar, as the story page hosts them: a title above, in the page's scroll view.
+/// A page and its toolbar, as the story page hosts them, in the page's scroll view.
 void main() {
   final adapter = StoryPadEditorRichTextAdapter();
 
   Future<({StoryPadEditorRichTextController controller, FocusNode focusNode, List<int> changes})> pumpPage(
     WidgetTester tester, {
-    List<dynamic> json = const [],
+    String markdown = '',
     bool readOnly = false,
     bool keepsChanges = true,
     VoidCallback? onGoToEdit,
   }) async {
     final controller =
         adapter.createController(
-              json: json,
+              markdown: markdown,
               selection: const TextSelection.collapsed(offset: 0),
               readOnly: readOnly,
             )
@@ -39,7 +39,6 @@ void main() {
             builder: (context) => SingleChildScrollView(
               child: Column(
                 children: [
-                  const TextField(decoration: InputDecoration(hintText: 'Title')),
                   adapter.buildEditor(
                     context: context,
                     controller: controller,
@@ -67,9 +66,7 @@ void main() {
   testWidgets('focusing the page focuses the editor, with the caret at the end', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'Hello\n'},
-      ],
+      markdown: 'Hello',
     );
 
     page.focusNode.requestFocus();
@@ -83,9 +80,7 @@ void main() {
   testWidgets('edits are reported right away (so Done never misses the last keystrokes)', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'Hello\n'},
-      ],
+      markdown: 'Hello',
     );
     page.focusNode.requestFocus();
     await tester.pumpAndSettle();
@@ -101,17 +96,13 @@ void main() {
     await Future<void>.value();
 
     expect(page.changes, isNotEmpty);
-    expect(page.controller.serialize(), [
-      {'insert': 'Hello world\n'},
-    ]);
+    expect(page.controller.serialize(), 'Hello world');
   });
 
   testWidgets('the toolbar formats the selection', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'Hello\n'},
-      ],
+      markdown: 'Hello',
     );
     page.controller.selection = const TextSelection(baseOffset: 0, extentOffset: 5);
     await tester.pump();
@@ -119,25 +110,13 @@ void main() {
     await tester.tap(find.byIcon(SpIcons.formatBold));
     await tester.pumpAndSettle();
 
-    expect(page.controller.serialize(), [
-      {
-        'insert': 'Hello',
-        'attributes': {'bold': true},
-      },
-      {'insert': '\n'},
-    ]);
+    expect(page.controller.serialize(), '**Hello**');
   });
 
   testWidgets('a view whose changes aren\'t kept has no live checkboxes', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'task'},
-        {
-          'insert': '\n',
-          'attributes': {'list': 'unchecked'},
-        },
-      ],
+      markdown: '- [ ] task',
       readOnly: true,
       keepsChanges: false,
     );
@@ -150,35 +129,21 @@ void main() {
   testWidgets('read-only with changes kept: a checkbox toggle is reported', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'task'},
-        {
-          'insert': '\n',
-          'attributes': {'list': 'unchecked'},
-        },
-      ],
+      markdown: '- [ ] task',
       readOnly: true,
     );
 
     await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
     expect(page.changes, isNotEmpty);
-    expect(page.controller.serialize(), [
-      {'insert': 'task'},
-      {
-        'insert': '\n',
-        'attributes': {'list': 'checked'},
-      },
-    ]);
+    expect(page.controller.serialize(), '- [x] task');
   });
 
   testWidgets('read-only, the right-click menu offers Edit; editing, Uppercase and Lowercase', (tester) async {
     var edits = 0;
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'Hello\n'},
-      ],
+      markdown: 'Hello',
       readOnly: true,
       onGoToEdit: () => edits++,
     );
@@ -195,9 +160,7 @@ void main() {
   testWidgets('editing: Uppercase changes the selected text', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'Hello\n'},
-      ],
+      markdown: 'Hello',
     );
     page.controller.selection = const TextSelection(baseOffset: 0, extentOffset: 5);
     await tester.pump();
@@ -206,16 +169,14 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Uppercase'));
     await tester.pumpAndSettle();
-    expect(page.controller.serialize(), [
-      {'insert': 'HELLO\n'},
-    ]);
+    expect(page.controller.serialize(), 'HELLO');
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
   testWidgets('content changed before the page is built is reported once it is (a story started from a photo)', (
     tester,
   ) async {
     final controller =
-        adapter.createController(json: const [], selection: const TextSelection.collapsed(offset: 0), readOnly: false)
+        adapter.createController(markdown: '', selection: const TextSelection.collapsed(offset: 0), readOnly: false)
             as StoryPadEditorRichTextController;
     final focusNode = FocusNode();
     addTearDown(() {
@@ -249,17 +210,13 @@ void main() {
     await tester.pump();
 
     expect(changes, hasLength(1));
-    expect(controller.serialize(), [
-      {'insert': 'Hello\n'},
-    ]);
+    expect(controller.serialize(), 'Hello');
   });
 
   testWidgets('with text selected, undo/redo become move up/down and move the selected lines', (tester) async {
     final page = await pumpPage(
       tester,
-      json: [
-        {'insert': 'one\ntwo\nthree\n'},
-      ],
+      markdown: 'one\n\ntwo\n\nthree',
     );
     expect(find.byIcon(SpIcons.undo), findsOneWidget);
 
@@ -270,8 +227,83 @@ void main() {
 
     await tester.tap(find.byIcon(SpIcons.moveUp));
     await tester.pumpAndSettle();
-    expect(page.controller.serialize(), [
-      {'insert': 'two\none\nthree\n'},
-    ]);
+    expect(page.controller.serialize(), 'two\n\none\n\nthree');
+  });
+
+  group('the page title (its leading heading)', () {
+    Future<StoryPadEditorRichTextController> pumpTitled(
+      WidgetTester tester, {
+      required String markdown,
+      bool readOnly = false,
+      TextStyle? titleStyle,
+    }) async {
+      final controller =
+          adapter.createController(
+                markdown: markdown,
+                selection: const TextSelection.collapsed(offset: 0),
+                readOnly: readOnly,
+              )
+              as StoryPadEditorRichTextController;
+      final focusNode = FocusNode();
+      addTearDown(() {
+        focusNode.dispose();
+        controller.dispose();
+      });
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => SingleChildScrollView(
+                child: adapter.buildEditor(
+                  context: context,
+                  controller: controller,
+                  focusNode: focusNode,
+                  scrollController: ScrollController(),
+                  readOnly: readOnly,
+                  storyContent: StoryContentDbModel.create(),
+                  onChanged: () {},
+                  titleStyle: titleStyle,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return controller;
+    }
+
+    testWidgets('an empty title shows the title hint while editing, not while reading', (tester) async {
+      await pumpTitled(tester, markdown: '###\n\nbody');
+      expect(find.text('Title...', findRichText: true), findsOneWidget);
+
+      await pumpTitled(tester, markdown: '###\n\nbody', readOnly: true);
+      expect(find.text('Title...', findRichText: true), findsNothing);
+    });
+
+    testWidgets('the title gets the title style; a heading further down keeps the heading style', (tester) async {
+      await pumpTitled(
+        tester,
+        markdown: '### Trip\n\nbody\n\n### Later',
+        titleStyle: const TextStyle(fontSize: 13, color: Color(0xFF00FF00)),
+      );
+
+      TextStyle styleOf(String text) {
+        final root = tester.widget<RichText>(find.text(text, findRichText: true)).text;
+        TextStyle? found;
+        void visit(InlineSpan span, TextStyle inherited) {
+          final style = inherited.merge(span.style);
+          if (span is TextSpan && span.text == text) found = style;
+          if (span is TextSpan) span.children?.forEach((child) => visit(child, style));
+        }
+
+        visit(root, const TextStyle());
+        return found!;
+      }
+
+      expect(styleOf('Trip').fontSize, 13);
+      expect(styleOf('Trip').color, const Color(0xFF00FF00));
+      expect(styleOf('Later').fontSize, 24);
+    });
   });
 }

@@ -43,14 +43,12 @@ class StoryPageObjectsMap {
     _map[richPage.id] = StoryPageObject(
       key: GlobalKey(),
       page: richPage,
-      titleController: TextEditingController(text: richPage.title?.trim()),
       bodyController: editorAdapter.createController(
-        json: richPage.quillBody,
+        markdown: richPage.markdown,
         selection: const TextSelection.collapsed(offset: 0),
-        readOnly: readOnly,
+        readOnly: readOnly || richPage.isUnsupported,
       ),
       bodyScrollController: ScrollController(),
-      titleFocusNode: FocusNode(),
       bodyFocusNode: FocusNode(),
     );
   }
@@ -71,25 +69,16 @@ class StoryPageObjectsMap {
       final richPage = content.richPages![i];
 
       final richTextController = editorAdapter.createController(
-        json: richPage.quillBody,
+        markdown: richPage.markdown,
         selection: initialPagesMap?[richPage.id]?.bodyController.selection ?? const TextSelection.collapsed(offset: 0),
-        readOnly: readOnly,
+        readOnly: readOnly || richPage.isUnsupported,
       );
 
       map[richPage.id] = StoryPageObject(
         key: GlobalKey(),
         page: result?[i] ?? richPage,
-        titleController: TextEditingController.fromValue(
-          TextEditingValue(
-            text: richPage.title?.trim() ?? '',
-            selection:
-                initialPagesMap?[richPage.id]?.titleController.selection ??
-                TextSelection.collapsed(offset: richPage.title?.length ?? 0),
-          ),
-        ),
         bodyController: richTextController,
         bodyScrollController: ScrollController(),
-        titleFocusNode: FocusNode(),
         bodyFocusNode: FocusNode(),
       );
     }

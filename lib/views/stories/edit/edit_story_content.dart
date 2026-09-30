@@ -72,13 +72,6 @@ class _EditStoryContent extends StatelessWidget {
       onSwapPages: (oldIndex, newIndex) => viewModel.reorderPages(oldIndex: oldIndex, newIndex: newIndex),
       onDelete: (page) => viewModel.deleteAPage(context, page.page),
       canDeletePage: viewModel.pagesManager.canDeletePage,
-      onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
-        if (titleFocused) {
-          if (viewModel.pagesManager.pageScrollController.hasClients) {
-            viewModel.pagesManager.scrollToPage(page.id);
-          }
-        }
-      },
     );
   }
 

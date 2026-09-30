@@ -506,6 +506,7 @@
   "page.video_compression.message": "Tout en conservant la qualité et en économisant de l'espace. Les clips longs peuvent prendre un certain temps.",
   "page.video_compression.progress_args": "Vidéo {SP_CURRENT} de {SP_TOTAL}",
   "page.video_compression.title": "Compression vidéo",
+  "page.newer_version_notice": "Créée avec une version plus récente de StoryPad. Mets l'app à jour pour modifier cette page.",
   "paywall_features.backgrounds.subtitle": "Créez l'atmosphère idéale pour vos histoires grâce à des arrière-plans.",
   "paywall_features.backgrounds.title": "Contextes",
   "paywall_features.customizations.subtitle": "Icônes personnalisées, mises en page et polices pour l'ensemble de l'application.",

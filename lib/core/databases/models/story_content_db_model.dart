@@ -99,11 +99,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     return copyWith(
       richPages: [
         ...richPages ?? [],
-        StoryPageDbModel.legacy(
-          id: DateTime.now().millisecondsSinceEpoch,
-          title: null,
-          body: null,
-        ),
+        StoryPageDbModel.create(id: DateTime.now().millisecondsSinceEpoch),
       ],
     );
   }

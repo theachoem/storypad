@@ -86,7 +86,6 @@ class _EditTemplateContent extends StatelessWidget {
         onAddPage: () => viewModel.addNewPage(),
         onSwapPages: (oldIndex, newIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: newIndex),
         onDelete: (page) => viewModel.deleteAPage(context, page.page),
-        onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {},
         canDeletePage: viewModel.pagesManager.canDeletePage,
       ),
     );

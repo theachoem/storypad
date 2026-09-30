@@ -196,14 +196,14 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             body: delta.toJson(),
             characterCount: body.length,
             wordCount: null,
-          ),
+          ).toMarkdownPage(),
           StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch + 1,
             title: null,
             body: (Delta()..insert("Page two content.")).toJson(),
             characterCount: null,
             wordCount: null,
-          ),
+          ).toMarkdownPage(),
         ],
       ),
     );
@@ -230,7 +230,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
             body: (Delta()..insert(body)).toJson(),
             characterCount: body.length,
             wordCount: null,
-          ),
+          ).toMarkdownPage(),
         ],
       ),
     );

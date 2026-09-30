@@ -146,9 +146,7 @@ class StoryPagesManager extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
         Text(
-          page.titleController.text.trim().isNotEmpty == true
-              ? page.titleController.text.trim()
-              : tr('input.title.hint'),
+          page.page.title?.trim().isNotEmpty == true ? page.page.title!.trim() : tr('input.title.hint'),
           textAlign: TextAlign.center,
           style: TextTheme.of(context).titleSmall,
           maxLines: 2,

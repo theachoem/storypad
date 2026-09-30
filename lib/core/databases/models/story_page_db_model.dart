@@ -43,6 +43,15 @@ class StoryPageDbModel {
       _legacyBody = null,
       _unsupportedJson = null;
 
+  /// A new page: [title] as its leading heading -- an empty one when there's no title, the slot the editor shows a
+  /// "Title" hint in -- then [body], Markdown.
+  factory StoryPageDbModel.create({required int id, String? title, String body = ''}) {
+    return StoryPageDbModel.markdown(
+      id: id,
+      markdown: storyPadCodec.encode([pageTitleNode(title), ...storyPadCodec.decodeNodes(body)]),
+    );
+  }
+
   /// A page in the legacy shape: a separate [title] and a Quill Delta [body]. Only for content from before Markdown
   /// (old databases, backups and imports) -- new pages are [StoryPageDbModel.markdown].
   StoryPageDbModel.legacy({required this.id, String? title, List<dynamic>? body, this.wordCount, this.characterCount})

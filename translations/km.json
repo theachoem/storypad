@@ -506,6 +506,7 @@
   "page.video_compression.message": "រក្សាគុណភាព ខណៈសន្សំទំហំផ្ទុក។ វីដេអូវែងអាចចំណាយពេលបន្តិច",
   "page.video_compression.progress_args": "វីដេអូ {SP_CURRENT} ក្នុងចំណោម {SP_TOTAL}",
   "page.video_compression.title": "កំពុងបង្ហាប់វីដេអូ",
+  "page.newer_version_notice": "បានបង្កើតដោយ StoryPad កំណែថ្មីជាង។ ធ្វើបច្ចុប្បន្នភាពកម្មវិធី ដើម្បីកែសម្រួលទំព័រនេះ។",
   "paywall_features.backgrounds.subtitle": "បង្កើតបរិយាកាសសមស្របសម្រាប់រឿងរបស់អ្នកជាមួយផ្ទៃខាងក្រោយ",
   "paywall_features.backgrounds.title": "ផ្ទៃខាងក្រោយ",
   "paywall_features.customizations.subtitle": "រូបតំណាង ប្លង់ និងពុម្ពអក្សរផ្ទាល់ខ្លួនសម្រាប់កម្មវិធីទាំងមូល",

@@ -7,46 +7,51 @@ import 'package:storypad/core/rich_text/storypad_editor/embeds/embed_attributes.
 import 'package:storypad/core/rich_text/storypad_editor/embeds/media_embed.dart';
 import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_adapter.dart';
 import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_embeds.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad_editor/super_editor.dart';
 
-/// The bridge: pages load from and save to Quill Delta, edited in storypad_editor.
+/// Pages load from and save to Markdown, edited in storypad_editor.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final adapter = StoryPadEditorRichTextAdapter();
 
-  // A realistic stored page: formatting, a list, an embed with attributes, a legacy key, an unknown embed.
-  final storedPage = <dynamic>[
-    {
-      'insert': 'Morning',
-      'attributes': {'bold': true},
-    },
-    {'insert': ' walk\n'},
-    {'insert': 'coffee'},
-    {
-      'insert': '\n',
-      'attributes': {'list': 'checked'},
-    },
-    {'insert': 'bread'},
-    {
-      'insert': '\n',
-      'attributes': {'list': 'unchecked', 'indent': 1},
-    },
-    {
-      'insert': {'image': 'images/1.jpg|images/2.jpg'},
-      'attributes': {'custom-embed-size': 'default'},
-    },
-    {'insert': '\n'},
-    {
-      'insert': {'sticker': 'party.png'},
-    },
-    {'insert': '\nThe end\n'},
-  ];
+  // A realistic page from before Markdown: formatting, a list, an embed with attributes, a legacy key, an unknown
+  // embed -- converted the way opening a story converts it.
+  final legacyPage = StoryPageDbModel.legacy(
+    id: 1,
+    title: 'Trip',
+    body: [
+      {
+        'insert': 'Morning',
+        'attributes': {'bold': true},
+      },
+      {'insert': ' walk\n'},
+      {'insert': 'coffee'},
+      {
+        'insert': '\n',
+        'attributes': {'list': 'checked'},
+      },
+      {'insert': 'bread'},
+      {
+        'insert': '\n',
+        'attributes': {'list': 'unchecked', 'indent': 1},
+      },
+      {
+        'insert': {'image': 'images/1.jpg|images/2.jpg'},
+        'attributes': {'custom-embed-size': 'default'},
+      },
+      {'insert': '\n'},
+      {
+        'insert': {'sticker': 'party.png'},
+      },
+      {'insert': '\nThe end\n'},
+    ],
+  );
+  final storedPage = legacyPage.toMarkdownPage().markdown;
 
-  StoryPadEditorRichTextController controllerFor(List<dynamic> json, {bool readOnly = false}) {
+  StoryPadEditorRichTextController controllerFor(String markdown, {bool readOnly = false}) {
     final controller = adapter.createController(
-      json: json,
+      markdown: markdown,
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: readOnly,
     );
@@ -54,7 +59,7 @@ void main() {
     return controller as StoryPadEditorRichTextController;
   }
 
-  void type(StoryPadEditorRichTextController controller, String text, {int nodeIndex = 0, int offset = 0}) {
+  void type(StoryPadEditorRichTextController controller, String text, {int nodeIndex = 1, int offset = 0}) {
     final node = controller.editor.document.getNodeAt(nodeIndex)!;
     controller.editor.editor.execute([
       InsertTextRequest(
@@ -72,31 +77,33 @@ void main() {
     expect(editorAdapter, isA<StoryPadEditorRichTextAdapter>());
   });
 
+  test('the converted page starts with its title heading', () {
+    expect(storedPage, startsWith('### Trip\n\n**Morning** walk'));
+  });
+
   group('saving', () {
-    test('an unedited page saves its original JSON, untouched', () {
+    test('an unedited page saves its original Markdown, untouched', () {
       final controller = controllerFor(storedPage);
       expect(identical(controller.serialize(), storedPage), isTrue);
 
       // So a story opened and closed without edits isn't a change (drafts, "revert if nothing changed").
-      final page = StoryPageDbModel.legacy(id: 1, title: 'Title', body: storedPage);
+      final page = StoryPageDbModel.markdown(id: 1, markdown: storedPage);
       final content = StoryContentDbModel.create().copyWith(richPages: [page]);
-      final reopened = content.copyWith(
-        richPages: [StoryPageDbModel.legacy(id: 1, title: 'Title', body: controller.serialize())],
-      );
+      final reopened = content.copyWith(richPages: [page.withMarkdown(controller.serialize())]);
       expect(reopened.hasChanges(content), isFalse);
     });
 
-    test('an edit saves Quill with the edit, readable by everything that reads stories', () {
+    test('an edit saves Markdown with the edit, readable by everything that reads stories', () {
       final controller = controllerFor(storedPage);
       type(controller, 'Sunny ');
 
-      final saved = controller.serialize();
-      expect(saved, isNot(storedPage));
-      expect(saved.last, {'insert': '\nThe end\n'});
-      expect(QuillDeltaToPlainTextService.call(saved, markdown: false), contains('Sunny Morning walk'));
+      final saved = StoryPageDbModel.markdown(id: 1, markdown: controller.serialize());
+      expect(saved.markdown, isNot(storedPage));
+      expect(saved.title, 'Trip');
+      expect(QuillDeltaToPlainTextService.call(saved.quillBody, markdown: false), contains('Sunny Morning walk'));
       // The unknown embed survives verbatim; the album is written back under the current key.
       expect(
-        saved,
+        saved.quillBody,
         contains(
           equals({
             'insert': {'sticker': 'party.png'},
@@ -104,20 +111,25 @@ void main() {
         ),
       );
       expect(
-        saved,
+        saved.quillBody,
         contains(
           equals({
             'insert': {'media': 'images/1.jpg|images/2.jpg'},
           }),
         ),
       );
-      expect(storyPadCodec.markdownToQuill(storyPadCodec.quillToMarkdown(saved)), saved);
     });
 
-    test('undoing every edit gets the original JSON back', () {
+    test('editing the title heading changes the page title', () {
+      final controller = controllerFor(storedPage);
+      type(controller, 'Beach ', nodeIndex: 0);
+      expect(StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).title, 'Beach Trip');
+    });
+
+    test('undoing every edit gets the original Markdown back', () {
       final controller = controllerFor(storedPage);
       type(controller, 'x');
-      expect(controller.serialize(), isNot(same(storedPage)));
+      expect(controller.serialize(), isNot(storedPage));
 
       controller.editor.actions.undo();
       expect(identical(controller.serialize(), storedPage), isTrue);
@@ -128,15 +140,7 @@ void main() {
       final task = controller.editor.document.whereType<TaskNode>().first;
       controller.editor.editor.execute([ChangeTaskCompletionRequest(nodeId: task.id, isComplete: false)]);
 
-      expect(
-        controller.serialize(),
-        contains(
-          equals({
-            'insert': '\n',
-            'attributes': {'list': 'unchecked'},
-          }),
-        ),
-      );
+      expect(controller.serialize(), contains('- [ ] coffee'));
     });
 
     test('notifies on content changes, not on selection changes', () {
@@ -151,18 +155,37 @@ void main() {
     });
   });
 
+  group('isEditingTitle', () {
+    test('follows the caret into and out of the leading heading', () {
+      final controller = controllerFor(storedPage);
+      expect(controller.isEditingTitle.value, isFalse);
+
+      controller.selection = const TextSelection.collapsed(offset: 2); // In "Trip".
+      expect(controller.isEditingTitle.value, isTrue);
+
+      controller.selection = const TextSelection.collapsed(offset: 7); // In "Morning walk".
+      expect(controller.isEditingTitle.value, isFalse);
+    });
+
+    test('a page without a leading heading has no title to edit', () {
+      final controller = controllerFor('Just text\n\n### Later');
+      controller.selection = const TextSelection.collapsed(offset: 2);
+      expect(controller.isEditingTitle.value, isFalse);
+      controller.selection = const TextSelection.collapsed(offset: 12);
+      expect(controller.isEditingTitle.value, isFalse);
+    });
+  });
+
   group('embeds', () {
     test('insertMedia inserts a full-size photo, as before', () {
-      final controller = controllerFor([
-        {'insert': 'Hello\n'},
-      ]);
+      final controller = controllerFor('Hello');
       controller.selection = const TextSelection.collapsed(offset: 5);
       adapter.insertMedia(controller: controller, mediaPath: 'images/9.jpg');
 
       final media = controller.editor.embedsOf(const MediaEmbed()).single.$2;
       expect(media, const MediaValue(['images/9.jpg'], size: EmbedSize.max));
       expect(
-        controller.serialize(),
+        StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).quillBody,
         contains(
           equals({
             'insert': {'media': 'images/9.jpg'},
@@ -173,10 +196,10 @@ void main() {
     });
 
     test('insertAudio', () {
-      final controller = controllerFor([]);
+      final controller = controllerFor('');
       adapter.insertAudio(controller: controller, audioPath: 'audio/1.m4a');
       expect(
-        controller.serialize(),
+        StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).quillBody,
         contains(
           equals({
             'insert': {'audio': 'audio/1.m4a'},
@@ -186,25 +209,41 @@ void main() {
     });
 
     test('replaceText with an embed map inserts it at that offset (a story started from a photo)', () {
-      final controller = controllerFor([]);
+      final controller = controllerFor('Hello');
       controller.replaceText(0, 0, {'media': 'images/3.jpg'}, null);
       expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
     });
 
+    test('an embed inserted with the caret in the title goes below it, so the title stays first', () {
+      for (final markdown in ['###', '### Trip', '### Trip\n\nbody']) {
+        final controller = controllerFor(markdown);
+        controller.replaceText(0, 0, {'media': 'images/3.jpg'}, null);
+        final page = StoryPageDbModel.markdown(id: 1, markdown: controller.serialize());
+        expect(page.markdown, startsWith(markdown.split('\n').first), reason: markdown);
+        expect(controller.editor.document.first, isA<ParagraphNode>(), reason: markdown);
+        expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
+      }
+    });
+
     test('an embed key no embed imports is ignored, not inserted as garbage', () {
-      final controller = controllerFor([]);
+      final controller = controllerFor('');
       controller.insertEmbed(embedType: 'nope', value: 'x');
       expect(controller.serialize(), isEmpty);
     });
 
     test('replaceEmbed keeps the embed\'s other properties', () {
-      final controller = controllerFor([
-        {
-          'insert': {'media': 'images/1.jpg'},
-          'attributes': {'custom-embed-alignment': 'center'},
-        },
-        {'insert': '\n'},
-      ]);
+      final controller = controllerFor(
+        StoryPageDbModel.legacy(
+          id: 1,
+          body: [
+            {
+              'insert': {'media': 'images/1.jpg'},
+              'attributes': {'custom-embed-alignment': 'center'},
+            },
+            {'insert': '\n'},
+          ],
+        ).markdown,
+      );
       controller.replaceEmbed(offset: 0, length: 1, embedType: 'media', value: 'images/1.jpg|images/2.jpg');
       expect(
         controller.editor.embedsOf(const MediaEmbed()).single.$2,
@@ -219,8 +258,8 @@ void main() {
       for (final selection in const [
         TextSelection.collapsed(offset: 0),
         TextSelection(baseOffset: 2, extentOffset: 20),
-        TextSelection.collapsed(offset: 27),
-        TextSelection.collapsed(offset: 29),
+        TextSelection.collapsed(offset: 32),
+        TextSelection.collapsed(offset: 34),
       ]) {
         controller.selection = selection;
         expect(controller.selection, selection);
@@ -229,7 +268,7 @@ void main() {
 
     test('a selection handed over from another controller (show → edit) is kept', () {
       final controller = adapter.createController(
-        json: storedPage,
+        markdown: storedPage,
         selection: const TextSelection(baseOffset: 0, extentOffset: 7),
         readOnly: false,
       );
@@ -239,20 +278,17 @@ void main() {
 
     test('plain text and length', () {
       final controller = controllerFor(storedPage);
-      expect(controller.document.toPlainText(), startsWith('Morning walk\ncoffee\nbread'));
+      expect(controller.document.toPlainText(), startsWith('Trip\nMorning walk\ncoffee\nbread'));
       expect(
         controller.document.length,
         controller.editor.document.fold(0, (sum, node) {
           return sum + (node is TextNode ? node.text.length : 1) + 1;
         }),
       );
-      expect(controller.document.toJson(), same(storedPage));
     });
 
     test('cursor left/right move one character', () {
-      final controller = controllerFor([
-        {'insert': 'abc\n'},
-      ]);
+      final controller = controllerFor('abc');
       controller.selection = const TextSelection.collapsed(offset: 1);
       controller.moveCursorRight();
       expect(controller.selection, const TextSelection.collapsed(offset: 2));
@@ -260,12 +296,5 @@ void main() {
       controller.moveCursorLeft();
       expect(controller.selection, const TextSelection.collapsed(offset: 0));
     });
-  });
-
-  test('headless documents read stored pages', () {
-    final document = adapter.createDocument(json: storedPage);
-    expect(document.toPlainText(), startsWith('Morning walk'));
-    expect(document.toJson(), same(storedPage));
-    expect(adapter.createEmptyDocument().toPlainText(), '');
   });
 }

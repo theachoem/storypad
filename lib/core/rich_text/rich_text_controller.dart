@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
 
@@ -20,6 +21,10 @@ abstract class RichTextController extends ChangeNotifier {
 
   /// Whether the editor is in read-only mode
   bool get readOnly;
+
+  /// Whether the caret (or selection) is in the page title -- the page's leading heading. Kept while the editor loses
+  /// its selection (e.g. to a sheet), so a title toolbar stays up.
+  ValueListenable<bool> get isEditingTitle;
 
   // ========================================================================
   // Text Editing Operations
@@ -46,10 +51,9 @@ abstract class RichTextController extends ChangeNotifier {
   /// Gets plain text representation of the document (no formatting)
   String getPlainText();
 
-  /// Serializes the document to JSON format for storage
-  ///
-  /// Returns format compatible with [RichTextDocument.fromJson()]
-  List<dynamic> serialize();
+  /// The page as Markdown for storage, title included (its first block, a heading). A page the user didn't change
+  /// returns the Markdown it was opened with, untouched.
+  String serialize();
 
   // ========================================================================
   // Embed Operations

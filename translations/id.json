@@ -506,6 +506,7 @@
   "page.video_compression.message": "Menjaga kualitas sekaligus menghemat ruang. Klip panjang bisa memakan waktu cukup lama.",
   "page.video_compression.progress_args": "Video {SP_CURRENT} dari {SP_TOTAL}",
   "page.video_compression.title": "Kompresi Video",
+  "page.newer_version_notice": "Dibuat dengan StoryPad versi terbaru. Perbarui aplikasi untuk mengedit halaman ini.",
   "paywall_features.backgrounds.subtitle": "Ciptakan suasana yang tepat untuk cerita Anda dengan latar belakang.",
   "paywall_features.backgrounds.title": "Latar Belakang",
   "paywall_features.customizations.subtitle": "Ikon, tata letak, dan font khusus untuk seluruh aplikasi.",

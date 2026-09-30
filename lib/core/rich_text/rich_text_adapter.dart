@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
-import 'package:storypad/core/rich_text/rich_text_document.dart';
 import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_adapter.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 
@@ -42,6 +41,7 @@ abstract class RichTextAdapter {
     PageLayoutType? layoutType,
     VoidCallback? onChanged,
     VoidCallback? onGoToEdit,
+    TextStyle? titleStyle,
   });
 
   /// Builds the rich text toolbar widget.
@@ -55,29 +55,12 @@ abstract class RichTextAdapter {
   // Factory Methods
   // ========================================================================
 
-  /// Creates a RichTextController from JSON data.
-  ///
-  /// [json]: Delta JSON from database (`List<dynamic>`)
-  /// [selection]: Initial cursor position
-  /// [readOnly]: Whether the editor is read-only
+  /// Creates a controller for a page stored as [markdown] (title included, as its leading heading).
   RichTextController createController({
-    required List<dynamic> json,
+    required String markdown,
     required TextSelection selection,
     required bool readOnly,
   });
-
-  /// Creates a RichTextController with empty content.
-  RichTextController createEmptyController({
-    required bool readOnly,
-  });
-
-  /// Creates a RichTextDocument from JSON data.
-  RichTextDocument createDocument({
-    required List<dynamic> json,
-  });
-
-  /// Creates an empty RichTextDocument.
-  RichTextDocument createEmptyDocument();
 
   // ========================================================================
   // Embed Operations
@@ -118,6 +101,5 @@ abstract class RichTextAdapter {
 /// editorAdapter.insertMedia(controller: controller, mediaPath: path)
 /// ```
 ///
-/// Stories are edited with storypad_editor (super_editor) and still stored as Quill Delta. To roll back to the Quill
-/// editor, use `QuillRichTextAdapter()` instead -- stored stories need no change either way.
+/// Stories are edited with storypad_editor (super_editor) and stored as Markdown.
 final RichTextAdapter editorAdapter = StoryPadEditorRichTextAdapter();

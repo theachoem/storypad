@@ -506,6 +506,7 @@
   "page.video_compression.message": "Сохранение качества при экономии места. На создание длинных видеороликов может уйти много времени.",
   "page.video_compression.progress_args": "Видео {SP_CURRENT} из {SP_TOTAL}",
   "page.video_compression.title": "Сжатие видео",
+  "page.newer_version_notice": "Создано в более новой версии StoryPad. Обнови приложение, чтобы редактировать эту страницу.",
   "paywall_features.backgrounds.subtitle": "Создай нужную атмосферу для своих историй с помощью фонов.",
   "paywall_features.backgrounds.title": "Фоны",
   "paywall_features.customizations.subtitle": "Пользовательские значки, макеты и шрифты для всего приложения.",

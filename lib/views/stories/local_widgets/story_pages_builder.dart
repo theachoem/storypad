@@ -15,14 +15,13 @@ import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';
 import 'package:storypad/widgets/sp_animated_icon.dart';
-import 'package:storypad/widgets/sp_focus_node_builder2.dart';
+import 'package:storypad/widgets/sp_focus_node_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_page_view_datas.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 part 'story_page.dart';
 part 'add_page_button.dart';
-part 'title_field.dart';
 part 'story_page_builder_action.dart';
 
 part 'layouts/pages_layout.dart';
@@ -101,7 +100,6 @@ class StoryPagesBuilder extends StatelessWidget {
       canMoveDown: actions == null ? false : actions!.canMoveDown(pageIndex, pages.length),
       canDeletePage: actions?.canDeletePage == true,
       onChanged: onPageChanged,
-      onFocusChange: actions?.onFocusChange != null ? (a, b) => actions!.onFocusChange(pageIndex, page, a, b) : null,
       onTitleVisibilityChanged: onTitleVisibilityChanged != null
           ? (info) => onTitleVisibilityChanged!(pageIndex, page, info)
           : null,

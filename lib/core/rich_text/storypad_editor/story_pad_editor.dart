@@ -9,8 +9,8 @@ import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
-/// A story page's body: the storypad_editor editor, sized to its content below the page title, in the page's scroll
-/// view.
+/// A story page: the storypad_editor editor, sized to its content, in the page's scroll view. The page title is the
+/// page's leading heading, styled with [StoryPadEditor.titleStyle].
 class StoryPadEditor extends StatefulWidget {
   const StoryPadEditor({
     super.key,
@@ -21,6 +21,7 @@ class StoryPadEditor extends StatefulWidget {
     required this.layoutType,
     required this.onChanged,
     required this.onGoToEdit,
+    this.titleStyle,
   });
 
   final StoryPadEditorRichTextController controller;
@@ -39,6 +40,9 @@ class StoryPadEditor extends StatefulWidget {
   /// Opens the story for editing, from a read-only page's context menu.
   final VoidCallback? onGoToEdit;
 
+  /// How the page title -- its leading heading -- looks (the story's title font). `null` keeps the heading style.
+  final TextStyle? titleStyle;
+
   @override
   State<StoryPadEditor> createState() => _StoryPadEditorState();
 }
@@ -49,7 +53,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
   StoryPadEditorStyle? _style;
   // What the style was built from. Not the ThemeData itself: story themes build a new one on every rebuild, and a new
   // style makes the editor restyle every block.
-  (ColorScheme, TextStyle, TargetPlatform)? _styleKey;
+  (ColorScheme, TextStyle, TargetPlatform, TextStyle?)? _styleKey;
 
   @override
   void initState() {
@@ -133,9 +137,9 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
 
   StoryPadEditorStyle _styleFor(BuildContext context) {
     final theme = Theme.of(context);
-    final key = (theme.colorScheme, DefaultTextStyle.of(context).style, theme.platform);
+    final key = (theme.colorScheme, DefaultTextStyle.of(context).style, theme.platform, widget.titleStyle);
     if (_style == null || _styleKey != key) {
-      _style = StoryPadEditorStyle(context);
+      _style = StoryPadEditorStyle(context, titleStyle: widget.titleStyle);
       _styleKey = key;
     }
     return _style!;
@@ -164,6 +168,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
           blockStyles: style.blockStyles,
           placeholder: '...',
           placeholderStyle: style.placeholderStyle,
+          titlePlaceholder: widget.readOnly ? null : tr('input.title.hint'),
           checkboxesEnabled: widget.onChanged != null,
           onTapLink: (url) => UrlOpenerService.openForRichContent(context: context, url: url),
           contextMenuActions: _buildContextMenuActions(),

@@ -506,6 +506,7 @@
   "page.video_compression.message": "既保证了视频质量，又节省了空间。长视频片段可能需要一些时间。",
   "page.video_compression.progress_args": "视频 {SP_CURRENT} 的 {SP_TOTAL}",
   "page.video_compression.title": "压缩视频",
+  "page.newer_version_notice": "由较新版本的 StoryPad 创建。更新应用后即可编辑此页面。",
   "paywall_features.backgrounds.subtitle": "使用背景为你的故事营造合适的氛围。",
   "paywall_features.backgrounds.title": "背景",
   "paywall_features.customizations.subtitle": "自定义图标、布局和应用内字体。",

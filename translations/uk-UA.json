@@ -506,6 +506,7 @@
   "page.video_compression.message": "Збереження якості та економія місця. Довгі кліпи можуть зайняти деякий час.",
   "page.video_compression.progress_args": "Відео {SP_CURRENT} з {SP_TOTAL}",
   "page.video_compression.title": "Стиснення відео",
+  "page.newer_version_notice": "Створено в новішій версії StoryPad. Онови застосунок, щоб редагувати цю сторінку.",
   "paywall_features.backgrounds.subtitle": "Створіть гарну атмосферу для своїх розповідей за допомогою тла.",
   "paywall_features.backgrounds.title": "Тло",
   "paywall_features.customizations.subtitle": "Налаштовувані значки, макети та шрифти для всієї програми.",

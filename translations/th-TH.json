@@ -506,6 +506,7 @@
   "page.video_compression.message": "รักษาคุณภาพไปพร้อมกับการประหยัดพื้นที่ คลิปยาวๆ อาจใช้เวลาสักครู่",
   "page.video_compression.progress_args": "วิดีโอ {SP_CURRENT} จาก {SP_TOTAL}",
   "page.video_compression.title": "การบีบอัดวิดีโอ",
+  "page.newer_version_notice": "สร้างด้วย StoryPad เวอร์ชันใหม่กว่า อัปเดตแอปเพื่อแก้ไขหน้านี้",
   "paywall_features.backgrounds.subtitle": "สร้างบรรยากาศที่เหมาะสมให้กับเรื่องราวของคุณด้วยฉากหลัง",
   "paywall_features.backgrounds.title": "พื้นหลัง",
   "paywall_features.customizations.subtitle": "ไอคอน รูปแบบ และฟอนต์ที่กำหนดเองสำหรับทั้งแอป",

@@ -36,9 +36,10 @@ class SpPagesToolbar extends StatefulWidget {
 }
 
 class SpPagesToolbarState extends State<SpPagesToolbar> {
-  Map<int, void Function()> titleFocusListenters = {};
   Map<int, void Function()> bodyFocusListenters = {};
+  Map<int, void Function()> titleListenters = {};
 
+  // The title toolbar shows while the caret is in the focused page's title (its leading heading).
   bool titleFocused = false;
   int? bodyFocusedIndex;
 
@@ -50,11 +51,11 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
 
   void setupListeners() {
     for (int index = 0; index < widget.pages.length; index++) {
-      titleFocusListenters[index] = () => titleFocusListener(index);
       bodyFocusListenters[index] = () => bodyFocusListener(index);
+      titleListenters[index] = () => titleListener(index);
 
-      widget.pages[index].titleFocusNode.addListener(titleFocusListenters[index]!);
       widget.pages[index].bodyFocusNode.addListener(bodyFocusListenters[index]!);
+      widget.pages[index].bodyController.isEditingTitle.addListener(titleListenters[index]!);
     }
   }
 
@@ -62,45 +63,35 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   void didUpdateWidget(covariant SpPagesToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    clearPreviousListeners();
+    clearPreviousListeners(oldWidget.pages);
     setupListeners();
   }
 
-  void clearPreviousListeners() {
-    for (int index = 0; index < widget.pages.length; index++) {
-      if (titleFocusListenters[index] != null) {
-        widget.pages[index].titleFocusNode.removeListener(titleFocusListenters[index]!);
-      }
+  void clearPreviousListeners(List<StoryPageObject> pages) {
+    for (int index = 0; index < pages.length; index++) {
       if (bodyFocusListenters[index] != null) {
-        widget.pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
+        pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
+      }
+      if (titleListenters[index] != null) {
+        pages[index].bodyController.isEditingTitle.removeListener(titleListenters[index]!);
       }
     }
 
-    titleFocusListenters.clear();
     bodyFocusListenters.clear();
+    titleListenters.clear();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    clearPreviousListeners();
+    clearPreviousListeners(widget.pages);
     setupListeners();
   }
 
-  void titleFocusListener(int index) {
-    if (index >= widget.pages.length) return;
-    if (widget.pages[index].titleFocusNode.hasFocus) {
-      titleFocused = true;
-    } else {
-      bool everyBodyNoFocus = widget.pages.every((e) => !e.bodyFocusNode.hasFocus);
-      if (everyBodyNoFocus && titleFocused) {
-        titleFocused = true;
-      } else {
-        titleFocused = false;
-      }
-    }
-
+  void titleListener(int index) {
+    if (index >= widget.pages.length || index != bodyFocusedIndex) return;
+    titleFocused = widget.pages[index].bodyController.isEditingTitle.value;
     if (mounted) setState(() {});
   }
 
@@ -108,7 +99,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
     if (index >= widget.pages.length) return;
     if (widget.pages[index].bodyFocusNode.hasFocus) {
       bodyFocusedIndex = index;
-      titleFocused = false;
+      titleFocused = widget.pages[index].bodyController.isEditingTitle.value;
     }
 
     if (mounted) setState(() {});
@@ -116,7 +107,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
 
   @override
   void dispose() {
-    clearPreviousListeners();
+    clearPreviousListeners(widget.pages);
     super.dispose();
   }
 
@@ -127,7 +118,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
       child: Stack(
         fit: StackFit.loose,
         children: [
-          if (titleFocused) buildTitleToolbar(context),
+          if (titleFocused && bodyFocusedIndex != null) buildTitleToolbar(context),
           if (!titleFocused)
             ...List.generate(
               widget.pages.length,

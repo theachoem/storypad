@@ -506,6 +506,7 @@
   "page.video_compression.message": "品質を維持しながらスペースを節約。長いクリップは時間がかかる場合があります。",
   "page.video_compression.progress_args": "ビデオ {SP_CURRENT} / {SP_TOTAL}",
   "page.video_compression.title": "ビデオの圧縮",
+  "page.newer_version_notice": "新しいバージョンの StoryPad で作成されました。このページを編集するにはアプリをアップデートしてね。",
   "paywall_features.backgrounds.subtitle": "背景を使ってストーリーに適切な雰囲気を作りましょう。",
   "paywall_features.backgrounds.title": "背景",
   "paywall_features.customizations.subtitle": "カスタムアイコン、レイアウト、およびアプリ全体で使用するフォント。",

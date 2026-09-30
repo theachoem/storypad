@@ -11,6 +11,7 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -52,6 +53,13 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   EditingFlowType get flowType => params.flowType;
 
   Future<void> load() async {
+    if (params.initialTemplate != null && template.content?.hasLegacyPages == true) {
+      template = await StoryConvertLegacyPagesService.template(template);
+      latestContent = template.content;
+      draftContent = template.content;
+      if (draftContent!.richPages?.isNotEmpty != true) draftContent = draftContent!.addRichPage();
+    }
+
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: draftContent!,
       readOnly: false,

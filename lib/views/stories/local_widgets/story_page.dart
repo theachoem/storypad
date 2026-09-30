@@ -6,7 +6,6 @@ class _StoryPage extends StatelessWidget {
     required this.preferences,
     required this.storyContent,
     required this.page,
-    required this.onFocusChange,
     required this.onTitleVisibilityChanged,
     required this.onSwap,
     required this.canMoveUp,
@@ -23,7 +22,6 @@ class _StoryPage extends StatelessWidget {
   final StoryPreferencesDbModel? preferences;
   final StoryContentDbModel storyContent;
   final StoryPageObject page;
-  final void Function(bool titleFocused, bool bodyFocused)? onFocusChange;
   final void Function(VisibilityInfo info)? onTitleVisibilityChanged;
 
   final int pageIndex;
@@ -41,15 +39,24 @@ class _StoryPage extends StatelessWidget {
   final bool smallPage;
 
   void onChange() {
-    StoryPageDbModel richPage = StoryPageDbModel.legacy(
-      id: page.page.id,
-      title: page.titleController.text.trim().isNotEmpty == true ? page.titleController.text.trim() : null,
-      body: page.bodyController.serialize(),
-      wordCount: page.page.wordCount,
-      characterCount: page.page.characterCount,
-    );
+    // A page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle).
+    if (page.page.isUnsupported) return;
+    onChanged?.call(page.page.withMarkdown(page.bodyController.serialize()));
+  }
 
-    onChanged?.call(richPage);
+  /// How the page title -- the page's leading heading -- looks: the story's title font, size and weight.
+  TextStyle _titleStyle(BuildContext context) {
+    double? fontSize = preferences?.titleFontSize ?? Theme.of(context).textTheme.titleMedium?.fontSize;
+    if (fontSize != null && !smallPage) fontSize += 2;
+
+    return GoogleFonts.getFont(
+      preferences?.titleFontFamily ??
+          preferences?.fontFamily ??
+          context.read<DevicePreferencesProvider>().preferences.fontFamily,
+      color: Theme.of(context).textTheme.titleMedium?.color,
+      fontSize: fontSize,
+      fontWeight: AppTheme.getThemeFontWeight(context, preferences?.titleFontWeight ?? kTitleDefaultFontWeight),
+    );
   }
 
   @override
@@ -77,34 +84,26 @@ class _StoryPage extends StatelessWidget {
   }
 
   Widget buildEditor(BuildContext context) {
-    bool showHideTitle = readOnly && page.titleController.text.trim().isEmpty == true;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       spacing: 0.0,
       children: [
-        if (showHideTitle) ...[
-          const SizedBox(height: 12),
-        ] else ...[
-          VisibilityDetector(
-            key: ValueKey('page-title-${page.id}'),
-            onVisibilityChanged: onTitleVisibilityChanged,
-            child: Padding(
-              padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _TitleField(
-                titleFocusNode: page.titleFocusNode,
-                bodyFocusNode: page.bodyFocusNode,
-                titleController: page.titleController,
-                preferences: preferences,
-                readOnly: readOnly,
-                largerTitle: !smallPage,
-                onChanged: (_) => onChange(),
-              ),
+        // Marks the page's top (where its title is), for finding the page to open when going to edit.
+        VisibilityDetector(
+          key: ValueKey('page-title-${page.id}'),
+          onVisibilityChanged: onTitleVisibilityChanged,
+          child: const SizedBox(height: 8, width: double.infinity),
+        ),
+        if (page.page.isUnsupported)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            child: Text(
+              tr('page.newer_version_notice'),
+              style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).error),
             ),
           ),
-        ],
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
           child: editorAdapter.buildEditor(
@@ -117,6 +116,7 @@ class _StoryPage extends StatelessWidget {
             layoutType: preferences?.layoutType,
             onChanged: onChanged != null ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
+            titleStyle: _titleStyle(context),
           ),
         ),
       ],
@@ -127,10 +127,8 @@ class _StoryPage extends StatelessWidget {
     return Positioned(
       top: -16.0,
       right: -16.0,
-      child: SpFocusNodeBuilder2(
-        focusNode1: page.titleFocusNode,
-        focusNode2: page.bodyFocusNode,
-        onFucusChangeAfterInitialized: onFocusChange,
+      child: SpFocusNodeBuilder(
+        focusNode: page.bodyFocusNode,
         child: MoreVertActionButtons(
           pageIndex: pageIndex,
           canMoveUp: canMoveUp,
@@ -139,10 +137,10 @@ class _StoryPage extends StatelessWidget {
           onSwap: onSwap!,
           onDelete: onDelete!,
         ),
-        builder: (context, titleFocused, bodyFocused, child) {
+        builder: (context, focused, child) {
           return SpAnimatedIcons.fadeScale(
             duration: Durations.medium3,
-            showFirst: titleFocused || bodyFocused,
+            showFirst: focused,
             firstChild: child!,
             secondChild: const SizedBox.shrink(),
           );

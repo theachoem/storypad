@@ -506,6 +506,7 @@
   "page.video_compression.message": "الحفاظ على الجودة مع توفير المساحة. قد تستغرق المشابك الطويلة بعض الوقت.",
   "page.video_compression.progress_args": "الفيديو {SP_CURRENT} من {SP_TOTAL}",
   "page.video_compression.title": "ضغط الفيديو",
+  "page.newer_version_notice": "أُنشئت بإصدار أحدث من StoryPad. حدّث التطبيق لتعديل هذه الصفحة.",
   "paywall_features.backgrounds.subtitle": "ابتكر الجو المناسب لقصصك باستخدام الخلفيات.",
   "paywall_features.backgrounds.title": "الخلفيات",
   "paywall_features.customizations.subtitle": "أيقونات وتصاميم وخطوط مخصصة لجميع أقسام التطبيق.",

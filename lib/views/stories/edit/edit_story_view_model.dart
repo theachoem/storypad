@@ -8,6 +8,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
@@ -50,6 +51,7 @@ class EditStoryViewModel extends BaseStoryViewModel {
     story = this.initialStory = initialStory;
 
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
+    if (story != null) story = this.initialStory = await StoryConvertLegacyPagesService.call(story);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
@@ -140,13 +142,6 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
       for (StoryPageDbModel richPage in draftContent!.richPages!) {
         final page = pagesManager.pagesMap[richPage.id];
-
-        // only focus when it is a selection (no tap)
-        if (page != null &&
-            (page.titleController.selection.baseOffset != page.titleController.selection.extentOffset)) {
-          page.titleFocusNode.requestFocus();
-          requested = true;
-        }
 
         // only focus when it is a selection (no tap)
         if (page != null && (page.bodyController.selection.baseOffset != page.bodyController.selection.extentOffset)) {

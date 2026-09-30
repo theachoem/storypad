@@ -506,6 +506,7 @@
   "page.video_compression.message": "Đảm bảo chất lượng mà vẫn tiết kiệm không gian. Việc kẹp các đoạn video dài có thể mất một chút thời gian.",
   "page.video_compression.progress_args": "Video {SP_CURRENT} của {SP_TOTAL}",
   "page.video_compression.title": "Nén video",
+  "page.newer_version_notice": "Được tạo bằng phiên bản StoryPad mới hơn. Cập nhật ứng dụng để chỉnh sửa trang này.",
   "paywall_features.backgrounds.subtitle": "Tạo bầu không khí phù hợp cho câu chuyện của bạn bằng cách sử dụng hình nền.",
   "paywall_features.backgrounds.title": "Bối cảnh",
   "paywall_features.customizations.subtitle": "Các biểu tượng, bố cục và phông chữ tùy chỉnh cho toàn bộ ứng dụng.",

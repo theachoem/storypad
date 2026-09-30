@@ -5,8 +5,9 @@ import 'package:storypad_editor/super_editor.dart';
 /// How story text looks in the editor: the story's theme (font, weight, colors, and text scale from its preferences),
 /// with Quill's sizes so stories look as they did -- 16 for body text, 34/30/24/20/18/16 for headings.
 class StoryPadEditorStyle {
-  StoryPadEditorStyle(BuildContext context)
-    : _colorScheme = ColorScheme.of(context),
+  StoryPadEditorStyle(BuildContext context, {TextStyle? titleStyle})
+    : _titleStyle = titleStyle,
+      _colorScheme = ColorScheme.of(context),
       _base = DefaultTextStyle.of(context).style,
       _isCupertino = Theme.of(context).platform == .iOS || Theme.of(context).platform == .macOS;
 
@@ -26,6 +27,7 @@ class StoryPadEditorStyle {
 
   // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
+  final TextStyle? _titleStyle;
   final ColorScheme _colorScheme;
   final TextStyle _base;
   final bool _isCupertino;
@@ -85,6 +87,15 @@ class StoryPadEditorStyle {
         Styles.textStyle: TextStyle(color: _colorScheme.onSurface.withValues(alpha: 0.8)),
       },
     ),
+    // The page title: a heading that's the page's first block (see StoryCodec.pageTitleOf), in the story's title font.
+    if (_titleStyle case final titleStyle?)
+      StyleRule(BlockSelector.all, (document, node) {
+        if (!_isTitle(document, node)) return const {};
+        return {
+          Styles.textStyle: titleStyle.copyWith(letterSpacing: 0, height: 1.25),
+          Styles.padding: const CascadingPadding.only(top: 0),
+        };
+      }),
     StyleRule(
       const BlockSelector('code'),
       (document, node) => {
@@ -92,6 +103,12 @@ class StoryPadEditorStyle {
       },
     ),
   ];
+
+  static bool _isTitle(Document document, DocumentNode node) {
+    if (node is! ParagraphNode || document.getNodeIndexById(node.id) != 0) return false;
+    final Object? blockType = node.getMetadataValue(NodeMetadata.blockType);
+    return blockType is NamedAttribution && blockType.id.startsWith('header');
+  }
 
   /// The frames around quotes and code blocks, with the space inside them.
   late final Map<String, StoryBlockStyle> blockStyles = {

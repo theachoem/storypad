@@ -506,6 +506,7 @@
   "page.video_compression.message": "Yerden tasarruf ederken kaliteyi korumak. Uzun videolar zaman alabilir.",
   "page.video_compression.progress_args": "{SP_TOTAL} videosunun {SP_CURRENT}'i",
   "page.video_compression.title": "Video Sıkıştırma",
+  "page.newer_version_notice": "Daha yeni bir StoryPad sürümüyle oluşturuldu. Bu sayfayı düzenlemek için uygulamayı güncelle.",
   "paywall_features.backgrounds.subtitle": "Arka planlarla hikayeleriniz için doğru atmosferi yaratın.",
   "paywall_features.backgrounds.title": "Arka planlar",
   "paywall_features.customizations.subtitle": "Özel simgeler, düzenler ve uygulama genelinde kullanılan yazı tipleri.",

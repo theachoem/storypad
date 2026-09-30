@@ -19,17 +19,17 @@
 //     ↓ (calls editorAdapter.xxx)
 // RichTextAdapter (interface)
 //     ↓ (singleton instance)
-// QuillRichTextAdapter (implementation)
+// StoryPadEditorRichTextAdapter (implementation)
 //     ↓ (uses)
-// flutter_quill package
+// storypad_editor package
 // ```
 //
 // ## Usage
 //
 // ```dart
-// // Create controller from JSON (database)
+// // Create controller from a stored page (Markdown)
 // final controller = editorAdapter.createController(
-//   json: deltaJson,
+//   markdown: page.markdown,
 //   selection: TextSelection.collapsed(offset: 0),
 //   readOnly: false,
 // );
@@ -54,8 +54,8 @@
 //   mediaPath: 'path/to/image.jpg',
 // );
 //
-// // Serialize for storage
-// final json = controller.serialize();
+// // Serialize for storage (Markdown)
+// final markdown = controller.serialize();
 //
 // // Access document
 // final plainText = controller.document.toPlainText();
