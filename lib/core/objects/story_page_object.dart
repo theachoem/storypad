@@ -5,7 +5,6 @@ import 'package:storypad/core/rich_text/rich_text.dart';
 class StoryPageObject {
   final GlobalKey key;
   final RichTextController bodyController;
-  final ScrollController bodyScrollController;
   final FocusNode bodyFocusNode;
 
   // allow changed after initialize
@@ -22,13 +21,11 @@ class StoryPageObject {
     required this.key,
     required this.page,
     required this.bodyController,
-    required this.bodyScrollController,
     required this.bodyFocusNode,
   });
 
   void dispose() {
     bodyController.dispose();
-    bodyScrollController.dispose();
     bodyFocusNode.dispose();
   }
 }

@@ -151,7 +151,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
     );
   }
 
-  static Future<void> showQuillPicker<T>({
+  static Future<void> showForEditor({
     required BuildContext context,
     required RichTextController controller,
   }) async {
@@ -172,7 +172,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
     if (pickAssets is List<AssetDbModel> && pickAssets.isNotEmpty) {
       // Media embed supports multiple items by joining paths with '|', and parsing them in the embed builder.
-      // See docs/features/album-embed.md for details.
+      // See docs/app/features/media.md for details.
       final mediaPath = pickAssets.map((a) => a.relativeLocalFilePath).join('|');
 
       editorAdapter.insertMedia(

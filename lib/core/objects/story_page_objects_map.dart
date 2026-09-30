@@ -48,7 +48,6 @@ class StoryPageObjectsMap {
         selection: const TextSelection.collapsed(offset: 0),
         readOnly: readOnly || richPage.isUnsupported,
       ),
-      bodyScrollController: ScrollController(),
       bodyFocusNode: FocusNode(),
     );
   }
@@ -80,7 +79,6 @@ class StoryPageObjectsMap {
         key: GlobalKey(),
         page: result?[i] ?? richPage,
         bodyController: richTextController,
-        bodyScrollController: ScrollController(),
         bodyFocusNode: FocusNode(),
       );
     }

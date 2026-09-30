@@ -187,16 +187,19 @@ void main() {
       );
     });
 
-    test('replaceText with an embed map inserts it at that offset (a story started from a photo)', () {
+    test('an embed at a placed caret goes there (a story started from a photo)', () {
       final controller = controllerFor('Hello');
-      controller.replaceText(0, 0, {'media': 'images/3.jpg'}, null);
+      controller.selection = const TextSelection.collapsed(offset: 0);
+      controller.insertEmbed(embedType: 'media', value: 'images/3.jpg');
+      expect(controller.editor.document.first, isNot(isA<ParagraphNode>()));
       expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
     });
 
     test('an embed inserted with the caret in the title goes below it, so the title stays first', () {
       for (final markdown in ['###', '### Trip', '### Trip\n\nbody']) {
         final controller = controllerFor(markdown);
-        controller.replaceText(0, 0, {'media': 'images/3.jpg'}, null);
+        controller.selection = const TextSelection.collapsed(offset: 0);
+        controller.insertEmbed(embedType: 'media', value: 'images/3.jpg');
         final page = StoryPageDbModel.markdown(id: 1, markdown: controller.serialize());
         expect(page.markdown, startsWith(markdown.split('\n').first), reason: markdown);
         expect(controller.editor.document.first, isA<ParagraphNode>(), reason: markdown);
@@ -208,26 +211,6 @@ void main() {
       final controller = controllerFor('');
       controller.insertEmbed(embedType: 'nope', value: 'x');
       expect(controller.serialize(), isEmpty);
-    });
-
-    test('replaceEmbed keeps the embed\'s other properties', () {
-      final controller = controllerFor(
-        StoryPageDbModel.legacy(
-          id: 1,
-          body: [
-            {
-              'insert': {'media': 'images/1.jpg'},
-              'attributes': {'custom-embed-alignment': 'center'},
-            },
-            {'insert': '\n'},
-          ],
-        ).markdown,
-      );
-      controller.replaceEmbed(offset: 0, length: 1, embedType: 'media', value: 'images/1.jpg|images/2.jpg');
-      expect(
-        controller.editor.embedsOf(const MediaEmbed()).single.$2,
-        const MediaValue(['images/1.jpg', 'images/2.jpg'], alignment: EmbedAlignment.center),
-      );
     });
   });
 
@@ -255,25 +238,10 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
     });
 
-    test('plain text and length', () {
+    test('plain text', () {
       final controller = controllerFor(storedPage);
       expect(controller.document.toPlainText(), startsWith('Trip\nMorning walk\ncoffee\nbread'));
-      expect(
-        controller.document.length,
-        controller.editor.document.fold(0, (sum, node) {
-          return sum + (node is TextNode ? node.text.length : 1) + 1;
-        }),
-      );
-    });
-
-    test('cursor left/right move one character', () {
-      final controller = controllerFor('abc');
-      controller.selection = const TextSelection.collapsed(offset: 1);
-      controller.moveCursorRight();
-      expect(controller.selection, const TextSelection.collapsed(offset: 2));
-      controller.moveCursorLeft();
-      controller.moveCursorLeft();
-      expect(controller.selection, const TextSelection.collapsed(offset: 0));
+      expect(controller.document.bodyPlainText(), startsWith('Morning walk\ncoffee\nbread'), reason: 'no title');
     });
   });
 }

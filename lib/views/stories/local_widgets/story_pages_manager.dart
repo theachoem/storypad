@@ -105,7 +105,8 @@ class StoryPagesManager extends StatelessWidget {
           children: [
             buildPageCard(
               context: context,
-              child: Text(page.bodyController.document.toPlainText()),
+              // The title is the label below: the card shows what follows it.
+              child: Text(page.bodyController.document.bodyPlainText()),
               onTap: () {
                 HapticFeedback.selectionClick();
                 viewModel.pagesManager.toggleManagingPage();
@@ -146,7 +147,9 @@ class StoryPagesManager extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
         Text(
-          page.page.title?.trim().isNotEmpty == true ? page.page.title!.trim() : tr('input.title.hint'),
+          page.page.title?.trim().isNotEmpty == true
+              ? page.page.title!.trim()
+              : tr('general.page_number', args: ['${pageIndex + 1}']),
           textAlign: TextAlign.center,
           style: TextTheme.of(context).titleSmall,
           maxLines: 2,

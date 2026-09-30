@@ -95,7 +95,6 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
                 child: editorAdapter.buildToolbar(
                   context: context,
                   controller: widget.pages[index].bodyController,
-                  backgroundColor: widget.backgroundColor,
                 ),
               ),
             );

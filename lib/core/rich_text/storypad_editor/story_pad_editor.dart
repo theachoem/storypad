@@ -86,8 +86,8 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
     super.dispose();
   }
 
-  // The page owns the body focus node (the page, its title field and the toolbar listen to it); the editor owns its
-  // own. Focus handed to the page's node is passed on to the editor, and the editor's focus is mirrored back to it.
+  // The page owns the body focus node (the page and the toolbar listen to it); the editor owns its own. Focus handed
+  // to the page's node is passed on to the editor, and the editor's focus is mirrored back to it.
   void _attachFocus(FocusNode pageFocusNode) {
     pageFocusNode.addListener(_onPageFocusChanged);
     _editor.focusNode.addListener(_onEditorFocusChanged);

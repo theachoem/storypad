@@ -18,33 +18,9 @@ abstract class RichTextController extends ChangeNotifier {
   TextSelection get selection;
   set selection(TextSelection value);
 
-  /// Whether the editor is in read-only mode
-  bool get readOnly;
-
   // ========================================================================
-  // Text Editing Operations
+  // Serialization
   // ========================================================================
-
-  /// Replaces text at [index] with [length] replaced by [data].
-  ///
-  /// [data] can be:
-  /// - String: Plain text
-  /// - Map: Embed data (e.g., {"media": "path/to/image.jpg"})
-  ///
-  /// [textSelection] is the new cursor position after replacement.
-  void replaceText(
-    int index,
-    int length,
-    Object data,
-    TextSelection? textSelection,
-  );
-
-  // ========================================================================
-  // Content Extraction & Serialization
-  // ========================================================================
-
-  /// Gets plain text representation of the document (no formatting)
-  String getPlainText();
 
   /// The page as Markdown for storage, title included (its first block, a heading). A page the user didn't change
   /// returns the Markdown it was opened with, untouched.
@@ -54,7 +30,7 @@ abstract class RichTextController extends ChangeNotifier {
   // Embed Operations
   // ========================================================================
 
-  /// Inserts an embed at the current cursor position.
+  /// Inserts an embed at the current cursor position (the last one while the editor has none, else the end).
   ///
   /// [embedType]: The embed type key (e.g., 'media', 'audio')
   /// [value]: The embed value (e.g., file path or pipe-delimited paths)
@@ -64,30 +40,4 @@ abstract class RichTextController extends ChangeNotifier {
     required String value,
     Map<String, dynamic>? attributes,
   });
-
-  /// Replaces an embed's data at [offset] while preserving its existing attributes.
-  ///
-  /// This is used when the embed value changes (e.g., album paths updated)
-  /// but the formatting (alignment, size) should be kept.
-  ///
-  /// [offset]: The document offset of the embed
-  /// [length]: The length of the embed (typically 1)
-  /// [embedType]: The embed type key (e.g., 'media')
-  /// [value]: The new embed value
-  void replaceEmbed({
-    required int offset,
-    required int length,
-    required String embedType,
-    required String value,
-  });
-
-  // ========================================================================
-  // Cursor Navigation
-  // ========================================================================
-
-  /// Moves the cursor one position to the left.
-  void moveCursorLeft();
-
-  /// Moves the cursor one position to the right.
-  void moveCursorRight();
 }

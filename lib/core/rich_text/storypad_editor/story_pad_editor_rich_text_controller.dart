@@ -12,8 +12,7 @@ import 'package:storypad_editor/super_editor.dart';
 /// A page the user didn't change serializes to the Markdown it was opened with, untouched: change detection (drafts,
 /// "revert if nothing changed") compares the stored pages.
 ///
-/// Text offsets ([selection], [replaceText]) count like Quill's: each block's characters (1 for an embed) plus one for
-/// its line break.
+/// Text offsets ([selection]) count like Quill's: each block's characters (1 for an embed) plus one for its line break.
 class StoryPadEditorRichTextController extends RichTextController {
   StoryPadEditorRichTextController({
     required String markdown,
@@ -34,9 +33,6 @@ class StoryPadEditorRichTextController extends RichTextController {
   final StoryEditorController editor;
 
   final String _originalMarkdown;
-
-  String? _serialized;
-  int? _serializedRevision;
 
   /// Whether [node] is the page title: a heading that's the page's first block.
   bool _isTitle(DocumentNode? node) {
@@ -63,23 +59,9 @@ class StoryPadEditorRichTextController extends RichTextController {
   @override
   RichTextDocument get document => StoryPadEditorRichTextDocument._(this);
 
+  /// The editor caches its Markdown per edit, so this is cheap to call on every change.
   @override
-  bool get readOnly => editor.readOnly;
-
-  @override
-  String serialize() {
-    if (!editor.isDirty) return _originalMarkdown;
-
-    final revision = editor.documentRevision.value;
-    if (_serializedRevision != revision) {
-      _serialized = editor.toMarkdown();
-      _serializedRevision = revision;
-    }
-    return _serialized!;
-  }
-
-  @override
-  String getPlainText() => editor.toPlainText();
+  String serialize() => editor.isDirty ? editor.toMarkdown() : _originalMarkdown;
 
   // ==========================================================================
   // Selection, in Quill-style offsets
@@ -146,35 +128,6 @@ class StoryPadEditorRichTextController extends RichTextController {
   // ==========================================================================
 
   @override
-  void replaceText(int index, int length, Object data, TextSelection? textSelection) {
-    final start = _positionAt(index);
-    final requests = <EditRequest>[
-      if (length > 0)
-        DeleteContentRequest(
-          documentRange: DocumentRange(start: start, end: _positionAt(index + length)),
-        ),
-      ChangeSelectionRequest(
-        DocumentSelection.collapsed(position: start),
-        SelectionChangeType.placeCaret,
-        SelectionReason.contentChange,
-      ),
-    ];
-    editor.editor.execute(requests);
-
-    if (data is Map && data.isNotEmpty) {
-      final key = '${data.keys.first}';
-      final value = data.values.first;
-      insertEmbed(embedType: key, value: '$value');
-    } else if (data is String && data.isNotEmpty) {
-      final caret = editor.selection.value?.extent;
-      if (caret != null) {
-        editor.editor.execute([InsertPlainTextAtCaretRequest(data)]);
-      }
-    }
-    if (textSelection != null) selection = textSelection;
-  }
-
-  @override
   void insertEmbed({required String embedType, required String value, Map<String, dynamic>? attributes}) {
     final embed = editor.registry.byQuillKey(embedType);
     if (embed is! StoryEmbed) {
@@ -191,26 +144,6 @@ class StoryPadEditorRichTextController extends RichTextController {
     _moveCaretBelowTitle();
     editor.insertEmbed(embed, embedValue);
   }
-
-  @override
-  void replaceEmbed({required int offset, required int length, required String embedType, required String value}) {
-    final position = _positionAt(offset);
-    final node = editor.document.getNodeById(position.nodeId);
-    final embed = editor.registry.byQuillKey(embedType);
-    if (node is! StoryEmbedNode || embed == null || embed.type != node.type) return;
-
-    // Keep the embed's other properties (e.g. alignment): read the new value through Quill with them.
-    final current = embed.toQuillOf(node);
-    final updated = embed.fromQuill(QuillEmbedOp.of(embedType, value, attributes: current?.attributes ?? const {}));
-    if (updated == null) return;
-    editor.updateEmbed(embed, node.id, (_) => updated);
-  }
-
-  @override
-  void moveCursorLeft() => editor.actions.moveCaret(forward: false);
-
-  @override
-  void moveCursorRight() => editor.actions.moveCaret(forward: true);
 
   @override
   void dispose() {
@@ -231,10 +164,8 @@ class StoryPadEditorRichTextDocument implements RichTextDocument {
   final StoryPadEditorRichTextController _controller;
 
   @override
-  int get length => _controller.editor.document.fold(0, (sum, node) => sum + _lengthOf(node) + 1);
-
-  static int _lengthOf(DocumentNode node) => node is TextNode ? node.text.length : 1;
+  String toPlainText() => _controller.editor.toPlainText();
 
   @override
-  String toPlainText() => _controller.getPlainText();
+  String bodyPlainText() => StoryCodec.plainTextOf(StoryCodec.pageBodyOf(_controller.editor.document));
 }

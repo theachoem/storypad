@@ -10,7 +10,8 @@ import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
-/// The formatting toolbar for a page body: the old Quill toolbar's buttons, on the editor's actions.
+/// The formatting toolbar for a page body: formatting, headings, lists, alignment, media and block moves, on the
+/// editor's actions.
 ///
 /// In the editor's tap region group (so tapping it doesn't count as tapping outside the editor), and holding the
 /// editor's selection around every sheet, dialog and picker it opens (they take focus, and a phone's editor drops its
@@ -212,7 +213,7 @@ class StoryPadEditorToolbar extends StatelessWidget {
 
     switch (action) {
       case .selectFromLibrary:
-        await SpImagePickerBottomSheet.showQuillPicker(context: context, controller: controller);
+        await SpImagePickerBottomSheet.showForEditor(context: context, controller: controller);
       case .selectFromPhotos:
         await SpImagePickerBottomSheet.showNativePicker(context: context, controller: controller);
       case .takePhoto:
@@ -220,7 +221,7 @@ class StoryPadEditorToolbar extends StatelessWidget {
       case .recordVideo:
         await SpImagePickerBottomSheet.showVideoPicker(context: context, controller: controller, source: .camera);
       case .recordVoiceNote:
-        await SpVoiceRecordingSheet.showQuillRecorder(context: context, controller: controller);
+        await SpVoiceRecordingSheet.showForEditor(context: context, controller: controller);
     }
   }
 }

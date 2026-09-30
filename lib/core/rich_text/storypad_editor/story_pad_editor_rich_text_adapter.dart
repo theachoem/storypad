@@ -11,14 +11,10 @@ import 'package:storypad/core/types/page_layout_type.dart';
 /// The story editor on storypad_editor (super_editor): pages load from and save to Markdown.
 class StoryPadEditorRichTextAdapter implements RichTextAdapter {
   @override
-  List<LocalizationsDelegate> get localizationsDelegates => const [];
-
-  @override
   Widget buildEditor({
     required BuildContext context,
     required RichTextController controller,
     required FocusNode focusNode,
-    required ScrollController scrollController,
     required bool readOnly,
     required StoryContentDbModel storyContent,
     PageLayoutType? layoutType,
@@ -37,7 +33,7 @@ class StoryPadEditorRichTextAdapter implements RichTextAdapter {
   }
 
   @override
-  Widget buildToolbar({required BuildContext context, required RichTextController controller, Color? backgroundColor}) {
+  Widget buildToolbar({required BuildContext context, required RichTextController controller}) {
     return StoryPadEditorToolbar(controller: controller as StoryPadEditorRichTextController);
   }
 

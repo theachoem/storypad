@@ -10,23 +10,6 @@ import 'package:storypad/core/types/page_layout_type.dart';
 /// Business logic only interacts with this adapter, never with concrete implementations.
 abstract class RichTextAdapter {
   // ========================================================================
-  // Localization
-  // ========================================================================
-
-  /// Returns localization delegates required by the editor.
-  ///
-  /// Add these to MaterialApp's localizationsDelegates:
-  /// ```dart
-  /// MaterialApp(
-  ///   localizationsDelegates: [
-  ///     ...otherDelegates,
-  ///     ...editorAdapter.localizationsDelegates,
-  ///   ],
-  /// )
-  /// ```
-  List<LocalizationsDelegate> get localizationsDelegates;
-
-  // ========================================================================
   // Widget Builders
   // ========================================================================
 
@@ -35,7 +18,6 @@ abstract class RichTextAdapter {
     required BuildContext context,
     required RichTextController controller,
     required FocusNode focusNode,
-    required ScrollController scrollController,
     required bool readOnly,
     required StoryContentDbModel storyContent,
     PageLayoutType? layoutType,
@@ -47,7 +29,6 @@ abstract class RichTextAdapter {
   Widget buildToolbar({
     required BuildContext context,
     required RichTextController controller,
-    Color? backgroundColor,
   });
 
   // ========================================================================
@@ -90,9 +71,6 @@ abstract class RichTextAdapter {
 ///
 /// Example usage:
 /// ```dart
-/// // In app.dart:
-/// localizationsDelegates: editorAdapter.localizationsDelegates
-///
 /// // In editor view:
 /// editorAdapter.buildEditor(context: context, controller: controller, ...)
 ///

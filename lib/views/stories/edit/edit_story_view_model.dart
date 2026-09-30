@@ -87,14 +87,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
     if (params.initialAsset?.relativeLocalFilePath != null) {
       final asset = params.initialAsset!;
-      final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
-      final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
-      final embedKey = asset.type == AssetType.audio ? 'audio' : 'media';
-      pagesManager.pagesMap.first.bodyController.replaceText(
-        index,
-        length,
-        {embedKey: asset.relativeLocalFilePath},
-        null,
+      final controller = pagesManager.pagesMap.first.bodyController;
+      // At the caret: the page's start for a new story.
+      controller.selection = TextSelection.collapsed(offset: controller.selection.baseOffset);
+      controller.insertEmbed(
+        embedType: asset.type == AssetType.audio ? 'audio' : 'media',
+        value: asset.relativeLocalFilePath,
       );
     }
 

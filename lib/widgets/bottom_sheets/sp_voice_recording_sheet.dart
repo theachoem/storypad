@@ -41,7 +41,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
   @override
   double get cupertinoPaddingTop => 0.0; // we have custom padding here instead.
 
-  static Future<void> showQuillRecorder({
+  static Future<void> showForEditor({
     required BuildContext context,
     required RichTextController controller,
   }) async {

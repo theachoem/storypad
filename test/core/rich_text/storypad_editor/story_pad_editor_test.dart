@@ -43,7 +43,6 @@ void main() {
                     context: context,
                     controller: controller,
                     focusNode: focusNode,
-                    scrollController: ScrollController(),
                     readOnly: readOnly,
                     storyContent: StoryContentDbModel.create(),
                     onChanged: keepsChanges ? () => changes.add(changes.length) : null,
@@ -173,7 +172,7 @@ void main() {
     await tester.tap(find.text('Edit'));
     await tester.pumpAndSettle();
     expect(edits, 1);
-    expect(page.controller.readOnly, isTrue);
+    expect(page.controller.editor.readOnly, isTrue);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
   testWidgets('editing: Uppercase changes the selected text', (tester) async {
@@ -204,7 +203,8 @@ void main() {
     });
     // As EditStoryViewModel.init does for an initial asset (a photo; text here, since rendering a photo needs the app's
     // providers), before the page is built.
-    controller.replaceText(0, 0, 'Hello', null);
+    controller.selection = const TextSelection.collapsed(offset: 0);
+    controller.editor.editor.execute([const InsertPlainTextAtCaretRequest('Hello')]);
 
     final changes = <int>[];
     await tester.pumpWidget(
@@ -216,7 +216,6 @@ void main() {
                 context: context,
                 controller: controller,
                 focusNode: focusNode,
-                scrollController: ScrollController(),
                 readOnly: false,
                 storyContent: StoryContentDbModel.create(),
                 onChanged: () => changes.add(changes.length),

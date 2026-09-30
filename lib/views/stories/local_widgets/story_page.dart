@@ -99,7 +99,6 @@ class _StoryPage extends StatelessWidget {
             context: context,
             controller: page.bodyController,
             focusNode: page.bodyFocusNode,
-            scrollController: page.bodyScrollController,
             readOnly: readOnly || _locked,
             storyContent: storyContent,
             layoutType: preferences?.layoutType,
