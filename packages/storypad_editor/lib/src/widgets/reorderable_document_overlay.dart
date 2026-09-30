@@ -11,9 +11,9 @@ import 'drag_snapshot_preview.dart';
 /// anywhere else in the document.
 ///
 /// The handle is a floating overlay, not a layout change — it's absolutely
-/// positioned over a gutter that's always reserved (see the extra left
-/// `documentPadding` [RawEditor] adds), so hovering never resizes or reflows
-/// the text underneath it.
+/// positioned in the space left of each block (the editor's left padding, as
+/// the app set it), shrinking to fit when that's narrow (see
+/// [dragHandleSizeFor]), so hovering never resizes or reflows the text.
 ///
 /// Dragging the handle of a block inside the selection moves every block the selection touches, together (select
 /// several lines, then drag any of them); any other block's handle moves just that block.
@@ -42,9 +42,6 @@ class ReorderableDocumentOverlay extends StatefulWidget {
 }
 
 class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay> with DragSnapshotPreviewMixin {
-  static const _handleIconSize = 14.0;
-  static const _handleGap = 4.0;
-
   final _stackKey = GlobalKey();
 
   /// The node currently under the mouse, while nothing is being dragged.
@@ -259,15 +256,18 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
       return const SizedBox.shrink();
     }
 
+    // The handle lives in the space left of the block (the editor's left padding), never over the text and never
+    // outside the editor (where it would be clipped and out of the pointer's reach): full size when there's room,
+    // shrunk to fit when there isn't.
+    final size = dragHandleSizeFor(rect.left);
+
     return Positioned(
       // Anchored to the block's own rendered left edge, not a fixed offset —
-      // a fixed offset drifts away from the text on wide windows, where
-      // SuperEditor centers/constrains the document column well to the
-      // right of its own outer bounds.
-      left: rect.left - _handleGap - _handleIconSize,
+      // blocks can be indented or framed.
+      left: (rect.left - size.gap - size.icon).clamp(0.0, double.infinity),
       top: rect.top,
       height: rect.height,
-      width: _handleIconSize,
+      width: size.icon,
       child: MouseRegion(
         cursor: SystemMouseCursors.grab,
         child: GestureDetector(
@@ -278,7 +278,7 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
           child: Center(
             child: Icon(
               Icons.drag_indicator,
-              size: _handleIconSize,
+              size: size.icon,
               color: isActive ? Theme.of(context).colorScheme.primary : Colors.black38,
             ),
           ),
@@ -345,4 +345,18 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
       ),
     );
   }
+}
+
+const _handleIconSize = 14.0;
+const _handleGap = 4.0;
+const _minHandleIconSize = 10.0;
+const _minHandleGap = 1.0;
+
+/// The drag handle's icon size and its gap to the text, given [space] left of the block: full size (14 + 4) when it
+/// fits; with less, the gap shrinks first, then the icon (not below 10).
+({double icon, double gap}) dragHandleSizeFor(double space) {
+  if (space >= _handleIconSize + _handleGap) return (icon: _handleIconSize, gap: _handleGap);
+  if (space >= _handleIconSize + _minHandleGap) return (icon: _handleIconSize, gap: space - _handleIconSize);
+  final icon = (space - _minHandleGap).clamp(_minHandleIconSize, _handleIconSize);
+  return (icon: icon, gap: _minHandleGap);
 }

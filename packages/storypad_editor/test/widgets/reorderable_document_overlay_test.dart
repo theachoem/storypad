@@ -330,4 +330,17 @@ void main() {
       expect(dragSnapshotPixelRatio(const Size(800, 0), 2), isNull);
     });
   });
+
+  group('dragHandleSizeFor', () {
+    test('full size with room to spare', () {
+      expect(dragHandleSizeFor(18), (icon: 14.0, gap: 4.0));
+      expect(dragHandleSizeFor(40), (icon: 14.0, gap: 4.0));
+    });
+
+    test('the gap shrinks first, then the icon, down to 10', () {
+      expect(dragHandleSizeFor(16), (icon: 14.0, gap: 2.0));
+      expect(dragHandleSizeFor(12), (icon: 11.0, gap: 1.0));
+      expect(dragHandleSizeFor(4), (icon: 10.0, gap: 1.0));
+    });
+  });
 }

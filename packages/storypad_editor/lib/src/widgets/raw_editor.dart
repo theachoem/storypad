@@ -69,7 +69,9 @@ class RawEditor extends StatefulWidget {
   /// Merged into every block's text style -- e.g. a font. Per-block styling (heading sizes, …) is kept.
   final TextStyle? baseTextStyle;
 
-  /// The document's padding. Defaults to 16 all round (18 on the left on desktop, room for the drag handle).
+  /// The document's padding, used exactly as given: the editor adds none of its own, and its text spans the full width
+  /// inside it (no maximum width, no centering -- any of that is the app's choice). Defaults to 16 all round (18 on the
+  /// left on desktop, room for the drag handle).
   final EdgeInsets? padding;
 
   /// Extra stylesheet rules, applied after the editor's own -- e.g. `StyleRule(BlockSelector('media'), …)` to style
@@ -328,14 +330,25 @@ class _RawEditorState extends State<RawEditor> {
 
   Stylesheet _createStylesheet() {
     return defaultStylesheet.copyWith(
+      // The default rules cap every block at 640 wide, centered in a wider editor. Text spans the editor instead: the
+      // app decides any width limit or centering (e.g. through its padding). Removed from the default rules themselves,
+      // since super_editor never lets a later rule override `maxWidth` (its style merge only overrides text styles and
+      // padding).
+      rules: [
+        for (final rule in defaultStylesheet.rules)
+          StyleRule(rule.selector, (document, node) => {...rule.styler(document, node)}..remove(Styles.maxWidth)),
+      ],
       documentPadding: widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _reorderGutterWidth : 16, 16, 16, 16),
       addRulesAfter: [
         // The same small gap around every block (the default stylesheet's per-type block padding reads as
-        // inconsistent spacing), with the base text style merged in. Frames and their inner padding: blockStyles.
+        // inconsistent spacing), with the base text style merged in. No side padding: the default stylesheet gives
+        // every block 24 on each side, which only rules that also set left/right would override (a heading's top-only
+        // padding would keep it, indenting headings past paragraphs) -- the document padding is the only side inset.
+        // Frames and their inner padding: blockStyles.
         StyleRule(
           BlockSelector.all,
           (document, node) => {
-            Styles.padding: const CascadingPadding.symmetric(vertical: 2),
+            Styles.padding: const CascadingPadding.symmetric(vertical: 2, horizontal: 0),
             if (widget.baseTextStyle != null) Styles.textStyle: widget.baseTextStyle!,
           },
         ),
