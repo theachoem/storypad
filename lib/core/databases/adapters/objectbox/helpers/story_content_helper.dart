@@ -31,7 +31,7 @@ class StoryContentHelper {
         richPages: List.generate(
           // ignore: deprecated_member_use_from_same_package
           content.pages?.length ?? 0,
-          (index) => StoryPageDbModel(
+          (index) => StoryPageDbModel.legacy(
             id: now + index,
             title: index == 0 ? content.title : null,
             // ignore: deprecated_member_use_from_same_package

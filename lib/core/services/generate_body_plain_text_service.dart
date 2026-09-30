@@ -30,7 +30,7 @@ class GenerateBodyPlainTextService {
 
     // Compute text once per page and reuse results
     final pageTexts = newRichPages.map((page) {
-      return QuillDeltaToPlainTextService.call(page.body ?? [], markdown: true, includeMarkdownEmbeds: false);
+      return QuillDeltaToPlainTextService.call(page.quillBody, markdown: true, includeMarkdownEmbeds: false);
     }).toList();
 
     // Build plainText from computed texts

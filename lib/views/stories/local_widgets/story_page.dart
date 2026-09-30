@@ -41,9 +41,12 @@ class _StoryPage extends StatelessWidget {
   final bool smallPage;
 
   void onChange() {
-    StoryPageDbModel richPage = page.page.copyWith(
+    StoryPageDbModel richPage = StoryPageDbModel.legacy(
+      id: page.page.id,
       title: page.titleController.text.trim().isNotEmpty == true ? page.titleController.text.trim() : null,
       body: page.bodyController.serialize(),
+      wordCount: page.page.wordCount,
+      characterCount: page.page.characterCount,
     );
 
     onChanged?.call(richPage);

@@ -341,7 +341,7 @@ class StoryDbModel extends BaseDbModel {
         title: "Let's Begin: $year ✨",
         plainText: body,
         richPages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: DateTime.now().millisecondsSinceEpoch,
             title: "Let's Begin: $year ✨",
             body: delta.toJson(),

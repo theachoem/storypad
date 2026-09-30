@@ -371,7 +371,7 @@ void main() {
         month: 1,
         day: 4,
         pages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: "Let's Begin: 2025 ✨",
             body: [
@@ -414,21 +414,21 @@ void main() {
         month: 1,
         day: 4,
         pages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: "Page 1",
             body: [
               {"insert": "First page content\n"},
             ],
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 2,
             title: "Page 2",
             body: [
               {"insert": "Second page content\n"},
             ],
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 3,
             title: null,
             body: [
@@ -466,7 +466,7 @@ void main() {
         month: 1,
         day: 4,
         pages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: "Story with Image",
             body: [
@@ -503,7 +503,7 @@ void main() {
         month: 1,
         day: 4,
         pages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: "Story with Video",
             body: [
@@ -653,7 +653,7 @@ StoryDbModel _createStory({
       plainText: content,
       createdAt: now,
       richPages: [
-        StoryPageDbModel(
+        StoryPageDbModel.legacy(
           id: id + 2,
           title: title,
           body: [

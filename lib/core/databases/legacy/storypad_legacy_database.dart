@@ -89,7 +89,7 @@ class StorypadLegacyDatabase {
           title: storypadStory.title,
           plainText: document != null ? QuillDeltaToPlainTextService.call(document.root.toDelta().toJson()) : null,
           richPages: [
-            StoryPageDbModel(
+            StoryPageDbModel.legacy(
               id: DateTime.now().millisecondsSinceEpoch,
               title: storypadStory.title,
               body: document?.toDelta().toJson(),

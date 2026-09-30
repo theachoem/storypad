@@ -62,7 +62,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
 
   StoryContentDbModel getDraftContent() {
     final richPages = galleryTemplate.pages.map((e) {
-      return StoryPageDbModel(
+      return StoryPageDbModel.legacy(
         id: galleryTemplate.pages.indexOf(e),
         title: e.title,
         body: MarkdownToQuillDeltaService.call(e.content),

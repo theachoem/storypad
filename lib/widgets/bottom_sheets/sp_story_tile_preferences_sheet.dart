@@ -190,14 +190,14 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: "My Journal Entry ✨",
         plainText: body,
         richPages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch,
             title: "My Journal Entry ✨",
             body: delta.toJson(),
             characterCount: body.length,
             wordCount: null,
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch + 1,
             title: null,
             body: (Delta()..insert("Page two content.")).toJson(),
@@ -224,7 +224,7 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: null,
         plainText: body,
         richPages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch + 10,
             title: null,
             body: (Delta()..insert(body)).toJson(),

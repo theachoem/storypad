@@ -40,7 +40,8 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   final DateTime createdAt;
 
   @override
-  List<String>? get includeCompareKeys => ['title', 'rich_pages'];
+  // The title is worked out from the pages (see StoryPageDbModel.title), so comparing the pages covers it.
+  List<String>? get includeCompareKeys => ['rich_pages'];
 
   @override
   List<String> get excludeCompareKeys {
@@ -98,7 +99,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     return copyWith(
       richPages: [
         ...richPages ?? [],
-        StoryPageDbModel(
+        StoryPageDbModel.legacy(
           id: DateTime.now().millisecondsSinceEpoch,
           title: null,
           body: null,
@@ -115,7 +116,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
 
     return copyWith(
-      title: richPages?.first.title,
+      title: newRichPages.firstOrNull?.title,
       plainText: plainTextResult?.plainText,
       richPages: plainTextResult?.richPagesWithCounts,
     );
@@ -130,6 +131,42 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
 
     return copyWith(
       title: index == 0 ? newPage.title : title,
+      plainText: plainTextResult?.plainText,
+      richPages: plainTextResult?.richPagesWithCounts,
+    );
+  }
+
+  /// Whether a page is stored in a format this app version doesn't know (from a newer version): the story is shown
+  /// read-only and never saved.
+  bool get hasUnsupportedPages => richPages?.any((page) => page.isUnsupported) == true;
+
+  /// Whether a page is still stored in the legacy shape (a separate title and a Quill body).
+  bool get hasLegacyPages => richPages?.any((page) => page.isLegacy) == true;
+
+  /// This content with its legacy pages converted to Markdown ([StoryPageDbModel.toMarkdownPage]), title and plain
+  /// text recomputed -- or `null` when there's nothing to convert, or when any page wouldn't convert losslessly (see
+  /// [StoryPageDbModel.checkConversion]); the content then stays as stored, and the failure is logged.
+  StoryContentDbModel? convertLegacyPages() {
+    final pages = richPages;
+    if (pages == null || !hasLegacyPages || hasUnsupportedPages) return null;
+
+    for (final page in pages) {
+      if (!page.isLegacy) continue;
+      final check = page.checkConversion();
+      if (!check.isLossless) {
+        AppLogger.error(
+          'StoryContentDbModel#convertLegacyPages: page $id/${page.id} kept as Quill: $check '
+          '${check.losses.map((loss) => '${loss.kind.name}:${loss.key}').toSet()}',
+          tag: 'StoryContentDbModel',
+        );
+        return null;
+      }
+    }
+
+    final converted = [for (final page in pages) page.toMarkdownPage()];
+    final plainTextResult = GenerateBodyPlainTextService.call(converted);
+    return copyWith(
+      title: converted.first.title,
       plainText: plainTextResult?.plainText,
       richPages: plainTextResult?.richPagesWithCounts,
     );

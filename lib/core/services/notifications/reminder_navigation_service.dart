@@ -128,7 +128,7 @@ class ReminderNavigationService {
 
         final richPages = [
           for (int i = 0; i < template.pages.length; i++)
-            StoryPageDbModel(
+            StoryPageDbModel.legacy(
               id: i,
               title: template.pages[i].title,
               body: MarkdownToQuillDeltaService.call(template.pages[i].content),

@@ -78,9 +78,11 @@ void main() {
       expect(identical(controller.serialize(), storedPage), isTrue);
 
       // So a story opened and closed without edits isn't a change (drafts, "revert if nothing changed").
-      final page = StoryPageDbModel(id: 1, title: 'Title', body: storedPage);
+      final page = StoryPageDbModel.legacy(id: 1, title: 'Title', body: storedPage);
       final content = StoryContentDbModel.create().copyWith(richPages: [page]);
-      final reopened = content.copyWith(richPages: [page.copyWith(body: controller.serialize())]);
+      final reopened = content.copyWith(
+        richPages: [StoryPageDbModel.legacy(id: 1, title: 'Title', body: controller.serialize())],
+      );
       expect(reopened.hasChanges(content), isFalse);
     });
 

@@ -59,8 +59,8 @@ class StoryContentEmbedExtractor {
   static Set<int> assetIds(StoryContentDbModel? content) {
     final ids = <int>{};
     for (final page in content?.richPages ?? []) {
-      if (page.body == null || page.body!.isEmpty) continue;
-      ids.addAll(AssetLinkParser.extractIds(page.body));
+      if (page.quillBody.isEmpty) continue;
+      ids.addAll(AssetLinkParser.extractIds(page.quillBody));
     }
     return ids;
   }
@@ -85,8 +85,8 @@ class StoryContentEmbedExtractor {
     final pages = content?.richPages ?? [];
 
     for (final page in pages) {
-      if (page.body == null || page.body!.isEmpty) continue;
-      links.addAll(AssetLinkParser.extractEmbedSourcesAny(page.body, embedTypes));
+      if (page.quillBody.isEmpty) continue;
+      links.addAll(AssetLinkParser.extractEmbedSourcesAny(page.quillBody, embedTypes));
     }
 
     return links;
