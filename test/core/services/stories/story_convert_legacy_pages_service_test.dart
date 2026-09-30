@@ -60,27 +60,4 @@ void main() {
       expect(StoryConvertLegacyPagesService.convertContents(latest: draft, draft: latest), isNull);
     });
   });
-
-  group('new pages', () {
-    test('start empty: no title slot', () {
-      final page = StoryPageDbModel.create(id: 1);
-      expect(page.markdown, '');
-      expect(page.title, isNull);
-      expect(page.quillBody, [
-        {'insert': '\n'},
-      ]);
-    });
-
-    test('from a template: its title, then its Markdown body', () {
-      final page = StoryPageDbModel.create(id: 1, title: 'Goals', body: '- one\n- two');
-      expect(page.markdown, '### Goals\n\n- one\n- two');
-      expect(page.title, 'Goals');
-    });
-
-    test('a new story with nothing written counts as empty', () {
-      final content = StoryContentDbModel.create().addRichPage();
-      expect(content.richPages!.single.format, StoryPageFormat.markdownV1);
-      expect(content.richPages!.single.markdown, '');
-    });
-  });
 }

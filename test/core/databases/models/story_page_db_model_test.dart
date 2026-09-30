@@ -152,6 +152,13 @@ void main() {
       expect(recounted.toJson(), json);
     });
 
+    test('are kept exactly as stored even without counts, or with an id this version does not read', () {
+      const bare = {'id': 'p-3', 'format': 'markdown_v9', 'markdown': 'x'};
+      final page = StoryPageDbModel.fromJson(bare);
+      expect(page.toJson(), bare);
+      expect(StoryPageDbModel.fromJson(page.toJson()).toJson(), bare, reason: 'stable across reads and writes');
+    });
+
     test('still read, best effort, for showing', () {
       final page = StoryPageDbModel.fromJson(json);
       expect(page.title, 'Future');
@@ -245,6 +252,29 @@ void main() {
       final content = contentOf([StoryPageDbModel.fromJson(legacyJson), unsupported]);
       expect(content.hasUnsupportedPages, isTrue);
       expect(content.convertLegacyPages(), isNull);
+    });
+  });
+
+  group('new pages', () {
+    test('start empty: nothing marks a title', () {
+      final page = StoryPageDbModel.create(id: 1);
+      expect(page.markdown, '');
+      expect(page.title, isNull);
+      expect(page.quillBody, [
+        {'insert': '\n'},
+      ]);
+    });
+
+    test('from a template: its title, then its Markdown body', () {
+      final page = StoryPageDbModel.create(id: 1, title: 'Goals', body: '- one\n- two');
+      expect(page.markdown, '### Goals\n\n- one\n- two');
+      expect(page.title, 'Goals');
+    });
+
+    test('a page added to a content is a new, empty Markdown page', () {
+      final content = StoryContentDbModel.create().addRichPage();
+      expect(content.richPages!.single.format, StoryPageFormat.markdownV1);
+      expect(content.richPages!.single.markdown, '');
     });
   });
 }

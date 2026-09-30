@@ -46,10 +46,11 @@ class StoryPageDbModel {
   /// A new page: [body] (Markdown), after [title] as its leading heading when there's one (e.g. from a template). A
   /// blank page is just empty: nothing special marks a title; it's worked out from the page when it's saved.
   factory StoryPageDbModel.create({required int id, String? title, String body = ''}) {
+    final heading = normalizePageTitle(title);
     return StoryPageDbModel.markdown(
       id: id,
       markdown: storyPadCodec.encode([
-        if (normalizePageTitle(title) != null) pageTitleNode(title),
+        if (heading != null) pageTitleNode(heading),
         ...storyPadCodec.decodeNodes(body),
       ]),
     );
@@ -129,7 +130,8 @@ class StoryPageDbModel {
 
   /// The page body -- without the title -- as Quill Delta ops, for readers built on Quill (plain text, word counts,
   /// asset links, exports). A legacy page's stored body; a Markdown page's body written as Quill, which is equivalent
-  /// to the Quill it was converted from (see [checkConversion]).
+  /// to the Quill it was converted from (see [checkConversion]) -- except that an untitled page starting with a
+  /// heading reads that heading as its [title] once converted, so it's no longer part of the body.
   List<dynamic> get quillBody => isLegacy ? (_legacyBody ?? const []) : _derived.quillBody;
 
   late final _MarkdownDerived _derived = _MarkdownDerived.of(markdown);
@@ -177,7 +179,13 @@ class StoryPageDbModel {
 
   Map<String, dynamic> toJson() {
     if (_unsupportedJson case final json?) {
-      return {...json, 'id': id, 'word_count': wordCount, 'character_count': characterCount};
+      // Verbatim: only what was stored, or changed since (see [copyWith]).
+      return {
+        ...json,
+        if (json['id'] is int) 'id': id,
+        if (wordCount != null || json.containsKey('word_count')) 'word_count': wordCount,
+        if (characterCount != null || json.containsKey('character_count')) 'character_count': characterCount,
+      };
     }
     if (isLegacy) {
       return {
