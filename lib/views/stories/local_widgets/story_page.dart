@@ -38,9 +38,12 @@ class _StoryPage extends StatelessWidget {
   final bool readOnly;
   final bool smallPage;
 
+  /// A story with a page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle) --
+  /// wherever it's shown, including the edit views (a template holding such a page, a story made from one).
+  bool get _locked => page.page.isUnsupported || storyContent.hasUnsupportedPages;
+
   void onChange() {
-    // A story with a page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle).
-    if (page.page.isUnsupported || storyContent.hasUnsupportedPages) return;
+    if (_locked) return;
     onChanged?.call(page.page.withMarkdown(page.bodyController.serialize()));
   }
 
@@ -60,6 +63,7 @@ class _StoryPage extends StatelessWidget {
           buildEditor(context),
           if (canMoveUp || canMoveDown || canDeletePage) ...[
             if (!readOnly &&
+                !_locked &&
                 (preferences?.layoutType == PageLayoutType.list || preferences?.layoutType == PageLayoutType.grid))
               buildMoreVertButton(context),
           ],
@@ -96,7 +100,7 @@ class _StoryPage extends StatelessWidget {
             controller: page.bodyController,
             focusNode: page.bodyFocusNode,
             scrollController: page.bodyScrollController,
-            readOnly: readOnly,
+            readOnly: readOnly || _locked,
             storyContent: storyContent,
             layoutType: preferences?.layoutType,
             onChanged: onChanged != null ? () => onChange() : null,
