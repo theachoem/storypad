@@ -18,7 +18,9 @@ dependencies:
   crypto: 3.0.7
   csv: 8.0.0
   cupertino_icons: 1.0.9
-  dart_quill_delta: 10.8.3
+  # Quill Delta ops: pages stored before Markdown are still read (and converted) through them. Same range as
+  # super_editor (via storypad_editor).
+  dart_quill_delta: ^9.4.1
   device_info_plus: 13.2.0
   dio: 5.11.1
   dismissible_page: 1.0.2
@@ -36,11 +38,6 @@ dependencies:
     sdk: flutter
   flutter_map: 8.3.2
   flutter_markdown_plus: 1.0.12
-  flutter_quill:
-    # path: packages/flutter-quill
-    git:
-      url: https://github.com/theachoem/flutter-quill.git
-      ref: d01480f4bc0c101ccb005bd6d1f8ac8404d45494
   flutter_secure_storage: 11.2.0
   flutter_slidable: 4.0.3
   flutter_staggered_grid_view: 0.7.0
@@ -105,11 +102,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   objectbox_generator: any
-
-dependency_overrides:
-  # super_editor (via storypad_editor) constrains dart_quill_delta to ^9.4.1, but flutter_quill needs 10.x. The Delta
-  # API super_editor uses is unchanged in 10.x. Drop once super_editor widens its constraint or flutter_quill is gone.
-  dart_quill_delta: 10.8.3
 
 flutter:
   uses-material-design: true
