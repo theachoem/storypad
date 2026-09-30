@@ -62,9 +62,9 @@ void main() {
   });
 
   group('new pages', () {
-    test('start with an empty title slot', () {
+    test('start empty: no title slot', () {
       final page = StoryPageDbModel.create(id: 1);
-      expect(page.markdown, '###');
+      expect(page.markdown, '');
       expect(page.title, isNull);
       expect(page.quillBody, [
         {'insert': '\n'},
@@ -80,7 +80,7 @@ void main() {
     test('a new story with nothing written counts as empty', () {
       final content = StoryContentDbModel.create().addRichPage();
       expect(content.richPages!.single.format, StoryPageFormat.markdownV1);
-      expect(content.richPages!.single.markdown, '###');
+      expect(content.richPages!.single.markdown, '');
     });
   });
 }

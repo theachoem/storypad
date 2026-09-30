@@ -155,27 +155,6 @@ void main() {
     });
   });
 
-  group('isEditingTitle', () {
-    test('follows the caret into and out of the leading heading', () {
-      final controller = controllerFor(storedPage);
-      expect(controller.isEditingTitle.value, isFalse);
-
-      controller.selection = const TextSelection.collapsed(offset: 2); // In "Trip".
-      expect(controller.isEditingTitle.value, isTrue);
-
-      controller.selection = const TextSelection.collapsed(offset: 7); // In "Morning walk".
-      expect(controller.isEditingTitle.value, isFalse);
-    });
-
-    test('a page without a leading heading has no title to edit', () {
-      final controller = controllerFor('Just text\n\n### Later');
-      controller.selection = const TextSelection.collapsed(offset: 2);
-      expect(controller.isEditingTitle.value, isFalse);
-      controller.selection = const TextSelection.collapsed(offset: 12);
-      expect(controller.isEditingTitle.value, isFalse);
-    });
-  });
-
   group('embeds', () {
     test('insertMedia inserts a full-size photo, as before', () {
       final controller = controllerFor('Hello');

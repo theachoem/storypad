@@ -44,21 +44,6 @@ class _StoryPage extends StatelessWidget {
     onChanged?.call(page.page.withMarkdown(page.bodyController.serialize()));
   }
 
-  /// How the page title -- the page's leading heading -- looks: the story's title font, size and weight.
-  TextStyle _titleStyle(BuildContext context) {
-    double? fontSize = preferences?.titleFontSize ?? Theme.of(context).textTheme.titleMedium?.fontSize;
-    if (fontSize != null && !smallPage) fontSize += 2;
-
-    return GoogleFonts.getFont(
-      preferences?.titleFontFamily ??
-          preferences?.fontFamily ??
-          context.read<DevicePreferencesProvider>().preferences.fontFamily,
-      color: Theme.of(context).textTheme.titleMedium?.color,
-      fontSize: fontSize,
-      fontWeight: AppTheme.getThemeFontWeight(context, preferences?.titleFontWeight ?? kTitleDefaultFontWeight),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -116,7 +101,6 @@ class _StoryPage extends StatelessWidget {
             layoutType: preferences?.layoutType,
             onChanged: onChanged != null ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
-            titleStyle: _titleStyle(context),
           ),
         ),
       ],

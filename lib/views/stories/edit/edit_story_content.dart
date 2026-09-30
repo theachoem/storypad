@@ -27,8 +27,6 @@ class _EditStoryContent extends StatelessWidget {
               managingPage: viewModel.pagesManager.managingPage,
               pages: pages,
               backgroundColor: ColorScheme.of(context).readOnly.surface1,
-              preferences: viewModel.story!.preferences,
-              onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
             ),
     );
   }

@@ -57,8 +57,6 @@ class _EditTemplateContent extends StatelessWidget {
         managingPage: viewModel.pagesManager.managingPage,
         pages: pages,
         backgroundColor: ColorScheme.of(context).readOnly.surface1,
-        preferences: viewModel.template.preferences,
-        onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
       ),
     );
   }

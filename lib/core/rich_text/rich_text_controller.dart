@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:storypad/core/rich_text/rich_text_document.dart';
 
@@ -21,10 +20,6 @@ abstract class RichTextController extends ChangeNotifier {
 
   /// Whether the editor is in read-only mode
   bool get readOnly;
-
-  /// Whether the caret (or selection) is in the page title -- the page's leading heading. Kept while the editor loses
-  /// its selection (e.g. to a sheet), so a title toolbar stays up.
-  ValueListenable<bool> get isEditingTitle;
 
   // ========================================================================
   // Text Editing Operations

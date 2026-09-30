@@ -41,7 +41,6 @@ abstract class RichTextAdapter {
     PageLayoutType? layoutType,
     VoidCallback? onChanged,
     VoidCallback? onGoToEdit,
-    TextStyle? titleStyle,
   });
 
   /// Builds the rich text toolbar widget.

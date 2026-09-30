@@ -113,6 +113,25 @@ void main() {
     expect(page.controller.serialize(), '**Hello**');
   });
 
+  testWidgets('the heading buttons set, switch and clear the line\'s heading level', (tester) async {
+    final page = await pumpPage(tester, markdown: 'Hello');
+    page.controller.selection = const TextSelection.collapsed(offset: 2);
+    await tester.pump();
+
+    Future<void> tap(IconData icon) async {
+      await tester.ensureVisible(find.byIcon(icon));
+      await tester.tap(find.byIcon(icon));
+      await tester.pumpAndSettle();
+    }
+
+    await tap(SpIcons.heading1);
+    expect(page.controller.serialize(), '# Hello');
+    await tap(SpIcons.heading2);
+    expect(page.controller.serialize(), '## Hello');
+    await tap(SpIcons.heading2);
+    expect(page.controller.serialize(), 'Hello');
+  });
+
   testWidgets('a view whose changes aren\'t kept has no live checkboxes', (tester) async {
     final page = await pumpPage(
       tester,
@@ -230,80 +249,40 @@ void main() {
     expect(page.controller.serialize(), 'two\n\none\n\nthree');
   });
 
-  group('the page title (its leading heading)', () {
-    Future<StoryPadEditorRichTextController> pumpTitled(
-      WidgetTester tester, {
-      required String markdown,
-      bool readOnly = false,
-      TextStyle? titleStyle,
-    }) async {
-      final controller =
-          adapter.createController(
-                markdown: markdown,
-                selection: const TextSelection.collapsed(offset: 0),
-                readOnly: readOnly,
-              )
-              as StoryPadEditorRichTextController;
-      final focusNode = FocusNode();
-      addTearDown(() {
-        focusNode.dispose();
-        controller.dispose();
-      });
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => SingleChildScrollView(
-                child: adapter.buildEditor(
-                  context: context,
-                  controller: controller,
-                  focusNode: focusNode,
-                  scrollController: ScrollController(),
-                  readOnly: readOnly,
-                  storyContent: StoryContentDbModel.create(),
-                  onChanged: () {},
-                  titleStyle: titleStyle,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      return controller;
-    }
+  testWidgets('moving lines keeps each line its own style, the first line included', (tester) async {
+    final page = await pumpPage(tester, markdown: '### Trip\n\nbody\n\n# Big');
 
-    testWidgets('an empty title shows the title hint while editing, not while reading', (tester) async {
-      await pumpTitled(tester, markdown: '###\n\nbody');
-      expect(find.text('Title...', findRichText: true), findsOneWidget);
-
-      await pumpTitled(tester, markdown: '###\n\nbody', readOnly: true);
-      expect(find.text('Title...', findRichText: true), findsNothing);
-    });
-
-    testWidgets('the title gets the title style; a heading further down keeps the heading style', (tester) async {
-      await pumpTitled(
-        tester,
-        markdown: '### Trip\n\nbody\n\n### Later',
-        titleStyle: const TextStyle(fontSize: 13, color: Color(0xFF00FF00)),
-      );
-
-      TextStyle styleOf(String text) {
-        final root = tester.widget<RichText>(find.text(text, findRichText: true)).text;
-        TextStyle? found;
-        void visit(InlineSpan span, TextStyle inherited) {
-          final style = inherited.merge(span.style);
-          if (span is TextSpan && span.text == text) found = style;
-          if (span is TextSpan) span.children?.forEach((child) => visit(child, style));
-        }
-
-        visit(root, const TextStyle());
-        return found!;
+    double sizeOf(String text) {
+      final root = tester.widget<RichText>(find.text(text, findRichText: true)).text;
+      double? found;
+      void visit(InlineSpan span, double? inherited) {
+        final size = span.style?.fontSize ?? inherited;
+        if (span is TextSpan && span.text == text) found = size;
+        if (span is TextSpan) span.children?.forEach((child) => visit(child, size));
       }
 
-      expect(styleOf('Trip').fontSize, 13);
-      expect(styleOf('Trip').color, const Color(0xFF00FF00));
-      expect(styleOf('Later').fontSize, 24);
-    });
+      visit(root, null);
+      return found!;
+    }
+
+    final sizes = {
+      for (final text in ['Trip', 'body', 'Big']) text: sizeOf(text),
+    };
+    expect(sizes['Big'], greaterThan(sizes['Trip']!));
+    expect(sizes['Trip'], greaterThan(sizes['body']!));
+
+    // "body" to the top, then "Big" to the top: each line keeps its style wherever it goes.
+    page.controller.selection = const TextSelection.collapsed(offset: 6);
+    page.controller.editor.actions.moveSelectedBlocks(up: true);
+    await tester.pumpAndSettle();
+    page.controller.selection = const TextSelection.collapsed(offset: 11);
+    page.controller.editor.actions.moveSelectedBlocks(up: true);
+    page.controller.editor.actions.moveSelectedBlocks(up: true);
+    await tester.pumpAndSettle();
+
+    expect(page.controller.serialize(), '# Big\n\nbody\n\n### Trip');
+    for (final MapEntry(key: text, value: size) in sizes.entries) {
+      expect(sizeOf(text), size, reason: text);
+    }
   });
 }

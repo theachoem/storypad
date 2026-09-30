@@ -1,34 +1,19 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/rich_text/rich_text.dart';
-import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
-import 'package:storypad/widgets/sp_icons.dart';
 
-part './title_toolbar.dart';
-
+/// The formatting toolbar of whichever page is being edited. One toolbar for the whole page: the page title is the
+/// page's leading heading, formatted like any other line.
 class SpPagesToolbar extends StatefulWidget {
   const SpPagesToolbar({
     super.key,
     required this.pages,
-    required this.preferences,
-    required this.onThemeChanged,
     required this.backgroundColor,
     required this.managingPage,
   });
 
   final bool managingPage;
   final List<StoryPageObject> pages;
-  final StoryPreferencesDbModel preferences;
-  final void Function(StoryPreferencesDbModel) onThemeChanged;
   final Color? backgroundColor;
 
   @override
@@ -37,10 +22,7 @@ class SpPagesToolbar extends StatefulWidget {
 
 class SpPagesToolbarState extends State<SpPagesToolbar> {
   Map<int, void Function()> bodyFocusListenters = {};
-  Map<int, void Function()> titleListenters = {};
 
-  // The title toolbar shows while the caret is in the focused page's title (its leading heading).
-  bool titleFocused = false;
   int? bodyFocusedIndex;
 
   @override
@@ -52,10 +34,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   void setupListeners() {
     for (int index = 0; index < widget.pages.length; index++) {
       bodyFocusListenters[index] = () => bodyFocusListener(index);
-      titleListenters[index] = () => titleListener(index);
-
       widget.pages[index].bodyFocusNode.addListener(bodyFocusListenters[index]!);
-      widget.pages[index].bodyController.isEditingTitle.addListener(titleListenters[index]!);
     }
   }
 
@@ -72,13 +51,9 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
       if (bodyFocusListenters[index] != null) {
         pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
       }
-      if (titleListenters[index] != null) {
-        pages[index].bodyController.isEditingTitle.removeListener(titleListenters[index]!);
-      }
     }
 
     bodyFocusListenters.clear();
-    titleListenters.clear();
   }
 
   @override
@@ -89,19 +64,9 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
     setupListeners();
   }
 
-  void titleListener(int index) {
-    if (index >= widget.pages.length || index != bodyFocusedIndex) return;
-    titleFocused = widget.pages[index].bodyController.isEditingTitle.value;
-    if (mounted) setState(() {});
-  }
-
   void bodyFocusListener(int index) {
     if (index >= widget.pages.length) return;
-    if (widget.pages[index].bodyFocusNode.hasFocus) {
-      bodyFocusedIndex = index;
-      titleFocused = widget.pages[index].bodyController.isEditingTitle.value;
-    }
-
+    if (widget.pages[index].bodyFocusNode.hasFocus) bodyFocusedIndex = index;
     if (mounted) setState(() {});
   }
 
@@ -117,44 +82,25 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
       visible: !widget.managingPage,
       child: Stack(
         fit: StackFit.loose,
-        children: [
-          if (titleFocused && bodyFocusedIndex != null) buildTitleToolbar(context),
-          if (!titleFocused)
-            ...List.generate(
-              widget.pages.length,
-              (index) {
-                return Visibility(
-                  visible: index == bodyFocusedIndex,
-                  child: Container(
-                    color: widget.backgroundColor,
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: editorAdapter.buildToolbar(
-                      context: context,
-                      controller: widget.pages[index].bodyController,
-                      backgroundColor: widget.backgroundColor,
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildTitleToolbar(BuildContext context) {
-    return Container(
-      color: widget.backgroundColor,
-      padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: _TitleToolbar(
-        preferences: widget.preferences,
-        onThemeChanged: (preferences) => widget.onThemeChanged(preferences),
+        children: List.generate(
+          widget.pages.length,
+          (index) {
+            return Visibility(
+              visible: index == bodyFocusedIndex,
+              child: Container(
+                color: widget.backgroundColor,
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: editorAdapter.buildToolbar(
+                  context: context,
+                  controller: widget.pages[index].bodyController,
+                  backgroundColor: widget.backgroundColor,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

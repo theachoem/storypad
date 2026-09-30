@@ -24,7 +24,6 @@ class StoryPadEditorRichTextAdapter implements RichTextAdapter {
     PageLayoutType? layoutType,
     VoidCallback? onChanged,
     VoidCallback? onGoToEdit,
-    TextStyle? titleStyle,
   }) {
     return StoryPadEditor(
       controller: controller as StoryPadEditorRichTextController,
@@ -34,7 +33,6 @@ class StoryPadEditorRichTextAdapter implements RichTextAdapter {
       layoutType: layoutType,
       onChanged: onChanged,
       onGoToEdit: onGoToEdit,
-      titleStyle: titleStyle,
     );
   }
 

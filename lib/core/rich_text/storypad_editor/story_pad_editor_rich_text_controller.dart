@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:storypad/core/rich_text/rich_text_controller.dart';
@@ -28,8 +27,6 @@ class StoryPadEditorRichTextController extends RichTextController {
          unknownBuilder: buildStoryPadUnknownEmbed,
        ) {
     editor.documentRevision.addListener(notifyListeners);
-    editor.selection.addListener(_updateEditingTitle);
-    editor.documentRevision.addListener(_updateEditingTitle);
     if (!selection.isCollapsed || selection.baseOffset > 0) this.selection = selection;
   }
 
@@ -41,19 +38,6 @@ class StoryPadEditorRichTextController extends RichTextController {
   String? _serialized;
   int? _serializedRevision;
 
-  final ValueNotifier<bool> _isEditingTitle = ValueNotifier(false);
-
-  @override
-  ValueListenable<bool> get isEditingTitle => _isEditingTitle;
-
-  void _updateEditingTitle() {
-    final selection = editor.selection.value;
-    if (selection == null) return; // Keep the last value while the selection is away.
-    _isEditingTitle.value =
-        selection.base.nodeId == selection.extent.nodeId &&
-        _isTitle(editor.document.getNodeById(selection.extent.nodeId));
-  }
-
   /// Whether [node] is the page title: a heading that's the page's first block.
   bool _isTitle(DocumentNode? node) {
     if (node is! ParagraphNode || editor.document.getNodeIndexById(node.id) != 0) return false;
@@ -61,21 +45,16 @@ class StoryPadEditorRichTextController extends RichTextController {
     return blockType is NamedAttribution && blockType.id.startsWith('header');
   }
 
-  /// Embeds never go into (or before) the page title: with the caret there, it moves to the start of the block after
-  /// it (a new empty paragraph when there's none).
+  /// Embeds never go into (or before) the page title: with the caret there, it moves to the title's end, so the embed
+  /// goes right after the title (see `StoryEditorController.insertEmbed`) -- no empty line is added for it.
   void _moveCaretBelowTitle() {
     final selection = editor.selection.value ?? editor.lastSelection;
     final title = selection == null ? null : editor.document.getNodeById(selection.extent.nodeId);
     if (title == null || !_isTitle(title)) return;
 
-    var next = editor.document.getNodeAfterById(title.id);
-    if (next == null) {
-      next = ParagraphNode(id: Editor.createNodeId(), text: AttributedText());
-      editor.editor.execute([InsertNodeAfterNodeRequest(existingNodeId: title.id, newNode: next)]);
-    }
     editor.composer.setSelectionWithReason(
       DocumentSelection.collapsed(
-        position: DocumentPosition(nodeId: next.id, nodePosition: next.beginningPosition),
+        position: DocumentPosition(nodeId: title.id, nodePosition: title.endPosition),
       ),
       SelectionReason.contentChange,
     );
@@ -236,9 +215,6 @@ class StoryPadEditorRichTextController extends RichTextController {
   @override
   void dispose() {
     editor.documentRevision.removeListener(notifyListeners);
-    editor.selection.removeListener(_updateEditingTitle);
-    editor.documentRevision.removeListener(_updateEditingTitle);
-    _isEditingTitle.dispose();
     // Pages are disposed (e.g. a deleted page) while their editor widget may still be mounted for this frame; the
     // editor controller must outlive it.
     final editorToDispose = editor;

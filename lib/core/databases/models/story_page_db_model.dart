@@ -43,12 +43,15 @@ class StoryPageDbModel {
       _legacyBody = null,
       _unsupportedJson = null;
 
-  /// A new page: [title] as its leading heading -- an empty one when there's no title, the slot the editor shows a
-  /// "Title" hint in -- then [body], Markdown.
+  /// A new page: [body] (Markdown), after [title] as its leading heading when there's one (e.g. from a template). A
+  /// blank page is just empty: nothing special marks a title; it's worked out from the page when it's saved.
   factory StoryPageDbModel.create({required int id, String? title, String body = ''}) {
     return StoryPageDbModel.markdown(
       id: id,
-      markdown: storyPadCodec.encode([pageTitleNode(title), ...storyPadCodec.decodeNodes(body)]),
+      markdown: storyPadCodec.encode([
+        if (normalizePageTitle(title) != null) pageTitleNode(title),
+        ...storyPadCodec.decodeNodes(body),
+      ]),
     );
   }
 
