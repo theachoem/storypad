@@ -16,11 +16,17 @@ class WindowAppearanceService {
 
   static bool get isSupported => Platform.isMacOS;
 
+  static bool? _dark;
+
+  /// Sets the frame's appearance; only crosses to the native side when it changes (callers set it on every
+  /// preferences change).
   static Future<void> setDark(bool dark) async {
-    if (!isSupported) return;
+    if (!isSupported || _dark == dark) return;
+    _dark = dark;
     try {
       await _channel.invokeMethod('WindowAppearanceService.setDark', {'dark': dark});
     } catch (e) {
+      _dark = null;
       AppLogger.error('WindowAppearanceService#setDark failed: $e', tag: 'WindowAppearanceService');
     }
   }
