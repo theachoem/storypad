@@ -23,7 +23,13 @@ class StoryConvertLegacyPagesService {
     if (stored == null || stored.updatedAt != story.updatedAt) return story;
 
     final converted = stored.copyWith(latestContent: contents.latest, draftContent: contents.draft);
-    await StoryDbModel.db.set(converted, runCallbacks: false, debugSource: 'StoryConvertLegacyPagesService');
+    // A format change only: no callbacks (not an edit, not a sync trigger), and the assets' tags can't have changed.
+    await StoryDbModel.db.set(
+      converted,
+      runCallbacks: false,
+      retagAssets: false,
+      debugSource: 'StoryConvertLegacyPagesService',
+    );
     return converted;
   }
 
