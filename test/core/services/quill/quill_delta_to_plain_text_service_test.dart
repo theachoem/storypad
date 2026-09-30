@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'package:dart_quill_delta/dart_quill_delta.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 
-// Stored Delta ops from a JSON string, normalized the way a Delta composes them (adjacent inserts with the same
-// attributes merged) -- what `doc.root.toDelta().toJson()` reads.
-_Doc _docFromJson(String jsonString) => _Doc(Delta.fromJson(json.decode(jsonString) as List).toJson());
+// Stored Delta ops from a JSON string, as a page stores them.
+_Doc _docFromJson(String jsonString) => _Doc(json.decode(jsonString) as List);
 
 class _Doc {
   _Doc(this._ops);

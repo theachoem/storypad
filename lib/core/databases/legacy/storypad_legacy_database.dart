@@ -15,7 +15,6 @@ import 'package:storypad/core/types/path_type.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:sqflite/sqflite.dart' as sqlite;
-import 'package:dart_quill_delta/dart_quill_delta.dart';
 
 class StorypadLegacyDatabase {
   sqlite.Database? _database;
@@ -81,7 +80,7 @@ class StorypadLegacyDatabase {
 
         if (storypadStory.paragraph != null) {
           dynamic quill = jsonDecode(storypadStory.paragraph!);
-          if (quill is List) ops = Delta.fromJson(quill).toJson();
+          if (quill is List) ops = quill;
         }
 
         final content = StoryContentDbModel.create(createdAt: storypadStory.createOn).copyWith(
