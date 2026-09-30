@@ -31,7 +31,6 @@ const bool kIsCupertino = String.fromEnvironment('CUPERTINO') == 'yes';
 const Color kDefaultColorSeed = Colors.black;
 const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
-const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
 final bool kIAPEnabled =
     (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
