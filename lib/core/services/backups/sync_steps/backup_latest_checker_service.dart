@@ -13,8 +13,8 @@ import 'package:storypad/core/storages/backup_import_history_storage.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
-  final Map<int, CloudFileObject>? backupCloudFileByYear; // v3: map of year -> CloudFileObject
-  final Map<int, BackupObject>? backupContentsByYear; // v3: map of year -> BackupObject
+  final Map<int, CloudFileObject>? backupCloudFileByYear; // year -> current (v4) file
+  final Map<int, BackupObject>? backupContentsByYear; // year -> its contents
 
   /// Devices still writing legacy (v3) backups after this service has current ones: an older app on another device,
   /// whose new stories this device can't receive until it updates. By device model.

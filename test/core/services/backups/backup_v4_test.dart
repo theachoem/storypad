@@ -34,7 +34,6 @@ void main() {
       );
       expect(info.version, '4');
       expect(info.fileNameWithExtention, 'Backup__4__2025__1734350000000__iPhone 15 Pro__abc.zip');
-      expect(info.isCurrentYearlyVersion, isTrue);
     });
 
     test('v4 and v3 names parse; the Drive query of apps before v4 never matches a v4 name', () {
@@ -43,7 +42,7 @@ void main() {
       expect(v4.createdAt, DateTime.fromMillisecondsSinceEpoch(1734350000000));
 
       final v3 = BackupFileObject.fromFileName('Backup__3__2025__1734350000000__iPhone 15 Pro__abc.zip')!;
-      expect((v3.version, v3.isCurrentYearlyVersion), ('3', false));
+      expect(v3.version, '3');
 
       // Old apps: `name contains 'Backup__3__' or name contains 'Backup::3::'` on Drive; elsewhere the v3 parser.
       expect(v4.fileName.contains('Backup__3__') || v4.fileName.contains('Backup::3::'), isFalse);

@@ -328,9 +328,8 @@ class GoogleDriveCloudService extends BackupCloudService {
     );
   }
 
-  /// Fetch all yearly backups (v3) from the backups/ folder
-  /// Falls back to legacy backups (v2/v1) from root if no v3 backups exist
-  /// Returns a map of year -> CloudFileObject
+  /// Fetch all yearly backups (v4, and v3 as legacy) from the backups/ folder
+  /// Falls back to legacy backups (v2/v1) from root if no yearly backups exist
   @override
   Future<YearlyBackupFilesObject> fetchYearlyBackups() async {
     return _executeWithRetry(

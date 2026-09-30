@@ -15,7 +15,7 @@ class BackupFileObject {
 
   /// The yearly file version this app writes. v4 holds stories whose pages may be Markdown (v3 held Quill only):
   /// apps before v4 never list a v4 file -- their parser doesn't know the version -- so they can't misread one.
-  /// v3 files are still read, once, for years without a v4 file (see `BackupCloudService.fetchLegacyYearlyBackups`).
+  /// v3 files are still read, once, for years without a v4 file (see `BackupCloudService.fetchYearlyBackups`).
   static const String currentYearlyVersion = '4';
 
   final DateTime createdAt;
@@ -36,9 +36,6 @@ class BackupFileObject {
     String? version,
     this.year,
   }) : version = version ?? (year != null ? currentYearlyVersion : '2');
-
-  /// Whether this is a yearly file in the format this app writes (see [currentYearlyVersion]).
-  bool get isCurrentYearlyVersion => version == currentYearlyVersion && year != null;
 
   // v4: Backup__4__2025__1734350000000__iPhone 15 Pro__iPhone123 (as v3; pages may be Markdown)
   // v3: Backup__3__2025__1734350000000__iPhone 15 Pro__iPhone123 (year-based, extension added separately)
