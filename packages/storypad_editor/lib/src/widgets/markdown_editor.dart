@@ -42,7 +42,6 @@ class MarkdownEditor extends StatefulWidget {
     this.selectionColor,
     this.placeholder,
     this.placeholderStyle,
-    this.titlePlaceholder,
     this.checkboxesEnabled = true,
     this.contextMenuActions = const [],
     this.blockStyles,
@@ -94,9 +93,6 @@ class MarkdownEditor extends StatefulWidget {
 
   /// See [RawEditor.placeholderStyle].
   final TextStyle? placeholderStyle;
-
-  /// See [RawEditor.titlePlaceholder].
-  final String? titlePlaceholder;
 
   /// See [RawEditor.checkboxesEnabled].
   final bool checkboxesEnabled;
@@ -200,7 +196,6 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       selectionColor: widget.selectionColor,
       placeholder: widget.placeholder,
       placeholderStyle: widget.placeholderStyle,
-      titlePlaceholder: widget.titlePlaceholder,
       checkboxesEnabled: widget.checkboxesEnabled,
       contextMenuActions: widget.contextMenuActions,
       blockStyles: widget.blockStyles,

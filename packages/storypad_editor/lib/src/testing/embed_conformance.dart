@@ -23,7 +23,7 @@ import 'quill_equivalence.dart';
 /// - it survives between other blocks, with its line separated from theirs;
 /// - its plain text is consistent;
 /// - if the embed has a Quill form ([StoryEmbedCodec.quillKeys]), [StoryEmbedCodec.toQuill] writes [value] under one
-///   of its keys, and that op imports back as [value] (so a document edited here can be stored as Quill);
+///   of its keys, and that op imports back as [value] (so readers of Quill get the same embed);
 /// - if [fromQuillOp] is given (a Quill embed op, e.g. `{'insert': {'media': 'a.jpg'}}`), that op imports as
 ///   [value], converts to the same Markdown, and writing it back as Quill gives an equivalent op.
 ///

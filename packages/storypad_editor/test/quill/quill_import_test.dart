@@ -163,12 +163,13 @@ void main() {
       expect(nodes[2].getMetadataValue(TextNodeMetadata.textAlign), 'justify');
     });
 
-    test('alignment on a list item is dropped instead of crashing', () {
+    test('alignment on a list item is kept', () {
       final nodes = _import([
         _text('a'),
         _line({'list': 'bullet', 'align': 'center'}),
       ]);
       expect(nodes.first, isA<ListItemNode>());
+      expect(nodes.first.getMetadataValue(TextNodeMetadata.textAlign), 'center');
     });
 
     test('huge and malformed indent values are clamped or ignored', () {

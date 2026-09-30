@@ -4,10 +4,11 @@ import '../markdown/markdown_format.dart';
 
 /// A page's title lives in its Markdown: it's the page's **first block, if that block is a heading** (any level). A
 /// heading further down -- even after blank lines -- is content, not a title: the editor treats exactly the first
-/// block as the title, so the two can't disagree. An empty heading in that place is an empty title (the slot a new
-/// page starts with), and it isn't part of the body either.
+/// block as the title, so the two can't disagree. An empty heading in that place is an empty title, and it isn't part
+/// of the body either.
 ///
-/// Titles are written as [pageTitleLevel] headings (see [pageTitleNode]).
+/// A title given on its own (a Quill page's separate title, a template's) is written as a [pageTitleLevel] heading
+/// (see [pageTitleNode]).
 
 /// The heading level a page title is written as.
 const pageTitleLevel = 3;
@@ -20,11 +21,10 @@ String? normalizePageTitle(String? title) {
   return normalized.isEmpty ? null : normalized;
 }
 
-/// A heading holding [title] (unformatted) as a page's title. [title] is normalized (see [normalizePageTitle]); an
-/// empty title makes an empty heading.
-ParagraphNode pageTitleNode(String? title, {String? id}) {
+/// A heading holding [title] (unformatted, normalized: see [normalizePageTitle]) as a page's title.
+ParagraphNode pageTitleNode(String title) {
   return ParagraphNode(
-    id: id ?? Editor.createNodeId(),
+    id: Editor.createNodeId(),
     text: AttributedText(normalizePageTitle(title) ?? ''),
     metadata: {NodeMetadata.blockType: headerAttribution(pageTitleLevel)},
   );

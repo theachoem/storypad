@@ -9,7 +9,8 @@ Pointer-style: see the named files for how each works. Update when behavior chan
   nodes and view models by `runtimeType`, so a generic node would silently compare unequal across copies.
   `StoryEmbedRegistry` validates types, Quill keys and tags up front (duplicates, reserved names).
 - **Codec** (`lib/src/codec/story_codec.dart`): `decode`/`encode`/`quillToMarkdown`/`markdownToQuill`/
-  `quillImportLosses`/`toPlainText`, no widgets.
+  `quillImportLosses`/`toPlainText`, page title (`pageTitleOf`/`pageBodyOf`/`quillPageToMarkdown`/`checkQuillPage`),
+  no widgets.
 - **Controller** (`lib/src/controller/`): owns document, composer and an `Editor` it builds itself (see Gotchas),
   `StoryEditorActions` (headless commands), embed ops, selection holds, dirty tracking, read-only.
 - **Widgets** (`lib/src/widgets/`): `RawEditor`, `MarkdownEditor`, and one `StoryEmbedComponentBuilder` for every
@@ -25,9 +26,15 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
   Blocks are separated by a blank line; consecutive list items/tasks by one newline.
 - Hard line break inside text: `<br>`. Empty paragraph: `&nbsp;` — kept wherever it is (first, middle, last); only a
   blank page (one empty paragraph) is written as nothing. The editor adds no line of its own: after a trailing embed the
-  caret sits right after it (typing or Enter starts a new line), and inserting an embed or divider at the end of a line
-  adds no empty line after it. Enter at the start of a heading or quote adds a plain empty
-  line above it.
+  caret sits right after it, and typing, pasting or Enter there starts a new line (`controller/text_at_block_edge.dart`).
+  Enter at the start of a heading or quote adds a plain empty line above it (`controller/newline_before_block.dart`).
+- Inserting an embed or divider (`controller/insert_block.dart`): a plain empty line takes it in its place; at the end
+  of a line (an empty heading or quote too) or on any other block it goes after, adding no empty line; mid-paragraph it
+  splits the line, both halves keeping its style (heading, quote, alignment, indent).
+- Page title: the page's first block, if it's a heading (`codec/page_title.dart`, `StoryCodec.pageTitleOf`/
+  `pageBodyOf`). A Quill page's separate title converts to a leading `###` heading (`quillPageToMarkdown`);
+  `checkQuillPage` decides whether that conversion is lossless. An untitled Quill page whose body starts with a heading
+  gains that heading as its title — nothing is lost, it just reads as the title afterwards.
 - Lists/tasks: `-`, `1.`, `- [ ]`/`- [x]`, 4 spaces per level (reads 2/3-space nesting too). Indent max 6.
 - Non-left alignment and paragraph indent: `<div style="text-align:…" data-indent="…">` + blank lines + the block +
   blank lines + `</div>` (paragraphs, headings, quotes). A run of consecutive list items/tasks sharing an alignment
@@ -71,7 +78,8 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 
 ## Quill export (`quill/quill_exporter.dart`)
 
-For stories still stored as Quill: the mirror of the importer, in the shapes StoryPad's Quill editor writes.
+The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for readers that still take Quill, and for
+`checkQuillPage`'s round trip. Blank lines are kept, trailing ones included, so it's symmetric with the importer.
 
 - Blocks on each line's `\n`: `header`, `list` (+ `indent`), `blockquote: true`, `code-block: true`, `align`,
   `indent`. A node holding line breaks (a multi-line quote/code block, a soft break) becomes one Quill line per line.

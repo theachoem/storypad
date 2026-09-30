@@ -8,8 +8,8 @@ import '../support/random_documents.dart';
 import '../support/random_quill.dart';
 import '../support/test_embeds.dart';
 
-/// Stories are stored as Quill while edited as Markdown: Quill → Markdown → Quill must keep everything the loss report
-/// doesn't flag, and must settle after one trip (so saving an opened story twice never changes it again).
+/// Pages stored as Quill (from before Markdown) convert to Markdown, and readers still get Quill from Markdown pages:
+/// Quill → Markdown → Quill must keep everything the loss report doesn't flag, and must settle after one trip.
 void main() {
   final codec = StoryCodec(embeds: testEmbedCodecs);
 

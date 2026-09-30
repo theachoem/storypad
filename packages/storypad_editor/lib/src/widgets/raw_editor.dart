@@ -16,7 +16,6 @@ import 'link_tap_handler.dart';
 import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
 import 'story_embed_component.dart';
-import 'title_hint.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
 /// selection and platform chrome. Format-agnostic -- see `MarkdownEditor` for Markdown change notifications.
@@ -58,7 +57,6 @@ class RawEditor extends StatefulWidget {
     this.selectionColor,
     this.placeholder,
     this.placeholderStyle,
-    this.titlePlaceholder,
     this.checkboxesEnabled = true,
     this.contextMenuActions = const [],
     this.blockStyles,
@@ -111,11 +109,6 @@ class RawEditor extends StatefulWidget {
   /// The [placeholder]'s style. Defaults to [baseTextStyle] in the theme's hint color.
   final TextStyle? placeholderStyle;
 
-  /// Shown in an empty heading that's the first block -- an empty page title (see `StoryCodec.pageTitleOf`), e.g.
-  /// the one a new page starts with -- in the heading's style and [placeholderStyle]'s color (default: the theme's
-  /// hint color). Takes precedence over [placeholder] when the document is just that heading.
-  final String? titlePlaceholder;
-
   /// Whether task checkboxes toggle -- also while read-only, where it's the only edit (reported like any other).
   /// Turn off for a view whose changes wouldn't be kept.
   final bool checkboxesEnabled;
@@ -148,8 +141,9 @@ enum StoryEditorLayout {
   sliver,
 }
 
-/// The document's left inset on desktop/web: just wide enough for [ReorderableDocumentOverlay]'s drag handle.
-const _reorderGutterWidth = 18.0;
+/// The default left padding on desktop/web: room for [ReorderableDocumentOverlay]'s full-size drag handle (it
+/// shrinks to fit a narrower padding the app passes, see `dragHandleSizeFor`).
+const _defaultDesktopLeftPadding = 18.0;
 
 /// The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
 final _keyboardActions = List<SuperEditorKeyboardAction>.unmodifiable([
@@ -205,7 +199,6 @@ class _RawEditorState extends State<RawEditor> {
     }
     if (oldWidget.placeholder != widget.placeholder ||
         oldWidget.placeholderStyle != widget.placeholderStyle ||
-        oldWidget.titlePlaceholder != widget.titlePlaceholder ||
         oldWidget.baseTextStyle != widget.baseTextStyle ||
         oldWidget.checkboxesEnabled != widget.checkboxesEnabled) {
       _componentBuildersCache = null;
@@ -338,7 +331,8 @@ class _RawEditorState extends State<RawEditor> {
         for (final rule in defaultStylesheet.rules)
           StyleRule(rule.selector, (document, node) => {...rule.styler(document, node)}..remove(Styles.maxWidth)),
       ],
-      documentPadding: widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _reorderGutterWidth : 16, 16, 16, 16),
+      documentPadding:
+          widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _defaultDesktopLeftPadding : 16, 16, 16, 16),
       addRulesAfter: [
         // The same small gap around every block (the default stylesheet's per-type block padding reads as
         // inconsistent spacing), with the base text style merged in. No side padding: the default stylesheet gives
@@ -406,8 +400,6 @@ class _RawEditorState extends State<RawEditor> {
   }
 
   List<ComponentBuilder> _createComponentBuilders() => [
-    if (widget.titlePlaceholder case final titlePlaceholder?)
-      TitleHintComponentBuilder(titlePlaceholder, (context) => widget.placeholderStyle?.color),
     if (widget.placeholder case final placeholder?) HintComponentBuilder(placeholder, _placeholderStyle),
     const NoPaddingBlockquoteComponentBuilder(),
     const CompactParagraphComponentBuilder(),
@@ -499,8 +491,7 @@ class _RawEditorState extends State<RawEditor> {
       shrinkWrap: !_ownsScrolling,
       componentBuilders: _componentBuilders(context),
       keyboardActions: _keyboardActions,
-      // Mobile drops the selection when the editor loses focus (so tap-outside unfocuses and enables reordering),
-      // except while a toolbar holds it (its popup took focus, and its action still needs the selection). Desktop
+      // Mobile drops the selection when the editor loses focus, except while a toolbar holds it (its popup took focus, and its action still needs the selection). Desktop
       // always keeps it: its toolbar popups take focus too.
       selectionPolicies: SuperEditorSelectionPolicies(
         clearSelectionWhenEditorLosesFocus: !keepSelection,

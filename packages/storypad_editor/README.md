@@ -132,7 +132,7 @@ flutter analyze && (cd example && flutter analyze)
 dart format -l 120 lib test
 ```
 
-**Fidelity audit**: how real stories survive Quill → Markdown → Quill (what the bridge phase does on every save).
+**Fidelity audit**: how real stories survive Quill → Markdown → Quill (the check a page passes before it's converted).
 Prints only counts, attribute keys and story ids, never story text; nothing leaves your machine:
 
 ```sh

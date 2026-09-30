@@ -12,7 +12,7 @@ void main() {
   final codec = StoryCodec(embeds: testEmbedCodecs);
 
   group('the title rule', () {
-    test('the first non-empty block, if it is a heading of any level', () {
+    test('the first block, if it is a heading of any level', () {
       for (var level = 1; level <= 6; level++) {
         expect(codec.pageTitle('${'#' * level} Trip\n\nWent to the beach.'), 'Trip', reason: 'h$level');
       }
@@ -44,7 +44,7 @@ void main() {
 
       expect(body('### Trip\n\nA\n\nB'), ['A', 'B']);
       expect(body('&nbsp;\n\n### Trip\n\nA'), ['', 'Trip', 'A'], reason: 'no title: everything is body');
-      expect(body('###\n\nA'), ['A'], reason: 'an empty title is still the title slot');
+      expect(body('###\n\nA'), ['A'], reason: 'an empty leading heading is an empty title, not body');
       expect(body('A\n\n### B'), ['A', 'B'], reason: 'no title: everything is body');
     });
   });
@@ -101,13 +101,6 @@ void main() {
         ], title: 'Trip'),
         '### Trip',
       );
-    });
-
-    test('pageTitleNode makes an empty heading for an empty title', () {
-      final node = pageTitleNode(null);
-      expect(node.text.toPlainText(), isEmpty);
-      expect(node.getMetadataValue(NodeMetadata.blockType), header3Attribution);
-      expect(codec.encode([node, ParagraphNode(id: '2', text: AttributedText('body'))]), '###\n\nbody');
     });
   });
 

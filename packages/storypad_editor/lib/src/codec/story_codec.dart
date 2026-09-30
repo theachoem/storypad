@@ -14,7 +14,7 @@ import '../quill/quill_import_losses.dart';
 import '../quill/quill_importer.dart';
 import 'page_title.dart';
 
-export 'page_title.dart' show normalizePageTitle, pageTitleLevel, pageTitleNode;
+export 'page_title.dart' show normalizePageTitle, pageTitleNode;
 
 /// Converts documents to and from Markdown (the storage format), with a given set of embeds -- and from and to Quill
 /// Delta, for stories stored in Quill.
@@ -87,7 +87,8 @@ final class StoryCodec {
   /// trimmed, `null` when empty. A heading further down (even after blank lines) is content, not a title.
   static String? pageTitleOf(Iterable<DocumentNode> nodes) => locatePageTitle(nodes.toList()).title;
 
-  /// A page's body: [nodes] after the title heading, or all of them when the page has no title. An empty leading heading is an empty title, so it isn't part of the body either.
+  /// A page's body: [nodes] after the title heading, or all of them when the page has no title. An empty leading
+  /// heading is an empty title, so it isn't part of the body either.
   static List<DocumentNode> pageBodyOf(Iterable<DocumentNode> nodes) {
     final list = nodes.toList();
     return list.sublist(locatePageTitle(list).bodyStart);
@@ -109,6 +110,10 @@ final class StoryCodec {
   /// Checks three things: nothing is dropped ([quillImportLosses]); the title reads back as the same title; and the
   /// body written back as Quill is equivalent to [ops] (see [canonicalQuill]). The round trip catches converter bugs
   /// the loss report can't see (wrong nesting, reordering, a broken embed).
+  ///
+  /// Nothing is lost, but one thing can read differently afterwards, by design: a page with no title whose body
+  /// starts with a heading. After conversion that heading is the page's first block, so it reads as its title
+  /// ([pageTitleOf]), and no longer as the start of its body ([pageBodyOf]).
   QuillPageCheck checkQuillPage(List<Object?> ops, {String? title, String? markdown}) {
     final losses = quillImportLosses(ops);
     final expectedTitle = normalizePageTitle(title);
@@ -158,7 +163,8 @@ final class QuillPageCheck {
   /// Formatting the conversion drops (see [StoryCodec.quillImportLosses]).
   final List<QuillImportLoss> losses;
 
-  /// Whether the Markdown's leading heading reads back as exactly the page's title (always true without a title).
+  /// Whether the Markdown's leading heading reads back as exactly the page's title. Always true without a title (a
+  /// leading heading in the body then becomes the title, see [StoryCodec.checkQuillPage]).
   final bool titleRoundTrips;
 
   /// Whether the Markdown's body, written back as Quill, is equivalent to the original ops. `false` when the title
