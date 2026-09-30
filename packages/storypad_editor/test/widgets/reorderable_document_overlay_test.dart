@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_editor/super_editor.dart';
+import 'package:storypad_editor/src/widgets/drag_snapshot_preview.dart';
 import 'package:storypad_editor/src/widgets/reorderable_document_overlay.dart';
 
 void main() {
@@ -139,6 +140,18 @@ void main() {
     // — pumpAndSettle to let it resolve.
     await tester.pumpAndSettle();
     expect(hasSnapshotPreview(), isTrue);
+
+    // Only the dragged block's region is captured, not the whole document: a long story's full height can exceed what
+    // a GPU texture may be (Metal: 16384 px), which Impeller fails on.
+    final painter = tester
+        .widget<CustomPaint>(
+          find.byWidgetPredicate(
+            (w) => w is CustomPaint && w.painter.runtimeType.toString() == '_SnapshotRegionPainter',
+          ),
+        )
+        .painter;
+    final snapshotHeight = ((painter as dynamic).image as dynamic).height as int;
+    expect(snapshotHeight, globalRectForNode('p1').height.round());
 
     // At the exact moment of grabbing, before any movement, the floating
     // preview sits right on top of the real block it was grabbed from —
@@ -298,5 +311,23 @@ void main() {
     // One undo step.
     editor.undo();
     expect([for (final node in document) node.id], ['p1', 'p2', 'p3', 'p4']);
+  });
+
+  group('dragSnapshotPixelRatio', () {
+    test('keeps the device pixel ratio while the region fits', () {
+      expect(dragSnapshotPixelRatio(const Size(800, 300), 2), 2);
+      expect(dragSnapshotPixelRatio(const Size(800, 2048), 2), 2);
+    });
+
+    test('lowers it so the longest side stays within the limit', () {
+      final ratio = dragSnapshotPixelRatio(const Size(800, 20000), 2)!;
+      expect(20000 * ratio, closeTo(maxDragSnapshotExtent, 0.001));
+      expect(800 * ratio, lessThan(maxDragSnapshotExtent));
+    });
+
+    test('nothing to capture for an empty region', () {
+      expect(dragSnapshotPixelRatio(Size.zero, 2), isNull);
+      expect(dragSnapshotPixelRatio(const Size(800, 0), 2), isNull);
+    });
   });
 }

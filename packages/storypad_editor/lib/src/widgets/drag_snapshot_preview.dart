@@ -3,9 +3,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-/// Captures a real pixel snapshot of a dragged block (via a [RepaintBoundary]
-/// wrapped around the whole document) and re-paints just that block's
-/// cropped region at the current drop slot, semi-transparent — a
+/// Captures a real pixel snapshot of a dragged block (the block's region of a
+/// [RepaintBoundary] wrapped around the whole document) and re-paints it at
+/// the current drop slot, semi-transparent — a
 /// Notion-style "here's exactly what's about to land here" preview, on top
 /// of (not instead of) the plain drop-indicator line
 /// [ReorderableDocumentOverlay] already draws.
@@ -18,8 +18,8 @@ import 'package:flutter/rendering.dart';
 /// from outside it.
 ///
 /// Mix into a drag-and-drop overlay's `State`: wrap the child that contains
-/// the document in [wrapWithSnapshotBoundary], call [captureDragSnapshot] the
-/// moment a drag starts (before anything moves — it's the last complete
+/// the document in [wrapWithSnapshotBoundary], call [captureDragSnapshot] with
+/// the dragged blocks' rect the moment a drag starts (before anything moves — it's the last complete
 /// frame of the untouched layout), [disposeDragSnapshot] when the drag ends
 /// or is cancelled (also called automatically from [dispose]), and render
 /// [buildSnapshotPreview] at the current drop slot while a snapshot is held.
@@ -28,26 +28,34 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
 
   ui.Image? _snapshotImage;
   double? _snapshotPixelRatio;
+  Offset _snapshotOrigin = Offset.zero;
   int _captureGeneration = 0;
 
   bool get hasDragSnapshot => _snapshotImage != null;
 
-  Widget wrapWithSnapshotBoundary(Widget child) => RepaintBoundary(key: _repaintBoundaryKey, child: child);
+  Widget wrapWithSnapshotBoundary(Widget child) => _SnapshotBoundary(key: _repaintBoundaryKey, child: child);
 
-  /// Captures the whole document's current appearance as an image, to later
-  /// crop [buildSnapshotPreview] from. Safe to call even if the boundary
-  /// isn't laid out yet (silently does nothing) — a dragged block always
-  /// has *some* rect by the time a drag can start, so this only fails to
-  /// capture in situations that would already have no rect to show anyway.
-  Future<void> captureDragSnapshot() async {
+  /// Captures [region] of the document (the dragged blocks' rect, in the
+  /// coordinate space of [wrapWithSnapshotBoundary]'s child) as an image, for
+  /// [buildSnapshotPreview]. Only that region: a whole document can be taller
+  /// than a GPU texture may be (16384 px on Metal — a long story at 2x), which
+  /// Impeller fails on. A region too large even so is captured at a lower
+  /// pixel ratio (see [dragSnapshotPixelRatio]).
+  ///
+  /// Safe to call even if the boundary isn't laid out or painted yet
+  /// (silently does nothing, and the drag shows no preview).
+  Future<void> captureDragSnapshot(Rect region) async {
     final boundary = _repaintBoundaryKey.currentContext?.findRenderObject();
-    if (boundary is! RenderRepaintBoundary) {
+    if (boundary is! _RenderSnapshotBoundary || !boundary.hasSize || boundary.debugNeedsPaint) {
       return;
     }
 
+    final bounds = region.intersect(Offset.zero & boundary.size);
+    final pixelRatio = dragSnapshotPixelRatio(bounds.size, MediaQuery.of(context).devicePixelRatio);
+    if (pixelRatio == null) return;
+
     final generation = ++_captureGeneration;
-    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final image = await boundary.toImage(pixelRatio: pixelRatio);
+    final image = await boundary.toImageOf(bounds, pixelRatio: pixelRatio);
     // The drag may have ended (or another started) while capturing: a late image would be stale.
     if (!mounted || generation != _captureGeneration) {
       image.dispose();
@@ -58,6 +66,7 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
       _snapshotImage?.dispose();
       _snapshotImage = image;
       _snapshotPixelRatio = pixelRatio;
+      _snapshotOrigin = bounds.topLeft;
     });
   }
 
@@ -101,8 +110,8 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
           painter: _SnapshotRegionPainter(
             image: image,
             sourceRect: Rect.fromLTWH(
-              sourceRect.left * pixelRatio,
-              sourceRect.top * pixelRatio,
+              (sourceRect.left - _snapshotOrigin.dx) * pixelRatio,
+              (sourceRect.top - _snapshotOrigin.dy) * pixelRatio,
               sourceRect.width * pixelRatio,
               sourceRect.height * pixelRatio,
             ),
@@ -134,4 +143,33 @@ class _SnapshotRegionPainter extends CustomPainter {
   @override
   bool shouldRepaint(_SnapshotRegionPainter oldDelegate) =>
       oldDelegate.image != image || oldDelegate.sourceRect != sourceRect || oldDelegate.opacity != opacity;
+}
+
+/// The longest side, in pixels, a drag snapshot is captured at: well within every GPU's texture limit (Metal's is
+/// 16384; some Android GPUs' 4096), and plenty for a translucent preview.
+const maxDragSnapshotExtent = 4096.0;
+
+/// The pixel ratio to capture a region of [size] at: [devicePixelRatio], lowered so its longest side stays within
+/// [maxDragSnapshotExtent]; `null` when there's nothing to capture.
+double? dragSnapshotPixelRatio(Size size, double devicePixelRatio) {
+  if (size.isEmpty || devicePixelRatio <= 0) return null;
+  final longest = size.longestSide * devicePixelRatio;
+  return longest <= maxDragSnapshotExtent ? devicePixelRatio : devicePixelRatio * maxDragSnapshotExtent / longest;
+}
+
+/// A [RepaintBoundary] that can capture just part of what it painted ([RenderRepaintBoundary.toImage] captures all of
+/// it).
+class _SnapshotBoundary extends RepaintBoundary {
+  const _SnapshotBoundary({super.key, super.child});
+
+  @override
+  RenderRepaintBoundary createRenderObject(BuildContext context) => _RenderSnapshotBoundary();
+}
+
+class _RenderSnapshotBoundary extends RenderRepaintBoundary {
+  /// [bounds] (in this render object's coordinates) of what was last painted, as an image.
+  Future<ui.Image> toImageOf(Rect bounds, {required double pixelRatio}) {
+    final offsetLayer = layer! as OffsetLayer;
+    return offsetLayer.toImage(bounds, pixelRatio: pixelRatio);
+  }
 }

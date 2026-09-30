@@ -182,7 +182,7 @@ class _ReorderableDocumentOverlayState extends State<ReorderableDocumentOverlay>
     // the image is ready (a frame or two later) — the plain drop-indicator
     // line is already showing by then, so the preview just fades in on top
     // of it slightly after the drag visibly starts, rather than blocking it.
-    captureDragSnapshot();
+    if (sourceRect != null) captureDragSnapshot(sourceRect);
   }
 
   int _computeDropIndex(double pointerY) {
