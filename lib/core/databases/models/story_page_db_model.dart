@@ -122,14 +122,14 @@ class StoryPageDbModel {
       : _markdown!;
 
   /// The page title (see `StoryCodec.pageTitleOf`), or `null`. For a legacy page, its stored title.
-  late final String? title = isLegacy ? _legacyTitle : storyPadCodec.pageTitle(markdown);
+  String? get title => isLegacy ? _legacyTitle : _derived.title;
 
   /// The page body -- without the title -- as Quill Delta ops, for readers built on Quill (plain text, word counts,
   /// asset links, exports). A legacy page's stored body; a Markdown page's body written as Quill, which is equivalent
   /// to the Quill it was converted from (see [checkConversion]).
-  late final List<dynamic> quillBody = isLegacy
-      ? (_legacyBody ?? const [])
-      : storyPadCodec.encodeQuill(StoryCodec.pageBodyOf(storyPadCodec.decodeNodes(markdown)));
+  List<dynamic> get quillBody => isLegacy ? (_legacyBody ?? const []) : _derived.quillBody;
+
+  late final _MarkdownDerived _derived = _MarkdownDerived.of(markdown);
 
   /// Whether this legacy page converts to Markdown without losing anything (see `StoryCodec.checkQuillPage`).
   QuillPageCheck checkConversion() {
@@ -160,6 +160,11 @@ class StoryPageDbModel {
 
   /// This page with other ids or counts; the content is kept as stored.
   StoryPageDbModel copyWith({int? id, int? wordCount, int? characterCount}) {
+    if ((id ?? this.id) == this.id &&
+        (wordCount ?? this.wordCount) == this.wordCount &&
+        (characterCount ?? this.characterCount) == this.characterCount) {
+      return this;
+    }
     final json = toJson();
     if (id != null) json['id'] = id;
     if (wordCount != null) json['word_count'] = wordCount;
@@ -187,5 +192,32 @@ class StoryPageDbModel {
       'character_count': characterCount,
       'markdown': _markdown,
     };
+  }
+}
+
+/// What's worked out from a Markdown page (parsing it is the costly part), shared by every page model holding the same
+/// Markdown: while editing, each keystroke rebuilds the story's page models and recounts every page, and all but the
+/// edited one are unchanged.
+class _MarkdownDerived {
+  _MarkdownDerived._(this.title, this.quillBody);
+
+  final String? title;
+  final List<dynamic> quillBody;
+
+  static const _maxCached = 64;
+  static final Map<String, _MarkdownDerived> _cache = {};
+
+  factory _MarkdownDerived.of(String markdown) {
+    final cached = _cache.remove(markdown);
+    if (cached != null) return _cache[markdown] = cached; // Most recently used last.
+
+    final nodes = storyPadCodec.decodeNodes(markdown);
+    final derived = _MarkdownDerived._(
+      StoryCodec.pageTitleOf(nodes),
+      List.unmodifiable(storyPadCodec.encodeQuill(StoryCodec.pageBodyOf(nodes))),
+    );
+    _cache[markdown] = derived;
+    if (_cache.length > _maxCached) _cache.remove(_cache.keys.first);
+    return derived;
   }
 }

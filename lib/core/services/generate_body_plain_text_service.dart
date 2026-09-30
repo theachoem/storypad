@@ -52,6 +52,9 @@ class GenerateBodyPlainTextService {
           final filteredBody = MarkdownContentFilterService.call(pageTexts[i]);
           final filteredCombined = '$filteredTitle $filteredBody';
 
+          // A page from a newer app version is kept exactly as stored, counts included.
+          if (newRichPages[i].isUnsupported) return newRichPages[i];
+
           return newRichPages[i].copyWith(
             characterCount: filteredTitle.length + filteredBody.length,
             wordCount: filteredCombined.split(RegExp(r'\s+')).where((element) => element.isNotEmpty).length,

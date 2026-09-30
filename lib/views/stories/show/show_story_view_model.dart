@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -6,6 +7,7 @@ import 'package:storypad/core/services/stories/story_convert_legacy_pages_servic
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/initializers/database_initializer.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -49,9 +51,11 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
     // Save if detect data is invalid mostly from previous version before 2.12.3 (plainText), 2.23.0 (count)
     // No need to do following in edit story view.
-    if (draftContent?.plainText != content.plainText ||
-        draftContent?.characterCount != content.characterCount ||
-        draftContent?.wordCount != content.wordCount) {
+    // Never for a story with a page from a newer app version: it's kept exactly as stored.
+    if (draftContent?.hasUnsupportedPages != true &&
+        (draftContent?.plainText != content.plainText ||
+            draftContent?.characterCount != content.characterCount ||
+            draftContent?.wordCount != content.wordCount)) {
       // Keep updatedAt same as before since this is just a silent fix. User didn't explicitly make change.
       story = buildStory(draft: story?.draftStory == true, updatedAt: story?.updatedAt);
       StoryDbModel.db.set(story!, runCallbacks: false);
@@ -62,6 +66,10 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
   Future<void> goToEditPage(BuildContext context) async {
     if (draftContent == null || draftContent?.richPages == null) return;
+    if (draftContent!.hasUnsupportedPages) {
+      MessengerService.of(context).showSnackBar(tr('page.newer_version_notice'), success: false);
+      return;
+    }
 
     int? nearestPageIndex;
     double? initialPageScrollOffet;

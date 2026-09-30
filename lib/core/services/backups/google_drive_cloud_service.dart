@@ -343,15 +343,23 @@ class GoogleDriveCloudService extends BackupCloudService {
         final backupsFolderId = await loadFolder(client, 'backups');
 
         if (backupsFolderId != null) {
-          drive.FileList fileList = await client.files.list(
-            spaces: "appDataFolder",
-            q:
-                "(name contains 'Backup__${BackupFileObject.currentYearlyVersion}__' or name contains 'Backup__3__' "
-                "or name contains 'Backup::3::') and '$backupsFolderId' in parents",
-          );
+          // Every page: v3 files are kept for older apps, so the listing grows past one page over the years.
+          final driveFiles = <drive.File>[];
+          String? pageToken;
+          do {
+            final fileList = await client.files.list(
+              spaces: "appDataFolder",
+              q:
+                  "(name contains 'Backup__${BackupFileObject.currentYearlyVersion}__' or name contains 'Backup__3__' "
+                  "or name contains 'Backup::3::') and '$backupsFolderId' in parents",
+              pageToken: pageToken,
+            );
+            driveFiles.addAll(fileList.files ?? const []);
+            pageToken = fileList.nextPageToken;
+          } while (pageToken != null);
 
-          if (fileList.files != null && fileList.files!.isNotEmpty) {
-            final files = YearlyBackupFilesObject.fromFiles(fileList.files!.map(CloudFileObject.fromGoogleDrive));
+          if (driveFiles.isNotEmpty) {
+            final files = YearlyBackupFilesObject.fromFiles(driveFiles.map(CloudFileObject.fromGoogleDrive));
             if (files.current.isNotEmpty || files.legacy.isNotEmpty) return files;
           }
         }

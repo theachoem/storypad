@@ -71,7 +71,9 @@ class StoryPageObjectsMap {
       final richTextController = editorAdapter.createController(
         markdown: richPage.markdown,
         selection: initialPagesMap?[richPage.id]?.bodyController.selection ?? const TextSelection.collapsed(offset: 0),
-        readOnly: readOnly || richPage.isUnsupported,
+        // A story with a page from a newer app version is read-only as a whole: saving any of it would rewrite that
+        // page's story (assets, title, counts) from what this version can't fully read.
+        readOnly: readOnly || content.hasUnsupportedPages,
       );
 
       map[richPage.id] = StoryPageObject(

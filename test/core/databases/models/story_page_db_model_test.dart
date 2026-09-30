@@ -145,10 +145,30 @@ void main() {
       expect(page.toMarkdownPage(), same(page));
     });
 
+    test('keep their stored counts when a story recounts its pages', () {
+      final page = StoryPageDbModel.fromJson(json);
+      final recounted = GenerateBodyPlainTextService.call([page])!.richPagesWithCounts.single;
+      expect(recounted, same(page));
+      expect(recounted.toJson(), json);
+    });
+
     test('still read, best effort, for showing', () {
       final page = StoryPageDbModel.fromJson(json);
       expect(page.title, 'Future');
     });
+  });
+
+  test('pages holding the same Markdown share what is worked out from it', () {
+    final a = StoryPageDbModel.markdown(id: 1, markdown: '### Shared\n\nbody');
+    final b = StoryPageDbModel.markdown(id: 2, markdown: '### Shared\n\nbody');
+    expect(identical(a.quillBody, b.quillBody), isTrue);
+    expect(b.title, 'Shared');
+    expect(() => a.quillBody.add({}), throwsUnsupportedError, reason: 'shared, so never mutated');
+  });
+
+  test('copyWith with nothing new returns the same page', () {
+    final page = StoryPageDbModel.markdown(id: 1, markdown: '### A', wordCount: 1, characterCount: 1);
+    expect(page.copyWith(wordCount: 1, characterCount: 1), same(page));
   });
 
   test('copyWith changes counts and keeps the content as stored', () {

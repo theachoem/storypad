@@ -39,8 +39,8 @@ class _StoryPage extends StatelessWidget {
   final bool smallPage;
 
   void onChange() {
-    // A page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle).
-    if (page.page.isUnsupported) return;
+    // A story with a page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle).
+    if (page.page.isUnsupported || storyContent.hasUnsupportedPages) return;
     onChanged?.call(page.page.withMarkdown(page.bodyController.serialize()));
   }
 
