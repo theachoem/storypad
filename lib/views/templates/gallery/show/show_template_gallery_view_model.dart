@@ -63,7 +63,7 @@ class ShowTemplateGalleryViewModel extends ChangeNotifier with DisposeAwareMixin
     final richPages = galleryTemplate.pages.map((e) {
       return StoryPageDbModel.create(id: galleryTemplate.pages.indexOf(e), title: e.title, body: e.content);
     }).toList();
-    return StoryContentDbModel.create().copyWith(richPages: richPages);
+    return StoryContentDbModel.create().withPages(richPages);
   }
 
   void goToPreviousStories(BuildContext context) async {

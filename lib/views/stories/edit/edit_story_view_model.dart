@@ -78,11 +78,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialPagesMap: initialPagesMap,
     );
 
-    // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.
-    // plainText is needed when saving back to draft content for homepage display & search.
-    draftContent = content.copyWith(
-      richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
-    );
+    // The pages as the editors hold them (their counts computed), and the title worked out from them: a content built
+    // elsewhere may lack it (e.g. a story made from a template before titles were set there).
+    final pages = [
+      for (final page in content.richPages ?? <StoryPageDbModel>[]) pagesManager.pagesMap[page.id]?.page ?? page,
+    ];
+    draftContent = content.copyWith(title: pages.firstOrNull?.title, richPages: pages);
 
     if (params.initialAsset?.relativeLocalFilePath != null) {
       final asset = params.initialAsset!;

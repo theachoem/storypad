@@ -307,7 +307,7 @@ class AppQuickActionsService {
           for (int i = 0; i < template.pages.length; i++)
             StoryPageDbModel.create(id: i, title: template.pages[i].title, body: template.pages[i].content),
         ];
-        final draftContent = StoryContentDbModel.create().copyWith(richPages: richPages);
+        final draftContent = StoryContentDbModel.create().withPages(richPages);
         return template.copyWith(lazyDraftContent: draftContent);
       }
     }

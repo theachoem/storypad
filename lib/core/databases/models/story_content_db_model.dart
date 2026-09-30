@@ -40,7 +40,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   final DateTime createdAt;
 
   @override
-  // The title is worked out from the pages (see StoryPageDbModel.title), so comparing the pages covers it.
+  // The title is worked out from the pages (see [withPages]), so comparing the pages covers it.
   List<String>? get includeCompareKeys => ['rich_pages'];
 
   @override
@@ -82,17 +82,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required int oldIndex,
     required int newIndex,
   }) {
-    List<StoryPageDbModel> newRichPages = [
-      ...richPages ?? <StoryPageDbModel>[],
-    ].reorder(oldIndex: oldIndex, newIndex: newIndex);
-
-    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
-
-    return copyWith(
-      title: newRichPages.first.title,
-      plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
-    );
+    return withPages([...richPages ?? <StoryPageDbModel>[]].reorder(oldIndex: oldIndex, newIndex: newIndex));
   }
 
   StoryContentDbModel addRichPage() {
@@ -105,30 +95,24 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   }
 
   StoryContentDbModel removeRichPage(int pageId) {
-    List<StoryPageDbModel> newRichPages = [
-      ...richPages ?? [],
-    ]..removeWhere((e) => e.id == pageId);
-
-    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
-
-    return copyWith(
-      title: newRichPages.firstOrNull?.title,
-      plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
-    );
+    return withPages([...richPages ?? <StoryPageDbModel>[]]..removeWhere((e) => e.id == pageId));
   }
 
   StoryContentDbModel replacePage(StoryPageDbModel newPage) {
     List<StoryPageDbModel> richPages = [...this.richPages ?? []];
     int index = richPages.indexWhere((e) => e.id == newPage.id);
     richPages[index] = newPage;
+    return withPages(richPages);
+  }
 
-    final plainTextResult = GenerateBodyPlainTextService.call(richPages);
-
+  /// This content holding [pages], with what's worked out from them recomputed: the [title] (the first page's), the
+  /// [plainText] and the pages' counts. Build contents with it (e.g. from a template), so these are never missing.
+  StoryContentDbModel withPages(List<StoryPageDbModel> pages) {
+    final plainTextResult = GenerateBodyPlainTextService.call(pages);
     return copyWith(
-      title: index == 0 ? newPage.title : title,
+      title: pages.firstOrNull?.title,
       plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
+      richPages: plainTextResult?.richPagesWithCounts ?? pages,
     );
   }
 
@@ -159,13 +143,7 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
       }
     }
 
-    final converted = [for (final page in pages) page.toMarkdownPage()];
-    final plainTextResult = GenerateBodyPlainTextService.call(converted);
-    return copyWith(
-      title: converted.first.title,
-      plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
-    );
+    return withPages([for (final page in pages) page.toMarkdownPage()]);
   }
 
   String? displayShortBody({int maxCharacterCount = 200}) {
