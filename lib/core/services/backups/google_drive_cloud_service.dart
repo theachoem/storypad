@@ -4,7 +4,9 @@ import 'dart:io' as io;
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
+import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/objects/google_user_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
@@ -330,45 +332,33 @@ class GoogleDriveCloudService extends BackupCloudService {
   /// Falls back to legacy backups (v2/v1) from root if no v3 backups exist
   /// Returns a map of year -> CloudFileObject
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async {
     return _executeWithRetry(
       methodName: 'fetchYearlyBackups',
       operation: () async {
         drive.DriveApi client = await _getAuthenticatedClient();
 
-        // First, try to fetch v3 yearly backups from backups/ folder
+        // First, fetch v4 and v3 yearly backups from the backups/ folder. Apps before v4 query for v3 names only, so
+        // they never see a v4 file.
         final backupsFolderId = await loadFolder(client, 'backups');
 
         if (backupsFolderId != null) {
           drive.FileList fileList = await client.files.list(
             spaces: "appDataFolder",
-            q: "(name contains 'Backup__3__' or name contains 'Backup::3::') and '$backupsFolderId' in parents",
+            q:
+                "(name contains 'Backup__${BackupFileObject.currentYearlyVersion}__' or name contains 'Backup__3__' "
+                "or name contains 'Backup::3::') and '$backupsFolderId' in parents",
           );
 
           if (fileList.files != null && fileList.files!.isNotEmpty) {
-            Map<int, CloudFileObject> yearlyBackups = {};
-            for (var file in fileList.files!) {
-              final cloudFile = CloudFileObject.fromGoogleDrive(file);
-              final year = cloudFile.year;
-              if (year != null) {
-                // When duplicates exist for the same year, keep the one with the newest
-                // filename timestamp. This prevents non-deterministic ordering from
-                // causing endless re-uploads when multiple files exist for a year.
-                final existing = yearlyBackups[year];
-                final existingTs = existing?.lastUpdatedAt;
-                final newTs = cloudFile.lastUpdatedAt;
-                final isNewer =
-                    existing == null || (newTs != null && (existingTs == null || newTs.isAfter(existingTs)));
-                if (isNewer) yearlyBackups[year] = cloudFile;
-              }
-            }
-            return yearlyBackups;
+            final files = YearlyBackupFilesObject.fromFiles(fileList.files!.map(CloudFileObject.fromGoogleDrive));
+            if (files.current.isNotEmpty || files.legacy.isNotEmpty) return files;
           }
         }
 
-        // Should be removed after all users have migrated to v3 backups.
+        // Should be removed after all users have migrated to yearly backups.
         // Only for backward compatibility.
-        return _fetchLegacyBackups(client);
+        return YearlyBackupFilesObject(legacy: await _fetchLegacyBackups(client));
       },
     );
   }

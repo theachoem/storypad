@@ -299,6 +299,8 @@
   "general.word_count_args": "単語数: {WORDS_COUNT}",
   "general.words": "言葉",
   "general.years": "年",
+  "general.older_app_devices.message": "{} は古いバージョンの StoryPad を使っています。デバイス間でストーリーを同期し続けるにはアップデートしてね。",
+  "general.older_app_devices.title": "ほかのデバイスの StoryPad をアップデートしてね",
   "input.coordinates.label": "座標",
   "input.message.already_exist": "すでに存在しています！",
   "input.message.incorrect": "正しくない",

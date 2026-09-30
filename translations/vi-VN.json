@@ -299,6 +299,8 @@
   "general.word_count_args": "Số từ: {WORDS_COUNT}",
   "general.words": "Từ",
   "general.years": "Năm",
+  "general.older_app_devices.message": "{} đang dùng StoryPad phiên bản cũ. Hãy cập nhật để câu chuyện của bạn tiếp tục đồng bộ giữa các thiết bị.",
+  "general.older_app_devices.title": "Cập nhật StoryPad trên các thiết bị khác",
   "input.coordinates.label": "Tọa độ",
   "input.message.already_exist": "Đã tồn tại!",
   "input.message.incorrect": "Không đúng",

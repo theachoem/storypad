@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/objects/dropbox_user_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/backups/dropbox_oauth_service.dart';
@@ -245,26 +246,12 @@ class DropboxCloudService extends BackupCloudService {
   }
 
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async {
     return _executeWithRetry(
       methodName: 'fetchYearlyBackups',
       operation: () async {
         final files = await _listFolder('/backups', swallow404: true);
-
-        final Map<int, CloudFileObject> yearlyBackups = {};
-        for (final file in files) {
-          final cloudFile = CloudFileObject.fromDropbox(file);
-          final year = cloudFile.year;
-          if (year == null) continue;
-
-          final existing = yearlyBackups[year];
-          final existingTs = existing?.lastUpdatedAt;
-          final newTs = cloudFile.lastUpdatedAt;
-          final isNewer = existing == null || (newTs != null && (existingTs == null || newTs.isAfter(existingTs)));
-          if (isNewer) yearlyBackups[year] = cloudFile;
-        }
-
-        return yearlyBackups;
+        return YearlyBackupFilesObject.fromFiles(files.map((file) => CloudFileObject.fromDropbox(file)));
       },
     );
   }

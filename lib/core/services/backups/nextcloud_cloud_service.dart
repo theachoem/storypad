@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/objects/nextcloud_user_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -176,7 +177,7 @@ class NextcloudCloudService extends BackupCloudService {
   }
 
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async {
     return _executeWithRetry(
       methodName: 'fetchYearlyBackups',
       operation: () async {
@@ -187,26 +188,15 @@ class NextcloudCloudService extends BackupCloudService {
         try {
           files = await client.readDir(backupsPath);
         } on DioException catch (e) {
-          if (e.response?.statusCode == 404) return {};
+          if (e.response?.statusCode == 404) return const YearlyBackupFilesObject();
           rethrow;
         }
 
-        final Map<int, CloudFileObject> yearlyBackups = {};
-        for (final file in files) {
-          if (file.isDir == true || file.name == null) continue;
-
-          final cloudFile = CloudFileObject.fromNextcloud(file, remotePath: '$backupsPath/${file.name}');
-          final year = cloudFile.year;
-          if (year == null) continue;
-
-          final existing = yearlyBackups[year];
-          final existingTs = existing?.lastUpdatedAt;
-          final newTs = cloudFile.lastUpdatedAt;
-          final isNewer = existing == null || (newTs != null && (existingTs == null || newTs.isAfter(existingTs)));
-          if (isNewer) yearlyBackups[year] = cloudFile;
-        }
-
-        return yearlyBackups;
+        return YearlyBackupFilesObject.fromFiles([
+          for (final file in files)
+            if (file.isDir != true && file.name != null)
+              CloudFileObject.fromNextcloud(file, remotePath: '$backupsPath/${file.name}'),
+        ]);
       },
     );
   }

@@ -299,6 +299,8 @@
   "general.word_count_args": "عدد الكلمات: {WORDS_COUNT}",
   "general.words": "كلمات",
   "general.years": "سنين",
+  "general.older_app_devices.message": "يستخدم {} إصدارًا أقدم من StoryPad. حدّثه لتستمر مزامنة قصصك بين الأجهزة.",
+  "general.older_app_devices.title": "حدّث StoryPad على أجهزتك الأخرى",
   "input.coordinates.label": "الإحداثيات",
   "input.message.already_exist": "موجودة بالفعل!",
   "input.message.incorrect": "غير صحيح",

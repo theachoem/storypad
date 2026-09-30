@@ -64,7 +64,8 @@ class ShowBackupServiceViewModel extends ChangeNotifier with DisposeAwareMixin {
     error = null;
 
     try {
-      yearlyBackups = await service.fetchYearlyBackups();
+      // Each year's current file, or its legacy (v3) one until this app writes the year again.
+      yearlyBackups = (await service.fetchYearlyBackups()).merged;
     } on BackupException catch (e) {
       yearlyBackups = {};
       error = e;

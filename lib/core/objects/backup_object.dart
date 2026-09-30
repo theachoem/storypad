@@ -12,7 +12,10 @@ class BackupObject {
 
   // BackupObject version is different from BackupFileObject version.
   // they serve different purpose.
-  static const int currentVersion = 1;
+  //
+  // v2 stores the tables under `data` instead of `tables`, so an app from before Markdown pages -- which reads
+  // `tables` -- rejects the file ("empty or invalid") instead of restoring its stories as empty pages.
+  static const int currentVersion = 2;
 
   BackupObject({
     required this.tables,
@@ -24,7 +27,7 @@ class BackupObject {
   static BackupObject fromContents(Map<String, dynamic> contents) {
     return BackupObject(
       version: int.tryParse(contents['version'].toString()) ?? currentVersion,
-      tables: contents['tables'],
+      tables: contents['data'] ?? contents['tables'],
       year: contents['year'] != null ? int.tryParse(contents['year'].toString()) : null,
       fileInfo: BackupFileObject(
         createdAt: DateTime.parse(contents['meta_data']['created_at']),
@@ -41,7 +44,7 @@ class BackupObject {
   Map<String, dynamic> toContents() {
     final contents = {
       'version': version,
-      'tables': tables,
+      version >= 2 ? 'data' : 'tables': tables,
       'meta_data': {
         'device_model': fileInfo.device.model,
         'device_id': fileInfo.device.id,

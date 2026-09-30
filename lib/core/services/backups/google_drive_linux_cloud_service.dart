@@ -3,6 +3,7 @@ import 'dart:io' as io;
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
@@ -38,7 +39,7 @@ class GoogleDriveLinuxCloudService extends BackupCloudService {
   void setAutoBackupEnabled(bool enabled) {}
 
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async => {};
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async => const YearlyBackupFilesObject();
 
   @override
   Future<(String, int)?> getFileContent(CloudFileObject file) async => null;

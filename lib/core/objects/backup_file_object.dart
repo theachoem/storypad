@@ -13,6 +13,11 @@ class BackupFileObject {
   /// monolithic backups (see `GoogleDriveCloudService.fetchYearlyBackups`).
   static const int kGlobalBackupYear = -2;
 
+  /// The yearly file version this app writes. v4 holds stories whose pages may be Markdown (v3 held Quill only):
+  /// apps before v4 never list a v4 file -- their parser doesn't know the version -- so they can't misread one.
+  /// v3 files are still read, once, for years without a v4 file (see `BackupCloudService.fetchLegacyYearlyBackups`).
+  static const String currentYearlyVersion = '4';
+
   final DateTime createdAt;
   final String version;
   final DeviceInfoObject device;
@@ -30,15 +35,19 @@ class BackupFileObject {
     required this.hasCompression,
     String? version,
     this.year,
-  }) : version = version ?? (year != null ? '3' : '2');
+  }) : version = version ?? (year != null ? currentYearlyVersion : '2');
 
+  /// Whether this is a yearly file in the format this app writes (see [currentYearlyVersion]).
+  bool get isCurrentYearlyVersion => version == currentYearlyVersion && year != null;
+
+  // v4: Backup__4__2025__1734350000000__iPhone 15 Pro__iPhone123 (as v3; pages may be Markdown)
   // v3: Backup__3__2025__1734350000000__iPhone 15 Pro__iPhone123 (year-based, extension added separately)
   // v2 (legacy): Backup::2::1731680400000::iPhone 15 Pro::ABC123 (extension added separately)
   // v1 (legacy): Backup::1::2022-06-14T17:44:47.097469::Pixel 5 (extension added separately)
   String get fileName {
-    if (version == '3') {
+    if (version == '3' || version == '4') {
       if (year == null) {
-        throw ArgumentError('Year is required for v3 backups');
+        throw ArgumentError('Year is required for v$version backups');
       }
 
       return <String>[
@@ -83,7 +92,9 @@ class BackupFileObject {
       String? version = value.length > 1 ? value[1] : null;
 
       switch (version) {
+        case "4":
         case "3":
+          // v4: Backup__4__2025__1734350000000__iPhone 15 Pro__iPhone123
           // v3: Backup__3__2025__1734350000000__iPhone 15 Pro__iPhone123 (or legacy Backup::3::...)
           try {
             int year = int.parse(value[2]);
@@ -100,7 +111,7 @@ class BackupFileObject {
               hasCompression: hasCompression,
             );
           } catch (e) {
-            debugPrint("ERROR: fromFileName v3 parse error: $e");
+            debugPrint("ERROR: fromFileName v$version parse error: $e");
           }
           break;
         case "2":

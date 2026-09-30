@@ -299,6 +299,8 @@
   "general.word_count_args": "Kelime sayısı: {WORDS_COUNT}",
   "general.words": "Kelimeler",
   "general.years": "Yıllar",
+  "general.older_app_devices.message": "{} eski bir StoryPad sürümü kullanıyor. Hikâyelerin cihazlar arasında senkronize olmaya devam etsin diye güncelle.",
+  "general.older_app_devices.title": "Diğer cihazlarında StoryPad'i güncelle",
   "input.coordinates.label": "Koordinatlar",
   "input.message.already_exist": "Zaten mevcut!",
   "input.message.incorrect": "Yanlış",

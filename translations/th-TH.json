@@ -299,6 +299,8 @@
   "general.word_count_args": "จำนวนคำ: {WORDS_COUNT}",
   "general.words": "คำ",
   "general.years": "ปี",
+  "general.older_app_devices.message": "{} ใช้ StoryPad เวอร์ชันเก่า อัปเดตเพื่อให้เรื่องราวของคุณซิงค์ระหว่างอุปกรณ์ต่อไป",
+  "general.older_app_devices.title": "อัปเดต StoryPad บนอุปกรณ์อื่นของคุณ",
   "input.coordinates.label": "พิกัด",
   "input.message.already_exist": "มีอยู่แล้ว!",
   "input.message.incorrect": "ไม่ถูกต้อง",
