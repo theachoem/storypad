@@ -4,6 +4,9 @@ import 'package:super_editor/super_editor.dart';
 import '../embed/story_embed_node.dart';
 import '../markdown/inline_markdown_writer.dart';
 import '../markdown/markdown_format.dart';
+import '../codec/node_description.dart';
+
+export '../codec/node_description.dart' show describeNode;
 
 /// Whether two nodes hold the same content as far as the Markdown format can tell: same kind of block, block type,
 /// alignment, indent, completion, and text (compared per character, ignoring formatting on line breaks and
@@ -49,25 +52,6 @@ List<DocumentNode> canonicalNodes(Iterable<DocumentNode> nodes) {
     list.removeLast();
   }
   return list;
-}
-
-/// A readable one-line description of [node], for failure messages.
-String describeNode(DocumentNode node) {
-  final String detail;
-  switch (node) {
-    case ParagraphNode():
-      detail = '${_blockType(node).id} align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
-    case ListItemNode():
-      detail = '${node.type.name} align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
-    case TaskNode():
-      detail =
-          '[${node.isComplete ? 'x' : ' '}] align=${_align(node)} indent=${node.indent} "${node.text.toPlainText()}"';
-    case StoryEmbedNode():
-      detail = '${node.type}: ${node.value}';
-    default:
-      detail = '';
-  }
-  return '${node.runtimeType}($detail)';
 }
 
 /// Matches a document (any `Iterable<DocumentNode>`) equivalent to [expected] node by node (see [nodesEquivalent]),

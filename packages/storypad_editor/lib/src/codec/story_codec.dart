@@ -1,14 +1,20 @@
+import 'package:collection/collection.dart';
 import 'package:super_editor/super_editor.dart';
 
 import '../embed/story_embed_codec.dart';
 import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
+import '../markdown/markdown_format.dart';
 import '../markdown/markdown_reader.dart';
 import '../markdown/markdown_writer.dart';
+import '../quill/quill_canonical.dart';
 import '../quill/quill_exporter.dart';
 import '../quill/quill_import_losses.dart';
 import '../quill/quill_importer.dart';
+import 'page_title.dart';
+
+export 'page_title.dart' show normalizePageTitle, pageTitleLevel, pageTitleNode;
 
 /// Converts documents to and from Markdown (the storage format), with a given set of embeds -- and from and to Quill
 /// Delta, for stories stored in Quill.
@@ -74,6 +80,57 @@ final class StoryCodec {
   /// The canonical form of [markdown]: what it reads as, written back.
   String canonicalize(String markdown) => encode(decodeNodes(markdown));
 
+  /// The title of the page [markdown] holds: its first non-empty block, if that's a heading, as plain text (see
+  /// [pageTitleOf]).
+  String? pageTitle(String markdown) => pageTitleOf(decodeNodes(markdown));
+
+  /// A page's title: its first non-empty block, if that block is a heading (any level), as plain text -- formatting
+  /// dropped, trimmed, `null` when empty. A heading further down is content, not a title.
+  static String? pageTitleOf(Iterable<DocumentNode> nodes) => locatePageTitle(nodes.toList()).title;
+
+  /// A page's body: [nodes] after the title heading (and the empty paragraphs before it), or all of them when the
+  /// page has no title. An empty leading heading is an empty title, so it isn't part of the body either.
+  static List<DocumentNode> pageBodyOf(Iterable<DocumentNode> nodes) {
+    final list = nodes.toList();
+    return list.sublist(locatePageTitle(list).bodyStart);
+  }
+
+  /// Converts a page stored as Quill -- a separate [title] plus body [ops] -- to one Markdown page: the title as a
+  /// leading [pageTitleLevel] heading (see [pageTitleNode]; omitted when the title is empty), then the body.
+  String quillPageToMarkdown(List<Object?> ops, {String? title}) {
+    final heading = normalizePageTitle(title);
+    return encode([if (heading != null) pageTitleNode(heading), ...decodeQuill(ops)]);
+  }
+
+  /// Whether converting a Quill page ([title] + [ops]) to Markdown keeps everything, for deciding whether the
+  /// Markdown may replace the stored Quill. [markdown] is the conversion to check (default: [quillPageToMarkdown]).
+  ///
+  /// Checks three things: nothing is dropped ([quillImportLosses]); the title reads back as the same title; and the
+  /// body written back as Quill is equivalent to [ops] (see [canonicalQuill]). The round trip catches converter bugs
+  /// the loss report can't see (wrong nesting, reordering, a broken embed).
+  QuillPageCheck checkQuillPage(List<Object?> ops, {String? title, String? markdown}) {
+    final losses = quillImportLosses(ops);
+    final expectedTitle = normalizePageTitle(title);
+    final nodes = decodeNodes(markdown ?? quillPageToMarkdown(ops, title: title));
+
+    var body = nodes;
+    var titleRoundTrips = true;
+    if (expectedTitle != null) {
+      final first = nodes.firstOrNull;
+      titleRoundTrips =
+          first is ParagraphNode &&
+          headerLevel(first.getMetadataValue(NodeMetadata.blockType)) == pageTitleLevel &&
+          first.text.toPlainText() == expectedTitle &&
+          first.text.spans.markers.isEmpty;
+      if (titleRoundTrips) body = nodes.sublist(1);
+    }
+
+    final bodyRoundTrips =
+        titleRoundTrips &&
+        const DeepCollectionEquality().equals(canonicalQuill(encodeQuill(body), this), canonicalQuill(ops, this));
+    return QuillPageCheck(losses: losses, titleRoundTrips: titleRoundTrips, bodyRoundTrips: bodyRoundTrips);
+  }
+
   /// [markdown] as plain text (for search and word counts): one line per block, formatting removed, embeds as their
   /// `toPlainText`.
   String toPlainText(String markdown) => plainTextOf(decodeNodes(markdown));
@@ -91,4 +148,26 @@ final class StoryCodec {
         )
         .join('\n');
   }
+}
+
+/// The result of [StoryCodec.checkQuillPage]: whether a Quill page converts to Markdown without losing anything.
+final class QuillPageCheck {
+  const QuillPageCheck({required this.losses, required this.titleRoundTrips, required this.bodyRoundTrips});
+
+  /// Formatting the conversion drops (see [StoryCodec.quillImportLosses]).
+  final List<QuillImportLoss> losses;
+
+  /// Whether the Markdown's leading heading reads back as exactly the page's title (always true without a title).
+  final bool titleRoundTrips;
+
+  /// Whether the Markdown's body, written back as Quill, is equivalent to the original ops. `false` when the title
+  /// didn't round-trip (the body can't be told apart then).
+  final bool bodyRoundTrips;
+
+  /// Whether the Markdown may replace the stored Quill: no losses, and both title and body round-trip.
+  bool get isLossless => losses.isEmpty && titleRoundTrips && bodyRoundTrips;
+
+  @override
+  String toString() =>
+      'QuillPageCheck(losses: ${losses.length}, titleRoundTrips: $titleRoundTrips, bodyRoundTrips: $bodyRoundTrips)';
 }

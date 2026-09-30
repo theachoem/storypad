@@ -11,12 +11,13 @@ import 'package:storypad_editor/testing.dart';
 /// Reads StoryPad backups: a backup file (gzip-compressed or plain JSON), or a folder of them (yearly backups are one
 /// file per year).
 
-/// One page of Quill ops, with where it came from (ids only).
+/// One page of Quill ops and its separate title, with where it came from (ids only).
 class AuditPage {
-  const AuditPage(this.location, this.ops);
+  const AuditPage(this.location, this.ops, {this.title});
 
   final String location;
   final List<Object?> ops;
+  final String? title;
 }
 
 /// Every page in the backup(s) at [path]: stories (latest and draft content) and templates.
@@ -67,13 +68,19 @@ Iterable<AuditPage> _contentPages(Object? content, String location) sync* {
   final richPages = map['rich_pages'];
   if (richPages is List) {
     for (final (index, page) in richPages.indexed) {
-      if (page is Map && page['body'] is List) yield AuditPage('$location page $index', page['body'] as List);
+      if (page is Map && page['body'] is List) {
+        final title = page['title'];
+        yield AuditPage('$location page $index', page['body'] as List, title: title is String ? title : null);
+      }
     }
     return;
   }
   // Legacy content: `pages` is a list of op lists.
+  final title = map['title'];
   for (final (index, ops) in _list(map['pages']).indexed) {
-    if (ops is List) yield AuditPage('$location legacy page $index', ops);
+    if (ops is List) {
+      yield AuditPage('$location legacy page $index', ops, title: index == 0 && title is String ? title : null);
+    }
   }
 }
 
@@ -103,10 +110,19 @@ class AuditReport {
   /// Embed keys no embed claims (kept verbatim), with counts.
   final unknownKeys = <String, int>{};
 
+  /// Pages the save gate refuses (they'd stay Quill when opened), by reason: losses, title or body round trip.
+  final gateFailures = <String, List<String>>{};
+
+  /// Pages with a title (it becomes the leading heading).
+  int titled = 0;
+
+  /// Untitled pages whose body starts with a heading: that heading becomes the page's title once converted.
+  final headingBecomesTitle = <String>[];
+
   /// Per-page conversion time (Quill → Markdown → Quill), in microseconds.
   final timings = <int>[];
 
-  bool get isClean => losses.isEmpty && unexpected.isEmpty && failed == 0;
+  bool get isClean => losses.isEmpty && unexpected.isEmpty && gateFailures.isEmpty && failed == 0;
 
   String format() {
     final buffer = StringBuffer()
@@ -125,6 +141,18 @@ class AuditReport {
     if (unexpected.length > 50) buffer.writeln('  … ${unexpected.length - 50} more');
 
     buffer.writeln('\nPages that failed to convert: $failed');
+
+    final gated = gateFailures.values.expand((locations) => locations).toSet();
+    buffer.writeln('\nPages the save gate refuses (stay Quill when opened): ${gated.length}');
+    for (final MapEntry(:key, :value) in _byCount(gateFailures)) {
+      buffer.writeln('  ${value.length}× $key   e.g. ${value.take(3).join('; ')}');
+    }
+
+    buffer.writeln('\nTitles: $titled pages have one (becomes a leading heading)');
+    buffer.writeln(
+      'Untitled pages starting with a heading (it becomes the title): ${headingBecomesTitle.length}'
+      '${headingBecomesTitle.isEmpty ? '' : '   e.g. ${headingBecomesTitle.take(3).join('; ')}'}',
+    );
 
     buffer.writeln('\nEmbed ops written back differently (same value): ${embedRewrites.isEmpty ? 'none' : ''}');
     for (final MapEntry(:key, :value) in _byCount(embedRewrites)) {
@@ -180,6 +208,18 @@ void _auditPage(StoryCodec codec, AuditPage page, AuditReport report) {
   final written = codec.markdownToQuill(markdown);
   stopwatch.stop();
   report.timings.add(stopwatch.elapsedMicroseconds);
+
+  // What the app does when a story is opened: the title joins the Markdown, then the save gate decides.
+  final title = normalizePageTitle(page.title);
+  if (title != null) report.titled++;
+  final pageMarkdown = codec.quillPageToMarkdown(page.ops, title: page.title);
+  if (title == null && codec.pageTitle(pageMarkdown) != null) report.headingBecomesTitle.add(page.location);
+  final check = codec.checkQuillPage(page.ops, title: page.title, markdown: pageMarkdown);
+  if (check.losses.isNotEmpty) report.gateFailures.putIfAbsent('formatting lost', () => []).add(page.location);
+  if (!check.titleRoundTrips) report.gateFailures.putIfAbsent('title round trip', () => []).add(page.location);
+  if (check.titleRoundTrips && !check.bodyRoundTrips) {
+    report.gateFailures.putIfAbsent('body round trip', () => []).add(page.location);
+  }
 
   if (losses.isEmpty && !isEquivalentQuill(page.ops, codec).matches(written, {})) {
     report.unexpected[page.location] = _firstDifference(

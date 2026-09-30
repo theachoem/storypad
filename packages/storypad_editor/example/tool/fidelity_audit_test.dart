@@ -17,7 +17,8 @@ import 'fidelity_audit.dart';
 /// ```
 ///
 /// Without `BACKUP`, it audits the real-shape fixtures in `test/fixtures/quill/`. Either way it fails unless the
-/// conversion is clean: no formatting dropped, no unexpected round-trip difference, no page failing to convert.
+/// conversion is clean: no formatting dropped, no unexpected round-trip difference, no page the save gate refuses (with
+/// its title), no page failing to convert.
 void main() {
   final codec = StoryCodec(embeds: demoEmbeds);
   final backup = Platform.environment['BACKUP'];
@@ -36,7 +37,13 @@ void main() {
 List<AuditPage> _fixturePages() {
   final files = Directory('test/fixtures/quill').listSync().whereType<File>().where((f) => f.path.endsWith('.json'));
   return [
-    for (final file in files)
+    for (final file in files) ...[
       AuditPage(file.uri.pathSegments.last, jsonDecode(file.readAsStringSync()) as List<Object?>),
+      AuditPage(
+        '${file.uri.pathSegments.last} (titled)',
+        jsonDecode(file.readAsStringSync()) as List<Object?>,
+        title: '#1 Trip: *day* one',
+      ),
+    ],
   ];
 }

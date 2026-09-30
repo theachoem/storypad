@@ -16,6 +16,7 @@ import 'link_tap_handler.dart';
 import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
 import 'story_embed_component.dart';
+import 'title_hint.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
 /// selection and platform chrome. Format-agnostic -- see `MarkdownEditor` for Markdown change notifications.
@@ -57,6 +58,7 @@ class RawEditor extends StatefulWidget {
     this.selectionColor,
     this.placeholder,
     this.placeholderStyle,
+    this.titlePlaceholder,
     this.checkboxesEnabled = true,
     this.contextMenuActions = const [],
     this.blockStyles,
@@ -106,6 +108,11 @@ class RawEditor extends StatefulWidget {
 
   /// The [placeholder]'s style. Defaults to [baseTextStyle] in the theme's hint color.
   final TextStyle? placeholderStyle;
+
+  /// Shown in an empty heading that's the first block -- an empty page title (see `StoryCodec.pageTitleOf`), e.g.
+  /// the one a new page starts with -- in the heading's style and [placeholderStyle]'s color (default: the theme's
+  /// hint color). Takes precedence over [placeholder] when the document is just that heading.
+  final String? titlePlaceholder;
 
   /// Whether task checkboxes toggle -- also while read-only, where it's the only edit (reported like any other).
   /// Turn off for a view whose changes wouldn't be kept.
@@ -196,6 +203,7 @@ class _RawEditorState extends State<RawEditor> {
     }
     if (oldWidget.placeholder != widget.placeholder ||
         oldWidget.placeholderStyle != widget.placeholderStyle ||
+        oldWidget.titlePlaceholder != widget.titlePlaceholder ||
         oldWidget.baseTextStyle != widget.baseTextStyle ||
         oldWidget.checkboxesEnabled != widget.checkboxesEnabled) {
       _componentBuildersCache = null;
@@ -385,6 +393,8 @@ class _RawEditorState extends State<RawEditor> {
   }
 
   List<ComponentBuilder> _createComponentBuilders() => [
+    if (widget.titlePlaceholder case final titlePlaceholder?)
+      TitleHintComponentBuilder(titlePlaceholder, (context) => widget.placeholderStyle?.color),
     if (widget.placeholder case final placeholder?) HintComponentBuilder(placeholder, _placeholderStyle),
     const NoPaddingBlockquoteComponentBuilder(),
     const CompactParagraphComponentBuilder(),
