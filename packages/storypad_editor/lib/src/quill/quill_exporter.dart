@@ -34,14 +34,9 @@ class QuillExporter {
   static const markdownKey = 'sp-markdown';
 
   List<Map<String, Object?>> export(Iterable<DocumentNode> nodes) {
-    final blocks = nodes.toList();
-    // Trailing empty paragraphs aren't stored (as in Markdown); Quill's final "\n" ends the last line instead.
-    while (blocks.isNotEmpty && isEmptyParagraph(blocks.last)) {
-      blocks.removeLast();
-    }
-
+    // Blank lines are kept, trailing ones included (as in Markdown): each is its own "\n".
     final delta = Delta();
-    for (final node in blocks) {
+    for (final node in nodes) {
       _writeNode(delta, node);
     }
     if (delta.isEmpty) delta.insert('\n');

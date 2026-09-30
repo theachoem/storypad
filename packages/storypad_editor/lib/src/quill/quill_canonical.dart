@@ -20,7 +20,6 @@ import 'quill_importer.dart';
 ///   spellings Markdown normalizes (e.g. percent-encoded spaces); inline formats on a line's `\n` (invisible);
 /// - an embed sharing a line with text: the embed is its own line (the text before it an unformatted line, the text
 ///   after it keeps the line's formatting), and an embed's own empty line, unless it's a list item or task;
-/// - trailing empty lines;
 /// - an embed's op as long as its embed reads it as the same value (e.g. a default attribute written or omitted, or a
 ///   legacy key), and the package's own `divider`/`sp-markdown` ops by what they hold.
 List<Map<String, Object?>> canonicalQuill(List<Object?> ops, StoryCodec codec) {
@@ -35,10 +34,6 @@ List<Map<String, Object?>> canonicalQuill(List<Object?> ops, StoryCodec codec) {
     }
   }
   if (segments.isNotEmpty) lines.addAll(_lines(segments, const {}, codec));
-
-  while (lines.isNotEmpty && (lines.last['content'] as List).isEmpty && (lines.last['block'] as Map).isEmpty) {
-    lines.removeLast();
-  }
   return lines;
 }
 

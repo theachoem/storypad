@@ -91,7 +91,7 @@ DocumentNode randomTextNode(Random random) {
     case 2:
       return HorizontalRuleNode(id: id());
     case 3:
-      // An empty paragraph (not at the end, it would be trimmed, which the equivalence check allows for).
+      // An empty paragraph: a blank line, kept wherever it is.
       return ParagraphNode(id: id(), text: AttributedText());
     default:
       final blockType = _blockTypes[random.nextInt(_blockTypes.length)];

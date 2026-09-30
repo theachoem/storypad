@@ -32,7 +32,7 @@ void main() {
     ]);
   });
 
-  test('empty paragraphs are empty lines; trailing ones are dropped', () {
+  test('empty paragraphs are empty lines, trailing ones included', () {
     expect(quill('a\n\n&nbsp;\n\nb'), [
       {'insert': 'a\n\nb\n'},
     ]);
@@ -42,9 +42,19 @@ void main() {
         ParagraphNode(id: id(), text: AttributedText()),
       ]),
       [
-        {'insert': 'a\n'},
+        {'insert': 'a\n\n'},
       ],
     );
+  });
+
+  test('blank lines at the top and bottom survive Quill -> Markdown -> Quill', () {
+    const ops = [
+      {'insert': '\na\n\n'},
+    ];
+    final markdown = codec.quillToMarkdown(ops);
+    expect(markdown, '&nbsp;\n\na\n\n&nbsp;');
+    expect(codec.markdownToQuill(markdown), ops);
+    expect(codec.checkQuillPage(ops).isLossless, isTrue);
   });
 
   test('inline formats', () {
