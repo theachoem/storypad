@@ -51,10 +51,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
     story = this.initialStory = initialStory;
 
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
+
+    // Set before any further await: the view (e.g. the Done button) reads it on the next frame.
+    flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
+
     if (story != null) story = this.initialStory = await StoryConvertLegacyPagesService.call(story);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
-
-    flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
     story ??= StoryDbModel.fromDate(
       openedOn,
       initialYear: params.initialYear,
