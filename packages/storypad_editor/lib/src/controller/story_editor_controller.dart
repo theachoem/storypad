@@ -10,6 +10,7 @@ import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import 'change_text_alignment_request.dart';
+import 'insert_block.dart';
 import 'newline_before_block.dart';
 import 'text_at_block_edge.dart';
 import 'story_editor_actions.dart';
@@ -260,53 +261,12 @@ class StoryEditorController extends ChangeNotifier {
   ];
 
   /// Inserts an embed holding [value] at the caret (or the [lastSelection], or at the end), as an undoable edit, and
-  /// returns its node id. In a paragraph, the embed goes before a plain empty one, splits one at the caret, or -- at
-  /// its end (an empty heading or quote included) -- goes after it; after any other block, it goes after it. No empty
-  /// line is added for the caret: after the embed, it sits right after it, where typing or Enter starts a new line.
+  /// returns its node id. See [insertBlockRequests] for where it goes; no empty line is added for the caret.
   String insertEmbed<T extends Object>(StoryEmbed<T> embed, T value) {
     assert(registry.byType(embed.type) != null, '"${embed.type}" is not one of this controller\'s embeds.');
 
     final node = embed.createNode(value);
-    final position = _insertionPosition();
-    final target = position == null ? null : _document.getNodeById(position.nodeId);
-
-    final nodePosition = position?.nodePosition;
-    // At the end of a line the embed goes after it. Only a plain empty line takes it in its place (the embed goes
-    // before it, the caret stays on the line) -- an empty heading or quote keeps its place above the embed.
-    final Object? blockType = target?.getMetadataValue(NodeMetadata.blockType);
-    final isPlainEmptyLine =
-        target is ParagraphNode && target.text.isEmpty && (blockType == null || blockType == paragraphAttribution);
-    final atEndOfText =
-        target is ParagraphNode &&
-        !isPlainEmptyLine &&
-        nodePosition is TextNodePosition &&
-        nodePosition.offset >= target.text.length;
-
-    if (position != null && target is ParagraphNode && !atEndOfText) {
-      _editor.execute([
-        ChangeSelectionRequest(
-          DocumentSelection.collapsed(position: position),
-          SelectionChangeType.placeCaret,
-          SelectionReason.contentChange,
-        ),
-        InsertNodeAtCaretRequest(node: node),
-      ]);
-    } else {
-      final afterId = target?.id ?? _document.last.id;
-      _editor.execute([
-        InsertNodeAfterNodeRequest(existingNodeId: afterId, newNode: node),
-        ChangeSelectionRequest(
-          DocumentSelection.collapsed(
-            position: DocumentPosition(
-              nodeId: node.id,
-              nodePosition: const UpstreamDownstreamNodePosition.downstream(),
-            ),
-          ),
-          SelectionChangeType.placeCaret,
-          SelectionReason.contentChange,
-        ),
-      ]);
-    }
+    _editor.execute(insertBlockRequests(_document, _insertionPosition(), node));
     return node.id;
   }
 

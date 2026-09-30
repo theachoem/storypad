@@ -4,6 +4,7 @@ import 'package:super_editor/super_editor.dart';
 
 import '../markdown/markdown_format.dart';
 import 'change_text_alignment_request.dart';
+import 'insert_block.dart';
 import 'move_blocks_requests.dart';
 import 'story_editor_controller.dart';
 import 'transform_text_request.dart';
@@ -500,44 +501,11 @@ class StoryEditorActions {
     _editor.execute([for (final node in nodes) ChangeTextAlignmentRequest(node.id, alignment)]);
   }
 
-  /// Inserts a horizontal rule at the caret (splitting the paragraph if needed).
+  /// Inserts a horizontal rule at the caret, placed like an embed (see [insertBlockRequests]).
   void insertHorizontalRule() {
     final selection = _selection;
     if (selection == null) return;
-    final rule = HorizontalRuleNode(id: Editor.createNodeId());
-
-    // At the end of a line it goes after that line, the caret right after it: no empty line of its own (typing or
-    // Enter there starts one).
-    final node = _document.getNodeById(selection.extent.nodeId);
-    final position = selection.extent.nodePosition;
-    if (node is ParagraphNode &&
-        node.text.isNotEmpty &&
-        position is TextNodePosition &&
-        position.offset >= node.text.length) {
-      _editor.execute([
-        InsertNodeAfterNodeRequest(existingNodeId: node.id, newNode: rule),
-        ChangeSelectionRequest(
-          DocumentSelection.collapsed(
-            position: DocumentPosition(
-              nodeId: rule.id,
-              nodePosition: const UpstreamDownstreamNodePosition.downstream(),
-            ),
-          ),
-          SelectionChangeType.placeCaret,
-          SelectionReason.userInteraction,
-        ),
-      ]);
-      return;
-    }
-
-    _editor.execute([
-      ChangeSelectionRequest(
-        DocumentSelection.collapsed(position: selection.extent),
-        SelectionChangeType.placeCaret,
-        SelectionReason.userInteraction,
-      ),
-      InsertNodeAtCaretRequest(node: rule),
-    ]);
+    _editor.execute(insertBlockRequests(_document, selection.extent, HorizontalRuleNode(id: Editor.createNodeId())));
   }
 
   // ── History ────────────────────────────────────────────────────────────────
