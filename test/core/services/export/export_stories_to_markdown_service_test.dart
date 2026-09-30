@@ -610,6 +610,55 @@ void main() {
       expect(files.isEmpty, true);
     });
   });
+
+  group('Markdown pages', () {
+    test('a converted story exports exactly like it did as Quill', () async {
+      final legacyPages = [
+        StoryPageDbModel.legacy(
+          id: 1,
+          title: "Trip ✨",
+          body: [
+            {"insert": "Hi there, "},
+            {
+              "insert": "bold",
+              "attributes": {"bold": true},
+            },
+            {"insert": "\nitem"},
+            {
+              "insert": "\n",
+              "attributes": {"list": "bullet"},
+            },
+            {
+              "insert": {"media": "images/1.jpg"},
+            },
+            {"insert": "\n"},
+          ],
+        ),
+        StoryPageDbModel.legacy(
+          id: 2,
+          title: "Day two",
+          body: [
+            {"insert": "Rain.\n"},
+          ],
+        ),
+      ];
+
+      Future<String> export(List<StoryPageDbModel> pages) async {
+        final dir = await Directory.systemTemp.createTemp('markdown_export_parity_');
+        addTearDown(() => dir.delete(recursive: true));
+        await ExportStoriesToMarkdownService.call(
+          stories: [_createStoryWithRichPages(id: 1, year: 2025, month: 1, day: 4, pages: pages)],
+          outputDir: dir,
+        );
+        final file = Directory('${dir.path}/2025').listSync().whereType<File>().first;
+        return file.readAsString();
+      }
+
+      final converted = [for (final page in legacyPages) page.toMarkdownPage()];
+      expect(converted.map((page) => page.isLegacy), everyElement(isFalse));
+      expect(await export(converted), await export(legacyPages));
+    });
+  });
 }
 
 // Helper function to create a story with simple text content
