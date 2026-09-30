@@ -49,7 +49,7 @@ class MarkdownReader {
     var i = 0;
     while (i < lines.length) {
       final line = lines[i];
-      if (line.trim().isEmpty) {
+      if (line.trim().isEmpty && !_isBlankLineMarker(line)) {
         i++;
         continue;
       }
@@ -72,7 +72,7 @@ class MarkdownReader {
   MarkdownBlock? readBlock(List<String> lines, int start) {
     final line = lines[start];
     return _fencedCode(lines, start) ??
-        (line.trim() == emptyParagraphMarker ? MarkdownBlock([_emptyParagraph()], start + 1) : null) ??
+        (_isBlankLineMarker(line) ? MarkdownBlock([_emptyParagraph()], start + 1) : null) ??
         _wrapper(lines, start) ??
         _embed(lines, start) ??
         _image(lines, start) ??
@@ -315,4 +315,13 @@ class MarkdownBlock {
 
   /// The index of the first line after the block.
   final int end;
+}
+
+/// A line holding a blank line: the writer's [emptyParagraphMarker] -- or that marker already decoded into its
+/// character (a lone non-breaking space), as stored content went through an HTML-entity decode in earlier StoryPad
+/// versions. The writer never writes a bare non-breaking space (whitespace-only text becomes character references).
+bool _isBlankLineMarker(String line) {
+  final trimmed = line.trim();
+  if (trimmed == emptyParagraphMarker) return true;
+  return trimmed.isEmpty && line.contains('\u00a0');
 }

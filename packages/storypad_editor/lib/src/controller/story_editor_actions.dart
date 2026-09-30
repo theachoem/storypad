@@ -504,13 +504,39 @@ class StoryEditorActions {
   void insertHorizontalRule() {
     final selection = _selection;
     if (selection == null) return;
+    final rule = HorizontalRuleNode(id: Editor.createNodeId());
+
+    // At the end of a line it goes after that line, the caret right after it: no empty line of its own (typing or
+    // Enter there starts one).
+    final node = _document.getNodeById(selection.extent.nodeId);
+    final position = selection.extent.nodePosition;
+    if (node is ParagraphNode &&
+        node.text.isNotEmpty &&
+        position is TextNodePosition &&
+        position.offset >= node.text.length) {
+      _editor.execute([
+        InsertNodeAfterNodeRequest(existingNodeId: node.id, newNode: rule),
+        ChangeSelectionRequest(
+          DocumentSelection.collapsed(
+            position: DocumentPosition(
+              nodeId: rule.id,
+              nodePosition: const UpstreamDownstreamNodePosition.downstream(),
+            ),
+          ),
+          SelectionChangeType.placeCaret,
+          SelectionReason.userInteraction,
+        ),
+      ]);
+      return;
+    }
+
     _editor.execute([
       ChangeSelectionRequest(
         DocumentSelection.collapsed(position: selection.extent),
         SelectionChangeType.placeCaret,
         SelectionReason.userInteraction,
       ),
-      InsertNodeAtCaretRequest(node: HorizontalRuleNode(id: Editor.createNodeId())),
+      InsertNodeAtCaretRequest(node: rule),
     ]);
   }
 

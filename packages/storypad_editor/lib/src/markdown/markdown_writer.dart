@@ -13,7 +13,8 @@ import 'markdown_format.dart';
 /// - Every block is **one line** (a hard line break inside text is an inline `<br>`), except a fenced code block and
 ///   an alignment/indent `<div>` wrapper.
 /// - Blocks are separated by a blank line; consecutive list items and tasks by a single newline.
-/// - An empty paragraph is a `&nbsp;` line. Trailing empty paragraphs are dropped.
+/// - An empty paragraph is a `&nbsp;` line -- wherever it is, first and last included: blank lines are the writer's own.
+///   Only a document that is nothing but one empty paragraph (a blank page) is written as nothing.
 /// - Nested list items and tasks are indented 4 spaces per level (correct nesting under both `-` and `1.` markers).
 /// - A paragraph's (or heading's/quote's) non-left alignment and indent live on a wrapping
 ///   `<div style="text-align:…" data-indent="…">`, with blank lines inside so the content is still Markdown. A run of
@@ -30,9 +31,7 @@ class MarkdownWriter {
 
   String write(Iterable<DocumentNode> nodes) {
     final blocks = nodes.toList();
-    while (blocks.isNotEmpty && isEmptyParagraph(blocks.last)) {
-      blocks.removeLast();
-    }
+    if (blocks.length == 1 && isEmptyParagraph(blocks.single)) return '';
 
     final buffer = StringBuffer();
     DocumentNode? previous;

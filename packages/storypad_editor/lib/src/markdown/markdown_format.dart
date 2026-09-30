@@ -35,7 +35,7 @@ Attribution headerAttribution(int level) => switch (level) {
 
 bool isListLike(DocumentNode node) => node is ListItemNode || node is TaskNode;
 
-/// A plain paragraph with no text, alignment or indent -- written as [emptyParagraphMarker], and dropped when trailing.
+/// A plain paragraph with no text, alignment or indent -- written as [emptyParagraphMarker].
 bool isEmptyParagraph(DocumentNode node) {
   if (node is! ParagraphNode || node.text.toPlainText().isNotEmpty || node.indent != 0) return false;
 

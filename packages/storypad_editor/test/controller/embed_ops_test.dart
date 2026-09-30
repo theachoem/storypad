@@ -21,16 +21,24 @@ void main() {
       expect(controller.selection.value!.extent.nodeId, nodeAt(controller, 2).id);
     });
 
-    test('at the end of a paragraph: goes after it, with a new paragraph for the caret', () {
-      final controller = controllerFor('Hello');
-      placeCaret(controller, 0, 5);
+    test('at the end of a paragraph: goes after it, the caret right after it -- no empty line added', () {
+      for (final markdown in ['Hello', 'Hello\n\nWorld']) {
+        final controller = controllerFor(markdown);
+        placeCaret(controller, 0, 5);
 
-      final id = controller.insertEmbed(_sticker, 'cat');
+        final id = controller.insertEmbed(_sticker, 'cat');
 
-      expect(controller.toMarkdown(), 'Hello\n\n<sp-sticker name="cat"></sp-sticker>');
-      expect(nodeAt(controller, 1).id, id);
-      expect(nodeAt(controller, 2), isA<ParagraphNode>());
-      expect(controller.selection.value!.extent.nodeId, nodeAt(controller, 2).id);
+        expect(
+          controller.toMarkdown(),
+          markdown.replaceFirst('Hello', 'Hello\n\n<sp-sticker name="cat"></sp-sticker>'),
+          reason: markdown,
+        );
+        expect(nodeAt(controller, 1).id, id);
+        expect(
+          controller.selection.value!.extent,
+          DocumentPosition(nodeId: id, nodePosition: const UpstreamDownstreamNodePosition.downstream()),
+        );
+      }
     });
 
     test('mid-paragraph: splits it', () {
@@ -59,8 +67,8 @@ void main() {
       placeCaret(controller, 0, 1);
       controller.composer.clearSelection(); // e.g. a picker sheet took focus
       controller.insertEmbed(_sticker, 'here');
-      // At the end of a paragraph the caret gets a fresh line after the embed, as in any rich text editor.
-      expect(controller.toMarkdown(), startsWith('a\n\n<sp-sticker name="here"></sp-sticker>\n\n&nbsp;\n\nb'));
+      // At the end of a paragraph it goes after it, and no empty line is added for the caret.
+      expect(controller.toMarkdown(), startsWith('a\n\n<sp-sticker name="here"></sp-sticker>\n\nb'));
     });
 
     test('a stale last selection (text shortened since) is clamped, not a crash', () {
@@ -143,8 +151,8 @@ void main() {
     });
 
     test('never leaves the document empty', () {
-      final controller = controllerFor('<sp-sticker name="x"></sp-sticker>');
-      controller.document.deleteNode(nodeAt(controller, 1).id); // Just the embed left.
+      final controller = controllerFor('<sp-sticker name="x"></sp-sticker>'); // Just the embed.
+      expect(controller.document.nodeCount, 1);
 
       controller.removeEmbed(nodeAt(controller, 0).id);
       expect(controller.document.nodeCount, 1);

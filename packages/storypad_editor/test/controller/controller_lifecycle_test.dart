@@ -12,13 +12,13 @@ void main() {
     final controller = controllerFor('# Title\n\nHello **world**\n\n<sp-sticker name="cat"></sp-sticker>');
 
     expect(controller.toMarkdown(), '# Title\n\nHello **world**\n\n<sp-sticker name="cat"></sp-sticker>');
-    expect(controller.toPlainText(), 'Title\nHello world\n:cat:\n');
+    expect(controller.toPlainText(), 'Title\nHello world\n:cat:');
   });
 
-  test('a trailing embed gets a paragraph after it, which is not written', () {
+  test('a trailing embed stays last: the editor adds no line of its own', () {
     final controller = controllerFor('<sp-sticker name="cat"></sp-sticker>');
 
-    expect(controller.document.last, isA<ParagraphNode>());
+    expect(controller.document.last, isA<StoryEmbedNode>());
     expect(controller.toMarkdown(), '<sp-sticker name="cat"></sp-sticker>');
   });
 

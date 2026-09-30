@@ -1,0 +1,26 @@
+import 'package:super_editor/super_editor.dart';
+
+/// Enter at the very start of a non-empty heading or quote adds a plain empty line above it, and the caret stays on the
+/// block -- as in most editors. super_editor's default splits the block there instead, leaving an *empty heading or
+/// quote* above and pushing the text down (so a page's heading title stopped being first).
+EditCommand? newlineBeforeBlockHandler(Editor editor, EditRequest request) {
+  if (request is! InsertNewlineAtCaretRequest) return null;
+
+  final selection = editor.composer.selection;
+  if (selection == null || !selection.isCollapsed) return null;
+
+  final position = selection.extent;
+  final node = editor.document.getNodeById(position.nodeId);
+  final nodePosition = position.nodePosition;
+  if (node is! ParagraphNode || node.text.isEmpty) return null;
+  if (nodePosition is! TextNodePosition || nodePosition.offset != 0) return null;
+
+  final Object? blockType = node.getMetadataValue(NodeMetadata.blockType);
+  final isHeading = blockType is NamedAttribution && blockType.id.startsWith('header');
+  if (!isHeading && blockType != blockquoteAttribution) return null;
+
+  return InsertNodeBeforeNodeCommand(
+    existingNodeId: node.id,
+    newNode: ParagraphNode(id: request.newNodeId, text: AttributedText()),
+  );
+}

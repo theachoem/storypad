@@ -23,7 +23,11 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
 
 - Every block is one line, except fenced code (fence longer than any backtick run inside) and the wrapper below.
   Blocks are separated by a blank line; consecutive list items/tasks by one newline.
-- Hard line break inside text: `<br>`. Empty paragraph: `&nbsp;`. Trailing empty paragraphs are dropped.
+- Hard line break inside text: `<br>`. Empty paragraph: `&nbsp;` — kept wherever it is (first, middle, last); only a
+  blank page (one empty paragraph) is written as nothing. The editor adds no line of its own: after a trailing embed the
+  caret sits right after it (typing or Enter starts a new line), and inserting an embed or divider at the end of a line
+  adds no empty line after it. Enter at the start of a heading or quote adds a plain empty
+  line above it.
 - Lists/tasks: `-`, `1.`, `- [ ]`/`- [x]`, 4 spaces per level (reads 2/3-space nesting too). Indent max 6.
 - Non-left alignment and paragraph indent: `<div style="text-align:…" data-indent="…">` + blank lines + the block +
   blank lines + `</div>` (paragraphs, headings, quotes). A run of consecutive list items/tasks sharing an alignment

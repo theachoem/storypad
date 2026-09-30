@@ -37,8 +37,15 @@ void main() {
       expect(_write([_paragraph('a'), _paragraph(''), _paragraph('b')]), 'a\n\n&nbsp;\n\nb');
     });
 
-    test('leading empty paragraphs are kept, trailing ones dropped', () {
-      expect(_write([_paragraph(''), _paragraph('a'), _paragraph(''), _paragraph('')]), '&nbsp;\n\na');
+    test('empty paragraphs are kept wherever they are: blank lines are the writer\'s own', () {
+      expect(
+        _write([_paragraph(''), _paragraph('a'), _paragraph(''), _paragraph('b'), _paragraph(''), _paragraph('')]),
+        '&nbsp;\n\na\n\n&nbsp;\n\nb\n\n&nbsp;\n\n&nbsp;',
+      );
+    });
+
+    test('a blank page (one empty paragraph) is written as nothing', () {
+      expect(_write([_paragraph('')]), '');
     });
 
     test('a whitespace-only paragraph is written as character references, so it is not a blank line', () {

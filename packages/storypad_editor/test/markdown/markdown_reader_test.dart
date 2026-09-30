@@ -35,6 +35,15 @@ void main() {
       expect(nodes.map((node) => (node as ParagraphNode).text.toPlainText()), ['a', '', '', 'b']);
     });
 
+    test(
+      'a line of just a non-breaking space is an empty paragraph too (&nbsp; decoded by older StoryPad storage)',
+      () {
+        final nodes = _read('\u00a0\n\na\n\n\u00a0\n\nb\n\n\u00a0');
+        expect(nodes.map((node) => (node as ParagraphNode).text.toPlainText()), ['', 'a', '', 'b', '']);
+        expect(_codec.encode(nodes), '&nbsp;\n\na\n\n&nbsp;\n\nb\n\n&nbsp;');
+      },
+    );
+
     test('leading spaces are kept', () {
       expect(_single<ParagraphNode>('   a').text.toPlainText(), '   a');
     });

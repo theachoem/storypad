@@ -97,7 +97,10 @@ final class StoryCodec {
   /// leading [pageTitleLevel] heading (see [pageTitleNode]; omitted when the title is empty), then the body.
   String quillPageToMarkdown(List<Object?> ops, {String? title}) {
     final heading = normalizePageTitle(title);
-    return encode([if (heading != null) pageTitleNode(heading), ...decodeQuill(ops)]);
+    // Quill always ends with a line break: an empty page reads as one empty line, which isn't a blank line of content.
+    final body = decodeQuill(ops);
+    final blank = body.length == 1 && isEmptyParagraph(body.single);
+    return encode([if (heading != null) pageTitleNode(heading), if (!blank) ...body]);
   }
 
   /// Whether converting a Quill page ([title] + [ops]) to Markdown keeps everything, for deciding whether the
