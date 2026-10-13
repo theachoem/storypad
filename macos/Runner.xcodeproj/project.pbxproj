@@ -29,10 +29,10 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		62DAA06C2F41ADD300CC9E4F /* storypad_logo_2_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA06A2F41ADD300CC9E4F /* storypad_logo_2_0.icon */; };
 		62DAA06D2F41ADD300CC9E4F /* storypad_logo_1_0.icon in Resources */ = {isa = PBXBuildFile; fileRef = 62DAA0692F41ADD300CC9E4F /* storypad_logo_1_0.icon */; };
+		6F8B2D3C0E4A5B7C9D1E2F30 /* WindowAppearanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A1C2B9D3F4A6B8C0D1E2F /* WindowAppearanceService.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		92B6E6BC28E36EC26D07CB16 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3C7576DA2E84F8A8AE10F6E /* Pods_RunnerTests.framework */; };
 		CA3E542E445E451C89DA861E /* ICloudBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */; };
-		6F8B2D3C0E4A5B7C9D1E2F30 /* WindowAppearanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A1C2B9D3F4A6B8C0D1E2F /* WindowAppearanceService.swift */; };
 		FCF31576F1661BB3728F2C91 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E9219F9FF30D98F729CB2D7 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +84,7 @@
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		4624778AFD367CC6BE8A4446 /* Pods-RunnerTests.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-community.xcconfig"; sourceTree = "<group>"; };
 		4E141ECC5FCF72640A3D1092 /* Pods-RunnerTests.profile-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-community.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-community.xcconfig"; sourceTree = "<group>"; };
+		5E7A1C2B9D3F4A6B8C0D1E2F /* WindowAppearanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAppearanceService.swift; sourceTree = "<group>"; };
 		62DAA0692F41ADD300CC9E4F /* storypad_logo_1_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_1_0.icon; sourceTree = "<group>"; };
 		62DAA06A2F41ADD300CC9E4F /* storypad_logo_2_0.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = storypad_logo_2_0.icon; sourceTree = "<group>"; };
 		64201C1DF9F048729E71111A /* Release-community.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-community.entitlements"; sourceTree = "<group>"; };
@@ -93,7 +94,6 @@
 		7DC73084E8E04810AD81F213 /* Release-storypad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Release-storypad.entitlements"; sourceTree = "<group>"; };
 		871734F7C2C1C756850EBDE3 /* Pods-Runner.debug-community.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-community.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-community.xcconfig"; sourceTree = "<group>"; };
 		8D9F56ABA1504AC4851F3737 /* ICloudBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudBackupService.swift; sourceTree = "<group>"; };
-		5E7A1C2B9D3F4A6B8C0D1E2F /* WindowAppearanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAppearanceService.swift; sourceTree = "<group>"; };
 		9244CEC2FF884D160FCFF6EC /* Pods-RunnerTests.release-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-storypad.xcconfig"; sourceTree = "<group>"; };
 		957DBB949DD25F4F4A34640F /* Pods-RunnerTests.debug-storypad.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-storypad.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-storypad.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -323,7 +323,9 @@
 					};
 					33CC10EC2044A3C60003C045 = {
 						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = XF9U464CCP;
 						LastSwiftMigration = 1100;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -631,8 +633,8 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-storypad.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -642,7 +644,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "StoryPad MacOS";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1042,8 +1044,8 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Runner/DebugProfile-storypad.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Thea Choem (XF9U464CCP)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XF9U464CCP;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -1053,7 +1055,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tc.writestory;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "StoryPad MacOS";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Profile-storypad";
