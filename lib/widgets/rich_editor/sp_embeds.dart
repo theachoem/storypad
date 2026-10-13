@@ -12,8 +12,9 @@ class SpEmbeds {
   static const all = <StoryEmbed>[SpMediaEmbed(), SpAudioEmbed(), SpDateEmbed()];
 
   /// Reads and writes story pages as Markdown (how they're stored and edited), and converts pages stored as Quill
-  /// before Markdown, with [all].
-  static final codec = StoryCodec(embeds: all);
+  /// before Markdown, with [all]. Converting drops the empty lines writers added to space embeds out: embeds get space
+  /// of their own now (`SpEditorStyle.spacing`), which those lines would double.
+  static final codec = StoryCodec(embeds: all, dropQuillSpacingLines: true);
 
   /// Content no embed understood (e.g. from a newer app version), kept as-is and shown as "Unknown".
   static Widget buildUnknown(BuildContext context, StoryEmbedContext<UnknownEmbedValue> embed) {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/widgets/rich_editor/sp_editor_scope.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_style.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
@@ -167,6 +168,8 @@ class _MediaEmbedView extends StatelessWidget {
   }
 
   Alignment? _alignment(BuildContext context) {
+    // Full size is centered once it reaches its widest (alignment is off then).
+    if (isMaxSize) return Alignment.center;
     return switch (value.alignment) {
       .left => Alignment.centerLeft,
       .center => Alignment.center,
@@ -189,7 +192,7 @@ class _MediaEmbedView extends StatelessWidget {
         double? height;
 
         if (isMaxSize) {
-          width = double.infinity;
+          width = min(constraints.maxWidth, SpEditorStyle.maxMediaWidth);
         } else {
           final side = MediaQuery.textScalerOf(context).scale(layoutType == .grid ? 88 : 150);
           width = min(constraints.maxWidth, side);
@@ -229,7 +232,7 @@ class _MediaEmbedView extends StatelessWidget {
   Widget _buildAlbum(BuildContext context, PageLayoutType? layoutType) {
     final paths = value.paths;
     final maxWidth = isMaxSize
-        ? double.infinity
+        ? SpEditorStyle.maxMediaWidth
         : MediaQuery.textScalerOf(context).scale(layoutType == .grid ? 180 : 300);
 
     return Container(

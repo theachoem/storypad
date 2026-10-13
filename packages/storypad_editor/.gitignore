@@ -9,3 +9,6 @@ pubspec.lock
 *.iml
 .idea/
 .DS_Store
+
+# Swift Package Manager state (macos/storypad_editor).
+.swiftpm/

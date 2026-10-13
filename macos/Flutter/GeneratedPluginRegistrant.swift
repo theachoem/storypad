@@ -35,6 +35,7 @@ import record_macos
 import share_plus
 import shared_preferences_foundation
 import sqflite_darwin
+import storypad_editor
 import url_launcher_macos
 import video_compressor_plus
 import video_player_avfoundation
@@ -72,6 +73,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   SharePlusMacosPlugin.register(with: registry.registrar(forPlugin: "SharePlusMacosPlugin"))
   SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
   SqflitePlugin.register(with: registry.registrar(forPlugin: "SqflitePlugin"))
+  StorypadEditorPlugin.register(with: registry.registrar(forPlugin: "StorypadEditorPlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
   VideoCompressorPlusPlugin.register(with: registry.registrar(forPlugin: "VideoCompressorPlusPlugin"))
   VideoPlayerPlugin.register(with: registry.registrar(forPlugin: "VideoPlayerPlugin"))

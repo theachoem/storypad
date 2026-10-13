@@ -103,6 +103,7 @@ class _StoryPage extends StatelessWidget {
             layoutType: preferences?.layoutType,
             onChanged: onChanged != null ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
+            card: smallPage,
           ),
         ),
       ],

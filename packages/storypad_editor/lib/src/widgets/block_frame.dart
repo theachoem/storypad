@@ -4,7 +4,7 @@ import 'package:super_editor/super_editor.dart';
 /// How a block type is framed: a box [decoration] (background, border, corners) and the [padding] between the frame
 /// and the block's content -- e.g. a quote's tinted box with its text inset from the edges.
 ///
-/// Space *between* blocks is the stylesheet's `Styles.padding` (see `RawEditor.styleRules`), outside the frame.
+/// Space *between* blocks is `RawEditor.spacing` (see `StoryEditorSpacing`), outside the frame.
 @immutable
 final class StoryBlockStyle {
   const StoryBlockStyle({this.decoration, this.padding = EdgeInsets.zero});

@@ -106,7 +106,9 @@ void main() {
     expect(selection.isCollapsed, isFalse, reason: 'Select All ran');
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-  testWidgets('desktop: the default context menu', (tester) async {
+  testWidgets('Windows: the default context menu, Flutter-painted (macOS: native, see native_context_menu_test)', (
+    tester,
+  ) async {
     final controller = controllerFor('Hello world');
     await pumpStoryEditor(tester, controller);
 
@@ -117,7 +119,7 @@ void main() {
     await tester.tap(find.text('Select all'));
     await tester.pumpAndSettle();
     expect(controller.selection.value!.isCollapsed, isFalse);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
   testWidgets('two editors sharing a controller are reported', (tester) async {
     final controller = controllerFor('a');

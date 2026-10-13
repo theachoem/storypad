@@ -75,7 +75,6 @@ dependencies:
   record: 7.1.1
   share_plus: 13.3.0
   shared_preferences: 2.5.5
-  # The super_editor-based story editor.
   storypad_editor:
     path: packages/storypad_editor
   tar: 2.0.2

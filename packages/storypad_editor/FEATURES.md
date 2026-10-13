@@ -28,9 +28,10 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
   blank page (one empty paragraph) is written as nothing. The editor adds no line of its own: after a trailing embed the
   caret sits right after it, and typing, pasting or Enter there starts a new line (`controller/text_at_block_edge.dart`).
   Enter at the start of a heading or quote adds a plain empty line above it (`controller/newline_before_block.dart`).
-- Inserting an embed or divider (`controller/insert_block.dart`): a plain empty line takes it in its place; at the end
-  of a line (an empty heading or quote too) or on any other block it goes after, adding no empty line; mid-paragraph it
-  splits the line, both halves keeping its style (heading, quote, alignment, indent).
+- Inserting an embed or divider (`controller/insert_block.dart`): a plain empty line is replaced by it, the caret right
+  after it (as Quill did); at the end of a line (an empty heading or quote too) or on any other block it goes after,
+  adding no empty line; mid-paragraph it splits the line, both halves keeping its style (heading, quote, alignment,
+  indent).
 - Page title: the page's first block, if it's a heading (`codec/page_title.dart`, `StoryCodec.pageTitleOf`/
   `pageBodyOf`). A Quill page's separate title converts to a leading `###` heading (`quillPageToMarkdown`);
   `checkQuillPage` decides whether that conversion is lossless. An untitled Quill page whose body starts with a heading
@@ -65,6 +66,10 @@ inline content uses `package:markdown`'s CommonMark inline parser). Guarantee, c
   matching block format per line, so stock formats drop combinations.
 - Tolerant inline formats: stock color/link/script formats throw on a bad value and abort the whole import.
 - Ops are sanitized (non-inserts skipped) and split per `\n` (Quill compacts same-attribute lines into one op).
+- Spacing lines (`StoryCodec(dropQuillSpacingLines: true)`): writers spaced embeds out with empty lines, which double
+  an editor's own embed spacing. Converting a page then drops at most one plain empty line directly above and below
+  each embed (a line between two embeds goes once; a second stays); `checkQuillPage` round-trips the conversion that
+  keeps every line, and accepts only that conversion minus those lines.
 - Removed after import: the empty paragraph super_editor inserts after every embed, and the one Quill's final `\n`
   opens.
 - Consecutive quote lines merge into one quote (line breaks inside) only when they share alignment and indent;
@@ -130,13 +135,17 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **Context-menu extras** (`RawEditor.contextMenuActions`, `widgets/context_menu_action.dart`): on the Android
   toolbar (after process-text, often in its overflow), the iOS system menu (`widgets/ios_system_context_menu.dart`,
   iOS 16+: super_editor's own can't take custom items, so ours rebuilds the standard list via `showWithItems`), and
-  the desktop menu. Read-only: desktop only -- super_editor's reader has no Android toolbar, and iOS shows its system
-  menu for editable text only.
+  the desktop menu. Read-only (`widgets/reader_toolbars.dart`; super_editor's reader shows no Android toolbar and only
+  a bare "Copy" bubble on iOS): Copy, Select All and the read-only extras, on Android in the editing toolbar's look,
+  on iOS in Flutter's iOS-style toolbar -- iOS's own menu is bound to text input (a no-op without a connection), so a
+  read-only page can't show it.
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
-- **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example
-  wires a native macOS `NSMenu` (with the Services submenu) in
-  `storypad_editor_example/macos/Runner/MainFlutterWindow.swift`.
+- **Desktop context menu** (`RawEditor.desktopContextMenu`, default `showDefaultDesktopContextMenu`): native is the
+  goal everywhere. On macOS it's a real `NSMenu` with the Services submenu, from the package's only native code
+  (`macos/`, a macOS-only plugin: CocoaPods podspec and Swift package, channel `storypad_editor/context_menu`). Flutter
+  has no native context-menu API there (`SystemContextMenu` is iOS-only). Windows/Linux, or a host without the plugin
+  (`MissingPluginException`), get the Flutter-painted `showMaterialDesktopContextMenu`.
 
 - **Android build**: `super_keyboard` (via super_editor) pins compileSdk 34; consuming apps must raise plugin modules to
   36 (see `storypad_editor_example/android/build.gradle.kts` and the README) or AGP's `checkAarMetadata` fails.

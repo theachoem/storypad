@@ -21,6 +21,7 @@ class SpEditor extends StatefulWidget {
     required this.layoutType,
     required this.onChanged,
     required this.onGoToEdit,
+    this.card = false,
   });
 
   final SpEditorController controller;
@@ -38,6 +39,9 @@ class SpEditor extends StatefulWidget {
 
   /// Opens the story for editing, from a read-only page's context menu.
   final VoidCallback? onGoToEdit;
+
+  /// Whether the page is shown as a card (list and grid layouts), inset evenly all round.
+  final bool card;
 
   @override
   State<SpEditor> createState() => _SpEditorState();
@@ -158,7 +162,7 @@ class _SpEditorState extends State<SpEditor> {
           // must never miss the last keystrokes.
           debounce: Duration.zero,
           onChanged: widget.onChanged == null ? null : (_) => widget.onChanged!(),
-          padding: const EdgeInsets.only(top: 4, left: 12.0, bottom: 20, right: 12.0),
+          spacing: widget.card ? SpEditorStyle.cardSpacing : SpEditorStyle.spacing,
           baseTextStyle: style.baseTextStyle,
           styleRules: style.styleRules,
           blockStyles: style.blockStyles,

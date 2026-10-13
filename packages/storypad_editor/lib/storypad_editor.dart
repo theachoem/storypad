@@ -22,8 +22,14 @@ export 'src/quill/quill_import_losses.dart' show QuillImportLoss, QuillImportLos
 export 'src/widgets/block_frame.dart' show StoryBlockStyle;
 export 'src/widgets/context_menu_action.dart';
 export 'src/widgets/desktop_context_menu.dart'
-    show DesktopContextMenuAction, DesktopContextMenuHandler, DesktopContextMenuRequest, showDefaultDesktopContextMenu;
+    show
+        DesktopContextMenuAction,
+        DesktopContextMenuHandler,
+        DesktopContextMenuRequest,
+        showDefaultDesktopContextMenu,
+        showMaterialDesktopContextMenu;
 export 'src/widgets/link_tap_handler.dart' show LinkTapCallback;
 export 'src/widgets/markdown_editor.dart';
 export 'src/widgets/raw_editor.dart';
+export 'src/widgets/story_editor_spacing.dart';
 export 'src/widgets/story_embed_component.dart' show defaultUnknownEmbedBuilder;

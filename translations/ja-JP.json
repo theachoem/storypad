@@ -46,6 +46,7 @@
   "button.editor.move_up": "上へ移動",
   "button.editor.numbered_list": "番号付きリスト",
   "button.editor.outdent": "インデントを減らす",
+  "button.editor.paragraph": "段落",
   "button.editor.quote": "引用",
   "button.editor.redo": "やり直す",
   "button.editor.strikethrough": "取り消し線",

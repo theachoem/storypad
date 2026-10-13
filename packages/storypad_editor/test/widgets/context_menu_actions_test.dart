@@ -34,6 +34,7 @@ void main() {
     ),
   ];
 
+  // The Flutter-painted menu (Windows/Linux); macOS's native one: native_context_menu_test.
   group('desktop right-click menu', () {
     testWidgets('offers the editing items for a selection, and runs the chosen one', (tester) async {
       final controller = controllerFor('Hello world');
@@ -57,7 +58,7 @@ void main() {
       await tester.tap(find.text('Upper'));
       await tester.pumpAndSettle();
       expect(controller.toMarkdown(), 'HELLO WORLD');
-    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
     testWidgets('read-only: offers the read-only items', (tester) async {
       final controller = controllerFor('Hello world', readOnly: true);
@@ -78,7 +79,7 @@ void main() {
       await tester.tap(find.text('Open editor'));
       await tester.pumpAndSettle();
       expect(log, ['edit']);
-    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
   });
 
   testWidgets('Android toolbar: the items follow the platform\'s', (tester) async {

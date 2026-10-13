@@ -10,6 +10,8 @@ A controller-centric rich text editor for StoryPad, built on
   Markdown page back as Quill for Quill-based readers (`encodeQuill`).
 - **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill form, Markdown form and
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
+- **Native menus where the platform has them**: the iOS system menu, and a real `NSMenu` on macOS (the package's
+  only native code: a macOS-only plugin in `macos/`). Windows and Linux get a Flutter-painted menu.
 
 Not published to pub: it lives in the StoryPad app (`app/packages/storypad_editor/`), which depends on it by path.
 Its manual-test app and reference consumer is `storypad_editor_example/` at the monorepo root (outside the app repo).
@@ -86,11 +88,15 @@ Presentation, on either editor widget:
 - `layout`: `StoryEditorLayout.scrolling` (fills its box, scrolls itself), `.box` (sized to its content inside your
   scroll view, e.g. below a title field; that scroll view scrolls it and follows the caret), or `.sliver` (several
   editors in one `CustomScrollView`).
-- `baseTextStyle`, `styleRules`, `padding`; `caretColor`/`selectionColor` (default: the theme's `TextSelectionTheme`,
-  else its primary color); `placeholder`; `checkboxesEnabled: false` for a view that won't keep its changes;
-  `contextMenuActions` — extra selection-menu items (e.g. Uppercase via `actions.transformSelectedText`).
-- Spacing: `Styles.padding` in `styleRules` is the gap between blocks (4px by default); `blockStyles` frames a
-  block type (`blockquote`, `code`, an embed type) with a decoration and the padding inside it.
+- `baseTextStyle`, `styleRules`; `caretColor` (caret, and mobile handles/magnifier) and `selectionColor` (both
+  default to the theme's `TextSelectionTheme`, else its primary color); `placeholder`; `checkboxesEnabled: false` for a
+  view that won't keep its changes; `contextMenuActions` — extra selection-menu items (e.g. Uppercase via
+  `actions.transformSelectedText`).
+- Spacing, all in one `spacing: StoryEditorSpacing(...)`: `page` (around the document), and space above/below each
+  block by kind (`text`: paragraphs, list items, tasks; `heading`; `block`: quotes, code, dividers, embeds), with
+  `byType` overrides (e.g. `{'media': BlockSpacing.zero}`). The first block never gets space above it, nor the last
+  block space below it, so the content sits exactly `page` in from the edges; blocks get no side space of their own. 2px everywhere by default. `blockStyles`
+  frames a block type (`blockquote`, `code`, an embed type) with a decoration and the padding inside it.
 
 ### 3. Toolbars
 

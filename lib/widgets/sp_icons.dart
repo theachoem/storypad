@@ -154,6 +154,10 @@ class SpIcons {
   static const IconData heading1 = MdiIcons.formatHeader1;
   static const IconData heading2 = MdiIcons.formatHeader2;
   static const IconData heading3 = MdiIcons.formatHeader3;
+  static const IconData heading4 = MdiIcons.formatHeader4;
+  static const IconData heading5 = MdiIcons.formatHeader5;
+  static const IconData heading6 = MdiIcons.formatHeader6;
+  static const IconData paragraph = kIsCupertino ? CupertinoIcons.textformat : Icons.text_fields;
   static const IconData listBulleted = kIsCupertino ? CupertinoIcons.list_bullet : Icons.format_list_bulleted;
   static const IconData listNumbered = kIsCupertino ? CupertinoIcons.list_number : Icons.format_list_numbered;
   static const IconData checklist = kIsCupertino ? CupertinoIcons.checkmark_square : Icons.checklist;

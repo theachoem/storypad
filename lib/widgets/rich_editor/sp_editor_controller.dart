@@ -20,13 +20,17 @@ class SpEditorController {
     required bool readOnly,
   }) : _originalMarkdown = markdown,
        editor = StoryEditorController(
-         markdown: markdown,
+         markdown: markdown.trim().isEmpty && !readOnly ? _emptyPageMarkdown : markdown,
          embeds: SpEmbeds.all,
          readOnly: readOnly,
          unknownBuilder: SpEmbeds.buildUnknown,
        ) {
     if (!selection.isCollapsed || selection.baseOffset > 0) this.selection = selection;
   }
+
+  /// An empty page opens for editing on an empty title line (the title's heading level), so the first line typed is
+  /// its title; Enter starts the body as a plain line. Left as is, the page is still saved empty (see [serialize]).
+  static const _emptyPageMarkdown = '###';
 
   /// The editor itself, for the editor widget and toolbar.
   final StoryEditorController editor;
@@ -40,13 +44,19 @@ class SpEditorController {
     return blockType is NamedAttribution && blockType.id.startsWith('header');
   }
 
-  /// Embeds never go into (or before) the page title: with the caret there, it moves to the title's end, so the embed
-  /// goes right after the title (see `StoryEditorController.insertEmbed`) -- no empty line is added for it.
-  void _moveCaretBelowTitle() {
+  /// The page title the caret is in (the last one while the editor has none), or `null`. With no caret at all, an
+  /// empty page's empty title line (where it opens, see [_emptyPageMarkdown]) counts.
+  ParagraphNode? _titleAtCaret() {
     final selection = editor.selection.value ?? editor.lastSelection;
-    final title = selection == null ? null : editor.document.getNodeById(selection.extent.nodeId);
-    if (title == null || !_isTitle(title)) return;
+    final node = selection == null
+        ? (editor.document.length == 1 ? editor.document.first : null)
+        : editor.document.getNodeById(selection.extent.nodeId);
+    return _isTitle(node) ? node as ParagraphNode : null;
+  }
 
+  /// Embeds never go into (or before) a page title: with the caret there, it moves to the title's end, so the embed
+  /// goes right after the title (see `StoryEditorController.insertEmbed`) -- no empty line is added for it.
+  void _moveCaretBelowTitle(ParagraphNode title) {
     editor.composer.setSelectionWithReason(
       DocumentSelection.collapsed(
         position: DocumentPosition(nodeId: title.id, nodePosition: title.endPosition),
@@ -132,8 +142,30 @@ class SpEditorController {
   /// Inserts a voice note at the caret (the last one while the editor has none, else the end).
   void insertAudio(String path) => _insertBelowTitle(const SpAudioEmbed(), path);
 
+  /// An empty title line is only where the caret was (a new page opens on one): the embed takes its place, as an
+  /// embed takes an empty line's, rather than leaving an empty title above it. A title with text keeps it, the embed
+  /// going below.
   void _insertBelowTitle<T extends Object>(StoryEmbed<T> embed, T value) {
-    _moveCaretBelowTitle();
+    final title = _titleAtCaret();
+    if (title != null && title.text.isEmpty) {
+      final node = embed.createNode(value);
+      editor.editor.execute([
+        ReplaceNodeRequest(existingNodeId: title.id, newNode: node),
+        ChangeSelectionRequest(
+          DocumentSelection.collapsed(
+            position: DocumentPosition(
+              nodeId: node.id,
+              nodePosition: const UpstreamDownstreamNodePosition.downstream(),
+            ),
+          ),
+          SelectionChangeType.insertContent,
+          SelectionReason.contentChange,
+        ),
+        ChangeComposingRegionRequest(null),
+      ]);
+      return;
+    }
+    if (title != null) _moveCaretBelowTitle(title);
     editor.insertEmbed(embed, value);
   }
 

@@ -96,6 +96,7 @@ class SpEditorToolbar extends StatelessWidget {
             ),
           ],
           _buildDivider(context),
+          _buildTextStyleButton(actions),
           toggle(tr('button.editor.bold'), SpIcons.formatBold, actions.isBold, actions.toggleBold),
           toggle(tr('button.editor.italic'), SpIcons.formatItalic, actions.isItalic, actions.toggleItalic),
           toggle(tr('button.editor.underline'), SpIcons.formatUnderline, actions.isUnderline, actions.toggleUnderline),
@@ -120,15 +121,6 @@ class SpEditorToolbar extends StatelessWidget {
             (TextAlign.justify, SpIcons.alignJustify, 'button.editor.align_justify'),
           ])
             toggle(tr(label), icon, actions.alignment == align, () => actions.setAlignment(align)),
-          _buildDivider(context),
-          // A heading on the first line is the page's title.
-          for (final (level, icon) in [(1, SpIcons.heading1), (2, SpIcons.heading2), (3, SpIcons.heading3)])
-            toggle(
-              tr('button.editor.heading', args: ['$level']),
-              icon,
-              actions.headingLevel == level,
-              () => actions.setHeading(actions.headingLevel == level ? null : level),
-            ),
           _buildDivider(context),
           toggle(
             tr('button.editor.numbered_list'),
@@ -173,6 +165,32 @@ class SpEditorToolbar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// The line's style, one button: each tap steps paragraph → H1 → H2 → H3 → paragraph (a smaller heading from an
+  /// older story steps back to paragraph). A heading on the first line is the page's title.
+  Widget _buildTextStyleButton(StoryEditorActions actions) {
+    final level = actions.headingLevel;
+    final next = switch (level) {
+      null => 1,
+      1 => 2,
+      2 => 3,
+      _ => null,
+    };
+    return IconButton(
+      tooltip: level == null ? tr('button.editor.paragraph') : tr('button.editor.heading', args: ['$level']),
+      icon: Icon(switch (level) {
+        null => SpIcons.paragraph,
+        1 => SpIcons.heading1,
+        2 => SpIcons.heading2,
+        3 => SpIcons.heading3,
+        4 => SpIcons.heading4,
+        5 => SpIcons.heading5,
+        _ => SpIcons.heading6,
+      }),
+      isSelected: level != null,
+      onPressed: () => actions.setHeading(next),
     );
   }
 
@@ -227,16 +245,40 @@ class SpEditorToolbar extends StatelessWidget {
 }
 
 /// Text or highlight color, from the app's color picker. Picking the current color removes it.
-class _ColorButton extends StatelessWidget {
+class _ColorButton extends StatefulWidget {
   const _ColorButton({required this.editor, required this.background});
 
   final StoryEditorController editor;
   final bool background;
 
+  @override
+  State<_ColorButton> createState() => _ColorButtonState();
+}
+
+class _ColorButtonState extends State<_ColorButton> {
+  StoryEditorController get editor => widget.editor;
+  bool get background => widget.background;
+
+  // The editor's selection, held while the picker is open (it's in an overlay, outside the editor, and may take
+  // focus). Taken on the tap, before the picker opens -- not while it's first built: taking it rebuilds the editor and
+  // the toolbar, which mid-way through the picker's first frame spoils its opening animation.
+  SelectionHold? _hold;
+
   Color? get _currentColor => background ? editor.actions.backgroundColor : editor.actions.textColor;
 
   void _apply(Color? color) {
     background ? editor.actions.setBackgroundColor(color) : editor.actions.setTextColor(color);
+  }
+
+  void _release() {
+    _hold?.release();
+    _hold = null;
+  }
+
+  @override
+  void dispose() {
+    _release();
+    super.dispose();
   }
 
   @override
@@ -262,10 +304,9 @@ class _ColorButton extends StatelessWidget {
       bottomToTop: true,
       dyGetter: (dy) => dy - (spOnPickingColorHeight * 2 - 8),
       floatingBuilder: (close) {
-        // Held while the picker is open (it's in an overlay, outside the editor, and may take focus); released when
-        // the picker goes away, picked or dismissed.
-        return _SelectionHolder(
-          editor: editor,
+        // Released when the picker goes away, picked or dismissed.
+        return _OnDispose(
+          onDispose: _release,
           child: TapRegion(
             groupId: editor.tapRegionGroupId,
             child: SpColorPicker(
@@ -286,36 +327,31 @@ class _ColorButton extends StatelessWidget {
           tooltip: background ? tr('button.editor.highlight_color') : tr('button.editor.text_color'),
           icon: Icon(background ? SpIcons.formatHighlight : SpIcons.formatColor, color: displayIconColor),
           style: ButtonStyle(backgroundColor: fillColor != null ? WidgetStatePropertyAll(fillColor) : null),
-          onPressed: open,
+          onPressed: () {
+            _hold ??= editor.holdSelection();
+            open();
+          },
         );
       },
     );
   }
 }
 
-/// Holds [editor]'s selection for as long as it's mounted.
-class _SelectionHolder extends StatefulWidget {
-  const _SelectionHolder({required this.editor, required this.child});
+/// Calls [onDispose] once unmounted.
+class _OnDispose extends StatefulWidget {
+  const _OnDispose({required this.onDispose, required this.child});
 
-  final StoryEditorController editor;
+  final VoidCallback onDispose;
   final Widget child;
 
   @override
-  State<_SelectionHolder> createState() => _SelectionHolderState();
+  State<_OnDispose> createState() => _OnDisposeState();
 }
 
-class _SelectionHolderState extends State<_SelectionHolder> {
-  late final SelectionHold _hold = widget.editor.holdSelection();
-
-  @override
-  void initState() {
-    super.initState();
-    _hold;
-  }
-
+class _OnDisposeState extends State<_OnDispose> {
   @override
   void dispose() {
-    _hold.release();
+    widget.onDispose();
     super.dispose();
   }
 

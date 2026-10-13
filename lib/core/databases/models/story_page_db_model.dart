@@ -131,7 +131,8 @@ class StoryPageDbModel {
   /// The page body -- without the title -- as Quill Delta ops, for readers built on Quill (plain text, word counts,
   /// asset links, exports). A legacy page's stored body; a Markdown page's body written as Quill, which is equivalent
   /// to the Quill it was converted from (see [checkConversion]) -- except that an untitled page starting with a
-  /// heading reads that heading as its [title] once converted, so it's no longer part of the body.
+  /// heading reads that heading as its [title] once converted, so it's no longer part of the body, and that the empty
+  /// lines which only spaced embeds out are gone (embeds get space of their own, see `SpEmbeds.codec`).
   List<dynamic> get quillBody => isLegacy ? (_legacyBody ?? const []) : _derived.quillBody;
 
   late final _MarkdownDerived _derived = _MarkdownDerived.of(markdown);

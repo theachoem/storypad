@@ -73,6 +73,22 @@ void main() {
     expect(storedPage, startsWith('### Trip\n\n**Morning** walk'));
   });
 
+  test('converting drops the empty lines that only spaced a photo out (embeds get space of their own now)', () {
+    // The old flow: the title (its own field, spaced from the body), a photo, an empty line for room, then text.
+    final page = StoryPageDbModel.legacy(
+      id: 2,
+      title: 'Title',
+      body: [
+        {
+          'insert': {'image': 'images/1.jpg'},
+        },
+        {'insert': '\n\nMy other paragraph\n'},
+      ],
+    );
+    expect(page.markdown, '### Title\n\n![](images/1.jpg)\n\nMy other paragraph');
+    expect(page.checkConversion().isLossless, isTrue);
+  });
+
   group('saving', () {
     test('an unedited page saves its original Markdown, untouched', () {
       final controller = controllerFor(storedPage);
@@ -176,8 +192,8 @@ void main() {
       expect(controller.editor.embedsOf(const SpMediaEmbed()).single.$2.paths, ['images/3.jpg']);
     });
 
-    test('an embed inserted with the caret in the title goes below it, so the title stays first', () {
-      for (final markdown in ['###', '### Trip', '### Trip\n\nbody']) {
+    test('an embed inserted with the caret in a title goes below it, so the title stays first', () {
+      for (final markdown in ['### Trip', '### Trip\n\nbody']) {
         final controller = controllerFor(markdown);
         controller.selection = const TextSelection.collapsed(offset: 0);
         controller.insertMedia(['images/3.jpg']);
@@ -186,6 +202,42 @@ void main() {
         expect(controller.editor.document.first, isA<ParagraphNode>(), reason: markdown);
         expect(controller.editor.embedsOf(const SpMediaEmbed()).single.$2.paths, ['images/3.jpg']);
       }
+    });
+
+    test('an empty title line (where a new page opens) is replaced by the embed, in one undoable edit', () {
+      for (final (markdown, placeCaret) in [('###', true), ('', true), ('', false), ('###\n\nbody', true)]) {
+        final controller = controllerFor(markdown);
+        if (placeCaret) controller.selection = const TextSelection.collapsed(offset: 0);
+        controller.insertMedia(['images/3.jpg']);
+
+        final reason = '$markdown, caret: $placeCaret';
+        expect(controller.editor.document.first, isNot(isA<ParagraphNode>()), reason: reason);
+        expect(controller.serialize(), isNot(startsWith('###')), reason: reason);
+        expect(controller.editor.selection.value?.extent.nodeId, controller.editor.document.first.id, reason: reason);
+
+        controller.editor.actions.undo();
+        expect(controller.editor.document.first, isA<ParagraphNode>(), reason: reason);
+        expect(controller.editor.actions.headingLevel ?? 3, 3, reason: reason);
+      }
+    });
+  });
+
+  group('an empty page', () {
+    test('opens for editing on an empty title line, and saves empty while left so', () {
+      final controller = controllerFor('');
+      expect(controller.editor.document.single, isA<ParagraphNode>());
+      expect(controller.editor.actions.headingLevel, isNull, reason: 'no caret yet');
+      expect(controller.editor.toMarkdown(), '###');
+      expect(controller.serialize(), '');
+
+      controller.selection = const TextSelection.collapsed(offset: 0);
+      expect(controller.editor.actions.headingLevel, 3);
+      type(controller, 'Trip', nodeIndex: 0);
+      expect(StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).title, 'Trip');
+    });
+
+    test('read-only, stays as it is', () {
+      expect(controllerFor('', readOnly: true).editor.toMarkdown(), '');
     });
   });
 

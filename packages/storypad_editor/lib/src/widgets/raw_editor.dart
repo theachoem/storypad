@@ -13,8 +13,10 @@ import 'desktop_context_menu.dart';
 import 'free_task_indent.dart';
 import 'ios_system_context_menu.dart';
 import 'link_tap_handler.dart';
+import 'reader_toolbars.dart';
 import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
+import 'story_editor_spacing.dart';
 import 'story_embed_component.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
@@ -45,7 +47,7 @@ class RawEditor extends StatefulWidget {
     super.key,
     required this.controller,
     this.baseTextStyle,
-    this.padding,
+    this.spacing = const StoryEditorSpacing(),
     this.styleRules = const [],
     this.scrollController,
     this.autofocus = false,
@@ -67,12 +69,11 @@ class RawEditor extends StatefulWidget {
   /// Merged into every block's text style -- e.g. a font. Per-block styling (heading sizes, …) is kept.
   final TextStyle? baseTextStyle;
 
-  /// The document's padding, used exactly as given: the editor adds none of its own, and its text spans the full width
-  /// inside it (no maximum width, no centering -- any of that is the app's choice). Defaults to 16 all round (18 on the
-  /// left on desktop, room for the drag handle).
-  final EdgeInsets? padding;
+  /// The space around the document ([StoryEditorSpacing.page], used exactly as given: text spans the full width inside
+  /// it, with no maximum width or centering -- any of that is the app's choice) and above and below each block.
+  final StoryEditorSpacing spacing;
 
-  /// Extra stylesheet rules, applied after the editor's own -- e.g. `StyleRule(BlockSelector('media'), …)` to style
+  /// Extra stylesheet rules, applied after the editor's own and [spacing] -- e.g. `StyleRule(BlockSelector('media'), …)` to style
   /// an embed type, or a blockquote border.
   final List<StyleRule> styleRules;
 
@@ -87,16 +88,16 @@ class RawEditor extends StatefulWidget {
   /// How the editor sizes and scrolls. See [StoryEditorLayout].
   final StoryEditorLayout layout;
 
-  /// Shows the desktop right-click menu. Defaults to a Flutter-painted menu; pass a native one (see the example's
-  /// macOS menu), or `null` for none.
+  /// Shows the desktop right-click menu. Defaults to [showDefaultDesktopContextMenu]: native on macOS, Flutter-painted
+  /// elsewhere. `null` for none.
   final DesktopContextMenuHandler? desktopContextMenu;
 
   /// Called when a link is tapped -- in read-only mode, or with Cmd/Ctrl held while editing (a plain tap places the
   /// caret). `null` opens the link with the platform's URL launcher.
   final LinkTapCallback? onTapLink;
 
-  /// The desktop caret. Defaults to the theme's cursor color (`TextSelectionTheme`), else its primary color. Mobile
-  /// carets and handles follow the theme's primary color.
+  /// The caret, and on mobile the selection handles and magnifier too. Defaults to the theme's cursor color
+  /// (`TextSelectionTheme`), else its primary color.
   final Color? caretColor;
 
   /// The selection highlight. Defaults to the theme's selection color (`TextSelectionTheme`), else its primary color
@@ -119,7 +120,7 @@ class RawEditor extends StatefulWidget {
 
   /// Frames per block type (`blockquote`, `code`, an embed's type, …): a background/border and the padding between it
   /// and the content. Defaults to a tinted quote with a left bar and a tinted code box, from the theme. Space *between*
-  /// blocks is `Styles.padding` in [styleRules] (4px by default).
+  /// blocks is [spacing].
   final Map<String, StoryBlockStyle>? blockStyles;
 
   @override
@@ -159,8 +160,12 @@ final _keyboardActions = List<SuperEditorKeyboardAction>.unmodifiable([
 class _RawEditorState extends State<RawEditor> {
   final _documentLayoutKey = GlobalKey();
   late CommonEditorOperations _editorOps;
-  late final SuperEditorIosControlsController _iosControlsController;
-  late final SuperEditorAndroidControlsController _androidControlsController;
+  // The mobile controls (caret, handles, magnifier, toolbar), in the caret color: made on the first build, and again
+  // whenever the color changes (super_editor only takes it when they're created).
+  SuperEditorIosControlsController? _iosControlsController;
+  SuperEditorAndroidControlsController? _androidControlsController;
+  SuperReaderIosControlsController? _iosReaderControlsController;
+  Color? _controlsColor;
 
   /// The scroll controller both the editor and the reader use, so the offset can be carried across a read-only switch.
   ScrollController? _ownScrollController;
@@ -183,8 +188,6 @@ class _RawEditorState extends State<RawEditor> {
   @override
   void initState() {
     super.initState();
-    _iosControlsController = SuperEditorIosControlsController(toolbarBuilder: _buildIosToolbar);
-    _androidControlsController = SuperEditorAndroidControlsController(toolbarBuilder: _buildAndroidToolbar);
     _attach(_controller);
     _initAndroidProcessTextActions();
   }
@@ -204,7 +207,7 @@ class _RawEditorState extends State<RawEditor> {
       _componentBuildersCache = null;
     }
     if (oldWidget.baseTextStyle != widget.baseTextStyle ||
-        oldWidget.padding != widget.padding ||
+        oldWidget.spacing != widget.spacing ||
         !identical(oldWidget.styleRules, widget.styleRules)) {
       _stylesheetCache = null;
     }
@@ -226,8 +229,7 @@ class _RawEditorState extends State<RawEditor> {
   @override
   void dispose() {
     _detach(_controller);
-    _iosControlsController.dispose();
-    _androidControlsController.dispose();
+    _disposeControls(_iosControlsController, _androidControlsController, _iosReaderControlsController);
     _ownScrollController?.dispose();
     super.dispose();
   }
@@ -332,20 +334,16 @@ class _RawEditorState extends State<RawEditor> {
           StyleRule(rule.selector, (document, node) => {...rule.styler(document, node)}..remove(Styles.maxWidth)),
       ],
       documentPadding:
-          widget.padding ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _defaultDesktopLeftPadding : 16, 16, 16, 16),
+          widget.spacing.page ?? EdgeInsets.fromLTRB(_isDesktopOrWeb ? _defaultDesktopLeftPadding : 16, 16, 16, 16),
       addRulesAfter: [
-        // The same small gap around every block (the default stylesheet's per-type block padding reads as
-        // inconsistent spacing), with the base text style merged in. No side padding: the default stylesheet gives
-        // every block 24 on each side, which only rules that also set left/right would override (a heading's top-only
-        // padding would keep it, indenting headings past paragraphs) -- the document padding is the only side inset.
-        // Frames and their inner padding: blockStyles.
-        StyleRule(
-          BlockSelector.all,
-          (document, node) => {
-            Styles.padding: const CascadingPadding.symmetric(vertical: 2, horizontal: 0),
-            if (widget.baseTextStyle != null) Styles.textStyle: widget.baseTextStyle!,
-          },
-        ),
+        // Space around each block, by kind (the default stylesheet's per-type block padding reads as inconsistent
+        // spacing). It sets no side padding: the default stylesheet gives every block 24 on each side, which only
+        // rules that also set left/right would override (a heading's top-only padding would keep it, indenting
+        // headings past paragraphs) -- the document padding is the only side inset. Frames and their inner padding:
+        // blockStyles.
+        widget.spacing.toStyleRule(),
+        if (widget.baseTextStyle case final baseTextStyle?)
+          StyleRule(BlockSelector.all, (document, node) => {Styles.textStyle: baseTextStyle}),
         StyleRule(
           const BlockSelector('code'),
           (document, node) => {Styles.textStyle: const TextStyle(fontFamily: 'monospace')},
@@ -424,8 +422,41 @@ class _RawEditorState extends State<RawEditor> {
   ContentTapDelegate _readerTapHandler(SuperReaderContext context) =>
       StoryLinkTapHandler(context.document, () => widget.onTapLink);
 
+  /// The caret's (and on mobile the handles' and magnifier's) color: [caretColor], else the theme's cursor color,
+  /// else its primary color -- the nearest theme's, so a themed subtree recolors it. Never super_editor's fallback,
+  /// `ThemeData.primaryColor`: a dark theme's is near-black.
   Color _caretColor(BuildContext context) =>
       widget.caretColor ?? TextSelectionTheme.of(context).cursorColor ?? ColorScheme.of(context).primary;
+
+  /// Makes the mobile controls in [color], unless they're already in it.
+  void _updateControls(Color color) {
+    if (_controlsColor == color && _iosControlsController != null) return;
+    _controlsColor = color;
+    final previous = (_iosControlsController, _androidControlsController, _iosReaderControlsController);
+    _iosControlsController = SuperEditorIosControlsController(toolbarBuilder: _buildIosToolbar, handleColor: color);
+    _androidControlsController = SuperEditorAndroidControlsController(
+      toolbarBuilder: _buildAndroidToolbar,
+      controlsColor: color,
+    );
+    _iosReaderControlsController = SuperReaderIosControlsController(
+      handleColor: color,
+      toolbarBuilder: _buildIosReaderToolbar,
+    );
+    // The previous ones are still in this frame's tree.
+    if (previous.$1 != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _disposeControls(previous.$1, previous.$2, previous.$3));
+    }
+  }
+
+  static void _disposeControls(
+    SuperEditorIosControlsController? ios,
+    SuperEditorAndroidControlsController? android,
+    SuperReaderIosControlsController? iosReader,
+  ) {
+    ios?.dispose();
+    android?.dispose();
+    iosReader?.dispose();
+  }
 
   SelectionStyles _selectionStyle(BuildContext context) {
     final color =
@@ -460,18 +491,44 @@ class _RawEditorState extends State<RawEditor> {
 
   bool get _ownsScrolling => widget.layout == StoryEditorLayout.scrolling;
 
+  ReaderMenu get _readerMenu => ReaderMenu(
+    document: _controller.document,
+    composer: _controller.composer,
+    extraActions: widget.contextMenuActions,
+  );
+
+  Widget _buildIosReaderToolbar(BuildContext context, Key mobileToolbarKey, LeaderLink focalPoint) {
+    if (kIsWeb) return const SizedBox.shrink();
+    return StoryIosReaderToolbar(
+      key: mobileToolbarKey,
+      focalPoint: focalPoint,
+      menu: _readerMenu,
+      controlsController: SuperReaderIosControlsScope.rootOf(context),
+    );
+  }
+
+  Widget _buildAndroidReaderToolbar(BuildContext context) {
+    return StoryAndroidReaderToolbar(menu: _readerMenu, processTextActions: _androidProcessTextActions);
+  }
+
   Widget _buildSuperReader(BuildContext context) {
-    return SuperReader(
-      contentTapDelegateFactory: _readerTapHandler,
-      editor: _controller.editor,
-      focusNode: _controller.focusNode,
-      tapRegionGroupId: _controller.tapRegionGroupId,
-      documentLayoutKey: _documentLayoutKey,
-      scrollController: _ownsScrolling ? _scrollController : widget.scrollController,
-      shrinkWrap: !_ownsScrolling,
-      componentBuilders: _componentBuilders(context),
-      stylesheet: _stylesheet(),
-      selectionStyle: _selectionStyle(context),
+    // super_reader looks up the outermost scope, so its iOS handles take this one's color.
+    return SuperReaderIosControlsScope(
+      controller: _iosReaderControlsController!,
+      child: SuperReader(
+        androidHandleColor: _controlsColor,
+        androidToolbarBuilder: _buildAndroidReaderToolbar,
+        contentTapDelegateFactory: _readerTapHandler,
+        editor: _controller.editor,
+        focusNode: _controller.focusNode,
+        tapRegionGroupId: _controller.tapRegionGroupId,
+        documentLayoutKey: _documentLayoutKey,
+        scrollController: _ownsScrolling ? _scrollController : widget.scrollController,
+        shrinkWrap: !_ownsScrolling,
+        componentBuilders: _componentBuilders(context),
+        stylesheet: _stylesheet(),
+        selectionStyle: _selectionStyle(context),
+      ),
     );
   }
 
@@ -515,11 +572,15 @@ class _RawEditorState extends State<RawEditor> {
 
   @override
   Widget build(BuildContext context) {
+    _updateControls(_caretColor(context));
     if (_controller.readOnly) return _buildReadOnly(context);
 
     final editor = SuperEditorIosControlsScope(
-      controller: _iosControlsController,
-      child: SuperEditorAndroidControlsScope(controller: _androidControlsController, child: _buildSuperEditor(context)),
+      controller: _iosControlsController!,
+      child: SuperEditorAndroidControlsScope(
+        controller: _androidControlsController!,
+        child: _buildSuperEditor(context),
+      ),
     );
 
     // Reorder, right-click and tap-outside chrome need a box around the editor, which a sliver can't have.

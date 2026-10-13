@@ -9,6 +9,7 @@ import 'context_menu_action.dart';
 import 'desktop_context_menu.dart';
 import 'link_tap_handler.dart';
 import 'raw_editor.dart';
+import 'story_editor_spacing.dart';
 
 /// A [RawEditor] that reports the document as Markdown whenever it changes -- the format StoryPad stores.
 ///
@@ -30,7 +31,7 @@ class MarkdownEditor extends StatefulWidget {
     this.onChanged,
     this.debounce = const Duration(milliseconds: 300),
     this.baseTextStyle,
-    this.padding,
+    this.spacing = const StoryEditorSpacing(),
     this.styleRules = const [],
     this.scrollController,
     this.autofocus = false,
@@ -58,8 +59,8 @@ class MarkdownEditor extends StatefulWidget {
   /// See [RawEditor.baseTextStyle].
   final TextStyle? baseTextStyle;
 
-  /// See [RawEditor.padding].
-  final EdgeInsets? padding;
+  /// See [RawEditor.spacing].
+  final StoryEditorSpacing spacing;
 
   /// See [RawEditor.styleRules].
   final List<StyleRule> styleRules;
@@ -184,7 +185,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
     return RawEditor(
       controller: widget.controller,
       baseTextStyle: widget.baseTextStyle,
-      padding: widget.padding,
+      spacing: widget.spacing,
       styleRules: widget.styleRules,
       scrollController: widget.scrollController,
       autofocus: widget.autofocus,

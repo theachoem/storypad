@@ -11,3 +11,4 @@ formatter:
 analyzer:
   exclude:
     - build/**
+    - macos/**

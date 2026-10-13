@@ -11,14 +11,33 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('insertEmbed', () {
-    test('on an empty line: goes before it, and the caret stays on the line', () {
-      final controller = controllerFor('a\n\n&nbsp;\n\nb');
-      placeCaret(controller, 1, 0);
+    test('on an empty line: takes its place, the caret right after it -- no empty line left behind', () {
+      for (final (markdown, expected) in [
+        ('a\n\n&nbsp;\n\nb', 'a\n\n<sp-sticker name="cat"></sp-sticker>\n\nb'),
+        ('a\n\n&nbsp;', 'a\n\n<sp-sticker name="cat"></sp-sticker>'),
+        ('', '<sp-sticker name="cat"></sp-sticker>'),
+      ]) {
+        final controller = controllerFor(markdown);
+        placeCaret(controller, markdown.isEmpty ? 0 : 1, 0);
 
+        final id = controller.insertEmbed(_sticker, 'cat');
+
+        expect(controller.toMarkdown(), expected, reason: markdown);
+        expect(
+          controller.selection.value!.extent,
+          DocumentPosition(nodeId: id, nodePosition: const UpstreamDownstreamNodePosition.downstream()),
+          reason: markdown,
+        );
+      }
+    });
+
+    test('on an empty line, then typing: the text goes on a new line after it', () {
+      final controller = controllerFor('a\n\n&nbsp;');
+      placeCaret(controller, 1, 0);
       controller.insertEmbed(_sticker, 'cat');
 
-      expect(controller.toMarkdown(), 'a\n\n<sp-sticker name="cat"></sp-sticker>\n\n&nbsp;\n\nb');
-      expect(controller.selection.value!.extent.nodeId, nodeAt(controller, 2).id);
+      controller.editor.execute([const InsertPlainTextAtCaretRequest('x')]);
+      expect(controller.toMarkdown(), 'a\n\n<sp-sticker name="cat"></sp-sticker>\n\nx');
     });
 
     test('at the end of a paragraph: goes after it, the caret right after it -- no empty line added', () {

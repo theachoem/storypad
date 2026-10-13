@@ -4,7 +4,8 @@ import 'package:super_editor/super_editor.dart';
 /// The edit that inserts [block] (an embed, a divider) at [position] -- the caret -- in [document]; at the end of the
 /// document when there's no position. No empty line is ever added for the caret.
 ///
-/// - A plain empty line takes the block in its place: the block goes before it, the caret stays on the line.
+/// - A plain empty line is replaced by the block, the caret right after it (as Quill did): typing or Enter there starts
+///   a new line.
 /// - At the start of a line, the block goes before it; the caret stays at the line's start.
 /// - At the end of a line -- an empty heading or quote included, which keeps its place -- or on any other block (a list
 ///   item, a task, another embed), it goes after it, the caret right after the block.
@@ -19,7 +20,16 @@ List<EditRequest> insertBlockRequests(Document document, DocumentPosition? posit
     final isPlainEmptyLine = target.text.isEmpty && (blockType == null || blockType == paragraphAttribution);
     final offset = nodePosition.offset;
 
-    if (isPlainEmptyLine || (offset <= 0 && target.text.isNotEmpty)) {
+    if (isPlainEmptyLine) {
+      return [
+        ReplaceNodeRequest(existingNodeId: target.id, newNode: block),
+        ..._placeCaret(
+          DocumentPosition(nodeId: block.id, nodePosition: const UpstreamDownstreamNodePosition.downstream()),
+        ),
+      ];
+    }
+
+    if (offset <= 0 && target.text.isNotEmpty) {
       return [
         InsertNodeBeforeNodeRequest(existingNodeId: target.id, newNode: block),
         ..._placeCaret(DocumentPosition(nodeId: target.id, nodePosition: const TextNodePosition(offset: 0))),

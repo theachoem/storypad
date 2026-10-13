@@ -105,7 +105,7 @@ void main() {
     expect(page.controller.serialize(), '**Hello**');
   });
 
-  testWidgets('the heading buttons set, switch and clear the line\'s heading level', (tester) async {
+  testWidgets('one text style button steps the line through paragraph, H1, H2, H3 and back', (tester) async {
     final page = await pumpPage(tester, markdown: 'Hello');
     page.controller.selection = const TextSelection.collapsed(offset: 2);
     await tester.pump();
@@ -116,11 +116,13 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    await tap(SpIcons.heading1);
+    await tap(SpIcons.paragraph);
     expect(page.controller.serialize(), '# Hello');
-    await tap(SpIcons.heading2);
+    await tap(SpIcons.heading1);
     expect(page.controller.serialize(), '## Hello');
     await tap(SpIcons.heading2);
+    expect(page.controller.serialize(), '### Hello');
+    await tap(SpIcons.heading3);
     expect(page.controller.serialize(), 'Hello');
   });
 
@@ -150,6 +152,7 @@ void main() {
     expect(page.controller.serialize(), '- [x] task');
   });
 
+  // The right-click menu's Flutter-painted form (Windows/Linux); macOS shows the same items in a native NSMenu.
   testWidgets('read-only, the right-click menu offers Edit; editing, Uppercase and Lowercase', (tester) async {
     var edits = 0;
     final page = await pumpPage(
@@ -166,7 +169,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(edits, 1);
     expect(page.controller.editor.readOnly, isTrue);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
   testWidgets('editing: Uppercase changes the selected text', (tester) async {
     final page = await pumpPage(
@@ -181,7 +184,7 @@ void main() {
     await tester.tap(find.text('Uppercase'));
     await tester.pumpAndSettle();
     expect(page.controller.serialize(), 'HELLO');
-  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
   testWidgets('content changed before the page is built is reported once it is (a story started from a photo)', (
     tester,
@@ -222,7 +225,8 @@ void main() {
     await tester.pump();
 
     expect(changes, hasLength(1));
-    expect(controller.serialize(), 'Hello');
+    // An empty page opens on its title line.
+    expect(controller.serialize(), '### Hello');
   });
 
   testWidgets('with text selected, undo/redo become move up/down and move the selected lines', (tester) async {

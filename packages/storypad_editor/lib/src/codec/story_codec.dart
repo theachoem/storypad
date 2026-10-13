@@ -31,16 +31,25 @@ export 'page_title.dart' show normalizePageTitle, pageTitleNode;
 /// decide whether a document changed.
 final class StoryCodec {
   /// A codec for [embeds]. Throws an [ArgumentError] if the embeds conflict (see [StoryEmbedRegistry]).
-  StoryCodec({List<StoryEmbedCodec> embeds = const [], UnknownEmbedCodec unknown = const UnknownEmbedCodec()})
-    : this.fromRegistry(StoryEmbedRegistry(embeds, unknown: unknown));
+  StoryCodec({
+    List<StoryEmbedCodec> embeds = const [],
+    UnknownEmbedCodec unknown = const UnknownEmbedCodec(),
+    bool dropQuillSpacingLines = false,
+  }) : this.fromRegistry(StoryEmbedRegistry(embeds, unknown: unknown), dropQuillSpacingLines: dropQuillSpacingLines);
 
-  StoryCodec.fromRegistry(this.registry)
+  StoryCodec.fromRegistry(this.registry, {this.dropQuillSpacingLines = false})
     : _reader = MarkdownReader(registry),
       _writer = MarkdownWriter(registry),
       _quill = QuillImporter(registry),
       _quillWriter = QuillExporter(registry, MarkdownWriter(registry));
 
   final StoryEmbedRegistry registry;
+
+  /// Whether converting a Quill page ([quillPageToMarkdown]) drops the empty lines writers added only to space embeds
+  /// out: at most one plain empty line directly above, and one directly below, each embed (see
+  /// [dropSpacingLinesAroundEmbeds]). For an editor whose embeds get space of their own (`StoryEditorSpacing`), where
+  /// those lines would double it. Off by default: the conversion keeps every line.
+  final bool dropQuillSpacingLines;
   final MarkdownReader _reader;
   final MarkdownWriter _writer;
   final QuillImporter _quill;
@@ -99,9 +108,26 @@ final class StoryCodec {
   String quillPageToMarkdown(List<Object?> ops, {String? title}) {
     final heading = normalizePageTitle(title);
     // Quill always ends with a line break: an empty page reads as one empty line, which isn't a blank line of content.
-    final body = decodeQuill(ops);
-    final blank = body.length == 1 && isEmptyParagraph(body.single);
+    final imported = decodeQuill(ops);
+    final blank = imported.length == 1 && isEmptyParagraph(imported.single);
+    final body = dropQuillSpacingLines ? dropSpacingLinesAroundEmbeds(imported) : imported;
     return encode([if (heading != null) pageTitleNode(heading), if (!blank) ...body]);
+  }
+
+  /// [nodes] without the empty lines that only space embeds out: at most one plain empty line ([isEmptyParagraph]: no
+  /// text, style, alignment or indent) directly above each embed, and one directly below. A line between two embeds
+  /// spaces both, and goes once; a second empty line stays (more room, on purpose).
+  static List<DocumentNode> dropSpacingLinesAroundEmbeds(List<DocumentNode> nodes) {
+    final dropped = <int>{};
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i] is! StoryEmbedNode) continue;
+      if (i > 0 && isEmptyParagraph(nodes[i - 1])) dropped.add(i - 1);
+      if (i + 1 < nodes.length && isEmptyParagraph(nodes[i + 1])) dropped.add(i + 1);
+    }
+    return [
+      for (var i = 0; i < nodes.length; i++)
+        if (!dropped.contains(i)) nodes[i],
+    ];
   }
 
   /// Whether converting a Quill page ([title] + [ops]) to Markdown keeps everything, for deciding whether the
@@ -114,10 +140,19 @@ final class StoryCodec {
   /// Nothing is lost, but one thing can read differently afterwards, by design: a page with no title whose body
   /// starts with a heading. After conversion that heading is the page's first block, so it reads as its title
   /// ([pageTitleOf]), and no longer as the start of its body ([pageBodyOf]).
+  ///
+  /// With [dropQuillSpacingLines], the round trip is checked on the conversion that keeps every line, and [markdown]
+  /// must then be exactly that conversion without the spacing lines -- so dropping them can't hide a converter bug,
+  /// and nothing but those lines goes.
   QuillPageCheck checkQuillPage(List<Object?> ops, {String? title, String? markdown}) {
     final losses = quillImportLosses(ops);
     final expectedTitle = normalizePageTitle(title);
-    final nodes = decodeNodes(markdown ?? quillPageToMarkdown(ops, title: title));
+    final converted = markdown ?? quillPageToMarkdown(ops, title: title);
+    final nodes = dropQuillSpacingLines ? decodeNodes(_keepingEveryLine(ops, title)) : decodeNodes(converted);
+    final droppedOnlySpacing =
+        !dropQuillSpacingLines ||
+        // A title is a heading, never an empty line: dropping over the whole page drops the body's lines.
+        canonicalize(converted) == encode(dropSpacingLinesAroundEmbeds(nodes));
 
     var body = nodes;
     var titleRoundTrips = true;
@@ -133,9 +168,14 @@ final class StoryCodec {
 
     final bodyRoundTrips =
         titleRoundTrips &&
+        droppedOnlySpacing &&
         const DeepCollectionEquality().equals(canonicalQuill(encodeQuill(body), this), canonicalQuill(ops, this));
     return QuillPageCheck(losses: losses, titleRoundTrips: titleRoundTrips, bodyRoundTrips: bodyRoundTrips);
   }
+
+  /// [quillPageToMarkdown] keeping every line.
+  String _keepingEveryLine(List<Object?> ops, String? title) =>
+      StoryCodec.fromRegistry(registry).quillPageToMarkdown(ops, title: title);
 
   /// [markdown] as plain text (for search and word counts): one line per block, formatting removed, embeds as their
   /// `toPlainText`.

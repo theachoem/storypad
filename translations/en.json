@@ -46,6 +46,7 @@
   "button.editor.move_up": "Move up",
   "button.editor.numbered_list": "Numbered list",
   "button.editor.outdent": "Decrease indent",
+  "button.editor.paragraph": "Paragraph",
   "button.editor.quote": "Quote",
   "button.editor.redo": "Redo",
   "button.editor.strikethrough": "Strikethrough",

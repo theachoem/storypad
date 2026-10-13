@@ -34,7 +34,7 @@ void main() {
       controller,
       editor: RawEditor(
         controller: controller,
-        padding: const EdgeInsets.all(16),
+        spacing: const StoryEditorSpacing(page: EdgeInsets.all(16)),
         styleRules: [
           StyleRule(
             const BlockSelector('paragraph'),
@@ -60,7 +60,10 @@ void main() {
     await pumpStoryEditor(
       tester,
       controller,
-      editor: RawEditor(controller: controller, padding: const EdgeInsets.only(left: 12, top: 4)),
+      editor: RawEditor(
+        controller: controller,
+        spacing: const StoryEditorSpacing(page: EdgeInsets.only(left: 12, top: 4)),
+      ),
       // Narrower than the default 640 text column, as a story page is: no centering slack on the left.
       size: const Size(400, 800),
     );
@@ -83,7 +86,10 @@ void main() {
     await pumpStoryEditor(
       tester,
       controller,
-      editor: RawEditor(controller: controller, padding: const EdgeInsets.symmetric(horizontal: 10)),
+      editor: RawEditor(
+        controller: controller,
+        spacing: const StoryEditorSpacing(page: EdgeInsets.symmetric(horizontal: 10)),
+      ),
       size: const Size(1200, 800),
     );
 
