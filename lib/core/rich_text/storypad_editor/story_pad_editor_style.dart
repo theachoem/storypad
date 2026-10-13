@@ -12,8 +12,9 @@ class StoryPadEditorStyle {
 
   // ── Spacing: tune here ──────────────────────────────────────────────────────────────────────────────────────────
 
-  /// Space above and below each line of text (paragraph, list item, task): two lines sit `2 × lineGap` apart.
-  static const lineGap = 3.0;
+  /// Space above and below each line of text (paragraph, list item, task, heading): none, so a new line sits exactly
+  /// where a wrapped one would -- as in Quill. Blank lines are how a writer spaces text out.
+  static const lineGap = 0.0;
 
   /// Space above and below quotes, code blocks, audio and date blocks, setting them apart from the text around. Photos
   /// and videos have none.
