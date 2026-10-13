@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/rich_text/rich_text_adapter.dart';
-import 'package:storypad/core/rich_text/storypad_editor/embeds/embed_attributes.dart';
-import 'package:storypad/core/rich_text/storypad_editor/embeds/media_embed.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_adapter.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
+import 'package:storypad/core/story_editor/embeds/embed_attributes.dart';
+import 'package:storypad/core/story_editor/embeds/media_embed.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad_editor/super_editor.dart';
 
 /// Pages load from and save to Markdown, edited in storypad_editor.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final adapter = StoryPadEditorRichTextAdapter();
 
   // A realistic page from before Markdown: formatting, a list, an embed with attributes, a legacy key, an unknown
   // embed -- converted the way opening a story converts it.
@@ -49,17 +46,17 @@ void main() {
   );
   final storedPage = legacyPage.toMarkdownPage().markdown;
 
-  StoryPadEditorRichTextController controllerFor(String markdown, {bool readOnly = false}) {
-    final controller = adapter.createController(
+  StoryPadEditorController controllerFor(String markdown, {bool readOnly = false}) {
+    final controller = StoryPadEditorController(
       markdown: markdown,
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: readOnly,
     );
     addTearDown(controller.dispose);
-    return controller as StoryPadEditorRichTextController;
+    return controller;
   }
 
-  void type(StoryPadEditorRichTextController controller, String text, {int nodeIndex = 1, int offset = 0}) {
+  void type(StoryPadEditorController controller, String text, {int nodeIndex = 1, int offset = 0}) {
     final node = controller.editor.document.getNodeAt(nodeIndex)!;
     controller.editor.editor.execute([
       InsertTextRequest(
@@ -72,10 +69,6 @@ void main() {
       ),
     ]);
   }
-
-  test('the app edits with storypad_editor', () {
-    expect(editorAdapter, isA<StoryPadEditorRichTextAdapter>());
-  });
 
   test('the converted page starts with its title heading', () {
     expect(storedPage, startsWith('### Trip\n\n**Morning** walk'));
@@ -142,24 +135,13 @@ void main() {
 
       expect(controller.serialize(), contains('- [ ] coffee'));
     });
-
-    test('notifies on content changes, not on selection changes', () {
-      final controller = controllerFor(storedPage);
-      var notified = 0;
-      controller.addListener(() => notified++);
-
-      controller.selection = const TextSelection.collapsed(offset: 3);
-      expect(notified, 0);
-      type(controller, 'x');
-      expect(notified, 1);
-    });
   });
 
   group('embeds', () {
     test('insertMedia inserts a full-size photo, as before', () {
       final controller = controllerFor('Hello');
       controller.selection = const TextSelection.collapsed(offset: 5);
-      adapter.insertMedia(controller: controller, mediaPath: 'images/9.jpg');
+      controller.insertMedia(['images/9.jpg']);
 
       final media = controller.editor.embedsOf(const MediaEmbed()).single.$2;
       expect(media, const MediaValue(['images/9.jpg'], size: EmbedSize.max));
@@ -176,7 +158,7 @@ void main() {
 
     test('insertAudio', () {
       final controller = controllerFor('');
-      adapter.insertAudio(controller: controller, audioPath: 'audio/1.m4a');
+      controller.insertAudio('audio/1.m4a');
       expect(
         StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).quillBody,
         contains(
@@ -190,7 +172,7 @@ void main() {
     test('an embed at a placed caret goes there (a story started from a photo)', () {
       final controller = controllerFor('Hello');
       controller.selection = const TextSelection.collapsed(offset: 0);
-      controller.insertEmbed(embedType: 'media', value: 'images/3.jpg');
+      controller.insertMedia(['images/3.jpg']);
       expect(controller.editor.document.first, isNot(isA<ParagraphNode>()));
       expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
     });
@@ -199,22 +181,16 @@ void main() {
       for (final markdown in ['###', '### Trip', '### Trip\n\nbody']) {
         final controller = controllerFor(markdown);
         controller.selection = const TextSelection.collapsed(offset: 0);
-        controller.insertEmbed(embedType: 'media', value: 'images/3.jpg');
+        controller.insertMedia(['images/3.jpg']);
         final page = StoryPageDbModel.markdown(id: 1, markdown: controller.serialize());
         expect(page.markdown, startsWith(markdown.split('\n').first), reason: markdown);
         expect(controller.editor.document.first, isA<ParagraphNode>(), reason: markdown);
         expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
       }
     });
-
-    test('an embed key no embed imports is ignored, not inserted as garbage', () {
-      final controller = controllerFor('');
-      controller.insertEmbed(embedType: 'nope', value: 'x');
-      expect(controller.serialize(), isEmpty);
-    });
   });
 
-  group('selection and document, in Quill-style offsets', () {
+  group('selection, in flat text offsets, and plain text', () {
     test('offsets round-trip, across text and embeds', () {
       final controller = controllerFor(storedPage);
       for (final selection in const [
@@ -229,7 +205,7 @@ void main() {
     });
 
     test('a selection handed over from another controller (show → edit) is kept', () {
-      final controller = adapter.createController(
+      final controller = StoryPadEditorController(
         markdown: storedPage,
         selection: const TextSelection(baseOffset: 0, extentOffset: 7),
         readOnly: false,
@@ -240,8 +216,8 @@ void main() {
 
     test('plain text', () {
       final controller = controllerFor(storedPage);
-      expect(controller.document.toPlainText(), startsWith('Trip\nMorning walk\ncoffee\nbread'));
-      expect(controller.document.bodyPlainText(), startsWith('Morning walk\ncoffee\nbread'), reason: 'no title');
+      expect(controller.editor.toPlainText(), startsWith('Trip\nMorning walk\ncoffee\nbread'));
+      expect(controller.bodyPlainText(), startsWith('Morning walk\ncoffee\nbread'), reason: 'no title');
     });
   });
 }

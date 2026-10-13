@@ -106,7 +106,7 @@ class StoryPagesManager extends StatelessWidget {
             buildPageCard(
               context: context,
               // The title is the label below: the card shows what follows it.
-              child: Text(page.bodyController.document.bodyPlainText()),
+              child: Text(page.bodyController.bodyPlainText()),
               onTap: () {
                 HapticFeedback.selectionClick();
                 viewModel.pagesManager.toggleManagingPage();

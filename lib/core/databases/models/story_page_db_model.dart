@@ -1,4 +1,4 @@
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_embeds.dart';
+import 'package:storypad/core/story_editor/story_pad_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 int _idFromJson(dynamic id) {

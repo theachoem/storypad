@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
@@ -19,7 +19,7 @@ import 'package:storypad_editor/storypad_editor.dart';
 class StoryPadEditorToolbar extends StatelessWidget {
   const StoryPadEditorToolbar({super.key, required this.controller});
 
-  final StoryPadEditorRichTextController controller;
+  final StoryPadEditorController controller;
 
   StoryEditorController get _editor => controller.editor;
 

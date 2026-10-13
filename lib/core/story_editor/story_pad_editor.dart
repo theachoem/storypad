@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_scope.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_style.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_scope.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_style.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
@@ -23,7 +23,7 @@ class StoryPadEditor extends StatefulWidget {
     required this.onGoToEdit,
   });
 
-  final StoryPadEditorRichTextController controller;
+  final StoryPadEditorController controller;
 
   /// The page's body focus node, which the page and its toolbar listen to.
   final FocusNode focusNode;

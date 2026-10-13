@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
 class StoryPageObjectsMap {
@@ -43,7 +43,7 @@ class StoryPageObjectsMap {
     _map[richPage.id] = StoryPageObject(
       key: GlobalKey(),
       page: richPage,
-      bodyController: editorAdapter.createController(
+      bodyController: StoryPadEditorController(
         markdown: richPage.markdown,
         selection: const TextSelection.collapsed(offset: 0),
         readOnly: readOnly || richPage.isUnsupported,
@@ -67,7 +67,7 @@ class StoryPageObjectsMap {
     for (int i = 0; i < (content.richPages?.length ?? 0); i++) {
       final richPage = content.richPages![i];
 
-      final richTextController = editorAdapter.createController(
+      final richTextController = StoryPadEditorController(
         markdown: richPage.markdown,
         selection: initialPagesMap?[richPage.id]?.bodyController.selection ?? const TextSelection.collapsed(offset: 0),
         // A story with a page from a newer app version is read-only as a whole: saving any of it would rewrite that

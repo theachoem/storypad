@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/rich_text/storypad_editor/embeds/audio_embed.dart';
-import 'package:storypad/core/rich_text/storypad_editor/embeds/date_embed.dart';
-import 'package:storypad/core/rich_text/storypad_editor/embeds/media_embed.dart';
+import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
+import 'package:storypad/core/story_editor/embeds/date_embed.dart';
+import 'package:storypad/core/story_editor/embeds/media_embed.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 /// Every embed a story can hold, for the editor and for headless conversion alike.

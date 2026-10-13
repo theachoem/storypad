@@ -90,10 +90,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
       final controller = pagesManager.pagesMap.first.bodyController;
       // At the caret: the page's start for a new story.
       controller.selection = TextSelection.collapsed(offset: controller.selection.baseOffset);
-      controller.insertEmbed(
-        embedType: asset.type == AssetType.audio ? 'audio' : 'media',
-        value: asset.relativeLocalFilePath,
-      );
+      final path = asset.relativeLocalFilePath;
+      asset.type == AssetType.audio ? controller.insertAudio(path) : controller.insertMedia([path]);
     }
 
     notifyListeners();

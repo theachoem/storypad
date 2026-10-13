@@ -303,7 +303,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     if (result == OkCancelResult.ok) {
       draftContent = draftContent!.removeRichPage(richPage.id);
       // Rebuild before awaiting anything: removing the page disposes its editor after the next frame, which must
-      // already be the frame without that page (see StoryPadEditorRichTextController.dispose).
+      // already be the frame without that page (see StoryPadEditorController.dispose).
       pagesManager.pagesMap.remove(richPage.id);
       notifyListeners();
       await saveDraft(debugSource: '$runtimeType#deleteAPage');

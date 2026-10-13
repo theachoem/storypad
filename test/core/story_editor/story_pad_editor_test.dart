@@ -2,29 +2,26 @@ import 'package:flutter/gestures.dart' show kSecondaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_adapter.dart';
-import 'package:storypad/core/rich_text/storypad_editor/story_pad_editor_rich_text_controller.dart';
+import 'package:storypad/core/story_editor/story_pad_editor.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/story_editor/story_pad_editor_toolbar.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad_editor/super_editor.dart';
 
 /// A page and its toolbar, as the story page hosts them, in the page's scroll view.
 void main() {
-  final adapter = StoryPadEditorRichTextAdapter();
-
-  Future<({StoryPadEditorRichTextController controller, FocusNode focusNode, List<int> changes})> pumpPage(
+  Future<({StoryPadEditorController controller, FocusNode focusNode, List<int> changes})> pumpPage(
     WidgetTester tester, {
     String markdown = '',
     bool readOnly = false,
     bool keepsChanges = true,
     VoidCallback? onGoToEdit,
   }) async {
-    final controller =
-        adapter.createController(
-              markdown: markdown,
-              selection: const TextSelection.collapsed(offset: 0),
-              readOnly: readOnly,
-            )
-            as StoryPadEditorRichTextController;
+    final controller = StoryPadEditorController(
+      markdown: markdown,
+      selection: const TextSelection.collapsed(offset: 0),
+      readOnly: readOnly,
+    );
     final focusNode = FocusNode();
     final changes = <int>[];
     addTearDown(() {
@@ -35,26 +32,22 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: Builder(
-            builder: (context) => SingleChildScrollView(
-              child: Column(
-                children: [
-                  adapter.buildEditor(
-                    context: context,
-                    controller: controller,
-                    focusNode: focusNode,
-                    readOnly: readOnly,
-                    storyContent: StoryContentDbModel.create(),
-                    onChanged: keepsChanges ? () => changes.add(changes.length) : null,
-                    onGoToEdit: onGoToEdit,
-                  ),
-                ],
-              ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                StoryPadEditor(
+                  controller: controller,
+                  focusNode: focusNode,
+                  readOnly: readOnly,
+                  storyContent: StoryContentDbModel.create(),
+                  layoutType: null,
+                  onChanged: keepsChanges ? () => changes.add(changes.length) : null,
+                  onGoToEdit: onGoToEdit,
+                ),
+              ],
             ),
           ),
-          bottomNavigationBar: Builder(
-            builder: (context) => adapter.buildToolbar(context: context, controller: controller),
-          ),
+          bottomNavigationBar: StoryPadEditorToolbar(controller: controller),
         ),
       ),
     );
@@ -193,9 +186,11 @@ void main() {
   testWidgets('content changed before the page is built is reported once it is (a story started from a photo)', (
     tester,
   ) async {
-    final controller =
-        adapter.createController(markdown: '', selection: const TextSelection.collapsed(offset: 0), readOnly: false)
-            as StoryPadEditorRichTextController;
+    final controller = StoryPadEditorController(
+      markdown: '',
+      selection: const TextSelection.collapsed(offset: 0),
+      readOnly: false,
+    );
     final focusNode = FocusNode();
     addTearDown(() {
       focusNode.dispose();
@@ -210,16 +205,15 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: Builder(
-            builder: (context) => SingleChildScrollView(
-              child: adapter.buildEditor(
-                context: context,
-                controller: controller,
-                focusNode: focusNode,
-                readOnly: false,
-                storyContent: StoryContentDbModel.create(),
-                onChanged: () => changes.add(changes.length),
-              ),
+          body: SingleChildScrollView(
+            child: StoryPadEditor(
+              controller: controller,
+              focusNode: focusNode,
+              readOnly: false,
+              storyContent: StoryContentDbModel.create(),
+              layoutType: null,
+              onChanged: () => changes.add(changes.length),
+              onGoToEdit: null,
             ),
           ),
         ),
