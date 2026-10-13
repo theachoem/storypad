@@ -11,17 +11,16 @@ A controller-centric rich text editor for StoryPad, built on
 - **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill form, Markdown form and
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
 
-Not published to pub. `example/` is the manual-test app and reference consumer. See [FEATURES.md](FEATURES.md) for
-the storage format, design decisions and gotchas.
+Not published to pub: it lives in the StoryPad app (`app/packages/storypad_editor/`), which depends on it by path.
+`example/` is the manual-test app and reference consumer. See [FEATURES.md](FEATURES.md) for the storage format,
+design decisions and gotchas.
 
 ## Use
 
 ```yaml
 dependencies:
   storypad_editor:
-    git:
-      url: https://github.com/theachoem/storypad_editor.git
-      ref: <commit>
+    path: packages/storypad_editor
 ```
 
 **Android:** super_editor's `super_keyboard` plugin pins compileSdk 34, which newer transitive plugins reject
