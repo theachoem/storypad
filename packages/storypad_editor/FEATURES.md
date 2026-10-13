@@ -14,7 +14,7 @@ Pointer-style: see the named files for how each works. Update when behavior chan
 - **Controller** (`lib/src/controller/`): owns document, composer and an `Editor` it builds itself (see Gotchas),
   `StoryEditorActions` (headless commands), embed ops, selection holds, dirty tracking, read-only.
 - **Widgets** (`lib/src/widgets/`): `RawEditor`, `MarkdownEditor`, and one `StoryEmbedComponentBuilder` for every
-  embed. No toolbar: `example/lib/toolbar/` is the reference.
+  embed. No toolbar: `storypad_editor_example/lib/toolbar/` (monorepo root) is the reference.
 
 ## Storage format (Markdown)
 
@@ -135,10 +135,11 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
 - **Desktop context menu** is a hook (`RawEditor.desktopContextMenu`); the package ships no native code. The example
-  wires a native macOS `NSMenu` (with the Services submenu) in `example/macos/Runner/MainFlutterWindow.swift`.
+  wires a native macOS `NSMenu` (with the Services submenu) in
+  `storypad_editor_example/macos/Runner/MainFlutterWindow.swift`.
 
 - **Android build**: `super_keyboard` (via super_editor) pins compileSdk 34; consuming apps must raise plugin modules to
-  36 (see `example/android/build.gradle.kts` and the README) or AGP's `checkAarMetadata` fails.
+  36 (see `storypad_editor_example/android/build.gradle.kts` and the README) or AGP's `checkAarMetadata` fails.
 
 ## Known limitations
 

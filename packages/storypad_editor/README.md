@@ -12,8 +12,8 @@ A controller-centric rich text editor for StoryPad, built on
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
 
 Not published to pub: it lives in the StoryPad app (`app/packages/storypad_editor/`), which depends on it by path.
-`example/` is the manual-test app and reference consumer. See [FEATURES.md](FEATURES.md) for the storage format,
-design decisions and gotchas.
+Its manual-test app and reference consumer is `storypad_editor_example/` at the monorepo root (outside the app repo).
+See [FEATURES.md](FEATURES.md) for the storage format, design decisions and gotchas.
 
 ## Use
 
@@ -26,8 +26,8 @@ dependencies:
 **Android:** super_editor's `super_keyboard` plugin pins compileSdk 34, which newer transitive plugins reject
 (`checkAarMetadata`: "requires … compileSdk of at least 36"). Until it's updated upstream, raise plugin modules'
 compileSdk in the app's `android/build.gradle.kts`, before its `evaluationDependsOn(":app")` block — copy the
-`subprojects { afterEvaluate { … } }` block from `example/android/build.gradle.kts`. (Its Kotlin Gradle Plugin warning
-is harmless for now.)
+`subprojects { afterEvaluate { … } }` block from `storypad_editor_example/android/build.gradle.kts`. (Its Kotlin Gradle
+Plugin warning is harmless for now.)
 
 ### 1. Define embeds
 
@@ -94,7 +94,7 @@ Presentation, on either editor widget:
 
 ### 3. Toolbars
 
-The package has no toolbar; build one from the controller (see `example/lib/toolbar/`):
+The package has no toolbar; build one from the controller (see `storypad_editor_example/lib/toolbar/`):
 
 - `controller.actions` — every command, and the state a button shows (`isBold`, `headingLevel`, `canIndent`, …),
   including caret moves for arrow buttons (`moveCaret`, `canMoveCaret`, `placeCaretAtEnd`).
