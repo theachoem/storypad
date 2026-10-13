@@ -27,7 +27,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   QueryDateProperty<B> get permanentlyDeletedAtProperty;
 
   Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 30));
     Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
       permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
     );
