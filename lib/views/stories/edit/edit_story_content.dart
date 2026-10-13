@@ -42,7 +42,6 @@ class _EditStoryContent extends StatelessWidget {
         buildPageEditors(context, pages),
         StoryPagesManager(
           viewModel: viewModel,
-          mediaQueryPadding: MediaQuery.paddingOf(context),
           actions: getPageActions(context),
         ),
       ],
@@ -51,15 +50,14 @@ class _EditStoryContent extends StatelessWidget {
 
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
     return StoryPagesBuilder(
-      viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: (page) => StoryHeader.fromEditStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      padding: MediaQuery.paddingOf(context).copyWith(top: 0.0),
+      padding: MediaQuery.viewPaddingOf(context).copyWith(top: 0.0, bottom: 0.0),
       pages: pages,
       preferences: viewModel.story!.preferences,
       storyContent: viewModel.draftContent!,
       pageController: viewModel.pagesManager.pageController,
-      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
+      onPageChanged: viewModel.onPageChanged,
       actions: getPageActions(context),
     );
   }

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/widgets/rich_editor/sp_editor.dart';
@@ -32,17 +31,21 @@ class StoryPagesBuilder extends StatelessWidget {
     required this.headerBuilder,
     required this.padding,
     required this.pageScrollController,
-    required this.viewInsets,
     required this.pageController,
+    this.bottomSpacing = 0.0,
     this.onTitleVisibilityChanged,
     this.onPageChanged,
     this.onGoToEdit,
     this.actions,
   });
 
-  final EdgeInsets viewInsets;
   final ScrollController? pageScrollController;
+
+  /// Around the pages, but not below them: there's the bottom safe area as the keyboard leaves it, plus
+  /// [bottomSpacing] (see [_BottomSafeArea]). Pass the view padding (`MediaQuery.viewPaddingOf`), which the keyboard
+  /// doesn't change, so its animation doesn't rebuild the pages.
   final EdgeInsets padding;
+  final double bottomSpacing;
 
   /// [StoryHeader]
   final Widget Function(StoryPageObject page)? headerBuilder;
@@ -52,7 +55,7 @@ class StoryPagesBuilder extends StatelessWidget {
   final List<StoryPageObject> pages;
 
   // move out of action because even in read only mode, we should still listen to change.
-  final void Function(StoryPageDbModel newRichPage)? onPageChanged;
+  final VoidCallback? onPageChanged;
   final void Function()? onGoToEdit;
   final StoryPageBuilderAction? actions;
   final void Function(int pageIndex, StoryPageObject page, VisibilityInfo info)? onTitleVisibilityChanged;
@@ -102,8 +105,21 @@ class StoryPagesBuilder extends StatelessWidget {
     );
   }
 
+  Widget _buildBottomSafeArea() => _BottomSafeArea(extra: bottomSpacing);
+
   // both should have same height, so switch between show / edit won't break scroll position.
   Widget _buildAddButton() {
     return readOnly ? const SizedBox(height: 48) : _AddPageButton(onAddPage: () => actions!.onAddPage());
   }
+}
+
+/// The bottom safe area as the keyboard leaves it (the home indicator's inset shrinks to 0 under the keyboard), plus
+/// [extra]. Read here alone, so the keyboard's animation rebuilds this spacer instead of every page's editor.
+class _BottomSafeArea extends StatelessWidget {
+  const _BottomSafeArea({required this.extra});
+
+  final double extra;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(height: MediaQuery.paddingOf(context).bottom + extra);
 }

@@ -374,9 +374,11 @@ class _RawEditorState extends State<RawEditor> {
     }
     return _componentBuildersCache ??= [
       for (final builder in _createComponentBuilders())
-        blockStyles.isEmpty
-            ? builder
-            : FramedComponentBuilder(builder, document: _controller.document, styles: blockStyles),
+        _RepaintBoundaryComponentBuilder(
+          blockStyles.isEmpty
+              ? builder
+              : FramedComponentBuilder(builder, document: _controller.document, styles: blockStyles),
+        ),
     ];
   }
 
@@ -630,5 +632,27 @@ class _RawEditorState extends State<RawEditor> {
       extraActions: widget.contextMenuActions,
       child: laidOut,
     );
+  }
+}
+
+/// Each block in a repaint boundary of its own, as a `ListView` gives its items: super_editor's layout has none, so a
+/// keystroke repainted every block of the page (the cost growing with its length) instead of the one edited.
+class _RepaintBoundaryComponentBuilder implements ComponentBuilder {
+  const _RepaintBoundaryComponentBuilder(this.delegate);
+
+  final ComponentBuilder delegate;
+
+  @override
+  SingleColumnLayoutComponentViewModel? createViewModel(Document document, DocumentNode node) =>
+      delegate.createViewModel(document, node);
+
+  @override
+  Widget? createComponent(
+    SingleColumnDocumentComponentContext componentContext,
+    SingleColumnLayoutComponentViewModel componentViewModel,
+  ) {
+    final component = delegate.createComponent(componentContext, componentViewModel);
+    // The component (holding the layout's component key) stays inside, so selection and hit testing are unchanged.
+    return component == null ? null : RepaintBoundary(child: component);
   }
 }

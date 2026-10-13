@@ -86,7 +86,8 @@ final class StoryEditorSpacing {
     final previous = document.getNodeBeforeById(node.id);
     return BlockSpacing.only(
       top: previous == null ? 0 : max(0, wanted.top - _wanted(previous).bottom),
-      bottom: document.last.id == node.id ? 0 : wanted.bottom,
+      // `document.last` would walk the whole document, for every node styled.
+      bottom: document.getNodeAfterById(node.id) == null ? 0 : wanted.bottom,
     );
   }
 

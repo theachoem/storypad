@@ -25,6 +25,12 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   EditTemplateViewModel({
     required this.params,
   }) {
+    pagesManager = StoryPagesManagerInfo(
+      initialPageIndex: 0,
+      initialScrollOffset: 0.0,
+      draftContent: () => draftContent,
+      notifyListeners: notifyListeners,
+    );
     template = params.initialTemplate ?? TemplateDbModel.newTemplate(createdAt: openedOn);
     latestContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
     draftContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
@@ -32,18 +38,22 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     bool alreadyHasPage = draftContent!.richPages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
-    pagesManager = StoryPagesManagerInfo(
-      initialPageIndex: 0,
-      initialScrollOffset: 0.0,
-      draftContent: () => draftContent,
-      notifyListeners: notifyListeners,
-    );
-
     load();
   }
 
   late TemplateDbModel template;
-  StoryContentDbModel? draftContent;
+
+  StoryContentDbModel? _draftContent;
+
+  /// The template's content as edited, its pages' latest edits included (read from their editors on first read after
+  /// an edit, not on every keystroke).
+  StoryContentDbModel? get draftContent {
+    final content = _draftContent;
+    if (content == null) return null;
+    return _draftContent = pagesManager.pagesMap.withPendingEdits(content);
+  }
+
+  set draftContent(StoryContentDbModel? value) => _draftContent = value;
   StoryContentDbModel? latestContent;
 
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
@@ -160,10 +170,8 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     });
   }
 
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
+  /// A page's editor changed (marked on its page, see [StoryPageObject.markEdited]): saved once edits pause.
+  Future<void> onPageChanged() async {
     return debouncedCallback(() async {
       if (hasChange) {
         template = template.copyWith(content: draftContent, updatedAt: DateTime.now());

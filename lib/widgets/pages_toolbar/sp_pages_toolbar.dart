@@ -87,17 +87,32 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
           (index) {
             return Visibility(
               visible: index == bodyFocusedIndex,
-              child: Container(
+              child: _AboveKeyboard(
                 color: widget.backgroundColor,
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-                ),
                 child: SpEditorToolbar(controller: widget.pages[index].bodyController),
               ),
             );
           },
         ),
       ),
+    );
+  }
+}
+
+/// Sits [child] above the keyboard (and the home indicator without one). The keyboard's animation changes that space on
+/// every frame: read here alone, it rebuilds this padding only -- not the toolbar, whose ~30 buttons are a frame's work.
+class _AboveKeyboard extends StatelessWidget {
+  const _AboveKeyboard({required this.color, required this.child});
+
+  final Color? color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: color,
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + MediaQuery.viewInsetsOf(context).bottom),
+      child: child,
     );
   }
 }

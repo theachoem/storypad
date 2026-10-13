@@ -35,7 +35,6 @@ class _ShowStoryContent extends StatelessWidget {
         buildPageEditors(context, pages),
         StoryPagesManager(
           viewModel: viewModel,
-          mediaQueryPadding: MediaQuery.paddingOf(context),
           actions: null,
         ),
       ],
@@ -44,17 +43,16 @@ class _ShowStoryContent extends StatelessWidget {
 
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
     return StoryPagesBuilder(
-      viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: (page) => StoryHeader.fromShowStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      padding: MediaQuery.paddingOf(context).copyWith(top: 0.0),
+      padding: MediaQuery.viewPaddingOf(context).copyWith(top: 0.0, bottom: 0.0),
       pages: pages,
       preferences: viewModel.story?.preferences,
       storyContent: viewModel.draftContent!,
       onTitleVisibilityChanged: (pageIndex, page, info) =>
           viewModel.pagesManager.pagesMap.setTitleVisibleFraction(page.id, info.visibleFraction),
       pageController: viewModel.pagesManager.pageController,
-      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
+      onPageChanged: viewModel.onPageChanged,
       onGoToEdit: () => viewModel.goToEditPage(context),
       actions: null,
     );

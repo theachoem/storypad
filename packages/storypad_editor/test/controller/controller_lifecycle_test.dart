@@ -99,6 +99,20 @@ void main() {
       expect(controller.toMarkdown(), '**Hello**');
     });
 
+    test('undo takes back a burst of typing at once, and caret moves are no steps of their own', () {
+      final controller = controllerFor('Hello');
+      placeCaret(controller, 0, 5);
+      for (final character in [' ', 'y', 'o', 'u']) {
+        controller.editor.execute([InsertCharacterAtCaretRequest(character: character)]);
+      }
+      placeCaret(controller, 0, 0);
+      placeCaret(controller, 0, 2);
+      expect(controller.toMarkdown(), 'Hello you');
+
+      controller.actions.undo();
+      expect(controller.toMarkdown(), 'Hello');
+    });
+
     test('the controller notifies on selection, edits, pending styles and read-only changes', () {
       final controller = controllerFor('Hello');
       var notifications = 0;

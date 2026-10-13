@@ -32,6 +32,24 @@ class StoryPageObjectsMap {
     }
   }
 
+  /// [content] with the pages edited since last read (see [StoryPageObject.markEdited]) read from their editors, or
+  /// [content] itself when none was.
+  StoryContentDbModel withPendingEdits(StoryContentDbModel content) {
+    final edited = [
+      for (final page in _map.values)
+        if (page.hasPendingEdit) page,
+    ];
+    if (edited.isEmpty) return content;
+
+    final pages = [...content.richPages ?? <StoryPageDbModel>[]];
+    for (final page in edited) {
+      final index = pages.indexWhere((e) => e.id == page.id);
+      final model = page.takeEdit();
+      if (index != -1) pages[index] = model;
+    }
+    return content.withPages(pages);
+  }
+
   void setTitleVisibleFraction(int key, double visibleFraction) {
     _map[key]?.titleVisibleFraction = visibleFraction;
   }

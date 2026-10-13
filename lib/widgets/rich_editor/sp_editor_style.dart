@@ -51,9 +51,9 @@ class SpEditorStyle {
     (14.0, FontWeight.w600, 1.35, 0.2),
   ];
 
-  /// The widest a full-size photo, video or album gets (centered past it), so it stays a sensible size on a wide
+  /// The widest a full-size photo, video or album gets (at the text's start past it), so it stays a sensible size on a wide
   /// desktop window.
-  static const maxMediaWidth = 640.0;
+  static const maxMediaWidth = 480.0;
 
   /// Space inside a quote's frame, around its text.
   static const quotePadding = EdgeInsets.symmetric(horizontal: 12, vertical: 8);

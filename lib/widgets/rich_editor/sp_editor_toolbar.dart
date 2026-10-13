@@ -1,5 +1,6 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
@@ -39,12 +40,45 @@ class SpEditorToolbar extends StatelessWidget {
           mainAxisSize: .min,
           children: [
             const Divider(height: 1),
-            ListenableBuilder(listenable: _editor, builder: (context, _) => _buildButtons(context)),
+            _ToolbarStateBuilder(editor: _editor, stateOf: _stateOf, builder: _buildButtons),
             const Divider(height: 1),
           ],
         ),
       ),
     );
+  }
+
+  /// Everything the buttons show (keep in step with [_buildButtons] and [_ColorButton]). The buttons rebuild only when
+  /// it changes: typing changes none of it, and rebuilding ~30 buttons on every keystroke took a good part of a frame.
+  static List<Object?> _stateOf(StoryEditorActions actions) {
+    final hasSelection = actions.hasSelection;
+    return [
+      hasSelection,
+      if (hasSelection) ...[
+        actions.canMoveSelectedBlocks(up: true),
+        actions.canMoveSelectedBlocks(up: false),
+      ] else ...[
+        actions.canUndo,
+        actions.canRedo,
+      ],
+      actions.headingLevel,
+      actions.isBold,
+      actions.isItalic,
+      actions.isUnderline,
+      actions.isStrikethrough,
+      actions.textColor,
+      actions.backgroundColor,
+      actions.alignment,
+      actions.isOrderedList,
+      actions.isBulletList,
+      actions.isTaskList,
+      actions.isBlockquote,
+      actions.canIndent,
+      actions.canOutdent,
+      actions.linkUrl,
+      actions.canMoveCaret(forward: false),
+      actions.canMoveCaret(forward: true),
+    ];
   }
 
   Widget _buildButtons(BuildContext context) {
@@ -59,8 +93,9 @@ class SpEditorToolbar extends StatelessWidget {
       padding: EdgeInsets.only(
         top: 4.0,
         bottom: 4.0,
-        left: MediaQuery.paddingOf(context).left + 8.0,
-        right: MediaQuery.paddingOf(context).right + 8.0,
+        // The view padding: the same at the sides, and the keyboard never changes it (a rebuild per keyboard frame).
+        left: MediaQuery.viewPaddingOf(context).left + 8.0,
+        right: MediaQuery.viewPaddingOf(context).right + 8.0,
       ),
       child: Row(
         children: [
@@ -242,6 +277,54 @@ class SpEditorToolbar extends StatelessWidget {
         await SpVoiceRecordingSheet.showForEditor(context: context, controller: controller);
     }
   }
+}
+
+/// Builds [builder] again when the editor's toolbar state ([stateOf]) changes -- not on every editor notification.
+class _ToolbarStateBuilder extends StatefulWidget {
+  const _ToolbarStateBuilder({required this.editor, required this.stateOf, required this.builder});
+
+  final StoryEditorController editor;
+  final List<Object?> Function(StoryEditorActions actions) stateOf;
+  final WidgetBuilder builder;
+
+  @override
+  State<_ToolbarStateBuilder> createState() => _ToolbarStateBuilderState();
+}
+
+class _ToolbarStateBuilderState extends State<_ToolbarStateBuilder> {
+  late List<Object?> _state;
+
+  @override
+  void initState() {
+    super.initState();
+    _state = widget.stateOf(widget.editor.actions);
+    widget.editor.addListener(_onEditorChanged);
+  }
+
+  @override
+  void didUpdateWidget(_ToolbarStateBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.editor != widget.editor) {
+      oldWidget.editor.removeListener(_onEditorChanged);
+      widget.editor.addListener(_onEditorChanged);
+      _state = widget.stateOf(widget.editor.actions);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.editor.removeListener(_onEditorChanged);
+    super.dispose();
+  }
+
+  void _onEditorChanged() {
+    final state = widget.stateOf(widget.editor.actions);
+    if (listEquals(state, _state)) return;
+    setState(() => _state = state);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context);
 }
 
 /// Text or highlight color, from the app's color picker. Picking the current color removes it.

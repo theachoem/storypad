@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
@@ -55,12 +57,28 @@ class _SpEditorState extends State<SpEditor> {
   // style makes the editor restyle every block.
   (ColorScheme, TextStyle, TargetPlatform)? _styleKey;
 
+  bool _changeScheduled = false;
+
   @override
   void initState() {
     super.initState();
     _editor.readOnly = widget.readOnly;
     _attachFocus(widget.focusNode);
+    _editor.documentRevision.addListener(_onDocumentChanged);
     _reportChangesMadeBeforeMount();
+  }
+
+  /// Reports a change right after the edit completes (a change reported mid-edit could re-enter the editor); edits made
+  /// in one synchronous block are reported once. Only a signal: the page reads its Markdown when it's next needed, so
+  /// a keystroke never serializes the page. Still reported if the editor goes away meanwhile, so no edit is lost.
+  void _onDocumentChanged() {
+    final onChanged = widget.onChanged;
+    if (onChanged == null || _changeScheduled) return;
+    _changeScheduled = true;
+    scheduleMicrotask(() {
+      _changeScheduled = false;
+      onChanged();
+    });
   }
 
   /// Content changed before the editor was built (e.g. a story started from a photo inserts it while the page is
@@ -79,6 +97,10 @@ class _SpEditorState extends State<SpEditor> {
       _detachFocus(oldWidget.focusNode, oldWidget.controller.editor);
       _attachFocus(widget.focusNode);
     }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.editor.documentRevision.removeListener(_onDocumentChanged);
+      _editor.documentRevision.addListener(_onDocumentChanged);
+    }
     if (oldWidget.readOnly != widget.readOnly || oldWidget.controller != widget.controller) {
       _editor.readOnly = widget.readOnly;
     }
@@ -86,6 +108,7 @@ class _SpEditorState extends State<SpEditor> {
 
   @override
   void dispose() {
+    _editor.documentRevision.removeListener(_onDocumentChanged);
     _detachFocus(widget.focusNode, _editor);
     super.dispose();
   }
@@ -155,13 +178,9 @@ class _SpEditorState extends State<SpEditor> {
         focusNode: widget.focusNode,
         skipTraversal: true,
         canRequestFocus: !widget.readOnly,
-        child: MarkdownEditor(
+        child: RawEditor(
           controller: _editor,
           layout: .box,
-          // Reported right after each edit (not debounced): the page saves through its own debounce, and a Done tap
-          // must never miss the last keystrokes.
-          debounce: Duration.zero,
-          onChanged: widget.onChanged == null ? null : (_) => widget.onChanged!(),
           spacing: widget.card ? SpEditorStyle.cardSpacing : SpEditorStyle.spacing,
           baseTextStyle: style.baseTextStyle,
           styleRules: style.styleRules,

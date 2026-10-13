@@ -32,7 +32,7 @@ class _StoryPage extends StatelessWidget {
 
   final void Function(int oldIndex, int newIndex)? onSwap;
   final void Function()? onDelete;
-  final void Function(StoryPageDbModel newRichPage)? onChanged;
+  final VoidCallback? onChanged;
   final void Function()? onGoToEdit;
 
   final bool readOnly;
@@ -40,17 +40,32 @@ class _StoryPage extends StatelessWidget {
 
   /// A story with a page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle) --
   /// wherever it's shown, including the edit views (a template holding such a page, a story made from one).
-  bool get _locked => page.page.isUnsupported || storyContent.hasUnsupportedPages;
+  bool get _locked => page.isUnsupported || storyContent.hasUnsupportedPages;
 
   void onChange() {
     if (_locked) return;
-    onChanged?.call(page.page.withMarkdown(page.bodyController.serialize()));
+    // Only marked: the page's Markdown is read from its editor when the story next reads the page (see
+    // StoryPageObject.page), never per keystroke.
+    page.markEdited();
+    onChanged?.call();
+  }
+
+  /// The least a page card (list/grid) is tall: an empty page's card, as when the title and body were separate fields.
+  static const double _cardMinHeight = 64;
+
+  bool get _editable => !readOnly && !_locked && onChanged != null;
+
+  /// A tap on the page's empty space below its text puts the caret at the end.
+  void _focusAtEnd() {
+    page.bodyController.editor.actions.placeCaretAtEnd();
+    page.bodyFocusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.zero,
+      constraints: smallPage ? BoxConstraints(minHeight: MediaQuery.textScalerOf(context).scale(_cardMinHeight)) : null,
       decoration: smallPage
           ? BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
@@ -60,6 +75,10 @@ class _StoryPage extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          if (_editable)
+            Positioned.fill(
+              child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: _focusAtEnd),
+            ),
           buildEditor(context),
           if (canMoveUp || canMoveDown || canDeletePage) ...[
             if (!readOnly &&
@@ -85,7 +104,7 @@ class _StoryPage extends StatelessWidget {
           onVisibilityChanged: onTitleVisibilityChanged,
           child: const SizedBox(height: 8, width: double.infinity),
         ),
-        if (page.page.isUnsupported)
+        if (page.isUnsupported)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(

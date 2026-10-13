@@ -19,17 +19,17 @@ class StoryPagesManager extends StatelessWidget {
   const StoryPagesManager({
     super.key,
     required this.viewModel,
-    required this.mediaQueryPadding,
     required this.actions,
   });
 
   final BaseStoryViewModel viewModel;
-  final EdgeInsets mediaQueryPadding;
   final StoryPageBuilderAction? actions;
 
   @override
   Widget build(BuildContext context) {
     final richPages = viewModel.draftContent?.richPages ?? <StoryPageDbModel>[];
+    // Read here, not passed in by the story screen: the keyboard changing it then rebuilds this, not the pages.
+    final mediaQueryPadding = MediaQuery.paddingOf(context);
 
     return Stack(
       children: [

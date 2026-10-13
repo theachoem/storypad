@@ -28,7 +28,18 @@ part 'story_pages_manager_info.dart';
 
 abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   StoryDbModel? story;
-  StoryContentDbModel? draftContent;
+
+  StoryContentDbModel? _draftContent;
+
+  /// The story's content as edited, its pages' latest edits included (read from their editors on first read after an
+  /// edit, not on every keystroke).
+  StoryContentDbModel? get draftContent {
+    final content = _draftContent;
+    if (content == null) return null;
+    return _draftContent = pagesManager.pagesMap.withPendingEdits(content);
+  }
+
+  set draftContent(StoryContentDbModel? value) => _draftContent = value;
 
   bool get canShare => story != null && draftContent != null;
   final DateTime openedOn = DateTime.now();
@@ -336,10 +347,8 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     }
   }
 
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
+  /// A page's editor changed (marked on its page, see [StoryPageObject.markEdited]): saved once edits pause.
+  Future<void> onPageChanged() async {
     return debouncedCallback(() async {
       await saveDraft(debugSource: '$runtimeType#onPageChanged');
     });

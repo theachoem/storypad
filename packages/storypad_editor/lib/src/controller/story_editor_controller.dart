@@ -17,6 +17,13 @@ import 'story_editor_actions.dart';
 import 'transform_text_request.dart';
 import 'update_story_embed_request.dart';
 
+/// Undo steps as in the old Quill editor: typing in one burst (keys under 400ms apart) is one step, and caret moves
+/// aren't steps of their own. Also keeps undo fast: it replays the history, which this keeps short.
+const _historyGrouping = HistoryGroupingPolicyList([
+  mergeRepeatSelectionChangesPolicy,
+  MergeRapidTextInputPolicy(Duration(milliseconds: 400)),
+]);
+
 /// The one object an editor needs: it holds the document and every embed, and does everything else -- serialization,
 /// formatting commands ([actions]), embed operations, focus and selection, dirty tracking, read-only.
 ///
@@ -73,6 +80,7 @@ class StoryEditorController extends ChangeNotifier {
             reaction,
       ],
       isHistoryEnabled: true,
+      historyGroupingPolicy: _historyGrouping,
     );
     actions = StoryEditorActions(this);
 
@@ -83,7 +91,7 @@ class StoryEditorController extends ChangeNotifier {
     _readOnly.addListener(notifyListeners);
     _readOnly.addListener(_updateToolbarActive);
 
-    _savedMarkdown = toMarkdown();
+    _openedMarkdown = markdown;
   }
 
   /// A controller for a page stored as Quill Delta [ops] (from before Markdown), converted to Markdown first -- so
@@ -233,21 +241,38 @@ class StoryEditorController extends ChangeNotifier {
     if (_markdownCacheRevision != _revision.value) {
       _markdownCache = codec.encode(_document);
       _markdownCacheRevision = _revision.value;
+      _debugMarkdownWrites++;
     }
     return _markdownCache!;
   }
 
+  int _debugMarkdownWrites = 0;
+
+  /// How many times [toMarkdown] wrote the document out (cache misses): for tests that typing doesn't.
+  @visibleForTesting
+  int get debugMarkdownWrites => _debugMarkdownWrites;
+
   /// The document as plain text (for search and word counts).
   String toPlainText() => StoryCodec.plainTextOf(_document);
 
-  late String _savedMarkdown;
+  // The Markdown the controller was opened with; written out canonically only once [isDirty] needs it (after an edit),
+  // so opening a page never writes the whole page out.
+  late String _openedMarkdown;
+  String? _savedMarkdownCache;
+  int _savedRevision = 0;
+
+  String get _savedMarkdown => _savedMarkdownCache ??= codec.encode(codec.decodeNodes(_openedMarkdown));
 
   /// Whether the document differs from when it was loaded or last [markSaved] -- compared as canonical Markdown, so
-  /// an edit that's undone, or content that merely wasn't canonical when loaded, isn't a change.
-  bool get isDirty => toMarkdown() != _savedMarkdown;
+  /// an edit that's undone, or content that merely wasn't canonical when loaded, isn't a change. Free until the first
+  /// edit.
+  bool get isDirty => _revision.value != _savedRevision && toMarkdown() != _savedMarkdown;
 
   /// Marks the current content as saved (see [isDirty]).
-  void markSaved() => _savedMarkdown = toMarkdown();
+  void markSaved() {
+    _savedMarkdownCache = toMarkdown();
+    _savedRevision = _revision.value;
+  }
 
   // ── Embeds ─────────────────────────────────────────────────────────────────
 

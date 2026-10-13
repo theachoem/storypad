@@ -33,6 +33,7 @@ class _GridLayout extends StatelessWidget {
         ),
         SizedBox(height: builder.spacing),
         builder._buildAddButton(),
+        builder._buildBottomSafeArea(),
       ],
     );
   }

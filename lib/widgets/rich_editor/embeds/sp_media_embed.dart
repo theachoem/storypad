@@ -168,13 +168,14 @@ class _MediaEmbedView extends StatelessWidget {
   }
 
   Alignment? _alignment(BuildContext context) {
-    // Full size is centered once it reaches its widest (alignment is off then).
-    if (isMaxSize) return Alignment.center;
+    final start = AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft);
+    // Full size (alignment is off then) sits at the text's start once it reaches its widest, in line with the text.
+    if (isMaxSize) return start;
     return switch (value.alignment) {
       .left => Alignment.centerLeft,
       .center => Alignment.center,
       .right => Alignment.centerRight,
-      .none => AppTheme.getDirectionValue(context, Alignment.centerRight, Alignment.centerLeft),
+      .none => start,
     };
   }
 

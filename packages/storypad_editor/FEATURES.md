@@ -98,6 +98,7 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 
 ## Gotchas
 
+- **Performance**: opening a controller parses only (its saved Markdown is written out lazily, once `isDirty` needs it after an edit), and each block has its own repaint boundary, so a keystroke repaints one block (super_editor's layout has none). `debugMarkdownWrites` lets tests check typing doesn't serialize.
 - **One controller per story.** super_editor's undo replays history from a snapshot taken at construction, and history
   can't be cleared, so content is never replaced in place.
 - **Editor reactions**: the controller leaves out `UpdateSubTaskIndentAfterTaskDeletionReaction` (re-clamps free task
@@ -153,7 +154,8 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 ## Known limitations
 
 - Cutting and pasting an embed inside the editor loses it (paste is plain text).
-- Undo slows down over a long session (full history replay).
+- Undo replays the whole history, so it slows down over a long session. Grouping keeps the history short: typing in
+  one burst (keys under 400ms apart, as in Quill) is one undo step, and caret moves are no steps of their own.
 - Hand-written Markdown: setext headings, lazy continuation, tables and HTML blocks read as paragraph text.
 - A whitespace-only paragraph is stored with character references (`&#32;`); leading spaces in a line are kept, but
   other Markdown renderers may show 4+ as code.

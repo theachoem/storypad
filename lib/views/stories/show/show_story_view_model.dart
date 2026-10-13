@@ -118,12 +118,8 @@ class ShowStoryViewModel extends BaseStoryViewModel {
   }
 
   @override
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
+  Future<void> onPageChanged() async {
     // unlike edit view, we can notify UI on each change, and won't need to use debounce callback here.
-
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
     await saveDraft(debugSource: '$runtimeType#onPageChanged');
     notifyListeners();
   }
