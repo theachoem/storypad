@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/story_editor/embeds/embed_attributes.dart';
 import 'package:storypad/core/story_editor/embeds/media_embed.dart';
 import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';

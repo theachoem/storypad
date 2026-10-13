@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
-import 'package:storypad/core/story_editor/embeds/embed_attributes.dart';
 import 'package:storypad/core/story_editor/embeds/media_embed.dart';
 import 'package:storypad/core/story_editor/story_pad_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
@@ -22,9 +21,9 @@ class StoryPadEditorController {
   }) : _originalMarkdown = markdown,
        editor = StoryEditorController(
          markdown: markdown,
-         embeds: storyPadEmbeds,
+         embeds: StoryPadEmbeds.all,
          readOnly: readOnly,
-         unknownBuilder: buildStoryPadUnknownEmbed,
+         unknownBuilder: StoryPadEmbeds.buildUnknown,
        ) {
     if (!selection.isCollapsed || selection.baseOffset > 0) this.selection = selection;
   }

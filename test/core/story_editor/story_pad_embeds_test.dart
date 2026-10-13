@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
 import 'package:storypad/core/story_editor/embeds/date_embed.dart';
-import 'package:storypad/core/story_editor/embeds/embed_attributes.dart';
 import 'package:storypad/core/story_editor/embeds/media_embed.dart';
 import 'package:storypad/core/story_editor/story_pad_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
@@ -14,7 +13,7 @@ import 'package:storypad_editor/testing.dart';
 /// back as equivalent Quill with nothing dropped.
 void main() {
   List<StoryEmbedCodec> othersThan(StoryEmbedCodec embed) => [
-    for (final other in storyPadEmbeds)
+    for (final other in StoryPadEmbeds.all)
       if (other.type != embed.type) other,
   ];
 
@@ -74,7 +73,7 @@ void main() {
         },
         {'insert': '\n'},
       ];
-      expect(storyPadCodec.markdownToQuill(storyPadCodec.quillToMarkdown(ops)), ops);
+      expect(StoryPadEmbeds.codec.markdownToQuill(StoryPadEmbeds.codec.quillToMarkdown(ops)), ops);
     });
   });
 
@@ -109,10 +108,10 @@ void main() {
       final ops = jsonDecode(file.readAsStringSync()) as List<Object?>;
 
       test('$name converts without dropping anything and comes back as equivalent Quill', () {
-        expect(storyPadCodec.quillImportLosses(ops), isEmpty);
+        expect(StoryPadEmbeds.codec.quillImportLosses(ops), isEmpty);
         expect(
-          storyPadCodec.markdownToQuill(storyPadCodec.quillToMarkdown(ops)),
-          isEquivalentQuill(ops, storyPadCodec),
+          StoryPadEmbeds.codec.markdownToQuill(StoryPadEmbeds.codec.quillToMarkdown(ops)),
+          isEquivalentQuill(ops, StoryPadEmbeds.codec),
         );
       });
     }

@@ -5,7 +5,6 @@ import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/story_editor/embeds/embed_attributes.dart';
 import 'package:storypad/core/story_editor/story_pad_editor_scope.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
@@ -16,6 +15,10 @@ import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_media_tile.dart';
 import 'package:storypad_editor/storypad_editor.dart';
+
+enum EmbedAlignment { none, left, center, right }
+
+enum EmbedSize { normal, max }
 
 /// One or more photos/videos (an album when there's more than one), with size and alignment.
 @immutable
@@ -60,6 +63,21 @@ class MediaValue {
 class MediaEmbed extends StoryEmbed<MediaValue> {
   const MediaEmbed();
 
+  // Each layout attribute is defined once for both formats: the Quill op attribute and the HTML attribute in Markdown.
+  static const _alignment = StoryEmbedAttribute<EmbedAlignment>.enumeration(
+    quillKey: 'custom-embed-alignment',
+    htmlName: 'data-align',
+    values: {EmbedAlignment.left: 'left', EmbedAlignment.center: 'center', EmbedAlignment.right: 'right'},
+    fallback: EmbedAlignment.none,
+  );
+
+  static const _size = StoryEmbedAttribute<EmbedSize>.enumeration(
+    quillKey: 'custom-embed-size',
+    htmlName: 'data-size',
+    values: {EmbedSize.normal: 'default', EmbedSize.max: 'max'},
+    fallback: EmbedSize.normal,
+  );
+
   @override
   String get type => 'media';
 
@@ -76,14 +94,14 @@ class MediaEmbed extends StoryEmbed<MediaValue> {
 
     final paths = value.split('|').where((path) => path.isNotEmpty).toList();
     if (paths.isEmpty) return null;
-    return MediaValue(paths, size: op.attribute(embedSize), alignment: op.attribute(embedAlignment));
+    return MediaValue(paths, size: op.attribute(_size), alignment: op.attribute(_alignment));
   }
 
   @override
   QuillEmbedOp toQuill(MediaValue value) => QuillEmbedOp.of(
     'media',
     value.paths.join('|'),
-    attributes: {...embedSize.toQuill(value.size), ...embedAlignment.toQuill(value.alignment)},
+    attributes: {..._size.toQuill(value.size), ..._alignment.toQuill(value.alignment)},
   );
 
   @override
@@ -94,12 +112,12 @@ class MediaEmbed extends StoryEmbed<MediaValue> {
         if (source['src'] case final src? when src.isNotEmpty) src,
     ];
     if (paths.isEmpty) return null;
-    return MediaValue(paths, size: element.attribute(embedSize), alignment: element.attribute(embedAlignment));
+    return MediaValue(paths, size: element.attribute(_size), alignment: element.attribute(_alignment));
   }
 
   @override
   StoryHtmlElement toHtml(MediaValue value) {
-    final attributes = {...embedSize.toHtml(value.size), ...embedAlignment.toHtml(value.alignment)};
+    final attributes = {..._size.toHtml(value.size), ..._alignment.toHtml(value.alignment)};
     if (!value.isAlbum) return _source(value.paths.single, attributes);
     return StoryHtmlElement(
       'sp-album',
