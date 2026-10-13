@@ -2332,8 +2332,8 @@ packages:
     dependency: transitive
     description:
       path: super_editor
-      ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
-      resolved-ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
+      ref: ad86b14448c01f90b79f2e6c615bd21ea6cb26a0
+      resolved-ref: ad86b14448c01f90b79f2e6c615bd21ea6cb26a0
       url: "https://github.com/Flutter-Bounty-Hunters/super_editor.git"
     source: git
     version: "0.3.0-dev.52"

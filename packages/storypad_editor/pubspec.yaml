@@ -25,7 +25,7 @@ dependencies:
   super_editor:
     git:
       url: https://github.com/Flutter-Bounty-Hunters/super_editor.git
-      ref: fbf5d192f2c9a412ddb194ce06e25c457acf0fcb
+      ref: ad86b14448c01f90b79f2e6c615bd21ea6cb26a0
       path: super_editor
 
   # Quill Delta is read (import) and written (export, while stories are still
