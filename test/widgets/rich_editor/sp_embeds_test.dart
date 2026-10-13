@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_date_embed.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
-import 'package:storypad/core/rich_editor/sp_embeds.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_date_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/widgets/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/testing.dart';
 
@@ -104,7 +104,7 @@ void main() {
   });
 
   group('real-shape stories', () {
-    final files = Directory('test/core/rich_editor/fixtures').listSync().whereType<File>().toList()
+    final files = Directory('test/widgets/rich_editor/fixtures').listSync().whereType<File>().toList()
       ..sort((a, b) => a.path.compareTo(b.path));
 
     for (final file in files) {

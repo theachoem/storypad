@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
 
 class StoryPageObjectsMap {

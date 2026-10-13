@@ -5,7 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';

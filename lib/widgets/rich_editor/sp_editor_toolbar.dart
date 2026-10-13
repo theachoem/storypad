@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';

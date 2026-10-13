@@ -5,7 +5,7 @@ import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/rich_editor/sp_editor_scope.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_scope.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';

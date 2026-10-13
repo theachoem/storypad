@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_date_embed.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_date_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_media_embed.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 class SpEmbeds {

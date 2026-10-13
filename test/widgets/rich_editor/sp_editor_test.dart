@@ -2,9 +2,9 @@ import 'package:flutter/gestures.dart' show kSecondaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/rich_editor/sp_editor.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
-import 'package:storypad/core/rich_editor/sp_editor_toolbar.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_toolbar.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad_editor/super_editor.dart';
 

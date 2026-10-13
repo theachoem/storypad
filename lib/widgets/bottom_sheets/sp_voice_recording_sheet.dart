@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';

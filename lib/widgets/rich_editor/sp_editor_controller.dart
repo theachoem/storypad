@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
-import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
-import 'package:storypad/core/rich_editor/sp_embeds.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/widgets/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/super_editor.dart';
 

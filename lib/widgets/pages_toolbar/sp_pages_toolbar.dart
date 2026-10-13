@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/rich_editor/sp_editor_toolbar.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_toolbar.dart';
 
 /// The formatting toolbar of whichever page is being edited. One toolbar for the whole page: the page title is the
 /// page's leading heading, formatted like any other line.

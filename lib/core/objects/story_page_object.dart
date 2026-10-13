@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 
 class StoryPageObject {
   final GlobalKey key;

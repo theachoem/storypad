@@ -1,4 +1,4 @@
-import 'package:storypad/core/rich_editor/sp_embeds.dart';
+import 'package:storypad/widgets/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 int _idFromJson(dynamic id) {
