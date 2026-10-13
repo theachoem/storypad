@@ -16,7 +16,7 @@
         <true />
         <key>com.apple.security.application-groups</key>
         <array>
-            <string>24KJ877SZ9</string>
+            <string>$(MACOS_APP_GROUP)</string>
         </array>
         <key>keychain-access-groups</key>
         <array>

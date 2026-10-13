@@ -22,6 +22,10 @@ const String kMapTileProxySecret = String.fromEnvironment('MAP_TILE_PROXY_SECRET
 /// for public/native clients needs no client secret).
 const String kDropboxAppKey = String.fromEnvironment('DROPBOX_APP_KEY');
 
+/// macOS app group, `<team ID>.<name>` (max 19 chars) — ObjectBox needs it in the sandbox. The same dart-define fills
+/// `com.apple.security.application-groups` in macos/Runner/*.entitlements (via GeneratedDartDefines.xcconfig).
+const String kMacosAppGroup = String.fromEnvironment('MACOS_APP_GROUP');
+
 /// Base URL for static.storypad.me — serves remote config, cloud-stored assets,
 /// and the MapTiler tile proxy.
 const String kCdnBaseUrl = String.fromEnvironment('CDN_BASE_URL', defaultValue: 'https://static.storypad.me');

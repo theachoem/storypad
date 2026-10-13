@@ -91,7 +91,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     await SupportDirectoryPath.objectbox.ensureDirectoryExists();
     _store = await openStore(
       directory: SupportDirectoryPath.objectbox.directoryPath,
-      macosApplicationGroup: '24KJ877SZ9',
+      macosApplicationGroup: kMacosAppGroup,
     );
   }
 
