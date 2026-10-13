@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
-import 'package:storypad/core/story_editor/embeds/date_embed.dart';
-import 'package:storypad/core/story_editor/embeds/media_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_date_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
-class StoryPadEmbeds {
-  StoryPadEmbeds._();
+class SpEmbeds {
+  SpEmbeds._();
 
   /// Every embed a story can hold, for the editor and for headless conversion alike.
-  static const all = <StoryEmbed>[MediaEmbed(), AudioEmbed(), DateEmbed()];
+  static const all = <StoryEmbed>[SpMediaEmbed(), SpAudioEmbed(), SpDateEmbed()];
 
   /// Reads and writes story pages as Markdown (how they're stored and edited), and converts pages stored as Quill
   /// before Markdown, with [all].

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
-import 'package:storypad/core/story_editor/embeds/date_embed.dart';
-import 'package:storypad/core/story_editor/embeds/media_embed.dart';
-import 'package:storypad/core/story_editor/story_pad_embeds.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_date_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/core/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/testing.dart';
 
@@ -13,17 +13,17 @@ import 'package:storypad_editor/testing.dart';
 /// back as equivalent Quill with nothing dropped.
 void main() {
   List<StoryEmbedCodec> othersThan(StoryEmbedCodec embed) => [
-    for (final other in StoryPadEmbeds.all)
+    for (final other in SpEmbeds.all)
       if (other.type != embed.type) other,
   ];
 
   group('media', () {
-    const media = MediaEmbed();
+    const media = SpMediaEmbed();
 
     test('a single photo, as the app inserts it (max size)', () {
       expectEmbedRoundTrip(
         media,
-        const MediaValue(['images/1.jpg'], size: .max),
+        const SpMediaValue(['images/1.jpg'], size: .max),
         fromQuillOp: {
           'insert': {'media': 'images/1.jpg'},
           'attributes': {'custom-embed-size': 'max'},
@@ -35,7 +35,7 @@ void main() {
     test('the legacy image key reads identically', () {
       expectEmbedRoundTrip(
         media,
-        const MediaValue(['images/1.jpg', 'images/2.jpg']),
+        const SpMediaValue(['images/1.jpg', 'images/2.jpg']),
         fromQuillOp: {
           'insert': {'image': 'images/1.jpg|images/2.jpg'},
         },
@@ -44,15 +44,19 @@ void main() {
     });
 
     test('a single video', () {
-      expectEmbedRoundTrip(media, const MediaValue(['videos/1.mp4']), otherEmbeds: othersThan(media));
+      expectEmbedRoundTrip(media, const SpMediaValue(['videos/1.mp4']), otherEmbeds: othersThan(media));
     });
 
-    for (final size in EmbedSize.values) {
-      for (final alignment in EmbedAlignment.values) {
+    for (final size in SpEmbedSize.values) {
+      for (final alignment in SpEmbedAlignment.values) {
         test('an album mixing photos and videos, size=${size.name} alignment=${alignment.name}', () {
           expectEmbedRoundTrip(
             media,
-            MediaValue(['images/1.jpg', 'videos/2.mp4', 'https://example.com/3.jpg'], size: size, alignment: alignment),
+            SpMediaValue(
+              ['images/1.jpg', 'videos/2.mp4', 'https://example.com/3.jpg'],
+              size: size,
+              alignment: alignment,
+            ),
             fromQuillOp: {
               'insert': {'media': 'images/1.jpg|videos/2.mp4|https://example.com/3.jpg'},
               'attributes': {
@@ -73,34 +77,34 @@ void main() {
         },
         {'insert': '\n'},
       ];
-      expect(StoryPadEmbeds.codec.markdownToQuill(StoryPadEmbeds.codec.quillToMarkdown(ops)), ops);
+      expect(SpEmbeds.codec.markdownToQuill(SpEmbeds.codec.quillToMarkdown(ops)), ops);
     });
   });
 
   test('audio', () {
     expectEmbedRoundTrip(
-      const AudioEmbed(),
+      const SpAudioEmbed(),
       'audio/1762500783747.m4a',
       fromQuillOp: {
         'insert': {'audio': 'audio/1762500783747.m4a'},
       },
-      otherEmbeds: othersThan(const AudioEmbed()),
+      otherEmbeds: othersThan(const SpAudioEmbed()),
     );
   });
 
   test('date', () {
     expectEmbedRoundTrip(
-      const DateEmbed(),
+      const SpDateEmbed(),
       DateTime(2023, 6, 15),
       fromQuillOp: {
         'insert': {'date': '[{"insert":"2023-06-15T00:00:00.000"}]'},
       },
-      otherEmbeds: othersThan(const DateEmbed()),
+      otherEmbeds: othersThan(const SpDateEmbed()),
     );
   });
 
   group('real-shape stories', () {
-    final files = Directory('test/core/story_editor/fixtures').listSync().whereType<File>().toList()
+    final files = Directory('test/core/rich_editor/fixtures').listSync().whereType<File>().toList()
       ..sort((a, b) => a.path.compareTo(b.path));
 
     for (final file in files) {
@@ -108,10 +112,10 @@ void main() {
       final ops = jsonDecode(file.readAsStringSync()) as List<Object?>;
 
       test('$name converts without dropping anything and comes back as equivalent Quill', () {
-        expect(StoryPadEmbeds.codec.quillImportLosses(ops), isEmpty);
+        expect(SpEmbeds.codec.quillImportLosses(ops), isEmpty);
         expect(
-          StoryPadEmbeds.codec.markdownToQuill(StoryPadEmbeds.codec.quillToMarkdown(ops)),
-          isEquivalentQuill(ops, StoryPadEmbeds.codec),
+          SpEmbeds.codec.markdownToQuill(SpEmbeds.codec.quillToMarkdown(ops)),
+          isEquivalentQuill(ops, SpEmbeds.codec),
         );
       });
     }

@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_add_media_action_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_image_picker_bottom_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_voice_recording_sheet.dart';
@@ -16,10 +16,10 @@ import 'package:storypad_editor/storypad_editor.dart';
 /// In the editor's tap region group (so tapping it doesn't count as tapping outside the editor), and holding the
 /// editor's selection around every sheet, dialog and picker it opens (they take focus, and a phone's editor drops its
 /// selection on losing focus).
-class StoryPadEditorToolbar extends StatelessWidget {
-  const StoryPadEditorToolbar({super.key, required this.controller});
+class SpEditorToolbar extends StatelessWidget {
+  const SpEditorToolbar({super.key, required this.controller});
 
-  final StoryPadEditorController controller;
+  final SpEditorController controller;
 
   StoryEditorController get _editor => controller.editor;
 

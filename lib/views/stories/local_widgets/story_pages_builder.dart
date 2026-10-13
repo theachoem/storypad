@@ -5,7 +5,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 import 'package:storypad/core/extensions/matrix_4_extension.dart';
-import 'package:storypad/core/story_editor/story_pad_editor.dart';
+import 'package:storypad/core/rich_editor/sp_editor.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/local_widgets/more_vert_action_buttons.dart';

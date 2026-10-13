@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_toolbar.dart';
+import 'package:storypad/core/rich_editor/sp_editor_toolbar.dart';
 
 /// The formatting toolbar of whichever page is being edited. One toolbar for the whole page: the page title is the
 /// page's leading heading, formatted like any other line.
@@ -92,7 +92,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: StoryPadEditorToolbar(controller: widget.pages[index].bodyController),
+                child: SpEditorToolbar(controller: widget.pages[index].bodyController),
               ),
             );
           },

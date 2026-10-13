@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:storypad/core/story_editor/embeds/audio_embed.dart';
-import 'package:storypad/core/story_editor/embeds/media_embed.dart';
-import 'package:storypad/core/story_editor/story_pad_embeds.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/core/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/super_editor.dart';
 
@@ -13,17 +13,17 @@ import 'package:storypad_editor/super_editor.dart';
 ///
 /// [selection] is in flat text offsets (each block's characters, 1 for an embed, plus one for its line break), which
 /// survive reopening the page in a new controller (e.g. from the view screen into edit), unlike node ids.
-class StoryPadEditorController {
-  StoryPadEditorController({
+class SpEditorController {
+  SpEditorController({
     required String markdown,
     required TextSelection selection,
     required bool readOnly,
   }) : _originalMarkdown = markdown,
        editor = StoryEditorController(
          markdown: markdown,
-         embeds: StoryPadEmbeds.all,
+         embeds: SpEmbeds.all,
          readOnly: readOnly,
-         unknownBuilder: StoryPadEmbeds.buildUnknown,
+         unknownBuilder: SpEmbeds.buildUnknown,
        ) {
     if (!selection.isCollapsed || selection.baseOffset > 0) this.selection = selection;
   }
@@ -126,10 +126,11 @@ class StoryPadEditorController {
 
   /// Inserts photos/videos (an album when there's more than one) at the caret (the last one while the editor has none,
   /// else the end), full width.
-  void insertMedia(List<String> paths) => _insertBelowTitle(const MediaEmbed(), MediaValue(paths, size: EmbedSize.max));
+  void insertMedia(List<String> paths) =>
+      _insertBelowTitle(const SpMediaEmbed(), SpMediaValue(paths, size: SpEmbedSize.max));
 
   /// Inserts a voice note at the caret (the last one while the editor has none, else the end).
-  void insertAudio(String path) => _insertBelowTitle(const AudioEmbed(), path);
+  void insertAudio(String path) => _insertBelowTitle(const SpAudioEmbed(), path);
 
   void _insertBelowTitle<T extends Object>(StoryEmbed<T> embed, T value) {
     _moveCaretBelowTitle();

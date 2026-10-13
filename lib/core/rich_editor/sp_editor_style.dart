@@ -4,8 +4,8 @@ import 'package:storypad_editor/super_editor.dart';
 
 /// How story text looks in the editor: the story's theme (font, weight, colors, and text scale from its preferences),
 /// with Quill's sizes so stories look as they did -- 16 for body text, 34/30/24/20/18/16 for headings.
-class StoryPadEditorStyle {
-  StoryPadEditorStyle(BuildContext context)
+class SpEditorStyle {
+  SpEditorStyle(BuildContext context)
     : _colorScheme = ColorScheme.of(context),
       _base = DefaultTextStyle.of(context).style,
       _isCupertino = Theme.of(context).platform == .iOS || Theme.of(context).platform == .macOS;

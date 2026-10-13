@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_scope.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_style.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_scope.dart';
+import 'package:storypad/core/rich_editor/sp_editor_style.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/services/url_opener_service.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
@@ -11,8 +11,8 @@ import 'package:storypad_editor/storypad_editor.dart';
 
 /// A story page: the storypad_editor editor, sized to its content, in the page's scroll view. The page title is the
 /// page's leading heading, styled like any other heading.
-class StoryPadEditor extends StatefulWidget {
-  const StoryPadEditor({
+class SpEditor extends StatefulWidget {
+  const SpEditor({
     super.key,
     required this.controller,
     required this.focusNode,
@@ -23,7 +23,7 @@ class StoryPadEditor extends StatefulWidget {
     required this.onGoToEdit,
   });
 
-  final StoryPadEditorController controller;
+  final SpEditorController controller;
 
   /// The page's body focus node, which the page and its toolbar listen to.
   final FocusNode focusNode;
@@ -40,13 +40,13 @@ class StoryPadEditor extends StatefulWidget {
   final VoidCallback? onGoToEdit;
 
   @override
-  State<StoryPadEditor> createState() => _StoryPadEditorState();
+  State<SpEditor> createState() => _SpEditorState();
 }
 
-class _StoryPadEditorState extends State<StoryPadEditor> {
+class _SpEditorState extends State<SpEditor> {
   StoryEditorController get _editor => widget.controller.editor;
 
-  StoryPadEditorStyle? _style;
+  SpEditorStyle? _style;
   // What the style was built from. Not the ThemeData itself: story themes build a new one on every rebuild, and a new
   // style makes the editor restyle every block.
   (ColorScheme, TextStyle, TargetPlatform)? _styleKey;
@@ -69,7 +69,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
   }
 
   @override
-  void didUpdateWidget(StoryPadEditor oldWidget) {
+  void didUpdateWidget(SpEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.focusNode != widget.focusNode || oldWidget.controller != widget.controller) {
       _detachFocus(oldWidget.focusNode, oldWidget.controller.editor);
@@ -131,11 +131,11 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
     ];
   }
 
-  StoryPadEditorStyle _styleFor(BuildContext context) {
+  SpEditorStyle _styleFor(BuildContext context) {
     final theme = Theme.of(context);
     final key = (theme.colorScheme, DefaultTextStyle.of(context).style, theme.platform);
     if (_style == null || _styleKey != key) {
-      _style = StoryPadEditorStyle(context);
+      _style = SpEditorStyle(context);
       _styleKey = key;
     }
     return _style!;
@@ -144,7 +144,7 @@ class _StoryPadEditorState extends State<StoryPadEditor> {
   @override
   Widget build(BuildContext context) {
     final style = _styleFor(context);
-    return StoryPadEditorScope(
+    return SpEditorScope(
       layoutType: widget.layoutType,
       fetchAllMedia: () => StoryContentEmbedExtractor.media(widget.storyContent),
       child: Focus(

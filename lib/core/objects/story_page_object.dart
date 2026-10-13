@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
 
 class StoryPageObject {
   final GlobalKey key;
-  final StoryPadEditorController bodyController;
+  final SpEditorController bodyController;
   final FocusNode bodyFocusNode;
 
   // allow changed after initialize

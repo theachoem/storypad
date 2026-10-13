@@ -95,7 +95,7 @@ class _StoryPage extends StatelessWidget {
           ),
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-          child: StoryPadEditor(
+          child: SpEditor(
             controller: page.bodyController,
             focusNode: page.bodyFocusNode,
             readOnly: readOnly || _locked,

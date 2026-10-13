@@ -5,7 +5,7 @@ import 'package:animated_clipper/animated_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_scope.dart';
+import 'package:storypad/core/rich_editor/sp_editor_scope.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_album_management_sheet.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_asset_info_sheet.dart';
@@ -16,30 +16,30 @@ import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_media_tile.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
-enum EmbedAlignment { none, left, center, right }
+enum SpEmbedAlignment { none, left, center, right }
 
-enum EmbedSize { normal, max }
+enum SpEmbedSize { normal, max }
 
 /// One or more photos/videos (an album when there's more than one), with size and alignment.
 @immutable
-class MediaValue {
-  const MediaValue(this.paths, {this.size = .normal, this.alignment = .none});
+class SpMediaValue {
+  const SpMediaValue(this.paths, {this.size = .normal, this.alignment = .none});
 
   /// Relative asset paths (`images/<id>.jpg`, `videos/<id>.mp4`) or URLs. Never empty.
   final List<String> paths;
-  final EmbedSize size;
-  final EmbedAlignment alignment;
+  final SpEmbedSize size;
+  final SpEmbedAlignment alignment;
 
   bool get isAlbum => paths.length > 1;
 
-  MediaValue copyWith({List<String>? paths, EmbedSize? size, EmbedAlignment? alignment}) {
-    return MediaValue(paths ?? this.paths, size: size ?? this.size, alignment: alignment ?? this.alignment);
+  SpMediaValue copyWith({List<String>? paths, SpEmbedSize? size, SpEmbedAlignment? alignment}) {
+    return SpMediaValue(paths ?? this.paths, size: size ?? this.size, alignment: alignment ?? this.alignment);
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (other is! MediaValue || size != other.size || alignment != other.alignment) return false;
+    if (other is! SpMediaValue || size != other.size || alignment != other.alignment) return false;
     if (paths.length != other.paths.length) return false;
     for (int i = 0; i < paths.length; i++) {
       if (paths[i] != other.paths[i]) return false;
@@ -51,7 +51,7 @@ class MediaValue {
   int get hashCode => Object.hash(Object.hashAll(paths), size, alignment);
 
   @override
-  String toString() => 'MediaValue($paths, $size, $alignment)';
+  String toString() => 'SpMediaValue($paths, $size, $alignment)';
 }
 
 /// Photos and videos share one embed, so an album can mix both (see docs/app/features/media.md).
@@ -60,22 +60,22 @@ class MediaValue {
 ///   `custom-embed-size`/`custom-embed-alignment`. Always written back as `media`.
 /// - Markdown: a single photo `<img src>` (a bare `![](images/a.jpg)` without attributes), a single video
 ///   `<video controls src>`, an album `<sp-album>` wrapping `<img>`/`<video>` children.
-class MediaEmbed extends StoryEmbed<MediaValue> {
-  const MediaEmbed();
+class SpMediaEmbed extends StoryEmbed<SpMediaValue> {
+  const SpMediaEmbed();
 
   // Each layout attribute is defined once for both formats: the Quill op attribute and the HTML attribute in Markdown.
-  static const _alignment = StoryEmbedAttribute<EmbedAlignment>.enumeration(
+  static const _alignment = StoryEmbedAttribute<SpEmbedAlignment>.enumeration(
     quillKey: 'custom-embed-alignment',
     htmlName: 'data-align',
-    values: {EmbedAlignment.left: 'left', EmbedAlignment.center: 'center', EmbedAlignment.right: 'right'},
-    fallback: EmbedAlignment.none,
+    values: {SpEmbedAlignment.left: 'left', SpEmbedAlignment.center: 'center', SpEmbedAlignment.right: 'right'},
+    fallback: SpEmbedAlignment.none,
   );
 
-  static const _size = StoryEmbedAttribute<EmbedSize>.enumeration(
+  static const _size = StoryEmbedAttribute<SpEmbedSize>.enumeration(
     quillKey: 'custom-embed-size',
     htmlName: 'data-size',
-    values: {EmbedSize.normal: 'default', EmbedSize.max: 'max'},
-    fallback: EmbedSize.normal,
+    values: {SpEmbedSize.normal: 'default', SpEmbedSize.max: 'max'},
+    fallback: SpEmbedSize.normal,
   );
 
   @override
@@ -88,35 +88,35 @@ class MediaEmbed extends StoryEmbed<MediaValue> {
   Set<String> get htmlTags => const {'img', 'video', 'sp-album'};
 
   @override
-  MediaValue? fromQuill(QuillEmbedOp op) {
+  SpMediaValue? fromQuill(QuillEmbedOp op) {
     final value = op.value;
     if (value is! String) return null;
 
     final paths = value.split('|').where((path) => path.isNotEmpty).toList();
     if (paths.isEmpty) return null;
-    return MediaValue(paths, size: op.attribute(_size), alignment: op.attribute(_alignment));
+    return SpMediaValue(paths, size: op.attribute(_size), alignment: op.attribute(_alignment));
   }
 
   @override
-  QuillEmbedOp toQuill(MediaValue value) => QuillEmbedOp.of(
+  QuillEmbedOp toQuill(SpMediaValue value) => QuillEmbedOp.of(
     'media',
     value.paths.join('|'),
     attributes: {..._size.toQuill(value.size), ..._alignment.toQuill(value.alignment)},
   );
 
   @override
-  MediaValue? fromHtml(StoryHtmlElement element) {
+  SpMediaValue? fromHtml(StoryHtmlElement element) {
     final sources = element.tag == 'sp-album' ? element.children : [element];
     final paths = [
       for (final source in sources)
         if (source['src'] case final src? when src.isNotEmpty) src,
     ];
     if (paths.isEmpty) return null;
-    return MediaValue(paths, size: element.attribute(_size), alignment: element.attribute(_alignment));
+    return SpMediaValue(paths, size: element.attribute(_size), alignment: element.attribute(_alignment));
   }
 
   @override
-  StoryHtmlElement toHtml(MediaValue value) {
+  StoryHtmlElement toHtml(SpMediaValue value) {
     final attributes = {..._size.toHtml(value.size), ..._alignment.toHtml(value.alignment)};
     if (!value.isAlbum) return _source(value.paths.single, attributes);
     return StoryHtmlElement(
@@ -133,15 +133,15 @@ class MediaEmbed extends StoryEmbed<MediaValue> {
   }
 
   @override
-  Widget build(BuildContext context, StoryEmbedContext<MediaValue> embed) => _MediaEmbedView(embed: embed);
+  Widget build(BuildContext context, StoryEmbedContext<SpMediaValue> embed) => _MediaEmbedView(embed: embed);
 }
 
 class _MediaEmbedView extends StatelessWidget {
   const _MediaEmbedView({required this.embed});
 
-  final StoryEmbedContext<MediaValue> embed;
+  final StoryEmbedContext<SpMediaValue> embed;
 
-  MediaValue get value => embed.value;
+  SpMediaValue get value => embed.value;
   bool get readOnly => embed.readOnly;
   bool get isMaxSize => value.size == .max;
 
@@ -158,7 +158,7 @@ class _MediaEmbedView extends StatelessWidget {
     }
   }
 
-  void _toggleAlignment(EmbedAlignment alignment) {
+  void _toggleAlignment(SpEmbedAlignment alignment) {
     embed.update((current) => current.copyWith(alignment: current.alignment == alignment ? .none : alignment));
   }
 
@@ -177,7 +177,7 @@ class _MediaEmbedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final layoutType = StoryPadEditorScope.maybeOf(context)?.layoutType;
+    final layoutType = SpEditorScope.maybeOf(context)?.layoutType;
     if (value.isAlbum) return _buildAlbum(context, layoutType);
     return _buildSingle(context, value.paths.single, layoutType);
   }
@@ -250,9 +250,9 @@ class _MediaEmbedView extends StatelessWidget {
   Widget _buildMoreVertButton(BuildContext context) {
     final buttons = <IconButton>[
       for (final (alignment, icon) in const [
-        (EmbedAlignment.left, SpIcons.alignLeft),
-        (EmbedAlignment.center, SpIcons.alignCenter),
-        (EmbedAlignment.right, SpIcons.alignRight),
+        (SpEmbedAlignment.left, SpIcons.alignLeft),
+        (SpEmbedAlignment.center, SpIcons.alignCenter),
+        (SpEmbedAlignment.right, SpIcons.alignRight),
       ])
         IconButton(
           isSelected: value.alignment == alignment,
@@ -327,7 +327,7 @@ class _MediaEmbedView extends StatelessWidget {
 
   void _viewMedia(BuildContext context, String link) {
     Feedback.forTap(context);
-    final media = StoryPadEditorScope.maybeOf(context)?.fetchAllMedia() ?? const <String>[];
+    final media = SpEditorScope.maybeOf(context)?.fetchAllMedia() ?? const <String>[];
     final images = media.contains(link) ? media : [link];
     SpMediaViewer.fromString(images: images, initialIndex: images.indexOf(link), context: context).show(context);
   }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
-import 'package:storypad/core/story_editor/embeds/media_embed.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 import 'package:storypad_editor/super_editor.dart';
 
@@ -45,8 +45,8 @@ void main() {
   );
   final storedPage = legacyPage.toMarkdownPage().markdown;
 
-  StoryPadEditorController controllerFor(String markdown, {bool readOnly = false}) {
-    final controller = StoryPadEditorController(
+  SpEditorController controllerFor(String markdown, {bool readOnly = false}) {
+    final controller = SpEditorController(
       markdown: markdown,
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: readOnly,
@@ -55,7 +55,7 @@ void main() {
     return controller;
   }
 
-  void type(StoryPadEditorController controller, String text, {int nodeIndex = 1, int offset = 0}) {
+  void type(SpEditorController controller, String text, {int nodeIndex = 1, int offset = 0}) {
     final node = controller.editor.document.getNodeAt(nodeIndex)!;
     controller.editor.editor.execute([
       InsertTextRequest(
@@ -142,8 +142,8 @@ void main() {
       controller.selection = const TextSelection.collapsed(offset: 5);
       controller.insertMedia(['images/9.jpg']);
 
-      final media = controller.editor.embedsOf(const MediaEmbed()).single.$2;
-      expect(media, const MediaValue(['images/9.jpg'], size: EmbedSize.max));
+      final media = controller.editor.embedsOf(const SpMediaEmbed()).single.$2;
+      expect(media, const SpMediaValue(['images/9.jpg'], size: SpEmbedSize.max));
       expect(
         StoryPageDbModel.markdown(id: 1, markdown: controller.serialize()).quillBody,
         contains(
@@ -173,7 +173,7 @@ void main() {
       controller.selection = const TextSelection.collapsed(offset: 0);
       controller.insertMedia(['images/3.jpg']);
       expect(controller.editor.document.first, isNot(isA<ParagraphNode>()));
-      expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
+      expect(controller.editor.embedsOf(const SpMediaEmbed()).single.$2.paths, ['images/3.jpg']);
     });
 
     test('an embed inserted with the caret in the title goes below it, so the title stays first', () {
@@ -184,7 +184,7 @@ void main() {
         final page = StoryPageDbModel.markdown(id: 1, markdown: controller.serialize());
         expect(page.markdown, startsWith(markdown.split('\n').first), reason: markdown);
         expect(controller.editor.document.first, isA<ParagraphNode>(), reason: markdown);
-        expect(controller.editor.embedsOf(const MediaEmbed()).single.$2.paths, ['images/3.jpg']);
+        expect(controller.editor.embedsOf(const SpMediaEmbed()).single.$2.paths, ['images/3.jpg']);
       }
     });
   });
@@ -204,7 +204,7 @@ void main() {
     });
 
     test('a selection handed over from another controller (show → edit) is kept', () {
-      final controller = StoryPadEditorController(
+      final controller = SpEditorController(
         markdown: storedPage,
         selection: const TextSelection(baseOffset: 0, extentOffset: 7),
         readOnly: false,

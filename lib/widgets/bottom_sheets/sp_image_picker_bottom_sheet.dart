@@ -5,7 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/services/assets/app_file_picker_service.dart';
 import 'package:storypad/core/services/assets/retrieve_lost_photo_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
@@ -31,7 +31,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   static Future<void> showImagePicker({
     required BuildContext context,
-    required StoryPadEditorController controller,
+    required SpEditorController controller,
     required ImageSource source,
   }) async {
     return SpAppLockWrapper.disableAppLockIfHas(
@@ -60,7 +60,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   static Future<void> showVideoPicker({
     required BuildContext context,
-    required StoryPadEditorController controller,
+    required SpEditorController controller,
     required ImageSource source,
   }) async {
     return SpAppLockWrapper.disableAppLockIfHas(
@@ -92,7 +92,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
   /// inserts everything picked as a single embed (an album if more than one).
   static Future<void> showNativePicker({
     required BuildContext context,
-    required StoryPadEditorController controller,
+    required SpEditorController controller,
   }) async {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
@@ -143,7 +143,7 @@ class SpImagePickerBottomSheet extends BaseBottomSheet {
 
   static Future<void> showForEditor({
     required BuildContext context,
-    required StoryPadEditorController controller,
+    required SpEditorController controller,
   }) async {
     await RetrieveLostPhotoService.call();
 

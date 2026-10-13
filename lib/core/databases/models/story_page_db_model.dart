@@ -1,4 +1,4 @@
-import 'package:storypad/core/story_editor/story_pad_embeds.dart';
+import 'package:storypad/core/rich_editor/sp_embeds.dart';
 import 'package:storypad_editor/storypad_editor.dart';
 
 int _idFromJson(dynamic id) {
@@ -49,9 +49,9 @@ class StoryPageDbModel {
     final heading = normalizePageTitle(title);
     return StoryPageDbModel.markdown(
       id: id,
-      markdown: StoryPadEmbeds.codec.encode([
+      markdown: SpEmbeds.codec.encode([
         if (heading != null) pageTitleNode(heading),
-        ...StoryPadEmbeds.codec.decodeNodes(body),
+        ...SpEmbeds.codec.decodeNodes(body),
       ]),
     );
   }
@@ -122,7 +122,7 @@ class StoryPageDbModel {
 
   /// The page as Markdown, title included (its first block, a heading). A legacy page is converted on first access.
   late final String markdown = isLegacy
-      ? StoryPadEmbeds.codec.quillPageToMarkdown(_legacyBody ?? const [], title: _legacyTitle)
+      ? SpEmbeds.codec.quillPageToMarkdown(_legacyBody ?? const [], title: _legacyTitle)
       : _markdown!;
 
   /// The page title (see `StoryCodec.pageTitleOf`), or `null`. For a legacy page, its stored title.
@@ -139,7 +139,7 @@ class StoryPageDbModel {
   /// Whether this legacy page converts to Markdown without losing anything (see `StoryCodec.checkQuillPage`).
   QuillPageCheck checkConversion() {
     assert(isLegacy, 'Only a legacy page is converted.');
-    return StoryPadEmbeds.codec.checkQuillPage(_legacyBody ?? const [], title: _legacyTitle, markdown: markdown);
+    return SpEmbeds.codec.checkQuillPage(_legacyBody ?? const [], title: _legacyTitle, markdown: markdown);
   }
 
   /// This page stored as Markdown: a legacy page converted (see [checkConversion] first); any other page as is.
@@ -222,10 +222,10 @@ class _MarkdownDerived {
     final cached = _cache.remove(markdown);
     if (cached != null) return _cache[markdown] = cached; // Most recently used last.
 
-    final nodes = StoryPadEmbeds.codec.decodeNodes(markdown);
+    final nodes = SpEmbeds.codec.decodeNodes(markdown);
     final derived = _MarkdownDerived._(
       StoryCodec.pageTitleOf(nodes),
-      List.unmodifiable(StoryPadEmbeds.codec.encodeQuill(StoryCodec.pageBodyOf(nodes))),
+      List.unmodifiable(SpEmbeds.codec.encodeQuill(StoryCodec.pageBodyOf(nodes))),
     );
     _cache[markdown] = derived;
     if (_cache.length > _maxCached) _cache.remove(_cache.keys.first);

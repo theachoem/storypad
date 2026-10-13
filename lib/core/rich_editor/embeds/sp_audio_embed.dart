@@ -12,8 +12,8 @@ import 'package:storypad_editor/storypad_editor.dart';
 ///
 /// - Quill: `{"audio": "audio/….m4a"}`.
 /// - Markdown: `<audio controls src="audio/….m4a"></audio>`.
-class AudioEmbed extends StoryEmbed<String> {
-  const AudioEmbed();
+class SpAudioEmbed extends StoryEmbed<String> {
+  const SpAudioEmbed();
 
   @override
   String get type => 'audio';

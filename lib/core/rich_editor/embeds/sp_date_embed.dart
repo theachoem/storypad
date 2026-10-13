@@ -10,8 +10,8 @@ import 'package:storypad_editor/storypad_editor.dart';
 /// - Quill: `{"date": "[{\"insert\":\"2024-01-01T00:00:00.000\"}]"}` -- a JSON-encoded one-op Delta holding an ISO
 ///   date. A malformed value is rejected, so the unknown embed keeps it as-is.
 /// - Markdown: `<time datetime="…">…</time>`.
-class DateEmbed extends StoryEmbed<DateTime> {
-  const DateEmbed();
+class SpDateEmbed extends StoryEmbed<DateTime> {
+  const SpDateEmbed();
 
   @override
   String get type => 'date';

@@ -2,22 +2,22 @@ import 'package:flutter/gestures.dart' show kSecondaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
-import 'package:storypad/core/story_editor/story_pad_editor.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_toolbar.dart';
+import 'package:storypad/core/rich_editor/sp_editor.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_toolbar.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad_editor/super_editor.dart';
 
 /// A page and its toolbar, as the story page hosts them, in the page's scroll view.
 void main() {
-  Future<({StoryPadEditorController controller, FocusNode focusNode, List<int> changes})> pumpPage(
+  Future<({SpEditorController controller, FocusNode focusNode, List<int> changes})> pumpPage(
     WidgetTester tester, {
     String markdown = '',
     bool readOnly = false,
     bool keepsChanges = true,
     VoidCallback? onGoToEdit,
   }) async {
-    final controller = StoryPadEditorController(
+    final controller = SpEditorController(
       markdown: markdown,
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: readOnly,
@@ -35,7 +35,7 @@ void main() {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                StoryPadEditor(
+                SpEditor(
                   controller: controller,
                   focusNode: focusNode,
                   readOnly: readOnly,
@@ -47,7 +47,7 @@ void main() {
               ],
             ),
           ),
-          bottomNavigationBar: StoryPadEditorToolbar(controller: controller),
+          bottomNavigationBar: SpEditorToolbar(controller: controller),
         ),
       ),
     );
@@ -186,7 +186,7 @@ void main() {
   testWidgets('content changed before the page is built is reported once it is (a story started from a photo)', (
     tester,
   ) async {
-    final controller = StoryPadEditorController(
+    final controller = SpEditorController(
       markdown: '',
       selection: const TextSelection.collapsed(offset: 0),
       readOnly: false,
@@ -206,7 +206,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: StoryPadEditor(
+            child: SpEditor(
               controller: controller,
               focusNode: focusNode,
               readOnly: false,

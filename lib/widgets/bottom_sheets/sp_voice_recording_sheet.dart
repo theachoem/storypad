@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/story_editor/story_pad_editor_controller.dart';
+import 'package:storypad/core/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
@@ -43,7 +43,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
 
   static Future<void> showForEditor({
     required BuildContext context,
-    required StoryPadEditorController controller,
+    required SpEditorController controller,
   }) async {
     final result = await const SpVoiceRecordingSheet().show(context: context);
 
