@@ -110,6 +110,10 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **Selection hold**: take it synchronously before opening a popup/dialog (opening moves focus). Mobile clears the
   selection on focus loss otherwise; `isToolbarActive` keeps a toolbar mounted meanwhile.
 - **Embed host** paints its own selection overlay: super_editor's `SelectableBox` wraps its child in `IgnorePointer`.
+- **Text selection highlight** is painted by the package (`widgets/text_selection_highlight.dart`, wrapping every
+  text block's builder), as native text does: each line exactly over its own height, a block's lines in one fill.
+  super_editor's grows each line 2px up and down, so wrapped lines overlapped and the see-through color darkened
+  there; its own is made transparent. On iOS its handles, sized for that 2px, reach about 2px past the highlight.
 - **Reordering**: desktop drags a block by the handle shown on hover (`reorderable_document_overlay.dart`); dragging
   the handle of a block inside the selection moves every selected block together (`moveBlocksRequests`, one undo
   step). Touch has no drag or tap-outside chrome: apps move selected blocks with `actions.moveSelectedBlocks`

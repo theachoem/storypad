@@ -18,6 +18,7 @@ import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
 import 'story_editor_spacing.dart';
 import 'story_embed_component.dart';
+import 'text_selection_highlight.dart';
 import 'process_text.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
@@ -425,7 +426,7 @@ class _RawEditorState extends State<RawEditor> {
       _componentBuildersCache = null;
     }
     return _componentBuildersCache ??= [
-      for (final builder in _createComponentBuilders())
+      for (final builder in _createComponentBuilders().map(TextSelectionHighlightComponentBuilder.new))
         _RepaintBoundaryComponentBuilder(
           blockStyles.isEmpty
               ? builder
