@@ -34,6 +34,7 @@ class _EditTemplateContent extends StatelessWidget {
           ),
         ),
         leading: const CloseButton(),
+        flexibleSpace: const StoryAppBarUnfocusArea(),
         actions: [
           const SizedBox(width: 8.0),
           IconButton(

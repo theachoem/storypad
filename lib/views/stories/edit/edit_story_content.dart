@@ -75,6 +75,7 @@ class _EditStoryContent extends StatelessWidget {
     return AppBar(
       forceMaterialTransparency: true,
       titleSpacing: 0.0,
+      flexibleSpace: const StoryAppBarUnfocusArea(),
       // On large screens, its side padding prevents the divider
       // from spanning the full width of the screen. To avoid this visual
       // inconsistency, we hide the divider when the window is large.
