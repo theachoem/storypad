@@ -18,6 +18,7 @@ import 'reorderable_document_overlay.dart';
 import 'sliver_box.dart';
 import 'story_editor_spacing.dart';
 import 'story_embed_component.dart';
+import 'process_text.dart';
 
 /// The editing surface for a [StoryEditorController]: renders its document and every embed, and handles input,
 /// selection and platform chrome. Format-agnostic -- see `MarkdownEditor` for Markdown change notifications.
@@ -171,9 +172,12 @@ class _RawEditorState extends State<RawEditor> {
   ScrollController? _ownScrollController;
   ScrollController get _scrollController => widget.scrollController ?? (_ownScrollController ??= ScrollController());
 
-  /// Android "Process Text" actions, queried once up front (like `EditableText` does), well before any toolbar needs
-  /// them.
+  /// Android "Process Text" actions, queried up front and again whenever a selection starts or the app comes back (an
+  /// app may have been installed, removed or updated meanwhile), as a native TextView queries them for each menu --
+  /// ahead of the menu, so it shows them at once.
   List<ProcessTextAction> _androidProcessTextActions = const [];
+  AppLifecycleListener? _processTextLifecycle;
+  bool _hadExpandedSelection = false;
 
   StoryEditorController get _controller => widget.controller;
 
@@ -189,7 +193,10 @@ class _RawEditorState extends State<RawEditor> {
   void initState() {
     super.initState();
     _attach(_controller);
-    _initAndroidProcessTextActions();
+    if (_queriesProcessText) {
+      _processTextLifecycle = AppLifecycleListener(onResume: _queryAndroidProcessTextActions);
+      _queryAndroidProcessTextActions();
+    }
   }
 
   @override
@@ -229,6 +236,7 @@ class _RawEditorState extends State<RawEditor> {
   @override
   void dispose() {
     _detach(_controller);
+    _processTextLifecycle?.dispose();
     _disposeControls(_iosControlsController, _androidControlsController, _iosReaderControlsController);
     _ownScrollController?.dispose();
     super.dispose();
@@ -245,11 +253,13 @@ class _RawEditorState extends State<RawEditor> {
     // A selection hold suspends mobile's clear-selection-on-blur policy.
     controller.isSelectionHeld.addListener(_rebuild);
     controller.readOnlyListenable.addListener(_onReadOnlyChanged);
+    if (_queriesProcessText) controller.composer.selectionNotifier.addListener(_onSelectionForProcessText);
   }
 
   void _detach(StoryEditorController controller) {
     controller.isSelectionHeld.removeListener(_rebuild);
     controller.readOnlyListenable.removeListener(_onReadOnlyChanged);
+    controller.composer.selectionNotifier.removeListener(_onSelectionForProcessText);
     controller.detachEditor(this);
   }
 
@@ -273,10 +283,19 @@ class _RawEditorState extends State<RawEditor> {
     if (mounted) setState(() {});
   }
 
-  Future<void> _initAndroidProcessTextActions() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
-    final actions = await DefaultProcessTextService().queryTextActions();
-    if (mounted) setState(() => _androidProcessTextActions = actions);
+  bool get _queriesProcessText => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  Future<void> _queryAndroidProcessTextActions() async {
+    final actions = await StoryProcessText.queryTextActions();
+    if (mounted && !listEquals(actions, _androidProcessTextActions)) {
+      setState(() => _androidProcessTextActions = actions);
+    }
+  }
+
+  void _onSelectionForProcessText() {
+    final expanded = _controller.composer.selection?.isCollapsed == false;
+    if (expanded && !_hadExpandedSelection) _queryAndroidProcessTextActions();
+    _hadExpandedSelection = expanded;
   }
 
   // These toolbar builders must never early-return based on the selection: super_editor calls them once and caches
@@ -312,6 +331,39 @@ class _RawEditorState extends State<RawEditor> {
       selectionNotifier: _controller.composer.selectionNotifier,
       processTextActions: _androidProcessTextActions,
       extraActions: widget.contextMenuActions,
+      selectionRect: _selectionGlobalRect,
+      replaceSelection: _replaceSelection,
+    );
+  }
+
+  /// Replaces the selection with [text] (what a process-text app returned), as one undo step, as a native TextView
+  /// does. (super_editor's `CommonEditorOperations.insertPlainText` also puts an empty paragraph before it: its
+  /// "not in a text block" check tests the position, not the block.)
+  void _replaceSelection(String text) {
+    final selection = _controller.composer.selection;
+    if (selection == null) return;
+    final start = selection.normalize(_controller.document).start;
+    _controller.editor.execute([
+      if (!selection.isCollapsed) DeleteContentRequest(documentRange: selection),
+      ChangeSelectionRequest(
+        DocumentSelection.collapsed(position: start),
+        SelectionChangeType.placeCaret,
+        SelectionReason.userInteraction,
+      ),
+      InsertPlainTextAtCaretRequest(text),
+    ]);
+  }
+
+  /// The selection's rect on screen, or null without an expanded one laid out.
+  Rect? _selectionGlobalRect() {
+    final selection = _controller.composer.selection;
+    if (selection == null || _documentLayoutKey.currentState == null) return null;
+    final layout = _layout();
+    final rect = layout.getRectForSelection(selection.base, selection.extent);
+    if (rect == null) return null;
+    return Rect.fromPoints(
+      layout.getGlobalOffsetFromDocumentOffset(rect.topLeft),
+      layout.getGlobalOffsetFromDocumentOffset(rect.bottomRight),
     );
   }
 
@@ -510,7 +562,11 @@ class _RawEditorState extends State<RawEditor> {
   }
 
   Widget _buildAndroidReaderToolbar(BuildContext context) {
-    return StoryAndroidReaderToolbar(menu: _readerMenu, processTextActions: _androidProcessTextActions);
+    return StoryAndroidReaderToolbar(
+      menu: _readerMenu,
+      processTextActions: _androidProcessTextActions,
+      selectionRect: _selectionGlobalRect,
+    );
   }
 
   Widget _buildSuperReader(BuildContext context) {

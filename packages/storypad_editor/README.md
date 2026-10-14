@@ -10,8 +10,9 @@ A controller-centric rich text editor for StoryPad, built on
   Markdown page back as Quill for Quill-based readers (`encodeQuill`).
 - **App-defined embeds.** Each embed (media, audio, …) is one object bundling its Quill form, Markdown form and
   widget. All embeds go into one controller; the editor widgets take the controller, and the controller does the rest.
-- **Native menus where the platform has them**: the iOS system menu, and a real `NSMenu` on macOS (the package's
-  only native code: a macOS-only plugin in `macos/`). Windows and Linux get a Flutter-painted menu.
+- **Native menus where the platform has them**: the iOS system menu, and a real `NSMenu` on macOS (the plugin's
+  `macos/` side). Windows and Linux get a Flutter-painted menu. On Android, the "Process Text" apps (Translate,
+  Ask …) come from the plugin's `android/` side, queried as a native text field queries them.
 
 Not published to pub: it lives in the StoryPad app (`app/packages/storypad_editor/`), which depends on it by path.
 Its manual-test app and reference consumer is `storypad_editor_example/` at the monorepo root (outside the app repo).

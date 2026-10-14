@@ -59,5 +59,9 @@ dev_dependencies:
 flutter:
   plugin:
     platforms:
+      # The "Process Text" apps for the selection menus, as a native TextView queries them.
+      android:
+        package: com.tc.storypad_editor
+        pluginClass: StorypadEditorPlugin
       macos:
         pluginClass: StorypadEditorPlugin

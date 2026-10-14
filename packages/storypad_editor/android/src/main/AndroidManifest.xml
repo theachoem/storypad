@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The apps that can act on selected text (Intent.ACTION_PROCESS_TEXT), which the selection menus offer: since
+         Android 11 only visible to an app that declares it queries them. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+</manifest>

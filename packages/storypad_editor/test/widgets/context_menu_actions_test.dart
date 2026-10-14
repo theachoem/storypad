@@ -108,6 +108,36 @@ void main() {
     expect(controller.toMarkdown(), 'HELLO world');
   }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
+  testWidgets('Android toolbar: without room above for its open ⋮ menu, below the selection right away', (
+    tester,
+  ) async {
+    final controller = controllerFor('One\n\nTwo\n\nThree\n\nHello world');
+    await pumpStoryEditor(
+      tester,
+      controller,
+      editor: RawEditor(
+        controller: controller,
+        contextMenuActions: [
+          for (var i = 1; i <= 10; i++) StoryContextMenuAction(label: 'Action $i', onPressed: () {}),
+        ],
+      ),
+    );
+    final word = tester.getTopLeft(find.byType(TextComponent).last) + const Offset(12, 8);
+    await tester.tapAt(word);
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
+    await tester.longPressAt(word);
+    await tester.pumpAndSettle();
+
+    final toolbar = find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_OverflowMorph');
+    final closed = tester.getRect(toolbar);
+    expect(closed.top, greaterThan(tester.getRect(find.byType(TextComponent).last).bottom), reason: 'below');
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    expect(tester.getRect(toolbar).top, closed.top, reason: 'opening downwards in place');
+    expect(tester.getCenter(find.byIcon(Icons.arrow_back)).dy, lessThan(tester.getCenter(find.text('Action 10')).dy));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
   test('iOS system menu items: the standard ones for the selection, then the shown extras', () {
     final actions = actionsFor(controllerFor(''), []);
     const localizations = DefaultWidgetsLocalizations();

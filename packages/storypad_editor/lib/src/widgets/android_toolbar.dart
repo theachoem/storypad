@@ -6,6 +6,7 @@ import 'package:super_editor/super_editor.dart';
 
 import 'context_menu_action.dart';
 import 'vendor/android_popover_toolbar.dart';
+import 'process_text.dart';
 
 // =============================================================================
 // Android: floating toolbar augmented with native "Process Text" actions.
@@ -23,19 +24,14 @@ const _maxToolbarWidth = 280.0;
 /// `super_editor/lib/src/infrastructure/platforms/android/toolbar.dart`) with one
 /// addition: a button for each Android "Process Text" action the OS reports — the same
 /// mechanism that gives native `TextField`s their "Translate"/"Assist"/dictionary
-/// entries (`Intent.ACTION_PROCESS_TEXT`, exposed to Dart as
-/// [DefaultProcessTextService]). Picking one launches that app's real activity with the
-/// selected text, and — if the activity returns a transformed version — replaces the
-/// selection with it.
+/// entries (`Intent.ACTION_PROCESS_TEXT`, from the package's Android side: [StoryProcessText]).
+/// Picking one launches that app's real activity with the selected text, and — if the
+/// activity returns a transformed version — replaces the selection with it.
 ///
 /// This widget is a pure "given this list, render buttons" component. It doesn't query
-/// [DefaultProcessTextService] itself — [processTextActions] is queried once by
-/// `RawEditor` (a long-lived ancestor), exactly the way `EditableText` queries it once
-/// from its own `initState` and later reads the resulting list when it's about to show
-/// its toolbar, rather than a short-lived toolbar widget querying it right when it's
-/// about to be shown. Querying this early (well before any selection/toolbar
-/// interaction can happen) gives the query plenty of time to resolve before it's ever
-/// needed, with no `FutureBuilder`/loading-state dance required in the toolbar itself.
+/// the actions itself — [processTextActions] comes from `RawEditor` (a long-lived
+/// ancestor), which queries them up front and again as each selection starts, so the
+/// list is fresh by the time the toolbar shows, with no loading state here.
 ///
 /// Uses a vendored copy of `AndroidPopoverToolbar`/`AndroidPopoverToolbarContainer`
 /// (see `vendor/android_popover_toolbar.dart`), an internal SuperEditor widget, so this
@@ -51,6 +47,8 @@ class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
     required this.selectionNotifier,
     required this.processTextActions,
     this.extraActions = const [],
+    this.selectionRect,
+    required this.replaceSelection,
   });
 
   final Key? floatingToolbarKey;
@@ -64,6 +62,13 @@ class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
   /// The app's extra items (`RawEditor.contextMenuActions`), after the process-text ones.
   final List<StoryContextMenuAction> extraActions;
 
+  /// The selection's global rect, for the toolbar to tell which side of it super_editor put it on (see
+  /// `AndroidPopoverToolbar.anchorRect`).
+  final ValueGetter<Rect?>? selectionRect;
+
+  /// Replaces the selection with the text a process-text app returned.
+  final ValueChanged<String> replaceSelection;
+
   @override
   State<AndroidTextEditingFloatingToolbarWithProcessText> createState() =>
       _AndroidTextEditingFloatingToolbarWithProcessTextState();
@@ -71,54 +76,6 @@ class AndroidTextEditingFloatingToolbarWithProcessText extends StatefulWidget {
 
 class _AndroidTextEditingFloatingToolbarWithProcessTextState
     extends State<AndroidTextEditingFloatingToolbarWithProcessText> {
-  /// Whether the toolbar is above or below the focal point.
-  ///
-  /// This is used to determine the position of the back button in the overflow menu.
-  bool _isAbove = true;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.focalPoint?.addListener(_onFocalPointChange);
-  }
-
-  @override
-  void didUpdateWidget(AndroidTextEditingFloatingToolbarWithProcessText oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.focalPoint != widget.focalPoint) {
-      oldWidget.focalPoint?.removeListener(_onFocalPointChange);
-      widget.focalPoint?.addListener(_onFocalPointChange);
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.focalPoint?.removeListener(_onFocalPointChange);
-    super.dispose();
-  }
-
-  void _onFocalPointChange() {
-    final leader = widget.focalPoint?.leader;
-    if (leader == null) {
-      return;
-    }
-
-    final box = context.findRenderObject() as RenderBox?;
-    if (box == null) {
-      return;
-    }
-
-    final leaderOffset = leader.offset;
-    final followerOffset = box.localToGlobal(Offset.zero);
-    final isAbove = followerOffset < leaderOffset;
-
-    if (isAbove != _isAbove) {
-      setState(() {
-        _isAbove = isAbove;
-      });
-    }
-  }
-
   void _cut() {
     widget.editorOps.cut();
     widget.editorControlsController.hideToolbar();
@@ -150,7 +107,7 @@ class _AndroidTextEditingFloatingToolbarWithProcessTextState
 
     widget.editorControlsController.hideToolbar();
 
-    final processedText = await DefaultProcessTextService().processTextAction(action.id, selectedText, false);
+    final processedText = await StoryProcessText.processTextAction(action.id, selectedText, false);
 
     // Some actions (e.g. "Assist"-style lookups) never return a transformed version of
     // the text — they just do something with it externally. Only actions that hand
@@ -159,12 +116,7 @@ class _AndroidTextEditingFloatingToolbarWithProcessTextState
       return;
     }
 
-    // `insertPlainText` is deprecated in favor of executing an
-    // InsertPlainTextAtCaretRequest directly, but that requires the Editor instance,
-    // which CommonEditorOperations only exposes as @protected. This is the only public
-    // way to replace a selection with text from outside the super_editor package.
-    // ignore: deprecated_member_use
-    widget.editorOps.insertPlainText(processedText);
+    widget.replaceSelection(processedText);
   }
 
   @override
@@ -224,7 +176,13 @@ class _AndroidTextEditingFloatingToolbarWithProcessTextState
                 return ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
                   child: AndroidPopoverToolbar(
-                    isAbove: _isAbove,
+                    // Its side found from the selection (and re-checked as the focal point moves).
+                    isAbove: true,
+                    anchorRect: widget.selectionRect,
+                    anchorChanges: widget.focalPoint,
+                    // super_editor's toolbar aligner: 20 above the selection, 90 below (clear of the handles).
+                    gapAbove: 20,
+                    gapBelow: 90,
                     toolbarBuilder: _defaultToolbarBuilder,
                     children: [
                       for (int i = 0; i < buttons.length; i++)

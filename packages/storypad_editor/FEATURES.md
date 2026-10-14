@@ -104,7 +104,7 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **Editor reactions**: the controller leaves out `UpdateSubTaskIndentAfterTaskDeletionReaction` (re-clamps free task
   indent on any task delete) and `ImageUrlConversionReaction` (pasted URL → stock `ImageNode`).
 - **Embed updates** use `UpdateStoryEmbedRequest` (a node change), not `ReplaceNodeRequest` (remove + insert, which
-  triggers deletion reactions). `StoryEmbedContext.update` transforms the *live* value (fast double taps).
+  triggers deletion reactions). `StoryEmbedContext.update` transforms the _live_ value (fast double taps).
 - **Revision/caching** listens to the document's change log, not editor listeners: undo/redo don't report edits to
   editor listeners.
 - **Selection hold**: take it synchronously before opening a popup/dialog (opening moves focus). Mobile clears the
@@ -123,10 +123,23 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **package:markdown quirks** handled in the inline writer: no entity decoding right after a backtick (separator
   `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.
 - **Android toolbar** is super_editor's internal `AndroidPopoverToolbar`, vendored in `widgets/vendor/` (the
-  `implementation_imports` lint is on).
-- **Box layout** (`widgets/sliver_box.dart`): inside a scroll view super_editor renders its document as a *sliver* of
+  `implementation_imports` lint is on). Changes from upstream are marked `StoryPad:`. The open ⋮ menu is capped at four and a half items and
+  scrolls. Opening or closing it animates with native Android's values, taken from AOSP's
+  `LocalFloatingToolbarPopup.java` (`openOverflow` / `closeOverflow`): separate width and height curves, the panels
+  fading at their own speeds, and the button sliding across (`_RenderOverflowMorph`). Upstream (and Flutter's
+  Material toolbar) grow the menu past the screen and snap the items. Native's animated ⋮ → ← icon is still a
+  cross-fade here. With a ⋮ menu, the toolbar is placed as native places it
+  (`widgets/android_toolbar_placement.dart`, from `refreshCoordinatesAndOverflowDirection`): above the selection
+  when a menu of at least two items fits there, else below, the menu shrunk to the room it has. The toolbar takes
+  that room from the start (see-through to taps), so super_editor (and the reader's position delegate) put it on
+  that side and opening it never moves it; it finds which side it landed on from the selection's rect
+  (`anchorRect`). The hosts only place a toolbar right above or below the selection, growing away from it, so
+  native's "toolbar above, menu opening downwards over the text" (and "below, opening upwards") become the roomier
+  side; and since they'd flip a toolbar past its room, the half item hinting at more never runs past it (native's
+  can).
+- **Box layout** (`widgets/sliver_box.dart`): inside a scroll view super_editor renders its document as a _sliver_ of
   that scroll view. `StoryEditorLayout.box` hosts the sliver in `SliverBox`, a plain render box laid out at the
-  sliver's full length -- deliberately *not* a viewport: super_editor's mobile caret-follow measures against the
+  sliver's full length -- deliberately _not_ a viewport: super_editor's mobile caret-follow measures against the
   nearest `RenderAbstractViewport`, so a `ShrinkWrappingViewport` host (which never scrolls) broke it, and nested
   viewports also trip Flutter's scroll-semantics assertion.
 - **Caret/selection colors**: the desktop caret is a replaced `DefaultCaretOverlayBuilder` in the default overlay
@@ -143,11 +156,19 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
 - **Desktop context menu** (`RawEditor.desktopContextMenu`, default `showDefaultDesktopContextMenu`): native is the
-  goal everywhere. On macOS it's a real `NSMenu` with the Services submenu, from the package's only native code
-  (`macos/`, a macOS-only plugin: CocoaPods podspec and Swift package, channel `storypad_editor/context_menu`). Flutter
+  goal everywhere. On macOS it's a real `NSMenu` with the Services submenu, from the plugin's `macos/` side
+  (CocoaPods podspec and Swift package, channel `storypad_editor/context_menu`). Flutter
   has no native context-menu API there (`SystemContextMenu` is iOS-only). Windows/Linux, or a host without the plugin
   (`MissingPluginException`), get the Flutter-painted `showMaterialDesktopContextMenu`.
 
+- **Android "Process Text" apps** (Translate, Ask …, in both Android selection menus): from the plugin's `android/`
+  side (`StorypadEditorPlugin.java`, channel `storypad_editor/process_text`; Dart: `widgets/process_text.dart`),
+  ported from a native TextView's (`Editor.ProcessTextIntentActionsHandler`): queried afresh (by `RawEditor` up
+  front, as each selection starts, and when the app resumes, so the list is ready when the menu shows), in the
+  system's order, only those the app may start, labelled as the system labels them. Flutter's
+  `DefaultProcessTextService` queries once per engine and keeps the results -- an app updated since shows its
+  activity's class name -- and returns them unordered. The text an app returns replaces the selection as one undo
+  step (`RawEditor._replaceSelection`; super_editor's `insertPlainText` also adds an empty paragraph before it).
 - **Android build**: `super_keyboard` (via super_editor) pins compileSdk 34; consuming apps must raise plugin modules to
   36 (see `storypad_editor_example/android/build.gradle.kts` and the README) or AGP's `checkAarMetadata` fails.
 
