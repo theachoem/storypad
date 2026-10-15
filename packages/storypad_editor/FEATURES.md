@@ -188,6 +188,8 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
 - Cutting and pasting an embed inside the editor loses it (paste is plain text).
 - Undo replays the whole history, so it slows down over a long session. Grouping keeps the history short: typing in
   one burst (keys under 400ms apart, as in Quill) is one undo step, and caret moves are no steps of their own.
+  `StoryEditorActions.undo` undoes an edit with the caret moves after it, `canUndo` counts edits only, and actions
+  that would change nothing (aligning an aligned line) don't run, so they leave no empty step either.
 - Hand-written Markdown: setext headings, lazy continuation, tables and HTML blocks read as paragraph text.
 - A whitespace-only paragraph is stored with character references (`&#32;`); leading spaces in a line are kept, but
   other Markdown renderers may show 4+ as code.

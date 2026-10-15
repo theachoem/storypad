@@ -103,7 +103,12 @@ class StoryEditorActions {
   /// upper or lower case. One undo step; the selection keeps covering the same text.
   void transformSelectedText(String Function(String text) transform) {
     final ranges = _selectedRanges;
-    if (ranges.isEmpty) return;
+    // Nothing to change (e.g. uppercasing uppercase text): no edit, so no empty step in the undo history.
+    final changes = ranges.any((range) {
+      final text = range.node.text.toPlainText().substring(range.start, range.end);
+      return transform(text) != text;
+    });
+    if (!changes) return;
     _editor.execute([
       TransformTextRequest([
         for (final range in ranges) (nodeId: range.node.id, start: range.start, end: range.end),
@@ -427,7 +432,7 @@ class StoryEditorActions {
               id: node.id,
               text: node.text,
               indent: _indentOf(node),
-              metadata: {NodeMetadata.blockType: blockType},
+              metadata: {..._alignmentOf(node), NodeMetadata.blockType: blockType},
             ),
           ),
     ]);
@@ -448,8 +453,8 @@ class StoryEditorActions {
     return nodes.isNotEmpty && nodes.every((node) => node is ListItemNode && node.type == type);
   }
 
-  /// Converts every selected block to a [type] list item, or back to paragraphs if they all already are. Indent is
-  /// kept across the conversion.
+  /// Converts every selected block to a [type] list item, or back to paragraphs if they all already are. Indent and
+  /// alignment are kept across the conversion.
   void _toggleList(ListItemType type) {
     final nodes = selectedTextNodes;
     if (nodes.isEmpty) return;
@@ -457,12 +462,19 @@ class StoryEditorActions {
     _replaceAll(
       nodes,
       (node) => active
-          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node))
-          : ListItemNode(id: node.id, itemType: type, text: node.text, indent: _indentOf(node)),
+          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node), metadata: _alignmentOf(node))
+          : ListItemNode(
+              id: node.id,
+              itemType: type,
+              text: node.text,
+              indent: _indentOf(node),
+              metadata: _alignmentOf(node),
+            ),
     );
   }
 
-  /// Converts every selected block to an unchecked task, or back to paragraphs if they all already are tasks.
+  /// Converts every selected block to an unchecked task, or back to paragraphs if they all already are tasks. Indent
+  /// and alignment are kept.
   void toggleTaskList() {
     final nodes = selectedTextNodes;
     if (nodes.isEmpty) return;
@@ -470,8 +482,14 @@ class StoryEditorActions {
     _replaceAll(
       nodes,
       (node) => active
-          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node))
-          : TaskNode(id: node.id, text: node.text, isComplete: false, indent: _indentOf(node)),
+          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node), metadata: _alignmentOf(node))
+          : TaskNode(
+              id: node.id,
+              text: node.text,
+              isComplete: false,
+              indent: _indentOf(node),
+              metadata: _alignmentOf(node),
+            ),
     );
   }
 
@@ -480,6 +498,11 @@ class StoryEditorActions {
       for (final node in nodes) ReplaceNodeRequest(existingNodeId: node.id, newNode: replacement(node)),
     ]);
   }
+
+  /// [node]'s alignment as metadata for the block replacing it (none for code, which is never aligned).
+  static Map<String, dynamic> _alignmentOf(TextNode node) => {
+    if (!_isCode(node)) TextNodeMetadata.textAlign: ?node.getMetadataValue(TextNodeMetadata.textAlign),
+  };
 
   static int _indentOf(TextNode node) => switch (node) {
     ListItemNode() => node.indent,
@@ -535,7 +558,11 @@ class StoryEditorActions {
 
   /// Aligns every selected paragraph, heading, quote, list item and task. Code blocks have no alignment.
   void setAlignment(TextAlign alignment) {
-    final nodes = selectedTextNodes.where((node) => !_isCode(node));
+    // Only blocks it changes: an edit that changes nothing would still be an (empty) undo step.
+    final name = textAlignName(alignment);
+    final nodes = selectedTextNodes.where(
+      (node) => !_isCode(node) && node.getMetadataValue(TextNodeMetadata.textAlign) != name,
+    );
     if (nodes.isEmpty) return;
     _editor.execute([for (final node in nodes) ChangeTextAlignmentRequest(node.id, alignment)]);
   }
@@ -549,14 +576,31 @@ class StoryEditorActions {
 
   // ── History ────────────────────────────────────────────────────────────────
 
-  bool get canUndo => _editor.history.isNotEmpty;
-  bool get canRedo => _editor.future.isNotEmpty;
+  /// Whether there's an edit to undo. Taps that only move the caret are history steps too, but not edits: a freshly
+  /// opened story has nothing to undo.
+  bool get canUndo => _editor.history.any(_changesDocument);
+  bool get canRedo => _editor.future.any(_changesDocument);
 
+  /// Undoes the last edit, with any caret moves made after it -- one press, one visible change.
   void undo() {
-    if (canUndo) _editor.undo();
+    if (!canUndo) return;
+    while (_editor.history.isNotEmpty) {
+      final last = _editor.history.last;
+      _editor.undo();
+      if (_changesDocument(last)) return;
+    }
   }
 
+  /// Redoes the last undone edit (caret moves undone with it stay undone; the next edit drops them).
   void redo() {
-    if (canRedo) _editor.redo();
+    if (!canRedo) return;
+    while (_editor.future.isNotEmpty) {
+      final next = _editor.future.last;
+      _editor.redo();
+      if (_changesDocument(next)) return;
+    }
   }
+
+  static bool _changesDocument(CommandTransaction transaction) =>
+      transaction.changes.any((change) => change is DocumentEdit);
 }

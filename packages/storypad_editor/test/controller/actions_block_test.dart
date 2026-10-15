@@ -1,5 +1,6 @@
 import 'package:flutter/painting.dart' show Color, TextAlign;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:super_editor/super_editor.dart';
 
 import '../support/controller_helpers.dart';
 
@@ -72,6 +73,26 @@ void main() {
     expect(controller.toMarkdown(), '# h\n\np\n\n- item\n- [ ] task\n\n```\ncode\n```');
   });
 
+  test('list, task and heading toggles keep alignment', () {
+    final controller = controllerFor('<div style="text-align:center">\n\np\n\n</div>');
+    placeCaret(controller, 0, 0);
+    const centered = '<div style="text-align:center">\n\n%s\n\n</div>';
+
+    controller.actions.toggleBulletList();
+    expect(controller.toMarkdown(), centered.replaceFirst('%s', '- p'));
+
+    controller.actions.toggleTaskList();
+    expect(controller.toMarkdown(), centered.replaceFirst('%s', '- [ ] p'));
+
+    controller.actions.setHeading(2);
+    expect(controller.toMarkdown(), centered.replaceFirst('%s', '## p'));
+
+    controller.actions.toggleOrderedList();
+    controller.actions.toggleOrderedList();
+    expect(controller.toMarkdown(), centered.replaceFirst('%s', 'p'));
+    expect(controller.actions.alignment, TextAlign.center);
+  });
+
   test('horizontal rule at the caret', () {
     final controller = controllerFor('Hello');
     placeCaret(controller, 0, 5);
@@ -94,6 +115,61 @@ void main() {
 
     controller.actions.redo();
     expect(controller.toMarkdown(), '**Hello**');
+  });
+
+  group('undo counts edits, not caret moves', () {
+    test('nothing to undo after only moving the caret', () {
+      final controller = controllerFor('Hello\n\nWorld');
+      controller.actions.placeCaretAtEnd();
+      controller.actions.moveCaret(forward: false);
+      expect(controller.editor.history, isNotEmpty, reason: 'caret moves are history steps');
+      expect(controller.actions.canUndo, isFalse);
+
+      controller.actions.undo();
+      expect(controller.composer.selection, isNotNull, reason: 'undo did not drop the caret');
+    });
+
+    test('one undo undoes the last edit, with the caret moves after it', () {
+      final controller = controllerFor('Hello');
+      selectNode(controller, 0);
+      controller.actions.toggleBold();
+      controller.actions.placeCaretAtEnd();
+      controller.actions.moveCaret(forward: false);
+
+      controller.actions.undo();
+      expect(controller.toMarkdown(), 'Hello');
+      expect(controller.actions.canUndo, isFalse);
+
+      controller.actions.redo();
+      expect(controller.toMarkdown(), '**Hello**');
+      expect(controller.actions.canRedo, isFalse);
+    });
+
+    test('an action that changes nothing adds no undo step', () {
+      final controller = controllerFor('<div style="text-align:center">\n\nHELLO\n\n</div>');
+      controller.actions.placeCaretAtEnd();
+      final steps = controller.editor.history.length;
+
+      controller.actions.setAlignment(TextAlign.center);
+      selectNode(controller, 0);
+      controller.actions.transformSelectedText((text) => text.toUpperCase());
+      expect(controller.editor.history.length, steps);
+    });
+
+    test('undoing a newline after a no-op alignment keeps the text before it', () {
+      final controller = controllerFor('<div style="text-align:center">\n\nHello\n\n</div>');
+      controller.actions.placeCaretAtEnd();
+      controller.actions.setAlignment(TextAlign.center);
+      controller.editor.execute([InsertNewlineAtCaretRequest(Editor.createNodeId())]);
+      expect(controller.document.nodeCount, 2);
+
+      controller.actions.undo();
+      expect(controller.document.nodeCount, 1);
+      expect(controller.toMarkdown(), '<div style="text-align:center">\n\nHello\n\n</div>');
+
+      controller.actions.redo();
+      expect(controller.document.nodeCount, 2);
+    });
   });
 
   test('a code block holds plain text only: converting strips formatting, and formatting/indent do not apply', () {
