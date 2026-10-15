@@ -59,6 +59,46 @@ class StoryEditorActions {
 
   static int? _offset(NodePosition position) => position is TextNodePosition ? position.offset : null;
 
+  /// [_selectedRanges] outside code blocks: the text inline formatting applies to.
+  List<({TextNode node, int start, int end})> get _formattableRanges => [
+    for (final range in _selectedRanges)
+      if (!_isCode(range.node)) range,
+  ];
+
+  /// One [request] per range, each over that one block. super_editor's attribution commands work out a multi-block
+  /// selection's ranges themselves and get them wrong at a block's edge -- e.g. a selection ending at the start of a
+  /// line gives that line the range `0..-1`, and removing an attribution there throws mid-edit.
+  static List<EditRequest> _overRanges(
+    List<({TextNode node, int start, int end})> ranges,
+    EditRequest Function(DocumentRange range) request,
+  ) {
+    return [
+      for (final range in ranges)
+        request(
+          DocumentRange(
+            start: DocumentPosition(
+              nodeId: range.node.id,
+              nodePosition: TextNodePosition(offset: range.start),
+            ),
+            end: DocumentPosition(
+              nodeId: range.node.id,
+              nodePosition: TextNodePosition(offset: range.end),
+            ),
+          ),
+        ),
+    ];
+  }
+
+  List<EditRequest> _removing(Set<Attribution> attributions) => _overRanges(
+    _selectedRanges,
+    (range) => RemoveTextAttributionsRequest(documentRange: range, attributions: attributions),
+  );
+
+  List<EditRequest> _adding(Set<Attribution> attributions) => _overRanges(
+    _formattableRanges,
+    (range) => AddTextAttributionsRequest(documentRange: range, attributions: attributions),
+  );
+
   /// Replaces the selected text with `transform(text)` in each selected block, keeping its formatting -- e.g. to
   /// upper or lower case. One undo step; the selection keeps covering the same text.
   void transformSelectedText(String Function(String text) transform) {
@@ -205,7 +245,7 @@ class StoryEditorActions {
     if (selection == null) return false;
     if (selection.isCollapsed) return _composer.preferences.currentAttributions.contains(attribution);
 
-    final ranges = _selectedRanges;
+    final ranges = _formattableRanges;
     return ranges.isNotEmpty &&
         ranges.every(
           (range) => range.node.text.hasAttributionsThroughout(
@@ -223,9 +263,9 @@ class StoryEditorActions {
     if (selection.isCollapsed) {
       _composer.preferences.toggleStyles({attribution});
     } else {
-      _editor.execute([
-        ToggleTextAttributionsRequest(documentRange: selection, attributions: {attribution}),
-      ]);
+      // Decided here, by what the toolbar shows: on throughout the (non-code) selection → off, otherwise → on.
+      final requests = hasAttribution(attribution) ? _removing({attribution}) : _adding({attribution});
+      if (requests.isNotEmpty) _editor.execute(requests);
     }
   }
 
@@ -244,10 +284,11 @@ class StoryEditorActions {
       return;
     }
     final present = _attributionsInSelection((a) => a == other);
-    _editor.execute([
-      if (present.isNotEmpty) RemoveTextAttributionsRequest(documentRange: selection, attributions: present),
-      ToggleTextAttributionsRequest(documentRange: selection, attributions: {script}),
-    ]);
+    final requests = [
+      if (present.isNotEmpty) ..._removing(present),
+      ...hasAttribution(script) ? _removing({script}) : _adding({script}),
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
   }
 
   /// The text color throughout the selection, or `null` if none or mixed.
@@ -285,9 +326,7 @@ class StoryEditorActions {
       return;
     }
     final attributions = _attributionsInSelection((_) => true);
-    if (attributions.isNotEmpty) {
-      _editor.execute([RemoveTextAttributionsRequest(documentRange: selection, attributions: attributions)]);
-    }
+    if (attributions.isNotEmpty) _editor.execute(_removing(attributions));
   }
 
   /// Replaces any [A] attribution in the selection (or pending for the caret) with [attribution], or just removes
@@ -305,9 +344,9 @@ class StoryEditorActions {
 
     // One edit (one undo step): remove the old value, add the new one.
     final existing = _attributionsInSelection((a) => a is A);
-    final requests = <EditRequest>[
-      if (existing.isNotEmpty) RemoveTextAttributionsRequest(documentRange: selection, attributions: existing),
-      if (attribution != null) AddTextAttributionsRequest(documentRange: selection, attributions: {attribution}),
+    final requests = [
+      if (existing.isNotEmpty) ..._removing(existing),
+      if (attribution != null) ..._adding({attribution}),
     ];
     if (requests.isNotEmpty) _editor.execute(requests);
   }
