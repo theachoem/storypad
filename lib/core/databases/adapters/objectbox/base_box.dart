@@ -91,7 +91,8 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     await SupportDirectoryPath.objectbox.ensureDirectoryExists();
     _store = await openStore(
       directory: SupportDirectoryPath.objectbox.directoryPath,
-      macosApplicationGroup: kMacosAppGroup,
+      // ObjectBox rejects an empty group on every platform, so a build without the dart-define passes none.
+      macosApplicationGroup: kMacosAppGroup.isEmpty ? null : kMacosAppGroup,
     );
   }
 
